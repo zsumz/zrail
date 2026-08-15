@@ -15,10 +15,28 @@ pub(super) fn compare(
     candidate: &LockFile,
 ) -> Result<DiffReport, CliError> {
     let common = &options.common;
-    let snapshot = GitSnapshot::create(&common.root, &options.base, &common.config, &common.lock)?;
-    let before = load_contract(snapshot.root(), &common.config)
+    compare_from_repository(
+        &common.root,
+        &options.base,
+        &common.config,
+        &common.lock,
+        after,
+        candidate,
+    )
+}
+
+pub(super) fn compare_from_repository(
+    authority_root: &std::path::Path,
+    base: &std::ffi::OsStr,
+    config: &std::path::Path,
+    lock: &std::path::Path,
+    after: &ContractBundle,
+    candidate: &LockFile,
+) -> Result<DiffReport, CliError> {
+    let snapshot = GitSnapshot::create(authority_root, base, config, lock)?;
+    let before = load_contract(snapshot.root(), config)
         .map_err(|error| CliError::new(format!("load base contract: {error}")))?;
-    let lock_path = repository_file(snapshot.root(), &common.lock).map_err(CliError::new)?;
+    let lock_path = repository_file(snapshot.root(), lock).map_err(CliError::new)?;
     let before_lock = LockFile::read_optional(&lock_path)
         .map_err(|error| CliError::new(format!("load base lock: {error}")))?;
     Ok(compare_architecture_checked(

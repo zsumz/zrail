@@ -55,6 +55,24 @@ zrail explain --path crates/zrail-core/src/lib.rs
 zrail diff --base HEAD --deny-grants
 ```
 
+Protected automation can independently derive a proposal's observed state with
+a binary and base revision outside the proposal's control:
+
+```sh
+zrail review --base HEAD --authority-root . --root proposal --deny-grants
+```
+
+`review` analyzes the proposed Cargo and Rust source as data, verifies its
+checked-in lock against an in-memory candidate, and rejects source violations,
+grants, new debt, unknown comparisons, and stale or forged locks.
+
+The included authority workflow runs on `pull_request_target`, builds only the
+protected base checkout, and places the proposal beneath that trusted root only
+after the authority binary exists. It grants read-only repository permission,
+uses no proposal actions or scripts, and requires `protected source review` to
+be configured as a required check on the protected branch. Organization
+ruleset workflows or an external authority service are stronger alternatives.
+
 After an intentional dependency, provenance, gate, or ratchet change:
 
 ```sh
@@ -98,6 +116,7 @@ zrail check [--root ROOT] [--format human|json]
 zrail update [--base REVISION] [--root ROOT] [--format human|json] [--accept-grants]
 zrail doctor [--root ROOT] [--format human|json]
 zrail explain --path PATH [--root ROOT] [--format human|json]
+zrail review [--base REVISION] [--authority-root ROOT] --root PROPOSAL [--deny-grants]
 zrail diff --base REVISION [--root ROOT] [--deny-grants]
 zrail diff --before ROOT --after ROOT [--deny-grants]
 ```

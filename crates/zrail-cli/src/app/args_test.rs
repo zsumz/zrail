@@ -128,6 +128,30 @@ fn update_requires_explicit_grant_acceptance() {
 }
 
 #[test]
+fn review_separates_trusted_authority_from_proposed_source() {
+    let command = parse([
+        OsString::from("zrail"),
+        OsString::from("review"),
+        OsString::from("--authority-root"),
+        OsString::from("trusted"),
+        OsString::from("--root"),
+        OsString::from("proposal"),
+        OsString::from("--base"),
+        OsString::from("protected"),
+        OsString::from("--deny-grants"),
+    ])
+    .expect("parse protected review");
+    let Command::Review(options) = command else {
+        panic!("expected review command");
+    };
+
+    assert_eq!(options.authority_root.to_string_lossy(), "trusted");
+    assert_eq!(options.common.root.to_string_lossy(), "proposal");
+    assert_eq!(options.base, OsString::from("protected"));
+    assert!(options.deny_grants);
+}
+
+#[test]
 fn init_defaults_to_zsumz_without_baseline() {
     let command =
         parse([OsString::from("zrail"), OsString::from("init")]).expect("parse strict default");

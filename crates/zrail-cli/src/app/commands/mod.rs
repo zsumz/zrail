@@ -11,6 +11,7 @@ mod init;
 mod init_preset;
 mod init_template;
 mod result;
+mod review;
 mod update;
 mod update_authority;
 
@@ -20,6 +21,7 @@ pub(crate) use doctor::doctor;
 pub(crate) use explain::explain;
 pub(crate) use init::init;
 pub(crate) use result::CommandResult;
+pub(crate) use review::review;
 pub(crate) use update::update;
 
 #[cfg(test)]

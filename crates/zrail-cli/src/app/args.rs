@@ -9,8 +9,11 @@ use super::{error::CliError, output::OutputFormat};
 
 mod diff;
 mod init;
+mod review;
+mod update;
 
 pub(crate) use init::{InitOptions, InitPreset};
+pub(crate) use update::UpdateOptions;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) enum Command {
@@ -22,6 +25,7 @@ pub(crate) enum Command {
         path: PathBuf,
     },
     Diff(DiffOptions),
+    Review(ReviewOptions),
     Init(InitOptions),
     Help,
     Version,
@@ -51,10 +55,11 @@ pub(crate) enum DiffMode {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct UpdateOptions {
+pub(crate) struct ReviewOptions {
     pub(crate) common: CommonOptions,
+    pub(crate) authority_root: PathBuf,
     pub(crate) base: OsString,
-    pub(crate) accept_grants: bool,
+    pub(crate) deny_grants: bool,
 }
 
 impl Default for CommonOptions {
@@ -81,9 +86,10 @@ pub(crate) fn parse(arguments: impl IntoIterator<Item = OsString>) -> Result<Com
     match command.as_str() {
         "check" => Ok(Command::Check(parse_common(&remaining)?)),
         "doctor" => Ok(Command::Doctor(parse_common(&remaining)?)),
-        "update" => parse_update(&remaining),
+        "update" => update::parse(&remaining),
         "explain" | "guide" => parse_explain(&remaining),
         "diff" => diff::parse(&remaining),
+        "review" => review::parse(&remaining),
         "init" => init::parse(&remaining),
         "help" | "--help" | "-h" => Ok(Command::Help),
         "version" | "--version" | "-V" => Ok(Command::Version),
@@ -94,41 +100,6 @@ pub(crate) fn parse(arguments: impl IntoIterator<Item = OsString>) -> Result<Com
 
 fn parse_common(arguments: &[OsString]) -> Result<CommonOptions, CliError> {
     parse_common_options(arguments)
-}
-
-fn parse_update(arguments: &[OsString]) -> Result<Command, CliError> {
-    let mut common = CommonOptions::default();
-    let mut base = OsString::from("HEAD");
-    let mut base_set = false;
-    let mut accept_grants = false;
-    let mut index = 0;
-    while index < arguments.len() {
-        let flag = as_string(&arguments[index])?;
-        match flag.as_str() {
-            "--root" => common.root = value(arguments, &mut index, "--root")?,
-            "--config" => common.config = value(arguments, &mut index, "--config")?,
-            "--lock" => common.lock = value(arguments, &mut index, "--lock")?,
-            "--format" => {
-                common.format = parse_format(&value(arguments, &mut index, "--format")?)?;
-            }
-            "--base" if !base_set => {
-                base = os_value(arguments, &mut index, "--base")?;
-                base_set = true;
-            }
-            "--base" => return Err(CliError::new("--base may be specified only once")),
-            "--accept-grants" if !accept_grants => accept_grants = true,
-            "--accept-grants" => {
-                return Err(CliError::new("--accept-grants may be specified only once"));
-            }
-            _ => return Err(CliError::new(format!("unknown option {flag:?}"))),
-        }
-        index += 1;
-    }
-    Ok(Command::Update(UpdateOptions {
-        common,
-        base,
-        accept_grants,
-    }))
 }
 
 fn parse_common_options(arguments: &[OsString]) -> Result<CommonOptions, CliError> {

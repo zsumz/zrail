@@ -20,6 +20,7 @@ const HELP: &str = concat!(
     "  zrail update [--base REVISION] [--root ROOT] [--format human|json] [--accept-grants]\n",
     "  zrail doctor [--root ROOT] [--format human|json]\n",
     "  zrail explain --path PATH [--root ROOT] [--format human|json]\n",
+    "  zrail review [--base REVISION] [--authority-root ROOT] --root PROPOSAL [--deny-grants]\n",
     "  zrail diff --base REVISION [--root ROOT] [--deny-grants]\n",
     "  zrail diff --before ROOT --after ROOT [--deny-grants]\n\n",
     "MODEL\n",
@@ -42,6 +43,7 @@ fn run_command(command: &Command) -> i32 {
         Command::Update(options) => commands::update(options),
         Command::Explain { common, path } => commands::explain(common, path),
         Command::Diff(options) => commands::diff(options),
+        Command::Review(options) => commands::review(options),
         Command::Init(options) => commands::init(options),
         Command::Help => return write_stdout(HELP, 0),
         Command::Version => {
@@ -60,6 +62,7 @@ fn command_format(command: &Command) -> OutputFormat {
         Command::Update(options) => options.common.format,
         Command::Explain { common, .. } => common.format,
         Command::Diff(options) => options.format,
+        Command::Review(options) => options.common.format,
         Command::Init(_) | Command::Help | Command::Version => OutputFormat::Human,
     }
 }
