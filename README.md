@@ -75,6 +75,9 @@ also handles merge-group events. A merge queue that requires protected review
 needs an organization ruleset workflow or external authority service capable of
 reviewing the merge-group commit.
 
+This repository's `main` branch requires that authority status, canonical Linux
+qualification, portable macOS and Windows tests, and signed commits.
+
 After an intentional dependency, provenance, gate, or ratchet change:
 
 ```sh
