@@ -1,0 +1,94 @@
+//! Call identities retain aliases and conservative glob-import possibilities.
+
+use zrail_core::AnalysisQuality;
+
+use super::{ImportMap, candidates, facts};
+
+#[test]
+fn aliases_resolve_to_the_exact_called_path() {
+    let file = syn::parse_file(
+        "use std::process::Command as Process; fn run() { Process::new(\"git\"); }",
+    )
+    .expect("parse source");
+    let imports = ImportMap::from_file(&file);
+
+    let observed = facts(call(&file), &imports);
+
+    assert!(observed.iter().any(|fact| {
+        fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Exact
+    }));
+}
+
+#[test]
+fn glob_imports_add_a_conservative_called_path() {
+    let file = syn::parse_file("use std::process::*; fn run() { Command::new(\"git\"); }")
+        .expect("parse source");
+    let imports = ImportMap::from_file(&file);
+
+    let observed = facts(call(&file), &imports);
+
+    assert!(observed.iter().any(|fact| {
+        fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
+    }));
+}
+
+#[test]
+fn function_local_imports_add_a_conservative_called_path() {
+    let file = syn::parse_file(
+        "fn run() { use std::process::Command as Process; Process::new(\"git\"); }",
+    )
+    .expect("parse source");
+    let imports = ImportMap::from_file(&file);
+
+    let observed = facts(call(&file), &imports);
+
+    assert!(observed.iter().any(|fact| {
+        fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
+    }));
+}
+
+#[test]
+fn type_aliases_add_a_conservative_called_path() {
+    let file = syn::parse_file(
+        "type Process = std::process::Command; fn run() { Process::new(\"git\"); }",
+    )
+    .expect("parse source");
+    let imports = ImportMap::from_file(&file);
+
+    let observed = facts(call(&file), &imports);
+
+    assert!(observed.iter().any(|fact| {
+        fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
+    }));
+}
+
+#[test]
+fn type_aliases_add_a_conservative_reference_path() {
+    let file = syn::parse_file(
+        "type Process = std::process::Command; fn run() { let constructor = Process::new; }",
+    )
+    .expect("parse source");
+    let imports = ImportMap::from_file(&file);
+    let path = syn::parse_str::<syn::Path>("Process::new").expect("parse path");
+
+    let observed = candidates(&path, &imports, "Process::new");
+
+    assert!(observed.iter().any(|fact| {
+        fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
+    }));
+}
+
+fn call(file: &syn::File) -> &syn::ExprCall {
+    let Some(syn::Item::Fn(function)) = file.items.last() else {
+        panic!("last item is a function");
+    };
+    function
+        .block
+        .stmts
+        .iter()
+        .find_map(|statement| match statement {
+            syn::Stmt::Expr(syn::Expr::Call(call), _) => Some(call),
+            _ => None,
+        })
+        .expect("function has a call")
+}
