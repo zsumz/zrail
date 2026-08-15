@@ -1,0 +1,23 @@
+[package]
+name = "zrail"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+description = "Executable architecture guardrails for human- and agent-written code."
+publish = false
+
+[[bin]]
+name = "zrail"
+path = "src/main.rs"
+
+[dependencies]
+zrail-core.workspace = true
+zrail-rust.workspace = true
+
+[lints]
+workspace = true

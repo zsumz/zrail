@@ -1,0 +1,42 @@
+[workspace]
+members = [
+    "crates/zrail-core",
+    "crates/zrail-rust",
+    "crates/zrail-cli",
+    "crates/zrail-testkit",
+]
+resolver = "3"
+
+[workspace.package]
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.96"
+authors = ["zsumz <shawn@zsumz.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/zsumz/zrail"
+homepage = "https://github.com/zsumz/zrail"
+
+[workspace.dependencies]
+proc-macro2 = { version = "1.0.107", features = ["span-locations"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+sha2 = "0.10.9"
+syn = { version = "2.0.119", features = ["extra-traits", "full", "visit"] }
+toml = "0.8.23"
+zrail-core = { path = "crates/zrail-core", version = "=0.0.1" }
+zrail-rust = { path = "crates/zrail-rust", version = "=0.0.1" }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_debug_implementations = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+similar_names = "allow"
+too_many_lines = "allow"
