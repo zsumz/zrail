@@ -180,10 +180,10 @@ fn doctor_status(
     let Some(current) = current else {
         return "lock-missing";
     };
-    if current.engine != env!("CARGO_PKG_VERSION") {
-        return "lock-engine-mismatch";
+    if !current.has_current_semantics() {
+        return "lock-semantics-mismatch";
     }
-    if current != candidate {
+    if !current.same_resolved_state(candidate) {
         return "lock-stale";
     }
     "ready"

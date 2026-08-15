@@ -16,14 +16,14 @@ impl LockFile {
 }
 
 fn validate_header(lock: &LockFile) -> Result<(), LockError> {
-    if lock.schema != 1 {
-        return Err(LockError(format!(
-            "unsupported zrail lock schema {}",
-            lock.schema
-        )));
+    if lock.schema == 0 {
+        return Err(LockError("zrail.lock schema must be positive".into()));
     }
-    if lock.engine.trim().is_empty() {
-        return Err(LockError("zrail.lock engine may not be empty".into()));
+    if lock.semantics == 0 {
+        return Err(LockError("zrail.lock semantics must be positive".into()));
+    }
+    if lock.producer.trim().is_empty() {
+        return Err(LockError("zrail.lock producer may not be empty".into()));
     }
     if !valid_digest(&lock.contract_sha256) {
         return Err(LockError(

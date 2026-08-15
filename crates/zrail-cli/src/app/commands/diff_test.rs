@@ -30,15 +30,19 @@ fn deny_grants_rejects_stale_contract_digest() {
 }
 
 #[test]
-fn deny_grants_rejects_incompatible_engine() {
+fn deny_grants_rejects_incompatible_semantics() {
     let (before, after) = fixture("engine");
     write_lock(&before, |_| {});
-    write_lock(&after, |lock| lock.engine = "999.0.0".into());
+    write_lock(&after, |lock| lock.semantics = 999);
 
     let output = diff(&options(&before, &after)).expect("compare incompatible lock");
 
     assert_eq!(output.exit_code, 1);
-    assert!(output.text.contains("UNKNOWN lock.authority after:engine"));
+    assert!(
+        output
+            .text
+            .contains("UNKNOWN lock.authority after:semantics")
+    );
     reset(&before);
     reset(&after);
 }

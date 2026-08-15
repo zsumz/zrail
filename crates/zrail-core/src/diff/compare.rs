@@ -1,6 +1,6 @@
 //! Public semantic comparison entry point.
 
-use crate::{Contract, LockFile};
+use crate::{Contract, LOCK_SCHEMA, LOCK_SEMANTICS, LockFile};
 
 use super::{ArchitectureChange, ChangeKind, DiffReport, contract, lock};
 
@@ -48,15 +48,26 @@ fn lock_authority(
         )];
     };
     let mut changes = Vec::new();
-    if lock.engine != env!("CARGO_PKG_VERSION") {
+    if !matches!(lock.schema, 1 | LOCK_SCHEMA) {
         changes.push(
             ArchitectureChange::new(
                 ChangeKind::Unknown,
                 "lock.authority",
-                format!("{side}:engine"),
-                "lock engine is incompatible with this zrail engine",
+                format!("{side}:schema"),
+                "lock schema is unsupported by this zrail engine",
             )
-            .values(&lock.engine, env!("CARGO_PKG_VERSION")),
+            .values(lock.schema.to_string(), LOCK_SCHEMA.to_string()),
+        );
+    }
+    if !lock.has_current_semantics() {
+        changes.push(
+            ArchitectureChange::new(
+                ChangeKind::Unknown,
+                "lock.authority",
+                format!("{side}:semantics"),
+                "lock semantics are incompatible with this zrail engine",
+            )
+            .values(lock.semantics.to_string(), LOCK_SEMANTICS.to_string()),
         );
     }
     if lock.contract_sha256 != contract_sha256 {

@@ -27,7 +27,7 @@ pub use diff::{
 };
 pub use digest::sha256_hex;
 pub use lock::{
-    LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope, LockedGate,
-    LockedGeneratedSource, LockedPackage, LockedRatchet,
+    LOCK_SCHEMA, LOCK_SEMANTICS, LockFile, LockedDependency, LockedDependencyKind,
+    LockedDependencyScope, LockedGate, LockedGeneratedSource, LockedPackage, LockedRatchet,
 };
 pub use report::{Report, ReportStatus, ReportSummary};

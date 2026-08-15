@@ -37,12 +37,12 @@ fn stale_contract_lock_is_unknown_and_skips_lock_semantics() {
 }
 
 #[test]
-fn incompatible_engine_is_unknown() {
+fn incompatible_semantics_are_unknown() {
     let fixture = fixture();
     let bundle =
         load_contract(&fixture, std::path::Path::new("zrail.toml")).expect("load fixture contract");
     let mut lock = LockFile::new(&bundle.sha256);
-    lock.engine = "999.0.0".into();
+    lock.semantics = 999;
 
     let report = compare_architecture_checked(
         &bundle.contract,
@@ -60,6 +60,28 @@ fn incompatible_engine_is_unknown() {
             .iter()
             .all(|change| change.rail == "lock.authority")
     );
+    reset(&fixture);
+}
+
+#[test]
+fn rolling_producer_upgrade_with_stable_semantics_is_accepted() {
+    let fixture = fixture();
+    let bundle =
+        load_contract(&fixture, std::path::Path::new("zrail.toml")).expect("load fixture contract");
+    let before = LockFile::new(&bundle.sha256);
+    let mut after = before.clone();
+    after.producer = "0.0.2".into();
+
+    let report = compare_architecture_checked(
+        &bundle.contract,
+        &bundle.sha256,
+        Some(&before),
+        &bundle.contract,
+        &bundle.sha256,
+        Some(&after),
+    );
+
+    assert!(report.changes.is_empty());
     reset(&fixture);
 }
 
