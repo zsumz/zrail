@@ -11,6 +11,10 @@ mod support;
 mod topology;
 mod topology_policy;
 
+#[cfg(test)]
+#[path = "compare_fixture_test.rs"]
+mod compare_fixture_test;
+
 pub use compare::{compare_architecture, compare_architecture_checked};
 pub use model::{ArchitectureChange, ChangeKind, DiffReport, DiffSummary};
 

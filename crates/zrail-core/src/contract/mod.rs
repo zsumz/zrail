@@ -16,6 +16,10 @@ mod validate_ratchet;
 mod validate_sets;
 mod validate_source;
 
+#[cfg(test)]
+#[path = "validate_fixture_test.rs"]
+mod validate_fixture_test;
+
 pub use evidence::{EvidenceReference, parse_evidence_reference};
 pub use imports::contract_imports;
 pub use load::{

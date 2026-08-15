@@ -31,3 +31,7 @@ mod git_base_migration_test;
 #[cfg(test)]
 #[path = "update_contract_test.rs"]
 mod update_contract_test;
+
+#[cfg(test)]
+#[path = "update_fixture_test.rs"]
+mod update_fixture_test;
