@@ -9,6 +9,7 @@ use super::{
     attributes::{has_conditional_path_attribute, has_path_attribute, is_cfg_test, path_attribute},
     fact::source_span,
     model::{InlineModulePath, ModuleDeclaration},
+    visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
 };
 
 pub(super) fn module_declarations(file: &syn::File) -> Vec<ModuleDeclaration> {
@@ -25,6 +26,46 @@ struct ModuleCollector {
 }
 
 impl<'ast> Visit<'ast> for ModuleCollector {
+    fn visit_file(&mut self, file: &'ast syn::File) {
+        self.with_cfg(&file.attrs, |visitor| visit::visit_file(visitor, file));
+    }
+
+    fn visit_item(&mut self, item: &'ast syn::Item) {
+        self.with_cfg(item_attrs(item), |visitor| visit::visit_item(visitor, item));
+    }
+
+    fn visit_impl_item(&mut self, item: &'ast syn::ImplItem) {
+        self.with_cfg(impl_attrs(item), |visitor| {
+            visit::visit_impl_item(visitor, item);
+        });
+    }
+
+    fn visit_trait_item(&mut self, item: &'ast syn::TraitItem) {
+        self.with_cfg(trait_attrs(item), |visitor| {
+            visit::visit_trait_item(visitor, item);
+        });
+    }
+
+    fn visit_foreign_item(&mut self, item: &'ast syn::ForeignItem) {
+        self.with_cfg(foreign_attrs(item), |visitor| {
+            visit::visit_foreign_item(visitor, item);
+        });
+    }
+
+    fn visit_expr(&mut self, expression: &'ast syn::Expr) {
+        self.with_cfg(expr_attrs(expression), |visitor| {
+            visit::visit_expr(visitor, expression);
+        });
+    }
+
+    fn visit_local(&mut self, local: &'ast syn::Local) {
+        self.with_cfg(&local.attrs, |visitor| visit::visit_local(visitor, local));
+    }
+
+    fn visit_arm(&mut self, arm: &'ast syn::Arm) {
+        self.with_cfg(&arm.attrs, |visitor| visit::visit_arm(visitor, arm));
+    }
+
     fn visit_item_mod(&mut self, module: &'ast ItemMod) {
         let path = path_attribute(&module.attrs);
         let unresolved_path = has_conditional_path_attribute(&module.attrs)
@@ -53,6 +94,15 @@ impl<'ast> Visit<'ast> for ModuleCollector {
         }
         self.test_only_context = previous_context;
         self.inline_ancestors.pop();
+    }
+}
+
+impl ModuleCollector {
+    fn with_cfg(&mut self, attributes: &[syn::Attribute], visit: impl FnOnce(&mut Self)) {
+        let previous = self.test_only_context;
+        self.test_only_context |= attributes.iter().any(is_cfg_test);
+        visit(self);
+        self.test_only_context = previous;
     }
 }
 

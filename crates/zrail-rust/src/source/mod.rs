@@ -13,6 +13,9 @@ mod parse;
 mod paths;
 mod visitor;
 mod visitor_boundaries;
+mod visitor_context;
+mod visitor_init;
+mod visitor_model;
 
 pub(crate) use model::{
     IncludeBoundary, IncludeContext, ModuleDeclaration, ObservedFact, Reachability, RustFileFacts,

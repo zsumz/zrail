@@ -6,11 +6,13 @@ use std::{
     path::Path,
     process::{Command, Stdio},
     thread,
+    time::{Duration, Instant},
 };
 
 use crate::app::error::CliError;
 
 const MAX_GIT_ERROR_BYTES: usize = 64 * 1024;
+const GIT_TIMEOUT: Duration = Duration::from_mins(1);
 
 pub(super) fn output(
     root: &Path,
@@ -40,32 +42,44 @@ pub(super) fn output(
         .stderr
         .take()
         .ok_or_else(|| CliError::new(format!("capture Git {operation} errors")))?;
+    let output = match thread::Builder::new()
+        .name("zrail-git-stdout".into())
+        .spawn(move || read_bounded(stdout, limit))
+    {
+        Ok(output) => output,
+        Err(error) => {
+            stop(&mut child);
+            return Err(CliError::new(format!(
+                "capture Git {operation} output: start reader thread: {error}"
+            )));
+        }
+    };
     let errors = match thread::Builder::new()
         .name("zrail-git-stderr".into())
         .spawn(move || drain_bounded(stderr, MAX_GIT_ERROR_BYTES))
     {
         Ok(errors) => errors,
         Err(error) => {
-            let _killed = child.kill();
-            let _waited = child.wait();
+            stop(&mut child);
+            let _joined = output.join();
             return Err(CliError::new(format!(
                 "capture Git {operation} errors: start reader thread: {error}"
             )));
         }
     };
-    let captured = read_bounded(stdout, limit);
-    if captured.as_ref().is_ok_and(|value| value.overflowed) {
-        let _killed = child.kill();
+    let status = wait_bounded(&mut child, operation);
+    if status.is_err() {
+        stop(&mut child);
     }
-    let status = child
-        .wait()
-        .map_err(|error| CliError::new(format!("wait for Git {operation}: {error}")))?;
+    let captured = output
+        .join()
+        .map_err(|_| CliError::new(format!("capture Git {operation} output")))?
+        .map_err(|error| CliError::new(format!("read Git {operation} output: {error}")))?;
     let errors = errors
         .join()
         .map_err(|_| CliError::new(format!("capture Git {operation} errors")))?
         .map_err(|error| CliError::new(format!("read Git {operation} errors: {error}")))?;
-    let captured =
-        captured.map_err(|error| CliError::new(format!("read Git {operation} output: {error}")))?;
+    let status = status?;
     if captured.overflowed {
         return Err(CliError::new(format!(
             "Git {operation} output exceeds the {limit}-byte safety limit"
@@ -82,6 +96,33 @@ pub(super) fn output(
         return Err(CliError::new(message));
     }
     Ok(captured.bytes)
+}
+
+fn wait_bounded(
+    child: &mut std::process::Child,
+    operation: &str,
+) -> Result<std::process::ExitStatus, CliError> {
+    let deadline = Instant::now() + GIT_TIMEOUT;
+    loop {
+        match child.try_wait() {
+            Ok(Some(status)) => return Ok(status),
+            Ok(None) if Instant::now() < deadline => thread::sleep(Duration::from_millis(10)),
+            Ok(None) => {
+                return Err(CliError::new(format!(
+                    "Git {operation} exceeded the {}-second time limit",
+                    GIT_TIMEOUT.as_secs()
+                )));
+            }
+            Err(error) => {
+                return Err(CliError::new(format!("wait for Git {operation}: {error}")));
+            }
+        }
+    }
+}
+
+fn stop(child: &mut std::process::Child) {
+    let _killed = child.kill();
+    let _waited = child.wait();
 }
 
 struct Captured {

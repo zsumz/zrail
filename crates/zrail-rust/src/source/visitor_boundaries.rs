@@ -24,7 +24,6 @@ impl FactVisitor<'_> {
                 module.ident.span(),
                 AnalysisQuality::Exact,
             ));
-            self.test_only_context = true;
         }
     }
 

@@ -14,58 +14,62 @@ use super::{
         unsafe_attribute_names,
     },
     fact::fact,
-    imports::ImportMap,
-    model::{IncludeBoundary, ObservedFact},
+    visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
 };
 
-#[derive(Debug)]
-pub(super) struct FactVisitor<'a> {
-    imports: &'a ImportMap,
-    pub(super) test_only_context: bool,
-    pub(super) paths: Vec<ObservedFact>,
-    pub(super) calls: Vec<ObservedFact>,
-    pub(super) methods: Vec<ObservedFact>,
-    pub(super) macros: Vec<ObservedFact>,
-    pub(super) lint_suppressions: Vec<ObservedFact>,
-    pub(super) unsafe_constructs: Vec<ObservedFact>,
-    pub(super) tests: Vec<ObservedFact>,
-    pub(super) includes: Vec<IncludeBoundary>,
-    pub(super) item_macros: Vec<ObservedFact>,
-}
-
-impl<'a> FactVisitor<'a> {
-    pub(super) fn new(imports: &'a ImportMap) -> Self {
-        let mut paths = imports
-            .declared_paths()
-            .into_iter()
-            .map(|(path, quality)| ObservedFact {
-                name: path.to_owned(),
-                span: None,
-                quality,
-            })
-            .collect::<Vec<_>>();
-        paths.extend(imports.globs().iter().map(|path| ObservedFact {
-            name: path.clone(),
-            span: None,
-            quality: AnalysisQuality::Conservative,
-        }));
-        Self {
-            imports,
-            test_only_context: false,
-            paths,
-            calls: Vec::new(),
-            methods: Vec::new(),
-            macros: Vec::new(),
-            lint_suppressions: Vec::new(),
-            unsafe_constructs: Vec::new(),
-            tests: Vec::new(),
-            includes: Vec::new(),
-            item_macros: Vec::new(),
-        }
-    }
-}
+pub(super) use super::visitor_model::FactVisitor;
 
 impl<'ast> Visit<'ast> for FactVisitor<'_> {
+    fn visit_file(&mut self, file: &'ast syn::File) {
+        self.with_cfg(&file.attrs, |visitor| visit::visit_file(visitor, file));
+    }
+
+    fn visit_item(&mut self, item: &'ast syn::Item) {
+        self.with_cfg(item_attrs(item), |visitor| visit::visit_item(visitor, item));
+    }
+
+    fn visit_impl_item(&mut self, item: &'ast syn::ImplItem) {
+        self.with_cfg(impl_attrs(item), |visitor| {
+            visit::visit_impl_item(visitor, item);
+        });
+    }
+
+    fn visit_trait_item(&mut self, item: &'ast syn::TraitItem) {
+        self.with_cfg(trait_attrs(item), |visitor| {
+            visit::visit_trait_item(visitor, item);
+        });
+    }
+
+    fn visit_foreign_item(&mut self, item: &'ast syn::ForeignItem) {
+        self.with_cfg(foreign_attrs(item), |visitor| {
+            visit::visit_foreign_item(visitor, item);
+        });
+    }
+
+    fn visit_expr(&mut self, expression: &'ast syn::Expr) {
+        self.with_cfg(expr_attrs(expression), |visitor| {
+            visit::visit_expr(visitor, expression);
+        });
+    }
+
+    fn visit_local(&mut self, local: &'ast syn::Local) {
+        self.with_cfg(&local.attrs, |visitor| visit::visit_local(visitor, local));
+    }
+
+    fn visit_arm(&mut self, arm: &'ast syn::Arm) {
+        self.with_cfg(&arm.attrs, |visitor| visit::visit_arm(visitor, arm));
+    }
+
+    fn visit_field(&mut self, field: &'ast syn::Field) {
+        self.with_cfg(&field.attrs, |visitor| visit::visit_field(visitor, field));
+    }
+
+    fn visit_variant(&mut self, variant: &'ast syn::Variant) {
+        self.with_cfg(&variant.attrs, |visitor| {
+            visit::visit_variant(visitor, variant);
+        });
+    }
+
     fn visit_path(&mut self, path: &'ast syn::Path) {
         let (name, quality) = self.imports.resolve(path);
         if !name.is_empty() {
@@ -223,9 +227,7 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_item_mod(&mut self, module: &'ast ItemMod) {
-        let previous_context = self.test_only_context;
         self.record_module(module);
         visit::visit_item_mod(self, module);
-        self.test_only_context = previous_context;
     }
 }

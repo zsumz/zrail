@@ -32,6 +32,13 @@ fn nested_module_and_include_edges_inherit_test_only_reachability() {
         "src/tests/support.rs",
         "src/included.rs",
         "src/tests/outer/inner/support.rs",
+        "src/function.rs",
+        "src/const.rs",
+        "src/impl.rs",
+        "src/method.rs",
+        "src/function_support.rs",
+        "src/file_context.rs",
+        "src/file_inner.rs",
     ] {
         let explanation = explain_path(&root, Path::new("zrail.toml"), Path::new(path))
             .expect("explain nested test support");
