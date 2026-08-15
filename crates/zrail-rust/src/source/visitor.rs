@@ -11,6 +11,7 @@ use zrail_core::AnalysisQuality;
 use super::{
     attributes::{
         is_cfg_test, is_lint_suppression, is_test_attribute, lint_suppression_is_reasoned,
+        unsafe_attribute_names,
     },
     fact::fact,
     imports::ImportMap,
@@ -85,6 +86,19 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
                 AnalysisQuality::Exact,
             ));
         }
+        let attribute_quality = if attribute.path().is_ident("cfg_attr") {
+            AnalysisQuality::Conservative
+        } else {
+            AnalysisQuality::Exact
+        };
+        self.unsafe_constructs
+            .extend(unsafe_attribute_names(attribute).into_iter().map(|name| {
+                fact(
+                    format!("unsafe attribute {name}"),
+                    attribute.span(),
+                    attribute_quality,
+                )
+            }));
         visit::visit_attribute(self, attribute);
     }
 
@@ -183,13 +197,15 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_item_foreign_mod(&mut self, item: &'ast ItemForeignMod) {
-        if let Some(unsafe_token) = &item.unsafety {
-            self.unsafe_constructs.push(fact(
-                "unsafe extern block",
-                unsafe_token.span,
-                AnalysisQuality::Exact,
-            ));
-        }
+        self.unsafe_constructs.push(fact(
+            if item.unsafety.is_some() {
+                "unsafe extern block"
+            } else {
+                "extern block"
+            },
+            item.abi.extern_token.span,
+            AnalysisQuality::Exact,
+        ));
         visit::visit_item_foreign_mod(self, item);
     }
 

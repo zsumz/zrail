@@ -1,0 +1,42 @@
+schema = 1
+adapters = ["rust"]
+
+[repository]
+roots = ["crates"]
+exclude = []
+workspace_members = "exact"
+nested_git = "deny"
+submodules = "deny"
+symlinks = "inside"
+
+[dependencies]
+mode = "observed"
+unassigned_packages = "allow"
+cycles = "deny"
+
+[source.rust]
+module_docs = "required"
+facades = "declarative"
+tests = "sibling"
+
+[source.rust.hygiene]
+unsafe = "deny"
+lint_suppressions = "deny"
+deny_methods = []
+deny_macros = []
+
+[source.rust.size.facade]
+target = 80
+hard = 120
+
+[source.rust.size.implementation]
+target = 240
+hard = 300
+
+[source.rust.size.test]
+target = 300
+hard = 300
+
+[source.rust.size.auxiliary]
+target = 300
+hard = 300

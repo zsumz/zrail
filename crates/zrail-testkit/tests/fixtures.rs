@@ -198,6 +198,24 @@ fn unchecked_failures_and_suppressions_are_rejected() {
 }
 
 #[test]
+fn unsafe_boundaries_are_detected_across_rust_editions() {
+    let report = check("unsafe_editions");
+    for package in ["edition2015", "edition2018", "edition2021", "edition2024"] {
+        assert!(
+            report.findings.iter().any(|finding| {
+                finding.id == "RUST-HYG-004"
+                    && finding
+                        .path
+                        .as_deref()
+                        .is_some_and(|path| path.contains(package))
+            }),
+            "missing unsafe finding for {package}: {}",
+            report.human()
+        );
+    }
+}
+
+#[test]
 fn production_reachability_overrides_test_like_pathnames() {
     let report = check("production_test_path");
     for rule in ["RUST-HYG-001", "RUST-SIZE-001"] {

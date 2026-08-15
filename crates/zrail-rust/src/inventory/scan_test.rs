@@ -8,7 +8,7 @@ use zrail_core::contract::{
     RepositoryContract, RustSourceContract, SourceContract, SymlinkMode, TestMode,
 };
 
-use super::{MAX_DIRECTORY_DEPTH, MAX_RUST_SOURCE_BYTES, inventory_repository};
+use super::{MAX_DIRECTORY_DEPTH, MAX_RUST_SOURCE_BYTES, excluded_subtree, inventory_repository};
 
 #[test]
 fn inventory_reads_rust_under_declared_roots() {
@@ -88,8 +88,83 @@ fn inventory_rejects_excessive_directory_depth() {
     fs::remove_dir_all(root).expect("remove fixture");
 }
 
+#[test]
+fn complete_exclusions_prune_before_directory_limits() {
+    let root = fixture_root("inventory-pruned");
+    reset(&root);
+    let mut directory = root.join("node_modules");
+    for _ in 0..=MAX_DIRECTORY_DEPTH {
+        directory.push("nested");
+    }
+    fs::create_dir_all(&directory).expect("create excluded deep tree");
+    fs::create_dir_all(root.join("crates/a/src")).expect("create source");
+    fs::write(root.join("crates/a/src/lib.rs"), "//! contract\n").expect("write source");
+    let mut contract = contract();
+    contract.repository.exclude = vec!["node_modules/**".into()];
+
+    let inventory = inventory_repository(&root, &contract).expect("prune excluded tree");
+
+    assert_eq!(inventory.rust_files.len(), 1);
+    reset(&root);
+}
+
+#[test]
+fn ambiguous_exclusions_do_not_hide_descendants() {
+    let root = fixture_root("inventory-ambiguous");
+    reset(&root);
+    fs::create_dir_all(root.join("vendor/package")).expect("create vendor tree");
+    fs::write(root.join("vendor/package/visible.rs"), "//! visible\n").expect("write source");
+    let mut contract = contract();
+    contract.repository.roots = vec![".".into()];
+    contract.repository.exclude = vec!["vendor/*".into()];
+
+    let inventory = inventory_repository(&root, &contract).expect("traverse ambiguous exclusion");
+
+    assert!(
+        inventory
+            .rust_files
+            .iter()
+            .any(|file| file.relative == "vendor/package/visible.rs")
+    );
+    reset(&root);
+}
+
+#[test]
+fn nested_target_directories_remain_visible_source() {
+    let root = fixture_root("inventory-target-name");
+    reset(&root);
+    fs::create_dir_all(root.join("crates/a/src/target")).expect("create source");
+    fs::write(root.join("crates/a/src/target/visible.rs"), "//! visible\n").expect("write source");
+
+    let inventory = inventory_repository(&root, &contract()).expect("inventory nested target");
+
+    assert!(
+        inventory
+            .rust_files
+            .iter()
+            .any(|file| file.relative.ends_with("src/target/visible.rs"))
+    );
+    reset(&root);
+}
+
+#[test]
+fn only_provable_subtree_patterns_are_pruned() {
+    assert!(excluded_subtree(&["vendor/**".into()], "vendor"));
+    assert!(excluded_subtree(
+        &["**/node_modules/**".into()],
+        "apps/web/node_modules"
+    ));
+    assert!(!excluded_subtree(&["vendor/*".into()], "vendor/package"));
+}
+
 fn fixture_root(name: &str) -> PathBuf {
     std::env::temp_dir().join(format!("zrail-{name}-{}", std::process::id()))
+}
+
+fn reset(root: &std::path::Path) {
+    if root.exists() {
+        fs::remove_dir_all(root).expect("reset fixture");
+    }
 }
 
 fn contract() -> Contract {

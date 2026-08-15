@@ -2,6 +2,8 @@
 
 use syn::{AttrStyle, Attribute, Expr, ExprLit, Lit, Meta, Token, punctuated::Punctuated};
 
+const UNSAFE_ATTRIBUTES: [&str; 4] = ["export_name", "link_section", "naked", "no_mangle"];
+
 pub(super) fn has_module_docs(attributes: &[Attribute]) -> bool {
     attributes.iter().any(|attribute| {
         matches!(attribute.style, AttrStyle::Inner(_)) && attribute.path().is_ident("doc")
@@ -82,6 +84,38 @@ pub(super) fn is_test_attribute(attribute: &Attribute) -> bool {
 
 pub(super) fn is_lint_suppression(attribute: &Attribute) -> bool {
     lint_suppression_reason(&attribute.meta).is_some()
+}
+
+pub(super) fn unsafe_attribute_names(attribute: &Attribute) -> Vec<&'static str> {
+    let mut names = Vec::new();
+    collect_unsafe_attributes(&attribute.meta, &mut names);
+    names.sort_unstable();
+    names.dedup();
+    names
+}
+
+fn collect_unsafe_attributes(meta: &Meta, names: &mut Vec<&'static str>) {
+    if let Some(name) = UNSAFE_ATTRIBUTES
+        .iter()
+        .find(|name| meta.path().is_ident(name))
+    {
+        names.push(name);
+        return;
+    }
+    let Meta::List(list) = meta else {
+        return;
+    };
+    if list.path.is_ident("unsafe") {
+        if let Ok(nested) = syn::parse2::<Meta>(list.tokens.clone()) {
+            collect_unsafe_attributes(&nested, names);
+        }
+    } else if list.path.is_ident("cfg_attr")
+        && let Some(arguments) = cfg_arguments(list)
+    {
+        for nested in arguments.iter().skip(1) {
+            collect_unsafe_attributes(nested, names);
+        }
+    }
 }
 
 pub(super) fn lint_suppression_is_reasoned(attribute: &Attribute) -> bool {

@@ -85,6 +85,7 @@ fn unsafe_traits_extern_blocks_and_mutable_statics_are_visible() {
         "//! unsafe shapes\n",
         "unsafe trait Raw {}\n",
         "unsafe extern \"C\" { fn raw(); }\n",
+        "extern \"C\" { fn legacy(); }\n",
         "static mut STATE: u8 = 0;\n",
     );
     let file = RustSourceFile {
@@ -105,7 +106,44 @@ fn unsafe_traits_extern_blocks_and_mutable_statics_are_visible() {
 
     assert!(names.contains(&"unsafe trait"));
     assert!(names.contains(&"unsafe extern block"));
+    assert!(names.contains(&"extern block"));
     assert!(names.contains(&"mutable static"));
+}
+
+#[test]
+fn unsafe_attributes_in_legacy_and_2024_forms_are_visible() {
+    let source = concat!(
+        "//! unsafe attributes\n",
+        "#[no_mangle] pub extern \"C\" fn legacy() {}\n",
+        "#[export_name = \"named\"] pub fn named() {}\n",
+        "#[link_section = \".raw\"] pub static RAW: u8 = 0;\n",
+        "#[unsafe(no_mangle)] pub extern \"C\" fn modern() {}\n",
+        "#[cfg_attr(any(), unsafe(naked))] pub fn conditional() {}\n",
+    );
+    let file = RustSourceFile {
+        relative: "crates/a/src/attributes.rs".into(),
+        absolute: "attributes.rs".into(),
+        class: FileClass::Implementation,
+        source: source.into(),
+        lines: source.lines().count(),
+    };
+    let syntax = syn::parse_file(source).expect("parse unsafe attributes");
+
+    let facts = index_file(&file, &syntax);
+    let names = facts
+        .unsafe_constructs
+        .iter()
+        .map(|fact| fact.name.as_str())
+        .collect::<Vec<_>>();
+
+    for name in ["export_name", "link_section", "naked", "no_mangle"] {
+        assert!(
+            names
+                .iter()
+                .any(|observed| *observed == format!("unsafe attribute {name}")),
+            "missing {name}: {names:?}"
+        );
+    }
 }
 
 #[test]

@@ -37,7 +37,7 @@ pub fn inventory_repository(
     root: &Path,
     contract: &Contract,
 ) -> Result<RepositoryInventory, RepositoryInventoryError> {
-    let (root, entries) = scan_repository(root)?;
+    let (root, entries) = scan_repository(root, &contract.repository.exclude)?;
     let mut rust_files = Vec::new();
     let manifests = cargo_manifests(&entries, Some(contract))?;
     let mut source_bytes = 0_usize;
@@ -98,7 +98,7 @@ pub fn inventory_repository(
 pub(crate) fn inventory_cargo_repository(
     root: &Path,
 ) -> Result<RepositoryInventory, RepositoryInventoryError> {
-    let (root, entries) = scan_repository(root)?;
+    let (root, entries) = scan_repository(root, &[])?;
     let manifest_paths = cargo_manifests(&entries, None)?;
     Ok(RepositoryInventory {
         root,
@@ -110,12 +110,13 @@ pub(crate) fn inventory_cargo_repository(
 
 fn scan_repository(
     root: &Path,
+    exclusions: &[String],
 ) -> Result<(PathBuf, Vec<RepositoryEntry>), RepositoryInventoryError> {
     let root = fs::canonicalize(root).map_err(|error| {
         RepositoryInventoryError(format!("open repository {}: {error}", root.display()))
     })?;
     let mut entries = Vec::new();
-    collect(&root, &root, &mut entries, 0)?;
+    collect(&root, &root, exclusions, &mut entries, 0)?;
     entries.sort_by(|left, right| left.relative.cmp(&right.relative));
     Ok((root, entries))
 }
@@ -149,6 +150,7 @@ fn cargo_manifests(
 fn collect(
     root: &Path,
     current: &Path,
+    exclusions: &[String],
     entries: &mut Vec<RepositoryEntry>,
     depth: usize,
 ) -> Result<(), RepositoryInventoryError> {
@@ -190,8 +192,8 @@ fn collect(
                 absolute: path.clone(),
                 kind: RepositoryEntryKind::Directory,
             });
-            if !skip_directory(&relative) {
-                collect(root, &path, entries, depth + 1)?;
+            if !skip_directory(&relative) && !excluded_subtree(exclusions, &relative) {
+                collect(root, &path, exclusions, entries, depth + 1)?;
             }
         } else if metadata.is_file() {
             entries.push(RepositoryEntry {
@@ -209,7 +211,16 @@ fn skip_directory(relative: &str) -> bool {
         || relative.ends_with("/.git")
         || relative == ".zrail"
         || relative == "target"
-        || relative.ends_with("/target")
+}
+
+fn excluded_subtree(exclusions: &[String], directory: &str) -> bool {
+    exclusions.iter().any(|pattern| {
+        if !pattern.bytes().any(|byte| matches!(byte, b'*' | b'?')) {
+            return directory == pattern || directory.starts_with(&format!("{pattern}/"));
+        }
+        let prefix = pattern.trim_end_matches("/**");
+        prefix != pattern && glob_matches(prefix, directory)
+    })
 }
 
 fn under_roots(contract: &Contract, relative: &str) -> bool {
