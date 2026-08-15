@@ -1,6 +1,7 @@
 //! Source-convention and budget permission changes.
 
 mod out_dir;
+mod size;
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -15,7 +16,7 @@ use super::{
 };
 
 pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<ArchitectureChange>) {
-    compare_budgets(before, after, changes);
+    size::compare(before, after, changes);
     compare_generated(before, after, changes);
     out_dir::compare(before, after, changes);
     compare_item_macros(before, after, changes);
@@ -125,32 +126,6 @@ fn generated_by_root(
         .iter()
         .map(|generated| (generated.root.as_str(), generated))
         .collect()
-}
-
-fn compare_budgets(before: &Contract, after: &Contract, changes: &mut Vec<ArchitectureChange>) {
-    let left = &before.source.rust.size;
-    let right = &after.source.rust.size;
-    for (name, old, new) in [
-        ("facade", left.facade, right.facade),
-        ("implementation", left.implementation, right.implementation),
-        ("test", left.test, right.test),
-        ("auxiliary", left.auxiliary, right.auxiliary),
-    ] {
-        compare_number(
-            "rust.file-size",
-            &format!("{name}.target"),
-            old.target,
-            new.target,
-            changes,
-        );
-        compare_number(
-            "rust.file-size",
-            &format!("{name}.hard"),
-            old.hard,
-            new.hard,
-            changes,
-        );
-    }
 }
 
 fn compare_modes(before: &Contract, after: &Contract, changes: &mut Vec<ArchitectureChange>) {

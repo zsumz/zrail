@@ -11,7 +11,7 @@ use zrail_core::ReportStatus;
 use zrail_rust::check_repository;
 
 use crate::app::{
-    args::{InitMode, InitOptions},
+    args::{InitOptions, InitPreset},
     commands::{CommandResult, init},
     error::CliError,
 };
@@ -29,7 +29,8 @@ fn baseline_records_size_and_inline_test_debt_as_ratchets() {
     let contract = fs::read_to_string(root.join("zrail.toml")).expect("read contract");
     let lock = fs::read_to_string(root.join("zrail.lock")).expect("read lock");
 
-    assert!(result.text.contains("Mode: baseline"));
+    assert!(result.text.contains("Preset: zsumz"));
+    assert!(result.text.contains("Adoption: baseline"));
     assert!(result.text.contains("Recorded debt: 2 ratchets"));
     assert!(contract.contains("tests = \"sibling\""));
     assert_eq!(contract.matches("target = 300").count(), 4);
@@ -106,7 +107,8 @@ fn baseline_refuses_unratchetable_source_debt_without_partial_state() {
 fn initialize(root: &Path) -> Result<CommandResult, CliError> {
     init(&InitOptions {
         root: root.to_path_buf(),
-        mode: InitMode::Baseline,
+        preset: InitPreset::Zsumz,
+        baseline: true,
     })
 }
 

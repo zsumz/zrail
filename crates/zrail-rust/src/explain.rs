@@ -39,8 +39,8 @@ pub struct PathExplanation {
     pub invariants: Vec<String>,
     pub capability_owners: Vec<CapabilityOwnerExplanation>,
     pub call_owners: Vec<CallOwnerExplanation>,
-    pub design_target: usize,
-    pub hard_ceiling: usize,
+    pub design_target: Option<usize>,
+    pub hard_ceiling: Option<usize>,
     pub declarative_shape: Option<bool>,
     pub module_docs_required: bool,
     pub sibling_tests_required: bool,
@@ -94,7 +94,7 @@ pub fn explain_path(
                 .any(|pattern| glob_matches(pattern, &package.name))
         })
     });
-    let budget = policy::budget_for(
+    let budget = crate::source_policy::budget_for(
         &relative,
         class,
         reachability,
@@ -123,9 +123,15 @@ pub fn explain_path(
     let capability_owners = owners::for_path(&model.bundle.contract, &relative);
     let call_owners = owners::calls_for_path(&model.bundle.contract, &relative);
     let invariants = evidence::for_path(&model.bundle.contract, &relative);
-    let expected_sibling_test = policy::sibling_path(&relative);
+    let sibling_tests_required = matches!(
+        model.bundle.contract.source.rust.tests,
+        zrail_core::TestMode::Sibling
+    );
+    let expected_sibling_test = sibling_tests_required
+        .then(|| policy::sibling_path(&relative))
+        .flatten();
     Ok(PathExplanation {
-        schema: 2,
+        schema: 3,
         path: relative,
         file_class: format!("{class:?}").to_ascii_lowercase(),
         reachability: reachability.name().into(),
@@ -164,8 +170,8 @@ pub fn explain_path(
         invariants,
         capability_owners,
         call_owners,
-        design_target: budget.target,
-        hard_ceiling: budget.hard,
+        design_target: budget.map(|budget| budget.target),
+        hard_ceiling: budget.map(|budget| budget.hard),
         declarative_shape: policy::declarative_shape(
             class,
             model.bundle.contract.source.rust.facades,
@@ -175,10 +181,7 @@ pub fn explain_path(
             class,
             model.bundle.contract.source.rust.module_docs,
         ),
-        sibling_tests_required: matches!(
-            model.bundle.contract.source.rust.tests,
-            zrail_core::TestMode::Sibling
-        ),
+        sibling_tests_required,
     })
 }
 

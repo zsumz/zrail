@@ -3,14 +3,11 @@
 use std::{collections::BTreeSet, path::Path};
 
 use zrail_core::{
-    Budget, Contract, Effect, ExternalDependencyMode, FacadeMode, LayerContract,
-    LintSuppressionMode, ModuleDocsMode, PolicyMode, RustSourceContract, ScopeContract,
+    Contract, Effect, ExternalDependencyMode, FacadeMode, LayerContract, LintSuppressionMode,
+    ModuleDocsMode, PolicyMode, ScopeContract,
 };
 
-use crate::{
-    inventory::{FileClass, under_root},
-    source::Reachability,
-};
+use crate::inventory::FileClass;
 
 pub(super) fn dependency_layers(layer: Option<&LayerContract>) -> Vec<String> {
     let Some(layer) = layer else {
@@ -105,30 +102,6 @@ pub(super) fn declarative_shape(
 
 pub(super) fn module_docs_required(class: FileClass, mode: ModuleDocsMode) -> bool {
     class != FileClass::Generated && mode == ModuleDocsMode::Required
-}
-
-pub(super) fn budget_for(
-    path: &str,
-    class: FileClass,
-    reachability: Reachability,
-    rust: &RustSourceContract,
-) -> Budget {
-    if class != FileClass::Generated && reachability == Reachability::TestOnly {
-        return rust.size.test;
-    }
-    match class {
-        FileClass::Facade => rust.size.facade,
-        FileClass::Implementation | FileClass::Test => rust.size.implementation,
-        FileClass::Auxiliary | FileClass::EntryPoint => rust.size.auxiliary,
-        FileClass::Generated => rust
-            .generated
-            .iter()
-            .find(|generated| under_root(path, &generated.root))
-            .map_or(rust.size.implementation, |generated| Budget {
-                target: generated.target,
-                hard: generated.hard,
-            }),
-    }
 }
 
 const fn effect_name(effect: Effect) -> &'static str {

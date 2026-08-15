@@ -72,7 +72,8 @@ pub struct RustSourceContract {
     #[serde(default)]
     pub item_macros: Vec<ItemMacroContract>,
     pub hygiene: HygieneContract,
-    pub size: FileSizeContract,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub size: Option<FileSizeContract>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]

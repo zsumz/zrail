@@ -67,7 +67,9 @@ fn validate_repository(contract: &Contract, errors: &mut ValidationErrors) {
 }
 
 fn validate_budgets(contract: &Contract, errors: &mut ValidationErrors) {
-    let size = &contract.source.rust.size;
+    let Some(size) = &contract.source.rust.size else {
+        return;
+    };
     for (name, budget) in [
         ("facade", size.facade),
         ("implementation", size.implementation),

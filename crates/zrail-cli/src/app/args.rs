@@ -10,7 +10,7 @@ use super::{error::CliError, output::OutputFormat};
 mod diff;
 mod init;
 
-pub(crate) use init::{InitMode, InitOptions};
+pub(crate) use init::{InitOptions, InitPreset};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) enum Command {

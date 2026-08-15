@@ -19,21 +19,33 @@ cargo install --path crates/zrail-cli --locked
 
 ## Use
 
-Create a strict Rust contract and its resolved lock:
+Create a zsumz-style contract and its resolved lock:
 
 ```sh
 zrail init
 ```
 
-Onboard an existing repository without hiding its current size or inline-test
-debt:
+The default `zsumz` preset uses sibling test files and 300-line source targets.
+For conventional Rust organization, including inline unit tests and Cargo
+integration tests, use:
+
+```sh
+zrail init --preset rust
+```
+
+The `rust` preset does not invent a universal source-file length limit. Both
+presets write an explicit `zrail.toml`; the preset is not hidden policy.
+
+Add `--baseline` to either preset when adopting an existing repository:
 
 ```sh
 zrail init --baseline
+zrail init --preset rust --baseline
 ```
 
-Baseline mode keeps sibling tests and 300-line design targets as the goal. It
-records existing exceptions as exact, tightening ratchets; new debt still fails.
+Baseline records supported violations of the selected preset as exact,
+tightening ratchets. New debt fails, cleanup makes the lock stale so it must
+tighten, and unsupported violations abort initialization without partial files.
 
 Check it, inspect one path, or review an architecture change:
 
@@ -65,8 +77,8 @@ The Rust adapter enforces:
 - effect boundaries, capability owners, and direct-call owners;
 - complete Rust source traversal, including reviewed generated and `OUT_DIR`
   snapshots;
-- declarative facades, module contracts, and separate tests;
-- source hygiene, file-size ceilings, and tightening ratchets; and
+- declarative facades, module contracts, and configurable test placement;
+- source hygiene, optional file-size ceilings, and tightening ratchets; and
 - invariants connected to exact tests and content-addressed qualification gates.
 
 Contract parsing is strict. Unknown keys, stale policy, unresolved source
@@ -78,7 +90,7 @@ or unknown. `--deny-grants` rejects added power, new debt, and unsafe comparison
 ## CLI
 
 ```text
-zrail init [ROOT] [--strict | --baseline]
+zrail init [ROOT] [--preset zsumz|rust] [--baseline]
 zrail check [--root ROOT] [--format human|json]
 zrail update [--root ROOT] [--format human|json] [--accept-grants]
 zrail doctor [--root ROOT] [--format human|json]

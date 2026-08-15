@@ -4,10 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::{Budget, Finding, FindingSink, LockedRatchet};
 
-use crate::{
-    inventory::{FileClass, under_root},
-    source::Reachability,
-};
+use crate::source_policy;
 
 use super::RuleContext;
 
@@ -29,7 +26,12 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     let mut seen = BTreeSet::new();
     for file in &context.source.files {
         seen.insert(file.relative.as_str());
-        let budget = budget_for(&file.relative, file.class, file.reachability, context);
+        let budget = source_policy::budget_for(
+            &file.relative,
+            file.class,
+            file.reachability,
+            &context.contract.source.rust,
+        );
         check_file(
             file,
             budget,
@@ -55,11 +57,26 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
 
 fn check_file(
     file: &crate::source::RustFileFacts,
-    budget: Budget,
+    budget: Option<Budget>,
     contract_ratchet: Option<&zrail_core::RatchetContract>,
     locked_ratchet: Option<&LockedRatchet>,
     findings: &mut FindingSink,
 ) {
+    let Some(budget) = budget else {
+        if contract_ratchet.is_some() || locked_ratchet.is_some() {
+            findings.push(
+                Finding::error(
+                    "RUST-SIZE-005",
+                    "rust.file-size",
+                    "source-size",
+                    "file-size ratchet has no active size policy",
+                )
+                .at(&file.relative, None)
+                .with_help("remove the stale ratchet or restore a reviewed size policy"),
+            );
+        }
+        return;
+    };
     if file.lines > budget.hard {
         findings.push(
             Finding::error(
@@ -148,33 +165,5 @@ fn check_file(
             .at(&file.relative, None)
             .with_help("run `zrail update` to tighten the recorded ceiling"),
         );
-    }
-}
-
-fn budget_for(
-    path: &str,
-    class: FileClass,
-    reachability: Reachability,
-    context: &RuleContext<'_>,
-) -> Budget {
-    let size = &context.contract.source.rust.size;
-    if class != FileClass::Generated && reachability == Reachability::TestOnly {
-        return size.test;
-    }
-    match class {
-        FileClass::Facade => size.facade,
-        FileClass::Implementation | FileClass::Test => size.implementation,
-        FileClass::Auxiliary | FileClass::EntryPoint => size.auxiliary,
-        FileClass::Generated => context
-            .contract
-            .source
-            .rust
-            .generated
-            .iter()
-            .find(|generated| under_root(path, &generated.root))
-            .map_or(size.implementation, |generated| Budget {
-                target: generated.target,
-                hard: generated.hard,
-            }),
     }
 }

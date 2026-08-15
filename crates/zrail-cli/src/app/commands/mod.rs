@@ -8,6 +8,7 @@ mod git_base;
 mod git_materialize;
 mod git_process;
 mod init;
+mod init_preset;
 mod init_template;
 mod result;
 mod update;

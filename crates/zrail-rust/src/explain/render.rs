@@ -40,8 +40,8 @@ impl PathExplanation {
             display_list(&self.invariants),
             owners::display(&self.capability_owners),
             owners::display_calls(&self.call_owners),
-            self.design_target,
-            self.hard_ceiling,
+            display_optional_number(self.design_target),
+            display_optional_number(self.hard_ceiling),
             display_optional_bool(self.declarative_shape),
             self.module_docs_required,
             self.sibling_tests_required
@@ -63,4 +63,8 @@ const fn display_optional_bool(value: Option<bool>) -> &'static str {
         Some(false) => "false",
         None => "<not applicable>",
     }
+}
+
+fn display_optional_number(value: Option<usize>) -> String {
+    value.map_or_else(|| "<not enforced>".into(), |value| value.to_string())
 }

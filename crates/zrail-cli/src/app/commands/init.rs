@@ -8,12 +8,9 @@ use std::{fs, path::Path};
 use zrail_core::{ReportStatus, input::create_text, path::repository_file};
 use zrail_rust::{BaselinePlan, build_lock, check_repository_with_lock, discover_source_roots};
 
-use crate::app::{
-    args::{InitMode, InitOptions},
-    error::CliError,
-};
+use crate::app::{args::InitOptions, error::CliError};
 
-use super::{CommandResult, init_template};
+use super::{CommandResult, init_preset, init_template};
 
 pub(crate) fn init(options: &InitOptions) -> Result<CommandResult, CliError> {
     let root = fs::canonicalize(&options.root).map_err(|error| {
@@ -26,11 +23,11 @@ pub(crate) fn init(options: &InitOptions) -> Result<CommandResult, CliError> {
     let lock = repository_file(&root, Path::new("zrail.lock")).map_err(CliError::new)?;
     ensure_vacant(&config, &lock)?;
     let roots = discover_source_roots(&root).map_err(|error| CliError::new(error.to_string()))?;
-    let mut baseline = BaselinePlan::strict();
-    let template = init_template::render(&roots, &baseline);
+    let mut baseline = BaselinePlan::empty();
+    let template = init_template::render(&roots, options.preset, &baseline);
     create_text(&config, &template).map_err(CliError::new)?;
-    if options.mode == InitMode::Baseline {
-        baseline = match init_baseline::apply(&root, &config, &roots) {
+    if options.baseline {
+        baseline = match init_baseline::apply(&root, &config, &roots, options.preset) {
             Ok(baseline) => baseline,
             Err(error) => return Err(rollback_error(&config, &error)),
         };
@@ -51,8 +48,8 @@ pub(crate) fn init(options: &InitOptions) -> Result<CommandResult, CliError> {
         remove_created(&config)?;
         return Ok(CommandResult::status(
             format!(
-                "zrail init refused to write a lock for a failing {} contract\n\n{}",
-                mode_name(options.mode),
+                "zrail init refused to write a lock for a failing {} preset\n\n{}",
+                options.preset.name(),
                 checked.report.human()
             ),
             1,
@@ -71,23 +68,18 @@ pub(crate) fn init(options: &InitOptions) -> Result<CommandResult, CliError> {
         concat!(
             "Initialized {}\n",
             "Created zrail.toml and zrail.lock\n",
-            "Mode: {}\n",
+            "Preset: {}\n",
+            "Adoption: {}\n",
             "Recorded debt: {} ratchets\n",
             "Source roots: {}\n",
             "Next: run `zrail check`\n",
         ),
         root.display(),
-        mode_name(options.mode),
+        options.preset.name(),
+        init_preset::adoption_name(options.baseline),
         baseline.ratchets.len(),
         roots.join(", ")
     )))
-}
-
-const fn mode_name(mode: InitMode) -> &'static str {
-    match mode {
-        InitMode::Strict => "strict",
-        InitMode::Baseline => "baseline",
-    }
 }
 
 fn ensure_vacant(config: &Path, lock: &Path) -> Result<(), CliError> {

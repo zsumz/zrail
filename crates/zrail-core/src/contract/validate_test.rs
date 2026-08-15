@@ -200,7 +200,7 @@ fn minimal_contract() -> Contract {
                     deny_methods: Vec::new(),
                     deny_macros: Vec::new(),
                 },
-                size: FileSizeContract {
+                size: Some(FileSizeContract {
                     facade: Budget {
                         target: 80,
                         hard: 120,
@@ -217,7 +217,7 @@ fn minimal_contract() -> Contract {
                         target: 300,
                         hard: 300,
                     },
-                },
+                }),
             },
         },
         profiles: BTreeMap::new(),

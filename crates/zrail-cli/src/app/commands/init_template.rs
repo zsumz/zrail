@@ -4,7 +4,9 @@ use std::fmt::Write as _;
 
 use zrail_rust::BaselinePlan;
 
-pub(super) fn render(roots: &[String], baseline: &BaselinePlan) -> String {
+use crate::app::args::InitPreset;
+
+pub(super) fn render(roots: &[String], preset: InitPreset, baseline: &BaselinePlan) -> String {
     let roots = roots
         .iter()
         .map(|root| toml_string(root))
@@ -31,35 +33,22 @@ cycles = "deny"
 module_docs = "allow"
 facades = "allow"
 entrypoints = "allow"
-tests = "sibling"
+tests = "{tests}"
 
 [source.rust.hygiene]
 unsafe = "allow"
 lint_suppressions = "allow"
 deny_methods = []
 deny_macros = []
-
-[source.rust.size.facade]
-target = 300
-hard = {facade_hard}
-
-[source.rust.size.implementation]
-target = 300
-hard = {implementation_hard}
-
-[source.rust.size.test]
-target = 300
-hard = {test_hard}
-
-[source.rust.size.auxiliary]
-target = 300
-hard = {auxiliary_hard}
 "#,
-        facade_hard = baseline.facade_hard,
-        implementation_hard = baseline.implementation_hard,
-        test_hard = baseline.test_hard,
-        auxiliary_hard = baseline.auxiliary_hard,
+        tests = match preset {
+            InitPreset::Zsumz => "sibling",
+            InitPreset::Rust => "allow",
+        },
     );
+    if preset == InitPreset::Zsumz {
+        write_size(&mut contract, baseline);
+    }
     for ratchet in &baseline.ratchets {
         let _ = write!(
             contract,
@@ -70,6 +59,35 @@ hard = {auxiliary_hard}
         );
     }
     contract
+}
+
+fn write_size(contract: &mut String, baseline: &BaselinePlan) {
+    let hard =
+        |select: fn(&zrail_rust::BaselineSize) -> usize| baseline.size.as_ref().map_or(300, select);
+    let _ = write!(
+        contract,
+        r"
+[source.rust.size.facade]
+target = 300
+hard = {facade}
+
+[source.rust.size.implementation]
+target = 300
+hard = {implementation}
+
+[source.rust.size.test]
+target = 300
+hard = {test}
+
+[source.rust.size.auxiliary]
+target = 300
+hard = {auxiliary}
+",
+        facade = hard(|size| size.facade_hard),
+        implementation = hard(|size| size.implementation_hard),
+        test = hard(|size| size.test_hard),
+        auxiliary = hard(|size| size.auxiliary_hard),
+    );
 }
 
 fn toml_string(value: &str) -> String {

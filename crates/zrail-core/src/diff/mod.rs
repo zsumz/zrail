@@ -17,3 +17,7 @@ pub use model::{ArchitectureChange, ChangeKind, DiffReport, DiffSummary};
 #[cfg(test)]
 #[path = "compare_checked_test.rs"]
 mod compare_checked_test;
+
+#[cfg(test)]
+#[path = "size_policy_test.rs"]
+mod size_policy_test;

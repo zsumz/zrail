@@ -2,7 +2,7 @@
 
 use std::ffi::OsString;
 
-use super::{Command, DiffMode, InitMode, parse};
+use super::{Command, DiffMode, InitPreset, parse};
 
 #[test]
 fn check_defaults_are_quiet_and_repository_local() {
@@ -115,17 +115,23 @@ fn update_requires_explicit_grant_acceptance() {
 }
 
 #[test]
-fn init_defaults_to_strict_and_accepts_one_explicit_mode() {
+fn init_defaults_to_zsumz_without_baseline() {
     let command =
         parse([OsString::from("zrail"), OsString::from("init")]).expect("parse strict default");
     let Command::Init(options) = command else {
         panic!("expected init command");
     };
-    assert_eq!(options.mode, InitMode::Strict);
+    assert_eq!(options.preset, InitPreset::Zsumz);
+    assert!(!options.baseline);
+}
 
+#[test]
+fn init_accepts_a_rust_preset_with_baseline_in_any_order() {
     let command = parse([
         OsString::from("zrail"),
         OsString::from("init"),
+        OsString::from("--preset"),
+        OsString::from("rust"),
         OsString::from("repository"),
         OsString::from("--baseline"),
     ])
@@ -134,14 +140,55 @@ fn init_defaults_to_strict_and_accepts_one_explicit_mode() {
         panic!("expected init command");
     };
     assert_eq!(options.root.to_string_lossy(), "repository");
-    assert_eq!(options.mode, InitMode::Baseline);
+    assert_eq!(options.preset, InitPreset::Rust);
+    assert!(options.baseline);
+}
 
-    let error = parse([
+#[test]
+fn init_rejects_unknown_or_repeated_preset_authority() {
+    let unknown = parse([
+        OsString::from("zrail"),
+        OsString::from("init"),
+        OsString::from("--preset"),
+        OsString::from("house"),
+    ])
+    .expect_err("unknown presets must fail");
+    assert!(unknown.message.contains("zsumz"));
+    assert!(unknown.message.contains("rust"));
+
+    let duplicate = parse([
+        OsString::from("zrail"),
+        OsString::from("init"),
+        OsString::from("--preset"),
+        OsString::from("zsumz"),
+        OsString::from("--preset"),
+        OsString::from("rust"),
+    ])
+    .expect_err("preset authority must be singular");
+    assert!(duplicate.message.contains("only once"));
+
+    let legacy = parse([
         OsString::from("zrail"),
         OsString::from("init"),
         OsString::from("--strict"),
+    ])
+    .expect_err("unreleased mode spelling should be removed");
+    assert!(legacy.message.contains("unknown option"));
+
+    let repeated_baseline = parse([
+        OsString::from("zrail"),
+        OsString::from("init"),
+        OsString::from("--baseline"),
         OsString::from("--baseline"),
     ])
-    .expect_err("init modes must be exclusive");
-    assert!(error.message.contains("init mode"));
+    .expect_err("baseline authority must be singular");
+    assert!(repeated_baseline.message.contains("only once"));
+
+    let missing = parse([
+        OsString::from("zrail"),
+        OsString::from("init"),
+        OsString::from("--preset"),
+    ])
+    .expect_err("preset value is required");
+    assert!(missing.message.contains("requires a value"));
 }

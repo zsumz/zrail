@@ -7,6 +7,7 @@ mod inventory;
 mod onboarding;
 mod rules;
 mod source;
+mod source_policy;
 
 pub use engine::{
     CheckError, CheckResult, DoctorReport, build_lock, check_repository,
@@ -16,4 +17,6 @@ pub use explain::{
     CallOwnerExplanation, CapabilityOwnerExplanation, PathExplanation, explain_path,
 };
 pub use inventory::{FileClass, RepositoryInventory, RepositoryInventoryError};
-pub use onboarding::{BaselinePlan, BaselineRatchet, discover_baseline, discover_source_roots};
+pub use onboarding::{
+    BaselinePlan, BaselineRatchet, BaselineSize, discover_baseline, discover_source_roots,
+};

@@ -14,7 +14,7 @@ fn explanation_contains_actionable_source_policy() {
     )
     .expect("explain fixture path");
 
-    assert_eq!(explanation.schema, 2);
+    assert_eq!(explanation.schema, 3);
     assert_eq!(explanation.reachability, "production");
     assert_eq!(explanation.unsafe_code, "deny");
     assert_eq!(explanation.lint_suppressions, "deny");
