@@ -12,6 +12,7 @@ mod init_preset;
 mod init_template;
 mod result;
 mod update;
+mod update_authority;
 
 pub(crate) use check::check;
 pub(crate) use diff::diff;

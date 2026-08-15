@@ -14,7 +14,7 @@ use crate::app::{
     output::{OutputFormat, json_escape},
 };
 
-use super::CommandResult;
+use super::{CommandResult, update_authority};
 
 pub(crate) fn update(options: &UpdateOptions) -> Result<CommandResult, CliError> {
     let common = &options.common;
@@ -45,19 +45,39 @@ pub(crate) fn update(options: &UpdateOptions) -> Result<CommandResult, CliError>
     };
     let bundle = load_contract(&common.root, &common.config)
         .map_err(|error| CliError::new(error.to_string()))?;
-    let changes = compare_architecture_checked(
-        &bundle.contract,
-        &bundle.sha256,
-        current.as_ref(),
-        &bundle.contract,
-        &bundle.sha256,
-        Some(&candidate),
-    );
-    if changes.denies_grants() && !options.accept_grants {
+    if current.is_none() && !options.accept_grants {
+        let missing = compare_architecture_checked(
+            &bundle.contract,
+            &bundle.sha256,
+            None,
+            &bundle.contract,
+            &bundle.sha256,
+            Some(&candidate),
+        );
         return Ok(CommandResult::status(
-            refused_changes(&changes, common.format)?,
+            refused_changes(&missing, common.format)?,
             1,
         ));
+    }
+    match update_authority::compare(options, &bundle, &candidate) {
+        Ok(changes) if changes.denies_grants() && !options.accept_grants => {
+            return Ok(CommandResult::status(
+                refused_changes(&changes, common.format)?,
+                1,
+            ));
+        }
+        Ok(_) => {}
+        Err(_) if options.accept_grants => {}
+        Err(error) => {
+            return Ok(CommandResult::status(
+                unavailable_base(
+                    &options.base.to_string_lossy(),
+                    &error.message,
+                    common.format,
+                ),
+                1,
+            ));
+        }
     }
     candidate
         .write(&destination)
@@ -131,6 +151,33 @@ fn unreadable_lock(error: &str, format: OutputFormat) -> String {
                 "  \"error\": \"{}\"\n",
                 "}}\n",
             ),
+            json_escape(error)
+        ),
+    }
+}
+
+fn unavailable_base(base: &str, error: &str, format: OutputFormat) -> String {
+    match format {
+        OutputFormat::Human => format!(
+            concat!(
+                "zrail update could not establish immutable architecture authority\n\n",
+                "base: {}\n",
+                "{}\n",
+                "Commit the adopted zrail state or choose a reviewed `--base` revision.\n",
+                "Use `--accept-grants` only with explicit human authorization.\n",
+            ),
+            base, error
+        ),
+        OutputFormat::Json => format!(
+            concat!(
+                "{{\n",
+                "  \"schema\": 1,\n",
+                "  \"status\": \"refused\",\n",
+                "  \"base\": \"{}\",\n",
+                "  \"error\": \"{}\"\n",
+                "}}\n",
+            ),
+            json_escape(base),
             json_escape(error)
         ),
     }

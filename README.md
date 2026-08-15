@@ -61,6 +61,9 @@ After an intentional dependency, provenance, gate, or ratchet change:
 zrail update
 ```
 
+`zrail update` uses committed `HEAD` architecture as its authority. Choose a
+different independently reviewed revision with `--base REVISION`.
+
 Policy changes and `zrail update --accept-grants` require explicit human
 authorization. Agents should report `zrail diff` instead of accepting power.
 
@@ -92,7 +95,7 @@ or unknown. `--deny-grants` rejects added power, new debt, and unsafe comparison
 ```text
 zrail init [ROOT] [--preset zsumz|rust] [--baseline]
 zrail check [--root ROOT] [--format human|json]
-zrail update [--root ROOT] [--format human|json] [--accept-grants]
+zrail update [--base REVISION] [--root ROOT] [--format human|json] [--accept-grants]
 zrail doctor [--root ROOT] [--format human|json]
 zrail explain --path PATH [--root ROOT] [--format human|json]
 zrail diff --base REVISION [--root ROOT] [--deny-grants]
@@ -103,6 +106,10 @@ zrail diff --before ROOT --after ROOT [--deny-grants]
 
 `QUAL-01` requires the reviewed local gate to remain connected to exact test
 evidence. The lock hashes the gate bytes, so a gate change cannot pass silently.
+
+`QUAL-02` requires pull requests to pass a semantic architecture diff executed
+by a zrail binary built from the protected base commit. Proposed checker changes
+therefore cannot authorize grants in the same pull request.
 
 Run the complete offline repository gate with:
 

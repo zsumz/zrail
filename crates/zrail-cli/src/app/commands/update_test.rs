@@ -7,6 +7,7 @@ use zrail_rust::build_lock;
 
 use crate::app::{
     args::{CommonOptions, UpdateOptions},
+    commands::git_base::{commit_all, git_available},
     output::OutputFormat,
 };
 
@@ -58,6 +59,9 @@ hard = 300
 
 #[test]
 fn update_refuses_new_dependency_without_acceptance() {
+    if !git_available() {
+        return;
+    }
     let root = fixture_root("dependency");
     reset(&root);
     write_fixture(&root);
@@ -66,6 +70,7 @@ fn update_refuses_new_dependency_without_acceptance() {
         .expect("build initial lock")
         .write(&lock_path)
         .expect("write initial lock");
+    commit_all(&root);
     let initial = fs::read_to_string(&lock_path).expect("read initial lock");
     fs::write(
         root.join("crates/fixture/Cargo.toml"),
@@ -99,6 +104,9 @@ fn update_refuses_new_dependency_without_acceptance() {
 
 #[test]
 fn update_refuses_changed_generated_provenance_without_acceptance() {
+    if !git_available() {
+        return;
+    }
     let root = fixture_root("generated");
     reset(&root);
     write_generated_fixture(&root, "one");
@@ -107,6 +115,7 @@ fn update_refuses_changed_generated_provenance_without_acceptance() {
         .expect("build initial lock")
         .write(&lock_path)
         .expect("write initial lock");
+    commit_all(&root);
     let initial = fs::read_to_string(&lock_path).expect("read initial lock");
     write_manifest(&root, "two");
 
@@ -126,6 +135,9 @@ fn update_refuses_changed_generated_provenance_without_acceptance() {
 
 #[test]
 fn update_refuses_changed_gate_bytes_without_acceptance() {
+    if !git_available() {
+        return;
+    }
     let root = fixture_root("gate");
     reset(&root);
     write_gate_fixture(&root);
@@ -134,6 +146,7 @@ fn update_refuses_changed_gate_bytes_without_acceptance() {
         .expect("build initial lock")
         .write(&lock_path)
         .expect("write initial lock");
+    commit_all(&root);
     let initial = fs::read_to_string(&lock_path).expect("read initial lock");
     fs::write(
         root.join("scripts/check"),
@@ -163,6 +176,7 @@ fn options(root: &std::path::Path) -> UpdateOptions {
             lock: PathBuf::from("zrail.lock"),
             format: OutputFormat::Human,
         },
+        base: "HEAD".into(),
         accept_grants: false,
     }
 }

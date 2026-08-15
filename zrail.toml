@@ -15,6 +15,13 @@ kind = "local"
 path = "scripts/check"
 reason = "The repository's canonical local qualification entrypoint."
 
+[[gate]]
+name = "architecture-review"
+kind = "ci"
+path = ".github/workflows/ci.yml"
+requires = ["check"]
+reason = "Pull requests are reviewed by the checker implementation from the protected base."
+
 [[invariant]]
 id = "QUAL-01"
 title = "Reviewed qualification gate changes cannot pass silently"
@@ -23,6 +30,16 @@ document = "README.md#qualification"
 evidence = [
   "rust-test:crates/zrail-rust/src/engine/lock_compare_test.rs::changed_gate_contents_are_stale_lock_state",
   "gate:check",
+]
+
+[[invariant]]
+id = "QUAL-02"
+title = "Proposed guardrail code cannot authorize its own architecture grants"
+status = "enforced"
+document = "README.md#qualification"
+evidence = [
+  "rust-test:crates/zrail-cli/src/app/commands/update_authority_test.rs::forged_worktree_digest_cannot_hide_a_weaker_contract",
+  "gate:architecture-review",
 ]
 
 [dependencies]

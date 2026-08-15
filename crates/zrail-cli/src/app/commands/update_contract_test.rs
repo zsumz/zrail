@@ -6,6 +6,7 @@ use zrail_rust::build_lock;
 
 use crate::app::{
     args::{CommonOptions, UpdateOptions},
+    commands::git_base::{commit_all, git_available},
     output::OutputFormat,
 };
 
@@ -13,6 +14,9 @@ use super::update;
 
 #[test]
 fn policy_weakenings_require_explicit_acceptance() {
+    if !git_available() {
+        return;
+    }
     for (name, before, after) in WEAKENINGS {
         let root = fixture_root(name);
         reset(&root);
@@ -22,6 +26,7 @@ fn policy_weakenings_require_explicit_acceptance() {
             .expect("build initial lock")
             .write(&lock_path)
             .expect("write initial lock");
+        commit_all(&root);
         let initial = fs::read_to_string(&lock_path).expect("read initial lock");
         let contract = fs::read_to_string(root.join("zrail.toml")).expect("read contract");
         assert_eq!(contract.matches(before).count(), 1, "mutation {name}");
@@ -35,9 +40,7 @@ fn policy_weakenings_require_explicit_acceptance() {
         let refused = update(&options).expect("evaluate contract update");
         assert_eq!(refused.exit_code, 1, "mutation {name}");
         assert!(
-            refused
-                .text
-                .contains("UNKNOWN lock.authority before:contract"),
+            refused.text.contains("GRANT"),
             "mutation {name}: {}",
             refused.text
         );
@@ -112,6 +115,7 @@ fn options(root: &std::path::Path) -> UpdateOptions {
             lock: PathBuf::from("zrail.lock"),
             format: OutputFormat::Human,
         },
+        base: "HEAD".into(),
         accept_grants: false,
     }
 }

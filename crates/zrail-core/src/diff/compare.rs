@@ -40,7 +40,12 @@ fn lock_authority(
     lock: Option<&LockFile>,
 ) -> Vec<ArchitectureChange> {
     let Some(lock) = lock else {
-        return Vec::new();
+        return vec![ArchitectureChange::new(
+            ChangeKind::Unknown,
+            "lock.authority",
+            format!("{side}:missing"),
+            "architecture comparison has no lock authority for this repository state",
+        )];
     };
     let mut changes = Vec::new();
     if lock.engine != env!("CARGO_PKG_VERSION") {

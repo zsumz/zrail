@@ -63,6 +63,44 @@ fn incompatible_engine_is_unknown() {
     reset(&fixture);
 }
 
+#[test]
+fn missing_lock_authority_is_unknown_on_either_side() {
+    let fixture = fixture();
+    let bundle =
+        load_contract(&fixture, std::path::Path::new("zrail.toml")).expect("load fixture contract");
+    let lock = LockFile::new(&bundle.sha256);
+
+    let missing_before = compare_architecture_checked(
+        &bundle.contract,
+        &bundle.sha256,
+        None,
+        &bundle.contract,
+        &bundle.sha256,
+        Some(&lock),
+    );
+    let missing_after = compare_architecture_checked(
+        &bundle.contract,
+        &bundle.sha256,
+        Some(&lock),
+        &bundle.contract,
+        &bundle.sha256,
+        None,
+    );
+
+    for (report, subject) in [
+        (missing_before, "before:missing"),
+        (missing_after, "after:missing"),
+    ] {
+        assert!(report.denies_grants());
+        assert!(report.changes.iter().any(|change| {
+            change.kind == ChangeKind::Unknown
+                && change.rail == "lock.authority"
+                && change.subject == subject
+        }));
+    }
+    reset(&fixture);
+}
+
 fn package(name: &str) -> LockedPackage {
     LockedPackage {
         name: name.into(),

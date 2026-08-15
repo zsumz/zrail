@@ -104,6 +104,19 @@ fn update_requires_explicit_grant_acceptance() {
     };
 
     assert!(options.accept_grants);
+    assert_eq!(options.base, OsString::from("HEAD"));
+
+    let based = parse([
+        OsString::from("zrail"),
+        OsString::from("update"),
+        OsString::from("--base"),
+        OsString::from("origin/main"),
+    ])
+    .expect("parse protected base");
+    let Command::Update(options) = based else {
+        panic!("expected based update command");
+    };
+    assert_eq!(options.base, OsString::from("origin/main"));
 
     let error = parse([
         OsString::from("zrail"),

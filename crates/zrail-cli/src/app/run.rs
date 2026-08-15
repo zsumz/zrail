@@ -17,7 +17,7 @@ const HELP: &str = concat!(
     "USAGE\n",
     "  zrail init [ROOT] [--preset zsumz|rust] [--baseline]\n",
     "  zrail check [--root ROOT] [--format human|json]\n",
-    "  zrail update [--root ROOT] [--format human|json] [--accept-grants]\n",
+    "  zrail update [--base REVISION] [--root ROOT] [--format human|json] [--accept-grants]\n",
     "  zrail doctor [--root ROOT] [--format human|json]\n",
     "  zrail explain --path PATH [--root ROOT] [--format human|json]\n",
     "  zrail diff --base REVISION [--root ROOT] [--deny-grants]\n",
