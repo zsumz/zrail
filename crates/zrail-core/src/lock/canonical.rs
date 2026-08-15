@@ -1,0 +1,185 @@
+//! Validation and deterministic ordering for resolved lock state.
+
+use std::{fmt, path::Path};
+
+use super::{LockError, LockFile, LockedDependency};
+
+impl LockFile {
+    pub fn canonicalize(&mut self) -> Result<(), LockError> {
+        validate_header(self)?;
+        canonicalize_packages(self)?;
+        canonicalize_generated(self)?;
+        canonicalize_gates(self)?;
+        canonicalize_ratchets(self)?;
+        Ok(())
+    }
+}
+
+fn validate_header(lock: &LockFile) -> Result<(), LockError> {
+    if lock.schema != 1 {
+        return Err(LockError(format!(
+            "unsupported zrail lock schema {}",
+            lock.schema
+        )));
+    }
+    if lock.engine.trim().is_empty() {
+        return Err(LockError("zrail.lock engine may not be empty".into()));
+    }
+    if !valid_digest(&lock.contract_sha256) {
+        return Err(LockError(
+            "zrail.lock contract_sha256 must be 64 lowercase hexadecimal characters".into(),
+        ));
+    }
+    Ok(())
+}
+
+fn canonicalize_packages(lock: &mut LockFile) -> Result<(), LockError> {
+    for package in &mut lock.packages {
+        if package.name.trim().is_empty() {
+            return Err(LockError("locked package names may not be empty".into()));
+        }
+        for dependency in &package.dependencies {
+            if dependency.name.trim().is_empty() {
+                return Err(LockError(format!(
+                    "dependency names in package {} may not be empty",
+                    package.name
+                )));
+            }
+        }
+        package.dependencies.sort();
+        ensure_unique(
+            package.dependencies.iter().map(dependency_identity),
+            &format!("dependency in package {}", package.name),
+        )?;
+    }
+    lock.packages
+        .sort_by(|left, right| left.name.cmp(&right.name));
+    ensure_unique(
+        lock.packages.iter().map(|package| package.name.as_str()),
+        "locked package",
+    )
+}
+
+fn canonicalize_generated(lock: &mut LockFile) -> Result<(), LockError> {
+    for generated in &lock.generated {
+        if !valid_root(&generated.root) {
+            return Err(LockError(format!(
+                "locked generated root is not a normalized repository path: {}",
+                generated.root
+            )));
+        }
+        if !valid_digest(&generated.manifest_sha256) {
+            return Err(LockError(format!(
+                "locked generated root {} has an invalid manifest_sha256",
+                generated.root
+            )));
+        }
+    }
+    lock.generated
+        .sort_by(|left, right| left.root.cmp(&right.root));
+    ensure_unique(
+        lock.generated
+            .iter()
+            .map(|generated| generated.root.as_str()),
+        "locked generated root",
+    )
+}
+
+fn canonicalize_gates(lock: &mut LockFile) -> Result<(), LockError> {
+    for gate in &lock.gates {
+        if !valid_name(&gate.name) {
+            return Err(LockError(format!(
+                "locked gate name is invalid: {}",
+                gate.name
+            )));
+        }
+        if gate.path == "." || gate.path == "zrail.lock" || !valid_root(&gate.path) {
+            return Err(LockError(format!(
+                "locked gate path is not a normalized repository file: {}",
+                gate.path
+            )));
+        }
+        if !valid_digest(&gate.sha256) {
+            return Err(LockError(format!(
+                "locked gate {} has an invalid sha256",
+                gate.name
+            )));
+        }
+    }
+    lock.gates.sort_by(|left, right| left.name.cmp(&right.name));
+    ensure_unique(
+        lock.gates.iter().map(|gate| gate.name.as_str()),
+        "locked gate",
+    )?;
+    ensure_unique(
+        lock.gates.iter().map(|gate| gate.path.as_str()),
+        "locked gate path",
+    )
+}
+
+fn canonicalize_ratchets(lock: &mut LockFile) -> Result<(), LockError> {
+    for ratchet in &lock.ratchets {
+        if ratchet.rule.trim().is_empty() || ratchet.target.trim().is_empty() {
+            return Err(LockError(
+                "locked ratchets require non-empty rule and target".into(),
+            ));
+        }
+        if ratchet.value == 0 {
+            return Err(LockError(format!(
+                "locked ratchet {}:{} must be positive",
+                ratchet.rule, ratchet.target
+            )));
+        }
+    }
+    lock.ratchets
+        .sort_by(|left, right| (&left.rule, &left.target).cmp(&(&right.rule, &right.target)));
+    ensure_unique(
+        lock.ratchets
+            .iter()
+            .map(|ratchet| format!("{}:{}", ratchet.rule, ratchet.target)),
+        "locked ratchet",
+    )
+}
+
+fn valid_digest(digest: &str) -> bool {
+    digest.len() == 64
+        && digest
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+}
+
+fn valid_name(value: &str) -> bool {
+    !value.is_empty()
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_' | b'.'))
+}
+
+fn valid_root(root: &str) -> bool {
+    if root == "." {
+        return true;
+    }
+    !root.contains(['*', '?'])
+        && crate::path::normalize_relative(Path::new(root))
+            .is_ok_and(|normalized| !normalized.is_empty() && normalized == root)
+}
+
+fn dependency_identity(dependency: &LockedDependency) -> String {
+    format!(
+        "{:?}:{:?}:{}",
+        dependency.scope, dependency.kind, dependency.name
+    )
+}
+
+fn ensure_unique<T>(values: impl Iterator<Item = T>, label: &str) -> Result<(), LockError>
+where
+    T: fmt::Display,
+{
+    let mut seen = std::collections::BTreeSet::new();
+    for value in values {
+        if !seen.insert(value.to_string()) {
+            return Err(LockError(format!("duplicate {label} {value}")));
+        }
+    }
+    Ok(())
+}
