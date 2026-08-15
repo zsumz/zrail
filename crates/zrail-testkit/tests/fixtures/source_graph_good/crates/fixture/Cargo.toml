@@ -1,0 +1,9 @@
+[package]
+name = "fixture"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "custom-root"
+path = "src/custom_root.rs"

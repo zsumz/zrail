@@ -1,0 +1,55 @@
+schema = 1
+adapters = ["rust"]
+
+[repository]
+roots = ["crates"]
+workspace_members = "exact"
+nested_git = "deny"
+submodules = "deny"
+symlinks = "inside"
+
+[dependencies]
+mode = "observed"
+unassigned_packages = "allow"
+cycles = "deny"
+
+[source.rust]
+module_docs = "required"
+facades = "declarative"
+tests = "sibling"
+
+[source.rust.hygiene]
+unsafe = "deny"
+lint_suppressions = "deny"
+
+[source.rust.size.facade]
+target = 80
+hard = 120
+
+[source.rust.size.implementation]
+target = 240
+hard = 300
+
+[source.rust.size.test]
+target = 300
+hard = 300
+
+[source.rust.size.auxiliary]
+target = 300
+hard = 300
+
+[[gate]]
+name = "check"
+kind = "local"
+path = "scripts/check"
+reason = "Canonical local qualification for the fixture."
+
+[[invariant]]
+id = "ARCH-01"
+title = "Qualification evidence remains connected"
+status = "enforced"
+document = "docs/architecture.md#qualification-graph"
+evidence = [
+  "rust-test:crates/fixture/src/architecture_test.rs::qualification_graph_is_live",
+  "gate:check",
+]

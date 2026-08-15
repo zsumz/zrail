@@ -1,0 +1,71 @@
+schema = 1
+adapters = ["rust"]
+
+[repository]
+roots = ["crates"]
+exclude = []
+workspace_members = "exact"
+nested_git = "deny"
+submodules = "deny"
+symlinks = "inside"
+
+[dependencies]
+mode = "observed"
+unassigned_packages = "allow"
+cycles = "deny"
+
+[source.rust]
+module_docs = "required"
+facades = "declarative"
+tests = "sibling"
+
+[source.rust.hygiene]
+unsafe = "deny"
+lint_suppressions = "deny"
+deny_methods = ["unwrap", "expect"]
+deny_macros = ["panic", "todo", "unimplemented", "unreachable", "dbg"]
+
+[source.rust.size.facade]
+target = 80
+hard = 120
+
+[source.rust.size.implementation]
+target = 240
+hard = 300
+
+[source.rust.size.test]
+target = 300
+hard = 400
+
+[source.rust.size.auxiliary]
+target = 300
+hard = 300
+
+[[scope]]
+name = "no-network"
+include = ["crates/fixture/src/**"]
+reason = "the fixture core is sans-I/O"
+
+[scope.symbols]
+deny = ["std::net"]
+
+[[owner]]
+name = "filesystem-owner"
+kind = "capability"
+within = ["crates/fixture/src/**"]
+match = "std::fs"
+allow = ["crates/fixture/src/owner.rs"]
+reason = "The fixture proves aliases cannot escape an exact capability owner."
+
+[[owner]]
+name = "filesystem-metadata-call"
+kind = "call"
+within = ["crates/fixture/src/**"]
+match = "std::fs::metadata"
+allow = [
+  "crates/fixture/src/indirect_owner.rs",
+  "crates/fixture/src/owner.rs",
+  "crates/fixture/src/uncertain_owner.rs",
+  "crates/fixture/src/worker.rs",
+]
+reason = "Only declared adapters may invoke filesystem metadata acquisition."

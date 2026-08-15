@@ -1,0 +1,3 @@
+[workspace]
+members = ["crates/fixture-core", "crates/fixture-manager"]
+resolver = "2"

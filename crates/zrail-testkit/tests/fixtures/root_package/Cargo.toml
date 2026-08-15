@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "root-package"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+member = { path = "member" }

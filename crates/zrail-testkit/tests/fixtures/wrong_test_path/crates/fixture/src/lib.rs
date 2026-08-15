@@ -1,0 +1,3 @@
+//! Fixture facade.
+
+mod worker;

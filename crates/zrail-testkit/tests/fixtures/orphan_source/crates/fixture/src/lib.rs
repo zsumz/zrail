@@ -1,0 +1,1 @@
+//! Orphan source fixture facade.

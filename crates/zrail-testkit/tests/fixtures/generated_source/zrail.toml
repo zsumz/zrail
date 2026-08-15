@@ -1,0 +1,56 @@
+schema = 1
+adapters = ["rust"]
+
+[repository]
+roots = ["."]
+exclude = []
+workspace_members = "exact"
+nested_git = "deny"
+submodules = "deny"
+symlinks = "inside"
+
+[dependencies]
+mode = "observed"
+unassigned_packages = "allow"
+cycles = "deny"
+
+[source.rust]
+module_docs = "required"
+facades = "declarative"
+tests = "sibling"
+
+[[source.rust.generated]]
+root = "src/generated"
+manifest = "src/generated/MANIFEST.json"
+inputs = ["Cargo.toml"]
+target = 300
+hard = 300
+reason = "A content-addressed fixture generator owns this fragment."
+
+[[source.rust.out_dir]]
+path = "src/lib.rs"
+output = "wire.rs"
+source = "src/generated/wire.rs"
+reason = "The fixture maps its compiler output to a reviewed generated snapshot."
+
+[source.rust.hygiene]
+unsafe = "deny"
+lint_suppressions = "deny"
+deny_methods = []
+deny_macros = []
+
+[source.rust.size.facade]
+target = 300
+hard = 300
+
+[source.rust.size.implementation]
+target = 300
+hard = 300
+
+[source.rust.size.test]
+target = 300
+hard = 300
+
+[source.rust.size.auxiliary]
+target = 300
+hard = 300

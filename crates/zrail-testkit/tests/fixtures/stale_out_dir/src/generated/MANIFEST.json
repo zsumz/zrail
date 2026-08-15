@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "generator": "zrail test fixture 1",
+  "inputs": [
+    {
+      "path": "Cargo.toml",
+      "sha256": "406c034db72173ce8ab3a19aacef4b663ffe673441f8ad7b35b47e5ef1d30b46"
+    }
+  ],
+  "files": [
+    {
+      "path": "unused.rs",
+      "sha256": "30b5f0b52371f0b91c92adf3cb452369c276737191a2058b1feda499311a44af"
+    }
+  ]
+}
