@@ -59,7 +59,7 @@ pub(crate) struct ReviewOptions {
     pub(crate) common: CommonOptions,
     pub(crate) authority_root: PathBuf,
     pub(crate) base: OsString,
-    pub(crate) deny_grants: bool,
+    pub(crate) allow_grants: bool,
 }
 
 impl Default for CommonOptions {

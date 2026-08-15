@@ -9,14 +9,38 @@ pub(crate) enum DependencyKind {
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct Dependency {
+    pub(crate) alias: String,
     pub(crate) name: String,
     pub(crate) kind: DependencyKind,
+    pub(crate) target: Option<String>,
+    pub(crate) optional: bool,
+    pub(crate) default_features: bool,
+    pub(crate) features: Vec<String>,
+    pub(crate) source: DependencySource,
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
-pub(crate) struct DependencyPath {
-    pub(crate) path: String,
-    pub(crate) workspace_relative: bool,
+pub(crate) enum DependencySource {
+    WorkspaceMember {
+        directory: String,
+        requirement: Option<String>,
+    },
+    RepositoryPath {
+        path: String,
+        requirement: Option<String>,
+    },
+    Registry {
+        registry: Option<String>,
+        index: Option<String>,
+        requirement: String,
+    },
+    Git {
+        repository: String,
+        branch: Option<String>,
+        tag: Option<String>,
+        rev: Option<String>,
+        requirement: Option<String>,
+    },
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -24,7 +48,6 @@ pub(crate) struct Package {
     pub(crate) name: String,
     pub(crate) directory: String,
     pub(crate) dependencies: Vec<Dependency>,
-    pub(crate) dependency_paths: Vec<DependencyPath>,
     pub(crate) targets: Vec<CargoTarget>,
 }
 
@@ -56,6 +79,20 @@ impl Package {
             "Cargo.toml".into()
         } else {
             format!("{}/Cargo.toml", self.directory)
+        }
+    }
+}
+
+impl Dependency {
+    pub(crate) fn internal_package(&self) -> Option<&str> {
+        matches!(self.source, DependencySource::WorkspaceMember { .. })
+            .then_some(self.name.as_str())
+    }
+
+    pub(crate) fn repository_path(&self) -> Option<&str> {
+        match &self.source {
+            DependencySource::RepositoryPath { path, .. } => Some(path),
+            _ => None,
         }
     }
 }

@@ -8,15 +8,13 @@ use zrail_core::input::read_text;
 use crate::inventory::RepositoryInventory;
 
 use super::{
-    dependencies::{
-        collect_dependencies, collect_dependency_paths, workspace_dependencies,
-        workspace_dependency_paths,
-    },
+    dependencies::{collect_dependencies, workspace_dependencies},
     model::{CargoWorkspace, Package},
     targets::collect_target_roots,
     workspace::{
         excluded_member, expand_implicit_members, expand_members, normalized_directory,
-        workspace_excludes, workspace_members, workspace_package_edition,
+        resolve_workspace_dependencies, workspace_excludes, workspace_members,
+        workspace_package_edition,
     },
 };
 
@@ -40,7 +38,6 @@ pub(crate) fn load_cargo_workspace(
     let mut manifest_bytes = 0;
     let root = read_manifest_counted(&root_manifest, &mut manifest_bytes)?;
     let workspace_dependencies = workspace_dependencies(&root).map_err(CargoModelError)?;
-    let workspace_dependency_paths = workspace_dependency_paths(&root).map_err(CargoModelError)?;
     let workspace_edition = workspace_package_edition(&root)?;
     let member_patterns = workspace_members(&root)?;
     let exclude_patterns = workspace_excludes(&root)?;
@@ -66,11 +63,9 @@ pub(crate) fn load_cargo_workspace(
         }
         packages.push(Package {
             name,
+            dependencies: collect_dependencies(&value, &workspace_dependencies, &directory)
+                .map_err(CargoModelError)?,
             directory,
-            dependencies: collect_dependencies(&value, &workspace_dependencies)
-                .map_err(CargoModelError)?,
-            dependency_paths: collect_dependency_paths(&value, &workspace_dependency_paths)
-                .map_err(CargoModelError)?,
             targets: collect_target_roots(
                 &value,
                 manifest.parent().unwrap_or(&inventory.root),
@@ -88,6 +83,7 @@ pub(crate) fn load_cargo_workspace(
     observed_members.sort();
     let declared_members = expand_members(&member_patterns, &observed_members, root_package)?;
     let declared_members = expand_implicit_members(declared_members, &packages, &exclude_patterns)?;
+    resolve_workspace_dependencies(&mut packages, &declared_members)?;
     Ok(CargoWorkspace {
         declared_members,
         observed_members,

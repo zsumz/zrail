@@ -138,7 +138,7 @@ fn review_separates_trusted_authority_from_proposed_source() {
         OsString::from("proposal"),
         OsString::from("--base"),
         OsString::from("protected"),
-        OsString::from("--deny-grants"),
+        OsString::from("--allow-grants"),
     ])
     .expect("parse protected review");
     let Command::Review(options) = command else {
@@ -148,7 +148,23 @@ fn review_separates_trusted_authority_from_proposed_source() {
     assert_eq!(options.authority_root.to_string_lossy(), "trusted");
     assert_eq!(options.common.root.to_string_lossy(), "proposal");
     assert_eq!(options.base, OsString::from("protected"));
-    assert!(options.deny_grants);
+    assert!(options.allow_grants);
+}
+
+#[test]
+fn review_denies_grants_without_a_safety_flag() {
+    let command = parse([
+        OsString::from("zrail"),
+        OsString::from("review"),
+        OsString::from("--root"),
+        OsString::from("proposal"),
+    ])
+    .expect("parse fail-closed review");
+    let Command::Review(options) = command else {
+        panic!("expected review command");
+    };
+
+    assert!(!options.allow_grants);
 }
 
 #[test]

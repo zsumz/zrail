@@ -11,7 +11,7 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
     let mut base = OsString::from("HEAD");
     let mut authority_set = false;
     let mut base_set = false;
-    let mut deny_grants = false;
+    let mut allow_grants = false;
     let mut index = 0;
     while index < arguments.len() {
         let flag = as_string(&arguments[index])?;
@@ -34,9 +34,9 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
             "--format" => {
                 common.format = parse_format(&value(arguments, &mut index, "--format")?)?;
             }
-            "--deny-grants" if !deny_grants => deny_grants = true,
-            "--deny-grants" => {
-                return Err(CliError::new("--deny-grants may be specified only once"));
+            "--allow-grants" if !allow_grants => allow_grants = true,
+            "--allow-grants" => {
+                return Err(CliError::new("--allow-grants may be specified only once"));
             }
             _ => return Err(CliError::new(format!("unknown option {flag:?}"))),
         }
@@ -46,6 +46,6 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
         common,
         authority_root,
         base,
-        deny_grants,
+        allow_grants,
     }))
 }

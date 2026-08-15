@@ -3,8 +3,8 @@
 use crate::{
     ChangeKind, DependencyMode, FacadeMode, GeneratedSourceContract, ItemMacroContract,
     LintSuppressionMode, LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope,
-    LockedGeneratedSource, LockedPackage, LockedRatchet, OutDirSourceContract, OwnerContract,
-    OwnerKind,
+    LockedDependencySource, LockedGeneratedSource, LockedPackage, LockedRatchet,
+    OutDirSourceContract, OwnerContract, OwnerKind,
 };
 
 use super::compare_architecture;
@@ -175,9 +175,18 @@ fn resolved_packages_and_ratchets_have_opposite_directions() {
     after_lock.packages.push(LockedPackage {
         name: "adapter".into(),
         dependencies: vec![LockedDependency {
+            alias: Some("core".into()),
             name: "core".into(),
             kind: LockedDependencyKind::Normal,
             scope: LockedDependencyScope::Internal,
+            target: None,
+            optional: Some(false),
+            default_features: Some(true),
+            features: Vec::new(),
+            source: Some(LockedDependencySource::WorkspaceMember {
+                directory: "crates/core".into(),
+                requirement: None,
+            }),
         }],
     });
 

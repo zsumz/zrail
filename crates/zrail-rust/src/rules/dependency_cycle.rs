@@ -7,11 +7,6 @@ use zrail_core::{Finding, FindingSink};
 use crate::cargo::CargoWorkspace;
 
 pub(super) fn check_cycles(workspace: &CargoWorkspace, findings: &mut FindingSink) {
-    let package_names = workspace
-        .packages
-        .iter()
-        .map(|package| package.name.as_str())
-        .collect::<BTreeSet<_>>();
     let graph = workspace
         .packages
         .iter()
@@ -19,8 +14,7 @@ pub(super) fn check_cycles(workspace: &CargoWorkspace, findings: &mut FindingSin
             let dependencies = package
                 .dependencies
                 .iter()
-                .filter(|dependency| package_names.contains(dependency.name.as_str()))
-                .map(|dependency| dependency.name.as_str())
+                .filter_map(|dependency| dependency.internal_package())
                 .collect::<BTreeSet<_>>();
             (package.name.as_str(), dependencies)
         })

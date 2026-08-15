@@ -25,12 +25,18 @@ pub(crate) fn review(options: &ReviewOptions) -> Result<CommandResult, CliError>
     findings.extend(lock_attestation(options, &checked.candidate_lock)?);
     let source = Report::from_findings(findings);
     let failed = source.status != ReportStatus::Pass
-        || (options.deny_grants && architecture.denies_grants());
+        || architecture_denied(&architecture, options.allow_grants);
     let text = match common.format {
         OutputFormat::Human => human(&source, &architecture),
         OutputFormat::Json => json(&source, &architecture, failed)?,
     };
     Ok(CommandResult::status(text, i32::from(failed)))
+}
+
+fn architecture_denied(report: &zrail_core::DiffReport, allow_grants: bool) -> bool {
+    report.summary.debt > 0
+        || report.summary.unknown > 0
+        || (!allow_grants && report.summary.grants > 0)
 }
 
 fn lock_attestation(

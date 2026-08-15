@@ -4,10 +4,7 @@ mod gates;
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{
-    LockFile, LockedDependencyKind, LockedDependencyScope, LockedGeneratedSource, LockedPackage,
-    LockedRatchet,
-};
+use crate::{LockFile, LockedDependency, LockedGeneratedSource, LockedPackage, LockedRatchet};
 
 use super::{ArchitectureChange, ChangeKind};
 
@@ -107,7 +104,7 @@ fn compare_edges(before: &LockFile, after: &LockFile, changes: &mut Vec<Architec
         changes.push(ArchitectureChange::new(
             ChangeKind::Grant,
             "dependency.resolved-edge",
-            edge,
+            edge_label(edge),
             "resolved dependency graph gained an edge",
         ));
     }
@@ -115,7 +112,7 @@ fn compare_edges(before: &LockFile, after: &LockFile, changes: &mut Vec<Architec
         changes.push(ArchitectureChange::new(
             ChangeKind::Revoke,
             "dependency.resolved-edge",
-            edge,
+            edge_label(edge),
             "resolved dependency graph lost an edge",
         ));
     }
@@ -186,36 +183,21 @@ fn generated_by_root(generated: &[LockedGeneratedSource]) -> BTreeMap<&str, &str
         .collect()
 }
 
-fn dependency_edges(packages: &[LockedPackage]) -> BTreeSet<String> {
+fn dependency_edges(packages: &[LockedPackage]) -> BTreeSet<(String, LockedDependency)> {
     packages
         .iter()
         .flat_map(|package| {
-            package.dependencies.iter().map(move |dependency| {
-                format!(
-                    "{}->{}:{}:{}",
-                    package.name,
-                    scope_name(dependency.scope),
-                    kind_name(dependency.kind),
-                    dependency.name
-                )
-            })
+            package
+                .dependencies
+                .iter()
+                .cloned()
+                .map(|dependency| (package.name.clone(), dependency))
         })
         .collect()
 }
 
-const fn kind_name(kind: LockedDependencyKind) -> &'static str {
-    match kind {
-        LockedDependencyKind::Normal => "normal",
-        LockedDependencyKind::Development => "development",
-        LockedDependencyKind::Build => "build",
-    }
-}
-
-const fn scope_name(scope: LockedDependencyScope) -> &'static str {
-    match scope {
-        LockedDependencyScope::Internal => "internal",
-        LockedDependencyScope::External => "external",
-    }
+fn edge_label((package, dependency): &(String, LockedDependency)) -> String {
+    format!("{package}->{}", dependency.label())
 }
 
 fn ratchets_by_identity(ratchets: &[LockedRatchet]) -> BTreeMap<String, &LockedRatchet> {

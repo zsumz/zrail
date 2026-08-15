@@ -1,18 +1,18 @@
 //! Candidate lock generation and exact lock drift findings.
 
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    path::Path,
-};
+use std::{collections::BTreeMap, path::Path};
 
 use zrail_core::{
-    LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope, LockedGate,
-    LockedPackage, LockedRatchet,
+    LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope,
+    LockedDependencySource, LockedGate, LockedPackage, LockedRatchet,
     input::{MAX_INPUT_BYTES, read_bytes_with_limit},
     sha256_hex,
 };
 
-use crate::{cargo::DependencyKind, inventory::RepositoryEntryKind};
+use crate::{
+    cargo::{DependencyKind, DependencySource},
+    inventory::RepositoryEntryKind,
+};
 
 use super::{
     CheckError,
@@ -20,12 +20,6 @@ use super::{
 };
 
 pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckError> {
-    let package_names = model
-        .cargo
-        .packages
-        .iter()
-        .map(|package| package.name.as_str())
-        .collect::<BTreeSet<_>>();
     let mut lock = LockFile::new(&model.bundle.sha256);
     lock.generated = crate::rules::generated::locked_sources(
         &model.inventory.root,
@@ -37,13 +31,19 @@ pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckE
             .dependencies
             .iter()
             .map(|dependency| LockedDependency {
+                alias: Some(dependency.alias.clone()),
                 name: dependency.name.clone(),
                 kind: locked_kind(dependency.kind),
-                scope: if package_names.contains(dependency.name.as_str()) {
+                scope: if dependency.internal_package().is_some() {
                     LockedDependencyScope::Internal
                 } else {
                     LockedDependencyScope::External
                 },
+                target: dependency.target.clone(),
+                optional: Some(dependency.optional),
+                default_features: Some(dependency.default_features),
+                features: dependency.features.clone(),
+                source: Some(locked_source(&dependency.source)),
             })
             .collect();
         lock.packages.push(LockedPackage {
@@ -73,6 +73,46 @@ pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckE
     lock.canonicalize()
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     Ok(lock)
+}
+
+fn locked_source(source: &DependencySource) -> LockedDependencySource {
+    match source {
+        DependencySource::WorkspaceMember {
+            directory,
+            requirement,
+        } => LockedDependencySource::WorkspaceMember {
+            directory: directory.clone(),
+            requirement: requirement.clone(),
+        },
+        DependencySource::RepositoryPath { path, requirement } => {
+            LockedDependencySource::RepositoryPath {
+                path: path.clone(),
+                requirement: requirement.clone(),
+            }
+        }
+        DependencySource::Registry {
+            registry,
+            index,
+            requirement,
+        } => LockedDependencySource::Registry {
+            registry: registry.clone(),
+            index: index.clone(),
+            requirement: requirement.clone(),
+        },
+        DependencySource::Git {
+            repository,
+            branch,
+            tag,
+            rev,
+            requirement,
+        } => LockedDependencySource::Git {
+            repository: repository.clone(),
+            branch: branch.clone(),
+            tag: tag.clone(),
+            rev: rev.clone(),
+            requirement: requirement.clone(),
+        },
+    }
 }
 
 fn ratchet_value(rule: &str, file: &crate::source::RustFileFacts) -> Option<usize> {

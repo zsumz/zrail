@@ -1,4 +1,4 @@
-name: Architecture authority
+name: Architecture preview
 
 on:
   pull_request_target:
@@ -10,7 +10,6 @@ concurrency:
 
 permissions:
   contents: read
-  statuses: write
 
 defaults:
   run:
@@ -18,7 +17,7 @@ defaults:
 
 jobs:
   review:
-    name: protected source review
+    name: protected-base source preview
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
@@ -30,17 +29,6 @@ jobs:
         with:
           ref: ${{ env.ZRAIL_BASE_SHA }}
           persist-credentials: false
-
-      - name: Mark proposal review pending
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: >-
-          gh api --method POST
-          "repos/$GITHUB_REPOSITORY/statuses/$ZRAIL_PROPOSAL_SHA"
-          -f state=pending
-          -f context=zrail/protected-source-review
-          -f description='Protected zrail review is running'
-          -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
 
       - name: Isolate trusted Cargo state
         run: |
@@ -70,35 +58,8 @@ jobs:
           persist-credentials: false
 
       - name: Independently review observed proposal state
-        id: review
-        continue-on-error: true
         run: >-
           "$CARGO_TARGET_DIR/debug/zrail" review
           --authority-root "$GITHUB_WORKSPACE"
           --base "$ZRAIL_BASE_SHA"
           --root "$GITHUB_WORKSPACE/proposal"
-          --deny-grants
-
-      - name: Publish proposal review result
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          ZRAIL_REVIEW_OUTCOME: ${{ steps.review.outcome }}
-        run: |
-          if [[ "$ZRAIL_REVIEW_OUTCOME" == "success" ]]; then
-            state=success
-            description='Protected zrail review passed'
-          else
-            state=failure
-            description='Protected zrail review failed'
-          fi
-          gh api --method POST \
-            "repos/$GITHUB_REPOSITORY/statuses/$ZRAIL_PROPOSAL_SHA" \
-            -f state="$state" \
-            -f context=zrail/protected-source-review \
-            -f description="$description" \
-            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-
-      - name: Enforce proposal review result
-        if: steps.review.outcome != 'success'
-        run: exit 1

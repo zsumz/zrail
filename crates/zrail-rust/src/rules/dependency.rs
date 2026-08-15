@@ -136,12 +136,6 @@ fn check_edges(
     assignments: &BTreeMap<&str, &str>,
     findings: &mut FindingSink,
 ) {
-    let packages = context
-        .cargo
-        .packages
-        .iter()
-        .map(|package| package.name.as_str())
-        .collect::<BTreeSet<_>>();
     for package in &context.cargo.packages {
         let Some(layer_name) = assignments.get(package.name.as_str()).copied() else {
             continue;
@@ -155,8 +149,8 @@ fn check_edges(
             continue;
         };
         for dependency in &package.dependencies {
-            if packages.contains(dependency.name.as_str()) {
-                let Some(target_layer) = assignments.get(dependency.name.as_str()).copied() else {
+            if let Some(internal) = dependency.internal_package() {
+                let Some(target_layer) = assignments.get(internal).copied() else {
                     continue;
                 };
                 let permitted = target_layer == layer.name
@@ -169,7 +163,7 @@ fn check_edges(
                             "dependency",
                             format!(
                                 "package {} in layer {} may not depend on {} in layer {}",
-                                package.name, layer.name, dependency.name, target_layer
+                                package.name, layer.name, internal, target_layer
                             ),
                         )
                         .at(package_manifest(package), None)
@@ -187,7 +181,7 @@ fn check_edges(
                             package.name,
                             layer.name,
                             dependency_kind(dependency.kind),
-                            dependency.name
+                            dependency.alias
                         ),
                     )
                     .at(package_manifest(package), None)

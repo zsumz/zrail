@@ -17,3 +17,7 @@ Do not weaken a rail merely to make an implementation pass.
 Never run `zrail update --accept-grants`, weaken `zrail.toml`, or replace
 `zrail.lock` without explicit human authorization. Report the semantic diff
 instead.
+
+`zrail review --allow-grants` is for explicit human review. It must never appear
+in automated or proposal-controlled merge checks; only separately protected,
+human-dispatched authority may use it.

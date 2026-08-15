@@ -1,5 +1,7 @@
 //! Workspace paths are normalized before exact declared-versus-observed comparison.
 
+mod dependencies;
+
 use std::{
     collections::{BTreeMap, BTreeSet, VecDeque},
     path::{Component, Path},
@@ -9,6 +11,8 @@ use toml::Value;
 use zrail_core::path::{glob_matches, normalize_relative, repository_relative};
 
 use super::{model::Package, parse::CargoModelError};
+
+pub(super) use dependencies::resolve_workspace_dependencies;
 
 pub(super) fn workspace_members(value: &Value) -> Result<Vec<String>, CargoModelError> {
     workspace_patterns(value, "members")
@@ -154,13 +158,8 @@ pub(super) fn expand_implicit_members(
         let Some(package) = packages.get(directory.as_str()) else {
             continue;
         };
-        for dependency in &package.dependency_paths {
-            let base = if dependency.workspace_relative {
-                "."
-            } else {
-                &package.directory
-            };
-            let Some(target) = resolve_inside(base, &dependency.path)? else {
+        for dependency in &package.dependencies {
+            let Some(target) = dependency.repository_path().map(str::to_owned) else {
                 continue;
             };
             if excluded_member(&target, excludes) {
@@ -180,7 +179,10 @@ pub(super) fn expand_implicit_members(
     Ok(members.into_iter().collect())
 }
 
-fn resolve_inside(base: &str, relative: &str) -> Result<Option<String>, CargoModelError> {
+pub(super) fn resolve_inside(
+    base: &str,
+    relative: &str,
+) -> Result<Option<String>, CargoModelError> {
     if relative.contains('\\') {
         return Err(CargoModelError(format!(
             "Cargo dependency path uses a platform-dependent separator: {relative:?}"

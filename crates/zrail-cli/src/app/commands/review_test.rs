@@ -2,7 +2,7 @@
 
 use std::{fs, path::PathBuf};
 
-use zrail_core::LockFile;
+use zrail_core::{DiffReport, DiffSummary, LockFile};
 use zrail_rust::build_lock;
 
 use crate::app::{
@@ -12,8 +12,27 @@ use crate::app::{
 
 use super::{
     super::git_base::{commit_all, git_available},
-    review,
+    architecture_denied, review,
 };
+
+#[test]
+fn grant_exceptions_never_allow_debt_or_unknown_comparisons() {
+    let report = |grants, debt, unknown| DiffReport {
+        schema: 1,
+        summary: DiffSummary {
+            grants,
+            debt,
+            unknown,
+            ..DiffSummary::default()
+        },
+        changes: Vec::new(),
+    };
+
+    assert!(architecture_denied(&report(1, 0, 0), false));
+    assert!(!architecture_denied(&report(1, 0, 0), true));
+    assert!(architecture_denied(&report(0, 1, 0), true));
+    assert!(architecture_denied(&report(0, 0, 1), true));
+}
 
 #[test]
 fn unchanged_compliant_source_passes_protected_review() {
@@ -197,7 +216,7 @@ fn options(fixture: &Fixture) -> ReviewOptions {
         },
         authority_root: fixture.authority.clone(),
         base: "HEAD".into(),
-        deny_grants: true,
+        allow_grants: false,
     }
 }
 

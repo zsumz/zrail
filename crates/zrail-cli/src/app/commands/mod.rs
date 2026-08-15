@@ -29,6 +29,10 @@ pub(crate) use update::update;
 mod git_base_migration_test;
 
 #[cfg(test)]
+#[path = "review_dependency_test.rs"]
+mod review_dependency_test;
+
+#[cfg(test)]
 #[path = "update_contract_test.rs"]
 mod update_contract_test;
 

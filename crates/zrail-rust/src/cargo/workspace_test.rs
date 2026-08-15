@@ -2,8 +2,11 @@
 
 use toml::Value;
 
-use super::super::model::{DependencyPath, Package};
-use super::{expand_implicit_members, expand_members, workspace_excludes, workspace_members};
+use super::super::model::{Dependency, DependencyKind, DependencySource, Package};
+use super::{
+    expand_implicit_members, expand_members, resolve_workspace_dependencies, workspace_excludes,
+    workspace_members,
+};
 
 #[test]
 fn a_root_package_is_an_implicit_workspace_member() {
@@ -72,18 +75,13 @@ fn in_tree_path_dependencies_are_implicit_members() {
         Package {
             name: "root".into(),
             directory: ".".into(),
-            dependencies: Vec::new(),
-            dependency_paths: vec![DependencyPath {
-                path: "crates/member".into(),
-                workspace_relative: false,
-            }],
+            dependencies: vec![path_dependency("member", "crates/member")],
             targets: Vec::new(),
         },
         Package {
             name: "member".into(),
             directory: "crates/member".into(),
             dependencies: Vec::new(),
-            dependency_paths: Vec::new(),
             targets: Vec::new(),
         },
     ];
@@ -92,4 +90,59 @@ fn in_tree_path_dependencies_are_implicit_members() {
         expand_implicit_members(vec![".".into()], &packages, &[]).expect("expand implicit members");
 
     assert_eq!(members, [".", "crates/member"]);
+}
+
+#[test]
+fn only_exact_declared_member_paths_become_internal() {
+    let mut packages = [
+        Package {
+            name: "root".into(),
+            directory: ".".into(),
+            dependencies: vec![
+                path_dependency("member", "crates/member"),
+                path_dependency("excluded", "crates/excluded"),
+            ],
+            targets: Vec::new(),
+        },
+        Package {
+            name: "member".into(),
+            directory: "crates/member".into(),
+            dependencies: Vec::new(),
+            targets: Vec::new(),
+        },
+        Package {
+            name: "excluded".into(),
+            directory: "crates/excluded".into(),
+            dependencies: Vec::new(),
+            targets: Vec::new(),
+        },
+    ];
+
+    resolve_workspace_dependencies(&mut packages, &[".".into(), "crates/member".into()])
+        .expect("resolve internal identity");
+
+    assert!(matches!(
+        packages[0].dependencies[0].source,
+        DependencySource::WorkspaceMember { .. }
+    ));
+    assert!(matches!(
+        packages[0].dependencies[1].source,
+        DependencySource::RepositoryPath { .. }
+    ));
+}
+
+fn path_dependency(name: &str, path: &str) -> Dependency {
+    Dependency {
+        alias: name.into(),
+        name: name.into(),
+        kind: DependencyKind::Normal,
+        target: None,
+        optional: false,
+        default_features: true,
+        features: Vec::new(),
+        source: DependencySource::RepositoryPath {
+            path: path.into(),
+            requirement: None,
+        },
+    }
 }

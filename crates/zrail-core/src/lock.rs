@@ -1,6 +1,7 @@
 //! Canonical dependency, generated-provenance, and tightening-ratchet state.
 
 mod canonical;
+mod dependency;
 
 use std::{error::Error, fmt, fs, path::Path};
 
@@ -8,8 +9,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::input::{read_text, replace_text};
 
+pub use dependency::LockedDependencySource;
+
 pub const LOCK_SCHEMA: u64 = 2;
-pub const LOCK_SEMANTICS: u64 = 1;
+pub const LOCK_SEMANTICS: u64 = 2;
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -56,9 +59,21 @@ pub struct LockedPackage {
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct LockedDependency {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub alias: Option<String>,
     pub name: String,
     pub kind: LockedDependencyKind,
     pub scope: LockedDependencyScope,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub target: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub optional: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub default_features: Option<bool>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub features: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source: Option<LockedDependencySource>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]

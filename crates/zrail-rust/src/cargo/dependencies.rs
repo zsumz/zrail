@@ -1,20 +1,23 @@
-//! Direct dependency extraction across normal, development, build, and target tables.
+//! Direct dependency extraction across kinds and target selectors.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 use toml::Value;
 
-use super::model::{Dependency, DependencyKind, DependencyPath};
+use super::{
+    dependency_spec::{self, DependencySpec, WorkspaceDependencies},
+    model::{Dependency, DependencyKind},
+};
 
-pub(super) fn workspace_dependencies(value: &Value) -> Result<BTreeMap<String, String>, String> {
+pub(super) fn workspace_dependencies(value: &Value) -> Result<WorkspaceDependencies, String> {
     let Some(workspace) = value.get("workspace") else {
-        return Ok(BTreeMap::new());
+        return Ok(WorkspaceDependencies::new());
     };
     let workspace = workspace
         .as_table()
         .ok_or_else(|| "Cargo [workspace] must be a table".to_owned())?;
     let Some(dependencies) = workspace.get("dependencies") else {
-        return Ok(BTreeMap::new());
+        return Ok(WorkspaceDependencies::new());
     };
     let dependencies = dependencies
         .as_table()
@@ -22,8 +25,16 @@ pub(super) fn workspace_dependencies(value: &Value) -> Result<BTreeMap<String, S
     dependencies
         .iter()
         .map(|(alias, value)| {
-            dependency_name(alias, value, None)
-                .map(|name| (alias.clone(), name))
+            if value
+                .as_table()
+                .is_some_and(|table| table.contains_key("optional"))
+            {
+                return Err(format!(
+                    "workspace dependency {alias:?}: optional is only valid at the inheriting package"
+                ));
+            }
+            dependency_spec::parse(alias, value, ".", None)
+                .map(|spec| (alias.clone(), spec))
                 .map_err(|error| format!("workspace dependency {alias:?}: {error}"))
         })
         .collect()
@@ -31,120 +42,54 @@ pub(super) fn workspace_dependencies(value: &Value) -> Result<BTreeMap<String, S
 
 pub(super) fn collect_dependencies(
     value: &Value,
-    workspace: &BTreeMap<String, String>,
+    workspace: &WorkspaceDependencies,
+    package_directory: &str,
 ) -> Result<Vec<Dependency>, String> {
     let mut result = BTreeSet::new();
-    collect_tables(value, workspace, &mut result)?;
+    collect_tables(value, workspace, package_directory, None, &mut result)?;
     if let Some(targets) = value.get("target") {
         let targets = targets
             .as_table()
             .ok_or_else(|| "Cargo [target] must be a table".to_owned())?;
-        for target in targets.values() {
+        for (selector, target) in targets {
+            if selector.trim().is_empty() {
+                return Err("Cargo target selector may not be empty".into());
+            }
             if !target.is_table() {
-                return Err("Cargo target selector must contain a table".into());
+                return Err(format!(
+                    "Cargo target selector {selector:?} must contain a table"
+                ));
             }
-            collect_tables(target, workspace, &mut result)?;
+            collect_tables(
+                target,
+                workspace,
+                package_directory,
+                Some(selector),
+                &mut result,
+            )?;
         }
     }
-    Ok(result
-        .into_iter()
-        .map(|(name, kind)| Dependency { name, kind })
-        .collect())
-}
-
-pub(super) fn workspace_dependency_paths(
-    value: &Value,
-) -> Result<BTreeMap<String, String>, String> {
-    let Some(dependencies) = value
-        .get("workspace")
-        .and_then(Value::as_table)
-        .and_then(|workspace| workspace.get("dependencies"))
-        .and_then(Value::as_table)
-    else {
-        return Ok(BTreeMap::new());
-    };
-    dependencies
-        .iter()
-        .filter_map(|(alias, value)| {
-            value
-                .as_table()
-                .and_then(|table| table.get("path"))
-                .map(|path| {
-                    path.as_str()
-                        .map(|path| (alias.clone(), path.to_owned()))
-                        .ok_or_else(|| {
-                            format!("workspace dependency {alias:?} path must be a string")
-                        })
-                })
-        })
-        .collect()
-}
-
-pub(super) fn collect_dependency_paths(
-    value: &Value,
-    workspace: &BTreeMap<String, String>,
-) -> Result<Vec<DependencyPath>, String> {
-    let mut paths = BTreeSet::new();
-    collect_path_tables(value, workspace, &mut paths)?;
-    if let Some(targets) = value.get("target") {
-        let targets = targets
-            .as_table()
-            .ok_or_else(|| "Cargo [target] must be a table".to_owned())?;
-        for target in targets.values() {
-            collect_path_tables(target, workspace, &mut paths)?;
-        }
-    }
-    Ok(paths
-        .into_iter()
-        .map(|(path, workspace_relative)| DependencyPath {
-            path,
-            workspace_relative,
-        })
-        .collect())
-}
-
-fn collect_path_tables(
-    value: &Value,
-    workspace: &BTreeMap<String, String>,
-    paths: &mut BTreeSet<(String, bool)>,
-) -> Result<(), String> {
-    for key in ["dependencies", "dev-dependencies", "build-dependencies"] {
-        let Some(table) = value.get(key) else {
-            continue;
-        };
-        let table = table
-            .as_table()
-            .ok_or_else(|| format!("Cargo [{key}] must be a table"))?;
-        for (alias, spec) in table {
-            let Some(spec) = spec.as_table() else {
-                continue;
-            };
-            if spec.get("workspace").and_then(Value::as_bool) == Some(true) {
-                if let Some(path) = workspace.get(alias) {
-                    paths.insert((path.clone(), true));
-                }
-            } else if let Some(path) = spec.get("path") {
-                let path = path
-                    .as_str()
-                    .ok_or_else(|| format!("dependency {alias:?} path must be a string"))?;
-                paths.insert((path.to_owned(), false));
-            }
-        }
-    }
-    Ok(())
+    Ok(result.into_iter().collect())
 }
 
 fn collect_tables(
     value: &Value,
-    workspace: &BTreeMap<String, String>,
-    result: &mut BTreeSet<(String, DependencyKind)>,
+    workspace: &WorkspaceDependencies,
+    package_directory: &str,
+    target: Option<&str>,
+    result: &mut BTreeSet<Dependency>,
 ) -> Result<(), String> {
+    let context = TableContext {
+        workspace,
+        package_directory,
+        target,
+    };
     for (key, kind) in [
         ("dependencies", DependencyKind::Normal),
         ("dev-dependencies", DependencyKind::Development),
         ("build-dependencies", DependencyKind::Build),
     ] {
-        collect_dependency_table(value, key, kind, workspace, result)?;
+        collect_dependency_table(value, key, kind, &context, result)?;
     }
     Ok(())
 }
@@ -153,8 +98,8 @@ fn collect_dependency_table(
     value: &Value,
     key: &str,
     kind: DependencyKind,
-    workspace: &BTreeMap<String, String>,
-    result: &mut BTreeSet<(String, DependencyKind)>,
+    context: &TableContext<'_>,
+    result: &mut BTreeSet<Dependency>,
 ) -> Result<(), String> {
     let Some(table) = value.get(key) else {
         return Ok(());
@@ -162,62 +107,41 @@ fn collect_dependency_table(
     let table = table
         .as_table()
         .ok_or_else(|| format!("Cargo [{key}] must be a table"))?;
-    for (alias, spec) in table {
-        let name = dependency_name(alias, spec, Some(workspace))
-            .map_err(|error| format!("dependency {alias:?}: {error}"))?;
-        result.insert((name, kind));
+    for (alias, value) in table {
+        let spec = dependency_spec::parse(
+            alias,
+            value,
+            context.package_directory,
+            Some(context.workspace),
+        )
+        .map_err(|error| format!("dependency {alias:?}: {error}"))?;
+        result.insert(dependency(alias, kind, context.target, spec));
     }
     Ok(())
 }
 
-fn dependency_name(
+struct TableContext<'a> {
+    workspace: &'a WorkspaceDependencies,
+    package_directory: &'a str,
+    target: Option<&'a str>,
+}
+
+fn dependency(
     alias: &str,
-    value: &Value,
-    workspace: Option<&BTreeMap<String, String>>,
-) -> Result<String, String> {
-    if value.is_str() {
-        return Ok(alias.to_owned());
+    kind: DependencyKind,
+    target: Option<&str>,
+    spec: DependencySpec,
+) -> Dependency {
+    Dependency {
+        alias: alias.into(),
+        name: spec.name,
+        kind,
+        target: target.map(str::to_owned),
+        optional: spec.optional,
+        default_features: spec.default_features,
+        features: spec.features,
+        source: spec.source,
     }
-    let table = value
-        .as_table()
-        .ok_or_else(|| "specification must be a version string or table".to_owned())?;
-    let package = optional_string(table, "package")?;
-    let _path = optional_string(table, "path")?;
-    let inherited = optional_bool(table, "workspace")?;
-    if inherited == Some(true) {
-        if package.is_some() {
-            return Err("workspace inheritance may not override package".into());
-        }
-        return workspace
-            .and_then(|values| values.get(alias))
-            .cloned()
-            .ok_or_else(|| "workspace dependency is not declared at the workspace root".into());
-    }
-    if inherited == Some(false) {
-        return Err("workspace inheritance must be true when present".into());
-    }
-    Ok(package.unwrap_or_else(|| alias.to_owned()))
-}
-
-fn optional_string(
-    table: &toml::map::Map<String, Value>,
-    key: &str,
-) -> Result<Option<String>, String> {
-    table.get(key).map_or(Ok(None), |value| {
-        value
-            .as_str()
-            .map(|value| Some(value.to_owned()))
-            .ok_or_else(|| format!("{key} must be a string"))
-    })
-}
-
-fn optional_bool(table: &toml::map::Map<String, Value>, key: &str) -> Result<Option<bool>, String> {
-    table.get(key).map_or(Ok(None), |value| {
-        value
-            .as_bool()
-            .map(Some)
-            .ok_or_else(|| format!("{key} must be a boolean"))
-    })
 }
 
 #[cfg(test)]

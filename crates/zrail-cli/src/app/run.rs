@@ -20,7 +20,7 @@ const HELP: &str = concat!(
     "  zrail update [--base REVISION] [--root ROOT] [--format human|json] [--accept-grants]\n",
     "  zrail doctor [--root ROOT] [--format human|json]\n",
     "  zrail explain --path PATH [--root ROOT] [--format human|json]\n",
-    "  zrail review [--base REVISION] [--authority-root ROOT] --root PROPOSAL [--deny-grants]\n",
+    "  zrail review [--base REVISION] [--authority-root ROOT] --root PROPOSAL [--allow-grants]\n",
     "  zrail diff --base REVISION [--root ROOT] [--deny-grants]\n",
     "  zrail diff --before ROOT --after ROOT [--deny-grants]\n\n",
     "MODEL\n",

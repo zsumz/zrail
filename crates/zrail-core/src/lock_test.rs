@@ -3,8 +3,8 @@
 use std::{fs, path::PathBuf};
 
 use super::{
-    LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope, LockedGate,
-    LockedGeneratedSource, LockedPackage, LockedRatchet,
+    LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope,
+    LockedDependencySource, LockedGate, LockedGeneratedSource, LockedPackage, LockedRatchet,
 };
 
 #[test]
@@ -65,7 +65,7 @@ fn current_locks_separate_format_semantics_and_producer() {
 
     let rendered = lock.render().expect("render current lock");
 
-    assert!(rendered.contains("schema = 2\nsemantics = 1\nproducer = \""));
+    assert!(rendered.contains("schema = 2\nsemantics = 2\nproducer = \""));
     assert!(!rendered.contains("\nengine = "));
 }
 
@@ -103,6 +103,52 @@ fn producer_identity_is_not_resolved_architecture() {
     next.producer = "0.0.2".into();
 
     assert!(first.same_resolved_state(&next));
+}
+
+#[test]
+fn current_semantics_require_complete_dependency_identity() {
+    let mut lock = LockFile::new("0".repeat(64));
+    lock.packages.push(LockedPackage {
+        name: "app".into(),
+        dependencies: vec![LockedDependency {
+            alias: None,
+            name: "core".into(),
+            kind: LockedDependencyKind::Normal,
+            scope: LockedDependencyScope::Internal,
+            target: None,
+            optional: None,
+            default_features: None,
+            features: Vec::new(),
+            source: None,
+        }],
+    });
+
+    let error = lock.render().expect_err("lossy dependency must fail");
+
+    assert!(error.to_string().contains("requires an alias"));
+}
+
+#[test]
+fn dependency_source_is_part_of_resolved_architecture() {
+    let mut registry = LockFile::new("0".repeat(64));
+    registry.packages.push(LockedPackage {
+        name: "app".into(),
+        dependencies: vec![dependency(
+            "shared",
+            LockedDependencyKind::Normal,
+            LockedDependencyScope::External,
+        )],
+    });
+    let mut git = registry.clone();
+    git.packages[0].dependencies[0].source = Some(LockedDependencySource::Git {
+        repository: "https://example.test/shared".into(),
+        branch: None,
+        tag: None,
+        rev: None,
+        requirement: None,
+    });
+
+    assert!(!registry.same_resolved_state(&git));
 }
 
 #[test]
@@ -187,9 +233,25 @@ fn dependency(
     scope: LockedDependencyScope,
 ) -> LockedDependency {
     LockedDependency {
+        alias: Some(name.into()),
         name: name.into(),
         kind,
         scope,
+        target: None,
+        optional: Some(false),
+        default_features: Some(true),
+        features: Vec::new(),
+        source: Some(match scope {
+            LockedDependencyScope::Internal => LockedDependencySource::WorkspaceMember {
+                directory: format!("crates/{name}"),
+                requirement: None,
+            },
+            LockedDependencyScope::External => LockedDependencySource::Registry {
+                registry: None,
+                index: None,
+                requirement: "*".into(),
+            },
+        }),
     }
 }
 

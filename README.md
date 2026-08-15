@@ -59,24 +59,25 @@ Protected automation can independently derive a proposal's observed state with
 a binary and base revision outside the proposal's control:
 
 ```sh
-zrail review --base HEAD --authority-root . --root proposal --deny-grants
+zrail review --base HEAD --authority-root . --root proposal
 ```
 
 `review` analyzes the proposed Cargo and Rust source as data, verifies its
 checked-in lock against an in-memory candidate, and rejects source violations,
-grants, new debt, unknown comparisons, and stale or forged locks.
+grants, new debt, unknown comparisons, and stale or forged locks by default.
+`--allow-grants` is an explicit local exception for grants; debt and unknown
+comparisons still fail. Automated and proposal-controlled merge checks must
+never use it.
 
-The included authority workflow runs on `pull_request_target`, builds only the
-protected base checkout, and places the proposal beneath that trusted root only
-after the authority binary exists. It executes no proposal actions or scripts.
-Protect the branch and require `zrail/protected-source-review`; the workflow
-publishes that status on the exact proposal commit. The ordinary CI workflow
-also handles merge-group events. A merge queue that requires protected review
-needs an organization ruleset workflow or external authority service capable of
-reviewing the merge-group commit.
+The included preview workflow demonstrates the safe computation: it builds only
+the protected base, then reads the proposal without executing its actions,
+scripts, Cargo, or build scripts. It is not a merge authority because a proposal
+can add another workflow under the same GitHub Actions identity.
 
-This repository's `main` branch requires that authority status, canonical Linux
-qualification, portable macOS and Windows tests, and signed commits.
+For merge authority, require either an organization ruleset workflow stored in
+a separately protected repository or a dedicated GitHub App. Restrict the
+required check to that exact App and require branches to be current with their
+base. Repository-local GitHub Actions statuses are preview feedback only.
 
 After an intentional dependency, provenance, gate, or ratchet change:
 
@@ -90,6 +91,23 @@ different independently reviewed revision with `--base REVISION`.
 Policy changes and `zrail update --accept-grants` require explicit human
 authorization. Agents should report `zrail diff` instead of accepting power.
 
+Approve an intentional grant through protected authority:
+
+1. Open a policy-only pull request and review its semantic diff.
+2. A designated owner manually dispatches the separately protected authority
+   workflow with that pull request number and explicit grant approval. The App
+   status is bound to the proposal SHA; debt, unknowns, and source violations
+   remain failures.
+3. Merge the policy, rebase the implementation onto it, and require a clean
+   automatic `zrail review` with no grant.
+
+This keeps the exceptional decision in protected workflow history instead of
+turning `--allow-grants` into a proposal-controlled CI switch.
+
+A lock semantic-epoch change is deliberately `unknown`, not a grant. It needs a
+separately reviewed, signed bootstrap because the protected older engine cannot
+interpret the newer architecture state.
+
 `zrail.toml` contains human-authored architecture. `zrail.lock` contains exact
 resolved state, reviewed gate bytes, generated provenance, and ratchets.
 `zrail check` never modifies either file.
@@ -98,7 +116,7 @@ resolved state, reviewed gate bytes, generated provenance, and ratchets.
 
 The Rust adapter enforces:
 
-- exact Cargo workspace membership and dependency edges;
+- exact Cargo workspace membership and source-aware dependency edges;
 - package layers and allowed dependency direction;
 - effect boundaries, capability owners, and direct-call owners;
 - complete Rust source traversal, including reviewed generated and `OUT_DIR`
@@ -121,7 +139,7 @@ zrail check [--root ROOT] [--format human|json]
 zrail update [--base REVISION] [--root ROOT] [--format human|json] [--accept-grants]
 zrail doctor [--root ROOT] [--format human|json]
 zrail explain --path PATH [--root ROOT] [--format human|json]
-zrail review [--base REVISION] [--authority-root ROOT] --root PROPOSAL [--deny-grants]
+zrail review [--base REVISION] [--authority-root ROOT] --root PROPOSAL [--allow-grants]
 zrail diff --base REVISION [--root ROOT] [--deny-grants]
 zrail diff --before ROOT --after ROOT [--deny-grants]
 ```
@@ -134,7 +152,8 @@ evidence. The lock hashes the gate bytes, so a gate change cannot pass silently.
 `QUAL-02` requires pull requests to pass independent source analysis by a zrail
 binary built from the protected base commit. It verifies observed source and the
 proposed lock, so proposed checker changes cannot authorize violations or grants
-in the same pull request.
+in the same pull request. Its required result must come from a ruleset workflow
+or App outside the proposal's write domain.
 
 Run the complete offline repository gate with:
 

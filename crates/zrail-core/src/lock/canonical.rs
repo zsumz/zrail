@@ -1,8 +1,10 @@
 //! Validation and deterministic ordering for resolved lock state.
 
+mod dependency;
+
 use std::{fmt, path::Path};
 
-use super::{LockError, LockFile, LockedDependency};
+use super::{LockError, LockFile};
 
 impl LockFile {
     pub fn canonicalize(&mut self) -> Result<(), LockError> {
@@ -34,23 +36,31 @@ fn validate_header(lock: &LockFile) -> Result<(), LockError> {
 }
 
 fn canonicalize_packages(lock: &mut LockFile) -> Result<(), LockError> {
+    let semantics = lock.semantics;
     for package in &mut lock.packages {
         if package.name.trim().is_empty() {
             return Err(LockError("locked package names may not be empty".into()));
         }
-        for dependency in &package.dependencies {
+        for dependency in &mut package.dependencies {
             if dependency.name.trim().is_empty() {
                 return Err(LockError(format!(
                     "dependency names in package {} may not be empty",
                     package.name
                 )));
             }
+            dependency::canonicalize(dependency, semantics)?;
         }
         package.dependencies.sort();
-        ensure_unique(
-            package.dependencies.iter().map(dependency_identity),
-            &format!("dependency in package {}", package.name),
-        )?;
+        if package
+            .dependencies
+            .windows(2)
+            .any(|pair| pair[0] == pair[1])
+        {
+            return Err(LockError(format!(
+                "duplicate dependency in package {}",
+                package.name
+            )));
+        }
     }
     lock.packages
         .sort_by(|left, right| left.name.cmp(&right.name));
@@ -162,13 +172,6 @@ fn valid_root(root: &str) -> bool {
     !root.contains(['*', '?'])
         && crate::path::normalize_relative(Path::new(root))
             .is_ok_and(|normalized| !normalized.is_empty() && normalized == root)
-}
-
-fn dependency_identity(dependency: &LockedDependency) -> String {
-    format!(
-        "{:?}:{:?}:{}",
-        dependency.scope, dependency.kind, dependency.name
-    )
 }
 
 fn ensure_unique<T>(values: impl Iterator<Item = T>, label: &str) -> Result<(), LockError>

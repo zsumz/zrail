@@ -7,7 +7,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::{
     Contract, DependencyMode, Finding, FindingSink, LOCK_SCHEMA, LOCK_SEMANTICS, LockFile,
-    LockedDependencyKind, LockedDependencyScope, LockedPackage,
+    LockedDependency, LockedPackage,
 };
 
 use super::model::RepositoryModel;
@@ -119,7 +119,10 @@ fn compare_edges(current: &LockFile, candidate: &LockFile, findings: &mut Findin
             "LOCK-005",
             "lock.dependency-edge",
             "lock",
-            format!("resolved dependency edge {edge} is not reviewed in zrail.lock"),
+            format!(
+                "resolved dependency edge {} is not reviewed in zrail.lock",
+                edge_label(edge)
+            ),
         ));
     }
     for edge in old.difference(&new) {
@@ -127,7 +130,10 @@ fn compare_edges(current: &LockFile, candidate: &LockFile, findings: &mut Findin
             "LOCK-006",
             "lock.dependency-edge",
             "lock",
-            format!("zrail.lock retains stale dependency edge {edge}"),
+            format!(
+                "zrail.lock retains stale dependency edge {}",
+                edge_label(edge)
+            ),
         ));
     }
 }
@@ -188,36 +194,21 @@ fn ratchet_values(lock: &LockFile) -> BTreeMap<String, usize> {
         .collect()
 }
 
-fn package_edges(packages: &[LockedPackage]) -> BTreeSet<String> {
+fn package_edges(packages: &[LockedPackage]) -> BTreeSet<(String, LockedDependency)> {
     packages
         .iter()
         .flat_map(|package| {
-            package.dependencies.iter().map(move |dependency| {
-                format!(
-                    "{}->{}:{}:{}",
-                    package.name,
-                    scope_name(dependency.scope),
-                    kind_name(dependency.kind),
-                    dependency.name
-                )
-            })
+            package
+                .dependencies
+                .iter()
+                .cloned()
+                .map(|dependency| (package.name.clone(), dependency))
         })
         .collect()
 }
 
-const fn kind_name(kind: LockedDependencyKind) -> &'static str {
-    match kind {
-        LockedDependencyKind::Normal => "normal",
-        LockedDependencyKind::Development => "development",
-        LockedDependencyKind::Build => "build",
-    }
-}
-
-const fn scope_name(scope: LockedDependencyScope) -> &'static str {
-    match scope {
-        LockedDependencyScope::Internal => "internal",
-        LockedDependencyScope::External => "external",
-    }
+fn edge_label((package, dependency): &(String, LockedDependency)) -> String {
+    format!("{package}->{}", dependency.label())
 }
 
 #[cfg(test)]
