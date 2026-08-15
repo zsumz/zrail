@@ -23,3 +23,7 @@ pub(crate) use update::update;
 #[cfg(test)]
 #[path = "git_base_migration_test.rs"]
 mod git_base_migration_test;
+
+#[cfg(test)]
+#[path = "update_contract_test.rs"]
+mod update_contract_test;

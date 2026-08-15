@@ -2,7 +2,7 @@
 
 use std::fs;
 
-use zrail_core::{LockFile, LockedGeneratedSource};
+use zrail_core::{LockFile, LockedGeneratedSource, load_contract};
 
 use crate::app::{
     args::{DiffMode, DiffOptions},
@@ -79,7 +79,10 @@ fn generated_contract(inputs: &str) -> String {
 }
 
 fn write_lock(root: &std::path::Path, protected: bool) {
-    let mut lock = LockFile::new("0".repeat(64));
+    let digest = load_contract(root, std::path::Path::new("zrail.toml"))
+        .expect("load fixture contract")
+        .sha256;
+    let mut lock = LockFile::new(digest);
     if protected {
         lock.generated.push(LockedGeneratedSource {
             root: "src/generated".into(),

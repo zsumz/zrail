@@ -1,0 +1,107 @@
+//! Authority-aware diffs reject stale or incompatible lock inputs.
+
+use crate::{ChangeKind, LockFile, LockedPackage, load_contract};
+
+use super::compare_architecture_checked;
+
+#[test]
+fn stale_contract_lock_is_unknown_and_skips_lock_semantics() {
+    let fixture = fixture();
+    let bundle =
+        load_contract(&fixture, std::path::Path::new("zrail.toml")).expect("load fixture contract");
+    let mut before = LockFile::new("0".repeat(64));
+    before.packages.push(package("core"));
+    let mut after = LockFile::new(&bundle.sha256);
+    after.packages.push(package("adapter"));
+
+    let report = compare_architecture_checked(
+        &bundle.contract,
+        &bundle.sha256,
+        Some(&before),
+        &bundle.contract,
+        &bundle.sha256,
+        Some(&after),
+    );
+
+    assert!(report.denies_grants());
+    assert!(report.changes.iter().any(|change| {
+        change.kind == ChangeKind::Unknown && change.subject == "before:contract"
+    }));
+    assert!(
+        report
+            .changes
+            .iter()
+            .all(|change| change.rail != "repository.package")
+    );
+    reset(&fixture);
+}
+
+#[test]
+fn incompatible_engine_is_unknown() {
+    let fixture = fixture();
+    let bundle =
+        load_contract(&fixture, std::path::Path::new("zrail.toml")).expect("load fixture contract");
+    let mut lock = LockFile::new(&bundle.sha256);
+    lock.engine = "999.0.0".into();
+
+    let report = compare_architecture_checked(
+        &bundle.contract,
+        &bundle.sha256,
+        Some(&lock),
+        &bundle.contract,
+        &bundle.sha256,
+        Some(&lock),
+    );
+
+    assert_eq!(report.summary.unknown, 2);
+    assert!(
+        report
+            .changes
+            .iter()
+            .all(|change| change.rail == "lock.authority")
+    );
+    reset(&fixture);
+}
+
+fn package(name: &str) -> LockedPackage {
+    LockedPackage {
+        name: name.into(),
+        dependencies: Vec::new(),
+    }
+}
+
+fn fixture() -> std::path::PathBuf {
+    let root = std::env::temp_dir().join(format!(
+        "zrail-checked-diff-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    reset(&root);
+    std::fs::create_dir_all(&root).expect("create fixture");
+    std::fs::write(
+        root.join("zrail.toml"),
+        concat!(
+            "schema = 1\nadapters = [\"rust\"]\n\n",
+            "[repository]\nroots = [\".\"]\nexclude = []\n",
+            "workspace_members = \"exact\"\nnested_git = \"deny\"\n",
+            "submodules = \"deny\"\nsymlinks = \"inside\"\n\n",
+            "[dependencies]\nmode = \"locked\"\n",
+            "unassigned_packages = \"allow\"\ncycles = \"deny\"\n\n",
+            "[source.rust]\nmodule_docs = \"allow\"\nfacades = \"allow\"\n",
+            "tests = \"allow\"\n\n[source.rust.hygiene]\nunsafe = \"allow\"\n",
+            "lint_suppressions = \"allow\"\ndeny_methods = []\ndeny_macros = []\n\n",
+            "[source.rust.size.facade]\ntarget = 300\nhard = 300\n\n",
+            "[source.rust.size.implementation]\ntarget = 300\nhard = 300\n\n",
+            "[source.rust.size.test]\ntarget = 300\nhard = 300\n\n",
+            "[source.rust.size.auxiliary]\ntarget = 300\nhard = 300\n",
+        ),
+    )
+    .expect("write fixture contract");
+    root
+}
+
+fn reset(root: &std::path::Path) {
+    if root.exists() {
+        std::fs::remove_dir_all(root).expect("reset fixture");
+    }
+}

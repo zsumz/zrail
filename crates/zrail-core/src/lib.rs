@@ -21,7 +21,10 @@ pub use contract::{
     contract_imports, load_contract, parse_evidence_reference,
 };
 pub use diagnostic::{AnalysisQuality, Finding, FindingSink, Severity, SourceSpan};
-pub use diff::{ArchitectureChange, ChangeKind, DiffReport, DiffSummary, compare_architecture};
+pub use diff::{
+    ArchitectureChange, ChangeKind, DiffReport, DiffSummary, compare_architecture,
+    compare_architecture_checked,
+};
 pub use digest::sha256_hex;
 pub use lock::{
     LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope, LockedGate,

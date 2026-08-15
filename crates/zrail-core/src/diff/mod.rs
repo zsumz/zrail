@@ -11,5 +11,9 @@ mod support;
 mod topology;
 mod topology_policy;
 
-pub use compare::compare_architecture;
+pub use compare::{compare_architecture, compare_architecture_checked};
 pub use model::{ArchitectureChange, ChangeKind, DiffReport, DiffSummary};
+
+#[cfg(test)]
+#[path = "compare_checked_test.rs"]
+mod compare_checked_test;

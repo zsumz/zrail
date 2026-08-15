@@ -3,7 +3,8 @@
 use std::path::Path;
 
 use zrail_core::{
-    DiffReport, LockFile, ReportStatus, compare_architecture, load_contract, path::repository_file,
+    DiffReport, LockFile, ReportStatus, compare_architecture_checked, load_contract,
+    path::repository_file,
 };
 use zrail_rust::{build_lock, check_repository_with_lock};
 
@@ -44,10 +45,12 @@ pub(crate) fn update(options: &UpdateOptions) -> Result<CommandResult, CliError>
     };
     let bundle = load_contract(&common.root, &common.config)
         .map_err(|error| CliError::new(error.to_string()))?;
-    let changes = compare_architecture(
+    let changes = compare_architecture_checked(
         &bundle.contract,
+        &bundle.sha256,
         current.as_ref(),
         &bundle.contract,
+        &bundle.sha256,
         Some(&candidate),
     );
     if changes.denies_grants() && !options.accept_grants {

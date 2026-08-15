@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use zrail_core::{LockFile, compare_architecture, load_contract, path::repository_file};
+use zrail_core::{LockFile, compare_architecture_checked, load_contract, path::repository_file};
 
 use crate::app::{
     args::{DiffMode, DiffOptions},
@@ -33,10 +33,12 @@ fn compare(
         .map_err(|error| CliError::new(format!("load after contract: {error}")))?;
     let before_lock = optional_lock(before_root, &options.lock)?;
     let after_lock = optional_lock(after_root, &options.lock)?;
-    let report = compare_architecture(
+    let report = compare_architecture_checked(
         &before.contract,
+        &before.sha256,
         before_lock.as_ref(),
         &after.contract,
+        &after.sha256,
         after_lock.as_ref(),
     );
     let text = match options.format {
@@ -58,3 +60,7 @@ fn optional_lock(root: &Path, lock: &Path) -> Result<Option<LockFile>, CliError>
         .map(Some)
         .map_err(|error| CliError::new(error.to_string()))
 }
+
+#[cfg(test)]
+#[path = "diff_test.rs"]
+mod diff_test;
