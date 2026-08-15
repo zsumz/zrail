@@ -111,14 +111,9 @@ fn check_effect_profiles(context: &RuleContext<'_>, findings: &mut FindingSink) 
     let assignments = package_profiles(context);
     let mut emitted = BTreeSet::new();
     for file in &context.source.files {
-        let Some(package) = package_for_file(&context.cargo.packages, &file.relative) else {
-            continue;
-        };
-        let Some(profiles) = assignments.get(package.name.as_str()) else {
-            continue;
-        };
+        let profiles = profiles_for_file(file, &context.cargo.packages, &assignments);
         for profile_name in profiles {
-            let Some(profile) = context.contract.profiles.get(*profile_name) else {
+            let Some(profile) = context.contract.profiles.get(profile_name) else {
                 continue;
             };
             for effect in &profile.effects.deny {
@@ -138,6 +133,28 @@ fn check_effect_profiles(context: &RuleContext<'_>, findings: &mut FindingSink) 
             }
         }
     }
+}
+
+fn profiles_for_file<'a>(
+    file: &RustFileFacts,
+    packages: &'a [Package],
+    assignments: &BTreeMap<&'a str, Vec<&'a str>>,
+) -> BTreeSet<&'a str> {
+    let mut profiles = BTreeSet::new();
+    if file.packages.is_empty() {
+        if let Some(package) = package_for_file(packages, &file.relative)
+            && let Some(assigned) = assignments.get(package.name.as_str())
+        {
+            profiles.extend(assigned.iter().copied());
+        }
+        return profiles;
+    }
+    for package in &file.packages {
+        if let Some(assigned) = assignments.get(package.as_str()) {
+            profiles.extend(assigned.iter().copied());
+        }
+    }
+    profiles
 }
 
 fn effect_finding(
@@ -193,10 +210,12 @@ fn matches_scope(path: &str, include: &[String], exclude: &[String]) -> bool {
 }
 
 pub(super) fn path_matches(denied: &str, observed: &ObservedFact) -> bool {
-    observed.name == denied
-        || observed.name.starts_with(&format!("{denied}::"))
-        || (observed.quality != AnalysisQuality::Exact
-            && denied.starts_with(&format!("{}::", observed.name)))
+    observed.policy_names().any(|name| {
+        name == denied
+            || name.starts_with(&format!("{denied}::"))
+            || (observed.quality != AnalysisQuality::Exact
+                && denied.starts_with(&format!("{name}::")))
+    })
 }
 
 const fn effect_tokens(effect: Effect) -> &'static [&'static str] {

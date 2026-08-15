@@ -32,8 +32,9 @@ impl FactVisitor<'_> {
             boundary.cfg_test = self.test_only_context || item.attrs.iter().any(is_cfg_test);
             self.includes.push(boundary);
         } else if item.ident.is_none() {
+            let (name, _) = self.imports.resolve(&item.mac.path);
             self.item_macros.push(fact(
-                macro_name(&item.mac),
+                name,
                 item.mac.path.span(),
                 AnalysisQuality::Unresolved,
             ));
@@ -46,14 +47,4 @@ impl FactVisitor<'_> {
             self.includes.push(boundary);
         }
     }
-}
-
-fn macro_name(invocation: &Macro) -> String {
-    invocation
-        .path
-        .segments
-        .iter()
-        .map(|segment| segment.ident.to_string())
-        .collect::<Vec<_>>()
-        .join("::")
 }

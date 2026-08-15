@@ -40,8 +40,18 @@ impl Reachability {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct ObservedFact {
     pub(crate) name: String,
+    pub(crate) canonical: Vec<String>,
     pub(crate) span: Option<SourceSpan>,
     pub(crate) quality: AnalysisQuality,
+}
+
+impl ObservedFact {
+    pub(crate) fn policy_names(&self) -> impl Iterator<Item = &str> {
+        self.canonical
+            .iter()
+            .map(String::as_str)
+            .chain(self.canonical.is_empty().then_some(self.name.as_str()))
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -87,6 +97,7 @@ pub(crate) struct IncludeBoundary {
 #[derive(Clone, Debug)]
 pub(crate) struct RustFileFacts {
     pub(crate) relative: String,
+    pub(crate) packages: Vec<String>,
     pub(crate) class: FileClass,
     pub(crate) reachability: Reachability,
     pub(crate) syntax: SourceSyntax,

@@ -10,6 +10,7 @@ use crate::inventory::RepositoryInventory;
 use super::{
     dependencies::{collect_dependencies, workspace_dependencies},
     model::{CargoWorkspace, Package},
+    overrides,
     targets::collect_target_roots,
     workspace::{
         excluded_member, expand_implicit_members, expand_members, normalized_directory,
@@ -48,16 +49,23 @@ pub(crate) fn load_cargo_workspace(
         ));
     }
     let mut packages = Vec::new();
+    let mut resolution_overrides = Vec::new();
     for manifest in &inventory.manifest_paths {
         let value = if manifest == &root_manifest {
             root.clone()
         } else {
             read_manifest_counted(manifest, &mut manifest_bytes)?
         };
+        let directory = normalized_directory(&inventory.root, manifest)?;
+        let manifest_path = if directory == "." {
+            "Cargo.toml".into()
+        } else {
+            format!("{directory}/Cargo.toml")
+        };
+        overrides::manifest(&value, &manifest_path, &mut resolution_overrides);
         let Some(name) = package_name(&value)? else {
             continue;
         };
-        let directory = normalized_directory(&inventory.root, manifest)?;
         if directory != "." && excluded_member(&directory, &exclude_patterns) {
             continue;
         }
@@ -84,10 +92,15 @@ pub(crate) fn load_cargo_workspace(
     let declared_members = expand_members(&member_patterns, &observed_members, root_package)?;
     let declared_members = expand_implicit_members(declared_members, &packages, &exclude_patterns)?;
     resolve_workspace_dependencies(&mut packages, &declared_members)?;
+    resolution_overrides.extend(overrides::named_registries(&packages));
+    resolution_overrides.extend(overrides::configuration(inventory));
+    resolution_overrides.sort();
+    resolution_overrides.dedup();
     Ok(CargoWorkspace {
         declared_members,
         observed_members,
         packages,
+        resolution_overrides,
     })
 }
 

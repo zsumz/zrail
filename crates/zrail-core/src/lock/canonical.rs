@@ -27,6 +27,7 @@ fn validate_header(lock: &LockFile) -> Result<(), LockError> {
     if lock.producer.trim().is_empty() {
         return Err(LockError("zrail.lock producer may not be empty".into()));
     }
+    super::compatibility::validate_epochs(lock.schema, lock.semantics)?;
     if !valid_digest(&lock.contract_sha256) {
         return Err(LockError(
             "zrail.lock contract_sha256 must be 64 lowercase hexadecimal characters".into(),

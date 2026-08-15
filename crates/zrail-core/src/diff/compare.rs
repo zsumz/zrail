@@ -48,7 +48,7 @@ fn lock_authority(
         )];
     };
     let mut changes = Vec::new();
-    if !matches!(lock.schema, 1 | LOCK_SCHEMA) {
+    if !lock.has_supported_schema() {
         changes.push(
             ArchitectureChange::new(
                 ChangeKind::Unknown,

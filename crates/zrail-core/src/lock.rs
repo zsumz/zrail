@@ -1,6 +1,7 @@
 //! Canonical dependency, generated-provenance, and tightening-ratchet state.
 
 mod canonical;
+mod compatibility;
 mod dependency;
 
 use std::{error::Error, fmt, fs, path::Path};
@@ -11,8 +12,8 @@ use crate::input::{read_text, replace_text};
 
 pub use dependency::LockedDependencySource;
 
-pub const LOCK_SCHEMA: u64 = 2;
-pub const LOCK_SEMANTICS: u64 = 2;
+pub const LOCK_SCHEMA: u64 = 3;
+pub const LOCK_SEMANTICS: u64 = 3;
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -167,6 +168,10 @@ impl LockFile {
 
     pub fn has_current_semantics(&self) -> bool {
         self.semantics == LOCK_SEMANTICS
+    }
+
+    pub fn has_supported_schema(&self) -> bool {
+        matches!(self.schema, 1 | 2 | LOCK_SCHEMA)
     }
 
     pub fn same_resolved_state(&self, other: &Self) -> bool {

@@ -116,6 +116,7 @@ fn index_file(source_file: &crate::inventory::RustSourceFile, syntax: &syn::File
         };
     RustFileFacts {
         relative: source_file.relative.clone(),
+        packages: Vec::new(),
         class: source_file.class,
         reachability: Reachability::Unreachable,
         syntax: SourceSyntax::Items,
@@ -144,6 +145,7 @@ fn index_expression(
     visitor.visit_expr(expression);
     RustFileFacts {
         relative: source_file.relative.clone(),
+        packages: Vec::new(),
         class: source_file.class,
         reachability: Reachability::Unreachable,
         syntax: SourceSyntax::Expression,

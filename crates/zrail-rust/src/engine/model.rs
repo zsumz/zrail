@@ -8,7 +8,7 @@ use crate::{
     cargo::{CargoWorkspace, load_cargo_workspace},
     inventory::{RepositoryInventory, inventory_repository},
     rules::source_graph,
-    source::{SourceIndex, index_rust_source},
+    source::{SourceIndex, canonicalize_dependency_roots, index_rust_source},
 };
 
 use super::CheckError;
@@ -29,15 +29,21 @@ pub(crate) fn load_model(root: &Path, config: &Path) -> Result<RepositoryModel, 
     let cargo = load_cargo_workspace(&inventory)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     let mut source = index_rust_source(&inventory);
-    let (reachability, findings) =
-        source_graph::analyze(&bundle.contract, &inventory, &cargo, &source);
+    let graph = source_graph::analyze(&bundle.contract, &inventory, &cargo, &source);
+    canonicalize_dependency_roots(&mut source, &cargo, &graph.packages);
     for file in &mut source.files {
-        file.reachability = reachability
+        file.packages = graph
+            .packages
+            .get(&file.relative)
+            .map(|packages| packages.iter().cloned().collect())
+            .unwrap_or_default();
+        file.reachability = graph
+            .reachability
             .get(&file.relative)
             .copied()
             .unwrap_or_default();
     }
-    source.findings.extend(findings);
+    source.findings.extend(graph.findings);
     Ok(RepositoryModel {
         bundle,
         inventory,

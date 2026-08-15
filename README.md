@@ -109,14 +109,17 @@ separately reviewed, signed bootstrap because the protected older engine cannot
 interpret the newer architecture state.
 
 `zrail.toml` contains human-authored architecture. `zrail.lock` contains exact
-resolved state, reviewed gate bytes, generated provenance, and ratchets.
-`zrail check` never modifies either file.
+normalized direct dependency declarations, reviewed gate bytes, generated
+provenance, and ratchets. `zrail check` never modifies either file.
+Cargo owns exact selected versions, checksums, and Git commits in `Cargo.lock`;
+zrail does not claim to be a second Cargo resolver.
 
 ## Checks
 
 The Rust adapter enforces:
 
 - exact Cargo workspace membership and source-aware dependency edges;
+- canonical Cargo dependency identities in Rust source-policy facts;
 - package layers and allowed dependency direction;
 - effect boundaries, capability owners, and direct-call owners;
 - complete Rust source traversal, including reviewed generated and `OUT_DIR`
@@ -127,6 +130,8 @@ The Rust adapter enforces:
 
 Contract parsing is strict. Unknown keys, stale policy, unresolved source
 boundaries, missing evidence, and unreviewed lock changes fail closed.
+Repository-controlled Cargo source overrides and registry mappings are rejected
+until zrail can attest their effective resolution.
 
 `zrail diff` classifies changes as grants, revocations, debt, cleanup, neutral,
 or unknown. `--deny-grants` rejects added power, new debt, and unsafe comparisons.

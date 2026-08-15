@@ -33,7 +33,7 @@ pub(super) fn check_lock(
         );
         return;
     };
-    if !matches!(current.schema, 1 | LOCK_SCHEMA) {
+    if !current.has_supported_schema() {
         findings.push(
             Finding::error(
                 "LOCK-011",

@@ -46,6 +46,19 @@ evidence = [
   "gate:architecture-review",
 ]
 
+[[invariant]]
+id = "DEPS-01"
+title = "Cargo spelling and resolution indirection cannot hide dependency authority"
+status = "enforced"
+document = "README.md#checks"
+evidence = [
+  "rust-test:crates/zrail-testkit/tests/cargo_alias_policy.rs::dependency_aliases_compose_with_rust_aliases_across_policy_facts",
+  "rust-test:crates/zrail-testkit/tests/cargo_override.rs::manifest_and_config_resolution_surfaces_are_rejected",
+  "rust-test:crates/zrail-testkit/tests/cargo_override.rs::named_registry_without_an_attested_index_is_rejected",
+  "rust-test:crates/zrail-testkit/tests/dependency_identity.rs::aliases_sources_targets_and_workspace_inheritance_are_locked",
+  "gate:check",
+]
+
 [dependencies]
 mode = "locked"
 unassigned_packages = "deny"

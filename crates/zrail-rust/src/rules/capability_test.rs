@@ -30,9 +30,19 @@ fn conservative_glob_roots_cover_narrower_denials() {
     ));
 }
 
+#[test]
+fn canonical_dependency_identity_owns_policy_matching() {
+    let mut renamed = fact("runtime::spawn", AnalysisQuality::Exact);
+    renamed.canonical.push("tokio::spawn".into());
+
+    assert!(path_matches("tokio", &renamed));
+    assert!(!path_matches("runtime", &renamed));
+}
+
 fn fact(name: &str, quality: AnalysisQuality) -> ObservedFact {
     ObservedFact {
         name: name.into(),
+        canonical: Vec::new(),
         span: None,
         quality,
     }

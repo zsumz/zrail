@@ -37,7 +37,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             if hygiene
                 .deny_macros
                 .iter()
-                .any(|denied| denied == &invocation.name)
+                .any(|denied| macro_matches(denied, invocation))
             {
                 findings.push(
                     Finding::error(
@@ -88,4 +88,10 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             }
         }
     }
+}
+
+fn macro_matches(denied: &str, invocation: &crate::source::ObservedFact) -> bool {
+    invocation
+        .policy_names()
+        .any(|name| name == denied || name.rsplit("::").next().is_some_and(|leaf| leaf == denied))
 }

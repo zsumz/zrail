@@ -4,10 +4,10 @@ use zrail_core::{AnalysisQuality, Finding, SourceSpan, path::glob_matches};
 
 use crate::{
     inventory::{FileClass, RepositoryEntryKind},
-    source::{Reachability, ResolutionError, SourceSyntax},
+    source::{ResolutionError, SourceSyntax},
 };
 
-use super::Walker;
+use super::{TraversalContext, Walker};
 
 impl Walker<'_> {
     pub(super) fn follow(
@@ -18,7 +18,7 @@ impl Walker<'_> {
         label: &str,
         directory_owned: bool,
         expected_syntax: SourceSyntax,
-        reachability: Reachability,
+        context: TraversalContext,
     ) {
         if !self.under_roots(&target) || self.excluded(&target) {
             self.boundary(
@@ -50,8 +50,12 @@ impl Walker<'_> {
             Some(RepositoryEntryKind::File) => {
                 self.reached
                     .entry(target.clone())
-                    .and_modify(|current| *current = current.join(reachability))
-                    .or_insert(reachability);
+                    .and_modify(|current| *current = current.join(context.reachability))
+                    .or_insert(context.reachability);
+                self.reached_packages
+                    .entry(target.clone())
+                    .or_default()
+                    .insert(context.package.clone());
                 let Some(file) = self.facts.get(target.as_str()) else {
                     self.unresolved(
                         origin,
@@ -72,7 +76,7 @@ impl Walker<'_> {
                     );
                     return;
                 }
-                let state = (target, directory_owned, reachability);
+                let state = (target, directory_owned, context);
                 if !self.visited.insert(state.clone()) {
                     return;
                 }

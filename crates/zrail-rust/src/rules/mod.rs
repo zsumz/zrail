@@ -1,6 +1,7 @@
 //! Typed architecture rails evaluated over one repository fact model.
 
 mod capability;
+mod cargo_override;
 mod dependency;
 mod dependency_cycle;
 mod dependency_deny;

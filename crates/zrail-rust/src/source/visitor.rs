@@ -123,14 +123,14 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_macro(&mut self, invocation: &'ast Macro) {
-        let name = invocation
-            .path
-            .segments
-            .last()
-            .map(|segment| segment.ident.to_string())
-            .unwrap_or_default();
+        let (name, quality) = self.imports.resolve(&invocation.path);
         self.macros
-            .push(fact(name, invocation.path.span(), AnalysisQuality::Exact));
+            .push(fact(name.clone(), invocation.path.span(), quality));
+        self.macros.extend(super::calls::candidates(
+            &invocation.path,
+            self.imports,
+            &name,
+        ));
         visit::visit_macro(self, invocation);
     }
 

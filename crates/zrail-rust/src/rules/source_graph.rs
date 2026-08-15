@@ -1,6 +1,7 @@
 //! Cargo roots and Rust source edges must form one closed, analyzable graph.
 
 mod boundary;
+mod external_module;
 mod include;
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
@@ -10,10 +11,7 @@ use zrail_core::{Contract, Finding, FindingSink};
 use crate::{
     cargo::{CargoTargetKind, CargoWorkspace},
     inventory::{RepositoryEntryKind, RepositoryInventory},
-    source::{
-        ModuleDeclaration, ModuleTarget, Reachability, RustFileFacts, SourceIndex, SourceSyntax,
-        join_relative, module_target,
-    },
+    source::{Reachability, RustFileFacts, SourceIndex, SourceSyntax, join_relative},
 };
 
 pub(crate) fn analyze(
@@ -21,8 +19,33 @@ pub(crate) fn analyze(
     inventory: &RepositoryInventory,
     cargo: &CargoWorkspace,
     source: &SourceIndex,
-) -> (BTreeMap<String, Reachability>, Vec<Finding>) {
+) -> SourceGraphAnalysis {
     Walker::new(contract, inventory, cargo, source).run()
+}
+
+pub(crate) struct SourceGraphAnalysis {
+    pub(crate) reachability: BTreeMap<String, Reachability>,
+    pub(crate) packages: BTreeMap<String, BTreeSet<String>>,
+    pub(crate) findings: Vec<Finding>,
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+struct TraversalContext {
+    reachability: Reachability,
+    package: String,
+}
+
+impl TraversalContext {
+    fn with_test_guard(&self, guarded: bool) -> Self {
+        Self {
+            reachability: if guarded {
+                Reachability::TestOnly
+            } else {
+                self.reachability
+            },
+            package: self.package.clone(),
+        }
+    }
 }
 
 struct Walker<'a> {
@@ -33,11 +56,12 @@ struct Walker<'a> {
     facts: BTreeMap<&'a str, &'a RustFileFacts>,
     entries: BTreeMap<&'a str, RepositoryEntryKind>,
     reached: BTreeMap<String, Reachability>,
+    reached_packages: BTreeMap<String, BTreeSet<String>>,
     seen_item_macros: BTreeSet<(String, String)>,
     seen_out_dir: BTreeSet<(String, String)>,
     reported: BTreeSet<(String, String)>,
-    visited: BTreeSet<(String, bool, Reachability)>,
-    queue: VecDeque<(String, bool, Reachability)>,
+    visited: BTreeSet<(String, bool, TraversalContext)>,
+    queue: VecDeque<(String, bool, TraversalContext)>,
 }
 
 impl<'a> Walker<'a> {
@@ -63,6 +87,7 @@ impl<'a> Walker<'a> {
                 .map(|entry| (entry.relative.as_str(), entry.kind))
                 .collect(),
             reached: BTreeMap::new(),
+            reached_packages: BTreeMap::new(),
             seen_item_macros: BTreeSet::new(),
             seen_out_dir: BTreeSet::new(),
             reported: BTreeSet::new(),
@@ -71,15 +96,19 @@ impl<'a> Walker<'a> {
         }
     }
 
-    fn run(mut self) -> (BTreeMap<String, Reachability>, Vec<Finding>) {
+    fn run(mut self) -> SourceGraphAnalysis {
         self.seed_cargo_targets();
-        while let Some((path, directory_owned, reachability)) = self.queue.pop_front() {
-            self.walk_file(&path, directory_owned, reachability);
+        while let Some((path, directory_owned, context)) = self.queue.pop_front() {
+            self.walk_file(&path, directory_owned, &context);
         }
         self.reject_orphans();
         self.reject_stale_item_macros();
         self.reject_stale_out_dir();
-        (self.reached, self.findings.into_findings())
+        SourceGraphAnalysis {
+            reachability: self.reached,
+            packages: self.reached_packages,
+            findings: self.findings.into_findings(),
+        }
     }
 
     fn seed_cargo_targets(&mut self) {
@@ -102,7 +131,10 @@ impl<'a> Walker<'a> {
                         &format!("Cargo target {:?}", target.path),
                         true,
                         SourceSyntax::Items,
-                        reachability,
+                        TraversalContext {
+                            reachability,
+                            package: package.name.clone(),
+                        },
                     ),
                     Err(error) => self.resolution_error(
                         &package.manifest_path(),
@@ -115,7 +147,7 @@ impl<'a> Walker<'a> {
         }
     }
 
-    fn walk_file(&mut self, path: &str, directory_owned: bool, reachability: Reachability) {
+    fn walk_file(&mut self, path: &str, directory_owned: bool, context: &TraversalContext) {
         let Some(file) = self.facts.get(path) else {
             return;
         };
@@ -138,10 +170,10 @@ impl<'a> Walker<'a> {
             }
         }
         for declaration in modules {
-            self.walk_module(path, directory_owned, reachability, &declaration);
+            self.walk_module(path, directory_owned, context, &declaration);
         }
         for include in includes {
-            self.walk_include(path, reachability, &include);
+            self.walk_include(path, context, &include);
         }
     }
 
@@ -175,64 +207,6 @@ impl<'a> Walker<'a> {
                 .at(&item_macro.path, None)
                 .because(&item_macro.reason),
             );
-        }
-    }
-
-    fn walk_module(
-        &mut self,
-        source: &str,
-        directory_owned: bool,
-        reachability: Reachability,
-        declaration: &ModuleDeclaration,
-    ) {
-        let label = format!("module {:?}", declaration.name);
-        let target_reachability = if declaration.cfg_test {
-            Reachability::TestOnly
-        } else {
-            reachability
-        };
-        match module_target(source, directory_owned, declaration) {
-            Ok(ModuleTarget::Exact(path)) => {
-                self.follow(
-                    source,
-                    declaration.span,
-                    path,
-                    &label,
-                    false,
-                    SourceSyntax::Items,
-                    target_reachability,
-                );
-            }
-            Ok(ModuleTarget::Search { direct, nested }) => {
-                let candidates = [direct, nested]
-                    .into_iter()
-                    .filter(|path| self.entries.contains_key(path.as_str()))
-                    .collect::<Vec<_>>();
-                match candidates.as_slice() {
-                    [path] => {
-                        self.follow(
-                            source,
-                            declaration.span,
-                            path.clone(),
-                            &label,
-                            false,
-                            SourceSyntax::Items,
-                            target_reachability,
-                        );
-                    }
-                    [] => self.missing(
-                        source,
-                        declaration.span,
-                        format!("{label} has no source file at either Rust module path"),
-                    ),
-                    _ => self.missing(
-                        source,
-                        declaration.span,
-                        format!("{label} is ambiguous because both Rust module paths exist"),
-                    ),
-                }
-            }
-            Err(error) => self.resolution_error(source, declaration.span, &error, &label),
         }
     }
 }

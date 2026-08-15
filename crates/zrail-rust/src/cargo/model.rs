@@ -83,6 +83,10 @@ impl Package {
     }
 }
 
+pub(crate) fn rust_crate_root(name: &str) -> String {
+    name.replace('-', "_")
+}
+
 impl Dependency {
     pub(crate) fn internal_package(&self) -> Option<&str> {
         matches!(self.source, DependencySource::WorkspaceMember { .. })
@@ -102,4 +106,11 @@ pub(crate) struct CargoWorkspace {
     pub(crate) declared_members: Vec<String>,
     pub(crate) observed_members: Vec<String>,
     pub(crate) packages: Vec<Package>,
+    pub(crate) resolution_overrides: Vec<CargoResolutionOverride>,
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) struct CargoResolutionOverride {
+    pub(crate) path: String,
+    pub(crate) surface: String,
 }

@@ -65,7 +65,7 @@ fn current_locks_separate_format_semantics_and_producer() {
 
     let rendered = lock.render().expect("render current lock");
 
-    assert!(rendered.contains("schema = 2\nsemantics = 2\nproducer = \""));
+    assert!(rendered.contains("schema = 3\nsemantics = 3\nproducer = \""));
     assert!(!rendered.contains("\nengine = "));
 }
 

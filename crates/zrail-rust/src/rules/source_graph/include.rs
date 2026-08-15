@@ -1,25 +1,19 @@
 //! Literal and verified `OUT_DIR` includes become exact source-graph edges.
 
-use crate::source::{
-    IncludeBoundary, IncludeContext, Reachability, SourceSyntax, join_relative, parent,
-};
+use crate::source::{IncludeBoundary, IncludeContext, SourceSyntax, join_relative, parent};
 
-use super::Walker;
+use super::{TraversalContext, Walker};
 
 impl Walker<'_> {
     pub(super) fn walk_include(
         &mut self,
         source: &str,
-        reachability: Reachability,
+        context: &TraversalContext,
         include: &IncludeBoundary,
     ) {
-        let reachability = if include.cfg_test {
-            Reachability::TestOnly
-        } else {
-            reachability
-        };
+        let context = context.with_test_guard(include.cfg_test);
         if let Some(output) = &include.out_dir {
-            self.walk_out_dir(source, reachability, include, output);
+            self.walk_out_dir(source, context, include, output);
             return;
         }
         let Some(relative) = &include.path else {
@@ -43,7 +37,7 @@ impl Walker<'_> {
                 &format!("literal include {relative:?}"),
                 true,
                 syntax(include.context),
-                reachability,
+                context,
             ),
             Err(error) => self.resolution_error(
                 source,
@@ -57,7 +51,7 @@ impl Walker<'_> {
     fn walk_out_dir(
         &mut self,
         source: &str,
-        reachability: Reachability,
+        context: TraversalContext,
         include: &IncludeBoundary,
         output: &str,
     ) {
@@ -85,7 +79,7 @@ impl Walker<'_> {
             &format!("OUT_DIR include {output:?}"),
             true,
             syntax(include.context),
-            reachability,
+            context,
         );
     }
 

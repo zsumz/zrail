@@ -8,6 +8,7 @@ use super::ObservedFact;
 pub(super) fn fact(name: impl Into<String>, span: Span, quality: AnalysisQuality) -> ObservedFact {
     ObservedFact {
         name: name.into(),
+        canonical: Vec::new(),
         span: Some(source_span(span)),
         quality,
     }

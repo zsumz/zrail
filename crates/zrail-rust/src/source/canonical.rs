@@ -1,0 +1,161 @@
+//! Cargo dependency roots canonicalize policy paths without hiding source spelling.
+
+use std::collections::{BTreeMap, BTreeSet};
+
+use zrail_core::{AnalysisQuality, Finding};
+
+use crate::cargo::{CargoWorkspace, Package, rust_crate_root};
+
+use super::{ObservedFact, SourceIndex};
+
+const MAX_IDENTITIES_PER_ROOT: usize = 4;
+
+pub(crate) fn canonicalize(
+    index: &mut SourceIndex,
+    cargo: &CargoWorkspace,
+    contexts: &BTreeMap<String, BTreeSet<String>>,
+) {
+    let packages = cargo
+        .packages
+        .iter()
+        .map(|package| (package.name.as_str(), package))
+        .collect::<BTreeMap<_, _>>();
+    let mut findings = Vec::new();
+    for file in &mut index.files {
+        let observed = observed_roots(file);
+        let selected = contexts.get(&file.relative).map_or_else(
+            || {
+                package_for_file(&cargo.packages, &file.relative)
+                    .into_iter()
+                    .collect()
+            },
+            |names| {
+                names
+                    .iter()
+                    .filter_map(|name| packages.get(name.as_str()).copied())
+                    .collect()
+            },
+        );
+        let (roots, overflowed) = dependency_roots(selected, &observed);
+        findings.extend(
+            overflowed
+                .iter()
+                .map(|root| identity_limit(&file.relative, root)),
+        );
+        for fact in file
+            .paths
+            .iter_mut()
+            .chain(&mut file.calls)
+            .chain(&mut file.macros)
+            .chain(&mut file.item_macros)
+        {
+            canonicalize_fact_bounded(fact, &roots, &overflowed);
+        }
+    }
+    index.findings.extend(findings);
+}
+
+fn dependency_roots(
+    packages: Vec<&Package>,
+    observed: &BTreeSet<String>,
+) -> (BTreeMap<String, BTreeSet<String>>, BTreeSet<String>) {
+    let mut roots = BTreeMap::<String, BTreeSet<String>>::new();
+    let mut overflowed = BTreeSet::new();
+    for package in packages {
+        for dependency in &package.dependencies {
+            let alias = rust_crate_root(&dependency.alias);
+            if !observed.contains(&alias) || overflowed.contains(&alias) {
+                continue;
+            }
+            let canonical = rust_crate_root(&dependency.name);
+            let identities = roots.entry(alias.clone()).or_default();
+            if identities.len() == MAX_IDENTITIES_PER_ROOT && !identities.contains(&canonical) {
+                overflowed.insert(alias);
+            } else {
+                identities.insert(canonical);
+            }
+        }
+    }
+    (roots, overflowed)
+}
+
+fn observed_roots(file: &super::RustFileFacts) -> BTreeSet<String> {
+    file.paths
+        .iter()
+        .chain(&file.calls)
+        .chain(&file.macros)
+        .chain(&file.item_macros)
+        .filter_map(|fact| split_root(&fact.name).map(|(root, _)| visible_root(root).into()))
+        .collect()
+}
+
+fn package_for_file<'a>(packages: &'a [Package], file: &str) -> Option<&'a Package> {
+    packages
+        .iter()
+        .filter(|package| package.contains_file(file))
+        .max_by_key(|package| package.directory.len())
+}
+
+fn canonicalize_fact(fact: &mut ObservedFact, roots: &BTreeMap<String, BTreeSet<String>>) {
+    let Some((root, suffix)) = split_root(&fact.name) else {
+        return;
+    };
+    let visible_root = visible_root(root);
+    let Some(canonical_roots) = roots.get(visible_root) else {
+        return;
+    };
+    let canonical = canonical_roots
+        .iter()
+        .map(|canonical| format!("{canonical}{suffix}"))
+        .collect::<Vec<_>>();
+    if canonical.len() != 1 || canonical[0] != fact.name {
+        fact.canonical = canonical;
+    }
+    if canonical_roots.len() > 1 && fact.quality == AnalysisQuality::Exact {
+        fact.quality = AnalysisQuality::Conservative;
+    }
+}
+
+fn canonicalize_fact_bounded(
+    fact: &mut ObservedFact,
+    roots: &BTreeMap<String, BTreeSet<String>>,
+    overflowed: &BTreeSet<String>,
+) {
+    if split_root(&fact.name).is_some_and(|(root, _)| overflowed.contains(visible_root(root))) {
+        fact.canonical.clear();
+        fact.quality = AnalysisQuality::Unresolved;
+    } else {
+        canonicalize_fact(fact, roots);
+    }
+}
+
+fn visible_root(root: &str) -> &str {
+    root.strip_prefix("r#").unwrap_or(root)
+}
+
+fn identity_limit(path: &str, root: &str) -> Finding {
+    Finding::error(
+        "RUST-CANON-001",
+        "rust.source.dependency-identity",
+        "source",
+        format!(
+            "Cargo dependency root {root:?} exceeds the {MAX_IDENTITIES_PER_ROOT}-identity analysis limit"
+        ),
+    )
+    .at(path, None)
+    .with_analysis(AnalysisQuality::Unresolved)
+    .with_help("split shared source or use distinct dependency aliases so policy identity is exact")
+}
+
+fn split_root(path: &str) -> Option<(&str, &str)> {
+    if path.is_empty() {
+        return None;
+    }
+    Some(path.find("::").map_or((path, ""), |separator| {
+        (&path[..separator], &path[separator..])
+    }))
+}
+
+#[cfg(test)]
+#[path = "canonical_test.rs"]
+mod canonical_test;

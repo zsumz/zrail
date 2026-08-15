@@ -11,12 +11,14 @@ impl<'a> FactVisitor<'a> {
             .into_iter()
             .map(|(path, quality)| ObservedFact {
                 name: path.to_owned(),
+                canonical: Vec::new(),
                 span: None,
                 quality,
             })
             .collect::<Vec<_>>();
         paths.extend(imports.globs().iter().map(|path| ObservedFact {
             name: path.clone(),
+            canonical: Vec::new(),
             span: None,
             quality: AnalysisQuality::Conservative,
         }));
