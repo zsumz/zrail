@@ -2,7 +2,9 @@
 
 use zrail_core::{FacadeMode, ModuleDocsMode};
 
-use super::{FileClass, declarative_shape, module_docs_required};
+use crate::inventory::FileClass;
+
+use super::policy::{declarative_shape, module_docs_required};
 
 #[test]
 fn facade_and_entrypoint_modes_are_reported_independently() {
