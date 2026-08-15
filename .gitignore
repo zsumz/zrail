@@ -1,0 +1,5 @@
+/target/
+/.zrail/cache/
+*.swp
+.DS_Store
+/.zrail-lock-*.tmp
