@@ -15,8 +15,8 @@ mod visitor;
 mod visitor_boundaries;
 
 pub(crate) use model::{
-    IncludeBoundary, IncludeContext, ModuleDeclaration, ObservedFact, RustFileFacts, SourceIndex,
-    SourceSyntax,
+    IncludeBoundary, IncludeContext, ModuleDeclaration, ObservedFact, Reachability, RustFileFacts,
+    SourceIndex, SourceSyntax,
 };
 pub(crate) use parse::index_rust_source;
 pub(crate) use paths::{ModuleTarget, ResolutionError, join_relative, module_target, parent};

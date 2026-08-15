@@ -10,7 +10,7 @@ use super::{
     depth::check_syntax_depth,
     fact::fact,
     imports::ImportMap,
-    model::{ObservedFact, RustFileFacts, SourceIndex, SourceSyntax},
+    model::{ObservedFact, Reachability, RustFileFacts, SourceIndex, SourceSyntax},
     modules::module_declarations,
     visitor::FactVisitor,
 };
@@ -117,6 +117,7 @@ fn index_file(source_file: &crate::inventory::RustSourceFile, syntax: &syn::File
     RustFileFacts {
         relative: source_file.relative.clone(),
         class: source_file.class,
+        reachability: Reachability::Unreachable,
         syntax: SourceSyntax::Items,
         lines: source_file.lines,
         module_docs: has_module_docs(&syntax.attrs),
@@ -144,6 +145,7 @@ fn index_expression(
     RustFileFacts {
         relative: source_file.relative.clone(),
         class: source_file.class,
+        reachability: Reachability::Unreachable,
         syntax: SourceSyntax::Expression,
         lines: source_file.lines,
         module_docs: false,

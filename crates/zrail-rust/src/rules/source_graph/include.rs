@@ -1,13 +1,20 @@
 //! Literal and verified `OUT_DIR` includes become exact source-graph edges.
 
-use crate::source::{IncludeBoundary, IncludeContext, SourceSyntax, join_relative, parent};
+use crate::source::{
+    IncludeBoundary, IncludeContext, Reachability, SourceSyntax, join_relative, parent,
+};
 
 use super::Walker;
 
-impl Walker<'_, '_> {
-    pub(super) fn walk_include(&mut self, source: &str, include: &IncludeBoundary) {
+impl Walker<'_> {
+    pub(super) fn walk_include(
+        &mut self,
+        source: &str,
+        reachability: Reachability,
+        include: &IncludeBoundary,
+    ) {
         if let Some(output) = &include.out_dir {
-            self.walk_out_dir(source, include, output);
+            self.walk_out_dir(source, reachability, include, output);
             return;
         }
         let Some(relative) = &include.path else {
@@ -31,6 +38,7 @@ impl Walker<'_, '_> {
                 &format!("literal include {relative:?}"),
                 true,
                 syntax(include.context),
+                reachability,
             ),
             Err(error) => self.resolution_error(
                 source,
@@ -41,9 +49,14 @@ impl Walker<'_, '_> {
         }
     }
 
-    fn walk_out_dir(&mut self, source: &str, include: &IncludeBoundary, output: &str) {
+    fn walk_out_dir(
+        &mut self,
+        source: &str,
+        reachability: Reachability,
+        include: &IncludeBoundary,
+        output: &str,
+    ) {
         let binding = self
-            .context
             .contract
             .source
             .rust
@@ -67,11 +80,12 @@ impl Walker<'_, '_> {
             &format!("OUT_DIR include {output:?}"),
             true,
             syntax(include.context),
+            reachability,
         );
     }
 
     pub(super) fn reject_stale_out_dir(&mut self) {
-        for binding in &self.context.contract.source.rust.out_dir {
+        for binding in &self.contract.source.rust.out_dir {
             if self
                 .seen_out_dir
                 .contains(&(binding.path.clone(), binding.output.clone()))

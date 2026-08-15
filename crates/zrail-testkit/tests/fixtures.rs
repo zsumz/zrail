@@ -198,6 +198,23 @@ fn unchecked_failures_and_suppressions_are_rejected() {
 }
 
 #[test]
+fn production_reachability_overrides_test_like_pathnames() {
+    let report = check("production_test_path");
+    for rule in ["RUST-HYG-001", "RUST-SIZE-001"] {
+        assert!(
+            report.findings.iter().any(|finding| finding.id == rule),
+            "missing {rule}: {}",
+            report.human()
+        );
+    }
+}
+
+#[test]
+fn sibling_tests_cannot_be_both_test_and_production_reachable() {
+    assert_rule("dual_reachable_test", "RUST-TEST-004");
+}
+
+#[test]
 fn undeclared_sibling_test_is_rejected() {
     assert_rule("undeclared_test", "RUST-TEST-002");
 }

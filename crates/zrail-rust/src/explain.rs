@@ -14,6 +14,7 @@ use zrail_core::{
 use crate::{
     engine::{CheckError, load_model},
     inventory::{FileClass, classify_path, under_root},
+    source::Reachability,
 };
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
@@ -22,6 +23,7 @@ pub struct PathExplanation {
     pub schema: u64,
     pub path: String,
     pub file_class: String,
+    pub reachability: String,
     pub package: Option<String>,
     pub layer: Option<String>,
     pub profiles: Vec<String>,
@@ -69,6 +71,7 @@ impl PathExplanation {
             concat!(
                 "path: {}\n",
                 "class: {}\n",
+                "reachability: {}\n",
                 "package: {}\n",
                 "layer: {}\n",
                 "profiles: {}\n",
@@ -83,6 +86,7 @@ impl PathExplanation {
             ),
             self.path,
             self.file_class,
+            self.reachability,
             self.package.as_deref().unwrap_or("<none>"),
             self.layer.as_deref().unwrap_or("<none>"),
             display_list(&self.profiles),
@@ -107,6 +111,12 @@ pub fn explain_path(
     let model = load_model(root, config)?;
     let relative = normalize_relative(path).map_err(CheckError::from_message)?;
     let class = classify_path(&relative, &model.bundle.contract.source.rust.generated);
+    let reachability = model
+        .source
+        .files
+        .iter()
+        .find(|file| file.relative == relative)
+        .map_or(Reachability::Unreachable, |file| file.reachability);
     let package = model
         .cargo
         .packages
@@ -121,7 +131,12 @@ pub fn explain_path(
                 .any(|pattern| glob_matches(pattern, &package.name))
         })
     });
-    let budget = budget_for(&relative, class, &model.bundle.contract.source.rust);
+    let budget = budget_for(
+        &relative,
+        class,
+        reachability,
+        &model.bundle.contract.source.rust,
+    );
     let scopes = model
         .bundle
         .contract
@@ -146,6 +161,7 @@ pub fn explain_path(
         schema: 1,
         path: relative,
         file_class: format!("{class:?}").to_ascii_lowercase(),
+        reachability: reachability.name().into(),
         package: package.map(|package| package.name.clone()),
         layer: layer.map(|layer| layer.name.clone()),
         profiles: layer.map_or_else(Vec::new, |layer| layer.profiles.clone()),
@@ -187,11 +203,18 @@ fn module_docs_required(class: FileClass, mode: zrail_core::ModuleDocsMode) -> b
     class != FileClass::Generated && mode == zrail_core::ModuleDocsMode::Required
 }
 
-fn budget_for(path: &str, class: FileClass, rust: &zrail_core::RustSourceContract) -> Budget {
+fn budget_for(
+    path: &str,
+    class: FileClass,
+    reachability: Reachability,
+    rust: &zrail_core::RustSourceContract,
+) -> Budget {
+    if class != FileClass::Generated && reachability == Reachability::TestOnly {
+        return rust.size.test;
+    }
     match class {
         FileClass::Facade => rust.size.facade,
-        FileClass::Implementation => rust.size.implementation,
-        FileClass::Test => rust.size.test,
+        FileClass::Implementation | FileClass::Test => rust.size.implementation,
         FileClass::Auxiliary | FileClass::EntryPoint => rust.size.auxiliary,
         FileClass::Generated => rust
             .generated

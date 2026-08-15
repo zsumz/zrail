@@ -7,5 +7,5 @@ mod target_discovery;
 mod targets;
 mod workspace;
 
-pub(crate) use model::{CargoWorkspace, DependencyKind, Package};
+pub(crate) use model::{CargoTargetKind, CargoWorkspace, DependencyKind, Package};
 pub(crate) use parse::load_cargo_workspace;

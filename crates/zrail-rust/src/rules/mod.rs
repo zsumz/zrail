@@ -10,7 +10,7 @@ pub(crate) mod generated;
 mod hygiene;
 mod repository;
 mod size;
-mod source_graph;
+pub(crate) mod source_graph;
 mod source_shape;
 mod test_placement;
 

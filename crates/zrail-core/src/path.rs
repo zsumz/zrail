@@ -5,6 +5,9 @@ use std::{
     path::{Component, Path, PathBuf},
 };
 
+pub const MAX_GLOB_PATTERN_BYTES: usize = 4 * 1024;
+pub const MAX_GLOB_PATTERN_SEGMENTS: usize = 256;
+
 pub fn normalize_relative(path: &Path) -> Result<String, String> {
     if path.is_absolute() {
         return Err(format!(
@@ -110,23 +113,47 @@ pub fn repository_file(root: &Path, path: &Path) -> Result<PathBuf, String> {
 pub fn glob_matches(pattern: &str, path: &str) -> bool {
     let pattern = pattern.trim_matches('/');
     let path = path.trim_matches('/');
-    let patterns = pattern.split('/').collect::<Vec<_>>();
-    let parts = path.split('/').collect::<Vec<_>>();
-    matches_segments(&patterns, &parts)
+    if pattern.len() > MAX_GLOB_PATTERN_BYTES {
+        return false;
+    }
+    let mut patterns = Vec::new();
+    for segment in segments(pattern) {
+        if segment != "**" || patterns.last().copied() != Some("**") {
+            patterns.push(segment);
+        }
+        if patterns.len() > MAX_GLOB_PATTERN_SEGMENTS {
+            return false;
+        }
+    }
+    matches_segments(&patterns, &segments(path))
 }
 
 fn matches_segments(pattern: &[&str], path: &[&str]) -> bool {
-    let Some((head, tail)) = pattern.split_first() else {
-        return path.is_empty();
-    };
-    if *head == "**" {
-        return matches_segments(tail, path)
-            || path
-                .split_first()
-                .is_some_and(|(_, rest)| matches_segments(pattern, rest));
+    let mut previous = vec![false; path.len() + 1];
+    previous[0] = true;
+    for segment in pattern {
+        let mut current = vec![false; path.len() + 1];
+        if *segment == "**" {
+            current[0] = previous[0];
+            for index in 1..=path.len() {
+                current[index] = previous[index] || current[index - 1];
+            }
+        } else {
+            for index in 1..=path.len() {
+                current[index] = previous[index - 1] && matches_component(segment, path[index - 1]);
+            }
+        }
+        previous = current;
     }
-    path.split_first()
-        .is_some_and(|(part, rest)| matches_component(head, part) && matches_segments(tail, rest))
+    previous[path.len()]
+}
+
+fn segments(value: &str) -> Vec<&str> {
+    if value.is_empty() {
+        Vec::new()
+    } else {
+        value.split('/').collect()
+    }
 }
 
 fn matches_component(pattern: &str, value: &str) -> bool {

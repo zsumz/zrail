@@ -12,7 +12,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
         .source
         .files
         .iter()
-        .filter(|file| !matches!(file.class, FileClass::Test | FileClass::Auxiliary))
+        .filter(|file| file.reachability.is_production())
     {
         for method in &file.methods {
             if hygiene

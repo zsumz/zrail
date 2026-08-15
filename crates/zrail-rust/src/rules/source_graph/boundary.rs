@@ -4,12 +4,12 @@ use zrail_core::{AnalysisQuality, Finding, SourceSpan, path::glob_matches};
 
 use crate::{
     inventory::{FileClass, RepositoryEntryKind},
-    source::{ResolutionError, SourceSyntax},
+    source::{Reachability, ResolutionError, SourceSyntax},
 };
 
 use super::Walker;
 
-impl Walker<'_, '_> {
+impl Walker<'_> {
     pub(super) fn follow(
         &mut self,
         origin: &str,
@@ -18,6 +18,7 @@ impl Walker<'_, '_> {
         label: &str,
         directory_owned: bool,
         expected_syntax: SourceSyntax,
+        reachability: Reachability,
     ) {
         if !self.under_roots(&target) || self.excluded(&target) {
             self.boundary(
@@ -47,7 +48,10 @@ impl Walker<'_, '_> {
                 format!("{label} source does not exist: {target}"),
             ),
             Some(RepositoryEntryKind::File) => {
-                self.reached.insert(target.clone());
+                self.reached
+                    .entry(target.clone())
+                    .and_modify(|current| *current = current.join(reachability))
+                    .or_insert(reachability);
                 let Some(file) = self.facts.get(target.as_str()) else {
                     self.unresolved(
                         origin,
@@ -68,7 +72,7 @@ impl Walker<'_, '_> {
                     );
                     return;
                 }
-                let state = (target, directory_owned);
+                let state = (target, directory_owned, reachability);
                 if !self.visited.insert(state.clone()) {
                     return;
                 }
@@ -84,12 +88,12 @@ impl Walker<'_, '_> {
 
     pub(super) fn reject_orphans(&mut self) {
         let orphans = self
-            .context
             .inventory
             .rust_files
             .iter()
             .filter(|file| {
-                !self.reached.contains(&file.relative) && !self.generated_auxiliary(&file.relative)
+                !self.reached.contains_key(&file.relative)
+                    && !self.generated_auxiliary(&file.relative)
             })
             .map(|file| file.relative.clone())
             .collect::<Vec<_>>();
@@ -110,18 +114,12 @@ impl Walker<'_, '_> {
     }
 
     fn generated_auxiliary(&self, path: &str) -> bool {
-        self.context
-            .contract
-            .source
-            .rust
-            .generated
-            .iter()
-            .any(|generated| {
-                generated.auxiliary.iter().any(|auxiliary| {
-                    crate::source::join_relative(&generated.root, auxiliary)
-                        .is_ok_and(|candidate| candidate == path)
-                })
+        self.contract.source.rust.generated.iter().any(|generated| {
+            generated.auxiliary.iter().any(|auxiliary| {
+                crate::source::join_relative(&generated.root, auxiliary)
+                    .is_ok_and(|candidate| candidate == path)
             })
+        })
     }
 
     pub(super) fn resolution_error(
@@ -139,6 +137,9 @@ impl Walker<'_, '_> {
     }
 
     pub(super) fn missing(&mut self, origin: &str, span: Option<SourceSpan>, message: String) {
+        if !self.reported.insert((origin.into(), message.clone())) {
+            return;
+        }
         self.findings.push(
             Finding::error(
                 "RUST-GRAPH-001",
@@ -151,8 +152,7 @@ impl Walker<'_, '_> {
     }
 
     fn under_roots(&self, path: &str) -> bool {
-        self.context
-            .contract
+        self.contract
             .repository
             .roots
             .iter()
@@ -160,8 +160,7 @@ impl Walker<'_, '_> {
     }
 
     fn excluded(&self, path: &str) -> bool {
-        self.context
-            .contract
+        self.contract
             .repository
             .exclude
             .iter()
@@ -169,6 +168,9 @@ impl Walker<'_, '_> {
     }
 
     fn boundary(&mut self, origin: &str, span: Option<SourceSpan>, message: String) {
+        if !self.reported.insert((origin.into(), message.clone())) {
+            return;
+        }
         self.findings.push(
             Finding::error(
                 "RUST-GRAPH-002",
@@ -181,6 +183,9 @@ impl Walker<'_, '_> {
     }
 
     pub(super) fn unresolved(&mut self, origin: &str, span: Option<SourceSpan>, message: String) {
+        if !self.reported.insert((origin.into(), message.clone())) {
+            return;
+        }
         self.findings.push(
             Finding::error(
                 "RUST-GRAPH-003",

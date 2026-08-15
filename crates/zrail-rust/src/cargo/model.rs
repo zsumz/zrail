@@ -25,7 +25,23 @@ pub(crate) struct Package {
     pub(crate) directory: String,
     pub(crate) dependencies: Vec<Dependency>,
     pub(crate) dependency_paths: Vec<DependencyPath>,
-    pub(crate) targets: Vec<String>,
+    pub(crate) targets: Vec<CargoTarget>,
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) struct CargoTarget {
+    pub(crate) path: String,
+    pub(crate) kind: CargoTargetKind,
+}
+
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) enum CargoTargetKind {
+    Library,
+    Binary,
+    Example,
+    Test,
+    Benchmark,
+    BuildScript,
 }
 
 impl Package {

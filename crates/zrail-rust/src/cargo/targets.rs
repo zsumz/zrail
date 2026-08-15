@@ -7,13 +7,16 @@ use std::{
 
 use toml::Value;
 
-use super::target_discovery::{auto_discovery_default, auto_enabled, discover_directory};
+use super::{
+    model::{CargoTarget, CargoTargetKind},
+    target_discovery::{auto_discovery_default, auto_enabled, discover_directory},
+};
 
 pub(super) fn collect_target_roots(
     manifest: &Value,
     package_directory: &Path,
     workspace_edition: Option<&str>,
-) -> Result<Vec<String>, String> {
+) -> Result<Vec<CargoTarget>, String> {
     let package = manifest
         .get("package")
         .and_then(Value::as_table)
@@ -34,6 +37,7 @@ pub(super) fn collect_target_roots(
         "bin",
         "src/bin",
         auto_default,
+        CargoTargetKind::Binary,
         &mut roots,
     )?;
     collect_kind(
@@ -43,6 +47,7 @@ pub(super) fn collect_target_roots(
         "example",
         "examples",
         auto_default,
+        CargoTargetKind::Example,
         &mut roots,
     )?;
     collect_kind(
@@ -52,6 +57,7 @@ pub(super) fn collect_target_roots(
         "test",
         "tests",
         auto_default,
+        CargoTargetKind::Test,
         &mut roots,
     )?;
     collect_kind(
@@ -61,6 +67,7 @@ pub(super) fn collect_target_roots(
         "bench",
         "benches",
         auto_default,
+        CargoTargetKind::Benchmark,
         &mut roots,
     )?;
     collect_build_script(package, package_directory, &mut roots)?;
@@ -72,17 +79,23 @@ fn collect_library(
     package: &toml::map::Map<String, Value>,
     directory: &Path,
     auto_default: bool,
-    roots: &mut BTreeSet<String>,
+    roots: &mut BTreeSet<CargoTarget>,
 ) -> Result<(), String> {
     if let Some(library) = manifest.get("lib") {
         let table = library
             .as_table()
             .ok_or_else(|| "Cargo [lib] target must be a table".to_owned())?;
-        roots.insert(target_path(table, "src/lib.rs")?);
+        roots.insert(CargoTarget {
+            path: target_path(table, "src/lib.rs")?,
+            kind: CargoTargetKind::Library,
+        });
     } else if auto_enabled(package, "autolib", auto_default)?
         && directory.join("src/lib.rs").is_file()
     {
-        roots.insert("src/lib.rs".into());
+        roots.insert(CargoTarget {
+            path: "src/lib.rs".into(),
+            kind: CargoTargetKind::Library,
+        });
     }
     Ok(())
 }
@@ -94,7 +107,8 @@ fn collect_kind(
     kind: &str,
     auto_directory: &str,
     auto_default: bool,
-    roots: &mut BTreeSet<String>,
+    target_kind: CargoTargetKind,
+    roots: &mut BTreeSet<CargoTarget>,
 ) -> Result<(), String> {
     let mut named = BTreeMap::new();
     let mut explicit = BTreeSet::new();
@@ -126,7 +140,10 @@ fn collect_kind(
             add_auto_target(&mut named, &explicit, kind, name, path)?;
         }
     }
-    roots.extend(named.into_values());
+    roots.extend(named.into_values().map(|path| CargoTarget {
+        path,
+        kind: target_kind,
+    }));
     Ok(())
 }
 
@@ -186,19 +203,28 @@ fn target_path(table: &toml::map::Map<String, Value>, default: &str) -> Result<S
 fn collect_build_script(
     package: &toml::map::Map<String, Value>,
     directory: &Path,
-    roots: &mut BTreeSet<String>,
+    roots: &mut BTreeSet<CargoTarget>,
 ) -> Result<(), String> {
     match package.get("build") {
         Some(Value::Boolean(false)) => {}
         Some(Value::Boolean(true)) => {
-            roots.insert("build.rs".into());
+            roots.insert(CargoTarget {
+                path: "build.rs".into(),
+                kind: CargoTargetKind::BuildScript,
+            });
         }
         Some(Value::String(path)) => {
-            roots.insert(path.clone());
+            roots.insert(CargoTarget {
+                path: path.clone(),
+                kind: CargoTargetKind::BuildScript,
+            });
         }
         Some(_) => return Err("package.build must be a path or false".into()),
         None if directory.join("build.rs").is_file() => {
-            roots.insert("build.rs".into());
+            roots.insert(CargoTarget {
+                path: "build.rs".into(),
+                kind: CargoTargetKind::BuildScript,
+            });
         }
         None => {}
     }

@@ -4,6 +4,39 @@ use zrail_core::{AnalysisQuality, Finding, SourceSpan};
 
 use crate::inventory::FileClass;
 
+#[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) enum Reachability {
+    #[default]
+    Unreachable,
+    TestOnly,
+    Production,
+    Both,
+}
+
+impl Reachability {
+    pub(crate) const fn join(self, other: Self) -> Self {
+        match (self, other) {
+            (Self::Unreachable, value) | (value, Self::Unreachable) => value,
+            (Self::TestOnly, Self::TestOnly) => Self::TestOnly,
+            (Self::Production, Self::Production) => Self::Production,
+            _ => Self::Both,
+        }
+    }
+
+    pub(crate) const fn is_production(self) -> bool {
+        matches!(self, Self::Production | Self::Both)
+    }
+
+    pub(crate) const fn name(self) -> &'static str {
+        match self {
+            Self::Unreachable => "unreachable",
+            Self::TestOnly => "test-only",
+            Self::Production => "production",
+            Self::Both => "both",
+        }
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct ObservedFact {
     pub(crate) name: String,
@@ -54,6 +87,7 @@ pub(crate) struct IncludeBoundary {
 pub(crate) struct RustFileFacts {
     pub(crate) relative: String,
     pub(crate) class: FileClass,
+    pub(crate) reachability: Reachability,
     pub(crate) syntax: SourceSyntax,
     pub(crate) lines: usize,
     pub(crate) module_docs: bool,

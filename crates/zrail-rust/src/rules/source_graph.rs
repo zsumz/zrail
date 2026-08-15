@@ -5,93 +5,117 @@ mod include;
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
-use zrail_core::FindingSink;
+use zrail_core::{Contract, Finding, FindingSink};
 
-use crate::source::{
-    ModuleDeclaration, ModuleTarget, RustFileFacts, SourceSyntax, join_relative, module_target,
+use crate::{
+    cargo::{CargoTargetKind, CargoWorkspace},
+    inventory::{RepositoryEntryKind, RepositoryInventory},
+    source::{
+        ModuleDeclaration, ModuleTarget, Reachability, RustFileFacts, SourceIndex, SourceSyntax,
+        join_relative, module_target,
+    },
 };
 
-use super::RuleContext;
-
-pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
-    Walker::new(context, findings).run();
+pub(crate) fn analyze(
+    contract: &Contract,
+    inventory: &RepositoryInventory,
+    cargo: &CargoWorkspace,
+    source: &SourceIndex,
+) -> (BTreeMap<String, Reachability>, Vec<Finding>) {
+    Walker::new(contract, inventory, cargo, source).run()
 }
 
-struct Walker<'a, 'f> {
-    context: &'a RuleContext<'a>,
-    findings: &'f mut FindingSink,
+struct Walker<'a> {
+    contract: &'a Contract,
+    inventory: &'a RepositoryInventory,
+    cargo: &'a CargoWorkspace,
+    findings: FindingSink,
     facts: BTreeMap<&'a str, &'a RustFileFacts>,
-    entries: BTreeMap<&'a str, crate::inventory::RepositoryEntryKind>,
-    reached: BTreeSet<String>,
+    entries: BTreeMap<&'a str, RepositoryEntryKind>,
+    reached: BTreeMap<String, Reachability>,
     seen_item_macros: BTreeSet<(String, String)>,
     seen_out_dir: BTreeSet<(String, String)>,
-    visited: BTreeSet<(String, bool)>,
-    queue: VecDeque<(String, bool)>,
+    reported: BTreeSet<(String, String)>,
+    visited: BTreeSet<(String, bool, Reachability)>,
+    queue: VecDeque<(String, bool, Reachability)>,
 }
 
-impl<'a, 'f> Walker<'a, 'f> {
-    fn new(context: &'a RuleContext<'a>, findings: &'f mut FindingSink) -> Self {
+impl<'a> Walker<'a> {
+    fn new(
+        contract: &'a Contract,
+        inventory: &'a RepositoryInventory,
+        cargo: &'a CargoWorkspace,
+        source: &'a SourceIndex,
+    ) -> Self {
         Self {
-            context,
-            findings,
-            facts: context
-                .source
+            contract,
+            inventory,
+            cargo,
+            findings: FindingSink::default(),
+            facts: source
                 .files
                 .iter()
                 .map(|file| (file.relative.as_str(), file))
                 .collect(),
-            entries: context
-                .inventory
+            entries: inventory
                 .entries
                 .iter()
                 .map(|entry| (entry.relative.as_str(), entry.kind))
                 .collect(),
-            reached: BTreeSet::new(),
+            reached: BTreeMap::new(),
             seen_item_macros: BTreeSet::new(),
             seen_out_dir: BTreeSet::new(),
+            reported: BTreeSet::new(),
             visited: BTreeSet::new(),
             queue: VecDeque::new(),
         }
     }
 
-    fn run(mut self) {
+    fn run(mut self) -> (BTreeMap<String, Reachability>, Vec<Finding>) {
         self.seed_cargo_targets();
-        while let Some((path, directory_owned)) = self.queue.pop_front() {
-            self.walk_file(&path, directory_owned);
+        while let Some((path, directory_owned, reachability)) = self.queue.pop_front() {
+            self.walk_file(&path, directory_owned, reachability);
         }
         self.reject_orphans();
         self.reject_stale_item_macros();
         self.reject_stale_out_dir();
+        (self.reached, self.findings.into_findings())
     }
 
     fn seed_cargo_targets(&mut self) {
-        for package in &self.context.cargo.packages {
+        for package in &self.cargo.packages {
             if package.targets.is_empty() {
                 let message = format!("Cargo package {:?} has no Rust target", package.name);
                 self.missing(&package.manifest_path(), None, message);
             }
             for target in &package.targets {
-                match join_relative(&package.directory, target) {
+                let reachability = if target.kind == CargoTargetKind::Test {
+                    Reachability::TestOnly
+                } else {
+                    Reachability::Production
+                };
+                match join_relative(&package.directory, &target.path) {
                     Ok(path) => self.follow(
                         &package.manifest_path(),
                         None,
                         path,
-                        &format!("Cargo target {target:?}"),
+                        &format!("Cargo target {:?}", target.path),
                         true,
                         SourceSyntax::Items,
+                        reachability,
                     ),
                     Err(error) => self.resolution_error(
                         &package.manifest_path(),
                         None,
                         &error,
-                        &format!("Cargo target {target:?}"),
+                        &format!("Cargo target {:?}", target.path),
                     ),
                 }
             }
         }
     }
 
-    fn walk_file(&mut self, path: &str, directory_owned: bool) {
+    fn walk_file(&mut self, path: &str, directory_owned: bool, reachability: Reachability) {
         let Some(file) = self.facts.get(path) else {
             return;
         };
@@ -114,16 +138,15 @@ impl<'a, 'f> Walker<'a, 'f> {
             }
         }
         for declaration in modules {
-            self.walk_module(path, directory_owned, &declaration);
+            self.walk_module(path, directory_owned, reachability, &declaration);
         }
         for include in includes {
-            self.walk_include(path, &include);
+            self.walk_include(path, reachability, &include);
         }
     }
 
     fn item_macro_allowed(&self, path: &str, name: &str) -> bool {
-        self.context
-            .contract
+        self.contract
             .source
             .rust
             .item_macros
@@ -132,7 +155,7 @@ impl<'a, 'f> Walker<'a, 'f> {
     }
 
     fn reject_stale_item_macros(&mut self) {
-        for item_macro in &self.context.contract.source.rust.item_macros {
+        for item_macro in &self.contract.source.rust.item_macros {
             if self
                 .seen_item_macros
                 .contains(&(item_macro.path.clone(), item_macro.name.clone()))
@@ -159,9 +182,15 @@ impl<'a, 'f> Walker<'a, 'f> {
         &mut self,
         source: &str,
         directory_owned: bool,
+        reachability: Reachability,
         declaration: &ModuleDeclaration,
     ) {
         let label = format!("module {:?}", declaration.name);
+        let target_reachability = if declaration.cfg_test {
+            Reachability::TestOnly
+        } else {
+            reachability
+        };
         match module_target(source, directory_owned, declaration) {
             Ok(ModuleTarget::Exact(path)) => {
                 self.follow(
@@ -171,6 +200,7 @@ impl<'a, 'f> Walker<'a, 'f> {
                     &label,
                     false,
                     SourceSyntax::Items,
+                    target_reachability,
                 );
             }
             Ok(ModuleTarget::Search { direct, nested }) => {
@@ -187,6 +217,7 @@ impl<'a, 'f> Walker<'a, 'f> {
                             &label,
                             false,
                             SourceSyntax::Items,
+                            target_reachability,
                         );
                     }
                     [] => self.missing(

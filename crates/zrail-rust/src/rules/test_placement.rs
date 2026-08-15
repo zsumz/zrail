@@ -7,9 +7,8 @@ use std::{
 
 use zrail_core::{Finding, FindingSink, TestMode};
 
-use crate::{
-    inventory::FileClass,
-    source::{ModuleDeclaration, ModuleTarget, RustFileFacts, join_relative, module_target},
+use crate::source::{
+    ModuleDeclaration, ModuleTarget, Reachability, RustFileFacts, join_relative, module_target,
 };
 
 use super::RuleContext;
@@ -22,7 +21,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
         .source
         .files
         .iter()
-        .filter(|file| !matches!(file.class, FileClass::Test | FileClass::Auxiliary))
+        .filter(|file| file.reachability.is_production())
     {
         for test in &file.tests {
             findings.push(
@@ -55,7 +54,7 @@ fn check_declarations(context: &RuleContext<'_>, findings: &mut FindingSink) {
             package
                 .targets
                 .iter()
-                .filter_map(|target| join_relative(&package.directory, target).ok())
+                .filter_map(|target| join_relative(&package.directory, &target.path).ok())
         })
         .collect::<BTreeSet<_>>();
     let declarations = context
@@ -83,11 +82,29 @@ fn check_declarations(context: &RuleContext<'_>, findings: &mut FindingSink) {
         .iter()
         .filter(|file| is_sibling_test(&file.relative))
     {
+        if test.reachability.is_production() {
+            findings.push(
+                Finding::error(
+                    "RUST-TEST-004",
+                    "rust.tests.reachability",
+                    "test-placement",
+                    format!(
+                        "sibling test {} is reachable by production code",
+                        test.relative
+                    ),
+                )
+                .at(&test.relative, None)
+                .with_help("remove every unconditional Cargo or module edge to this test file"),
+            );
+            continue;
+        }
         let exact = declarations
             .iter()
             .filter(|(_, _, target)| target.as_deref() == Some(test.relative.as_str()))
             .collect::<Vec<_>>();
-        if exact.iter().any(|(_, declaration, _)| declaration.cfg_test) {
+        if test.reachability == Reachability::TestOnly
+            && exact.iter().any(|(_, declaration, _)| declaration.cfg_test)
+        {
             continue;
         }
         if let Some((source, declaration, _)) = exact.first() {

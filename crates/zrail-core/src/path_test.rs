@@ -2,7 +2,10 @@
 
 use std::{fs, path::Path};
 
-use super::{glob_matches, normalize_relative, repository_file, repository_relative};
+use super::{
+    MAX_GLOB_PATTERN_BYTES, MAX_GLOB_PATTERN_SEGMENTS, glob_matches, normalize_relative,
+    repository_file, repository_relative,
+};
 
 #[test]
 fn recursive_globs_cross_directory_boundaries() {
@@ -14,6 +17,18 @@ fn recursive_globs_cross_directory_boundaries() {
 fn component_wildcards_do_not_cross_slashes() {
     assert!(glob_matches("crates/zrail-*", "crates/zrail-core"));
     assert!(!glob_matches("crates/zrail-*", "crates/zrail-core/src"));
+}
+
+#[test]
+fn repeated_recursive_globs_are_bounded_and_collapsed() {
+    let repeated = std::iter::repeat_n("**", MAX_GLOB_PATTERN_SEGMENTS).collect::<Vec<_>>();
+    assert!(glob_matches(&repeated.join("/"), "a/b/c"));
+
+    let adversarial = std::iter::repeat_n("**/x", MAX_GLOB_PATTERN_SEGMENTS)
+        .collect::<Vec<_>>()
+        .join("/");
+    assert!(!glob_matches(&adversarial, "a/b/c"));
+    assert!(!glob_matches(&"x".repeat(MAX_GLOB_PATTERN_BYTES + 1), "x"));
 }
 
 #[test]

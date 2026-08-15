@@ -4,7 +4,7 @@ use std::{fs, path::PathBuf};
 
 use toml::Value;
 
-use super::collect_target_roots;
+use super::{CargoTargetKind, collect_target_roots};
 
 #[test]
 fn conventional_and_explicit_targets_become_crate_roots() {
@@ -50,7 +50,7 @@ fn conventional_and_explicit_targets_become_crate_roots() {
         "build/custom.rs",
     ] {
         assert!(
-            roots.iter().any(|root| root == expected),
+            roots.iter().any(|root| root.path == expected),
             "missing {expected}"
         );
     }
@@ -106,8 +106,8 @@ fn explicit_target_names_override_auto_discovery() {
 
     let roots = collect_target_roots(&manifest, &root, None).expect("collect roots");
 
-    assert!(roots.iter().any(|path| path == "commands/tool.rs"));
-    assert!(!roots.iter().any(|path| path == "src/bin/tool.rs"));
+    assert!(roots.iter().any(|target| target.path == "commands/tool.rs"));
+    assert!(!roots.iter().any(|target| target.path == "src/bin/tool.rs"));
     reset(&root);
 }
 
@@ -156,7 +156,9 @@ fn edition_2015_manual_targets_disable_implicit_discovery() {
 
     let roots = collect_target_roots(&manifest, &root, None).expect("collect roots");
 
-    assert_eq!(roots, ["custom.rs"]);
+    assert_eq!(roots.len(), 1);
+    assert_eq!(roots[0].path, "custom.rs");
+    assert_eq!(roots[0].kind, CargoTargetKind::Binary);
     reset(&root);
 }
 

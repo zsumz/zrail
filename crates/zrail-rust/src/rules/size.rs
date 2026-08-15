@@ -4,7 +4,10 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::{Budget, Finding, FindingSink, LockedRatchet};
 
-use crate::inventory::{FileClass, under_root};
+use crate::{
+    inventory::{FileClass, under_root},
+    source::Reachability,
+};
 
 use super::RuleContext;
 
@@ -24,7 +27,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     let mut seen = BTreeSet::new();
     for file in &context.source.files {
         seen.insert(file.relative.as_str());
-        let budget = budget_for(&file.relative, file.class, context);
+        let budget = budget_for(&file.relative, file.class, file.reachability, context);
         check_file(
             file,
             budget,
@@ -146,12 +149,19 @@ fn check_file(
     }
 }
 
-fn budget_for(path: &str, class: FileClass, context: &RuleContext<'_>) -> Budget {
+fn budget_for(
+    path: &str,
+    class: FileClass,
+    reachability: Reachability,
+    context: &RuleContext<'_>,
+) -> Budget {
     let size = &context.contract.source.rust.size;
+    if class != FileClass::Generated && reachability == Reachability::TestOnly {
+        return size.test;
+    }
     match class {
         FileClass::Facade => size.facade,
-        FileClass::Implementation => size.implementation,
-        FileClass::Test => size.test,
+        FileClass::Implementation | FileClass::Test => size.implementation,
         FileClass::Auxiliary | FileClass::EntryPoint => size.auxiliary,
         FileClass::Generated => context
             .contract
