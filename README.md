@@ -68,10 +68,12 @@ grants, new debt, unknown comparisons, and stale or forged locks.
 
 The included authority workflow runs on `pull_request_target`, builds only the
 protected base checkout, and places the proposal beneath that trusted root only
-after the authority binary exists. It grants read-only repository permission,
-uses no proposal actions or scripts, and requires `protected source review` to
-be configured as a required check on the protected branch. Organization
-ruleset workflows or an external authority service are stronger alternatives.
+after the authority binary exists. It executes no proposal actions or scripts.
+Protect the branch and require `zrail/protected-source-review`; the workflow
+publishes that status on the exact proposal commit. The ordinary CI workflow
+also handles merge-group events. A merge queue that requires protected review
+needs an organization ruleset workflow or external authority service capable of
+reviewing the merge-group commit.
 
 After an intentional dependency, provenance, gate, or ratchet change:
 
@@ -126,9 +128,10 @@ zrail diff --before ROOT --after ROOT [--deny-grants]
 `QUAL-01` requires the reviewed local gate to remain connected to exact test
 evidence. The lock hashes the gate bytes, so a gate change cannot pass silently.
 
-`QUAL-02` requires pull requests to pass a semantic architecture diff executed
-by a zrail binary built from the protected base commit. Proposed checker changes
-therefore cannot authorize grants in the same pull request.
+`QUAL-02` requires pull requests to pass independent source analysis by a zrail
+binary built from the protected base commit. It verifies observed source and the
+proposed lock, so proposed checker changes cannot authorize violations or grants
+in the same pull request.
 
 Run the complete offline repository gate with:
 
@@ -137,7 +140,7 @@ scripts/check
 ```
 
 It checks structure, formatting, Clippy, tests, rustdoc, zrail itself, package
-archives, and a clean diff.
+archives, whitespace, and that Git status is unchanged by the gate.
 
 ## Status
 

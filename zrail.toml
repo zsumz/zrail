@@ -18,9 +18,9 @@ reason = "The repository's canonical local qualification entrypoint."
 [[gate]]
 name = "architecture-review"
 kind = "ci"
-path = ".github/workflows/ci.yml"
+path = ".github/workflows/authority.yml"
 requires = ["check"]
-reason = "Pull requests are reviewed by the checker implementation from the protected base."
+reason = "Pull requests are reviewed from protected base context against independently observed source."
 
 [[invariant]]
 id = "QUAL-01"
@@ -39,6 +39,8 @@ status = "enforced"
 document = "README.md#qualification"
 evidence = [
   "rust-test:crates/zrail-cli/src/app/commands/update_authority_test.rs::forged_worktree_digest_cannot_hide_a_weaker_contract",
+  "rust-test:crates/zrail-cli/src/app/commands/review_test.rs::unchanged_contract_and_lock_cannot_hide_a_source_violation",
+  "rust-test:crates/zrail-cli/src/app/commands/review_test.rs::proposed_policy_weakening_cannot_authorize_violating_source",
   "gate:architecture-review",
 ]
 

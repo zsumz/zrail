@@ -2,8 +2,9 @@ name: CI
 
 on:
   pull_request:
+  merge_group:
   push:
-    branches: [main]
+    branches: [main, "release/**"]
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -21,42 +22,6 @@ defaults:
     shell: bash
 
 jobs:
-  architecture:
-    name: protected architecture diff
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    steps:
-      - name: Check out proposed source and protected history
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Check out protected authority implementation
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref: ${{ github.event.pull_request.base.sha }}
-          path: .zrail-authority
-          persist-credentials: false
-
-      - name: Set up protected Rust toolchain
-        uses: ./.zrail-authority/.github/actions/setup-rust
-
-      - name: Build protected authority offline
-        run: |
-          cargo fetch --manifest-path .zrail-authority/Cargo.toml --locked
-          cargo build --manifest-path .zrail-authority/Cargo.toml --locked --offline -p zrail
-
-      - name: Reject unapproved architecture grants
-        env:
-          ZRAIL_PROTECTED_BASE: ${{ github.event.pull_request.base.sha }}
-        run: >-
-          .zrail-authority/target/debug/zrail diff
-          --base "$ZRAIL_PROTECTED_BASE"
-          --root "$GITHUB_WORKSPACE"
-          --deny-grants
-
   canonical:
     name: canonical
     runs-on: ubuntu-24.04
