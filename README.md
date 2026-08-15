@@ -16,6 +16,7 @@ From this checkout:
 cargo install --path crates/zrail-cli --locked
 ```
 
+
 ## Use
 
 Create a Rust contract and its resolved lock:
@@ -37,6 +38,9 @@ After an intentional dependency, provenance, gate, or ratchet change:
 ```sh
 zrail update
 ```
+
+Policy changes and `zrail update --accept-grants` require explicit human
+authorization. Agents should report `zrail diff` instead of accepting power.
 
 `zrail.toml` contains human-authored architecture. `zrail.lock` contains exact
 resolved state, reviewed gate bytes, generated provenance, and ratchets.

@@ -24,7 +24,7 @@ for package in "${packages[@]}"; do
     fi
     archive="$package_target/package/$package-$version.crate"
     for required in LICENSE README.md; do
-        if ! tar -tzf "$archive" | rg -Fxq "$package-$version/$required"; then
+        if ! tar -tzf "$archive" | grep -Fx "$package-$version/$required" >/dev/null; then
             echo "$package archive is missing $required" >&2
             exit 1
         fi

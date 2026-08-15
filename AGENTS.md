@@ -13,3 +13,7 @@ Read `README.md` and the owning module contract before editing code.
    grant, debt increase, or unknown change.
 
 Do not weaken a rail merely to make an implementation pass.
+
+Never run `zrail update --accept-grants`, weaken `zrail.toml`, or replace
+`zrail.lock` without explicit human authorization. Report the semantic diff
+instead.
