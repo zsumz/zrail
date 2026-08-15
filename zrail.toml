@@ -1,0 +1,148 @@
+schema = 1
+adapters = ["rust"]
+
+[repository]
+roots = ["crates"]
+exclude = ["crates/zrail-testkit/tests/fixtures/**"]
+workspace_members = "exact"
+nested_git = "deny"
+submodules = "deny"
+symlinks = "inside"
+
+[[gate]]
+name = "check"
+kind = "local"
+path = "scripts/check"
+reason = "The repository's canonical local qualification entrypoint."
+
+[[invariant]]
+id = "QUAL-01"
+title = "Reviewed qualification gate changes cannot pass silently"
+status = "enforced"
+document = "README.md#qualification"
+evidence = [
+  "rust-test:crates/zrail-rust/src/engine/lock_compare_test.rs::changed_gate_contents_are_stale_lock_state",
+  "gate:check",
+]
+
+[dependencies]
+mode = "locked"
+unassigned_packages = "deny"
+cycles = "deny"
+
+[source.rust]
+module_docs = "required"
+facades = "declarative"
+entrypoints = "declarative"
+tests = "sibling"
+
+[source.rust.hygiene]
+unsafe = "deny"
+lint_suppressions = "deny"
+deny_methods = ["unwrap", "expect"]
+deny_macros = ["panic", "todo", "unimplemented", "unreachable", "dbg"]
+
+[source.rust.size.facade]
+target = 80
+hard = 120
+
+[source.rust.size.implementation]
+target = 240
+hard = 300
+
+[source.rust.size.test]
+target = 300
+hard = 300
+
+[source.rust.size.auxiliary]
+target = 300
+hard = 300
+
+[[layer]]
+name = "model"
+packages = ["zrail-core"]
+may_depend_on = []
+reason = "Language-neutral contract, lock, diagnostics, and diff semantics."
+
+[layer.dependencies]
+external = "locked"
+
+[[layer]]
+name = "adapter"
+packages = ["zrail-rust"]
+may_depend_on = ["model"]
+reason = "Rust and Cargo facts adapt repositories into the language-neutral model."
+
+[layer.dependencies]
+external = "locked"
+
+[[layer]]
+name = "application"
+packages = ["zrail"]
+may_depend_on = ["model", "adapter"]
+reason = "The binary is a thin command and output adapter over library semantics."
+
+[layer.dependencies]
+external = "none"
+
+[[layer]]
+name = "verification"
+packages = ["zrail-testkit"]
+may_depend_on = ["model", "adapter"]
+reason = "Adversarial fixtures judge the engine without entering the product graph."
+
+[layer.dependencies]
+external = "none"
+
+[[dependency]]
+name = "core-remains-language-neutral"
+from = "zrail-core"
+deny = ["zrail-rust", "syn", "proc-macro2"]
+reason = "The public contract model must not depend on one language adapter."
+
+[[scope]]
+name = "core-language-boundary"
+include = ["crates/zrail-core/src/**"]
+exclude = ["crates/zrail-core/src/**/*_test.rs"]
+reason = "Language-neutral semantics do not parse Rust or invoke repository processes."
+
+[scope.symbols]
+deny = ["syn", "proc_macro2", "std::process", "std::net"]
+
+[[scope]]
+name = "rust-analysis-boundary"
+include = ["crates/zrail-rust/src/**"]
+exclude = ["crates/zrail-rust/src/**/*_test.rs"]
+reason = "Static analysis reads repository state but never executes the repository."
+
+[scope.symbols]
+deny = ["std::process", "std::net"]
+
+[[owner]]
+name = "detector-fixtures"
+kind = "directory"
+match = "**/fixtures"
+allow = ["crates/zrail-testkit/tests/fixtures"]
+reason = "Deliberately broken repositories have one visible, excluded owner."
+
+[[owner]]
+name = "git-process-capability"
+kind = "capability"
+within = ["crates/zrail-cli/src/**"]
+match = "std::process::Command"
+allow = [
+  "crates/zrail-cli/src/app/commands/git_base_test.rs",
+  "crates/zrail-cli/src/app/commands/git_process.rs",
+]
+reason = "Only the bounded Git adapter and its conformance tests may spawn repository processes."
+
+[[owner]]
+name = "git-process-construction"
+kind = "call"
+within = ["crates/zrail-cli/src/**"]
+match = "std::process::Command::new"
+allow = [
+  "crates/zrail-cli/src/app/commands/git_base_test.rs",
+  "crates/zrail-cli/src/app/commands/git_process.rs",
+]
+reason = "Only the bounded Git adapter and its conformance tests may construct repository processes."
