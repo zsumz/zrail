@@ -1,6 +1,7 @@
 //! Bounded, deterministic repository inventory.
 
 mod classify;
+mod exclusions;
 mod scan;
 mod types;
 

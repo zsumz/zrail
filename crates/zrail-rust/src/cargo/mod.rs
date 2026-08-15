@@ -4,6 +4,7 @@ mod dependencies;
 mod model;
 mod parse;
 mod target_discovery;
+mod target_fields;
 mod targets;
 mod workspace;
 

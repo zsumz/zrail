@@ -9,11 +9,12 @@ use std::{
 use zrail_core::{
     Contract,
     input::{MAX_DIRECTORY_DEPTH, MAX_REPOSITORY_ENTRIES, read_text_with_limit},
-    path::{glob_matches, repository_relative},
+    path::repository_relative,
 };
 
 use super::{
     classify::{classify_path, is_indexed_source},
+    exclusions::{excluded, excluded_subtree},
     types::{RepositoryEntry, RepositoryEntryKind, RepositoryInventory, RustSourceFile},
 };
 
@@ -213,28 +214,12 @@ fn skip_directory(relative: &str) -> bool {
         || relative == "target"
 }
 
-fn excluded_subtree(exclusions: &[String], directory: &str) -> bool {
-    exclusions.iter().any(|pattern| {
-        if !pattern.bytes().any(|byte| matches!(byte, b'*' | b'?')) {
-            return directory == pattern || directory.starts_with(&format!("{pattern}/"));
-        }
-        let prefix = pattern.trim_end_matches("/**");
-        prefix != pattern && glob_matches(prefix, directory)
-    })
-}
-
 fn under_roots(contract: &Contract, relative: &str) -> bool {
     contract
         .repository
         .roots
         .iter()
         .any(|root| root == "." || relative == root || relative.starts_with(&format!("{root}/")))
-}
-
-fn excluded(contract: &Contract, relative: &str) -> bool {
-    contract.repository.exclude.iter().any(|pattern| {
-        glob_matches(pattern, relative) || relative.starts_with(&format!("{pattern}/"))
-    })
 }
 
 #[cfg(test)]

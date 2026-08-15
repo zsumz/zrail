@@ -10,6 +10,7 @@ use toml::Value;
 use super::{
     model::{CargoTarget, CargoTargetKind},
     target_discovery::{auto_discovery_default, auto_enabled, discover_directory},
+    target_fields::{optional_string, required_string, target_path},
 };
 
 pub(super) fn collect_target_roots(
@@ -196,10 +197,6 @@ fn explicit_target_path(
     }
 }
 
-fn target_path(table: &toml::map::Map<String, Value>, default: &str) -> Result<String, String> {
-    optional_string(table, "path")?.map_or_else(|| Ok(default.into()), Ok)
-}
-
 fn collect_build_script(
     package: &toml::map::Map<String, Value>,
     directory: &Path,
@@ -229,26 +226,6 @@ fn collect_build_script(
         None => {}
     }
     Ok(())
-}
-
-fn required_string(
-    table: &toml::map::Map<String, Value>,
-    key: &str,
-    label: &str,
-) -> Result<String, String> {
-    optional_string(table, key)?.ok_or_else(|| format!("{label} requires {key}"))
-}
-
-fn optional_string(
-    table: &toml::map::Map<String, Value>,
-    key: &str,
-) -> Result<Option<String>, String> {
-    table.get(key).map_or(Ok(None), |value| {
-        value
-            .as_str()
-            .map(|value| Some(value.to_owned()))
-            .ok_or_else(|| format!("Cargo target {key} must be a string"))
-    })
 }
 
 #[cfg(test)]

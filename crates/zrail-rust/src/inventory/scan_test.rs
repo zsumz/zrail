@@ -8,7 +8,9 @@ use zrail_core::contract::{
     RepositoryContract, RustSourceContract, SourceContract, SymlinkMode, TestMode,
 };
 
-use super::{MAX_DIRECTORY_DEPTH, MAX_RUST_SOURCE_BYTES, excluded_subtree, inventory_repository};
+use crate::inventory::exclusions::excluded_subtree;
+
+use super::{MAX_DIRECTORY_DEPTH, MAX_RUST_SOURCE_BYTES, inventory_repository};
 
 #[test]
 fn inventory_reads_rust_under_declared_roots() {
