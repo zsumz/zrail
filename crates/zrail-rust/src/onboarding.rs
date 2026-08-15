@@ -1,10 +1,14 @@
 //! Cargo package directories become conservative initial Rust source boundaries.
 
+mod baseline;
+
 use std::path::Path;
 
 use crate::{
     cargo::load_cargo_workspace, engine::CheckError, inventory::inventory_cargo_repository,
 };
+
+pub use baseline::{BaselinePlan, BaselineRatchet, discover_baseline};
 
 pub fn discover_source_roots(root: &Path) -> Result<Vec<String>, CheckError> {
     let inventory = inventory_cargo_repository(root)

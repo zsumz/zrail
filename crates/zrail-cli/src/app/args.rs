@@ -8,6 +8,9 @@ use std::{
 use super::{error::CliError, output::OutputFormat};
 
 mod diff;
+mod init;
+
+pub(crate) use init::{InitMode, InitOptions};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) enum Command {
@@ -48,11 +51,6 @@ pub(crate) enum DiffMode {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct InitOptions {
-    pub(crate) root: PathBuf,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct UpdateOptions {
     pub(crate) common: CommonOptions,
     pub(crate) accept_grants: bool,
@@ -85,7 +83,7 @@ pub(crate) fn parse(arguments: impl IntoIterator<Item = OsString>) -> Result<Com
         "update" => parse_update(&remaining),
         "explain" | "guide" => parse_explain(&remaining),
         "diff" => diff::parse(&remaining),
-        "init" => parse_init(&remaining),
+        "init" => init::parse(&remaining),
         "help" | "--help" | "-h" => Ok(Command::Help),
         "version" | "--version" | "-V" => Ok(Command::Version),
         other => Err(CliError::new(format!("unknown command {other:?}"))
@@ -175,15 +173,6 @@ pub(super) fn set_once<T>(target: &mut Option<T>, value: T, label: &str) -> Resu
     } else {
         Ok(())
     }
-}
-
-fn parse_init(arguments: &[OsString]) -> Result<Command, CliError> {
-    let root = match arguments {
-        [] => PathBuf::from("."),
-        [root] => PathBuf::from(root.as_os_str()),
-        _ => return Err(CliError::new("init accepts at most one repository path")),
-    };
-    Ok(Command::Init(InitOptions { root }))
 }
 
 pub(super) fn value(

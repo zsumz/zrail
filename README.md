@@ -19,11 +19,21 @@ cargo install --path crates/zrail-cli --locked
 
 ## Use
 
-Create a Rust contract and its resolved lock:
+Create a strict Rust contract and its resolved lock:
 
 ```sh
 zrail init
 ```
+
+Onboard an existing repository without hiding its current size or inline-test
+debt:
+
+```sh
+zrail init --baseline
+```
+
+Baseline mode keeps sibling tests and 300-line design targets as the goal. It
+records existing exceptions as exact, tightening ratchets; new debt still fails.
 
 Check it, inspect one path, or review an architecture change:
 
@@ -68,7 +78,7 @@ or unknown. `--deny-grants` rejects added power, new debt, and unsafe comparison
 ## CLI
 
 ```text
-zrail init [ROOT]
+zrail init [ROOT] [--strict | --baseline]
 zrail check [--root ROOT] [--format human|json]
 zrail update [--root ROOT] [--format human|json] [--accept-grants]
 zrail doctor [--root ROOT] [--format human|json]

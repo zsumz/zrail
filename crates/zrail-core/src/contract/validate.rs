@@ -30,7 +30,7 @@ pub(super) fn validate_contract(contract: &Contract) -> Result<(), ContractError
     validate_layers(contract, &mut errors);
     validate_named_rules(contract, &mut errors);
     owner::validate_contract(contract, &mut errors);
-    validate_ratchets(contract, &mut errors);
+    super::validate_ratchet::validate(contract, &mut errors);
     super::validate_evidence::validate(contract, &mut errors);
     super::validate_sets::validate_sets(contract, &mut errors);
     if errors.is_empty() {
@@ -182,23 +182,6 @@ fn validate_named_rules(contract: &Contract, errors: &mut ValidationErrors) {
         }
         for pattern in scope.include.iter().chain(&scope.exclude) {
             validate_repository_pattern(pattern, errors);
-        }
-    }
-}
-
-fn validate_ratchets(contract: &Contract, errors: &mut ValidationErrors) {
-    let mut identities = BTreeSet::new();
-    for ratchet in &contract.ratchets {
-        if ratchet.rule != "rust.file-size" {
-            errors.push(format!("unsupported ratchet rule {:?}", ratchet.rule));
-        }
-        validate_repository_literal(&ratchet.target, errors);
-        require_reason("ratchet", &ratchet.target, &ratchet.reason, errors);
-        if !identities.insert((&ratchet.rule, &ratchet.target)) {
-            errors.push(format!(
-                "duplicate ratchet {} for {}",
-                ratchet.rule, ratchet.target
-            ));
         }
     }
 }

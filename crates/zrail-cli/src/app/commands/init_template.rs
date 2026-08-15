@@ -2,13 +2,15 @@
 
 use std::fmt::Write as _;
 
-pub(super) fn render(roots: &[String]) -> String {
+use zrail_rust::BaselinePlan;
+
+pub(super) fn render(roots: &[String], baseline: &BaselinePlan) -> String {
     let roots = roots
         .iter()
         .map(|root| toml_string(root))
         .collect::<Vec<_>>()
         .join(", ");
-    format!(
+    let mut contract = format!(
         r#"schema = 1
 adapters = ["rust"]
 
@@ -39,21 +41,35 @@ deny_macros = []
 
 [source.rust.size.facade]
 target = 300
-hard = 300
+hard = {facade_hard}
 
 [source.rust.size.implementation]
 target = 300
-hard = 300
+hard = {implementation_hard}
 
 [source.rust.size.test]
 target = 300
-hard = 300
+hard = {test_hard}
 
 [source.rust.size.auxiliary]
 target = 300
-hard = 300
-"#
-    )
+hard = {auxiliary_hard}
+"#,
+        facade_hard = baseline.facade_hard,
+        implementation_hard = baseline.implementation_hard,
+        test_hard = baseline.test_hard,
+        auxiliary_hard = baseline.auxiliary_hard,
+    );
+    for ratchet in &baseline.ratchets {
+        let _ = write!(
+            contract,
+            "\n[[ratchet]]\nrule = {}\ntarget = {}\nreason = {}\n",
+            toml_string(ratchet.rule),
+            toml_string(&ratchet.target),
+            toml_string(ratchet.reason),
+        );
+    }
+    contract
 }
 
 fn toml_string(value: &str) -> String {

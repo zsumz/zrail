@@ -51,24 +51,36 @@ pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckE
             dependencies,
         });
     }
-    let lines = model
+    let sources = model
         .source
         .files
         .iter()
-        .map(|file| (file.relative.as_str(), file.lines))
+        .map(|file| (file.relative.as_str(), file))
         .collect::<BTreeMap<_, _>>();
     for ratchet in &model.bundle.contract.ratchets {
-        if let Some(value) = lines.get(ratchet.target.as_str()) {
+        if let Some(value) = sources
+            .get(ratchet.target.as_str())
+            .and_then(|file| ratchet_value(&ratchet.rule, file))
+            .filter(|value| *value > 0)
+        {
             lock.ratchets.push(LockedRatchet {
                 rule: ratchet.rule.clone(),
                 target: ratchet.target.clone(),
-                value: *value,
+                value,
             });
         }
     }
     lock.canonicalize()
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     Ok(lock)
+}
+
+fn ratchet_value(rule: &str, file: &crate::source::RustFileFacts) -> Option<usize> {
+    match rule {
+        "rust.file-size" => Some(file.lines),
+        "rust.inline-tests" => Some(file.tests.len()),
+        _ => None,
+    }
 }
 
 fn locked_gates(model: &RepositoryModel) -> Result<Vec<LockedGate>, CheckError> {

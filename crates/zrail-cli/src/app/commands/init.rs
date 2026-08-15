@@ -1,11 +1,17 @@
 //! Create a conservative local contract and its first exact lock.
 
+#[path = "init_baseline.rs"]
+mod init_baseline;
+
 use std::{fs, path::Path};
 
 use zrail_core::{ReportStatus, input::create_text, path::repository_file};
-use zrail_rust::{build_lock, check_repository_with_lock, discover_source_roots};
+use zrail_rust::{BaselinePlan, build_lock, check_repository_with_lock, discover_source_roots};
 
-use crate::app::{args::InitOptions, error::CliError};
+use crate::app::{
+    args::{InitMode, InitOptions},
+    error::CliError,
+};
 
 use super::{CommandResult, init_template};
 
@@ -20,8 +26,15 @@ pub(crate) fn init(options: &InitOptions) -> Result<CommandResult, CliError> {
     let lock = repository_file(&root, Path::new("zrail.lock")).map_err(CliError::new)?;
     ensure_vacant(&config, &lock)?;
     let roots = discover_source_roots(&root).map_err(|error| CliError::new(error.to_string()))?;
-    let template = init_template::render(&roots);
+    let mut baseline = BaselinePlan::strict();
+    let template = init_template::render(&roots, &baseline);
     create_text(&config, &template).map_err(CliError::new)?;
+    if options.mode == InitMode::Baseline {
+        baseline = match init_baseline::apply(&root, &config, &roots) {
+            Ok(baseline) => baseline,
+            Err(error) => return Err(rollback_error(&config, &error)),
+        };
+    }
     let candidate = match build_lock(&root, Path::new("zrail.toml")) {
         Ok(candidate) => candidate,
         Err(error) => {
@@ -38,7 +51,8 @@ pub(crate) fn init(options: &InitOptions) -> Result<CommandResult, CliError> {
         remove_created(&config)?;
         return Ok(CommandResult::status(
             format!(
-                "zrail init refused to write a lock for a failing starter contract\n\n{}",
+                "zrail init refused to write a lock for a failing {} contract\n\n{}",
+                mode_name(options.mode),
                 checked.report.human()
             ),
             1,
@@ -57,12 +71,23 @@ pub(crate) fn init(options: &InitOptions) -> Result<CommandResult, CliError> {
         concat!(
             "Initialized {}\n",
             "Created zrail.toml and zrail.lock\n",
+            "Mode: {}\n",
+            "Recorded debt: {} ratchets\n",
             "Source roots: {}\n",
             "Next: run `zrail check`\n",
         ),
         root.display(),
+        mode_name(options.mode),
+        baseline.ratchets.len(),
         roots.join(", ")
     )))
+}
+
+const fn mode_name(mode: InitMode) -> &'static str {
+    match mode {
+        InitMode::Strict => "strict",
+        InitMode::Baseline => "baseline",
+    }
 }
 
 fn ensure_vacant(config: &Path, lock: &Path) -> Result<(), CliError> {

@@ -2,7 +2,7 @@
 
 use std::ffi::OsString;
 
-use super::{Command, DiffMode, parse};
+use super::{Command, DiffMode, InitMode, parse};
 
 #[test]
 fn check_defaults_are_quiet_and_repository_local() {
@@ -112,4 +112,36 @@ fn update_requires_explicit_grant_acceptance() {
     ])
     .expect_err("check must not accept update authority");
     assert!(error.message.contains("unknown option"));
+}
+
+#[test]
+fn init_defaults_to_strict_and_accepts_one_explicit_mode() {
+    let command =
+        parse([OsString::from("zrail"), OsString::from("init")]).expect("parse strict default");
+    let Command::Init(options) = command else {
+        panic!("expected init command");
+    };
+    assert_eq!(options.mode, InitMode::Strict);
+
+    let command = parse([
+        OsString::from("zrail"),
+        OsString::from("init"),
+        OsString::from("repository"),
+        OsString::from("--baseline"),
+    ])
+    .expect("parse baseline mode");
+    let Command::Init(options) = command else {
+        panic!("expected init command");
+    };
+    assert_eq!(options.root.to_string_lossy(), "repository");
+    assert_eq!(options.mode, InitMode::Baseline);
+
+    let error = parse([
+        OsString::from("zrail"),
+        OsString::from("init"),
+        OsString::from("--strict"),
+        OsString::from("--baseline"),
+    ])
+    .expect_err("init modes must be exclusive");
+    assert!(error.message.contains("init mode"));
 }

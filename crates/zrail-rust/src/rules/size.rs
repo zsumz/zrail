@@ -16,11 +16,13 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
         .contract
         .ratchets
         .iter()
+        .filter(|ratchet| ratchet.rule == "rust.file-size")
         .map(|ratchet| (ratchet.target.as_str(), ratchet))
         .collect::<BTreeMap<_, _>>();
     let locked = context.lock.map_or_else(BTreeMap::new, |lock| {
         lock.ratchets
             .iter()
+            .filter(|ratchet| ratchet.rule == "rust.file-size")
             .map(|ratchet| (ratchet.target.as_str(), ratchet))
             .collect()
     });

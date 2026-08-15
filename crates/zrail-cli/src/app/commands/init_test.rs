@@ -9,7 +9,7 @@ use std::{
 use zrail_core::ReportStatus;
 use zrail_rust::check_repository;
 
-use crate::app::args::InitOptions;
+use crate::app::args::{InitMode, InitOptions};
 
 use super::init;
 
@@ -162,6 +162,7 @@ fn non_cargo_directories_are_rejected_without_partial_state() {
 fn initialize(root: &Path) -> Result<super::CommandResult, crate::app::error::CliError> {
     init(&InitOptions {
         root: root.to_path_buf(),
+        mode: InitMode::Strict,
     })
 }
 

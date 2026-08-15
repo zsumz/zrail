@@ -15,7 +15,7 @@ use super::{
 const HELP: &str = concat!(
     "zrail — executable guardrails for human- and agent-written code\n\n",
     "USAGE\n",
-    "  zrail init [ROOT]\n",
+    "  zrail init [ROOT] [--strict | --baseline]\n",
     "  zrail check [--root ROOT] [--format human|json]\n",
     "  zrail update [--root ROOT] [--format human|json] [--accept-grants]\n",
     "  zrail doctor [--root ROOT] [--format human|json]\n",

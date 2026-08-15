@@ -1,5 +1,7 @@
 //! Sibling tests must be separate, test-only, and reachable through Rust modules.
 
+mod inline;
+
 use std::{
     collections::BTreeSet,
     path::{Path, PathBuf},
@@ -17,25 +19,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     if context.contract.source.rust.tests != TestMode::Sibling {
         return;
     }
-    for file in context
-        .source
-        .files
-        .iter()
-        .filter(|file| file.reachability.is_production())
-    {
-        for test in &file.tests {
-            findings.push(
-                Finding::error(
-                    "RUST-TEST-001",
-                    "rust.tests.sibling",
-                    "test-placement",
-                    format!("production source contains test construct {}", test.name),
-                )
-                .at(&file.relative, test.span)
-                .with_help("move the proof into a reachable sibling `_test.rs` module"),
-            );
-        }
-    }
+    inline::check(context, findings);
     check_declarations(context, findings);
 }
 

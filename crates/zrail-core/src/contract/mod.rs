@@ -12,6 +12,7 @@ mod validate;
 mod validate_evidence;
 mod validate_limits;
 mod validate_paths;
+mod validate_ratchet;
 mod validate_sets;
 mod validate_source;
 

@@ -16,4 +16,4 @@ pub use explain::{
     CallOwnerExplanation, CapabilityOwnerExplanation, PathExplanation, explain_path,
 };
 pub use inventory::{FileClass, RepositoryInventory, RepositoryInventoryError};
-pub use onboarding::discover_source_roots;
+pub use onboarding::{BaselinePlan, BaselineRatchet, discover_baseline, discover_source_roots};
