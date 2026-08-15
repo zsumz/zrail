@@ -33,18 +33,21 @@ fn collect(
             "contract discovery exceeds the {MAX_DIRECTORY_DEPTH}-directory-depth safety limit"
         )));
     }
-    let entries = fs::read_dir(current)
+    let directory = fs::read_dir(current)
         .map_err(|error| ContractError::one(format!("read {}: {error}", current.display())))?;
-    for entry in entries {
+    let mut entries = Vec::new();
+    for entry in directory {
         if *inspected == MAX_REPOSITORY_ENTRIES {
             return Err(ContractError::one(format!(
                 "contract discovery exceeds the {MAX_REPOSITORY_ENTRIES}-entry safety limit"
             )));
         }
         *inspected += 1;
-        let path = entry
-            .map_err(|error| ContractError::one(format!("read entry: {error}")))?
-            .path();
+        entries.push(entry.map_err(|error| ContractError::one(format!("read entry: {error}")))?);
+    }
+    entries.sort_by_key(fs::DirEntry::file_name);
+    for entry in entries {
+        let path = entry.path();
         let metadata = fs::symlink_metadata(&path)
             .map_err(|error| ContractError::one(format!("inspect {}: {error}", path.display())))?;
         if metadata.file_type().is_symlink() {

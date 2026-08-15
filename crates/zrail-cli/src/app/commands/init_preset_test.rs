@@ -41,13 +41,13 @@ fn rust_preset_accepts_inline_and_integration_tests_without_a_size_policy() {
         "\n[[ratchet]]\nrule = \"rust.file-size\"\ntarget = \"src/lib.rs\"\nreason = \"stale\"\n",
     );
     fs::write(root.join("zrail.toml"), contract).expect("write stale ratchet");
-    let stale = report(&root);
-    assert!(
-        stale
-            .findings
-            .iter()
-            .any(|finding| finding.id == "RUST-SIZE-005")
-    );
+    let stale = check_repository(
+        root.as_path(),
+        Path::new("zrail.toml"),
+        Path::new("zrail.lock"),
+    )
+    .expect_err("stale size ratchet must fail contract validation");
+    assert!(stale.to_string().contains("no handwritten or generated"));
     reset(&root);
 }
 

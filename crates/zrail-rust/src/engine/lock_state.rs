@@ -119,10 +119,5 @@ const fn locked_kind(kind: DependencyKind) -> LockedDependencyKind {
 
 pub(super) fn read_optional_lock(root: &Path, path: &Path) -> Result<Option<LockFile>, CheckError> {
     let path = resolve(root, path)?;
-    if !path.exists() {
-        return Ok(None);
-    }
-    LockFile::read(&path)
-        .map(Some)
-        .map_err(|error| CheckError::from_message(error.to_string()))
+    LockFile::read_optional(&path).map_err(|error| CheckError::from_message(error.to_string()))
 }

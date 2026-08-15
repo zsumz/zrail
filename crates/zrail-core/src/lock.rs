@@ -2,7 +2,7 @@
 
 mod canonical;
 
-use std::{error::Error, fmt, path::Path};
+use std::{error::Error, fmt, fs, path::Path};
 
 use serde::{Deserialize, Serialize};
 
@@ -114,6 +114,17 @@ impl LockFile {
             )));
         }
         Ok(lock)
+    }
+
+    pub fn read_optional(path: &Path) -> Result<Option<Self>, LockError> {
+        match fs::symlink_metadata(path) {
+            Ok(_) => Self::read(path).map(Some),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+            Err(error) => Err(LockError(format!(
+                "inspect optional lock {}: {error}",
+                path.display()
+            ))),
+        }
     }
 
     pub fn render(&self) -> Result<String, LockError> {

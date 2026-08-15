@@ -54,30 +54,9 @@ pub fn inventory_repository(
                     "repository exceeds the {MAX_RUST_FILES}-Rust-file safety limit"
                 )));
             }
-            let bytes = fs::metadata(&entry.absolute)
-                .map_err(|error| {
-                    RepositoryInventoryError(format!(
-                        "inspect {}: {error}",
-                        entry.absolute.display()
-                    ))
-                })?
-                .len();
-            let bytes = usize::try_from(bytes).map_err(|_| {
-                RepositoryInventoryError(format!(
-                    "Rust source is too large for this platform: {}",
-                    entry.absolute.display()
-                ))
-            })?;
-            source_bytes = source_bytes.checked_add(bytes).ok_or_else(|| {
-                RepositoryInventoryError("Rust source byte count overflowed".into())
-            })?;
-            if source_bytes > MAX_TOTAL_RUST_SOURCE_BYTES {
-                return Err(RepositoryInventoryError(format!(
-                    "repository exceeds the {MAX_TOTAL_RUST_SOURCE_BYTES}-byte total Rust source safety limit"
-                )));
-            }
             let source = read_text_with_limit(&entry.absolute, MAX_RUST_SOURCE_BYTES)
                 .map_err(RepositoryInventoryError)?;
+            source_bytes = add_source_bytes(source_bytes, source.len())?;
             rust_files.push(RustSourceFile {
                 relative: entry.relative.clone(),
                 absolute: entry.absolute.clone(),
@@ -94,6 +73,18 @@ pub fn inventory_repository(
         rust_files,
         manifest_paths: manifests,
     })
+}
+
+fn add_source_bytes(current: usize, observed: usize) -> Result<usize, RepositoryInventoryError> {
+    let total = current
+        .checked_add(observed)
+        .ok_or_else(|| RepositoryInventoryError("Rust source byte count overflowed".into()))?;
+    if total > MAX_TOTAL_RUST_SOURCE_BYTES {
+        return Err(RepositoryInventoryError(format!(
+            "repository exceeds the {MAX_TOTAL_RUST_SOURCE_BYTES}-byte total Rust source safety limit"
+        )));
+    }
+    Ok(total)
 }
 
 pub(crate) fn inventory_cargo_repository(

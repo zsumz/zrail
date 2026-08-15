@@ -19,6 +19,14 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
                 ratchet.rule
             ));
         }
+        if ratchet.rule == "rust.file-size"
+            && !file_size_policy_applies(&contract.source.rust, &ratchet.target)
+        {
+            errors.push(format!(
+                "file-size ratchet for {:?} has no handwritten or generated size policy",
+                ratchet.target
+            ));
+        }
         validate_repository_literal(&ratchet.target, errors);
         require_reason("ratchet", &ratchet.target, &ratchet.reason, errors);
         if !identities.insert((&ratchet.rule, &ratchet.target)) {
@@ -28,6 +36,18 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
             ));
         }
     }
+}
+
+fn file_size_policy_applies(rust: &super::RustSourceContract, target: &str) -> bool {
+    rust.size.is_some()
+        || rust
+            .generated
+            .iter()
+            .any(|generated| under_root(target, &generated.root))
+}
+
+fn under_root(path: &str, root: &str) -> bool {
+    root == "." || path == root || path.starts_with(&format!("{root}/"))
 }
 
 fn supported_rule(rule: &str) -> bool {

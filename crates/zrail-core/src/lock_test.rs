@@ -1,4 +1,6 @@
-//! Canonical lock rendering validates and sorts every exact-state family.
+//! Canonical lock handling validates exact state and distinguishes absent inputs.
+
+use std::{fs, path::PathBuf};
 
 use super::{
     LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope, LockedGate,
@@ -104,6 +106,35 @@ fn qualification_gate_digests_must_be_exact() {
     assert!(error.to_string().contains("invalid sha256"));
 }
 
+#[test]
+fn optional_read_accepts_only_a_genuinely_absent_lock() {
+    let root = fixture_root("optional");
+    reset(&root);
+    let path = root.join("zrail.lock");
+
+    assert_eq!(LockFile::read_optional(&path).expect("read absence"), None);
+    fs::create_dir(&path).expect("create non-file lock");
+    let error = LockFile::read_optional(&path).expect_err("directory is not absence");
+    assert!(error.to_string().contains("regular file"));
+    fs::remove_dir_all(root).expect("remove fixture");
+}
+
+#[cfg(unix)]
+#[test]
+fn optional_read_rejects_a_dangling_lock_alias() {
+    use std::os::unix::fs::symlink;
+
+    let root = fixture_root("dangling");
+    reset(&root);
+    let path = root.join("zrail.lock");
+    symlink(root.join("missing"), &path).expect("create dangling alias");
+
+    let error = LockFile::read_optional(&path).expect_err("alias is not absence");
+
+    assert!(error.to_string().contains("symlink"));
+    fs::remove_dir_all(root).expect("remove fixture");
+}
+
 fn dependency(
     name: &str,
     kind: LockedDependencyKind,
@@ -114,4 +145,15 @@ fn dependency(
         kind,
         scope,
     }
+}
+
+fn fixture_root(name: &str) -> PathBuf {
+    std::env::temp_dir().join(format!("zrail-lock-{name}-{}", std::process::id()))
+}
+
+fn reset(root: &PathBuf) {
+    if root.exists() {
+        fs::remove_dir_all(root).expect("reset fixture");
+    }
+    fs::create_dir_all(root).expect("create fixture");
 }

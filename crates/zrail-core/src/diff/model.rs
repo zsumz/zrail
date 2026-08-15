@@ -126,16 +126,21 @@ impl DiffReport {
         }
         let _ = writeln!(
             output,
-            "Changes: {} grants, {} revokes, {} debt, {} cleanup, {} unknown",
+            "Changes: {} grants, {} revokes, {} debt, {} cleanup, {} neutral, {} unknown",
             self.summary.grants,
             self.summary.revokes,
             self.summary.debt,
             self.summary.cleanup,
+            self.summary.neutral,
             self.summary.unknown
         );
         output
     }
 }
+
+#[cfg(test)]
+#[path = "model_test.rs"]
+mod model_test;
 
 const fn kind_name(kind: ChangeKind) -> &'static str {
     match kind {

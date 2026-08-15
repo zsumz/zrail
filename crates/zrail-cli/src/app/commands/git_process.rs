@@ -40,7 +40,19 @@ pub(super) fn output(
         .stderr
         .take()
         .ok_or_else(|| CliError::new(format!("capture Git {operation} errors")))?;
-    let errors = thread::spawn(move || drain_bounded(stderr, MAX_GIT_ERROR_BYTES));
+    let errors = match thread::Builder::new()
+        .name("zrail-git-stderr".into())
+        .spawn(move || drain_bounded(stderr, MAX_GIT_ERROR_BYTES))
+    {
+        Ok(errors) => errors,
+        Err(error) => {
+            let _killed = child.kill();
+            let _waited = child.wait();
+            return Err(CliError::new(format!(
+                "capture Git {operation} errors: start reader thread: {error}"
+            )));
+        }
+    };
     let captured = read_bounded(stdout, limit);
     if captured.as_ref().is_ok_and(|value| value.overflowed) {
         let _killed = child.kill();

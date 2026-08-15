@@ -10,7 +10,10 @@ use zrail_core::contract::{
 
 use crate::inventory::exclusions::excluded_subtree;
 
-use super::{MAX_DIRECTORY_DEPTH, MAX_RUST_SOURCE_BYTES, inventory_repository};
+use super::{
+    MAX_DIRECTORY_DEPTH, MAX_RUST_SOURCE_BYTES, MAX_TOTAL_RUST_SOURCE_BYTES, add_source_bytes,
+    inventory_repository,
+};
 
 #[test]
 fn inventory_reads_rust_under_declared_roots() {
@@ -70,6 +73,26 @@ fn inventory_rejects_oversized_rust_source() {
 
     assert!(error.to_string().contains("safety limit"));
     fs::remove_dir_all(root).expect("remove fixture");
+}
+
+#[test]
+fn total_source_accounting_is_checked_and_bounded() {
+    assert_eq!(
+        add_source_bytes(MAX_TOTAL_RUST_SOURCE_BYTES - 1, 1).expect("accept exact limit"),
+        MAX_TOTAL_RUST_SOURCE_BYTES
+    );
+    assert!(
+        add_source_bytes(MAX_TOTAL_RUST_SOURCE_BYTES, 1)
+            .expect_err("reject excess")
+            .to_string()
+            .contains("total Rust source safety limit")
+    );
+    assert!(
+        add_source_bytes(usize::MAX, 1)
+            .expect_err("reject overflow")
+            .to_string()
+            .contains("overflowed")
+    );
 }
 
 #[test]

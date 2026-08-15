@@ -37,8 +37,12 @@ pub fn read_bytes_with_limit(path: &Path, limit: usize) -> Result<Vec<u8>, Strin
 
 pub fn replace_text(path: &Path, contents: &str) -> Result<(), String> {
     validate_output(path, contents)?;
-    if path.exists() || fs::symlink_metadata(path).is_ok() {
-        require_regular(path)?;
+    match fs::symlink_metadata(path) {
+        Ok(_) => {
+            require_regular(path)?;
+        }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => return Err(format!("inspect {}: {error}", path.display())),
     }
     let parent = output_parent(path);
     let mut temporary = create_temporary(parent, path)?;

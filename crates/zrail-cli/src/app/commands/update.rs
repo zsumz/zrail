@@ -94,12 +94,7 @@ pub(crate) fn update(options: &UpdateOptions) -> Result<CommandResult, CliError>
 }
 
 fn read_current_lock(path: &Path) -> Result<Option<LockFile>, String> {
-    if !path.exists() {
-        return Ok(None);
-    }
-    LockFile::read(path)
-        .map(Some)
-        .map_err(|error| error.to_string())
+    LockFile::read_optional(path).map_err(|error| error.to_string())
 }
 
 fn refused_changes(report: &DiffReport, format: OutputFormat) -> Result<String, CliError> {

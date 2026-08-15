@@ -57,7 +57,7 @@ fn base_diff_accepts_a_legacy_generated_provenance_state() {
     assert!(
         output
             .text
-            .contains("Changes: 0 grants, 2 revokes, 0 debt, 0 cleanup, 0 unknown")
+            .contains("Changes: 0 grants, 2 revokes, 0 debt, 0 cleanup, 0 neutral, 0 unknown")
     );
     reset(&root);
 }

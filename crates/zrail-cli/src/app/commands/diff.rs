@@ -53,12 +53,7 @@ fn compare(
 
 fn optional_lock(root: &Path, lock: &Path) -> Result<Option<LockFile>, CliError> {
     let path = repository_file(root, lock).map_err(CliError::new)?;
-    if !path.exists() {
-        return Ok(None);
-    }
-    LockFile::read(&path)
-        .map(Some)
-        .map_err(|error| CliError::new(error.to_string()))
+    LockFile::read_optional(&path).map_err(|error| CliError::new(error.to_string()))
 }
 
 #[cfg(test)]
