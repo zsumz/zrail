@@ -36,6 +36,12 @@ fn exact_rust_source_graph_passes() {
 }
 
 #[test]
+fn nested_inline_test_source_graph_passes() {
+    let report = check("nested_test_context");
+    assert_eq!(report.status, ReportStatus::Pass, "{}", report.human());
+}
+
+#[test]
 fn exact_invariant_evidence_and_reviewed_gate_pass() {
     let report = check("evidence_good");
     assert_eq!(report.status, ReportStatus::Pass, "{}", report.human());

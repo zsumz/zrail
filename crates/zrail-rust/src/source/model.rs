@@ -79,6 +79,7 @@ pub(crate) struct IncludeBoundary {
     pub(crate) out_dir: Option<String>,
     pub(crate) expression: String,
     pub(crate) generated: bool,
+    pub(crate) cfg_test: bool,
     pub(crate) context: IncludeContext,
     pub(crate) span: Option<SourceSpan>,
 }

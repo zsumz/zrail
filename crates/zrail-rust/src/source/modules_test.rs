@@ -55,3 +55,30 @@ fn duplicate_path_attributes_are_unresolved() {
 
     assert!(declarations[0].unresolved_path);
 }
+
+#[test]
+fn external_modules_inherit_nested_inline_test_context() {
+    let source = format!(
+        r"
+        #[cfg(test)]
+        mod tests {{
+            mod {support};
+            mod outer {{
+                mod inner {{
+                    mod {nested};
+                }}
+            }}
+        }}
+    ",
+        support = "support",
+        nested = "nested",
+    );
+    let syntax = syn::parse_file(&source).expect("parse nested test modules");
+
+    let declarations = module_declarations(&syntax);
+
+    assert_eq!(declarations.len(), 2);
+    assert!(declarations.iter().all(|declaration| declaration.cfg_test));
+    assert_eq!(declarations[0].name, "support");
+    assert_eq!(declarations[1].name, "nested");
+}

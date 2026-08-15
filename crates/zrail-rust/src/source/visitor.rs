@@ -21,6 +21,7 @@ use super::{
 #[derive(Debug)]
 pub(super) struct FactVisitor<'a> {
     imports: &'a ImportMap,
+    pub(super) test_only_context: bool,
     pub(super) paths: Vec<ObservedFact>,
     pub(super) calls: Vec<ObservedFact>,
     pub(super) methods: Vec<ObservedFact>,
@@ -50,6 +51,7 @@ impl<'a> FactVisitor<'a> {
         }));
         Self {
             imports,
+            test_only_context: false,
             paths,
             calls: Vec::new(),
             methods: Vec::new(),
@@ -134,12 +136,12 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_expr_macro(&mut self, expression: &'ast ExprMacro) {
-        self.record_expression_macro(&expression.mac);
+        self.record_expression_macro(&expression.mac, expression.attrs.iter().any(is_cfg_test));
         visit::visit_expr_macro(self, expression);
     }
 
     fn visit_stmt_macro(&mut self, statement: &'ast StmtMacro) {
-        self.record_expression_macro(&statement.mac);
+        self.record_expression_macro(&statement.mac, statement.attrs.iter().any(is_cfg_test));
         visit::visit_stmt_macro(self, statement);
     }
 
@@ -221,20 +223,9 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_item_mod(&mut self, module: &'ast ItemMod) {
-        if let Some(unsafe_token) = &module.unsafety {
-            self.unsafe_constructs.push(fact(
-                "unsafe module",
-                unsafe_token.span,
-                AnalysisQuality::Exact,
-            ));
-        }
-        if module.content.is_some() && module.attrs.iter().any(is_cfg_test) {
-            self.tests.push(fact(
-                format!("inline module {}", module.ident),
-                module.ident.span(),
-                AnalysisQuality::Exact,
-            ));
-        }
+        let previous_context = self.test_only_context;
+        self.record_module(module);
         visit::visit_item_mod(self, module);
+        self.test_only_context = previous_context;
     }
 }

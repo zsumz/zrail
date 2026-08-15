@@ -32,6 +32,32 @@ reason = "one deterministic layer"
 }
 
 #[test]
+fn wildcard_imports_do_not_traverse_unrelated_repository_trees() {
+    let root = fixture_root("contract-prefix");
+    reset(&root);
+    fs::create_dir_all(root.join("architecture")).expect("create contract directory");
+    fs::write(
+        root.join("zrail.toml"),
+        base_contract("./architecture/*.toml"),
+    )
+    .expect("write root contract");
+    fs::write(root.join("architecture/empty.toml"), "# fragment\n").expect("write fragment");
+    fs::create_dir_all(root.join("node_modules")).expect("create unrelated tree");
+    for index in 0..128 {
+        fs::write(
+            root.join(format!("node_modules/{index}.toml")),
+            "unrelated = true\n",
+        )
+        .expect("write unrelated file");
+    }
+
+    let bundle = load_contract(&root, Path::new("zrail.toml")).expect("load narrow imports");
+
+    assert_eq!(bundle.sources.len(), 2);
+    reset(&root);
+}
+
+#[test]
 fn unknown_keys_fail_closed() {
     let root = fixture_root("contract-unknown");
     reset(&root);

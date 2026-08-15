@@ -24,3 +24,17 @@ fn explanation_contains_actionable_source_policy() {
         Some("crates/fixture/src/worker_test.rs")
     );
 }
+
+#[test]
+fn nested_module_and_include_edges_inherit_test_only_reachability() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/nested_test_context");
+    for path in [
+        "src/tests/support.rs",
+        "src/included.rs",
+        "src/tests/outer/inner/support.rs",
+    ] {
+        let explanation = explain_path(&root, Path::new("zrail.toml"), Path::new(path))
+            .expect("explain nested test support");
+        assert_eq!(explanation.reachability, "test-only", "{path}");
+    }
+}

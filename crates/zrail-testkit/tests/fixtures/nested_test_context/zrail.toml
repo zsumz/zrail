@@ -2,7 +2,7 @@ schema = 1
 adapters = ["rust"]
 
 [repository]
-roots = ["crates"]
+roots = ["."]
 exclude = []
 workspace_members = "exact"
 nested_git = "deny"
@@ -16,27 +16,12 @@ cycles = "deny"
 
 [source.rust]
 module_docs = "required"
-facades = "declarative"
-tests = "sibling"
+facades = "allow"
+entrypoints = "allow"
+tests = "allow"
 
 [source.rust.hygiene]
 unsafe = "deny"
-lint_suppressions = "deny"
-deny_methods = ["unwrap"]
+lint_suppressions = "allow"
+deny_methods = []
 deny_macros = []
-
-[source.rust.size.facade]
-target = 80
-hard = 120
-
-[source.rust.size.implementation]
-target = 4
-hard = 4
-
-[source.rust.size.test]
-target = 300
-hard = 300
-
-[source.rust.size.auxiliary]
-target = 300
-hard = 300

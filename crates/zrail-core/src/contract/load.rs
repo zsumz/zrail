@@ -1,7 +1,7 @@
 //! Deterministic loading of `zrail.toml` and repository-local fragments.
 
 use std::{
-    collections::BTreeSet,
+    collections::{BTreeMap, BTreeSet},
     error::Error,
     fmt, fs,
     path::{Path, PathBuf},
@@ -93,7 +93,8 @@ struct Loader {
     stack: Vec<PathBuf>,
     bytes: usize,
     imports: usize,
-    toml_files: Option<Vec<PathBuf>>,
+    toml_files: BTreeMap<String, Vec<PathBuf>>,
+    discovered_entries: usize,
 }
 
 impl Loader {
@@ -106,7 +107,8 @@ impl Loader {
             stack: Vec::new(),
             bytes: 0,
             imports: 0,
-            toml_files: None,
+            toml_files: BTreeMap::new(),
+            discovered_entries: 0,
         }
     }
 
@@ -179,19 +181,22 @@ impl Loader {
     fn expand_imports(&mut self, imports: &[String]) -> Result<Vec<PathBuf>, ContractError> {
         let mut expanded = Vec::new();
         for import in imports {
-            if !discover::has_wildcard(import) {
+            let import = discover::normalize_import(import)?;
+            if !discover::has_wildcard(&import) {
                 expanded.push(self.root.join(import));
                 continue;
             }
-            let candidates = if let Some(files) = &self.toml_files {
-                files
-            } else {
-                self.toml_files.insert(discover::toml_files(&self.root)?)
-            };
+            let prefix = discover::fixed_prefix(&import);
+            if !self.toml_files.contains_key(&prefix) {
+                let files =
+                    discover::toml_files(&self.root, &prefix, &mut self.discovered_entries)?;
+                self.toml_files.insert(prefix.clone(), files);
+            }
+            let candidates = &self.toml_files[&prefix];
             let mut matches = Vec::new();
             for path in candidates {
                 let relative = repository_relative(&self.root, path).map_err(ContractError::one)?;
-                if glob_matches(import, &relative) {
+                if glob_matches(&import, &relative) {
                     matches.push(path.clone());
                 }
             }

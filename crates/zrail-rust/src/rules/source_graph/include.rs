@@ -13,6 +13,11 @@ impl Walker<'_> {
         reachability: Reachability,
         include: &IncludeBoundary,
     ) {
+        let reachability = if include.cfg_test {
+            Reachability::TestOnly
+        } else {
+            reachability
+        };
         if let Some(output) = &include.out_dir {
             self.walk_out_dir(source, reachability, include, output);
             return;

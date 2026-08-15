@@ -3,4 +3,3 @@
 pub(crate) fn credential(input: Option<&str>) -> &str {
     input.unwrap()
 }
-

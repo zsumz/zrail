@@ -21,6 +21,7 @@ pub(super) fn include_boundary(
         generated: out_dir.is_some() || expression.contains("OUT_DIR"),
         out_dir,
         expression,
+        cfg_test: false,
         context,
         span: Some(source_span(invocation.span())),
     })
