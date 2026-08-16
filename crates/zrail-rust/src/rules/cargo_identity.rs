@@ -7,7 +7,7 @@ use zrail_core::{
     path::glob_matches,
 };
 
-use crate::cargo::{CrateRootAuthority, Package, rust_crate_root};
+use crate::cargo::{CrateRootAuthority, Package, attestation_matches, rust_crate_root};
 
 use super::RuleContext;
 
@@ -16,7 +16,18 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     for package in &context.cargo.packages {
         for dependency in &package.dependencies {
             if dependency.crate_root_authority == CrateRootAuthority::Attested {
-                used_attestations.insert(dependency.name.as_str());
+                for (index, _) in context
+                    .contract
+                    .dependencies
+                    .crate_roots
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, attestation)| {
+                        attestation_matches(attestation, &dependency.name, &dependency.source)
+                    })
+                {
+                    used_attestations.insert(index);
+                }
             }
             if dependency.crate_root_authority != CrateRootAuthority::Unresolved
                 || !identity_required(context.contract, package, &dependency.name)
@@ -41,16 +52,17 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             );
         }
     }
-    for attestation in &context.contract.dependencies.crate_roots {
-        if !used_attestations.contains(attestation.package.as_str()) {
+    for (index, attestation) in context.contract.dependencies.crate_roots.iter().enumerate() {
+        if !used_attestations.contains(&index) {
             findings.push(
                 Finding::error(
                     "CARGO-IDENTITY-002",
                     "cargo.crate-root",
                     "dependency",
                     format!(
-                        "crate-root attestation for package {:?} matches no unresolved external dependency",
-                        attestation.package
+                        "crate-root attestation for package {:?} at {} matches no unresolved external dependency",
+                        attestation.package,
+                        attestation.source.identity()
                     ),
                 )
                 .because(&attestation.reason)

@@ -3,7 +3,7 @@
 use std::{fs, path::PathBuf};
 
 use zrail_core::{Finding, ReportStatus};
-use zrail_rust::check_repository;
+use zrail_rust::{build_lock, check_repository};
 
 #[test]
 fn local_macro_cannot_hide_unsafe_code_or_process_effects() {
@@ -54,9 +54,14 @@ fn reviewed_expansion_is_allowed_and_stale_authority_is_rejected() {
         r#"
 [[source.rust.macros.allow]]
 name = "local::reviewed"
+definition = "src/lib.rs"
 reason = "The local transcriber expands to one integer literal."
 "#,
     );
+    build_lock(&root, "zrail.toml".as_ref())
+        .expect("build content-bound macro lock")
+        .write(&root.join("zrail.lock"))
+        .expect("write content-bound macro lock");
 
     let report = check(&root);
     assert_eq!(report.status, ReportStatus::Pass, "{:#?}", report.findings);
@@ -114,6 +119,9 @@ pub fn hidden() { rt::select! {} }
 [[source.rust.macros.allow]]
 name = "tokio::select"
 reason = "Only the invocation beneath the exact lexical import is reviewed."
+[source.rust.macros.allow.source]
+kind = "registry"
+requirement = "1"
 "#,
     );
     fs::write(
@@ -147,6 +155,9 @@ fn conditional_import_cannot_authorize_macro_identity() {
 [[source.rust.macros.allow]]
 name = "tokio::select"
 reason = "The runtime macro is reviewed only when its identity is exact."
+[source.rust.macros.allow.source]
+kind = "registry"
+requirement = "1"
 "#,
     );
     fs::write(

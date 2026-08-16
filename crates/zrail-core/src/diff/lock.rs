@@ -1,6 +1,7 @@
 //! Semantic comparison of generated exact state.
 
 mod gates;
+mod macros;
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -36,6 +37,7 @@ fn compare_present(before: &LockFile, after: &LockFile) -> Vec<ArchitectureChang
     compare_edges(before, after, &mut changes);
     compare_generated(before, after, &mut changes);
     gates::compare(before, after, &mut changes);
+    macros::compare(before, after, &mut changes);
     compare_ratchets(before, after, &mut changes);
     changes
 }

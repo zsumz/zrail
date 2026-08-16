@@ -118,8 +118,13 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
                 &name,
             ));
         }
+        super::compile_effects::record(self, invocation, &facts[0]);
+        let opaque_input = super::macro_inputs::inspect(self, invocation, &name);
         self.macros.extend(facts.iter().cloned());
-        self.macro_expansions.extend(facts);
+        self.macro_expansions.extend(facts.iter().cloned());
+        if opaque_input {
+            self.opaque_macro_inputs.extend(facts);
+        }
         visit::visit_macro(self, invocation);
     }
 

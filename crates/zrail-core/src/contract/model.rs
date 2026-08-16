@@ -4,17 +4,20 @@
 mod dependencies;
 #[path = "model/evidence.rs"]
 mod evidence;
+#[path = "model/macros.rs"]
+mod macros;
 
-pub use dependencies::{CrateRootContract, DependenciesContract};
+pub use dependencies::{CrateRootContract, CrateRootSource, DependenciesContract};
 pub use evidence::{GateContract, GateKind, InvariantContract, InvariantStatus};
+pub use macros::{MacroExpansionAllow, MacroExpansionContract};
 
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
 use super::modes::{
-    Effect, ExactMode, ExternalDependencyMode, FacadeMode, LintSuppressionMode, MacroExpansionMode,
-    ModuleDocsMode, OwnerKind, PolicyMode, SymlinkMode, TestMode,
+    Effect, ExactMode, ExternalDependencyMode, FacadeMode, LintSuppressionMode, ModuleDocsMode,
+    OwnerKind, PolicyMode, SymlinkMode, TestMode,
 };
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
@@ -71,21 +74,6 @@ pub struct RustSourceContract {
     pub hygiene: HygieneContract,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub size: Option<FileSizeContract>,
-}
-
-#[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct MacroExpansionContract {
-    pub mode: MacroExpansionMode,
-    #[serde(default)]
-    pub allow: Vec<MacroExpansionAllow>,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct MacroExpansionAllow {
-    pub name: String,
-    pub reason: String,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]

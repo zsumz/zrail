@@ -2,7 +2,7 @@
 
 use super::{
     imports::ImportMap,
-    model::{IncludeBoundary, ObservedFact},
+    model::{CompileEffectFact, IncludeBoundary, MacroDefinitionFact, ObservedFact},
 };
 
 #[derive(Debug)]
@@ -15,7 +15,9 @@ pub(super) struct FactVisitor<'a> {
     pub(super) methods: Vec<ObservedFact>,
     pub(super) macros: Vec<ObservedFact>,
     pub(super) macro_expansions: Vec<ObservedFact>,
-    pub(super) macro_definitions: Vec<ObservedFact>,
+    pub(super) opaque_macro_inputs: Vec<ObservedFact>,
+    pub(super) macro_definitions: Vec<MacroDefinitionFact>,
+    pub(super) compile_effects: Vec<CompileEffectFact>,
     pub(super) lint_suppressions: Vec<ObservedFact>,
     pub(super) unsafe_constructs: Vec<ObservedFact>,
     pub(super) tests: Vec<ObservedFact>,

@@ -3,6 +3,7 @@
 mod attributes;
 mod calls;
 mod canonical;
+mod compile_effects;
 mod depth;
 mod fact;
 mod import_aliases;
@@ -11,6 +12,7 @@ mod imports;
 mod includes;
 mod macro_definitions;
 mod macro_expansion;
+mod macro_inputs;
 mod model;
 mod modules;
 mod parse;
@@ -26,8 +28,8 @@ mod visitor_model;
 
 pub(crate) use canonical::canonicalize as canonicalize_dependency_roots;
 pub(crate) use model::{
-    IncludeBoundary, IncludeContext, ModuleDeclaration, ObservedFact, Reachability, RustFileFacts,
-    SourceIndex, SourceSyntax,
+    CompileEffectFact, IncludeBoundary, IncludeContext, ModuleDeclaration, ObservedFact,
+    Reachability, RustFileFacts, SourceIndex, SourceSyntax,
 };
 pub(crate) use parse::index_rust_source;
 pub(crate) use paths::{ModuleTarget, ResolutionError, join_relative, module_target, parent};

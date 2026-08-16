@@ -105,7 +105,7 @@ fn attested_external_crate_root_is_policy_visible_and_must_remain_used() {
         "//! App.\npub fn run() { runtime::process::Command::new(\"sh\"); }\n",
     );
     let contract = format!(
-        "{BASE_CONTRACT}\n[[dependencies.crate_root]]\npackage = \"tokio\"\nroot = \"runtime\"\nreason = \"Reviewed crate metadata establishes the external Rust root.\"\n"
+        "{BASE_CONTRACT}\n[[dependencies.crate_root]]\npackage = \"tokio\"\nroot = \"runtime\"\nreason = \"Reviewed crate metadata establishes the external Rust root.\"\n[dependencies.crate_root.source]\nkind = \"registry\"\nrequirement = \"1\"\n"
     );
 
     let result = check(&root, &contract);

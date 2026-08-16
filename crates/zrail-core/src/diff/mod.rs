@@ -12,6 +12,10 @@ mod topology;
 mod topology_policy;
 
 #[cfg(test)]
+#[path = "authority_test.rs"]
+mod authority_test;
+
+#[cfg(test)]
 #[path = "compare_fixture_test.rs"]
 mod compare_fixture_test;
 

@@ -114,6 +114,7 @@ pub(super) fn module_docs_required(class: FileClass, mode: ModuleDocsMode) -> bo
 const fn effect_name(effect: Effect) -> &'static str {
     match effect {
         Effect::Filesystem => "filesystem",
+        Effect::CompileFilesystem => "compile-filesystem",
         Effect::Network => "network",
         Effect::Process => "process",
         Effect::Synchronization => "synchronization",
@@ -123,6 +124,7 @@ const fn effect_name(effect: Effect) -> &'static str {
         Effect::Database => "database",
         Effect::ContainerRuntime => "container-runtime",
         Effect::Environment => "environment",
+        Effect::CompileEnvironment => "compile-environment",
         Effect::Randomness => "randomness",
     }
 }

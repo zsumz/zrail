@@ -1,6 +1,6 @@
 //! Normalized facts extracted from one Rust source file.
 
-use zrail_core::{AnalysisQuality, Finding, SourceSpan};
+use zrail_core::{AnalysisQuality, Effect, Finding, SourceSpan};
 
 use crate::inventory::FileClass;
 
@@ -43,6 +43,20 @@ pub(crate) struct ObservedFact {
     pub(crate) canonical: Vec<String>,
     pub(crate) span: Option<SourceSpan>,
     pub(crate) quality: AnalysisQuality,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct MacroDefinitionFact {
+    pub(crate) name: String,
+    pub(crate) sha256: String,
+    pub(crate) span: Option<SourceSpan>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct CompileEffectFact {
+    pub(crate) effect: Effect,
+    pub(crate) invocation: ObservedFact,
+    pub(crate) target: Option<String>,
 }
 
 impl ObservedFact {
@@ -108,7 +122,9 @@ pub(crate) struct RustFileFacts {
     pub(crate) methods: Vec<ObservedFact>,
     pub(crate) macros: Vec<ObservedFact>,
     pub(crate) macro_expansions: Vec<ObservedFact>,
-    pub(crate) macro_definitions: Vec<ObservedFact>,
+    pub(crate) opaque_macro_inputs: Vec<ObservedFact>,
+    pub(crate) macro_definitions: Vec<MacroDefinitionFact>,
+    pub(crate) compile_effects: Vec<CompileEffectFact>,
     pub(crate) lint_suppressions: Vec<ObservedFact>,
     pub(crate) unsafe_constructs: Vec<ObservedFact>,
     pub(crate) tests: Vec<ObservedFact>,

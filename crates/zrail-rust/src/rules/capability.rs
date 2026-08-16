@@ -1,11 +1,13 @@
 //! Exact symbol scopes and semantic effect profiles.
 
+mod compile;
+mod effects;
 mod ownership;
 mod ownership_call;
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use zrail_core::{AnalysisQuality, Effect, Finding, FindingSink, path::glob_matches};
+use zrail_core::{AnalysisQuality, Finding, FindingSink, path::glob_matches};
 
 use crate::{
     cargo::Package,
@@ -14,9 +16,13 @@ use crate::{
 
 use super::RuleContext;
 
+use effects::finding as effect_finding;
+pub(super) use effects::tokens as effect_tokens;
+
 pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     check_exact_scopes(context, findings);
     check_effect_profiles(context, findings);
+    compile::check_paths(context, findings);
     ownership::check(context, findings);
 }
 
@@ -130,6 +136,25 @@ fn check_effect_profiles(context: &RuleContext<'_>, findings: &mut FindingSink) 
                         }
                     }
                 }
+                for boundary in file.compile_effects.iter().filter(|boundary| {
+                    boundary.effect == *effect
+                        && boundary.invocation.quality == AnalysisQuality::Exact
+                }) {
+                    let key = (
+                        file.relative.clone(),
+                        boundary.invocation.span,
+                        profile_name.to_string(),
+                        *effect,
+                    );
+                    if emitted.insert(key) {
+                        findings.push(effect_finding(
+                            file,
+                            &boundary.invocation,
+                            profile_name,
+                            *effect,
+                        ));
+                    }
+                }
             }
         }
     }
@@ -155,26 +180,6 @@ fn profiles_for_file<'a>(
         }
     }
     profiles
-}
-
-fn effect_finding(
-    file: &RustFileFacts,
-    path: &ObservedFact,
-    profile: &str,
-    effect: Effect,
-) -> Finding {
-    Finding::error(
-        "EFFECT-001",
-        format!("profile.{profile}"),
-        "effect",
-        format!(
-            "profile {profile:?} denies {effect:?}, provided here by {}",
-            path.name
-        ),
-    )
-    .at(&file.relative, path.span)
-    .with_analysis(path.quality)
-    .with_help("acquire the effect in an outer adapter and inject an explicit capability")
 }
 
 fn package_profiles<'a>(context: &'a RuleContext<'_>) -> BTreeMap<&'a str, Vec<&'a str>> {
@@ -210,7 +215,9 @@ fn matches_scope(path: &str, include: &[String], exclude: &[String]) -> bool {
 }
 
 pub(super) fn path_matches(denied: &str, observed: &ObservedFact) -> bool {
+    let denied = normalized_path(denied);
     observed.policy_names().any(|name| {
+        let name = normalized_path(name);
         name == denied
             || name.starts_with(&format!("{denied}::"))
             || (observed.quality != AnalysisQuality::Exact
@@ -218,20 +225,11 @@ pub(super) fn path_matches(denied: &str, observed: &ObservedFact) -> bool {
     })
 }
 
-pub(super) const fn effect_tokens(effect: Effect) -> &'static [&'static str] {
-    match effect {
-        Effect::Filesystem => &["std::fs"],
-        Effect::Network => &["std::net", "std::os::unix::net"],
-        Effect::Process => &["std::process", "tokio::process"],
-        Effect::Synchronization => &["std::sync", "tokio::sync"],
-        Effect::Thread => &["std::thread"],
-        Effect::WallClock => &["std::time::Instant", "std::time::SystemTime"],
-        Effect::AsyncRuntime => &["tokio", "async_std", "smol"],
-        Effect::Database => &["sqlx", "diesel", "rusqlite"],
-        Effect::ContainerRuntime => &["bollard", "containerd_client", "docker_api"],
-        Effect::Environment => &["std::env"],
-        Effect::Randomness => &["rand", "getrandom"],
-    }
+pub(super) fn normalized_path(path: &str) -> String {
+    path.split("::")
+        .map(|segment| segment.strip_prefix("r#").unwrap_or(segment))
+        .collect::<Vec<_>>()
+        .join("::")
 }
 
 #[cfg(test)]

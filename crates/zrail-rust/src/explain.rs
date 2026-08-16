@@ -35,6 +35,8 @@ pub struct PathExplanation {
     pub denied_macros: Vec<String>,
     pub macro_expansion: String,
     pub allowed_macro_expansions: Vec<String>,
+    pub opaque_macro_inputs: Vec<String>,
+    pub content_bound_macro_definitions: Vec<String>,
     pub unsafe_code: String,
     pub lint_suppressions: String,
     pub expected_sibling_test: Option<String>,
@@ -133,7 +135,7 @@ pub fn explain_path(
         .then(|| policy::sibling_path(&relative))
         .flatten();
     Ok(PathExplanation {
-        schema: 4,
+        schema: 5,
         path: relative,
         file_class: format!("{class:?}").to_ascii_lowercase(),
         reachability: reachability.name().into(),
@@ -172,6 +174,32 @@ pub fn explain_path(
             .allow
             .iter()
             .map(|allowed| allowed.name.clone())
+            .collect(),
+        opaque_macro_inputs: model
+            .bundle
+            .contract
+            .source
+            .rust
+            .macros
+            .allow
+            .iter()
+            .filter(|allowed| allowed.inputs == zrail_core::MacroInputMode::Opaque)
+            .map(|allowed| allowed.name.clone())
+            .collect(),
+        content_bound_macro_definitions: model
+            .bundle
+            .contract
+            .source
+            .rust
+            .macros
+            .allow
+            .iter()
+            .filter_map(|allowed| {
+                allowed
+                    .definition
+                    .as_ref()
+                    .map(|path| format!("{}@{path}", allowed.name))
+            })
             .collect(),
         unsafe_code: policy::policy_mode(model.bundle.contract.source.rust.hygiene.unsafe_code)
             .into(),

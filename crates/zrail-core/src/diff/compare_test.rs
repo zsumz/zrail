@@ -1,11 +1,11 @@
 //! Architecture changes are classified by effective permission.
 
 use crate::{
-    ChangeKind, CrateRootContract, DependencyMode, FacadeMode, GeneratedSourceContract,
-    ItemMacroContract, LintSuppressionMode, LockFile, LockedDependency, LockedDependencyKind,
-    LockedDependencyScope, LockedDependencySource, LockedGeneratedSource, LockedPackage,
-    LockedRatchet, MacroExpansionAllow, MacroExpansionMode, OutDirSourceContract, OwnerContract,
-    OwnerKind,
+    ChangeKind, CrateRootContract, CrateRootSource, DependencyMode, FacadeMode,
+    GeneratedSourceContract, ItemMacroContract, LintSuppressionMode, LockFile, LockedDependency,
+    LockedDependencyKind, LockedDependencyScope, LockedDependencySource, LockedGeneratedSource,
+    LockedPackage, LockedRatchet, MacroExpansionAllow, MacroExpansionMode, MacroInputMode,
+    OutDirSourceContract, OwnerContract, OwnerKind,
 };
 
 use super::compare_architecture;
@@ -47,6 +47,11 @@ fn external_crate_root_attestation_is_a_grant_and_change_is_unknown() {
         package: "tokio".into(),
         root: "runtime".into(),
         reason: "Reviewed dependency metadata.".into(),
+        source: CrateRootSource::Registry {
+            registry: None,
+            index: None,
+            requirement: "1".into(),
+        },
     });
     let added = compare_architecture(&before, None, &trusted, None);
     assert!(added.changes.iter().any(|change| {
@@ -74,6 +79,9 @@ fn macro_expansion_denial_revokes_power_and_allowance_grants_it() {
     let mut allowed = denied.clone();
     allowed.source.rust.macros.allow.push(MacroExpansionAllow {
         name: "tokio::select".into(),
+        inputs: MacroInputMode::Inspect,
+        definition: None,
+        source: None,
         reason: "Reviewed async control-flow expansion.".into(),
     });
     let widened = compare_architecture(&denied, None, &allowed, None);

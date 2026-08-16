@@ -205,6 +205,9 @@ mode = "deny-unreviewed"
 [[source.rust.macros.allow]]
 name = "tokio::select"
 reason = "The dependency macro expansion is reviewed."
+[source.rust.macros.allow.source]
+kind = "registry"
+requirement = "1"
 
 [source.rust.hygiene]
 unsafe = "deny"

@@ -18,7 +18,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             if hygiene
                 .deny_methods
                 .iter()
-                .any(|denied| denied == &method.name)
+                .any(|denied| raw_identifier_matches(denied, &method.name))
             {
                 findings.push(
                     Finding::error(
@@ -91,7 +91,13 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
 }
 
 fn macro_matches(denied: &str, invocation: &crate::source::ObservedFact) -> bool {
+    let denied = super::capability::normalized_path(denied);
     invocation
         .policy_names()
+        .map(super::capability::normalized_path)
         .any(|name| name == denied || name.rsplit("::").next().is_some_and(|leaf| leaf == denied))
+}
+
+fn raw_identifier_matches(left: &str, right: &str) -> bool {
+    left.strip_prefix("r#").unwrap_or(left) == right.strip_prefix("r#").unwrap_or(right)
 }

@@ -1,6 +1,6 @@
 //! Directly inspected compiler macros cannot be confused with local definitions.
 
-use zrail_core::AnalysisQuality;
+use zrail_core::{AnalysisQuality, MacroExpansionAllow, MacroInputMode};
 
 use crate::source::ObservedFact;
 
@@ -30,10 +30,12 @@ fn every_conservative_canonical_identity_requires_review() {
     let mut expansion = fact("runtime::select");
     expansion.canonical = vec!["async_std::select".into(), "tokio::select".into()];
     expansion.quality = AnalysisQuality::Conservative;
-    let partial = std::collections::BTreeMap::from([("tokio::select", "reviewed")]);
+    let async_std = allowance("async_std::select");
+    let tokio = allowance("tokio::select");
+    let partial = std::collections::BTreeMap::from([("tokio::select", &tokio)]);
     let complete = std::collections::BTreeMap::from([
-        ("async_std::select", "reviewed"),
-        ("tokio::select", "reviewed"),
+        ("async_std::select", &async_std),
+        ("tokio::select", &tokio),
     ]);
 
     assert!(reviewed_names(&expansion, &partial).is_empty());
@@ -44,7 +46,9 @@ fn every_conservative_canonical_identity_requires_review() {
 
 #[test]
 fn bare_local_macros_cannot_borrow_a_global_name_allowance() {
-    let allowed = std::collections::BTreeMap::from([("panic", "standard panic")]);
+    let panic = allowance("panic");
+    let local_panic = allowance("local::panic");
+    let allowed = std::collections::BTreeMap::from([("panic", &panic)]);
     let mut local = fact("panic");
     local.quality = AnalysisQuality::Unresolved;
 
@@ -52,10 +56,20 @@ fn bare_local_macros_cannot_borrow_a_global_name_allowance() {
     assert_eq!(
         reviewed_names(
             &fact("local::panic"),
-            &std::collections::BTreeMap::from([("local::panic", "local macro")]),
+            &std::collections::BTreeMap::from([("local::panic", &local_panic)]),
         ),
         ["local::panic"]
     );
+}
+
+fn allowance(name: &str) -> MacroExpansionAllow {
+    MacroExpansionAllow {
+        name: name.into(),
+        inputs: MacroInputMode::Inspect,
+        definition: name.starts_with("local::").then(|| "src/lib.rs".into()),
+        source: None,
+        reason: "reviewed".into(),
+    }
 }
 
 fn fact(name: &str) -> ObservedFact {

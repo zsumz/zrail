@@ -28,15 +28,15 @@ pub use load::{
     MAX_IMPORT_DIRECTIVES, load_contract,
 };
 pub use model::{
-    Budget, Contract, CrateRootContract, DependenciesContract, DependencyRule, EffectBoundary,
-    FileSizeContract, GateContract, GateKind, GeneratedSourceContract, HygieneContract,
-    InvariantContract, InvariantStatus, ItemMacroContract, LayerContract, LayerDependencies,
-    MacroExpansionAllow, MacroExpansionContract, OutDirSourceContract, OwnerContract,
-    ProfileContract, RatchetContract, RepositoryContract, RustSourceContract, ScopeContract,
-    SourceContract, SymbolBoundary,
+    Budget, Contract, CrateRootContract, CrateRootSource, DependenciesContract, DependencyRule,
+    EffectBoundary, FileSizeContract, GateContract, GateKind, GeneratedSourceContract,
+    HygieneContract, InvariantContract, InvariantStatus, ItemMacroContract, LayerContract,
+    LayerDependencies, MacroExpansionAllow, MacroExpansionContract, OutDirSourceContract,
+    OwnerContract, ProfileContract, RatchetContract, RepositoryContract, RustSourceContract,
+    ScopeContract, SourceContract, SymbolBoundary,
 };
 pub use modes::{
     CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,
-    LintSuppressionMode, MacroExpansionMode, ModuleDocsMode, OwnerKind, PolicyMode, SymlinkMode,
-    TestMode,
+    LintSuppressionMode, MacroExpansionMode, MacroInputMode, ModuleDocsMode, OwnerKind, PolicyMode,
+    SymlinkMode, TestMode,
 };

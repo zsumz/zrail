@@ -110,7 +110,8 @@ interpret the newer architecture state.
 
 `zrail.toml` contains human-authored architecture. `zrail.lock` contains exact
 normalized direct dependency declarations, reviewed gate bytes, generated
-provenance, and ratchets. `zrail check` never modifies either file.
+provenance, content-bound local macro definitions, and ratchets. `zrail check`
+never modifies either file.
 Cargo owns exact selected versions, checksums, and Git commits in `Cargo.lock`;
 zrail does not claim to be a second Cargo resolver.
 
@@ -120,10 +121,12 @@ The Rust adapter enforces:
 
 - exact Cargo workspace membership and source-aware dependency edges;
 - inspected or reasoned Rust crate roots, including custom `[lib].name`, in
-  source-policy facts and the architecture lock; roots that no active canonical
+  source-policy facts and the architecture lock; external attestations bind to
+  the exact registry or Git declaration, and roots that no active canonical
   policy relies on remain explicitly unresolved rather than guessed;
 - package layers and allowed dependency direction;
-- effect boundaries, capability owners, and direct-call owners;
+- runtime and compile-time effect boundaries, capability owners, and direct-call
+  owners;
 - complete Rust source traversal, including reviewed generated and `OUT_DIR`
   snapshots;
 - declarative facades, module contracts, and configurable test placement;
@@ -132,9 +135,16 @@ The Rust adapter enforces:
 
 With `source.rust.macros.mode = "deny-unreviewed"`, macro expansions that zrail
 cannot inspect are rejected unless their invocation path has a reasoned
-allowance. An allowance trusts the expansion and its token interpretation; it
-is an architectural grant. Built-in data macros and `include!` are handled
-directly, and included Rust remains fully analyzed.
+allowance. Ordinary Rust expressions inside standard macro inputs are still
+analyzed. Other token DSLs require the separate `inputs = "opaque"` grant.
+Local allowances name one definition path and lock its normalized body digest;
+external allowances bind to the exact dependency source. Built-in data macros
+and `include!` are handled directly, and included Rust remains fully analyzed.
+
+`env!` and `option_env!` provide the `compile-environment` effect. `include!`,
+`include_str!`, and `include_bytes!` provide `compile-filesystem`; literal file
+inputs must resolve to inventoried files inside the repository. These are
+separate from runtime `environment` and `filesystem` effects.
 
 Bare allowances are conservative: when the package defines a local macro with
 the same name, use a stable qualified path instead of borrowing a global name.

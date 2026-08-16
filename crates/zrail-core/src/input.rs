@@ -4,7 +4,10 @@ use std::{
     fs::{self, File, OpenOptions},
     io::{Read as _, Write as _},
     path::{Path, PathBuf},
+    sync::atomic::{AtomicU64, Ordering},
 };
+
+static NEXT_TEMPORARY: AtomicU64 = AtomicU64::new(0);
 
 pub const MAX_DIRECTORY_DEPTH: usize = 128;
 pub const MAX_INPUT_BYTES: usize = 4 * 1024 * 1024;
@@ -151,7 +154,8 @@ fn create_temporary(parent: &Path, destination: &Path) -> Result<TemporaryFile, 
             )
         })?;
     for attempt in 0..100_u8 {
-        let path = parent.join(format!(".{name}.tmp-{}-{attempt}", std::process::id()));
+        let sequence = NEXT_TEMPORARY.fetch_add(1, Ordering::Relaxed);
+        let path = parent.join(format!(".{name}.tmp-{sequence}-{attempt}"));
         match OpenOptions::new().write(true).create_new(true).open(&path) {
             Ok(file) => {
                 return Ok(TemporaryFile {

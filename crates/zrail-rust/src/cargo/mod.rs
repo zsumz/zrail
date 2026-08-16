@@ -12,7 +12,7 @@ mod target_fields;
 mod targets;
 mod workspace;
 
-pub(crate) use crate_roots::apply_attestations;
+pub(crate) use crate_roots::{apply_attestations, attestation_matches, source_matches};
 pub(crate) use model::{
     CargoTargetKind, CargoWorkspace, CrateRootAuthority, DependencyKind, DependencySource, Package,
     rust_crate_root,

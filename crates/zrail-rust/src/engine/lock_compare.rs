@@ -2,6 +2,7 @@
 
 mod gates;
 mod generated;
+mod macros;
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -36,7 +37,7 @@ pub(super) fn check_lock(
     if !current.has_supported_schema() {
         findings.push(
             Finding::error(
-                "LOCK-011",
+                "LOCK-020",
                 "lock.schema",
                 "lock",
                 format!(
@@ -80,6 +81,7 @@ fn compare_locks(current: &LockFile, candidate: &LockFile, findings: &mut Findin
     compare_edges(current, candidate, findings);
     generated::compare(current, candidate, findings);
     gates::compare(current, candidate, findings);
+    macros::compare(current, candidate, findings);
     compare_ratchets(current, candidate, findings);
 }
 
@@ -87,6 +89,13 @@ pub(super) fn requires_lock(contract: &Contract) -> bool {
     contract.dependencies.mode == DependencyMode::Locked
         || !contract.source.rust.generated.is_empty()
         || !contract.gates.is_empty()
+        || contract
+            .source
+            .rust
+            .macros
+            .allow
+            .iter()
+            .any(|allowance| allowance.definition.is_some())
         || !contract.ratchets.is_empty()
 }
 

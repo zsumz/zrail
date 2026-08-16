@@ -42,7 +42,17 @@ pub(crate) fn canonicalize(
             },
         );
         let local_macros = local_macro_names(&selected, &macro_definitions);
-        for expansion in file.macros.iter_mut().chain(&mut file.macro_expansions) {
+        for expansion in file
+            .macros
+            .iter_mut()
+            .chain(&mut file.macro_expansions)
+            .chain(&mut file.opaque_macro_inputs)
+            .chain(
+                file.compile_effects
+                    .iter_mut()
+                    .map(|effect| &mut effect.invocation),
+            )
+        {
             if !expansion.name.contains("::")
                 && local_macros
                     .as_ref()
@@ -65,7 +75,13 @@ pub(crate) fn canonicalize(
             .chain(&mut file.calls)
             .chain(&mut file.macros)
             .chain(&mut file.macro_expansions)
+            .chain(&mut file.opaque_macro_inputs)
             .chain(&mut file.item_macros)
+            .chain(
+                file.compile_effects
+                    .iter_mut()
+                    .map(|effect| &mut effect.invocation),
+            )
         {
             canonicalize_fact_bounded(fact, &roots, &overflowed);
         }
@@ -106,7 +122,9 @@ fn observed_roots(file: &super::RustFileFacts) -> BTreeSet<String> {
         .chain(&file.calls)
         .chain(&file.macros)
         .chain(&file.macro_expansions)
+        .chain(&file.opaque_macro_inputs)
         .chain(&file.item_macros)
+        .chain(file.compile_effects.iter().map(|effect| &effect.invocation))
         .filter_map(|fact| split_root(&fact.name).map(|(root, _)| visible_root(root).into()))
         .collect()
 }

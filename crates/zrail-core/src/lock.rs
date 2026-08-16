@@ -3,17 +3,14 @@
 mod canonical;
 mod compatibility;
 mod dependency;
-
-use std::{error::Error, fmt, fs, path::Path};
-
-use serde::{Deserialize, Serialize};
-
 use crate::input::{read_text, replace_text};
+use serde::{Deserialize, Serialize};
+use std::{error::Error, fmt, fs, path::Path};
 
 pub use dependency::LockedDependencySource;
 
-pub const LOCK_SCHEMA: u64 = 4;
-pub const LOCK_SEMANTICS: u64 = 4;
+pub const LOCK_SCHEMA: u64 = 5;
+pub const LOCK_SEMANTICS: u64 = 5;
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -30,6 +27,8 @@ pub struct LockFile {
     pub generated: Vec<LockedGeneratedSource>,
     #[serde(default, rename = "gate", skip_serializing_if = "Vec::is_empty")]
     pub gates: Vec<LockedGate>,
+    #[serde(default, rename = "macro", skip_serializing_if = "Vec::is_empty")]
+    pub macros: Vec<LockedMacroDefinition>,
     #[serde(default, rename = "ratchet")]
     pub ratchets: Vec<LockedRatchet>,
 }
@@ -46,6 +45,15 @@ pub struct LockedGeneratedSource {
 pub struct LockedGate {
     pub name: String,
     pub path: String,
+    pub sha256: String,
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct LockedMacroDefinition {
+    pub path: String,
+    pub name: String,
+    pub ordinal: usize,
     pub sha256: String,
 }
 
@@ -123,6 +131,7 @@ impl LockFile {
             packages: Vec::new(),
             generated: Vec::new(),
             gates: Vec::new(),
+            macros: Vec::new(),
             ratchets: Vec::new(),
         }
     }
@@ -173,7 +182,7 @@ impl LockFile {
     }
 
     pub fn has_supported_schema(&self) -> bool {
-        matches!(self.schema, 1 | 2 | 3 | LOCK_SCHEMA)
+        matches!(self.schema, 1 | 2 | 3 | 4 | LOCK_SCHEMA)
     }
 
     pub fn same_resolved_state(&self, other: &Self) -> bool {
@@ -182,6 +191,7 @@ impl LockFile {
             && self.packages == other.packages
             && self.generated == other.generated
             && self.gates == other.gates
+            && self.macros == other.macros
             && self.ratchets == other.ratchets
     }
 
@@ -193,6 +203,7 @@ impl LockFile {
             packages: &self.packages,
             generated: &self.generated,
             gates: &self.gates,
+            macros: &self.macros,
             ratchets: &self.ratchets,
         };
         let body = toml::to_string_pretty(&legacy)
@@ -218,6 +229,8 @@ struct LegacyLockFile<'a> {
     generated: &'a Vec<LockedGeneratedSource>,
     #[serde(rename = "gate", skip_serializing_if = "Vec::is_empty")]
     gates: &'a Vec<LockedGate>,
+    #[serde(rename = "macro", skip_serializing_if = "Vec::is_empty")]
+    macros: &'a Vec<LockedMacroDefinition>,
     #[serde(rename = "ratchet")]
     ratchets: &'a Vec<LockedRatchet>,
 }

@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "kebab-case")]
 pub enum Effect {
     Filesystem,
+    CompileFilesystem,
     Network,
     Process,
     Synchronization,
@@ -15,6 +16,7 @@ pub enum Effect {
     Database,
     ContainerRuntime,
     Environment,
+    CompileEnvironment,
     Randomness,
 }
 
@@ -45,6 +47,14 @@ pub enum MacroExpansionMode {
     #[default]
     Allow,
     DenyUnreviewed,
+}
+
+#[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum MacroInputMode {
+    #[default]
+    Inspect,
+    Opaque,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]

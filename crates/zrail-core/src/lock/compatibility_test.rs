@@ -127,6 +127,13 @@ fn semantic_epoch_four_requires_schema_four() {
     assert!(error.to_string().contains("require lock schema 4"));
 }
 
+#[test]
+fn semantic_epoch_five_requires_schema_five() {
+    let error = super::validate_epochs(4, 5).expect_err("schema four cannot encode macro state");
+    assert!(error.to_string().contains("require lock schema 5"));
+    super::validate_epochs(5, 5).expect("current epochs are compatible");
+}
+
 fn fixture_root(name: &str) -> PathBuf {
     std::env::temp_dir().join(format!("zrail-lock-{name}-{}", std::process::id()))
 }

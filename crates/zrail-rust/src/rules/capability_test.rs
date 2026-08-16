@@ -39,6 +39,14 @@ fn canonical_dependency_identity_owns_policy_matching() {
     assert!(!path_matches("runtime", &renamed));
 }
 
+#[test]
+fn raw_identifiers_cannot_change_policy_identity() {
+    assert!(path_matches(
+        "std::process",
+        &fact("r#std::r#process::Command", AnalysisQuality::Exact)
+    ));
+}
+
 fn fact(name: &str, quality: AnalysisQuality) -> ObservedFact {
     ObservedFact {
         name: name.into(),

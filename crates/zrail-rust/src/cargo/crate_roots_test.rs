@@ -1,6 +1,6 @@
 //! External crate-root attestations never override stronger local evidence.
 
-use zrail_core::CrateRootContract;
+use zrail_core::{CrateRootContract, CrateRootSource};
 
 use super::super::{
     CargoWorkspace, CrateRootAuthority, Dependency, DependencyKind, DependencySource, Package,
@@ -31,6 +31,11 @@ fn attestations_resolve_only_uninspected_external_packages() {
             package: "tokio".into(),
             root: "runtime_core".into(),
             reason: "reviewed registry metadata".into(),
+            source: CrateRootSource::Registry {
+                registry: None,
+                index: None,
+                requirement: "1".into(),
+            },
         }],
     );
 
@@ -40,6 +45,42 @@ fn attestations_resolve_only_uninspected_external_packages() {
         dependency.crate_root_authority,
         CrateRootAuthority::Attested
     );
+}
+
+#[test]
+fn same_name_attestations_match_only_their_exact_source() {
+    let registry = CrateRootContract {
+        package: "runtime".into(),
+        root: "registry_runtime".into(),
+        reason: "reviewed registry metadata".into(),
+        source: CrateRootSource::Registry {
+            registry: None,
+            index: None,
+            requirement: "1".into(),
+        },
+    };
+    let git_source = DependencySource::Git {
+        repository: "https://example.invalid/runtime".into(),
+        branch: None,
+        tag: None,
+        rev: Some("abc123".into()),
+        requirement: None,
+    };
+
+    assert!(!super::attestation_matches(
+        &registry,
+        "runtime",
+        &git_source
+    ));
+    assert!(super::attestation_matches(
+        &registry,
+        "runtime",
+        &DependencySource::Registry {
+            registry: None,
+            index: None,
+            requirement: "1".into(),
+        }
+    ));
 }
 
 fn dependency(alias: &str, name: &str, authority: CrateRootAuthority) -> Dependency {

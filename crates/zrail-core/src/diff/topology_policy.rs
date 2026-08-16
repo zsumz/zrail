@@ -50,35 +50,40 @@ pub(super) fn compare_crate_roots(
             .dependencies
             .crate_roots
             .iter()
-            .map(|attestation| (attestation.package.clone(), attestation.root.clone()))
+            .map(|attestation| {
+                (
+                    format!("{}@{}", attestation.package, attestation.source.identity()),
+                    attestation.root.clone(),
+                )
+            })
             .collect::<BTreeMap<_, _>>()
     };
     let old = roots(before);
     let new = roots(after);
-    for package in old
+    for identity in old
         .keys()
         .chain(new.keys())
         .cloned()
         .collect::<BTreeSet<_>>()
     {
-        match (old.get(&package), new.get(&package)) {
+        match (old.get(&identity), new.get(&identity)) {
             (None, Some(root)) => changes.push(ArchitectureChange::new(
                 ChangeKind::Grant,
                 "dependency.crate-root",
-                format!("{package}:{root}"),
+                format!("{identity}:{root}"),
                 "contract now trusts an external package crate-root identity",
             )),
             (Some(root), None) => changes.push(ArchitectureChange::new(
                 ChangeKind::Revoke,
                 "dependency.crate-root",
-                format!("{package}:{root}"),
+                format!("{identity}:{root}"),
                 "contract no longer trusts an external package crate-root identity",
             )),
             (Some(left), Some(right)) if left != right => changes.push(
                 ArchitectureChange::new(
                     ChangeKind::Unknown,
                     "dependency.crate-root",
-                    package,
+                    identity,
                     "attested external crate-root identity changed",
                 )
                 .values(left, right),

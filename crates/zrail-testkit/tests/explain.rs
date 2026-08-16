@@ -1,6 +1,6 @@
 //! Agent explanations expose the effective rails for one concrete path.
 
-use std::path::Path;
+use std::{fs, path::Path};
 
 use zrail_rust::explain_path;
 
@@ -14,7 +14,7 @@ fn explanation_contains_actionable_source_policy() {
     )
     .expect("explain fixture path");
 
-    assert_eq!(explanation.schema, 4);
+    assert_eq!(explanation.schema, 5);
     assert_eq!(explanation.reachability, "production");
     assert_eq!(explanation.unsafe_code, "deny");
     assert_eq!(explanation.lint_suppressions, "deny");
@@ -46,3 +46,71 @@ fn nested_module_and_include_edges_inherit_test_only_reachability() {
         assert_eq!(explanation.reachability, "test-only", "{path}");
     }
 }
+
+#[test]
+fn explanation_separates_opaque_input_from_content_bound_expansion() {
+    let root = std::env::temp_dir().join(format!(
+        "zrail-explain-macro-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    let _ = fs::remove_dir_all(&root);
+    fs::create_dir_all(root.join("src")).expect("create explanation fixture");
+    fs::write(
+        root.join("Cargo.toml"),
+        "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\n",
+    )
+    .expect("write manifest");
+    fs::write(
+        root.join("src/lib.rs"),
+        "//! Macro policy.\nmod local { macro_rules! query { ($($input:tt)*) => { 1 }; } pub(crate) use query; }\npub fn run() { let _ = local::query!(select from events); }\n",
+    )
+    .expect("write source");
+    fs::write(root.join("zrail.toml"), MACRO_CONTRACT).expect("write contract");
+
+    let explanation = explain_path(&root, Path::new("zrail.toml"), Path::new("src/lib.rs"))
+        .expect("explain macro policy");
+
+    assert_eq!(explanation.opaque_macro_inputs, ["local::query"]);
+    assert_eq!(
+        explanation.content_bound_macro_definitions,
+        ["local::query@src/lib.rs"]
+    );
+    fs::remove_dir_all(root).expect("remove explanation fixture");
+}
+
+const MACRO_CONTRACT: &str = r#"schema = 1
+adapters = ["rust"]
+[repository]
+roots = ["."]
+exclude = []
+workspace_members = "exact"
+nested_git = "deny"
+submodules = "deny"
+symlinks = "inside"
+[dependencies]
+mode = "observed"
+unassigned_packages = "allow"
+cycles = "deny"
+[source.rust]
+module_docs = "required"
+facades = "allow"
+tests = "allow"
+[source.rust.macros]
+mode = "deny-unreviewed"
+[[source.rust.macros.allow]]
+name = "local::query"
+inputs = "opaque"
+definition = "src/lib.rs"
+reason = "Reviewed local query boundary."
+[source.rust.hygiene]
+unsafe = "deny"
+lint_suppressions = "allow"
+[[layer]]
+name = "app"
+packages = ["fixture"]
+profiles = []
+reason = "Fixture layer."
+[layer.dependencies]
+external = "allow"
+"#;

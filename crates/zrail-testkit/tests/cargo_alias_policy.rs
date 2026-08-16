@@ -191,6 +191,9 @@ mode = "deny-unreviewed"
 [[source.rust.macros.allow]]
 name = "tokio::select"
 reason = "The fixture explicitly reviews the aliased runtime selection expansion."
+[source.rust.macros.allow.source]
+kind = "registry"
+requirement = "1"
 
 [source.rust.hygiene]
 unsafe = "deny"

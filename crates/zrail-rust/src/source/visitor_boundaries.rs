@@ -1,10 +1,13 @@
 //! Macro positions identify includes and unresolved item-producing expansion.
 
 use syn::{ItemForeignMod, ItemMacro, ItemMod, ItemStatic, Macro, StmtMacro, spanned::Spanned};
-use zrail_core::AnalysisQuality;
+use zrail_core::{AnalysisQuality, sha256_hex};
 
 use super::{
-    attributes::is_cfg_test, fact::fact, includes::include_boundary, model::IncludeContext,
+    attributes::is_cfg_test,
+    fact::{fact, source_span},
+    includes::include_boundary,
+    model::{IncludeContext, MacroDefinitionFact},
     visitor::FactVisitor,
 };
 
@@ -51,11 +54,11 @@ impl FactVisitor<'_> {
 
     pub(super) fn record_item_macro(&mut self, item: &ItemMacro) {
         if let Some(name) = &item.ident {
-            self.macro_definitions.push(fact(
-                name.to_string(),
-                name.span(),
-                AnalysisQuality::Exact,
-            ));
+            self.macro_definitions.push(MacroDefinitionFact {
+                name: name.to_string(),
+                sha256: sha256_hex(item.mac.tokens.to_string().as_bytes()),
+                span: Some(source_span(name.span())),
+            });
         }
         if let Some(mut boundary) = include_boundary(&item.mac, IncludeContext::Items) {
             boundary.cfg_test = self.test_only_context || item.attrs.iter().any(is_cfg_test);
@@ -82,11 +85,11 @@ impl FactVisitor<'_> {
             if let Some(proc_macro2::TokenTree::Ident(name)) =
                 statement.mac.tokens.clone().into_iter().next()
             {
-                self.macro_definitions.push(fact(
-                    name.to_string(),
-                    name.span(),
-                    AnalysisQuality::Exact,
-                ));
+                self.macro_definitions.push(MacroDefinitionFact {
+                    name: name.to_string(),
+                    sha256: sha256_hex(statement.mac.tokens.to_string().as_bytes()),
+                    span: Some(source_span(name.span())),
+                });
             }
             return;
         }
