@@ -2,7 +2,10 @@
 
 use toml::Value;
 
-use super::super::model::{Dependency, DependencyKind, DependencySource, Package};
+use super::super::model::{
+    CargoTarget, CargoTargetKind, CrateRootAuthority, Dependency, DependencyKind, DependencySource,
+    Package,
+};
 use super::{
     expand_implicit_members, expand_members, resolve_workspace_dependencies, workspace_excludes,
     workspace_members,
@@ -82,7 +85,7 @@ fn in_tree_path_dependencies_are_implicit_members() {
             name: "member".into(),
             directory: "crates/member".into(),
             dependencies: Vec::new(),
-            targets: Vec::new(),
+            targets: vec![library_target("runtime_core")],
         },
     ];
 
@@ -108,13 +111,13 @@ fn only_exact_declared_member_paths_become_internal() {
             name: "member".into(),
             directory: "crates/member".into(),
             dependencies: Vec::new(),
-            targets: Vec::new(),
+            targets: vec![library_target("runtime_core")],
         },
         Package {
             name: "excluded".into(),
             directory: "crates/excluded".into(),
             dependencies: Vec::new(),
-            targets: Vec::new(),
+            targets: vec![library_target("excluded")],
         },
     ];
 
@@ -129,12 +132,48 @@ fn only_exact_declared_member_paths_become_internal() {
         packages[0].dependencies[1].source,
         DependencySource::RepositoryPath { .. }
     ));
+    assert_eq!(packages[0].dependencies[0].crate_root, "runtime_core");
+    assert_eq!(packages[0].dependencies[1].crate_root, "excluded");
+}
+
+#[test]
+fn explicit_package_rename_owns_the_rust_visible_root() {
+    let mut renamed = path_dependency("runtime", "crates/member");
+    renamed.name = "member".into();
+    renamed.explicit_package = true;
+    renamed.crate_root_authority = CrateRootAuthority::DeclaredAlias;
+    let mut packages = [
+        Package {
+            name: "root".into(),
+            directory: ".".into(),
+            dependencies: vec![renamed],
+            targets: Vec::new(),
+        },
+        Package {
+            name: "member".into(),
+            directory: "crates/member".into(),
+            dependencies: Vec::new(),
+            targets: vec![library_target("different_library_name")],
+        },
+    ];
+
+    resolve_workspace_dependencies(&mut packages, &[".".into(), "crates/member".into()])
+        .expect("resolve renamed dependency");
+
+    assert_eq!(packages[0].dependencies[0].crate_root, "runtime");
+    assert_eq!(
+        packages[0].dependencies[0].crate_root_authority,
+        CrateRootAuthority::DeclaredAlias
+    );
 }
 
 fn path_dependency(name: &str, path: &str) -> Dependency {
     Dependency {
         alias: name.into(),
         name: name.into(),
+        explicit_package: false,
+        crate_root: name.into(),
+        crate_root_authority: CrateRootAuthority::Unresolved,
         kind: DependencyKind::Normal,
         target: None,
         optional: false,
@@ -144,5 +183,13 @@ fn path_dependency(name: &str, path: &str) -> Dependency {
             path: path.into(),
             requirement: None,
         },
+    }
+}
+
+fn library_target(name: &str) -> CargoTarget {
+    CargoTarget {
+        name: name.into(),
+        path: "src/lib.rs".into(),
+        kind: CargoTargetKind::Library,
     }
 }

@@ -37,7 +37,7 @@ fn update_refuses_new_dependency_without_acceptance() {
             "version = \"0.0.0\"\n",
             "edition = \"2024\"\n\n",
             "[dependencies]\n",
-            "serde = \"1\"\n",
+            "serde = { package = \"serde\", version = \"1\" }\n",
         ),
     )
     .expect("add dependency");

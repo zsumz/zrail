@@ -1,6 +1,6 @@
 //! Macro positions identify includes and unresolved item-producing expansion.
 
-use syn::{ItemMacro, ItemMod, Macro, spanned::Spanned};
+use syn::{ItemForeignMod, ItemMacro, ItemMod, ItemStatic, Macro, StmtMacro, spanned::Spanned};
 use zrail_core::AnalysisQuality;
 
 use super::{
@@ -9,6 +9,28 @@ use super::{
 };
 
 impl FactVisitor<'_> {
+    pub(super) fn record_foreign_mod(&mut self, item: &ItemForeignMod) {
+        self.unsafe_constructs.push(fact(
+            if item.unsafety.is_some() {
+                "unsafe extern block"
+            } else {
+                "extern block"
+            },
+            item.abi.extern_token.span,
+            AnalysisQuality::Exact,
+        ));
+    }
+
+    pub(super) fn record_static(&mut self, item: &ItemStatic) {
+        if let syn::StaticMutability::Mut(mut_token) = &item.mutability {
+            self.unsafe_constructs.push(fact(
+                "mutable static",
+                mut_token.span,
+                AnalysisQuality::Exact,
+            ));
+        }
+    }
+
     pub(super) fn record_module(&mut self, module: &ItemMod) {
         if let Some(unsafe_token) = &module.unsafety {
             self.unsafe_constructs.push(fact(
@@ -28,6 +50,13 @@ impl FactVisitor<'_> {
     }
 
     pub(super) fn record_item_macro(&mut self, item: &ItemMacro) {
+        if let Some(name) = &item.ident {
+            self.macro_definitions.push(fact(
+                name.to_string(),
+                name.span(),
+                AnalysisQuality::Exact,
+            ));
+        }
         if let Some(mut boundary) = include_boundary(&item.mac, IncludeContext::Items) {
             boundary.cfg_test = self.test_only_context || item.attrs.iter().any(is_cfg_test);
             self.includes.push(boundary);
@@ -46,5 +75,21 @@ impl FactVisitor<'_> {
             boundary.cfg_test = self.test_only_context || cfg_test;
             self.includes.push(boundary);
         }
+    }
+
+    pub(super) fn record_statement_macro(&mut self, statement: &StmtMacro) {
+        if statement.mac.path.is_ident("macro_rules") {
+            if let Some(proc_macro2::TokenTree::Ident(name)) =
+                statement.mac.tokens.clone().into_iter().next()
+            {
+                self.macro_definitions.push(fact(
+                    name.to_string(),
+                    name.span(),
+                    AnalysisQuality::Exact,
+                ));
+            }
+            return;
+        }
+        self.record_expression_macro(&statement.mac, statement.attrs.iter().any(is_cfg_test));
     }
 }

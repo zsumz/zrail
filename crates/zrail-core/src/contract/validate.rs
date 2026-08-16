@@ -25,6 +25,7 @@ pub(super) fn validate_contract(contract: &Contract) -> Result<(), ContractError
     }
     validate_adapters(contract, &mut errors);
     validate_repository(contract, &mut errors);
+    super::validate_dependencies::validate(contract, &mut errors);
     validate_budgets(contract, &mut errors);
     super::validate_source::validate_source_contract(contract, &mut errors);
     validate_layers(contract, &mut errors);

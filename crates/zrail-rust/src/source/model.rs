@@ -107,6 +107,8 @@ pub(crate) struct RustFileFacts {
     pub(crate) calls: Vec<ObservedFact>,
     pub(crate) methods: Vec<ObservedFact>,
     pub(crate) macros: Vec<ObservedFact>,
+    pub(crate) macro_expansions: Vec<ObservedFact>,
+    pub(crate) macro_definitions: Vec<ObservedFact>,
     pub(crate) lint_suppressions: Vec<ObservedFact>,
     pub(crate) unsafe_constructs: Vec<ObservedFact>,
     pub(crate) tests: Vec<ObservedFact>,

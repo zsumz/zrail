@@ -4,7 +4,7 @@ use std::{collections::BTreeSet, path::Path};
 
 use zrail_core::{
     Contract, Effect, ExternalDependencyMode, FacadeMode, LayerContract, LintSuppressionMode,
-    ModuleDocsMode, PolicyMode, ScopeContract,
+    MacroExpansionMode, ModuleDocsMode, PolicyMode, ScopeContract,
 };
 
 use crate::inventory::FileClass;
@@ -66,6 +66,13 @@ pub(super) const fn lint_mode(mode: LintSuppressionMode) -> &'static str {
         LintSuppressionMode::Allow => "allow",
         LintSuppressionMode::Reasoned => "reasoned",
         LintSuppressionMode::Deny => "deny",
+    }
+}
+
+pub(super) const fn macro_mode(mode: MacroExpansionMode) -> &'static str {
+    match mode {
+        MacroExpansionMode::Allow => "allow",
+        MacroExpansionMode::DenyUnreviewed => "deny-unreviewed",
     }
 }
 

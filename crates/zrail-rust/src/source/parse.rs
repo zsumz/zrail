@@ -95,6 +95,8 @@ fn fact_count(file: &RustFileFacts) -> usize {
         + file.calls.len()
         + file.methods.len()
         + file.macros.len()
+        + file.macro_expansions.len()
+        + file.macro_definitions.len()
         + file.lint_suppressions.len()
         + file.unsafe_constructs.len()
         + file.tests.len()
@@ -126,6 +128,8 @@ fn index_file(source_file: &crate::inventory::RustSourceFile, syntax: &syn::File
         calls: visitor.calls,
         methods: visitor.methods,
         macros: visitor.macros,
+        macro_expansions: visitor.macro_expansions,
+        macro_definitions: visitor.macro_definitions,
         lint_suppressions: visitor.lint_suppressions,
         unsafe_constructs: visitor.unsafe_constructs,
         tests: visitor.tests,
@@ -155,6 +159,8 @@ fn index_expression(
         calls: visitor.calls,
         methods: visitor.methods,
         macros: visitor.macros,
+        macro_expansions: visitor.macro_expansions,
+        macro_definitions: visitor.macro_definitions,
         lint_suppressions: visitor.lint_suppressions,
         unsafe_constructs: visitor.unsafe_constructs,
         tests: visitor.tests,

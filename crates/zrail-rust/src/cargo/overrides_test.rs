@@ -50,6 +50,23 @@ default = "private"
 }
 
 #[test]
+fn config_includes_are_an_unattested_recursive_resolution_surface() {
+    for include in [
+        "include = [\"required.toml\"]",
+        "include = [{ path = \"required.toml\" }]",
+        "include = [{ path = \"optional.toml\", optional = true }]",
+        "include = [\"../outside.toml\"]",
+    ] {
+        let value = include.parse::<toml::Value>().expect("parse include");
+        assert!(
+            config_surfaces(&value)
+                .contains("Cargo configuration includes additional files whose effective resolution is not attested"),
+            "missing include surface for {include}"
+        );
+    }
+}
+
+#[test]
 fn build_and_network_configuration_do_not_claim_resolution_authority() {
     let value = parse(
         r#"

@@ -11,12 +11,23 @@ pub(crate) enum DependencyKind {
 pub(crate) struct Dependency {
     pub(crate) alias: String,
     pub(crate) name: String,
+    pub(crate) explicit_package: bool,
+    pub(crate) crate_root: String,
+    pub(crate) crate_root_authority: CrateRootAuthority,
     pub(crate) kind: DependencyKind,
     pub(crate) target: Option<String>,
     pub(crate) optional: bool,
     pub(crate) default_features: bool,
     pub(crate) features: Vec<String>,
     pub(crate) source: DependencySource,
+}
+
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) enum CrateRootAuthority {
+    DeclaredAlias,
+    InspectedLibrary,
+    Attested,
+    Unresolved,
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -53,6 +64,7 @@ pub(crate) struct Package {
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct CargoTarget {
+    pub(crate) name: String,
     pub(crate) path: String,
     pub(crate) kind: CargoTargetKind,
 }
@@ -80,6 +92,13 @@ impl Package {
         } else {
             format!("{}/Cargo.toml", self.directory)
         }
+    }
+
+    pub(crate) fn library_crate_root(&self) -> Option<&str> {
+        self.targets
+            .iter()
+            .find(|target| target.kind == CargoTargetKind::Library)
+            .map(|target| target.name.as_str())
     }
 }
 

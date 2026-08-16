@@ -1,6 +1,7 @@
 //! Typed architecture rails evaluated over one repository fact model.
 
 mod capability;
+mod cargo_identity;
 mod cargo_override;
 mod dependency;
 mod dependency_cycle;
@@ -9,6 +10,7 @@ mod evaluate;
 mod evidence;
 pub(crate) mod generated;
 mod hygiene;
+mod macro_expansion;
 mod repository;
 mod size;
 pub(crate) mod source_graph;

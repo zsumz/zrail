@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use zrail_core::{ContractBundle, load_contract, path::repository_file};
 
 use crate::{
-    cargo::{CargoWorkspace, load_cargo_workspace},
+    cargo::{CargoWorkspace, apply_attestations, load_cargo_workspace},
     inventory::{RepositoryInventory, inventory_repository},
     rules::source_graph,
     source::{SourceIndex, canonicalize_dependency_roots, index_rust_source},
@@ -26,8 +26,9 @@ pub(crate) fn load_model(root: &Path, config: &Path) -> Result<RepositoryModel, 
         load_contract(root, config).map_err(|error| CheckError::from_message(error.to_string()))?;
     let inventory = inventory_repository(root, &bundle.contract)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
-    let cargo = load_cargo_workspace(&inventory)
+    let mut cargo = load_cargo_workspace(&inventory)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
+    apply_attestations(&mut cargo, &bundle.contract.dependencies.crate_roots);
     let mut source = index_rust_source(&inventory);
     let graph = source_graph::analyze(&bundle.contract, &inventory, &cargo, &source);
     canonicalize_dependency_roots(&mut source, &cargo, &graph.packages);

@@ -155,6 +155,10 @@ fn inspect_config(
 fn config_surfaces(value: &Value) -> BTreeSet<&'static str> {
     let mut surfaces = BTreeSet::new();
     for (key, surface) in [
+        (
+            "include",
+            "Cargo configuration includes additional files whose effective resolution is not attested",
+        ),
         ("paths", "Cargo config paths override"),
         ("source", "Cargo config source mapping or replacement"),
         ("patch", "Cargo config patch override"),

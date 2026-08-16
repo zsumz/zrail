@@ -33,6 +33,8 @@ pub struct PathExplanation {
     pub denied_symbols: Vec<String>,
     pub denied_methods: Vec<String>,
     pub denied_macros: Vec<String>,
+    pub macro_expansion: String,
+    pub allowed_macro_expansions: Vec<String>,
     pub unsafe_code: String,
     pub lint_suppressions: String,
     pub expected_sibling_test: Option<String>,
@@ -131,7 +133,7 @@ pub fn explain_path(
         .then(|| policy::sibling_path(&relative))
         .flatten();
     Ok(PathExplanation {
-        schema: 3,
+        schema: 4,
         path: relative,
         file_class: format!("{class:?}").to_ascii_lowercase(),
         reachability: reachability.name().into(),
@@ -160,6 +162,17 @@ pub fn explain_path(
             .hygiene
             .deny_macros
             .clone(),
+        macro_expansion: policy::macro_mode(model.bundle.contract.source.rust.macros.mode).into(),
+        allowed_macro_expansions: model
+            .bundle
+            .contract
+            .source
+            .rust
+            .macros
+            .allow
+            .iter()
+            .map(|allowed| allowed.name.clone())
+            .collect(),
         unsafe_code: policy::policy_mode(model.bundle.contract.source.rust.hygiene.unsafe_code)
             .into(),
         lint_suppressions: policy::lint_mode(

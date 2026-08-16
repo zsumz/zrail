@@ -25,6 +25,7 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
             mode: DependencyMode::Locked,
             unassigned_packages: PolicyMode::Deny,
             cycles: CycleMode::Deny,
+            crate_roots: Vec::new(),
         },
         source: SourceContract {
             rust: RustSourceContract {
@@ -35,6 +36,7 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
                 generated: Vec::new(),
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),
+                macros: crate::MacroExpansionContract::default(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,
                     lint_suppressions: LintSuppressionMode::Deny,

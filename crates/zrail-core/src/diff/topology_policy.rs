@@ -40,6 +40,54 @@ pub(super) fn compare_dependency_modes(
     );
 }
 
+pub(super) fn compare_crate_roots(
+    before: &Contract,
+    after: &Contract,
+    changes: &mut Vec<ArchitectureChange>,
+) {
+    let roots = |contract: &Contract| {
+        contract
+            .dependencies
+            .crate_roots
+            .iter()
+            .map(|attestation| (attestation.package.clone(), attestation.root.clone()))
+            .collect::<BTreeMap<_, _>>()
+    };
+    let old = roots(before);
+    let new = roots(after);
+    for package in old
+        .keys()
+        .chain(new.keys())
+        .cloned()
+        .collect::<BTreeSet<_>>()
+    {
+        match (old.get(&package), new.get(&package)) {
+            (None, Some(root)) => changes.push(ArchitectureChange::new(
+                ChangeKind::Grant,
+                "dependency.crate-root",
+                format!("{package}:{root}"),
+                "contract now trusts an external package crate-root identity",
+            )),
+            (Some(root), None) => changes.push(ArchitectureChange::new(
+                ChangeKind::Revoke,
+                "dependency.crate-root",
+                format!("{package}:{root}"),
+                "contract no longer trusts an external package crate-root identity",
+            )),
+            (Some(left), Some(right)) if left != right => changes.push(
+                ArchitectureChange::new(
+                    ChangeKind::Unknown,
+                    "dependency.crate-root",
+                    package,
+                    "attested external crate-root identity changed",
+                )
+                .values(left, right),
+            ),
+            _ => {}
+        }
+    }
+}
+
 pub(super) fn compare_layer_profiles(
     before: &Contract,
     after: &Contract,

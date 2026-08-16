@@ -39,6 +39,14 @@ pub enum LintSuppressionMode {
     Deny,
 }
 
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum MacroExpansionMode {
+    #[default]
+    Allow,
+    DenyUnreviewed,
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum SymlinkMode {

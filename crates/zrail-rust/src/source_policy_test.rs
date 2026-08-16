@@ -27,6 +27,7 @@ fn generated_budget_remains_enforced_without_a_handwritten_size_policy() {
         }],
         out_dir: Vec::new(),
         item_macros: Vec::new(),
+        macros: zrail_core::MacroExpansionContract::default(),
         hygiene: HygieneContract {
             unsafe_code: PolicyMode::Allow,
             lint_suppressions: LintSuppressionMode::Allow,

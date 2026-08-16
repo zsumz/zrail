@@ -1,18 +1,15 @@
 //! Syntax visitor collecting source facts after import resolution.
 
 use syn::{
-    Attribute, ExprCall, ExprMacro, ExprMethodCall, ItemFn, ItemForeignMod, ItemImpl, ItemMacro,
-    ItemMod, ItemStatic, ItemTrait, Macro, Signature, StmtMacro,
+    Attribute, Block, ExprCall, ExprMacro, ExprMethodCall, ItemFn, ItemForeignMod, ItemImpl,
+    ItemMacro, ItemMod, ItemStatic, ItemTrait, Macro, Signature, Stmt, StmtMacro,
     spanned::Spanned,
     visit::{self, Visit},
 };
 use zrail_core::AnalysisQuality;
 
 use super::{
-    attributes::{
-        is_cfg_test, is_lint_suppression, is_test_attribute, lint_suppression_is_reasoned,
-        unsafe_attribute_names,
-    },
+    attributes::{is_cfg_test, is_test_attribute},
     fact::fact,
     visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
 };
@@ -21,7 +18,11 @@ pub(super) use super::visitor_model::FactVisitor;
 
 impl<'ast> Visit<'ast> for FactVisitor<'_> {
     fn visit_file(&mut self, file: &'ast syn::File) {
-        self.with_cfg(&file.attrs, |visitor| visit::visit_file(visitor, file));
+        self.with_cfg(&file.attrs, |visitor| {
+            visitor.with_import_scope(file.items.iter(), |visitor| {
+                visit::visit_file(visitor, file);
+            });
+        });
     }
 
     fn visit_item(&mut self, item: &'ast syn::Item) {
@@ -81,30 +82,7 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_attribute(&mut self, attribute: &'ast Attribute) {
-        if is_lint_suppression(attribute) {
-            self.lint_suppressions.push(fact(
-                if lint_suppression_is_reasoned(attribute) {
-                    "reasoned lint suppression"
-                } else {
-                    "unreasoned lint suppression"
-                },
-                attribute.span(),
-                AnalysisQuality::Exact,
-            ));
-        }
-        let attribute_quality = if attribute.path().is_ident("cfg_attr") {
-            AnalysisQuality::Conservative
-        } else {
-            AnalysisQuality::Exact
-        };
-        self.unsafe_constructs
-            .extend(unsafe_attribute_names(attribute).into_iter().map(|name| {
-                fact(
-                    format!("unsafe attribute {name}"),
-                    attribute.span(),
-                    attribute_quality,
-                )
-            }));
+        self.record_attribute(attribute);
         visit::visit_attribute(self, attribute);
     }
 
@@ -123,14 +101,25 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_macro(&mut self, invocation: &'ast Macro) {
-        let (name, quality) = self.imports.resolve(&invocation.path);
-        self.macros
-            .push(fact(name.clone(), invocation.path.span(), quality));
-        self.macros.extend(super::calls::candidates(
-            &invocation.path,
-            self.imports,
-            &name,
-        ));
+        if invocation.path.is_ident("macro_rules") {
+            visit::visit_macro(self, invocation);
+            return;
+        }
+        let (name, quality, scoped, local_module) = self.resolve_macro_path(&invocation.path);
+        let mut expansion = fact(name.clone(), invocation.path.span(), quality);
+        if local_module {
+            expansion.canonical.push(name.clone());
+        }
+        let mut facts = vec![expansion];
+        if !scoped {
+            facts.extend(super::calls::candidates(
+                &invocation.path,
+                self.imports,
+                &name,
+            ));
+        }
+        self.macros.extend(facts.iter().cloned());
+        self.macro_expansions.extend(facts);
         visit::visit_macro(self, invocation);
     }
 
@@ -145,7 +134,7 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_stmt_macro(&mut self, statement: &'ast StmtMacro) {
-        self.record_expression_macro(&statement.mac, statement.attrs.iter().any(is_cfg_test));
+        self.record_statement_macro(statement);
         visit::visit_stmt_macro(self, statement);
     }
 
@@ -203,31 +192,37 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_item_foreign_mod(&mut self, item: &'ast ItemForeignMod) {
-        self.unsafe_constructs.push(fact(
-            if item.unsafety.is_some() {
-                "unsafe extern block"
-            } else {
-                "extern block"
-            },
-            item.abi.extern_token.span,
-            AnalysisQuality::Exact,
-        ));
+        self.record_foreign_mod(item);
         visit::visit_item_foreign_mod(self, item);
     }
 
     fn visit_item_static(&mut self, item: &'ast ItemStatic) {
-        if let syn::StaticMutability::Mut(mut_token) = &item.mutability {
-            self.unsafe_constructs.push(fact(
-                "mutable static",
-                mut_token.span,
-                AnalysisQuality::Exact,
-            ));
-        }
+        self.record_static(item);
         visit::visit_item_static(self, item);
     }
 
     fn visit_item_mod(&mut self, module: &'ast ItemMod) {
         self.record_module(module);
-        visit::visit_item_mod(self, module);
+        for attribute in &module.attrs {
+            self.visit_attribute(attribute);
+        }
+        self.visit_visibility(&module.vis);
+        if let Some((_, items)) = &module.content {
+            self.with_import_scope(items.iter(), |visitor| {
+                for item in items {
+                    visitor.visit_item(item);
+                }
+            });
+        }
+    }
+
+    fn visit_block(&mut self, block: &'ast Block) {
+        self.with_import_scope(
+            block.stmts.iter().filter_map(|statement| match statement {
+                Stmt::Item(item) => Some(item),
+                _ => None,
+            }),
+            |visitor| visit::visit_block(visitor, block),
+        );
     }
 }

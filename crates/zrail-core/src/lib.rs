@@ -10,13 +10,14 @@ pub mod path;
 pub mod report;
 
 pub use contract::{
-    Budget, Contract, ContractBundle, ContractError, CycleMode, DependenciesContract,
-    DependencyMode, DependencyRule, Effect, EffectBoundary, EvidenceReference, ExactMode,
-    ExternalDependencyMode, FacadeMode, FileSizeContract, GateContract, GateKind,
-    GeneratedSourceContract, HygieneContract, InvariantContract, InvariantStatus,
-    ItemMacroContract, LayerContract, LayerDependencies, LintSuppressionMode, MAX_CONTRACT_BYTES,
-    MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES, ModuleDocsMode, OutDirSourceContract, OwnerContract,
-    OwnerKind, PolicyMode, ProfileContract, RatchetContract, RepositoryContract,
+    Budget, Contract, ContractBundle, ContractError, CrateRootContract, CycleMode,
+    DependenciesContract, DependencyMode, DependencyRule, Effect, EffectBoundary,
+    EvidenceReference, ExactMode, ExternalDependencyMode, FacadeMode, FileSizeContract,
+    GateContract, GateKind, GeneratedSourceContract, HygieneContract, InvariantContract,
+    InvariantStatus, ItemMacroContract, LayerContract, LayerDependencies, LintSuppressionMode,
+    MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES, MacroExpansionAllow,
+    MacroExpansionContract, MacroExpansionMode, ModuleDocsMode, OutDirSourceContract,
+    OwnerContract, OwnerKind, PolicyMode, ProfileContract, RatchetContract, RepositoryContract,
     RustSourceContract, ScopeContract, SourceContract, SymbolBoundary, SymlinkMode, TestMode,
     contract_imports, load_contract, parse_evidence_reference,
 };

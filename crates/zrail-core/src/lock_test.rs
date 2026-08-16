@@ -65,7 +65,7 @@ fn current_locks_separate_format_semantics_and_producer() {
 
     let rendered = lock.render().expect("render current lock");
 
-    assert!(rendered.contains("schema = 3\nsemantics = 3\nproducer = \""));
+    assert!(rendered.contains("schema = 4\nsemantics = 4\nproducer = \""));
     assert!(!rendered.contains("\nengine = "));
 }
 
@@ -113,6 +113,7 @@ fn current_semantics_require_complete_dependency_identity() {
         dependencies: vec![LockedDependency {
             alias: None,
             name: "core".into(),
+            crate_root: None,
             kind: LockedDependencyKind::Normal,
             scope: LockedDependencyScope::Internal,
             target: None,
@@ -235,6 +236,7 @@ fn dependency(
     LockedDependency {
         alias: Some(name.into()),
         name: name.into(),
+        crate_root: Some(name.into()),
         kind,
         scope,
         target: None,

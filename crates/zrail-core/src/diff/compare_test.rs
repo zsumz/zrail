@@ -1,10 +1,11 @@
 //! Architecture changes are classified by effective permission.
 
 use crate::{
-    ChangeKind, DependencyMode, FacadeMode, GeneratedSourceContract, ItemMacroContract,
-    LintSuppressionMode, LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope,
-    LockedDependencySource, LockedGeneratedSource, LockedPackage, LockedRatchet,
-    OutDirSourceContract, OwnerContract, OwnerKind,
+    ChangeKind, CrateRootContract, DependencyMode, FacadeMode, GeneratedSourceContract,
+    ItemMacroContract, LintSuppressionMode, LockFile, LockedDependency, LockedDependencyKind,
+    LockedDependencyScope, LockedDependencySource, LockedGeneratedSource, LockedPackage,
+    LockedRatchet, MacroExpansionAllow, MacroExpansionMode, OutDirSourceContract, OwnerContract,
+    OwnerKind,
 };
 
 use super::compare_architecture;
@@ -36,6 +37,49 @@ fn relaxing_exact_dependencies_is_a_grant() {
             .iter()
             .any(|change| { change.kind == ChangeKind::Grant && change.rail == "dependency.lock" })
     );
+}
+
+#[test]
+fn external_crate_root_attestation_is_a_grant_and_change_is_unknown() {
+    let before = contract_with_hard_limit(300);
+    let mut trusted = before.clone();
+    trusted.dependencies.crate_roots.push(CrateRootContract {
+        package: "tokio".into(),
+        root: "runtime".into(),
+        reason: "Reviewed dependency metadata.".into(),
+    });
+    let added = compare_architecture(&before, None, &trusted, None);
+    assert!(added.changes.iter().any(|change| {
+        change.kind == ChangeKind::Grant && change.rail == "dependency.crate-root"
+    }));
+
+    let mut changed = trusted.clone();
+    changed.dependencies.crate_roots[0].root = "executor".into();
+    let changed = compare_architecture(&trusted, None, &changed, None);
+    assert!(changed.changes.iter().any(|change| {
+        change.kind == ChangeKind::Unknown && change.rail == "dependency.crate-root"
+    }));
+}
+
+#[test]
+fn macro_expansion_denial_revokes_power_and_allowance_grants_it() {
+    let before = contract_with_hard_limit(300);
+    let mut denied = before.clone();
+    denied.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
+    let tightened = compare_architecture(&before, None, &denied, None);
+    assert!(tightened.changes.iter().any(|change| {
+        change.kind == ChangeKind::Revoke && change.rail == "rust.macro-expansion"
+    }));
+
+    let mut allowed = denied.clone();
+    allowed.source.rust.macros.allow.push(MacroExpansionAllow {
+        name: "tokio::select".into(),
+        reason: "Reviewed async control-flow expansion.".into(),
+    });
+    let widened = compare_architecture(&denied, None, &allowed, None);
+    assert!(widened.changes.iter().any(|change| {
+        change.kind == ChangeKind::Grant && change.rail == "rust.macro-expansion.allow"
+    }));
 }
 
 #[test]
@@ -177,6 +221,7 @@ fn resolved_packages_and_ratchets_have_opposite_directions() {
         dependencies: vec![LockedDependency {
             alias: Some("core".into()),
             name: "core".into(),
+            crate_root: Some("core".into()),
             kind: LockedDependencyKind::Normal,
             scope: LockedDependencyScope::Internal,
             target: None,

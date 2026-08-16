@@ -18,13 +18,23 @@ impl ImportMap {
         let mut imports = Self::default();
         for item in &file.items {
             match item {
-                Item::Use(item) => collect_use(&mut imports, Vec::new(), &item.tree),
+                Item::Use(item) => collect_use(
+                    &mut imports,
+                    Vec::new(),
+                    &item.tree,
+                    super::scoped_imports::conditional(&item.attrs),
+                ),
                 Item::ExternCrate(item) => {
                     let alias = item
                         .rename
                         .as_ref()
                         .map_or_else(|| item.ident.to_string(), |(_, name)| name.to_string());
-                    imports.aliases.insert(alias, item.ident.to_string());
+                    imports
+                        .aliases
+                        .insert(alias.clone(), item.ident.to_string());
+                    if super::scoped_imports::conditional(&item.attrs) {
+                        imports.unresolved.insert(alias);
+                    }
                 }
                 _ => {}
             }
@@ -112,9 +122,10 @@ impl ImportMap {
 
     fn normalize_aliases(&mut self) {
         let raw = self.aliases.clone();
+        let mut cache = BTreeMap::new();
         for alias in raw.keys() {
             let mut visiting = BTreeSet::new();
-            match expand_alias(alias, &raw, &mut visiting) {
+            match super::import_aliases::expand_alias(alias, &raw, &mut visiting, &mut cache, 0) {
                 Some(target) => {
                     self.aliases.insert(alias.clone(), target);
                 }
@@ -126,69 +137,52 @@ impl ImportMap {
     }
 }
 
-fn expand_alias(
-    alias: &str,
-    aliases: &BTreeMap<String, String>,
-    visiting: &mut BTreeSet<String>,
-) -> Option<String> {
-    if !visiting.insert(alias.to_owned()) {
-        return None;
-    }
-    let target = aliases.get(alias)?.clone();
-    let mut segments = target.split("::");
-    let first = segments.next()?;
-    let remainder = segments.collect::<Vec<_>>();
-    let expanded = if aliases.contains_key(first) {
-        let mut prefix = expand_alias(first, aliases, visiting)?;
-        if !remainder.is_empty() {
-            prefix.push_str("::");
-            prefix.push_str(&remainder.join("::"));
-        }
-        prefix
-    } else {
-        target
-    };
-    visiting.remove(alias);
-    Some(expanded)
-}
-
-fn collect_use(imports: &mut ImportMap, prefix: Vec<String>, tree: &UseTree) {
+fn collect_use(imports: &mut ImportMap, prefix: Vec<String>, tree: &UseTree, conditional: bool) {
     match tree {
         UseTree::Path(path) => {
             let mut nested = prefix;
             nested.push(path.ident.to_string());
-            collect_use(imports, nested, &path.tree);
+            collect_use(imports, nested, &path.tree, conditional);
         }
         UseTree::Name(name) if name.ident == "self" => {
             if let Some(alias) = prefix.last() {
                 imports.aliases.insert(alias.clone(), prefix.join("::"));
+                if conditional {
+                    imports.unresolved.insert(alias.clone());
+                }
             }
         }
         UseTree::Name(name) => {
             let mut target = prefix;
             target.push(name.ident.to_string());
-            imports
-                .aliases
-                .insert(name.ident.to_string(), target.join("::"));
+            let alias = name.ident.to_string();
+            imports.aliases.insert(alias.clone(), target.join("::"));
+            if conditional {
+                imports.unresolved.insert(alias);
+            }
         }
         UseTree::Rename(rename) if rename.ident == "self" => {
             if !prefix.is_empty() {
-                imports
-                    .aliases
-                    .insert(rename.rename.to_string(), prefix.join("::"));
+                let alias = rename.rename.to_string();
+                imports.aliases.insert(alias.clone(), prefix.join("::"));
+                if conditional {
+                    imports.unresolved.insert(alias);
+                }
             }
         }
         UseTree::Rename(rename) => {
             let mut target = prefix;
             target.push(rename.ident.to_string());
-            imports
-                .aliases
-                .insert(rename.rename.to_string(), target.join("::"));
+            let alias = rename.rename.to_string();
+            imports.aliases.insert(alias.clone(), target.join("::"));
+            if conditional {
+                imports.unresolved.insert(alias);
+            }
         }
         UseTree::Glob(_) => imports.globs.push(prefix.join("::")),
         UseTree::Group(group) => {
             for item in &group.items {
-                collect_use(imports, prefix.clone(), item);
+                collect_use(imports, prefix.clone(), item, conditional);
             }
         }
     }

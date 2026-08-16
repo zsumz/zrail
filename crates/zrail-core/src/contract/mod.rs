@@ -9,6 +9,7 @@ mod merge;
 mod model;
 mod modes;
 mod validate;
+mod validate_dependencies;
 mod validate_evidence;
 mod validate_limits;
 mod validate_paths;
@@ -27,13 +28,15 @@ pub use load::{
     MAX_IMPORT_DIRECTIVES, load_contract,
 };
 pub use model::{
-    Budget, Contract, DependenciesContract, DependencyRule, EffectBoundary, FileSizeContract,
-    GateContract, GateKind, GeneratedSourceContract, HygieneContract, InvariantContract,
-    InvariantStatus, ItemMacroContract, LayerContract, LayerDependencies, OutDirSourceContract,
-    OwnerContract, ProfileContract, RatchetContract, RepositoryContract, RustSourceContract,
-    ScopeContract, SourceContract, SymbolBoundary,
+    Budget, Contract, CrateRootContract, DependenciesContract, DependencyRule, EffectBoundary,
+    FileSizeContract, GateContract, GateKind, GeneratedSourceContract, HygieneContract,
+    InvariantContract, InvariantStatus, ItemMacroContract, LayerContract, LayerDependencies,
+    MacroExpansionAllow, MacroExpansionContract, OutDirSourceContract, OwnerContract,
+    ProfileContract, RatchetContract, RepositoryContract, RustSourceContract, ScopeContract,
+    SourceContract, SymbolBoundary,
 };
 pub use modes::{
     CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,
-    LintSuppressionMode, ModuleDocsMode, OwnerKind, PolicyMode, SymlinkMode, TestMode,
+    LintSuppressionMode, MacroExpansionMode, ModuleDocsMode, OwnerKind, PolicyMode, SymlinkMode,
+    TestMode,
 };

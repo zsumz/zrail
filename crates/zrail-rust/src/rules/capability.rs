@@ -218,7 +218,7 @@ pub(super) fn path_matches(denied: &str, observed: &ObservedFact) -> bool {
     })
 }
 
-const fn effect_tokens(effect: Effect) -> &'static [&'static str] {
+pub(super) const fn effect_tokens(effect: Effect) -> &'static [&'static str] {
     match effect {
         Effect::Filesystem => &["std::fs"],
         Effect::Network => &["std::net", "std::os::unix::net"],

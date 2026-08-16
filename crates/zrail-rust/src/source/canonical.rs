@@ -4,11 +4,16 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::{AnalysisQuality, Finding};
 
-use crate::cargo::{CargoWorkspace, Package, rust_crate_root};
+use crate::cargo::{CargoWorkspace, CrateRootAuthority, Package, rust_crate_root};
 
-use super::{ObservedFact, SourceIndex};
+use super::{
+    ObservedFact, SourceIndex,
+    macro_definitions::{local_macro_names, package_macro_definitions},
+};
 
 const MAX_IDENTITIES_PER_ROOT: usize = 4;
+#[cfg(test)]
+use super::macro_definitions::{MAX_MACRO_DEFINITIONS_PER_PACKAGE, MacroDefinitionSet};
 
 pub(crate) fn canonicalize(
     index: &mut SourceIndex,
@@ -20,10 +25,10 @@ pub(crate) fn canonicalize(
         .iter()
         .map(|package| (package.name.as_str(), package))
         .collect::<BTreeMap<_, _>>();
+    let macro_definitions = package_macro_definitions(index, contexts);
     let mut findings = Vec::new();
     for file in &mut index.files {
-        let observed = observed_roots(file);
-        let selected = contexts.get(&file.relative).map_or_else(
+        let selected: Vec<&Package> = contexts.get(&file.relative).map_or_else(
             || {
                 package_for_file(&cargo.packages, &file.relative)
                     .into_iter()
@@ -36,6 +41,18 @@ pub(crate) fn canonicalize(
                     .collect()
             },
         );
+        let local_macros = local_macro_names(&selected, &macro_definitions);
+        for expansion in file.macros.iter_mut().chain(&mut file.macro_expansions) {
+            if !expansion.name.contains("::")
+                && local_macros
+                    .as_ref()
+                    .is_none_or(|names| names.contains(expansion.name.as_str()))
+            {
+                expansion.canonical.clear();
+                expansion.quality = AnalysisQuality::Unresolved;
+            }
+        }
+        let observed = observed_roots(file);
         let (roots, overflowed) = dependency_roots(selected, &observed);
         findings.extend(
             overflowed
@@ -47,6 +64,7 @@ pub(crate) fn canonicalize(
             .iter_mut()
             .chain(&mut file.calls)
             .chain(&mut file.macros)
+            .chain(&mut file.macro_expansions)
             .chain(&mut file.item_macros)
         {
             canonicalize_fact_bounded(fact, &roots, &overflowed);
@@ -63,14 +81,17 @@ fn dependency_roots(
     let mut overflowed = BTreeSet::new();
     for package in packages {
         for dependency in &package.dependencies {
-            let alias = rust_crate_root(&dependency.alias);
-            if !observed.contains(&alias) || overflowed.contains(&alias) {
+            if dependency.crate_root_authority == CrateRootAuthority::Unresolved {
+                continue;
+            }
+            let crate_root = rust_crate_root(&dependency.crate_root);
+            if !observed.contains(&crate_root) || overflowed.contains(&crate_root) {
                 continue;
             }
             let canonical = rust_crate_root(&dependency.name);
-            let identities = roots.entry(alias.clone()).or_default();
+            let identities = roots.entry(crate_root.clone()).or_default();
             if identities.len() == MAX_IDENTITIES_PER_ROOT && !identities.contains(&canonical) {
-                overflowed.insert(alias);
+                overflowed.insert(crate_root);
             } else {
                 identities.insert(canonical);
             }
@@ -84,6 +105,7 @@ fn observed_roots(file: &super::RustFileFacts) -> BTreeSet<String> {
         .iter()
         .chain(&file.calls)
         .chain(&file.macros)
+        .chain(&file.macro_expansions)
         .chain(&file.item_macros)
         .filter_map(|fact| split_root(&fact.name).map(|(root, _)| visible_root(root).into()))
         .collect()
@@ -97,6 +119,10 @@ fn package_for_file<'a>(packages: &'a [Package], file: &str) -> Option<&'a Packa
 }
 
 fn canonicalize_fact(fact: &mut ObservedFact, roots: &BTreeMap<String, BTreeSet<String>>) {
+    // Exact lexical module bindings already own their policy identity.
+    if !fact.canonical.is_empty() {
+        return;
+    }
     let Some((root, suffix)) = split_root(&fact.name) else {
         return;
     };

@@ -48,6 +48,7 @@ pub(super) fn minimal_contract() -> Contract {
             mode: DependencyMode::Observed,
             unassigned_packages: PolicyMode::Allow,
             cycles: CycleMode::Allow,
+            crate_roots: Vec::new(),
         },
         source: SourceContract {
             rust: RustSourceContract {
@@ -58,6 +59,7 @@ pub(super) fn minimal_contract() -> Contract {
                 generated: Vec::new(),
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),
+                macros: crate::MacroExpansionContract::default(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Allow,
                     lint_suppressions: LintSuppressionMode::Allow,

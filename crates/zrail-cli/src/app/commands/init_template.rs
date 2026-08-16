@@ -35,6 +35,9 @@ facades = "allow"
 entrypoints = "allow"
 tests = "{tests}"
 
+[source.rust.macros]
+mode = "{macros}"
+
 [source.rust.hygiene]
 unsafe = "allow"
 lint_suppressions = "allow"
@@ -43,6 +46,10 @@ deny_macros = []
 "#,
         tests = match preset {
             InitPreset::Zsumz => "sibling",
+            InitPreset::Rust => "allow",
+        },
+        macros = match preset {
+            InitPreset::Zsumz => "deny-unreviewed",
             InitPreset::Rust => "allow",
         },
     );

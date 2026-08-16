@@ -13,6 +13,7 @@ pub(super) fn validate_source_contract(contract: &Contract, errors: &mut Validat
     validate_generated(contract, errors);
     validate_out_dir(contract, errors);
     validate_item_macros(contract, errors);
+    validate_macro_expansion(contract, errors);
 }
 
 fn validate_out_dir(contract: &Contract, errors: &mut ValidationErrors) {
@@ -184,6 +185,30 @@ fn validate_item_macros(contract: &Contract, errors: &mut ValidationErrors) {
             errors.push(format!(
                 "duplicate item macro exemption {} in {}",
                 item_macro.name, item_macro.path
+            ));
+        }
+    }
+}
+
+fn validate_macro_expansion(contract: &Contract, errors: &mut ValidationErrors) {
+    if contract.source.rust.macros.mode == super::MacroExpansionMode::Allow
+        && !contract.source.rust.macros.allow.is_empty()
+    {
+        errors.push("source.rust.macros.allow requires macros.mode = \"deny-unreviewed\"".into());
+    }
+    let mut names = BTreeSet::new();
+    for allowed in &contract.source.rust.macros.allow {
+        require_reason("macro expansion", &allowed.name, &allowed.reason, errors);
+        if !valid_rust_path(&allowed.name) {
+            errors.push(format!(
+                "allowed macro expansion name must be a Rust path: {:?}",
+                allowed.name
+            ));
+        }
+        if !names.insert(allowed.name.as_str()) {
+            errors.push(format!(
+                "duplicate macro expansion allowance {:?}",
+                allowed.name
             ));
         }
     }

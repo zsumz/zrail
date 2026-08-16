@@ -55,6 +55,44 @@ fn named_registry_without_an_attested_index_is_rejected() {
 }
 
 #[test]
+fn included_configuration_is_rejected_without_following_its_paths() {
+    for (name, include) in [
+        ("string-include", "include = [\"resolution.toml\"]\n"),
+        (
+            "table-include",
+            "include = [{ path = \"resolution.toml\" }]\n",
+        ),
+        (
+            "optional-include",
+            "include = [{ path = \"optional.toml\", optional = true }]\n",
+        ),
+        ("recursive-include", "include = [\"recursive.toml\"]\n"),
+        ("escaping-include", "include = [\"../outside.toml\"]\n"),
+    ] {
+        let root = repository(name, MANIFEST, include);
+        fs::write(
+            root.join(".cargo/resolution.toml"),
+            "[source.crates-io]\nreplace-with = \"fork\"\n",
+        )
+        .expect("write included override");
+        fs::write(
+            root.join(".cargo/recursive.toml"),
+            "include = [\"resolution.toml\"]\n",
+        )
+        .expect("write recursive include");
+
+        let report = check(&root);
+
+        assert!(report.findings.iter().any(|finding| {
+            finding.id == "CARGO-OVERRIDE-001"
+                && finding.path.as_deref() == Some(".cargo/config.toml")
+                && finding.message.contains("includes additional files")
+        }));
+        reset(&root);
+    }
+}
+
+#[test]
 fn unreadable_root_configuration_has_repository_stable_evidence() {
     let root = repository("unreadable", MANIFEST, ORDINARY_CONFIG);
     fs::write(root.join(".cargo/config.toml"), [0xff]).expect("write non-UTF-8 config");

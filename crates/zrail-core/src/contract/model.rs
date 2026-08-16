@@ -1,8 +1,11 @@
 //! Typed public schema for `zrail.toml`.
 
+#[path = "model/dependencies.rs"]
+mod dependencies;
 #[path = "model/evidence.rs"]
 mod evidence;
 
+pub use dependencies::{CrateRootContract, DependenciesContract};
 pub use evidence::{GateContract, GateKind, InvariantContract, InvariantStatus};
 
 use std::collections::BTreeMap;
@@ -10,8 +13,8 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 
 use super::modes::{
-    CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,
-    LintSuppressionMode, ModuleDocsMode, OwnerKind, PolicyMode, SymlinkMode, TestMode,
+    Effect, ExactMode, ExternalDependencyMode, FacadeMode, LintSuppressionMode, MacroExpansionMode,
+    ModuleDocsMode, OwnerKind, PolicyMode, SymlinkMode, TestMode,
 };
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
@@ -45,14 +48,6 @@ pub struct RepositoryContract {
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub struct DependenciesContract {
-    pub mode: DependencyMode,
-    pub unassigned_packages: PolicyMode,
-    pub cycles: CycleMode,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
 pub struct SourceContract {
     pub rust: RustSourceContract,
 }
@@ -71,9 +66,26 @@ pub struct RustSourceContract {
     pub out_dir: Vec<OutDirSourceContract>,
     #[serde(default)]
     pub item_macros: Vec<ItemMacroContract>,
+    #[serde(default)]
+    pub macros: MacroExpansionContract,
     pub hygiene: HygieneContract,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub size: Option<FileSizeContract>,
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct MacroExpansionContract {
+    pub mode: MacroExpansionMode,
+    #[serde(default)]
+    pub allow: Vec<MacroExpansionAllow>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct MacroExpansionAllow {
+    pub name: String,
+    pub reason: String,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]

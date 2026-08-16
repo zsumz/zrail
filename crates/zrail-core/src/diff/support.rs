@@ -4,7 +4,7 @@ use std::collections::BTreeSet;
 
 use crate::{
     CycleMode, DependencyMode, ExternalDependencyMode, FacadeMode, LintSuppressionMode,
-    ModuleDocsMode, PolicyMode, SymlinkMode, TestMode,
+    MacroExpansionMode, ModuleDocsMode, PolicyMode, SymlinkMode, TestMode,
 };
 
 use super::{ArchitectureChange, ChangeKind};
@@ -143,6 +143,13 @@ pub(super) const fn rank_lint_suppressions(mode: LintSuppressionMode) -> u8 {
         LintSuppressionMode::Allow => 0,
         LintSuppressionMode::Reasoned => 1,
         LintSuppressionMode::Deny => 2,
+    }
+}
+
+pub(super) const fn rank_macro_expansion(mode: MacroExpansionMode) -> u8 {
+    match mode {
+        MacroExpansionMode::Allow => 0,
+        MacroExpansionMode::DenyUnreviewed => 1,
     }
 }
 

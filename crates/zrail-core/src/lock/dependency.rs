@@ -40,6 +40,7 @@ pub enum LockedDependencySource {
 impl LockedDependency {
     pub fn label(&self) -> String {
         let alias = self.alias.as_deref().unwrap_or(&self.name);
+        let crate_root = self.crate_root.as_deref().unwrap_or("unresolved-root");
         let target = self.target.as_deref().unwrap_or("all-targets");
         let optional = self.optional.unwrap_or(false);
         let default_features = self.default_features.unwrap_or(true);
@@ -49,7 +50,7 @@ impl LockedDependency {
             .as_ref()
             .map_or_else(|| "legacy".into(), LockedDependencySource::label);
         format!(
-            "{}:{}:{target}:{alias}=>{}:{source}:optional={optional}:default-features={default_features}:features=[{features}]",
+            "{}:{}:{target}:{alias}[{crate_root}]=>{}:{source}:optional={optional}:default-features={default_features}:features=[{features}]",
             self.scope.label(),
             self.kind.label(),
             self.name,

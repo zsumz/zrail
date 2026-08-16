@@ -6,7 +6,7 @@ use std::{
     sync::atomic::{AtomicUsize, Ordering},
 };
 
-use zrail_core::ReportStatus;
+use zrail_core::{LockFile, ReportStatus};
 use zrail_rust::{check_repository, explain_path};
 
 use crate::app::args::{InitOptions, InitPreset};
@@ -31,12 +31,15 @@ fn rust_preset_accepts_inline_and_integration_tests_without_a_size_policy() {
     assert_ready(&root);
     let explanation = explain_path(&root, Path::new("zrail.toml"), Path::new("src/lib.rs"))
         .expect("explain unbounded Rust source");
-    assert_eq!(explanation.schema, 3);
+    assert_eq!(explanation.schema, 4);
     assert_eq!(explanation.design_target, None);
     assert_eq!(explanation.hard_ceiling, None);
     assert_eq!(explanation.expected_sibling_test, None);
+    assert_eq!(explanation.macro_expansion, "allow");
+    assert!(explanation.allowed_macro_expansions.is_empty());
     assert!(!explanation.sibling_tests_required);
     assert!(explanation.human().contains("target <not enforced>"));
+    assert!(explanation.human().contains("macro expansion: allow"));
     contract.push_str(
         "\n[[ratchet]]\nrule = \"rust.file-size\"\ntarget = \"src/lib.rs\"\nreason = \"stale\"\n",
     );
@@ -64,6 +67,29 @@ fn baseline_is_an_independent_no_op_for_allowed_rust_conventions() {
     assert!(result.text.contains("Adoption: baseline"));
     assert!(result.text.contains("Recorded debt: 0 ratchets"));
     assert!(!contract.contains("[[ratchet]]"));
+    assert_ready(&root);
+    reset(&root);
+}
+
+#[test]
+fn rust_preset_accepts_an_external_root_that_no_active_policy_relies_on() {
+    let root = fixture_root("external-dependency");
+    reset(&root);
+    write_conventional_package(&root);
+    let manifest = fs::read_to_string(root.join("Cargo.toml")).expect("read manifest");
+    fs::write(
+        root.join("Cargo.toml"),
+        format!("{manifest}\n[dependencies]\nserde = \"1\"\n"),
+    )
+    .expect("add external dependency");
+
+    let result = initialize(&root, false).expect("initialize dependency-bearing package");
+    let lock = LockFile::read(&root.join("zrail.lock")).expect("read initialized lock");
+    let dependency = &lock.packages[0].dependencies[0];
+
+    assert_eq!(result.exit_code, 0, "{}", result.text);
+    assert_eq!(dependency.name, "serde");
+    assert_eq!(dependency.crate_root, None);
     assert_ready(&root);
     reset(&root);
 }

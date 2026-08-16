@@ -208,6 +208,7 @@ fn contract() -> Contract {
             mode: DependencyMode::Observed,
             unassigned_packages: PolicyMode::Allow,
             cycles: CycleMode::Allow,
+            crate_roots: Vec::new(),
         },
         source: SourceContract {
             rust: RustSourceContract {
@@ -218,6 +219,7 @@ fn contract() -> Contract {
                 generated: Vec::new(),
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),
+                macros: zrail_core::MacroExpansionContract::default(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,
                     lint_suppressions: LintSuppressionMode::Deny,

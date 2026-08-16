@@ -61,9 +61,11 @@ fn contract_items(contract: &Contract) -> usize {
         + contract.scopes.len()
         + contract.owners.len()
         + contract.ratchets.len()
+        + contract.dependencies.crate_roots.len()
         + contract.source.rust.generated.len()
         + contract.source.rust.out_dir.len()
         + contract.source.rust.item_macros.len();
+    count += contract.source.rust.macros.allow.len();
     count += contract
         .source
         .rust

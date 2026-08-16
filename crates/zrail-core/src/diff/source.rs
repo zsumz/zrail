@@ -11,7 +11,7 @@ use super::{
     ArchitectureChange, ChangeKind,
     support::{
         compare_named_set, compare_number, compare_ordered_mode, compare_set_values, rank_facades,
-        rank_lint_suppressions, rank_module_docs, rank_policy, rank_tests,
+        rank_lint_suppressions, rank_macro_expansion, rank_module_docs, rank_policy, rank_tests,
     },
 };
 
@@ -20,8 +20,47 @@ pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<Arc
     compare_generated(before, after, changes);
     out_dir::compare(before, after, changes);
     compare_item_macros(before, after, changes);
+    compare_macro_expansion(before, after, changes);
     compare_modes(before, after, changes);
     compare_hygiene(before, after, changes);
+}
+
+fn compare_macro_expansion(
+    before: &Contract,
+    after: &Contract,
+    changes: &mut Vec<ArchitectureChange>,
+) {
+    compare_ordered_mode(
+        "rust.macro-expansion",
+        "source.rust.macros.mode",
+        rank_macro_expansion(before.source.rust.macros.mode),
+        rank_macro_expansion(after.source.rust.macros.mode),
+        changes,
+    );
+    compare_named_set(
+        "rust.macro-expansion.allow",
+        "source",
+        &before
+            .source
+            .rust
+            .macros
+            .allow
+            .iter()
+            .map(|allowed| allowed.name.clone())
+            .collect::<Vec<_>>(),
+        &after
+            .source
+            .rust
+            .macros
+            .allow
+            .iter()
+            .map(|allowed| allowed.name.clone())
+            .collect::<Vec<_>>(),
+        ChangeKind::Grant,
+        ChangeKind::Revoke,
+        "trusts an uninspected macro expansion",
+        changes,
+    );
 }
 
 fn compare_generated(before: &Contract, after: &Contract, changes: &mut Vec<ArchitectureChange>) {

@@ -54,6 +54,7 @@ fn schema_two_source_aware_locks_remain_readable() {
         dependencies: vec![LockedDependency {
             alias: Some("serde".into()),
             name: "serde".into(),
+            crate_root: None,
             kind: LockedDependencyKind::Normal,
             scope: LockedDependencyScope::External,
             target: None,
@@ -77,15 +78,53 @@ fn schema_two_source_aware_locks_remain_readable() {
 }
 
 #[test]
-fn semantic_epoch_three_requires_schema_three() {
+fn schema_three_alias_aware_locks_remain_readable() {
+    let root = fixture_root("schema-three");
+    reset(&root);
+    let path = root.join("zrail.lock");
     let mut lock = LockFile::new("0".repeat(64));
-    lock.schema = 2;
+    lock.schema = 3;
+    lock.semantics = 3;
+    lock.producer = "0.0.1".into();
+    lock.packages.push(LockedPackage {
+        name: "app".into(),
+        dependencies: vec![LockedDependency {
+            alias: Some("serde".into()),
+            name: "serde".into(),
+            crate_root: None,
+            kind: LockedDependencyKind::Normal,
+            scope: LockedDependencyScope::External,
+            target: None,
+            optional: Some(false),
+            default_features: Some(true),
+            features: Vec::new(),
+            source: Some(LockedDependencySource::Registry {
+                registry: None,
+                index: None,
+                requirement: "1".into(),
+            }),
+        }],
+    });
+    lock.write(&path).expect("write schema-three lock");
+
+    let read = LockFile::read(&path).expect("read schema-three lock");
+
+    assert_eq!(read.schema, 3);
+    assert_eq!(read.semantics, 3);
+    assert_eq!(read.packages[0].dependencies[0].crate_root, None);
+    fs::remove_dir_all(root).expect("remove fixture");
+}
+
+#[test]
+fn semantic_epoch_four_requires_schema_four() {
+    let mut lock = LockFile::new("0".repeat(64));
+    lock.schema = 3;
 
     let error = lock
         .render()
         .expect_err("old schema must not claim new semantics");
 
-    assert!(error.to_string().contains("require lock schema 3"));
+    assert!(error.to_string().contains("require lock schema 4"));
 }
 
 fn fixture_root(name: &str) -> PathBuf {

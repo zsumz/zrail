@@ -33,6 +33,9 @@ pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckE
             .map(|dependency| LockedDependency {
                 alias: Some(dependency.alias.clone()),
                 name: dependency.name.clone(),
+                crate_root: (dependency.crate_root_authority
+                    != crate::cargo::CrateRootAuthority::Unresolved)
+                    .then(|| dependency.crate_root.clone()),
                 kind: locked_kind(dependency.kind),
                 scope: if dependency.internal_package().is_some() {
                     LockedDependencyScope::Internal

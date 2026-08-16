@@ -31,6 +31,14 @@ fn dependency_aliases_compose_with_rust_aliases_across_policy_facts() {
     assert_message(&report.findings, "alias_use.rs", "Process");
     assert_message(&report.findings, "alias_use.rs", "AsyncRuntime");
     assert_message(&report.findings, "database.rs", "Database");
+    assert!(
+        !report
+            .findings
+            .iter()
+            .any(|finding| { matches!(finding.id.as_str(), "RUST-MACRO-001" | "RUST-MACRO-002") }),
+        "{:#?}",
+        report.findings
+    );
     assert!(report.findings.iter().any(|finding| {
         finding
             .path
@@ -176,6 +184,13 @@ cycles = "deny"
 module_docs = "required"
 facades = "declarative"
 tests = "allow"
+
+[source.rust.macros]
+mode = "deny-unreviewed"
+
+[[source.rust.macros.allow]]
+name = "tokio::select"
+reason = "The fixture explicitly reviews the aliased runtime selection expansion."
 
 [source.rust.hygiene]
 unsafe = "deny"

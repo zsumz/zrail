@@ -60,6 +60,26 @@ fn validate_complete(dependency: &LockedDependency, semantics: u64) -> Result<()
             dependency.name
         )));
     }
+    if semantics >= 4
+        && dependency
+            .crate_root
+            .as_deref()
+            .is_some_and(|root| !valid_crate_root(root))
+    {
+        return Err(LockError(format!(
+            "dependency {} has an invalid effective crate root under lock semantics {semantics}",
+            dependency.name
+        )));
+    }
+    if semantics >= 4
+        && dependency.scope == LockedDependencyScope::Internal
+        && dependency.crate_root.is_none()
+    {
+        return Err(LockError(format!(
+            "internal dependency {} requires an effective crate root under lock semantics {semantics}",
+            dependency.name
+        )));
+    }
     Ok(())
 }
 
@@ -125,6 +145,17 @@ fn validate_source(dependency: &LockedDependency) -> Result<(), LockError> {
 
 fn nonempty(value: &str) -> bool {
     !value.trim().is_empty()
+}
+
+fn valid_crate_root(root: &str) -> bool {
+    if root.starts_with("r#") || matches!(root, "_" | "Self" | "crate" | "self" | "super") {
+        return false;
+    }
+    let mut bytes = root.bytes();
+    bytes
+        .next()
+        .is_some_and(|byte| byte.is_ascii_alphabetic() || byte == b'_')
+        && bytes.all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
 }
 
 fn optional_nonempty(value: Option<&String>) -> bool {

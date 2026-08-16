@@ -8,11 +8,14 @@ use super::{
 #[derive(Debug)]
 pub(super) struct FactVisitor<'a> {
     pub(super) imports: &'a ImportMap,
+    pub(super) local_imports: super::visitor_imports::LocalImportScopes,
     pub(super) test_only_context: bool,
     pub(super) paths: Vec<ObservedFact>,
     pub(super) calls: Vec<ObservedFact>,
     pub(super) methods: Vec<ObservedFact>,
     pub(super) macros: Vec<ObservedFact>,
+    pub(super) macro_expansions: Vec<ObservedFact>,
+    pub(super) macro_definitions: Vec<ObservedFact>,
     pub(super) lint_suppressions: Vec<ObservedFact>,
     pub(super) unsafe_constructs: Vec<ObservedFact>,
     pub(super) tests: Vec<ObservedFact>,

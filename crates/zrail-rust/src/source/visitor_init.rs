@@ -24,11 +24,14 @@ impl<'a> FactVisitor<'a> {
         }));
         Self {
             imports,
+            local_imports: Vec::new(),
             test_only_context: false,
             paths,
             calls: Vec::new(),
             methods: Vec::new(),
             macros: Vec::new(),
+            macro_expansions: Vec::new(),
+            macro_definitions: Vec::new(),
             lint_suppressions: Vec::new(),
             unsafe_constructs: Vec::new(),
             tests: Vec::new(),

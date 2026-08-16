@@ -83,6 +83,52 @@ fn disabled_auto_discovery_does_not_claim_source_files() {
 }
 
 #[test]
+fn explicit_library_name_is_the_effective_rust_crate_root() {
+    let root = fixture_root("library-name");
+    reset(&root);
+    fs::create_dir_all(root.join("source")).expect("create source");
+    fs::write(root.join("source/library.rs"), "//! library\n").expect("write library");
+    let manifest = r#"
+        [package]
+        name = "published-package"
+        version = "0.0.0"
+
+        [lib]
+        name = "runtime_core"
+        path = "source/library.rs"
+    "#
+    .parse::<Value>()
+    .expect("parse manifest");
+
+    let roots = collect_target_roots(&manifest, &root, None).expect("collect roots");
+    let library = roots
+        .iter()
+        .find(|target| target.kind == CargoTargetKind::Library)
+        .expect("library target");
+
+    assert_eq!(library.name, "runtime_core");
+    assert_eq!(library.path, "source/library.rs");
+    reset(&root);
+}
+
+#[test]
+fn invalid_library_name_cannot_enter_policy_identity() {
+    let root = fixture_root("invalid-library-name");
+    reset(&root);
+    for name in ["runtime-core", "self", "_"] {
+        let manifest = format!(
+            "[package]\nname = \"published-package\"\nversion = \"0.0.0\"\n\n[lib]\nname = {name:?}\n"
+        )
+        .parse::<Value>()
+        .expect("parse manifest");
+        let error = collect_target_roots(&manifest, &root, None)
+            .expect_err("invalid crate root must not enter source policy");
+        assert!(error.contains("one usable Rust crate identifier"));
+    }
+    reset(&root);
+}
+
+#[test]
 fn explicit_target_names_override_auto_discovery() {
     let root = fixture_root("explicit-override");
     reset(&root);

@@ -8,6 +8,7 @@ use super::{ArchitectureChange, ChangeKind, support::compare_set_values, topolog
 
 pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<ArchitectureChange>) {
     topology_policy::compare_dependency_modes(before, after, changes);
+    topology_policy::compare_crate_roots(before, after, changes);
     compare_layer_edges(before, after, changes);
     topology_policy::compare_layer_profiles(before, after, changes);
     topology_policy::compare_layer_external_modes(before, after, changes);

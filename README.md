@@ -119,7 +119,9 @@ zrail does not claim to be a second Cargo resolver.
 The Rust adapter enforces:
 
 - exact Cargo workspace membership and source-aware dependency edges;
-- canonical Cargo dependency identities in Rust source-policy facts;
+- inspected or reasoned Rust crate roots, including custom `[lib].name`, in
+  source-policy facts and the architecture lock; roots that no active canonical
+  policy relies on remain explicitly unresolved rather than guessed;
 - package layers and allowed dependency direction;
 - effect boundaries, capability owners, and direct-call owners;
 - complete Rust source traversal, including reviewed generated and `OUT_DIR`
@@ -128,10 +130,22 @@ The Rust adapter enforces:
 - source hygiene, optional file-size ceilings, and tightening ratchets; and
 - invariants connected to exact tests and content-addressed qualification gates.
 
+With `source.rust.macros.mode = "deny-unreviewed"`, macro expansions that zrail
+cannot inspect are rejected unless their invocation path has a reasoned
+allowance. An allowance trusts the expansion and its token interpretation; it
+is an architectural grant. Built-in data macros and `include!` are handled
+directly, and included Rust remains fully analyzed.
+
+Bare allowances are conservative: when the package defines a local macro with
+the same name, use a stable qualified path instead of borrowing a global name.
+`#[macro_use]` imports remain unresolved because their bare namespace cannot be
+attributed exactly without compiler expansion.
+
 Contract parsing is strict. Unknown keys, stale policy, unresolved source
 boundaries, missing evidence, and unreviewed lock changes fail closed.
 Repository-controlled Cargo source overrides and registry mappings are rejected
-until zrail can attest their effective resolution.
+until zrail can attest their effective resolution. Cargo configuration
+`include` is rejected rather than recursively interpreted.
 
 `zrail diff` classifies changes as grants, revocations, debt, cleanup, neutral,
 or unknown. `--deny-grants` rejects added power, new debt, and unsafe comparisons.

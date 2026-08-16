@@ -12,6 +12,7 @@ use fields::{default_features, features, nonempty, optional_bool, optional_strin
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(super) struct DependencySpec {
     pub(super) name: String,
+    pub(super) explicit_package: bool,
     pub(super) optional: bool,
     pub(super) default_features: bool,
     pub(super) features: Vec<String>,
@@ -29,6 +30,7 @@ pub(super) fn parse(
     if let Some(requirement) = value.as_str() {
         return Ok(DependencySpec {
             name: alias.into(),
+            explicit_package: false,
             optional: false,
             default_features: true,
             features: Vec::new(),
@@ -45,13 +47,16 @@ pub(super) fn parse(
     if optional_bool(table, "workspace")? == Some(false) {
         return Err("workspace inheritance must be true when present".into());
     }
-    let name = optional_string(table, "package")?.unwrap_or_else(|| alias.into());
+    let package = optional_string(table, "package")?;
+    let explicit_package = package.is_some();
+    let name = package.unwrap_or_else(|| alias.into());
     let optional = optional_bool(table, "optional")?.unwrap_or(false);
     let default_features = default_features(table)?.unwrap_or(true);
     let features = features(table)?;
     let source = source(table, base)?;
     Ok(DependencySpec {
         name,
+        explicit_package,
         optional,
         default_features,
         features,

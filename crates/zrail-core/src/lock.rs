@@ -12,8 +12,8 @@ use crate::input::{read_text, replace_text};
 
 pub use dependency::LockedDependencySource;
 
-pub const LOCK_SCHEMA: u64 = 3;
-pub const LOCK_SEMANTICS: u64 = 3;
+pub const LOCK_SCHEMA: u64 = 4;
+pub const LOCK_SEMANTICS: u64 = 4;
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -63,6 +63,8 @@ pub struct LockedDependency {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub alias: Option<String>,
     pub name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub crate_root: Option<String>,
     pub kind: LockedDependencyKind,
     pub scope: LockedDependencyScope,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -171,7 +173,7 @@ impl LockFile {
     }
 
     pub fn has_supported_schema(&self) -> bool {
-        matches!(self.schema, 1 | 2 | LOCK_SCHEMA)
+        matches!(self.schema, 1 | 2 | 3 | LOCK_SCHEMA)
     }
 
     pub fn same_resolved_state(&self, other: &Self) -> bool {

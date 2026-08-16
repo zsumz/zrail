@@ -10,6 +10,7 @@ use toml::Value;
 use super::{
     model::{CargoTarget, CargoTargetKind},
     target_discovery::{auto_discovery_default, auto_enabled, discover_directory},
+    target_explicit::{collect_build_script, explicit_target_path},
     target_fields::{optional_string, required_string, target_path},
 };
 
@@ -22,11 +23,13 @@ pub(super) fn collect_target_roots(
         .get("package")
         .and_then(Value::as_table)
         .ok_or_else(|| "Cargo package must contain a [package] table".to_owned())?;
+    let package_name = required_string(package, "name", "Cargo package")?;
     let mut roots = BTreeSet::new();
     let auto_default = auto_discovery_default(manifest, package, workspace_edition)?;
     collect_library(
         manifest,
         package,
+        &package_name,
         package_directory,
         auto_default,
         &mut roots,
@@ -78,6 +81,7 @@ pub(super) fn collect_target_roots(
 fn collect_library(
     manifest: &Value,
     package: &toml::map::Map<String, Value>,
+    package_name: &str,
     directory: &Path,
     auto_default: bool,
     roots: &mut BTreeSet<CargoTarget>,
@@ -86,19 +90,46 @@ fn collect_library(
         let table = library
             .as_table()
             .ok_or_else(|| "Cargo [lib] target must be a table".to_owned())?;
+        let name =
+            optional_string(table, "name")?.unwrap_or_else(|| super::rust_crate_root(package_name));
+        validate_library_name(&name)?;
         roots.insert(CargoTarget {
+            name,
             path: target_path(table, "src/lib.rs")?,
             kind: CargoTargetKind::Library,
         });
     } else if auto_enabled(package, "autolib", auto_default)?
         && directory.join("src/lib.rs").is_file()
     {
+        let name = super::rust_crate_root(package_name);
+        validate_library_name(&name)?;
         roots.insert(CargoTarget {
+            name,
             path: "src/lib.rs".into(),
             kind: CargoTargetKind::Library,
         });
     }
     Ok(())
+}
+
+fn validate_library_name(name: &str) -> Result<(), String> {
+    if matches!(name, "_" | "Self" | "crate" | "self" | "super") {
+        return Err(format!(
+            "Cargo [lib] name {name:?} must be one usable Rust crate identifier"
+        ));
+    }
+    let mut bytes = name.bytes();
+    let valid = bytes
+        .next()
+        .is_some_and(|byte| byte.is_ascii_alphabetic() || byte == b'_')
+        && bytes.all(|byte| byte.is_ascii_alphanumeric() || byte == b'_');
+    if valid {
+        Ok(())
+    } else {
+        Err(format!(
+            "Cargo [lib] name {name:?} must be one usable Rust crate identifier"
+        ))
+    }
 }
 
 fn collect_kind(
@@ -141,7 +172,8 @@ fn collect_kind(
             add_auto_target(&mut named, &explicit, kind, name, path)?;
         }
     }
-    roots.extend(named.into_values().map(|path| CargoTarget {
+    roots.extend(named.into_iter().map(|(name, path)| CargoTarget {
+        name,
         path,
         kind: target_kind,
     }));
@@ -169,61 +201,6 @@ fn add_auto_target(
                 entry.get()
             ));
         }
-    }
-    Ok(())
-}
-
-fn explicit_target_path(
-    table: &toml::map::Map<String, Value>,
-    kind: &str,
-    target_directory: &str,
-    package_directory: &Path,
-) -> Result<String, String> {
-    if let Some(path) = optional_string(table, "path")? {
-        return Ok(path);
-    }
-    let name = required_string(table, "name", &format!("Cargo [[{kind}]] target"))?;
-    let direct = format!("{target_directory}/{name}.rs");
-    let nested = format!("{target_directory}/{name}/main.rs");
-    match (
-        package_directory.join(&direct).is_file(),
-        package_directory.join(&nested).is_file(),
-    ) {
-        (false, true) => Ok(nested),
-        (true, true) => Err(format!(
-            "Cargo [[{kind}]] target {name:?} has ambiguous inferred paths"
-        )),
-        (_, false) => Ok(direct),
-    }
-}
-
-fn collect_build_script(
-    package: &toml::map::Map<String, Value>,
-    directory: &Path,
-    roots: &mut BTreeSet<CargoTarget>,
-) -> Result<(), String> {
-    match package.get("build") {
-        Some(Value::Boolean(false)) => {}
-        Some(Value::Boolean(true)) => {
-            roots.insert(CargoTarget {
-                path: "build.rs".into(),
-                kind: CargoTargetKind::BuildScript,
-            });
-        }
-        Some(Value::String(path)) => {
-            roots.insert(CargoTarget {
-                path: path.clone(),
-                kind: CargoTargetKind::BuildScript,
-            });
-        }
-        Some(_) => return Err("package.build must be a path or false".into()),
-        None if directory.join("build.rs").is_file() => {
-            roots.insert(CargoTarget {
-                path: "build.rs".into(),
-                kind: CargoTargetKind::BuildScript,
-            });
-        }
-        None => {}
     }
     Ok(())
 }

@@ -4,11 +4,11 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::AnalysisQuality;
 
-use crate::cargo::{Dependency, DependencyKind, DependencySource, Package};
+use crate::cargo::{CrateRootAuthority, Dependency, DependencyKind, DependencySource, Package};
 
 use super::{
-    MAX_IDENTITIES_PER_ROOT, ObservedFact, canonicalize_fact, canonicalize_fact_bounded,
-    dependency_roots,
+    MAX_IDENTITIES_PER_ROOT, MAX_MACRO_DEFINITIONS_PER_PACKAGE, MacroDefinitionSet, ObservedFact,
+    canonicalize_fact, canonicalize_fact_bounded, dependency_roots, local_macro_names,
 };
 
 #[test]
@@ -69,6 +69,22 @@ fn excessive_shared_alias_identities_fail_closed_without_a_cross_product() {
     assert!(fact.canonical.is_empty());
 }
 
+#[test]
+fn excessive_package_macro_names_fail_closed_without_an_unbounded_union() {
+    let package = package(0, "runtime");
+    let definitions = std::collections::BTreeMap::from([(
+        package.name.clone(),
+        MacroDefinitionSet {
+            names: (0..=MAX_MACRO_DEFINITIONS_PER_PACKAGE)
+                .map(|index| format!("macro_{index}"))
+                .collect(),
+            overflowed: true,
+        },
+    )]);
+
+    assert!(local_macro_names(&[&package], &definitions).is_none());
+}
+
 fn observed(name: &str, quality: AnalysisQuality) -> ObservedFact {
     ObservedFact {
         name: name.into(),
@@ -97,6 +113,9 @@ fn package(index: usize, alias: &str) -> Package {
         dependencies: vec![Dependency {
             alias: alias.into(),
             name: format!("runtime-{index}"),
+            explicit_package: true,
+            crate_root: alias.into(),
+            crate_root_authority: CrateRootAuthority::DeclaredAlias,
             kind: DependencyKind::Normal,
             target: None,
             optional: false,

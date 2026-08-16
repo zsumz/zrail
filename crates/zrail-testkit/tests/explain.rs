@@ -14,11 +14,12 @@ fn explanation_contains_actionable_source_policy() {
     )
     .expect("explain fixture path");
 
-    assert_eq!(explanation.schema, 3);
+    assert_eq!(explanation.schema, 4);
     assert_eq!(explanation.reachability, "production");
     assert_eq!(explanation.unsafe_code, "deny");
     assert_eq!(explanation.lint_suppressions, "deny");
     assert_eq!(explanation.denied_methods, ["unwrap", "expect"]);
+    assert_eq!(explanation.macro_expansion, "allow");
     assert_eq!(
         explanation.expected_sibling_test.as_deref(),
         Some("crates/fixture/src/worker_test.rs")

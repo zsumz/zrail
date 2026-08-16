@@ -6,7 +6,7 @@ use toml::Value;
 
 use super::{
     dependency_spec::{self, DependencySpec, WorkspaceDependencies},
-    model::{Dependency, DependencyKind},
+    model::{CrateRootAuthority, Dependency, DependencyKind, rust_crate_root},
 };
 
 pub(super) fn workspace_dependencies(value: &Value) -> Result<WorkspaceDependencies, String> {
@@ -135,6 +135,13 @@ fn dependency(
     Dependency {
         alias: alias.into(),
         name: spec.name,
+        explicit_package: spec.explicit_package,
+        crate_root: rust_crate_root(alias),
+        crate_root_authority: if spec.explicit_package {
+            CrateRootAuthority::DeclaredAlias
+        } else {
+            CrateRootAuthority::Unresolved
+        },
         kind,
         target: target.map(str::to_owned),
         optional: spec.optional,

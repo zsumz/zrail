@@ -24,6 +24,18 @@ fn rust_preset_keeps_conventional_tests_without_inventing_a_size_limit() {
     let contract = render(&[".".into()], InitPreset::Rust, &BaselinePlan::empty());
 
     assert!(contract.contains("tests = \"allow\""));
+    assert!(contract.contains("[source.rust.macros]\nmode = \"allow\""));
     assert!(!contract.contains("[source.rust.size"));
     assert!(!contract.contains("[[ratchet]]"));
+}
+
+#[test]
+fn zsumz_preset_denies_unreviewed_macro_expansion() {
+    let contract = render(
+        &["crates".into()],
+        InitPreset::Zsumz,
+        &BaselinePlan::empty(),
+    );
+
+    assert!(contract.contains("[source.rust.macros]\nmode = \"deny-unreviewed\""));
 }
