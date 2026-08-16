@@ -109,9 +109,10 @@ separately reviewed, signed bootstrap because the protected older engine cannot
 interpret the newer architecture state.
 
 `zrail.toml` contains human-authored architecture. `zrail.lock` contains exact
-normalized direct dependency declarations, reviewed gate bytes, generated
-provenance, content-bound repository macro implementation packages, and
-ratchets. `zrail check` never modifies either file.
+normalized direct dependency declarations, reviewed gate bytes and their
+declared behavioral inputs, generated provenance, content-bound repository
+macro implementation packages, and ratchets. `zrail check` never modifies
+either file.
 Cargo owns exact selected versions, checksums, and Git commits in `Cargo.lock`;
 zrail does not claim to be a second Cargo resolver.
 
@@ -180,8 +181,10 @@ zrail diff --before ROOT --after ROOT [--deny-grants]
 
 ## Qualification
 
-`QUAL-01` requires the reviewed local gate to remain connected to exact test
-evidence. The lock hashes the gate bytes, so a gate change cannot pass silently.
+`QUAL-01` requires the reviewed local and hosted gates to remain connected to
+exact test evidence. The lock hashes each gate and its declared behavioral
+inputs, including helper scripts, workflow actions, and the Rust toolchain file,
+so changing effective qualification behavior cannot pass silently.
 
 `QUAL-02` requires pull requests to pass independent source analysis by a zrail
 binary built from the protected base commit. It verifies observed source and the

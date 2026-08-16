@@ -17,6 +17,8 @@ pub struct GateContract {
     pub kind: GateKind,
     pub path: String,
     #[serde(default)]
+    pub inputs: Vec<String>,
+    #[serde(default)]
     pub requires: Vec<String>,
     pub reason: String,
 }

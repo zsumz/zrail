@@ -1,5 +1,6 @@
 //! Cross-section validation for invariant evidence and qualification gates.
 
+mod gates;
 mod graph;
 
 use std::{
@@ -8,88 +9,16 @@ use std::{
     path::Path,
 };
 
-use crate::path::glob_matches;
-
 use super::{
-    Contract, EvidenceReference, GateContract, GateKind, parse_evidence_reference,
-    validate_limits::ValidationErrors,
-    validate_paths::validate_repository_literal,
-    validate_sets::{collect_unique, require_reason},
+    Contract, EvidenceReference, GateContract, parse_evidence_reference,
+    validate_limits::ValidationErrors, validate_paths::validate_repository_literal,
+    validate_sets::collect_unique,
 };
 
 pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
-    let gates = validate_gates(contract, errors);
+    let gates = gates::validate(contract, errors);
     graph::validate(&gates, errors);
     validate_invariants(contract, &gates, errors);
-}
-
-fn validate_gates<'a>(
-    contract: &'a Contract,
-    errors: &mut ValidationErrors,
-) -> BTreeMap<&'a str, &'a GateContract> {
-    let names = collect_unique(
-        contract.gates.iter().map(|gate| gate.name.as_str()),
-        "gate",
-        errors,
-    );
-    let mut paths = BTreeSet::new();
-    for gate in &contract.gates {
-        if !super::evidence::valid_name(&gate.name) {
-            errors.push(format!("invalid gate name {:?}", gate.name));
-        }
-        validate_repository_literal(&gate.path, errors);
-        if gate.path == "." {
-            errors.push(format!("gate {:?} must name a file", gate.name));
-        } else if gate.path == "zrail.lock" {
-            errors.push("zrail.lock cannot attest its own contents as a gate".into());
-        }
-        if !paths.insert(gate.path.as_str()) {
-            errors.push(format!("multiple gates attest path {:?}", gate.path));
-        }
-        if excluded(contract, &gate.path) {
-            errors.push(format!(
-                "gate {:?} is hidden by repository.exclude",
-                gate.name
-            ));
-        }
-        require_reason("gate", &gate.name, &gate.reason, errors);
-        validate_requirements(gate, &names, errors);
-        if gate.kind != GateKind::Local && gate.requires.is_empty() {
-            errors.push(format!(
-                "{:?} gate {:?} must require a lower qualification gate",
-                gate.kind, gate.name
-            ));
-        }
-    }
-    contract
-        .gates
-        .iter()
-        .map(|gate| (gate.name.as_str(), gate))
-        .collect()
-}
-
-fn validate_requirements(
-    gate: &GateContract,
-    names: &BTreeSet<&str>,
-    errors: &mut ValidationErrors,
-) {
-    let mut requirements = BTreeSet::new();
-    for required in &gate.requires {
-        if !requirements.insert(required.as_str()) {
-            errors.push(format!(
-                "gate {:?} contains duplicate requirement {required:?}",
-                gate.name
-            ));
-        }
-        if required == &gate.name {
-            errors.push(format!("gate {:?} may not require itself", gate.name));
-        } else if !names.contains(required.as_str()) {
-            errors.push(format!(
-                "gate {:?} requires missing gate {required:?}",
-                gate.name
-            ));
-        }
-    }
 }
 
 fn validate_invariants(
@@ -137,7 +66,7 @@ fn validate_document(contract: &Contract, id: &str, document: &str, errors: &mut
     validate_repository_literal(path, errors);
     if path == "." {
         errors.push(format!("invariant {id:?} document must name a file"));
-    } else if excluded(contract, path) {
+    } else if gates::excluded(contract, path) {
         errors.push(format!(
             "invariant {id:?} document is hidden by repository.exclude"
         ));
@@ -200,14 +129,6 @@ fn validate_evidence(
             invariant.id
         ));
     }
-}
-
-fn excluded(contract: &Contract, path: &str) -> bool {
-    contract
-        .repository
-        .exclude
-        .iter()
-        .any(|pattern| glob_matches(pattern, path) || path.starts_with(&format!("{pattern}/")))
 }
 
 #[cfg(test)]

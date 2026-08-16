@@ -4,15 +4,10 @@ use std::{collections::BTreeMap, path::Path};
 
 use zrail_core::{
     LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope,
-    LockedDependencySource, LockedGate, LockedPackage, LockedRatchet,
-    input::{MAX_INPUT_BYTES, read_bytes_with_limit},
-    sha256_hex,
+    LockedDependencySource, LockedPackage, LockedRatchet,
 };
 
-use crate::{
-    cargo::{DependencyKind, DependencySource},
-    inventory::RepositoryEntryKind,
-};
+use crate::cargo::{DependencyKind, DependencySource};
 
 use super::{
     CheckError,
@@ -25,7 +20,7 @@ pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckE
         &model.inventory.root,
         &model.bundle.contract.source.rust.generated,
     );
-    lock.gates = locked_gates(model)?;
+    lock.gates = super::gates::locked(model)?;
     lock.macro_implementations = super::macro_implementations::locked(model)?;
     for package in &model.cargo.packages {
         let dependencies = package
@@ -125,32 +120,6 @@ fn ratchet_value(rule: &str, file: &crate::source::RustFileFacts) -> Option<usiz
         "rust.inline-tests" => Some(file.tests.len()),
         _ => None,
     }
-}
-
-fn locked_gates(model: &RepositoryModel) -> Result<Vec<LockedGate>, CheckError> {
-    let entries = model
-        .inventory
-        .entries
-        .iter()
-        .map(|entry| (entry.relative.as_str(), entry))
-        .collect::<BTreeMap<_, _>>();
-    let mut gates = Vec::new();
-    for gate in &model.bundle.contract.gates {
-        let Some(entry) = entries.get(gate.path.as_str()) else {
-            continue;
-        };
-        if entry.kind != RepositoryEntryKind::File {
-            continue;
-        }
-        let bytes = read_bytes_with_limit(&entry.absolute, MAX_INPUT_BYTES)
-            .map_err(CheckError::from_message)?;
-        gates.push(LockedGate {
-            name: gate.name.clone(),
-            path: gate.path.clone(),
-            sha256: sha256_hex(&bytes),
-        });
-    }
-    Ok(gates)
 }
 
 const fn locked_kind(kind: DependencyKind) -> LockedDependencyKind {

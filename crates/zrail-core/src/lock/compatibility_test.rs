@@ -4,7 +4,7 @@ use std::{fs, path::PathBuf};
 
 use super::super::{
     LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope,
-    LockedDependencySource, LockedMacroDefinition, LockedPackage,
+    LockedDependencySource, LockedGate, LockedMacroDefinition, LockedPackage,
 };
 
 #[test]
@@ -140,6 +140,30 @@ fn schema_five_definition_locks_remain_readable() {
 }
 
 #[test]
+fn schema_six_gate_locks_remain_readable_without_behavioral_inputs() {
+    let root = fixture_root("schema-six");
+    reset(&root);
+    let path = root.join("zrail.lock");
+    let mut lock = LockFile::new("0".repeat(64));
+    lock.schema = 6;
+    lock.semantics = 6;
+    lock.producer = "0.0.1".into();
+    lock.gates.push(LockedGate {
+        name: "check".into(),
+        path: "scripts/check".into(),
+        sha256: "1".repeat(64),
+        inputs: Vec::new(),
+    });
+    lock.write(&path).expect("write schema-six lock");
+
+    let read = LockFile::read(&path).expect("read schema-six lock");
+
+    assert_eq!(read.schema, 6);
+    assert!(read.gates[0].inputs.is_empty());
+    fs::remove_dir_all(root).expect("remove fixture");
+}
+
+#[test]
 fn semantic_epoch_four_requires_schema_four() {
     let mut lock = LockFile::new("0".repeat(64));
     lock.schema = 3;
@@ -163,6 +187,13 @@ fn semantic_epoch_six_requires_schema_six() {
     let error = super::validate_epochs(5, 6).expect_err("schema five cannot encode manifests");
     assert!(error.to_string().contains("require lock schema 6"));
     super::validate_epochs(6, 6).expect("current epochs are compatible");
+}
+
+#[test]
+fn semantic_epoch_seven_requires_schema_seven() {
+    let error = super::validate_epochs(6, 7).expect_err("schema six cannot encode gate inputs");
+    assert!(error.to_string().contains("require lock schema 7"));
+    super::validate_epochs(7, 7).expect("current epochs are compatible");
 }
 
 fn fixture_root(name: &str) -> PathBuf {

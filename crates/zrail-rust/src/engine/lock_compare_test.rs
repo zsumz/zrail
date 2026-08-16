@@ -1,8 +1,8 @@
 //! Exact lock drift includes ratchet value changes.
 
 use zrail_core::{
-    FindingSink, LockFile, LockedGate, LockedGeneratedSource, LockedMacroImplementation,
-    LockedRatchet,
+    FindingSink, LockFile, LockedGate, LockedGateInput, LockedGeneratedSource,
+    LockedMacroImplementation, LockedRatchet,
 };
 
 use super::compare_locks;
@@ -47,6 +47,28 @@ fn changed_gate_contents_are_stale_lock_state() {
 }
 
 #[test]
+fn gate_input_drift_is_exact_and_directional() {
+    let mut current = LockFile::new("0".repeat(64));
+    let mut candidate = LockFile::new("0".repeat(64));
+    current.gates.push(gate_with_input("1"));
+    candidate.gates.push(gate_with_input("2"));
+    let mut findings = FindingSink::default();
+
+    compare_locks(&current, &candidate, &mut findings);
+
+    assert!(findings.iter().any(|finding| finding.id == "LOCK-026"));
+
+    candidate.gates[0].inputs.clear();
+    let mut stale = FindingSink::default();
+    compare_locks(&current, &candidate, &mut stale);
+    assert!(stale.iter().any(|finding| finding.id == "LOCK-025"));
+
+    let mut added = FindingSink::default();
+    compare_locks(&candidate, &current, &mut added);
+    assert!(added.iter().any(|finding| finding.id == "LOCK-024"));
+}
+
+#[test]
 fn changed_repository_macro_package_is_stale_lock_state() {
     let mut current = LockFile::new("0".repeat(64));
     current.macro_implementations.push(implementation("1"));
@@ -79,7 +101,17 @@ fn gate(digit: &str) -> LockedGate {
         name: "check".into(),
         path: "scripts/check".into(),
         sha256: digit.repeat(64),
+        inputs: Vec::new(),
     }
+}
+
+fn gate_with_input(digit: &str) -> LockedGate {
+    let mut gate = gate("1");
+    gate.inputs.push(LockedGateInput {
+        path: "scripts/helper".into(),
+        sha256: digit.repeat(64),
+    });
+    gate
 }
 
 fn implementation(digit: &str) -> LockedMacroImplementation {

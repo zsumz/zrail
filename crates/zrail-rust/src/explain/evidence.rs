@@ -1,5 +1,7 @@
 //! Invariant relationships included in path-scoped explanations.
 
+use std::collections::BTreeSet;
+
 use zrail_core::{
     Contract, EvidenceReference, GateContract, InvariantContract, parse_evidence_reference,
 };
@@ -25,11 +27,31 @@ fn mentions_path(gates: &[GateContract], invariant: &InvariantContract, path: &s
                 Ok(EvidenceReference::RustTest {
                     path: test_path, ..
                 }) => test_path == path,
-                Ok(EvidenceReference::Gate { name }) => gates
-                    .iter()
-                    .any(|gate| gate.name == name && gate.path == path),
+                Ok(EvidenceReference::Gate { name }) => {
+                    gate_mentions_path(gates, name, path, &mut BTreeSet::new())
+                }
                 Err(_) => false,
             })
+}
+
+fn gate_mentions_path(
+    gates: &[GateContract],
+    name: &str,
+    path: &str,
+    seen: &mut BTreeSet<String>,
+) -> bool {
+    if !seen.insert(name.into()) {
+        return false;
+    }
+    let Some(gate) = gates.iter().find(|gate| gate.name == name) else {
+        return false;
+    };
+    gate.path == path
+        || gate.inputs.iter().any(|input| input == path)
+        || gate
+            .requires
+            .iter()
+            .any(|required| gate_mentions_path(gates, required, path, seen))
 }
 
 #[cfg(test)]

@@ -71,6 +71,16 @@ fn compare_gate(
         );
     }
     compare_named_set(
+        "qualification.gate-input",
+        &before.name,
+        &before.inputs,
+        &after.inputs,
+        ChangeKind::Revoke,
+        ChangeKind::Grant,
+        "content-addresses this qualification input",
+        changes,
+    );
+    compare_named_set(
         "qualification.gate-requirement",
         &before.name,
         &before.requires,

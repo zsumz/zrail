@@ -4,7 +4,8 @@ use std::{fs, path::PathBuf};
 
 use super::{
     LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope,
-    LockedDependencySource, LockedGate, LockedGeneratedSource, LockedPackage, LockedRatchet,
+    LockedDependencySource, LockedGate, LockedGateInput, LockedGeneratedSource, LockedPackage,
+    LockedRatchet,
 };
 
 #[test]
@@ -48,6 +49,10 @@ fn render_sorts_packages_dependencies_and_ratchets() {
         name: "check".into(),
         path: "scripts/check".into(),
         sha256: "2".repeat(64),
+        inputs: vec![LockedGateInput {
+            path: "scripts/helper".into(),
+            sha256: "3".repeat(64),
+        }],
     }];
 
     let rendered = lock.render().expect("render canonical lock");
@@ -57,6 +62,8 @@ fn render_sorts_packages_dependencies_and_ratchets() {
     assert!(rendered.contains("scope = \"internal\""));
     assert!(rendered.contains("manifest_sha256 = \"111111"));
     assert!(rendered.contains("path = \"scripts/check\""));
+    assert!(rendered.contains("[[gate.input]]"));
+    assert!(rendered.contains("path = \"scripts/helper\""));
 }
 
 #[test]
@@ -65,7 +72,7 @@ fn current_locks_separate_format_semantics_and_producer() {
 
     let rendered = lock.render().expect("render current lock");
 
-    assert!(rendered.contains("schema = 6\nsemantics = 6\nproducer = \""));
+    assert!(rendered.contains("schema = 7\nsemantics = 7\nproducer = \""));
     assert!(!rendered.contains("\nengine = "));
 }
 
@@ -192,11 +199,35 @@ fn qualification_gate_digests_must_be_exact() {
         name: "check".into(),
         path: "scripts/check".into(),
         sha256: "ABC".into(),
+        inputs: Vec::new(),
     });
 
     let error = lock.render().expect_err("invalid gate digest must fail");
 
     assert!(error.to_string().contains("invalid sha256"));
+}
+
+#[test]
+fn qualification_gate_inputs_are_exact_unique_files() {
+    let mut lock = LockFile::new("0".repeat(64));
+    let repeated = LockedGateInput {
+        path: "scripts/helper".into(),
+        sha256: "1".repeat(64),
+    };
+    lock.gates.push(LockedGate {
+        name: "check".into(),
+        path: "scripts/check".into(),
+        sha256: "2".repeat(64),
+        inputs: vec![repeated.clone(), repeated],
+    });
+
+    let error = lock.render().expect_err("duplicate gate input must fail");
+
+    assert!(
+        error
+            .to_string()
+            .contains("duplicate locked gate check input")
+    );
 }
 
 #[test]

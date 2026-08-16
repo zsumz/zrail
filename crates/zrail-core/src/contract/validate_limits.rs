@@ -104,7 +104,10 @@ fn contract_items(contract: &Contract) -> usize {
 
 fn evidence_items(gates: &[super::GateContract], invariants: &[super::InvariantContract]) -> usize {
     gates.len()
-        + gates.iter().map(|gate| gate.requires.len()).sum::<usize>()
+        + gates
+            .iter()
+            .map(|gate| gate.inputs.len() + gate.requires.len())
+            .sum::<usize>()
         + invariants.len()
         + invariants
             .iter()

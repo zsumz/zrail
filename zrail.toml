@@ -13,12 +13,22 @@ symlinks = "inside"
 name = "check"
 kind = "local"
 path = "scripts/check"
+inputs = ["scripts/structure-check", "scripts/package-check", "rust-toolchain.toml"]
 reason = "The repository's canonical local qualification entrypoint."
+
+[[gate]]
+name = "ci"
+kind = "ci"
+path = ".github/workflows/ci.yml"
+inputs = [".github/actions/setup-rust/action.yml"]
+requires = ["check"]
+reason = "Hosted qualification runs the canonical gate and portable workspace tests."
 
 [[gate]]
 name = "architecture-review"
 kind = "ci"
 path = ".github/workflows/authority.yml"
+inputs = [".github/actions/setup-rust/action.yml"]
 requires = ["check"]
 reason = "The repository demonstrates protected-base analysis without claiming proposal-owned Actions as merge authority."
 
@@ -29,7 +39,9 @@ status = "enforced"
 document = "README.md#qualification"
 evidence = [
   "rust-test:crates/zrail-rust/src/engine/lock_compare_test.rs::changed_gate_contents_are_stale_lock_state",
+  "rust-test:crates/zrail-rust/src/engine/lock_compare_test.rs::gate_input_drift_is_exact_and_directional",
   "gate:check",
+  "gate:ci",
 ]
 
 [[invariant]]

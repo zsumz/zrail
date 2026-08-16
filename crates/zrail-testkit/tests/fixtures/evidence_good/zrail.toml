@@ -42,6 +42,7 @@ hard = 300
 name = "check"
 kind = "local"
 path = "scripts/check"
+inputs = ["scripts/helper"]
 reason = "Canonical local qualification for the fixture."
 
 [[invariant]]

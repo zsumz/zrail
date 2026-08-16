@@ -51,11 +51,38 @@ fn disconnecting_evidence_or_a_required_gate_is_a_grant() {
     );
 }
 
+#[test]
+fn adding_gate_inputs_revokes_permission_and_removing_them_grants_it() {
+    let before = gate(Vec::new());
+    let mut after = before.clone();
+    after.inputs.push("scripts/structure-check".into());
+
+    let mut added = Vec::new();
+    compare_gates(
+        std::slice::from_ref(&before),
+        std::slice::from_ref(&after),
+        &mut added,
+    );
+    assert_eq!(added.len(), 1);
+    assert_eq!(added[0].kind, ChangeKind::Revoke);
+    assert_eq!(added[0].rail, "qualification.gate-input");
+
+    let mut removed = Vec::new();
+    compare_gates(
+        std::slice::from_ref(&after),
+        std::slice::from_ref(&before),
+        &mut removed,
+    );
+    assert_eq!(removed.len(), 1);
+    assert_eq!(removed[0].kind, ChangeKind::Grant);
+}
+
 fn gate(requires: Vec<String>) -> GateContract {
     GateContract {
         name: "check".into(),
         kind: GateKind::Local,
         path: "scripts/check".into(),
+        inputs: Vec::new(),
         requires,
         reason: "Canonical qualification".into(),
     }

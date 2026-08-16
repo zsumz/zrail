@@ -99,7 +99,8 @@ fn canonicalize_generated(lock: &mut LockFile) -> Result<(), LockError> {
 }
 
 fn canonicalize_gates(lock: &mut LockFile) -> Result<(), LockError> {
-    for gate in &lock.gates {
+    let semantics = lock.semantics;
+    for gate in &mut lock.gates {
         if !valid_name(&gate.name) {
             return Err(LockError(format!(
                 "locked gate name is invalid: {}",
@@ -118,6 +119,37 @@ fn canonicalize_gates(lock: &mut LockFile) -> Result<(), LockError> {
                 gate.name
             )));
         }
+        if semantics < 7 && !gate.inputs.is_empty() {
+            return Err(LockError(format!(
+                "locked gate {} inputs require semantic epoch 7",
+                gate.name
+            )));
+        }
+        for input in &gate.inputs {
+            if input.path == "." || input.path == "zrail.lock" || !valid_root(&input.path) {
+                return Err(LockError(format!(
+                    "locked gate {} input is not a normalized repository file: {}",
+                    gate.name, input.path
+                )));
+            }
+            if input.path == gate.path {
+                return Err(LockError(format!(
+                    "locked gate {} repeats its primary path as an input",
+                    gate.name
+                )));
+            }
+            if !valid_digest(&input.sha256) {
+                return Err(LockError(format!(
+                    "locked gate {} input {} has an invalid sha256",
+                    gate.name, input.path
+                )));
+            }
+        }
+        gate.inputs.sort();
+        ensure_unique(
+            gate.inputs.iter().map(|input| input.path.as_str()),
+            &format!("locked gate {} input", gate.name),
+        )?;
     }
     lock.gates.sort_by(|left, right| left.name.cmp(&right.name));
     ensure_unique(

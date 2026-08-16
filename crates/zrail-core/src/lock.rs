@@ -9,8 +9,8 @@ use std::{error::Error, fmt};
 
 pub use dependency::LockedDependencySource;
 
-pub const LOCK_SCHEMA: u64 = 6;
-pub const LOCK_SEMANTICS: u64 = 6;
+pub const LOCK_SCHEMA: u64 = 7;
+pub const LOCK_SEMANTICS: u64 = 7;
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -50,6 +50,15 @@ pub struct LockedGeneratedSource {
 #[serde(deny_unknown_fields)]
 pub struct LockedGate {
     pub name: String,
+    pub path: String,
+    pub sha256: String,
+    #[serde(default, rename = "input", skip_serializing_if = "Vec::is_empty")]
+    pub inputs: Vec<LockedGateInput>,
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct LockedGateInput {
     pub path: String,
     pub sha256: String,
 }

@@ -1,5 +1,7 @@
 //! Live exact evidence and reviewed qualification-gate inputs.
 
+mod gates;
+
 use std::collections::BTreeMap;
 
 use zrail_core::{
@@ -19,7 +21,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
         .iter()
         .map(|entry| (entry.relative.as_str(), entry))
         .collect::<BTreeMap<_, _>>();
-    check_gates(context, &entries, findings);
+    gates::check(context, &entries, findings);
     for invariant in &context.contract.invariants {
         check_document(&invariant.id, &invariant.document, &entries, findings);
         for evidence in &invariant.evidence {
@@ -28,41 +30,6 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             {
                 check_test(context, &invariant.id, path, test, findings);
             }
-        }
-    }
-}
-
-fn check_gates(
-    context: &RuleContext<'_>,
-    entries: &BTreeMap<&str, &RepositoryEntry>,
-    findings: &mut FindingSink,
-) {
-    for gate in &context.contract.gates {
-        let Some(entry) = entries.get(gate.path.as_str()) else {
-            findings.push(
-                Finding::error(
-                    "QUAL-001",
-                    "qualification.gate",
-                    &gate.name,
-                    format!("qualification gate file {:?} is missing", gate.path),
-                )
-                .at(&gate.path, None),
-            );
-            continue;
-        };
-        if entry.kind != RepositoryEntryKind::File {
-            findings.push(
-                Finding::error(
-                    "QUAL-002",
-                    "qualification.gate",
-                    &gate.name,
-                    format!(
-                        "qualification gate {:?} is not a regular repository file",
-                        gate.path
-                    ),
-                )
-                .at(&gate.path, None),
-            );
         }
     }
 }

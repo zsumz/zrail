@@ -10,6 +10,7 @@ fn evidence_nodes_and_edges_consume_the_contract_limit() {
         name: "ci".into(),
         kind: GateKind::Ci,
         path: "ci/check".into(),
+        inputs: vec!["ci/action.yml".into()],
         requires: vec!["local".into(), "archive".into()],
         reason: "canonical CI gate".into(),
     }];
@@ -21,5 +22,5 @@ fn evidence_nodes_and_edges_consume_the_contract_limit() {
         evidence: vec!["test:qualification".into(), "gate:ci".into()],
     }];
 
-    assert_eq!(evidence_items(&gates, &invariants), 6);
+    assert_eq!(evidence_items(&gates, &invariants), 7);
 }

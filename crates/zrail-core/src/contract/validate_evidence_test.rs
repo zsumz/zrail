@@ -55,6 +55,7 @@ fn accepts_a_connected_local_and_ci_graph() {
 name = "check"
 kind = "local"
 path = "scripts/check"
+inputs = ["scripts/structure-check", "scripts/package-check"]
 reason = "Canonical local qualification."
 
 [[gate]]
@@ -73,6 +74,31 @@ evidence = ["rust-test:src/architecture_test.rs::qualifies", "gate:ci"]
 "#;
 
     assert!(contract(extra).is_ok());
+}
+
+#[test]
+fn rejects_unsafe_or_ambiguous_gate_inputs() {
+    let extra = r#"
+[[gate]]
+name = "check"
+kind = "local"
+path = "scripts/check"
+inputs = ["scripts/check", "scripts/helper", "scripts/helper", "zrail.lock"]
+reason = "Canonical local qualification."
+
+[[invariant]]
+id = "ARCH-01"
+title = "Architecture is qualified"
+status = "enforced"
+document = "docs/architecture.md#arch-01"
+evidence = ["rust-test:src/architecture_test.rs::qualifies", "gate:check"]
+"#;
+
+    let error = contract(extra).expect_err("invalid gate inputs must fail");
+    let message = error.to_string();
+    assert!(message.contains("repeats its primary path"));
+    assert!(message.contains("duplicate input"));
+    assert!(message.contains("cannot attest its own contents"));
 }
 
 #[test]

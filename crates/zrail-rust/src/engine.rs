@@ -1,5 +1,6 @@
 //! Public orchestration for checking, locking, and diagnosing a Rust repository.
 
+mod gates;
 mod lock_compare;
 mod lock_state;
 mod macro_implementations;

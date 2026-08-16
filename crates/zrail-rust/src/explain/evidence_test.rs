@@ -6,13 +6,24 @@ use super::mentions_path;
 
 #[test]
 fn connects_test_document_and_gate_paths_to_invariants() {
-    let gates = [GateContract {
-        name: "check".into(),
-        kind: GateKind::Local,
-        path: "scripts/check".into(),
-        requires: Vec::new(),
-        reason: "test".into(),
-    }];
+    let gates = [
+        GateContract {
+            name: "check".into(),
+            kind: GateKind::Local,
+            path: "scripts/check".into(),
+            inputs: vec!["scripts/structure-check".into()],
+            requires: Vec::new(),
+            reason: "test".into(),
+        },
+        GateContract {
+            name: "ci".into(),
+            kind: GateKind::Ci,
+            path: ".github/workflows/ci.yml".into(),
+            inputs: Vec::new(),
+            requires: vec!["check".into()],
+            reason: "test".into(),
+        },
+    ];
     let invariant = InvariantContract {
         id: "ARCH-01".into(),
         title: "Architecture".into(),
@@ -20,7 +31,7 @@ fn connects_test_document_and_gate_paths_to_invariants() {
         document: "docs/architecture.md#arch-01".into(),
         evidence: vec![
             "rust-test:src/architecture_test.rs::works".into(),
-            "gate:check".into(),
+            "gate:ci".into(),
         ],
     };
 
@@ -28,6 +39,8 @@ fn connects_test_document_and_gate_paths_to_invariants() {
         "docs/architecture.md",
         "src/architecture_test.rs",
         "scripts/check",
+        "scripts/structure-check",
+        ".github/workflows/ci.yml",
     ] {
         assert!(mentions_path(&gates, &invariant, path));
     }
