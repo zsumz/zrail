@@ -10,7 +10,7 @@ use std::{error::Error, fmt};
 pub use dependency::LockedDependencySource;
 
 pub const LOCK_SCHEMA: u64 = 7;
-pub const LOCK_SEMANTICS: u64 = 7;
+pub const LOCK_SEMANTICS: u64 = 8;
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]

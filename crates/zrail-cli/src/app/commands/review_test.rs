@@ -121,7 +121,7 @@ fn proposed_lock_must_match_independently_observed_source() {
 }
 
 #[test]
-fn proposal_cargo_configuration_is_never_executed() {
+fn proposal_cargo_configuration_is_rejected_without_execution() {
     if !git_available() {
         return;
     }
@@ -138,9 +138,11 @@ fn proposal_cargo_configuration_is_never_executed() {
     )
     .expect("write inert wrapper");
 
-    let result = review(&options(&fixture)).expect("review inert Cargo configuration");
+    let result = review(&options(&fixture)).expect("review hostile Cargo configuration");
 
-    assert_eq!(result.exit_code, 0);
+    assert_eq!(result.exit_code, 1);
+    assert!(result.text.contains("error[CARGO-CONFIG-001]"));
+    assert!(result.text.contains(".cargo/config.toml"));
     assert!(!fixture.proposal.join("wrapper-ran").exists());
     reset(&fixture);
 }

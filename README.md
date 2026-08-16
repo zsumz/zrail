@@ -160,8 +160,9 @@ attributed exactly without compiler expansion.
 Contract parsing is strict. Unknown keys, stale policy, unresolved source
 boundaries, missing evidence, and unreviewed lock changes fail closed.
 Repository-controlled Cargo source overrides and registry mappings are rejected
-until zrail can attest their effective resolution. Cargo configuration
-`include` is rejected rather than recursively interpreted.
+until zrail can attest their effective resolution. Root `.cargo/config` and
+`.cargo/config.toml` are rejected entirely because Cargo can use them to alter
+dependency resolution and qualification execution.
 
 `zrail diff` classifies changes as grants, revocations, debt, cleanup, neutral,
 or unknown. `--deny-grants` rejects added power, new debt, and unsafe comparisons.
@@ -183,8 +184,9 @@ zrail diff --before ROOT --after ROOT [--deny-grants]
 
 `QUAL-01` requires the reviewed local and hosted gates to remain connected to
 exact test evidence. The lock hashes each gate and its declared behavioral
-inputs, including helper scripts, workflow actions, and the Rust toolchain file,
-so changing effective qualification behavior cannot pass silently.
+inputs, including helper scripts, workflow actions, the Rust toolchain,
+formatting and lint configuration, and ignore rules, so changing effective
+qualification behavior cannot pass silently.
 
 `QUAL-02` requires pull requests to pass independent source analysis by a zrail
 binary built from the protected base commit. It verifies observed source and the

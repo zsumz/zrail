@@ -42,6 +42,44 @@ fn proposal_is_only_passed_to_the_trusted_review_binary() {
     assert!(!workflow.contains("proposal/scripts/"));
 }
 
+#[test]
+fn cargo_configuration_is_rejected_before_every_ci_cargo_invocation() {
+    let workflow = fs::read_to_string(repository_root().join(".github/workflows/ci.yml"))
+        .expect("read CI workflow");
+    let canonical = section(&workflow, "  canonical:", "  portable:");
+    let portable = section(&workflow, "  portable:", "__end_of_workflow__");
+
+    for job in [canonical, portable] {
+        let rejection = job
+            .find("repository-local Cargo configuration is not permitted")
+            .expect("job rejects Cargo configuration");
+        let fetch = job.find("cargo fetch --locked").expect("job fetches Cargo");
+        assert!(
+            rejection < fetch,
+            "Cargo configuration check must run first"
+        );
+    }
+    assert_eq!(
+        workflow
+            .matches("repository-local Cargo configuration is not permitted")
+            .count(),
+        2
+    );
+}
+
+#[test]
+fn local_gate_rejects_cargo_configuration_before_cargo_commands() {
+    let script =
+        fs::read_to_string(repository_root().join("scripts/check")).expect("read canonical gate");
+    let rejection = script
+        .find("repository-local Cargo configuration is not permitted")
+        .expect("gate rejects Cargo configuration");
+    let first_cargo = script.find("cargo fmt").expect("gate invokes Cargo");
+
+    assert!(rejection < first_cargo);
+    assert!(script.contains("-e \"$cargo_config\" || -L \"$cargo_config\""));
+}
+
 fn section<'a>(source: &'a str, start: &str, end: &str) -> &'a str {
     let start = source.find(start).expect("workflow section start");
     let tail = &source[start..];

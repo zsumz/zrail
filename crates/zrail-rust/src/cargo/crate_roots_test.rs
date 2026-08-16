@@ -22,7 +22,7 @@ fn attestations_resolve_only_uninspected_external_packages() {
             )],
             targets: Vec::new(),
         }],
-        resolution_overrides: Vec::new(),
+        authority_surfaces: Vec::new(),
     };
 
     apply_attestations(

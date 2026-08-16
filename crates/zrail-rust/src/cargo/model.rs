@@ -125,11 +125,18 @@ pub(crate) struct CargoWorkspace {
     pub(crate) declared_members: Vec<String>,
     pub(crate) observed_members: Vec<String>,
     pub(crate) packages: Vec<Package>,
-    pub(crate) resolution_overrides: Vec<CargoResolutionOverride>,
+    pub(crate) authority_surfaces: Vec<CargoAuthoritySurface>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) enum CargoAuthorityKind {
+    Resolution,
+    RepositoryConfiguration,
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
-pub(crate) struct CargoResolutionOverride {
+pub(crate) struct CargoAuthoritySurface {
+    pub(crate) kind: CargoAuthorityKind,
     pub(crate) path: String,
     pub(crate) surface: String,
 }

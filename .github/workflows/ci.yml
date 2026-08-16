@@ -32,6 +32,15 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Reject repository-local Cargo configuration
+        run: |
+          for cargo_config in .cargo/config .cargo/config.toml; do
+            if [[ -e "$cargo_config" || -L "$cargo_config" ]]; then
+              echo "repository-local Cargo configuration is not permitted: $cargo_config" >&2
+              exit 1
+            fi
+          done
+
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
 
@@ -54,6 +63,15 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+
+      - name: Reject repository-local Cargo configuration
+        run: |
+          for cargo_config in .cargo/config .cargo/config.toml; do
+            if [[ -e "$cargo_config" || -L "$cargo_config" ]]; then
+              echo "repository-local Cargo configuration is not permitted: $cargo_config" >&2
+              exit 1
+            fi
+          done
 
       - name: Set up Rust
         uses: ./.github/actions/setup-rust

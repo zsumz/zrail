@@ -49,7 +49,7 @@ pub(crate) fn load_cargo_workspace(
         ));
     }
     let mut packages = Vec::new();
-    let mut resolution_overrides = Vec::new();
+    let mut authority_surfaces = Vec::new();
     for manifest in &inventory.manifest_paths {
         let value = if manifest == &root_manifest {
             root.clone()
@@ -62,7 +62,7 @@ pub(crate) fn load_cargo_workspace(
         } else {
             format!("{directory}/Cargo.toml")
         };
-        overrides::manifest(&value, &manifest_path, &mut resolution_overrides);
+        overrides::manifest(&value, &manifest_path, &mut authority_surfaces);
         let Some(name) = package_name(&value)? else {
             continue;
         };
@@ -92,15 +92,15 @@ pub(crate) fn load_cargo_workspace(
     let declared_members = expand_members(&member_patterns, &observed_members, root_package)?;
     let declared_members = expand_implicit_members(declared_members, &packages, &exclude_patterns)?;
     resolve_workspace_dependencies(&mut packages, &declared_members)?;
-    resolution_overrides.extend(overrides::named_registries(&packages));
-    resolution_overrides.extend(overrides::configuration(inventory));
-    resolution_overrides.sort();
-    resolution_overrides.dedup();
+    authority_surfaces.extend(overrides::named_registries(&packages));
+    authority_surfaces.extend(overrides::configuration(inventory));
+    authority_surfaces.sort();
+    authority_surfaces.dedup();
     Ok(CargoWorkspace {
         declared_members,
         observed_members,
         packages,
-        resolution_overrides,
+        authority_surfaces,
     })
 }
 

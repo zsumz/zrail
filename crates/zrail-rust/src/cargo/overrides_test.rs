@@ -1,8 +1,8 @@
-//! Cargo resolution indirection is distinguished from unrelated local configuration.
+//! Cargo manifest resolution indirection remains explicit.
 
 use toml::Value;
 
-use super::{config_surfaces, manifest};
+use super::{CargoAuthorityKind, manifest, repository_configuration, root_cargo_config_path};
 
 #[test]
 fn manifest_patch_and_replace_tables_are_unsupported_surfaces() {
@@ -24,67 +24,16 @@ uuid = { git = "https://example.test/uuid" }
 }
 
 #[test]
-fn config_source_paths_and_registry_mappings_are_unsupported() {
-    let value = parse(
-        r#"
-paths = ["vendor"]
-
-[source.crates-io]
-replace-with = "mirror"
-
-[registries.private]
-index = "https://example.test/index"
-
-[registry]
-default = "private"
-"#,
-    );
-
-    let surfaces = config_surfaces(&value);
-
-    assert_eq!(surfaces.len(), 4);
-    assert!(surfaces.contains("Cargo config paths override"));
-    assert!(surfaces.contains("Cargo config source mapping or replacement"));
-    assert!(surfaces.contains("Cargo config named registry mapping"));
-    assert!(surfaces.contains("Cargo config default registry mapping"));
-}
-
-#[test]
-fn config_includes_are_an_unattested_recursive_resolution_surface() {
-    for include in [
-        "include = [\"required.toml\"]",
-        "include = [{ path = \"required.toml\" }]",
-        "include = [{ path = \"optional.toml\", optional = true }]",
-        "include = [\"../outside.toml\"]",
-    ] {
-        let value = include.parse::<toml::Value>().expect("parse include");
-        assert!(
-            config_surfaces(&value)
-                .contains("Cargo configuration includes additional files whose effective resolution is not attested"),
-            "missing include surface for {include}"
-        );
+fn root_cargo_configuration_is_exact_fail_closed_authority() {
+    for path in [".cargo/config", ".cargo/config.toml"] {
+        assert!(root_cargo_config_path(path));
+        let surface = repository_configuration(path);
+        assert_eq!(surface.kind, CargoAuthorityKind::RepositoryConfiguration);
+        assert_eq!(surface.path, path);
     }
-}
-
-#[test]
-fn build_and_network_configuration_do_not_claim_resolution_authority() {
-    let value = parse(
-        r#"
-[build]
-target-dir = "target"
-
-[net]
-offline = true
-
-[registry]
-global-credential-providers = ["cargo:token"]
-
-[registries.private]
-credential-provider = "cargo:token"
-"#,
-    );
-
-    assert!(config_surfaces(&value).is_empty());
+    for near_miss in [".cargo/config.toml.bak", "cargo/config", ".cargo/config/"] {
+        assert!(!root_cargo_config_path(near_miss));
+    }
 }
 
 fn parse(source: &str) -> Value {

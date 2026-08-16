@@ -196,6 +196,11 @@ fn semantic_epoch_seven_requires_schema_seven() {
     super::validate_epochs(7, 7).expect("current epochs are compatible");
 }
 
+#[test]
+fn semantic_epoch_eight_reuses_schema_seven() {
+    super::validate_epochs(7, 8).expect("new analysis semantics retain the current lock shape");
+}
+
 fn fixture_root(name: &str) -> PathBuf {
     std::env::temp_dir().join(format!("zrail-lock-{name}-{}", std::process::id()))
 }

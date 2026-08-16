@@ -1,8 +1,8 @@
-//! Repository-controlled Cargo resolution indirection fails closed as structured evidence.
+//! Repository-controlled Cargo authority surfaces fail closed as structured evidence.
 
 use std::{fs, path::PathBuf};
 
-use zrail_core::{AnalysisQuality, Finding, ReportStatus};
+use zrail_core::{AnalysisQuality, Finding};
 use zrail_rust::check_repository;
 
 #[test]
@@ -16,9 +16,8 @@ fn manifest_and_config_resolution_surfaces_are_rejected() {
         .filter(|finding| finding.id == "CARGO-OVERRIDE-001")
         .collect::<Vec<_>>();
 
-    assert_eq!(overrides.len(), 6, "{:#?}", report.findings);
+    assert_eq!(overrides.len(), 2, "{:#?}", report.findings);
     assert_path(&overrides, "Cargo.toml");
-    assert_path(&overrides, ".cargo/config.toml");
     assert!(overrides.iter().all(|finding| {
         finding.rule == "cargo.resolution-override"
             && finding.analysis == AnalysisQuality::Unresolved
@@ -27,16 +26,33 @@ fn manifest_and_config_resolution_surfaces_are_rejected() {
                 .as_deref()
                 .is_some_and(|help| help.contains("remove the override"))
     }));
+    assert_repository_config_rejected(&report, ".cargo/config.toml");
     reset(&root);
 }
 
 #[test]
-fn unrelated_local_cargo_configuration_remains_supported() {
-    let root = repository("ordinary", MANIFEST, ORDINARY_CONFIG);
+fn included_configuration_is_rejected_without_following_its_paths() {
+    let root = repository(
+        "included",
+        MANIFEST,
+        "include = [\"../outside-resolution.toml\"]\n",
+    );
 
     let report = check(&root);
 
-    assert_eq!(report.status, ReportStatus::Pass, "{:#?}", report.findings);
+    assert_repository_config_rejected(&report, ".cargo/config.toml");
+    reset(&root);
+}
+
+#[test]
+fn ordinary_root_cargo_configuration_is_rejected() {
+    let root = repository("ordinary", MANIFEST, ORDINARY_CONFIG);
+    fs::write(root.join(".cargo/config"), ORDINARY_CONFIG).expect("write extensionless config");
+
+    let report = check(&root);
+
+    assert_repository_config_rejected(&report, ".cargo/config");
+    assert_repository_config_rejected(&report, ".cargo/config.toml");
     reset(&root);
 }
 
@@ -55,45 +71,7 @@ fn named_registry_without_an_attested_index_is_rejected() {
 }
 
 #[test]
-fn included_configuration_is_rejected_without_following_its_paths() {
-    for (name, include) in [
-        ("string-include", "include = [\"resolution.toml\"]\n"),
-        (
-            "table-include",
-            "include = [{ path = \"resolution.toml\" }]\n",
-        ),
-        (
-            "optional-include",
-            "include = [{ path = \"optional.toml\", optional = true }]\n",
-        ),
-        ("recursive-include", "include = [\"recursive.toml\"]\n"),
-        ("escaping-include", "include = [\"../outside.toml\"]\n"),
-    ] {
-        let root = repository(name, MANIFEST, include);
-        fs::write(
-            root.join(".cargo/resolution.toml"),
-            "[source.crates-io]\nreplace-with = \"fork\"\n",
-        )
-        .expect("write included override");
-        fs::write(
-            root.join(".cargo/recursive.toml"),
-            "include = [\"resolution.toml\"]\n",
-        )
-        .expect("write recursive include");
-
-        let report = check(&root);
-
-        assert!(report.findings.iter().any(|finding| {
-            finding.id == "CARGO-OVERRIDE-001"
-                && finding.path.as_deref() == Some(".cargo/config.toml")
-                && finding.message.contains("includes additional files")
-        }));
-        reset(&root);
-    }
-}
-
-#[test]
-fn unreadable_root_configuration_has_repository_stable_evidence() {
+fn malformed_root_configuration_has_repository_stable_evidence() {
     let root = repository("unreadable", MANIFEST, ORDINARY_CONFIG);
     fs::write(root.join(".cargo/config.toml"), [0xff]).expect("write non-UTF-8 config");
 
@@ -101,11 +79,36 @@ fn unreadable_root_configuration_has_repository_stable_evidence() {
     let finding = report
         .findings
         .iter()
-        .find(|finding| finding.id == "CARGO-OVERRIDE-001")
-        .expect("reject unreadable config");
+        .find(|finding| finding.id == "CARGO-CONFIG-001")
+        .expect("reject malformed config");
 
-    assert!(finding.message.contains("bounded UTF-8"));
+    assert!(finding.message.contains("qualification execution"));
     assert!(!finding.message.contains(&root.display().to_string()));
+    reset(&root);
+}
+
+#[test]
+fn extensionless_root_cargo_configuration_is_rejected() {
+    let root = repository("extensionless", MANIFEST, ORDINARY_CONFIG);
+    fs::rename(root.join(".cargo/config.toml"), root.join(".cargo/config"))
+        .expect("rename Cargo config");
+
+    let report = check(&root);
+
+    assert_repository_config_rejected(&report, ".cargo/config");
+    reset(&root);
+}
+
+#[test]
+fn non_file_root_cargo_configuration_is_rejected() {
+    let root = repository("directory", MANIFEST, ORDINARY_CONFIG);
+    let config = root.join(".cargo/config.toml");
+    fs::remove_file(&config).expect("remove Cargo config file");
+    fs::create_dir(&config).expect("create Cargo config directory");
+
+    let report = check(&root);
+
+    assert_repository_config_rejected(&report, ".cargo/config.toml");
     reset(&root);
 }
 
@@ -139,9 +142,7 @@ fn symlinked_root_cargo_configuration_cannot_escape_attestation() {
 
     let report = check(&root);
 
-    assert!(report.findings.iter().any(|finding| {
-        finding.id == "CARGO-OVERRIDE-001" && finding.path.as_deref() == Some(".cargo/config.toml")
-    }));
+    assert_repository_config_rejected(&report, ".cargo/config.toml");
     reset(&root);
 }
 
@@ -157,12 +158,23 @@ fn symlinked_cargo_configuration_directory_is_not_traversed() {
 
     let report = check(&root);
 
-    assert!(report.findings.iter().any(|finding| {
-        finding.id == "CARGO-OVERRIDE-001"
-            && finding.path.as_deref() == Some(".cargo")
-            && finding.message.contains("repository-local directory")
-    }));
+    assert_repository_config_rejected(&report, ".cargo");
     reset(&root);
+}
+
+fn assert_repository_config_rejected(report: &zrail_core::Report, path: &str) {
+    assert!(report.findings.iter().any(|finding| {
+        finding.id == "CARGO-CONFIG-001"
+            && finding.rule == "cargo.execution-configuration"
+            && finding.category == "qualification"
+            && finding.analysis == AnalysisQuality::Unresolved
+            && finding.path.as_deref() == Some(path)
+            && finding.message.contains("qualification execution")
+            && finding
+                .help
+                .as_deref()
+                .is_some_and(|help| help.contains("remove the Cargo configuration"))
+    }));
 }
 
 fn assert_path(findings: &[&Finding], path: &str) {
@@ -259,7 +271,7 @@ adapters = ["rust"]
 
 [repository]
 roots = ["."]
-exclude = []
+exclude = [".cargo/**"]
 workspace_members = "exact"
 nested_git = "deny"
 submodules = "deny"
