@@ -1,6 +1,9 @@
 //! Exact lock drift includes ratchet value changes.
 
-use zrail_core::{FindingSink, LockFile, LockedGate, LockedGeneratedSource, LockedRatchet};
+use zrail_core::{
+    FindingSink, LockFile, LockedGate, LockedGeneratedSource, LockedMacroImplementation,
+    LockedRatchet,
+};
 
 use super::compare_locks;
 
@@ -43,6 +46,19 @@ fn changed_gate_contents_are_stale_lock_state() {
     assert!(findings.iter().any(|finding| finding.id == "LOCK-016"));
 }
 
+#[test]
+fn changed_repository_macro_package_is_stale_lock_state() {
+    let mut current = LockFile::new("0".repeat(64));
+    current.macro_implementations.push(implementation("1"));
+    let mut candidate = LockFile::new("0".repeat(64));
+    candidate.macro_implementations.push(implementation("2"));
+    let mut findings = FindingSink::default();
+
+    compare_locks(&current, &candidate, &mut findings);
+
+    assert!(findings.iter().any(|finding| finding.id == "LOCK-023"));
+}
+
 fn ratchet(value: usize) -> LockedRatchet {
     LockedRatchet {
         rule: "rust.file-size".into(),
@@ -63,5 +79,13 @@ fn gate(digit: &str) -> LockedGate {
         name: "check".into(),
         path: "scripts/check".into(),
         sha256: digit.repeat(64),
+    }
+}
+
+fn implementation(digit: &str) -> LockedMacroImplementation {
+    LockedMacroImplementation {
+        package: "fixture".into(),
+        directory: ".".into(),
+        manifest_sha256: digit.repeat(64),
     }
 }

@@ -68,6 +68,37 @@ fn local_macro_shadow_cannot_claim_a_compiler_intrinsic_effect() {
     reset(&root);
 }
 
+#[test]
+fn external_macro_named_env_is_not_a_compiler_intrinsic() {
+    let root = repository("external-env");
+    write(
+        &root,
+        "Cargo.toml",
+        "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\n[dependencies]\nenv = \"1\"\n",
+    );
+    write(
+        &root,
+        "src/lib.rs",
+        "//! External env macro.\npub const VALUE: &str = env!(\"HOME\");\n",
+    );
+
+    let report = check(&root);
+    assert!(
+        !report.findings.iter().any(|finding| {
+            finding.id == "EFFECT-001" && finding.message.contains("CompileEnvironment")
+        }),
+        "{:#?}",
+        report.findings
+    );
+    assert!(
+        report
+            .findings
+            .iter()
+            .any(|finding| finding.id == "RUST-MACRO-001")
+    );
+    reset(&root);
+}
+
 fn repository(name: &str) -> PathBuf {
     let root = std::env::temp_dir().join(format!(
         "zrail-compile-effects-{name}-{}-{:?}",

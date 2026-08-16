@@ -139,6 +139,7 @@ fn check_effect_profiles(context: &RuleContext<'_>, findings: &mut FindingSink) 
                 for boundary in file.compile_effects.iter().filter(|boundary| {
                     boundary.effect == *effect
                         && boundary.invocation.quality == AnalysisQuality::Exact
+                        && boundary.invocation.is_compiler_builtin()
                 }) {
                     let key = (
                         file.relative.clone(),
@@ -149,7 +150,7 @@ fn check_effect_profiles(context: &RuleContext<'_>, findings: &mut FindingSink) 
                     if emitted.insert(key) {
                         findings.push(effect_finding(
                             file,
-                            &boundary.invocation,
+                            &boundary.invocation.observation,
                             profile_name,
                             *effect,
                         ));

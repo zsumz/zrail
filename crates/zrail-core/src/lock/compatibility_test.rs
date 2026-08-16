@@ -4,7 +4,7 @@ use std::{fs, path::PathBuf};
 
 use super::super::{
     LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope,
-    LockedDependencySource, LockedPackage,
+    LockedDependencySource, LockedMacroDefinition, LockedPackage,
 };
 
 #[test]
@@ -116,6 +116,30 @@ fn schema_three_alias_aware_locks_remain_readable() {
 }
 
 #[test]
+fn schema_five_definition_locks_remain_readable() {
+    let root = fixture_root("schema-five");
+    reset(&root);
+    let path = root.join("zrail.lock");
+    let mut lock = LockFile::new("0".repeat(64));
+    lock.schema = 5;
+    lock.semantics = 5;
+    lock.producer = "0.0.1".into();
+    lock.macros.push(LockedMacroDefinition {
+        path: "src/lib.rs".into(),
+        name: "local::reviewed".into(),
+        ordinal: 1,
+        sha256: "1".repeat(64),
+    });
+    lock.write(&path).expect("write schema-five lock");
+
+    let read = LockFile::read(&path).expect("read schema-five lock");
+
+    assert_eq!(read.schema, 5);
+    assert_eq!(read.macros.len(), 1);
+    fs::remove_dir_all(root).expect("remove fixture");
+}
+
+#[test]
 fn semantic_epoch_four_requires_schema_four() {
     let mut lock = LockFile::new("0".repeat(64));
     lock.schema = 3;
@@ -131,7 +155,14 @@ fn semantic_epoch_four_requires_schema_four() {
 fn semantic_epoch_five_requires_schema_five() {
     let error = super::validate_epochs(4, 5).expect_err("schema four cannot encode macro state");
     assert!(error.to_string().contains("require lock schema 5"));
-    super::validate_epochs(5, 5).expect("current epochs are compatible");
+    super::validate_epochs(5, 5).expect("legacy epochs are compatible");
+}
+
+#[test]
+fn semantic_epoch_six_requires_schema_six() {
+    let error = super::validate_epochs(5, 6).expect_err("schema five cannot encode manifests");
+    assert!(error.to_string().contains("require lock schema 6"));
+    super::validate_epochs(6, 6).expect("current epochs are compatible");
 }
 
 fn fixture_root(name: &str) -> PathBuf {

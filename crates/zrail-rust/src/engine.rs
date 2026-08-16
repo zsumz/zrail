@@ -2,6 +2,7 @@
 
 mod lock_compare;
 mod lock_state;
+mod macro_implementations;
 mod model;
 
 use std::{error::Error, fmt, path::Path};
@@ -11,7 +12,7 @@ use zrail_core::{LockFile, Report};
 
 use crate::rules::{RuleContext, evaluate};
 
-pub(crate) use self::model::load_model;
+pub(crate) use self::model::{RepositoryModel, load_model};
 
 use self::{
     lock_compare::{check_lock, requires_lock},

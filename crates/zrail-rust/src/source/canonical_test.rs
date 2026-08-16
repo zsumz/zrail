@@ -59,7 +59,7 @@ fn excessive_shared_alias_identities_fail_closed_without_a_cross_product() {
         .collect::<Vec<_>>();
     let selected = packages.iter().collect::<Vec<_>>();
 
-    let (roots, overflowed) = dependency_roots(selected, &BTreeSet::from(["runtime".into()]));
+    let (roots, overflowed) = dependency_roots(&selected, &BTreeSet::from(["runtime".into()]));
     let mut fact = observed("runtime::spawn", AnalysisQuality::Exact);
     canonicalize_fact_bounded(&mut fact, &roots, &overflowed);
 

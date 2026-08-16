@@ -4,7 +4,7 @@ use std::{collections::BTreeMap, path::Path};
 
 use zrail_core::{
     LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope,
-    LockedDependencySource, LockedGate, LockedMacroDefinition, LockedPackage, LockedRatchet,
+    LockedDependencySource, LockedGate, LockedPackage, LockedRatchet,
     input::{MAX_INPUT_BYTES, read_bytes_with_limit},
     sha256_hex,
 };
@@ -26,7 +26,7 @@ pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckE
         &model.bundle.contract.source.rust.generated,
     );
     lock.gates = locked_gates(model)?;
-    lock.macros = locked_macros(model);
+    lock.macro_implementations = super::macro_implementations::locked(model)?;
     for package in &model.cargo.packages {
         let dependencies = package
             .dependencies
@@ -77,43 +77,6 @@ pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckE
     lock.canonicalize()
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     Ok(lock)
-}
-
-fn locked_macros(model: &RepositoryModel) -> Vec<LockedMacroDefinition> {
-    let files = model
-        .source
-        .files
-        .iter()
-        .map(|file| (file.relative.as_str(), file))
-        .collect::<BTreeMap<_, _>>();
-    let mut locked = Vec::new();
-    for allowance in &model.bundle.contract.source.rust.macros.allow {
-        let Some(path) = allowance.definition.as_deref() else {
-            continue;
-        };
-        let Some(file) = files.get(path) else {
-            continue;
-        };
-        let name = allowance
-            .name
-            .rsplit("::")
-            .next()
-            .unwrap_or(&allowance.name);
-        for (ordinal, definition) in file
-            .macro_definitions
-            .iter()
-            .filter(|definition| definition.name == name)
-            .enumerate()
-        {
-            locked.push(LockedMacroDefinition {
-                path: path.into(),
-                name: allowance.name.clone(),
-                ordinal: ordinal + 1,
-                sha256: definition.sha256.clone(),
-            });
-        }
-    }
-    locked
 }
 
 fn locked_source(source: &DependencySource) -> LockedDependencySource {

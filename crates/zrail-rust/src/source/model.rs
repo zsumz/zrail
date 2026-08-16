@@ -2,7 +2,7 @@
 
 use zrail_core::{AnalysisQuality, Effect, Finding, SourceSpan};
 
-use crate::inventory::FileClass;
+use crate::{cargo::DependencySource, inventory::FileClass};
 
 #[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum Reachability {
@@ -45,6 +45,63 @@ pub(crate) struct ObservedFact {
     pub(crate) quality: AnalysisQuality,
 }
 
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) enum MacroOrigin {
+    Pending {
+        local_module: bool,
+    },
+    CompilerBuiltin,
+    Repository {
+        package: String,
+        directory: String,
+    },
+    External {
+        package: String,
+        source: DependencySource,
+    },
+    Unresolved,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct MacroExpansionFact {
+    pub(crate) observation: ObservedFact,
+    pub(crate) origins: Vec<MacroOrigin>,
+}
+
+impl MacroExpansionFact {
+    pub(crate) fn pending(observation: ObservedFact, local_module: bool) -> Self {
+        Self {
+            observation,
+            origins: vec![MacroOrigin::Pending { local_module }],
+        }
+    }
+
+    pub(crate) fn unresolved(observation: ObservedFact) -> Self {
+        Self {
+            observation,
+            origins: vec![MacroOrigin::Unresolved],
+        }
+    }
+
+    pub(crate) fn is_compiler_builtin(&self) -> bool {
+        self.origins.as_slice() == [MacroOrigin::CompilerBuiltin]
+    }
+}
+
+impl std::ops::Deref for MacroExpansionFact {
+    type Target = ObservedFact;
+
+    fn deref(&self) -> &Self::Target {
+        &self.observation
+    }
+}
+
+impl std::ops::DerefMut for MacroExpansionFact {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.observation
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct MacroDefinitionFact {
     pub(crate) name: String,
@@ -55,8 +112,9 @@ pub(crate) struct MacroDefinitionFact {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct CompileEffectFact {
     pub(crate) effect: Effect,
-    pub(crate) invocation: ObservedFact,
+    pub(crate) invocation: MacroExpansionFact,
     pub(crate) target: Option<String>,
+    pub(crate) opaque_input: bool,
 }
 
 impl ObservedFact {
@@ -121,8 +179,8 @@ pub(crate) struct RustFileFacts {
     pub(crate) calls: Vec<ObservedFact>,
     pub(crate) methods: Vec<ObservedFact>,
     pub(crate) macros: Vec<ObservedFact>,
-    pub(crate) macro_expansions: Vec<ObservedFact>,
-    pub(crate) opaque_macro_inputs: Vec<ObservedFact>,
+    pub(crate) macro_expansions: Vec<MacroExpansionFact>,
+    pub(crate) opaque_macro_inputs: Vec<MacroExpansionFact>,
     pub(crate) macro_definitions: Vec<MacroDefinitionFact>,
     pub(crate) compile_effects: Vec<CompileEffectFact>,
     pub(crate) lint_suppressions: Vec<ObservedFact>,

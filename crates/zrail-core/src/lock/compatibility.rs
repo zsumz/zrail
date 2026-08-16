@@ -18,6 +18,11 @@ pub(super) fn validate_epochs(schema: u64, semantics: u64) -> Result<(), LockErr
             "zrail.lock semantics {semantics} require lock schema 5 or newer"
         )));
     }
+    if semantics >= 6 && schema < 6 {
+        return Err(LockError(format!(
+            "zrail.lock semantics {semantics} require lock schema 6 or newer"
+        )));
+    }
     Ok(())
 }
 

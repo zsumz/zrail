@@ -66,9 +66,6 @@ pub(crate) fn load_cargo_workspace(
         let Some(name) = package_name(&value)? else {
             continue;
         };
-        if directory != "." && excluded_member(&directory, &exclude_patterns) {
-            continue;
-        }
         packages.push(Package {
             name,
             dependencies: collect_dependencies(&value, &workspace_dependencies, &directory)
@@ -86,6 +83,9 @@ pub(crate) fn load_cargo_workspace(
     ensure_unique_packages(&packages)?;
     let mut observed_members = packages
         .iter()
+        .filter(|package| {
+            package.directory == "." || !excluded_member(&package.directory, &exclude_patterns)
+        })
         .map(|package| package.directory.clone())
         .collect::<Vec<_>>();
     observed_members.sort();

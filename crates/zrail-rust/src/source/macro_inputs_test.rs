@@ -38,6 +38,60 @@ fn compiler_expression_inputs_retain_nested_compile_effects() {
 }
 
 #[test]
+fn matches_inputs_visit_patterns_and_guards() {
+    let imports = ImportMap::default();
+    let mut visitor = FactVisitor::new(&imports);
+    let expression = syn::parse_str::<syn::ExprMacro>(
+        "matches!(value, Some(hidden!()) | denied::Variant if effectful_guard())",
+    )
+    .expect("parse matches input");
+
+    assert!(!inspect(&mut visitor, &expression.mac, "matches"));
+    assert!(
+        visitor
+            .macro_expansions
+            .iter()
+            .any(|expansion| expansion.name == "hidden")
+    );
+    assert!(
+        visitor
+            .paths
+            .iter()
+            .any(|path| path.name == "denied::Variant")
+    );
+    assert!(
+        visitor
+            .calls
+            .iter()
+            .any(|call| call.name == "effectful_guard")
+    );
+}
+
+#[test]
+fn opaque_scanning_retains_nested_compiler_effect_targets() {
+    let imports = ImportMap::default();
+    let mut visitor = FactVisitor::new(&imports);
+    let expression = syn::parse_str::<syn::ExprMacro>(
+        r#"dsl!(env!("HOME"), option_env!("USER"), include_str!("data.txt"))"#,
+    )
+    .expect("parse opaque compiler effects");
+
+    assert!(inspect(&mut visitor, &expression.mac, "dsl"));
+    assert_eq!(
+        visitor
+            .compile_effects
+            .iter()
+            .filter(|effect| effect.effect == zrail_core::Effect::CompileEnvironment)
+            .count(),
+        2
+    );
+    assert!(visitor.compile_effects.iter().any(|effect| {
+        effect.effect == zrail_core::Effect::CompileFilesystem
+            && effect.target.as_deref() == Some("data.txt")
+    }));
+}
+
+#[test]
 fn opaque_scanning_retains_paths_calls_methods_and_nested_macros() {
     let imports = ImportMap::default();
     let mut visitor = FactVisitor::new(&imports);

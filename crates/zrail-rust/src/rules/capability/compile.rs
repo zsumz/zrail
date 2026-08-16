@@ -20,10 +20,24 @@ pub(super) fn check_paths(context: &RuleContext<'_>, findings: &mut FindingSink)
         .collect::<BTreeMap<_, _>>();
     for file in &context.source.files {
         for boundary in &file.compile_effects {
-            let name = boundary.invocation.name.as_str();
+            let name = boundary
+                .invocation
+                .name
+                .rsplit("::")
+                .next()
+                .unwrap_or(&boundary.invocation.name);
             if boundary.invocation.quality != AnalysisQuality::Exact
+                || !boundary.invocation.is_compiler_builtin()
                 || !matches!(name, "include" | "include_str" | "include_bytes")
             {
+                continue;
+            }
+            if boundary.opaque_input && name == "include" {
+                findings.push(invalid(
+                    file,
+                    boundary,
+                    "source inclusion inside opaque macro input cannot be traversed exactly",
+                ));
                 continue;
             }
             let Some(target) = boundary.target.as_deref() else {

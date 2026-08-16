@@ -14,7 +14,7 @@ fn explanation_contains_actionable_source_policy() {
     )
     .expect("explain fixture path");
 
-    assert_eq!(explanation.schema, 5);
+    assert_eq!(explanation.schema, 6);
     assert_eq!(explanation.reachability, "production");
     assert_eq!(explanation.unsafe_code, "deny");
     assert_eq!(explanation.lint_suppressions, "deny");
@@ -73,8 +73,8 @@ fn explanation_separates_opaque_input_from_content_bound_expansion() {
 
     assert_eq!(explanation.opaque_macro_inputs, ["local::query"]);
     assert_eq!(
-        explanation.content_bound_macro_definitions,
-        ["local::query@src/lib.rs"]
+        explanation.content_bound_macro_implementations,
+        ["local::query@fixture:."]
     );
     fs::remove_dir_all(root).expect("remove explanation fixture");
 }

@@ -1,4 +1,4 @@
-//! Macro authority is reasoned, non-overlapping, and locally content-bindable.
+//! Macro authority is reasoned, non-overlapping, and optionally definition-narrowed.
 
 use std::collections::BTreeSet;
 
@@ -30,24 +30,14 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
                 allowed.name
             ));
         }
-        let local = allowed.name.starts_with("local::");
-        match (&allowed.definition, local) {
-            (Some(path), true) => validate_repository_literal(path, errors),
-            (None, true) => errors.push(format!(
-                "local macro expansion allowance {:?} requires an exact definition path",
-                allowed.name
-            )),
-            (Some(_), false) => errors.push(format!(
-                "external macro expansion allowance {:?} may not declare a local definition path",
-                allowed.name
-            )),
-            (None, false) => {}
+        if let Some(path) = &allowed.definition {
+            validate_repository_literal(path, errors);
         }
         if let Some(source) = &allowed.source {
             validate_dependencies::validate_source(source, &allowed.name, errors);
-            if local {
+            if allowed.definition.is_some() {
                 errors.push(format!(
-                    "local macro expansion allowance {:?} may not declare external source identity",
+                    "macro expansion allowance {:?} may not combine a repository definition with external source identity",
                     allowed.name
                 ));
             }

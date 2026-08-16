@@ -6,6 +6,7 @@ use zrail_core::AnalysisQuality;
 use super::{
     attributes::{is_lint_suppression, lint_suppression_is_reasoned, unsafe_attribute_names},
     fact::fact,
+    model::MacroExpansionFact,
     visitor::FactVisitor,
 };
 
@@ -14,11 +15,12 @@ impl FactVisitor<'_> {
         self.record_lint_suppression(attribute);
         self.record_unsafe_attributes(attribute);
         if attribute.path().is_ident("macro_use") {
-            self.macro_expansions.push(fact(
-                "macro_use",
-                attribute.span(),
-                AnalysisQuality::Unresolved,
-            ));
+            self.macro_expansions
+                .push(MacroExpansionFact::unresolved(fact(
+                    "macro_use",
+                    attribute.span(),
+                    AnalysisQuality::Unresolved,
+                )));
         } else {
             self.record_attribute_expansions(attribute);
         }
@@ -63,25 +65,31 @@ impl FactVisitor<'_> {
                     if local_module {
                         expansion.canonical.push(name.clone());
                     }
-                    let mut facts = vec![expansion];
+                    let mut facts = vec![MacroExpansionFact::pending(expansion, local_module)];
                     if !scoped {
-                        facts.extend(super::calls::candidates(&path, self.imports, &name));
+                        facts.extend(
+                            super::calls::candidates(&path, self.imports, &name)
+                                .into_iter()
+                                .map(|fact| MacroExpansionFact::pending(fact, false)),
+                        );
                     }
                     self.macro_expansions.extend(facts);
                 }
             }
-            Err(()) => self.macro_expansions.push(fact(
-                format!(
-                    "unparsed attribute {}",
-                    attribute
-                        .path()
-                        .segments
-                        .last()
-                        .map_or("<empty>".into(), |segment| segment.ident.to_string())
-                ),
-                attribute.span(),
-                AnalysisQuality::Unresolved,
-            )),
+            Err(()) => self
+                .macro_expansions
+                .push(MacroExpansionFact::unresolved(fact(
+                    format!(
+                        "unparsed attribute {}",
+                        attribute
+                            .path()
+                            .segments
+                            .last()
+                            .map_or("<empty>".into(), |segment| segment.ident.to_string())
+                    ),
+                    attribute.span(),
+                    AnalysisQuality::Unresolved,
+                ))),
         }
     }
 }

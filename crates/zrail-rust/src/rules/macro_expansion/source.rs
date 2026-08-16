@@ -1,46 +1,22 @@
-//! External expansion authority applies only to exact dependency sources in every file context.
+//! Expansion authority is bound to observed compiler, repository, or dependency origin.
 
 use zrail_core::MacroExpansionAllow;
 
 use crate::{
-    cargo::{DependencySource, rust_crate_root, source_matches},
-    source::RustFileFacts,
+    cargo::source_matches,
+    source::{MacroExpansionFact, MacroOrigin},
 };
 
-use super::super::RuleContext;
-
-pub(super) fn bound(
-    context: &RuleContext<'_>,
-    file: &RustFileFacts,
-    allowance: &MacroExpansionAllow,
-) -> bool {
-    if allowance.name.starts_with("local::") {
-        return allowance.source.is_none();
-    }
-    let root = allowance.name.split("::").next().unwrap_or(&allowance.name);
-    let mut external = false;
-    for package in context.cargo.packages.iter().filter(|package| {
-        file.packages.contains(&package.name)
-            || (file.packages.is_empty() && package.contains_file(&file.relative))
-    }) {
-        for dependency in &package.dependencies {
-            if rust_crate_root(&dependency.name) != root
-                || !matches!(
-                    dependency.source,
-                    DependencySource::Registry { .. } | DependencySource::Git { .. }
-                )
-            {
-                continue;
+pub(super) fn bound(expansion: &MacroExpansionFact, allowance: &MacroExpansionAllow) -> bool {
+    !expansion.origins.is_empty()
+        && expansion.origins.iter().all(|origin| match origin {
+            MacroOrigin::CompilerBuiltin | MacroOrigin::Repository { .. } => {
+                allowance.source.is_none()
             }
-            external = true;
-            if !allowance
+            MacroOrigin::External { source, .. } => allowance
                 .source
                 .as_ref()
-                .is_some_and(|source| source_matches(source, &dependency.source))
-            {
-                return false;
-            }
-        }
-    }
-    external || allowance.source.is_none()
+                .is_some_and(|allowed| source_matches(allowed, source)),
+            MacroOrigin::Pending { .. } | MacroOrigin::Unresolved => false,
+        })
 }

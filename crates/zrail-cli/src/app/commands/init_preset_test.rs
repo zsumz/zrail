@@ -31,7 +31,7 @@ fn rust_preset_accepts_inline_and_integration_tests_without_a_size_policy() {
     assert_ready(&root);
     let explanation = explain_path(&root, Path::new("zrail.toml"), Path::new("src/lib.rs"))
         .expect("explain unbounded Rust source");
-    assert_eq!(explanation.schema, 5);
+    assert_eq!(explanation.schema, 6);
     assert_eq!(explanation.design_target, None);
     assert_eq!(explanation.hard_ceiling, None);
     assert_eq!(explanation.expected_sibling_test, None);

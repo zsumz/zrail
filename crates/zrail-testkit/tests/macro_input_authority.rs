@@ -141,7 +141,7 @@ fn approved_local_macro_body_is_content_bound_in_the_lock() {
         check(&root)
             .findings
             .iter()
-            .any(|finding| finding.id == "LOCK-019")
+            .any(|finding| finding.id == "LOCK-023")
     );
     reset(&root);
 }

@@ -2,32 +2,32 @@
 
 use zrail_core::{AnalysisQuality, MacroExpansionAllow, MacroInputMode};
 
-use crate::source::ObservedFact;
+use crate::source::{MacroExpansionFact, MacroOrigin, ObservedFact};
 
 use super::{directly_inspected, reviewed_names};
 
 #[test]
 fn local_definitions_shadow_intrinsic_shortcuts() {
-    let include = fact("include");
-    let mut local_include = fact("include");
+    let include = compiler("include");
+    let mut local_include = compiler("include");
     local_include.quality = AnalysisQuality::Unresolved;
 
     assert!(directly_inspected(&include));
     assert!(!directly_inspected(&local_include));
-    assert!(!directly_inspected(&fact("std::include")));
-    assert!(!directly_inspected(&fact("core::concat")));
+    assert!(directly_inspected(&compiler("std::include")));
+    assert!(directly_inspected(&compiler("core::concat")));
 }
 
 #[test]
 fn arbitrary_expression_macros_are_never_assumed_inspected() {
     for name in ["assert", "format", "matches", "vec", "tokio::select"] {
-        assert!(!directly_inspected(&fact(name)));
+        assert!(!directly_inspected(&compiler(name)));
     }
 }
 
 #[test]
 fn every_conservative_canonical_identity_requires_review() {
-    let mut expansion = fact("runtime::select");
+    let mut expansion = expansion("runtime::select");
     expansion.canonical = vec!["async_std::select".into(), "tokio::select".into()];
     expansion.quality = AnalysisQuality::Conservative;
     let async_std = allowance("async_std::select");
@@ -49,13 +49,13 @@ fn bare_local_macros_cannot_borrow_a_global_name_allowance() {
     let panic = allowance("panic");
     let local_panic = allowance("local::panic");
     let allowed = std::collections::BTreeMap::from([("panic", &panic)]);
-    let mut local = fact("panic");
+    let mut local = expansion("panic");
     local.quality = AnalysisQuality::Unresolved;
 
     assert!(reviewed_names(&local, &allowed).is_empty());
     assert_eq!(
         reviewed_names(
-            &fact("local::panic"),
+            &expansion("local::panic"),
             &std::collections::BTreeMap::from([("local::panic", &local_panic)]),
         ),
         ["local::panic"]
@@ -78,5 +78,16 @@ fn fact(name: &str) -> ObservedFact {
         canonical: Vec::new(),
         span: None,
         quality: AnalysisQuality::Exact,
+    }
+}
+
+fn expansion(name: &str) -> MacroExpansionFact {
+    MacroExpansionFact::pending(fact(name), false)
+}
+
+fn compiler(name: &str) -> MacroExpansionFact {
+    MacroExpansionFact {
+        observation: fact(name),
+        origins: vec![MacroOrigin::CompilerBuiltin],
     }
 }

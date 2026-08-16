@@ -1,5 +1,6 @@
 //! Unexpanded Rust is an explicit, content-bound, reasoned trust boundary.
 
+mod bindings;
 mod source;
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -8,7 +9,7 @@ use zrail_core::{
     AnalysisQuality, Finding, FindingSink, MacroExpansionAllow, MacroExpansionMode, MacroInputMode,
 };
 
-use crate::source::{ObservedFact, Reachability, RustFileFacts};
+use crate::source::{MacroExpansionFact, Reachability};
 
 use super::RuleContext;
 
@@ -37,7 +38,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             if directly_inspected(expansion) {
                 continue;
             }
-            let matched = reviewed_for_file(context, file, expansion, &allowed);
+            let matched = reviewed(expansion, &allowed);
             if matched.is_empty() {
                 findings.push(unreviewed(file, expansion));
             } else {
@@ -45,7 +46,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             }
         }
         for input in &file.opaque_macro_inputs {
-            let matched = reviewed_for_file(context, file, input, &allowed);
+            let matched = reviewed(input, &allowed);
             if matched.is_empty()
                 || matched
                     .iter()
@@ -70,10 +71,10 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
         }
     }
     stale_allowances(&allowed, &used, &opaque_used, findings);
-    validate_local_bindings(context, &allowed, findings);
+    bindings::validate(context, &allowed, findings);
 }
 
-fn unreviewed(file: &crate::source::RustFileFacts, expansion: &ObservedFact) -> Finding {
+fn unreviewed(file: &crate::source::RustFileFacts, expansion: &MacroExpansionFact) -> Finding {
     Finding::error(
         "RUST-MACRO-001",
         "rust.macro-expansion",
@@ -121,60 +122,8 @@ fn stale_allowances(
     }
 }
 
-fn validate_local_bindings(
-    context: &RuleContext<'_>,
-    allowed: &BTreeMap<&str, &MacroExpansionAllow>,
-    findings: &mut FindingSink,
-) {
-    for allowance in allowed
-        .values()
-        .filter(|allowance| allowance.definition.is_some())
-    {
-        let path = allowance.definition.as_deref().unwrap_or_default();
-        let leaf = allowance
-            .name
-            .rsplit("::")
-            .next()
-            .unwrap_or(&allowance.name);
-        let bound = context
-            .source
-            .files
-            .iter()
-            .find(|file| file.relative == path)
-            .map_or(0, |file| {
-                file.macro_definitions
-                    .iter()
-                    .filter(|definition| definition.name == leaf)
-                    .count()
-            });
-        let total = context
-            .source
-            .files
-            .iter()
-            .filter(|file| file.reachability != Reachability::Unreachable)
-            .flat_map(|file| &file.macro_definitions)
-            .filter(|definition| definition.name == leaf)
-            .count();
-        if bound != 1 || total != 1 {
-            findings.push(
-                Finding::error(
-                    "RUST-MACRO-005",
-                    "rust.macro-definition",
-                    "source",
-                    format!(
-                        "local macro allowance {:?} resolves to {bound} definitions in {path:?} and {total} reachable definitions repository-wide",
-                        allowance.name,
-                    ),
-                )
-                .because(&allowance.reason)
-                .with_help("bind the allowance to one exact local macro_rules! definition"),
-            );
-        }
-    }
-}
-
 fn reviewed_names<'a>(
-    expansion: &'a ObservedFact,
+    expansion: &'a MacroExpansionFact,
     allowed: &BTreeMap<&str, &MacroExpansionAllow>,
 ) -> Vec<&'a str> {
     if expansion.quality == AnalysisQuality::Unresolved {
@@ -188,16 +137,14 @@ fn reviewed_names<'a>(
     }
 }
 
-fn reviewed_for_file<'a>(
-    context: &RuleContext<'_>,
-    file: &RustFileFacts,
-    expansion: &'a ObservedFact,
+fn reviewed<'a>(
+    expansion: &'a MacroExpansionFact,
     allowed: &BTreeMap<&str, &MacroExpansionAllow>,
 ) -> Vec<&'a str> {
     let names = reviewed_names(expansion, allowed);
     if names
         .iter()
-        .all(|name| source::bound(context, file, allowed[name]))
+        .all(|name| source::bound(expansion, allowed[name]))
     {
         names
     } else {
@@ -205,14 +152,12 @@ fn reviewed_for_file<'a>(
     }
 }
 
-fn directly_inspected(expansion: &ObservedFact) -> bool {
-    if expansion.quality != AnalysisQuality::Exact {
+fn directly_inspected(expansion: &MacroExpansionFact) -> bool {
+    if expansion.quality != AnalysisQuality::Exact || !expansion.is_compiler_builtin() {
         return false;
     }
     expansion.policy_names().all(|name| {
-        let Some(leaf) = (!name.contains("::")).then_some(name) else {
-            return false;
-        };
+        let leaf = name.rsplit("::").next().unwrap_or(name);
         matches!(
             leaf,
             "cfg"

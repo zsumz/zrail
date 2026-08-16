@@ -30,6 +30,6 @@ pub use digest::sha256_hex;
 pub use lock::{
     LOCK_SCHEMA, LOCK_SEMANTICS, LockFile, LockedDependency, LockedDependencyKind,
     LockedDependencyScope, LockedDependencySource, LockedGate, LockedGeneratedSource,
-    LockedMacroDefinition, LockedPackage, LockedRatchet,
+    LockedMacroDefinition, LockedMacroImplementation, LockedPackage, LockedRatchet,
 };
 pub use report::{Report, ReportStatus, ReportSummary};

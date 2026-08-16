@@ -110,8 +110,8 @@ interpret the newer architecture state.
 
 `zrail.toml` contains human-authored architecture. `zrail.lock` contains exact
 normalized direct dependency declarations, reviewed gate bytes, generated
-provenance, content-bound local macro definitions, and ratchets. `zrail check`
-never modifies either file.
+provenance, content-bound repository macro implementation packages, and
+ratchets. `zrail check` never modifies either file.
 Cargo owns exact selected versions, checksums, and Git commits in `Cargo.lock`;
 zrail does not claim to be a second Cargo resolver.
 
@@ -137,9 +137,14 @@ With `source.rust.macros.mode = "deny-unreviewed"`, macro expansions that zrail
 cannot inspect are rejected unless their invocation path has a reasoned
 allowance. Ordinary Rust expressions inside standard macro inputs are still
 analyzed. Other token DSLs require the separate `inputs = "opaque"` grant.
-Local allowances name one definition path and lock its normalized body digest;
-external allowances bind to the exact dependency source. Built-in data macros
-and `include!` are handled directly, and included Rust remains fully analyzed.
+Compiler built-ins come from a closed engine-known set. Repository-owned macros,
+including module-qualified local macros and workspace or repository-path macro
+crates, lock a deterministic manifest of their implementing package. This
+covers helper macro and internal proc-macro changes. An optional `definition`
+path can narrow a `macro_rules!` allowance, but path spelling never establishes
+origin. External allowances bind to the exact dependency source. Built-in data
+macros and `include!` are handled directly, and included Rust remains fully
+analyzed.
 
 `env!` and `option_env!` provide the `compile-environment` effect. `include!`,
 `include_str!`, and `include_bytes!` provide `compile-filesystem`; literal file

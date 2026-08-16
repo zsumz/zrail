@@ -89,13 +89,7 @@ pub(super) fn requires_lock(contract: &Contract) -> bool {
     contract.dependencies.mode == DependencyMode::Locked
         || !contract.source.rust.generated.is_empty()
         || !contract.gates.is_empty()
-        || contract
-            .source
-            .rust
-            .macros
-            .allow
-            .iter()
-            .any(|allowance| allowance.definition.is_some())
+        || !contract.source.rust.macros.allow.is_empty()
         || !contract.ratchets.is_empty()
 }
 

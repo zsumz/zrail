@@ -42,10 +42,19 @@ pub(crate) fn canonicalize(
             },
         );
         let local_macros = local_macro_names(&selected, &macro_definitions);
+        for expansion in &mut file.macros {
+            if !expansion.name.contains("::")
+                && local_macros
+                    .as_ref()
+                    .is_none_or(|names| names.contains(expansion.name.as_str()))
+            {
+                expansion.canonical.clear();
+                expansion.quality = AnalysisQuality::Unresolved;
+            }
+        }
         for expansion in file
-            .macros
+            .macro_expansions
             .iter_mut()
-            .chain(&mut file.macro_expansions)
             .chain(&mut file.opaque_macro_inputs)
             .chain(
                 file.compile_effects
@@ -63,7 +72,7 @@ pub(crate) fn canonicalize(
             }
         }
         let observed = observed_roots(file);
-        let (roots, overflowed) = dependency_roots(selected, &observed);
+        let (roots, overflowed) = dependency_roots(&selected, &observed);
         findings.extend(
             overflowed
                 .iter()
@@ -74,23 +83,29 @@ pub(crate) fn canonicalize(
             .iter_mut()
             .chain(&mut file.calls)
             .chain(&mut file.macros)
-            .chain(&mut file.macro_expansions)
-            .chain(&mut file.opaque_macro_inputs)
             .chain(&mut file.item_macros)
+        {
+            canonicalize_fact_bounded(fact, &roots, &overflowed);
+        }
+        for expansion in file
+            .macro_expansions
+            .iter_mut()
+            .chain(&mut file.opaque_macro_inputs)
             .chain(
                 file.compile_effects
                     .iter_mut()
                     .map(|effect| &mut effect.invocation),
             )
         {
-            canonicalize_fact_bounded(fact, &roots, &overflowed);
+            canonicalize_fact_bounded(&mut expansion.observation, &roots, &overflowed);
+            super::macro_origins::resolve(expansion, &selected);
         }
     }
     index.findings.extend(findings);
 }
 
 fn dependency_roots(
-    packages: Vec<&Package>,
+    packages: &[&Package],
     observed: &BTreeSet<String>,
 ) -> (BTreeMap<String, BTreeSet<String>>, BTreeSet<String>) {
     let mut roots = BTreeMap::<String, BTreeSet<String>>::new();
@@ -121,10 +136,18 @@ fn observed_roots(file: &super::RustFileFacts) -> BTreeSet<String> {
         .iter()
         .chain(&file.calls)
         .chain(&file.macros)
-        .chain(&file.macro_expansions)
-        .chain(&file.opaque_macro_inputs)
+        .chain(file.macro_expansions.iter().map(|fact| &fact.observation))
+        .chain(
+            file.opaque_macro_inputs
+                .iter()
+                .map(|fact| &fact.observation),
+        )
         .chain(&file.item_macros)
-        .chain(file.compile_effects.iter().map(|effect| &effect.invocation))
+        .chain(
+            file.compile_effects
+                .iter()
+                .map(|effect| &effect.invocation.observation),
+        )
         .filter_map(|fact| split_root(&fact.name).map(|(root, _)| visible_root(root).into()))
         .collect()
 }

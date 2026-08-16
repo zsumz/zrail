@@ -1,6 +1,7 @@
 //! Validation and deterministic ordering for resolved lock state.
 
 mod dependency;
+mod macros;
 
 use std::{fmt, path::Path};
 
@@ -12,50 +13,10 @@ impl LockFile {
         canonicalize_packages(self)?;
         canonicalize_generated(self)?;
         canonicalize_gates(self)?;
-        canonicalize_macros(self)?;
+        macros::canonicalize(self)?;
         canonicalize_ratchets(self)?;
         Ok(())
     }
-}
-
-fn canonicalize_macros(lock: &mut LockFile) -> Result<(), LockError> {
-    if lock.semantics < 5 && !lock.macros.is_empty() {
-        return Err(LockError(
-            "locked macro definitions require lock semantics 5 or newer".into(),
-        ));
-    }
-    for definition in &lock.macros {
-        if !valid_root(&definition.path) || !valid_macro_name(&definition.name) {
-            return Err(LockError(format!(
-                "locked macro definition is invalid: {} in {}",
-                definition.name, definition.path
-            )));
-        }
-        if definition.ordinal == 0 || !valid_digest(&definition.sha256) {
-            return Err(LockError(format!(
-                "locked macro definition {} in {} has invalid observation state",
-                definition.name, definition.path
-            )));
-        }
-    }
-    lock.macros.sort();
-    if lock.macros.windows(2).any(|pair| {
-        (&pair[0].path, &pair[0].name, pair[0].ordinal)
-            == (&pair[1].path, &pair[1].name, pair[1].ordinal)
-    }) {
-        return Err(LockError("duplicate locked macro definition".into()));
-    }
-    Ok(())
-}
-
-fn valid_macro_name(value: &str) -> bool {
-    value.split("::").all(|segment| {
-        let mut bytes = segment.bytes();
-        bytes
-            .next()
-            .is_some_and(|byte| byte.is_ascii_alphabetic() || byte == b'_')
-            && bytes.all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
-    })
 }
 
 fn validate_header(lock: &LockFile) -> Result<(), LockError> {
@@ -193,7 +154,7 @@ fn canonicalize_ratchets(lock: &mut LockFile) -> Result<(), LockError> {
     )
 }
 
-fn valid_digest(digest: &str) -> bool {
+pub(super) fn valid_digest(digest: &str) -> bool {
     digest.len() == 64
         && digest
             .bytes()
@@ -207,7 +168,7 @@ fn valid_name(value: &str) -> bool {
             .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_' | b'.'))
 }
 
-fn valid_root(root: &str) -> bool {
+pub(super) fn valid_root(root: &str) -> bool {
     if root == "." {
         return true;
     }

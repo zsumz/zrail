@@ -4,7 +4,7 @@ use proc_macro2::{TokenStream, TokenTree};
 use syn::{Expr, Macro, Pat, Token, parse::Parse, parse::ParseStream, parse::Parser, visit::Visit};
 use zrail_core::AnalysisQuality;
 
-use super::{fact::fact, visitor::FactVisitor};
+use super::{fact::fact, model::MacroExpansionFact, visitor::FactVisitor};
 
 const MAX_SCANNED_TOKENS: usize = 8_192;
 
@@ -82,6 +82,7 @@ fn visit_matches(visitor: &mut FactVisitor<'_>, tokens: TokenStream) -> bool {
         return false;
     };
     visitor.visit_expr(&input.expression);
+    visitor.visit_pat(&input.pattern);
     if let Some(guard) = &input.guard {
         visitor.visit_expr(guard);
     }
@@ -158,6 +159,10 @@ fn scan_path(visitor: &mut FactVisitor<'_>, trees: &[TokenTree], start: usize) -
             expansion.canonical.push(resolved);
         }
         visitor.macros.push(expansion.clone());
+        let expansion = MacroExpansionFact::pending(expansion, local_module);
+        if let Some(TokenTree::Group(group)) = trees.get(end + 2) {
+            super::compile_effects::record_tokens(visitor, group.stream(), &expansion, true);
+        }
         visitor.macro_expansions.push(expansion);
     }
     end
@@ -195,7 +200,7 @@ impl Parse for VecRepeat {
 
 struct MatchesInput {
     expression: Expr,
-    _pattern: Pat,
+    pattern: Pat,
     guard: Option<Expr>,
 }
 
@@ -216,7 +221,7 @@ impl Parse for MatchesInput {
         }
         Ok(Self {
             expression,
-            _pattern: pattern,
+            pattern,
             guard,
         })
     }

@@ -1,7 +1,7 @@
 //! Exact content and source identities remain visible in semantic review.
 
 use crate::{
-    ChangeKind, CrateRootContract, CrateRootSource, LockedMacroDefinition, MacroExpansionAllow,
+    ChangeKind, CrateRootContract, CrateRootSource, LockedMacroImplementation, MacroExpansionAllow,
     MacroExpansionMode, MacroInputMode,
 };
 
@@ -22,8 +22,8 @@ fn opaque_macro_input_is_a_grant_and_local_body_change_is_unknown() {
     after.source.rust.macros.allow[0].inputs = MacroInputMode::Opaque;
     let mut old_lock = crate::LockFile::new("0".repeat(64));
     let mut new_lock = old_lock.clone();
-    old_lock.macros.push(definition("a"));
-    new_lock.macros.push(definition("b"));
+    old_lock.macro_implementations.push(implementation("a"));
+    new_lock.macro_implementations.push(implementation("b"));
 
     let report = compare_architecture(&before, Some(&old_lock), &after, Some(&new_lock));
     assert!(
@@ -32,7 +32,25 @@ fn opaque_macro_input_is_a_grant_and_local_body_change_is_unknown() {
         })
     );
     assert!(report.changes.iter().any(|change| {
-        change.kind == ChangeKind::Unknown && change.rail == "rust.macro-definition"
+        change.kind == ChangeKind::Unknown && change.rail == "rust.macro-implementation"
+    }));
+}
+
+#[test]
+fn repository_macro_package_authority_adds_as_grant_and_removes_as_revoke() {
+    let contract = contract_with_hard_limit(300);
+    let empty = crate::LockFile::new("0".repeat(64));
+    let mut trusted = empty.clone();
+    trusted.macro_implementations.push(implementation("a"));
+
+    let granted = compare_architecture(&contract, Some(&empty), &contract, Some(&trusted));
+    let revoked = compare_architecture(&contract, Some(&trusted), &contract, Some(&empty));
+
+    assert!(granted.changes.iter().any(|change| {
+        change.kind == ChangeKind::Grant && change.rail == "rust.macro-implementation"
+    }));
+    assert!(revoked.changes.iter().any(|change| {
+        change.kind == ChangeKind::Revoke && change.rail == "rust.macro-implementation"
     }));
 }
 
@@ -67,12 +85,11 @@ fn crate_root_and_external_macro_source_changes_fail_closed() {
     }));
 }
 
-fn definition(digit: &str) -> LockedMacroDefinition {
-    LockedMacroDefinition {
-        path: "src/lib.rs".into(),
-        name: "local::query".into(),
-        ordinal: 1,
-        sha256: digit.repeat(64),
+fn implementation(digit: &str) -> LockedMacroImplementation {
+    LockedMacroImplementation {
+        package: "fixture".into(),
+        directory: ".".into(),
+        manifest_sha256: digit.repeat(64),
     }
 }
 
