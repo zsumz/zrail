@@ -2,7 +2,7 @@
 schema = 1
 semantics = 1
 producer = "0.0.1"
-contract_sha256 = "9ede5fbd4c76268d3664f62c67b4dea88a77fb619051563658934c012c3a92df"
+contract_sha256 = "431a4b7187629ff1d243663725801be29c5247a30c67f343a0d70d643b225594"
 ratchet = []
 
 [[package]]
@@ -274,6 +274,15 @@ sha256 = "9ea105b88ae4bb547699df0ba97cac461fc8ddd99ec6323625510c8a8f3e4627"
 name = "ci"
 path = ".github/workflows/ci.yml"
 sha256 = "6fc107adb9715513a64f423c98b5dee44819c6166e546f8220ff63d079444573"
+
+[[gate.input]]
+path = ".github/actions/setup-rust/action.yml"
+sha256 = "e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de"
+
+[[gate]]
+name = "security"
+path = ".github/workflows/security.yml"
+sha256 = "4c95470b78eab4c4af54c79e987bf8ca406776a2d0813783f8ce67d69d0359d9"
 
 [[gate.input]]
 path = ".github/actions/setup-rust/action.yml"

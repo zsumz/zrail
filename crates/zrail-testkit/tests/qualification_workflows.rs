@@ -106,6 +106,29 @@ fn canonical_and_compatibility_toolchains_are_explicit() {
     assert!(compatibility.contains("toolchain: \"1.96.1\""));
 }
 
+#[test]
+fn rustsec_audit_is_exact_online_and_fail_closed() {
+    let workflow = fs::read_to_string(repository_root().join(".github/workflows/security.yml"))
+        .expect("read security workflow");
+    let rejection = workflow
+        .find("repository-local Cargo configuration is not permitted")
+        .expect("security job rejects Cargo configuration");
+    let install = workflow
+        .find("cargo install cargo-audit --version 0.22.2 --locked")
+        .expect("security job installs an exact cargo-audit release");
+    let audit = workflow
+        .find("cargo audit --file Cargo.lock")
+        .expect("security job audits the checked-in lock");
+
+    assert!(rejection < install && install < audit);
+    assert!(workflow.contains(".cargo/audit.toml"));
+    assert!(workflow.contains("pull_request:"));
+    assert!(workflow.contains("branches: [main]"));
+    assert!(workflow.contains("schedule:"));
+    assert!(!workflow.contains("--deny warnings"));
+    assert!(!workflow.contains("rustsec/audit-check"));
+}
+
 fn section<'a>(source: &'a str, start: &str, end: &str) -> &'a str {
     let start = source.find(start).expect("workflow section start");
     let tail = &source[start..];

@@ -32,6 +32,14 @@ inputs = [".github/actions/setup-rust/action.yml"]
 requires = ["check"]
 reason = "The repository demonstrates protected-base analysis without claiming proposal-owned Actions as merge authority."
 
+[[gate]]
+name = "security"
+kind = "ci"
+path = ".github/workflows/security.yml"
+inputs = [".github/actions/setup-rust/action.yml"]
+requires = ["check"]
+reason = "Online RustSec advisory checks complement the complete offline qualification gate."
+
 [[invariant]]
 id = "QUAL-01"
 title = "Reviewed qualification gate changes cannot pass silently"
@@ -49,6 +57,7 @@ evidence = [
   "rust-test:crates/zrail-testkit/tests/qualification_workflows.rs::canonical_and_compatibility_toolchains_are_explicit",
   "gate:check",
   "gate:ci",
+  "gate:security",
 ]
 
 [[invariant]]
