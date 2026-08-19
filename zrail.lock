@@ -240,15 +240,15 @@ sha256 = "2122f85d49f342df8bf22663c398b8b02fd39e7e520d721f000e24d757b84e32"
 
 [[gate.input]]
 path = "crates/zrail-cli/Cargo.toml"
-sha256 = "2976e6079d902fcc3a2af7bb67cf0b078659c15b134710ed23b5d64d9ec25f04"
+sha256 = "88a20d40aa7341a466d45d656a8b340f7c7c0b2d906f578aa33b84c478b5b051"
 
 [[gate.input]]
 path = "crates/zrail-core/Cargo.toml"
-sha256 = "83dcfd224e8fbf776e4d0d21247ba371d9154c5052cc1072bd7b3c3975fc31ee"
+sha256 = "42b8cd60483fa825903e423987baa49423e07de746f13d7f290f26b5b605496d"
 
 [[gate.input]]
 path = "crates/zrail-rust/Cargo.toml"
-sha256 = "3eea7aaf483406155252cc2661828b1f674a10247d714d7155135b45f25c03bd"
+sha256 = "c323d7aa3f6818f20a1878f6e3c982d2908f99fb98b6cf323dc41edd14e7bb4b"
 
 [[gate.input]]
 path = "crates/zrail-testkit/Cargo.toml"

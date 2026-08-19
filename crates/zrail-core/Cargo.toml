@@ -9,7 +9,6 @@ repository.workspace = true
 homepage.workspace = true
 authors.workspace = true
 description = "Language-neutral architecture contracts, lock state, diagnostics, and semantic diffs."
-publish = false
 
 [dependencies]
 serde.workspace = true
