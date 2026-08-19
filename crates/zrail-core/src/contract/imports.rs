@@ -10,6 +10,11 @@ struct ImportHeader {
     imports: Vec<String>,
 }
 
+/// Reads only the top-level `imports` array from TOML contract source.
+///
+/// The returned paths retain source order and are not normalized or resolved.
+/// Malformed TOML is returned as a [`ContractError`] whose message names
+/// `origin`; unknown fields outside the import header are ignored.
 pub fn contract_imports(source: &str, origin: &str) -> Result<Vec<String>, ContractError> {
     toml::from_str::<ImportHeader>(source)
         .map(|header| header.imports)

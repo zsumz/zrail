@@ -8,6 +8,13 @@ use std::{fmt, path::Path};
 use super::{LockError, LockFile};
 
 impl LockFile {
+    /// Validates complete lock identity and orders every repeated field.
+    ///
+    /// Rejects invalid headers, digests, paths, dependency identities, empty
+    /// required values, non-positive ratchets, and duplicate canonical entries.
+    /// On success, packages, dependencies, features, generated roots, gates,
+    /// gate inputs, macro implementations, and ratchets are deterministic.
+    /// A failure may leave fields that were visited earlier partially sorted.
     pub fn canonicalize(&mut self) -> Result<(), LockError> {
         validate_header(self)?;
         canonicalize_packages(self)?;

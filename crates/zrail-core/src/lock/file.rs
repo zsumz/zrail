@@ -7,6 +7,12 @@ use crate::input::{read_text, replace_text};
 use super::{LockError, LockFile};
 
 impl LockFile {
+    /// Reads, validates, and canonicalizes an existing lock file.
+    ///
+    /// The path must be a bounded UTF-8 regular file, not a symlink. Parsing
+    /// rejects unknown TOML fields, validation rejects incomplete state, and
+    /// the original bytes must exactly equal [`Self::render`] or an error asks
+    /// the caller to run `zrail update`.
     pub fn read(path: &Path) -> Result<Self, LockError> {
         let source = read_text(path).map_err(LockError)?;
         let mut lock = toml::from_str::<Self>(&source)
@@ -22,6 +28,10 @@ impl LockFile {
         Ok(lock)
     }
 
+    /// Reads a lock when present, returning `None` only for true absence.
+    ///
+    /// Dangling symlinks, directories, permission failures, invalid content,
+    /// and every inspection error other than `NotFound` return [`LockError`].
     pub fn read_optional(path: &Path) -> Result<Option<Self>, LockError> {
         match fs::symlink_metadata(path) {
             Ok(_) => Self::read(path).map(Some),
@@ -33,6 +43,10 @@ impl LockFile {
         }
     }
 
+    /// Returns canonical generated-file text without mutating this lock.
+    ///
+    /// A clone is validated and ordered before pretty TOML serialization. The
+    /// result starts with the generated-file warning and ends with a newline.
     pub fn render(&self) -> Result<String, LockError> {
         let mut lock = self.clone();
         lock.canonicalize()?;
@@ -43,6 +57,10 @@ impl LockFile {
         ))
     }
 
+    /// Canonically renders and safely replaces or creates `path`.
+    ///
+    /// Rendering failures perform no write. Replacement uses a synced temporary
+    /// file and refuses existing symlinks or non-regular destinations.
     pub fn write(&self, path: &Path) -> Result<(), LockError> {
         replace_text(path, &self.render()?).map_err(LockError)
     }

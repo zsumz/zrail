@@ -5,9 +5,17 @@ use std::{
     path::{Component, Path, PathBuf},
 };
 
+/// Maximum UTF-8 bytes accepted by bounded repository glob matching.
 pub const MAX_GLOB_PATTERN_BYTES: usize = 4 * 1024;
+/// Maximum normalized path segments accepted in a repository glob pattern.
 pub const MAX_GLOB_PATTERN_SEGMENTS: usize = 256;
 
+/// Normalizes a lexical repository-relative path to portable `/` separators.
+///
+/// Current-directory components are removed. Absolute paths, parent traversal,
+/// platform prefixes, backslashes, and non-UTF-8 components return an error.
+/// Empty and current-directory paths normalize to the empty string. No
+/// filesystem access or symlink resolution is performed.
 pub fn normalize_relative(path: &Path) -> Result<String, String> {
     if path.is_absolute() {
         return Err(format!(
@@ -42,6 +50,11 @@ pub fn normalize_relative(path: &Path) -> Result<String, String> {
     Ok(parts.join("/"))
 }
 
+/// Renders `path` lexically relative to `root` using portable `/` separators.
+///
+/// Both arguments are used as supplied and are not canonicalized. The function
+/// rejects paths outside `root`, non-UTF-8 or non-portable components, and any
+/// remaining root, prefix, or parent component.
 pub fn repository_relative(root: &Path, path: &Path) -> Result<String, String> {
     let relative = path.strip_prefix(root).map_err(|_| {
         format!(
@@ -80,6 +93,12 @@ pub fn repository_relative(root: &Path, path: &Path) -> Result<String, String> {
     Ok(parts.join("/"))
 }
 
+/// Resolves a repository-relative file name without allowing parent symlink escape.
+///
+/// The repository and candidate parent are canonicalized, and the resolved
+/// parent must remain under the canonical root. `path` must be nonempty and meet
+/// [`normalize_relative`] requirements. The returned file itself need not exist;
+/// callers that read it must separately require a regular non-symlink file.
 pub fn repository_file(root: &Path, path: &Path) -> Result<PathBuf, String> {
     let root = fs::canonicalize(root)
         .map_err(|error| format!("open repository {}: {error}", root.display()))?;
@@ -105,6 +124,12 @@ pub fn repository_file(root: &Path, path: &Path) -> Result<PathBuf, String> {
     Ok(parent.join(name))
 }
 
+/// Matches a bounded, slash-separated repository glob against a path.
+///
+/// Leading and trailing slashes are ignored. `?` matches one byte, `*` matches
+/// zero or more bytes within one segment, and a complete `**` segment matches
+/// zero or more path segments. There is no escape syntax. Oversized patterns or
+/// patterns with too many normalized segments fail closed by returning `false`.
 pub fn glob_matches(pattern: &str, path: &str) -> bool {
     let pattern = pattern.trim_matches('/');
     let path = path.trim_matches('/');

@@ -12,9 +12,12 @@ use crate::{
     path::{glob_matches, repository_file, repository_relative},
 };
 
+/// Maximum combined UTF-8 bytes accepted across a contract and its imports.
 pub const MAX_CONTRACT_BYTES: usize = 16 * 1024 * 1024;
+/// Maximum number of distinct contract files accepted in one import graph.
 pub const MAX_CONTRACT_FILES: usize = 256;
 const MAX_IMPORT_DEPTH: usize = 64;
+/// Maximum combined import directives accepted across a contract graph.
 pub const MAX_IMPORT_DIRECTIVES: usize = 256;
 
 use super::{discover, hash::contract_sha256, merge::MergeState, validate::validate_contract};
@@ -23,24 +26,34 @@ mod file;
 pub(super) use file::ContractFile;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+/// Exact source bytes contributing to a loaded contract digest.
 pub struct ContractSource {
+    /// Normalized repository-relative path to the source file.
     pub path: String,
+    /// UTF-8 file content exactly as read from disk.
     pub content: String,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+/// A validated merged contract together with its source authority.
 pub struct ContractBundle {
+    /// Typed policy produced by deterministic import merging and validation.
     pub contract: super::Contract,
+    /// Contributing source files sorted by repository-relative path.
     pub sources: Vec<ContractSource>,
+    /// Lowercase SHA-256 digest of every source path and exact source byte string.
     pub sha256: String,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+/// One or more human-readable contract loading or validation failures.
+/// Messages are deterministic for deterministic input, but are not a stable machine protocol.
 pub struct ContractError {
     messages: Vec<String>,
 }
 
 impl ContractError {
+    /// Creates an error containing exactly one human-readable message.
     pub fn one(message: impl Into<String>) -> Self {
         Self {
             messages: vec![message.into()],
@@ -51,6 +64,7 @@ impl ContractError {
         Self { messages }
     }
 
+    /// Returns all failure messages in their deterministic reporting order.
     pub fn messages(&self) -> &[String] {
         &self.messages
     }
@@ -64,6 +78,11 @@ impl fmt::Display for ContractError {
 
 impl Error for ContractError {}
 
+/// Loads, merges, and validates a repository-bounded architecture contract.
+/// `root` is canonicalized; `config` and every import must be regular, non-symlink files inside it.
+/// Imports are deterministic. Inaccessible files, escapes, aliases, import-graph errors, malformed
+/// TOML, unknown keys, merge or validation failures, and safety-limit violations return
+/// [`ContractError`]; no partial contract is returned.
 pub fn load_contract(root: &Path, config: &Path) -> Result<ContractBundle, ContractError> {
     let root = fs::canonicalize(root).map_err(|error| {
         ContractError::one(format!("open repository {}: {error}", root.display()))

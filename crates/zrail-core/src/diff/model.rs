@@ -6,42 +6,67 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
+/// Semantic impact assigned to one architecture change.
 pub enum ChangeKind {
+    /// Policy authority was broadened or a hard limit was weakened.
     Grant,
+    /// Policy authority was narrowed or a hard limit was tightened.
     Revoke,
+    /// An advisory target or measured ratchet moved in a weaker direction.
     Debt,
+    /// An advisory target or measured ratchet moved in a stronger direction.
     Cleanup,
+    /// Architecture state changed without changing effective authority.
     Neutral,
+    /// Effective authority cannot be established from the supplied state.
     Unknown,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
+/// One deterministic semantic change to an architecture rail.
 pub struct ArchitectureChange {
+    /// Authority or debt impact of the change.
     pub kind: ChangeKind,
+    /// Stable contract or lock rail identity.
     pub rail: String,
+    /// Stable identity of the governed package, rule, path, or authority state.
     pub subject: String,
+    /// Human-readable explanation of the semantic change.
     pub message: String,
+    /// Canonical prior value, when the change compares values.
     pub before: Option<String>,
+    /// Canonical new value, when the change compares values.
     pub after: Option<String>,
 }
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
+/// Counts of semantic changes grouped by impact.
 pub struct DiffSummary {
+    /// Number of authority-broadening changes.
     pub grants: usize,
+    /// Number of authority-tightening changes.
     pub revokes: usize,
+    /// Number of debt-increasing changes.
     pub debt: usize,
+    /// Number of debt-reducing changes.
     pub cleanup: usize,
+    /// Number of authority-neutral changes.
     pub neutral: usize,
+    /// Number of changes whose authority could not be established.
     pub unknown: usize,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
+/// Deterministically ordered semantic architecture diff.
 pub struct DiffReport {
+    /// Diff wire-format version; currently `1`.
     pub schema: u64,
+    /// Impact counts derived from `changes`.
     pub summary: DiffSummary,
+    /// Changes sorted by kind, rail, subject, then message.
     pub changes: Vec<ArchitectureChange>,
 }
 
@@ -97,10 +122,15 @@ impl DiffReport {
         }
     }
 
+    /// Returns `true` when automation must fail closed.
+    ///
+    /// Grants, increased debt, and unknown authority deny acceptance; revokes,
+    /// cleanup, and neutral changes do not.
     pub fn denies_grants(&self) -> bool {
         self.summary.grants > 0 || self.summary.debt > 0 || self.summary.unknown > 0
     }
 
+    /// Serializes the diff as pretty JSON terminated by one newline.
     pub fn json(&self) -> Result<String, serde_json::Error> {
         serde_json::to_string_pretty(self).map(|mut value| {
             value.push('\n');
@@ -108,6 +138,7 @@ impl DiffReport {
         })
     }
 
+    /// Renders stored changes followed by a one-line impact summary.
     pub fn human(&self) -> String {
         let mut output = String::new();
         for change in &self.changes {

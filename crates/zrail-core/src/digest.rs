@@ -2,6 +2,7 @@
 
 use sha2::{Digest as _, Sha256};
 
+/// Returns the lowercase 64-character SHA-256 digest of `bytes`.
 pub fn sha256_hex(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }

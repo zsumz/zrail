@@ -4,6 +4,11 @@ use crate::{Contract, LOCK_SCHEMA, LOCK_SEMANTICS, LockFile};
 
 use super::{ArchitectureChange, ChangeKind, DiffReport, contract, lock};
 
+/// Compares effective contract policy and optional resolved lock state.
+///
+/// This compatibility entry point does not validate whether either lock belongs
+/// to its contract. Use [`compare_architecture_checked`] whenever contract
+/// digests are available. Returned changes and summary counts are deterministic.
 pub fn compare_architecture(
     before: &Contract,
     before_lock: Option<&LockFile>,
@@ -15,6 +20,14 @@ pub fn compare_architecture(
     DiffReport::new(changes)
 }
 
+/// Compares contract policy and lock state with fail-closed authority checks.
+///
+/// Each supplied lock must use the supported schema and current semantics and
+/// its `contract_sha256` must equal the corresponding digest argument. A missing,
+/// stale, or incompatible lock contributes an [`ChangeKind::Unknown`] change on
+/// `lock.authority`; resolved lock contents are compared only when both sides
+/// have valid authority. Contract changes are always compared. The function does
+/// no I/O and returns deterministically ordered changes.
 pub fn compare_architecture_checked(
     before: &Contract,
     before_sha256: &str,

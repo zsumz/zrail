@@ -9,19 +9,35 @@ use std::{
 
 static NEXT_TEMPORARY: AtomicU64 = AtomicU64::new(0);
 
+/// Shared maximum directory recursion depth for repository adapters.
 pub const MAX_DIRECTORY_DEPTH: usize = 128;
+/// Default maximum bytes accepted for one architecture input or text output.
 pub const MAX_INPUT_BYTES: usize = 4 * 1024 * 1024;
+/// Shared maximum filesystem entries inspected by repository adapters.
 pub const MAX_REPOSITORY_ENTRIES: usize = 200_000;
 
+/// Reads a regular non-symlink file as UTF-8, bounded by [`MAX_INPUT_BYTES`].
+///
+/// Returns a human-readable error for inspection or read failures, non-regular
+/// files, symlinks, oversized content (including concurrent growth), or invalid
+/// UTF-8. The function never follows a symlink at `path`.
 pub fn read_text(path: &Path) -> Result<String, String> {
     read_text_with_limit(path, MAX_INPUT_BYTES)
 }
 
+/// Reads a regular non-symlink file as UTF-8 with a caller-selected byte limit.
+///
+/// The same rejection guarantees as [`read_text`] apply; `limit` is inclusive.
 pub fn read_text_with_limit(path: &Path, limit: usize) -> Result<String, String> {
     let bytes = read_bytes_with_limit(path, limit)?;
     String::from_utf8(bytes).map_err(|error| format!("read {} as UTF-8: {error}", path.display()))
 }
 
+/// Reads at most `limit` bytes from a regular non-symlink file.
+///
+/// Metadata is checked before opening and the read itself is bounded to detect
+/// concurrent growth. Empty files are valid. All failures are returned as
+/// human-readable strings and no partial bytes are returned.
 pub fn read_bytes_with_limit(path: &Path, limit: usize) -> Result<Vec<u8>, String> {
     let metadata = require_regular(path)?;
     if metadata.len() > limit as u64 {
@@ -38,6 +54,12 @@ pub fn read_bytes_with_limit(path: &Path, limit: usize) -> Result<Vec<u8>, Strin
     Ok(bytes)
 }
 
+/// Replaces or creates a text file through a synced temporary file beside it.
+///
+/// `contents` must not exceed [`MAX_INPUT_BYTES`]. An existing destination must
+/// be a regular non-symlink file. The temporary file is removed on failure and
+/// renamed over `path` only after its contents are written and file-synced.
+/// Parent directories are not created or directory-synced.
 pub fn replace_text(path: &Path, contents: &str) -> Result<(), String> {
     validate_output(path, contents)?;
     match fs::symlink_metadata(path) {
@@ -57,6 +79,12 @@ pub fn replace_text(path: &Path, contents: &str) -> Result<(), String> {
     Ok(())
 }
 
+/// Creates a new text file without replacing any existing filesystem entry.
+///
+/// `contents` must not exceed [`MAX_INPUT_BYTES`]. Bytes are written and synced
+/// to a new temporary file, then hard-linked to `path`; the temporary name is
+/// removed afterward. The call fails closed if `path` already exists, including
+/// as a symlink. Parent directories are not created or directory-synced.
 pub fn create_text(path: &Path, contents: &str) -> Result<(), String> {
     validate_output(path, contents)?;
     match fs::symlink_metadata(path) {

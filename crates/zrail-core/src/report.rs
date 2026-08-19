@@ -8,30 +8,47 @@ use crate::diagnostic::{Finding, Severity, sort_findings};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
+/// Overall result of repository architecture analysis.
 pub enum ReportStatus {
+    /// Analysis completed with no error-severity findings.
     Pass,
+    /// Analysis completed with one or more error-severity findings.
     Fail,
+    /// Analysis could not produce a valid architecture result.
     Invalid,
 }
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
+/// Finding counts grouped by failure impact.
 pub struct ReportSummary {
+    /// Number of error-severity findings.
     pub errors: usize,
+    /// Number of warning-severity findings.
     pub warnings: usize,
+    /// Number of note-severity findings.
     pub notes: usize,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
+/// Deterministic machine- and human-readable architecture analysis result.
 pub struct Report {
+    /// Report wire-format version; currently `1`.
     pub schema: u64,
+    /// Overall pass, fail, or invalid state.
     pub status: ReportStatus,
+    /// Severity counts derived from `findings`.
     pub summary: ReportSummary,
+    /// Diagnostics in deterministic source order.
     pub findings: Vec<Finding>,
 }
 
 impl Report {
+    /// Builds a schema-1 report from findings sorted deterministically in place.
+    ///
+    /// The status is `Pass` exactly when no finding has [`Severity::Error`]; this
+    /// constructor never emits `Invalid`.
     pub fn from_findings(mut findings: Vec<Finding>) -> Self {
         sort_findings(&mut findings);
         let summary = ReportSummary {
@@ -60,6 +77,7 @@ impl Report {
         }
     }
 
+    /// Serializes the report as pretty JSON terminated by one newline.
     pub fn json(&self) -> Result<String, serde_json::Error> {
         serde_json::to_string_pretty(self).map(|mut value| {
             value.push('\n');
@@ -67,6 +85,7 @@ impl Report {
         })
     }
 
+    /// Renders findings and the summary in their stored deterministic order.
     pub fn human(&self) -> String {
         let mut output = String::new();
         for finding in &self.findings {

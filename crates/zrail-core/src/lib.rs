@@ -1,4 +1,6 @@
-//! Language-neutral contracts, diagnostics, locks, and architecture diffs.
+//! Language-neutral architecture contracts, lock state, diagnostics, and semantic diffs.
+#![doc = include_str!("crate.md")]
+#![deny(missing_docs)]
 
 mod contract;
 mod diagnostic;
