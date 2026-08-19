@@ -5,7 +5,7 @@ mod init_baseline;
 
 use std::{fs, path::Path};
 
-use zrail_core::{ReportStatus, input::create_text, path::repository_file};
+use zrail_core::{ReportStatus, create_text, repository_file};
 use zrail_rust::{BaselinePlan, build_lock, check_repository_with_lock, discover_source_roots};
 
 use crate::app::{args::InitOptions, error::CliError};

@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::{
-    CycleMode, ExternalDependencyMode, Finding, FindingSink, PolicyMode, path::glob_matches,
+    CycleMode, ExternalDependencyMode, Finding, FindingSink, PolicyMode, glob_matches,
 };
 
 use crate::cargo::{DependencyKind, Package};

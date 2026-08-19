@@ -2,11 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use zrail_core::{
-    LockedMacroImplementation,
-    input::{MAX_INPUT_BYTES, read_bytes_with_limit},
-    sha256_hex,
-};
+use zrail_core::{LockedMacroImplementation, MAX_INPUT_BYTES, read_bytes_with_limit, sha256_hex};
 
 use crate::{
     inventory::RepositoryEntryKind,

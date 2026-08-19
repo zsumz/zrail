@@ -5,7 +5,7 @@ use std::{
     path::Path,
 };
 
-use zrail_core::{Finding, GeneratedSourceContract, input::read_text_with_limit};
+use zrail_core::{Finding, GeneratedSourceContract, read_text_with_limit};
 
 use crate::inventory::{RepositoryEntry, RepositoryEntryKind, under_root};
 

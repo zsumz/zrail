@@ -1,6 +1,6 @@
 //! Exclusion matching distinguishes result filtering from proven subtree pruning.
 
-use zrail_core::{Contract, path::glob_matches};
+use zrail_core::{Contract, glob_matches};
 
 pub(super) fn excluded(contract: &Contract, relative: &str) -> bool {
     contract.repository.exclude.iter().any(|pattern| {

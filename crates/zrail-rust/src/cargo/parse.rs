@@ -3,7 +3,7 @@
 use std::{collections::BTreeSet, error::Error, fmt, path::Path};
 
 use toml::Value;
-use zrail_core::input::read_text;
+use zrail_core::read_text;
 
 use crate::inventory::RepositoryInventory;
 

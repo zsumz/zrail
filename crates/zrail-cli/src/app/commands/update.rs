@@ -4,7 +4,7 @@ use std::path::Path;
 
 use zrail_core::{
     DiffReport, LockFile, ReportStatus, compare_architecture_checked, load_contract,
-    path::repository_file,
+    repository_file,
 };
 use zrail_rust::{build_lock, check_repository_with_lock};
 

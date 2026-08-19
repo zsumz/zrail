@@ -80,11 +80,6 @@ pub fn repository_relative(root: &Path, path: &Path) -> Result<String, String> {
     Ok(parts.join("/"))
 }
 
-pub fn join_inside(root: &Path, relative: &str) -> Result<PathBuf, String> {
-    let normalized = normalize_relative(Path::new(relative))?;
-    Ok(root.join(normalized))
-}
-
 pub fn repository_file(root: &Path, path: &Path) -> Result<PathBuf, String> {
     let root = fs::canonicalize(root)
         .map_err(|error| format!("open repository {}: {error}", root.display()))?;

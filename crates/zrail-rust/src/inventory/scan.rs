@@ -7,9 +7,8 @@ use std::{
 };
 
 use zrail_core::{
-    Contract,
-    input::{MAX_DIRECTORY_DEPTH, MAX_REPOSITORY_ENTRIES, read_text_with_limit},
-    path::repository_relative,
+    Contract, MAX_DIRECTORY_DEPTH, MAX_REPOSITORY_ENTRIES, read_text_with_limit,
+    repository_relative,
 };
 
 use super::{

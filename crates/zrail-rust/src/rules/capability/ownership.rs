@@ -2,7 +2,7 @@
 
 use std::collections::BTreeSet;
 
-use zrail_core::{Finding, FindingSink, OwnerKind, path::glob_matches};
+use zrail_core::{Finding, FindingSink, OwnerKind, glob_matches};
 
 use super::{RuleContext, path_matches};
 

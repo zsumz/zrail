@@ -7,10 +7,7 @@ use std::{
     path::Path,
 };
 
-use zrail_core::{
-    input::{MAX_INPUT_BYTES, MAX_REPOSITORY_ENTRIES},
-    path::normalize_relative,
-};
+use zrail_core::{MAX_INPUT_BYTES, MAX_REPOSITORY_ENTRIES, normalize_relative};
 
 use crate::app::error::CliError;
 

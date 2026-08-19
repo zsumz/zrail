@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use zrail_core::input::replace_text;
+use zrail_core::replace_text;
 use zrail_rust::{BaselinePlan, discover_baseline};
 
 use crate::app::args::InitPreset;

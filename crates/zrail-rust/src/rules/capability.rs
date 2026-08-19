@@ -7,7 +7,7 @@ mod ownership_call;
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use zrail_core::{AnalysisQuality, Finding, FindingSink, path::glob_matches};
+use zrail_core::{AnalysisQuality, Finding, FindingSink, glob_matches};
 
 use crate::{
     cargo::Package,

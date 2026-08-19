@@ -2,7 +2,7 @@
 
 use std::{collections::BTreeMap, fs, path::PathBuf};
 
-use zrail_core::contract::{
+use zrail_core::{
     Budget, Contract, CycleMode, DependenciesContract, DependencyMode, ExactMode, FacadeMode,
     FileSizeContract, HygieneContract, LintSuppressionMode, ModuleDocsMode, PolicyMode,
     RepositoryContract, RustSourceContract, SourceContract, SymlinkMode, TestMode,

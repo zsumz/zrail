@@ -2,12 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use zrail_core::{
-    Finding,
-    input::{MAX_INPUT_BYTES, read_bytes_with_limit},
-    path::glob_matches,
-    sha256_hex,
-};
+use zrail_core::{Finding, MAX_INPUT_BYTES, glob_matches, read_bytes_with_limit, sha256_hex};
 
 use crate::inventory::{RepositoryEntry, RepositoryEntryKind, under_root};
 

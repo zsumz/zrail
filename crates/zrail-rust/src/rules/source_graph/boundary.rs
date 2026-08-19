@@ -1,6 +1,6 @@
 //! Source graph targets must remain regular, indexed Rust files inside declared roots.
 
-use zrail_core::{AnalysisQuality, Finding, SourceSpan, path::glob_matches};
+use zrail_core::{AnalysisQuality, Finding, SourceSpan, glob_matches};
 
 use crate::{
     inventory::{FileClass, RepositoryEntryKind},

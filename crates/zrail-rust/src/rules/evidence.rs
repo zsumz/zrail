@@ -5,9 +5,8 @@ mod gates;
 use std::collections::BTreeMap;
 
 use zrail_core::{
-    EvidenceReference, Finding, FindingSink,
-    input::{MAX_INPUT_BYTES, read_text_with_limit},
-    parse_evidence_reference,
+    EvidenceReference, Finding, FindingSink, MAX_INPUT_BYTES, parse_evidence_reference,
+    read_text_with_limit,
 };
 
 use crate::inventory::{FileClass, RepositoryEntry, RepositoryEntryKind};

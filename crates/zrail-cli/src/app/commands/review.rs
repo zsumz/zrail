@@ -1,7 +1,7 @@
 //! Protected source review derives proposed architecture without writing it.
 
 use zrail_core::{
-    Finding, LOCK_SCHEMA, LockFile, Report, ReportStatus, load_contract, path::repository_file,
+    Finding, LOCK_SCHEMA, LockFile, Report, ReportStatus, load_contract, repository_file,
 };
 use zrail_rust::check_repository;
 

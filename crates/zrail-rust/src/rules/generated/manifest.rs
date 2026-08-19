@@ -3,7 +3,7 @@
 use std::path::Path;
 
 use serde::Deserialize;
-use zrail_core::{GeneratedSourceContract, input::read_text_with_limit, path::normalize_relative};
+use zrail_core::{GeneratedSourceContract, normalize_relative, read_text_with_limit};
 
 pub(super) const MAX_FILES: usize = 20_000;
 pub(super) const MAX_INPUTS: usize = 20_000;

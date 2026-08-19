@@ -8,7 +8,7 @@ use std::{
 };
 
 use toml::Value;
-use zrail_core::path::{glob_matches, normalize_relative, repository_relative};
+use zrail_core::{glob_matches, normalize_relative, repository_relative};
 
 use super::{model::Package, parse::CargoModelError};
 

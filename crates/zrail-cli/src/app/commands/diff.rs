@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use zrail_core::{LockFile, compare_architecture_checked, load_contract, path::repository_file};
+use zrail_core::{LockFile, compare_architecture_checked, load_contract, repository_file};
 
 use crate::app::{
     args::{DiffMode, DiffOptions},

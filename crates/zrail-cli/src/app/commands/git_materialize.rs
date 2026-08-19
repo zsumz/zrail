@@ -10,9 +10,8 @@ use std::{
 };
 
 use zrail_core::{
-    MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES, contract_imports,
-    input::MAX_INPUT_BYTES,
-    path::{glob_matches, normalize_relative},
+    MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES, MAX_INPUT_BYTES,
+    contract_imports, glob_matches, normalize_relative,
 };
 
 use crate::app::error::CliError;

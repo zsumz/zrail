@@ -2,7 +2,7 @@
 
 use zrail_core::{
     ContractBundle, DiffReport, LockFile, compare_architecture_checked, load_contract,
-    path::repository_file,
+    repository_file,
 };
 
 use crate::app::{args::UpdateOptions, error::CliError};

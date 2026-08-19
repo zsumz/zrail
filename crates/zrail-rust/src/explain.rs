@@ -9,7 +9,7 @@ mod render;
 use std::path::Path;
 
 use serde::{Deserialize, Serialize};
-use zrail_core::path::{glob_matches, normalize_relative};
+use zrail_core::{glob_matches, normalize_relative};
 
 use crate::{
     engine::{CheckError, load_model},

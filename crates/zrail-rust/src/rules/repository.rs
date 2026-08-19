@@ -3,7 +3,7 @@
 use std::{collections::BTreeSet, fs, path::Path};
 
 use zrail_core::{
-    AnalysisQuality, Finding, FindingSink, OwnerKind, PolicyMode, SymlinkMode, path::glob_matches,
+    AnalysisQuality, Finding, FindingSink, OwnerKind, PolicyMode, SymlinkMode, glob_matches,
 };
 
 use crate::inventory::RepositoryEntryKind;

@@ -2,7 +2,7 @@
 
 use std::path::{Path, PathBuf};
 
-use zrail_core::{ContractBundle, load_contract, path::repository_file};
+use zrail_core::{ContractBundle, load_contract, repository_file};
 
 use crate::{
     cargo::{CargoWorkspace, apply_attestations, load_cargo_workspace},

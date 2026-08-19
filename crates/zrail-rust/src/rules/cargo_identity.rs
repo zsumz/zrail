@@ -3,8 +3,7 @@
 use std::collections::BTreeSet;
 
 use zrail_core::{
-    AnalysisQuality, Contract, Finding, FindingSink, MacroExpansionMode, OwnerKind,
-    path::glob_matches,
+    AnalysisQuality, Contract, Finding, FindingSink, MacroExpansionMode, OwnerKind, glob_matches,
 };
 
 use crate::cargo::{CrateRootAuthority, Package, attestation_matches, rust_crate_root};

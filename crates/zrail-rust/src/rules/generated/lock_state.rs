@@ -3,8 +3,7 @@
 use std::path::Path;
 
 use zrail_core::{
-    GeneratedSourceContract, LockedGeneratedSource,
-    input::{MAX_INPUT_BYTES, read_bytes_with_limit},
+    GeneratedSourceContract, LockedGeneratedSource, MAX_INPUT_BYTES, read_bytes_with_limit,
     sha256_hex,
 };
 

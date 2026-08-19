@@ -1,6 +1,6 @@
 //! Path-scoped source ownership includes every relevant declared destination.
 
-use zrail_core::{Contract, OwnerKind, path::glob_matches};
+use zrail_core::{Contract, OwnerKind, glob_matches};
 
 use super::{CallOwnerExplanation, CapabilityOwnerExplanation};
 
