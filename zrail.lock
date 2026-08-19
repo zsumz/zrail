@@ -2,7 +2,7 @@
 schema = 7
 semantics = 8
 producer = "0.0.1"
-contract_sha256 = "05080167d9b2fac86ece1965ea6027ff4f10259ca0a8dacac73c882efd521819"
+contract_sha256 = "2ec19a31d9c335dd6309bd9b42e04681dd01746a9a3d23c164b7e2a16ddb2882"
 ratchet = []
 
 [[package]]
@@ -219,24 +219,44 @@ sha256 = "ba696487ef1d5c82e4a9812bfaf59b036609d1d4405f8808f7f055d425160d2a"
 
 [[gate.input]]
 path = ".github/actions/setup-rust/action.yml"
-sha256 = "e15ed6890fd6eb6f4a98a4b388ef073c059d24c70eeb3fcd48049f77f135bab3"
+sha256 = "e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de"
 
 [[gate]]
 name = "check"
 path = "scripts/check"
-sha256 = "7983dd1d870153b339b63faea6d68b49d98220cfe1c0711bf6e79742ebca171a"
+sha256 = "647036c5e76fc3b5a151f72e12cb05d002e251f7db2939501c227eacbc9366f5"
 
 [[gate.input]]
 path = ".gitignore"
 sha256 = "7066af9c9876fc4f998a35dafa81084a22ff63dd21841e3f47ef7a3f7046db25"
 
 [[gate.input]]
+path = "Cargo.toml"
+sha256 = "fc297e1c1ee0b3d0a08ae7aee2def1ec1b32cef17dc8c0d11fdf312ee7a5596d"
+
+[[gate.input]]
 path = "clippy.toml"
 sha256 = "2122f85d49f342df8bf22663c398b8b02fd39e7e520d721f000e24d757b84e32"
 
 [[gate.input]]
+path = "crates/zrail-cli/Cargo.toml"
+sha256 = "2976e6079d902fcc3a2af7bb67cf0b078659c15b134710ed23b5d64d9ec25f04"
+
+[[gate.input]]
+path = "crates/zrail-core/Cargo.toml"
+sha256 = "83dcfd224e8fbf776e4d0d21247ba371d9154c5052cc1072bd7b3c3975fc31ee"
+
+[[gate.input]]
+path = "crates/zrail-rust/Cargo.toml"
+sha256 = "3eea7aaf483406155252cc2661828b1f674a10247d714d7155135b45f25c03bd"
+
+[[gate.input]]
+path = "crates/zrail-testkit/Cargo.toml"
+sha256 = "1aa81488422c00a6c527b92584557cd3453d3ca7602de2658ea27e7e04974c0b"
+
+[[gate.input]]
 path = "rust-toolchain.toml"
-sha256 = "5a357c16adbb4740c3264b315c59c4882c286072146d7198757096197b498c52"
+sha256 = "279d77167cec5426fa80f457cd066dc74a360fbe4e2816f4f3fa01487a918fdc"
 
 [[gate.input]]
 path = "rustfmt.toml"
@@ -253,8 +273,8 @@ sha256 = "9ea105b88ae4bb547699df0ba97cac461fc8ddd99ec6323625510c8a8f3e4627"
 [[gate]]
 name = "ci"
 path = ".github/workflows/ci.yml"
-sha256 = "1e358cf6b316f0797eb71b2ce1fbe71ff4ee5fa19361e8e9ec06e9eaf954e916"
+sha256 = "6fc107adb9715513a64f423c98b5dee44819c6166e546f8220ff63d079444573"
 
 [[gate.input]]
 path = ".github/actions/setup-rust/action.yml"
-sha256 = "e15ed6890fd6eb6f4a98a4b388ef073c059d24c70eeb3fcd48049f77f135bab3"
+sha256 = "e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de"

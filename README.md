@@ -184,9 +184,13 @@ zrail diff --before ROOT --after ROOT [--deny-grants]
 
 `QUAL-01` requires the reviewed local and hosted gates to remain connected to
 exact test evidence. The lock hashes each gate and its declared behavioral
-inputs, including helper scripts, workflow actions, the Rust toolchain,
-formatting and lint configuration, and ignore rules, so changing effective
-qualification behavior cannot pass silently.
+inputs, including helper scripts, workflow actions, workspace manifests, the
+Rust toolchain, formatting and lint configuration, and ignore rules, so
+changing effective qualification behavior cannot pass silently.
+
+Canonical qualification uses Rust 1.97.1. A separate compile-only job checks
+all targets and features with Rust 1.96.1, preserving the declared Rust 1.96
+source compatibility floor without qualifying releases on an older compiler.
 
 `QUAL-02` requires pull requests to pass independent source analysis by a zrail
 binary built from the protected base commit. It verifies observed source and the

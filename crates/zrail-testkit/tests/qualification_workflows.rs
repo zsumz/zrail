@@ -47,9 +47,10 @@ fn cargo_configuration_is_rejected_before_every_ci_cargo_invocation() {
     let workflow = fs::read_to_string(repository_root().join(".github/workflows/ci.yml"))
         .expect("read CI workflow");
     let canonical = section(&workflow, "  canonical:", "  portable:");
-    let portable = section(&workflow, "  portable:", "__end_of_workflow__");
+    let portable = section(&workflow, "  portable:", "  compatibility:");
+    let compatibility = section(&workflow, "  compatibility:", "__end_of_workflow__");
 
-    for job in [canonical, portable] {
+    for job in [canonical, portable, compatibility] {
         let rejection = job
             .find("repository-local Cargo configuration is not permitted")
             .expect("job rejects Cargo configuration");
@@ -63,7 +64,7 @@ fn cargo_configuration_is_rejected_before_every_ci_cargo_invocation() {
         workflow
             .matches("repository-local Cargo configuration is not permitted")
             .count(),
-        2
+        3
     );
 }
 
@@ -78,6 +79,31 @@ fn local_gate_rejects_cargo_configuration_before_cargo_commands() {
 
     assert!(rejection < first_cargo);
     assert!(script.contains("-e \"$cargo_config\" || -L \"$cargo_config\""));
+}
+
+#[test]
+fn self_check_selects_the_zrail_binary_explicitly() {
+    let script =
+        fs::read_to_string(repository_root().join("scripts/check")).expect("read canonical gate");
+
+    assert!(script.contains("cargo run --quiet --locked --offline -p zrail --bin zrail -- check"));
+}
+
+#[test]
+fn canonical_and_compatibility_toolchains_are_explicit() {
+    let root = repository_root();
+    let toolchain =
+        fs::read_to_string(root.join("rust-toolchain.toml")).expect("read canonical toolchain");
+    let setup = fs::read_to_string(root.join(".github/actions/setup-rust/action.yml"))
+        .expect("read Rust setup action");
+    let workflow =
+        fs::read_to_string(root.join(".github/workflows/ci.yml")).expect("read CI workflow");
+    let compatibility = section(&workflow, "  compatibility:", "__end_of_workflow__");
+
+    assert!(toolchain.contains("channel = \"1.97.1\""));
+    assert!(setup.contains("default: \"1.97.1\""));
+    assert!(compatibility.contains("name: compatibility (Rust 1.96.1)"));
+    assert!(compatibility.contains("toolchain: \"1.96.1\""));
 }
 
 fn section<'a>(source: &'a str, start: &str, end: &str) -> &'a str {

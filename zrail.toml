@@ -13,7 +13,7 @@ symlinks = "inside"
 name = "check"
 kind = "local"
 path = "scripts/check"
-inputs = ["scripts/structure-check", "scripts/package-check", "rust-toolchain.toml", "rustfmt.toml", "clippy.toml", ".gitignore"]
+inputs = ["scripts/structure-check", "scripts/package-check", "rust-toolchain.toml", "rustfmt.toml", "clippy.toml", ".gitignore", "Cargo.toml", "crates/zrail-cli/Cargo.toml", "crates/zrail-core/Cargo.toml", "crates/zrail-rust/Cargo.toml", "crates/zrail-testkit/Cargo.toml"]
 reason = "The repository's canonical local qualification entrypoint."
 
 [[gate]]
@@ -43,6 +43,10 @@ evidence = [
   "rust-test:crates/zrail-cli/src/app/commands/review_test.rs::proposal_cargo_configuration_is_rejected_without_execution",
   "rust-test:crates/zrail-testkit/tests/qualification_workflows.rs::cargo_configuration_is_rejected_before_every_ci_cargo_invocation",
   "rust-test:crates/zrail-testkit/tests/qualification_workflows.rs::local_gate_rejects_cargo_configuration_before_cargo_commands",
+  "rust-test:crates/zrail-testkit/tests/qualification_gate_inputs.rs::repository_manifests_are_locked_qualification_inputs",
+  "rust-test:crates/zrail-testkit/tests/qualification_gate_inputs.rs::manifest_target_selection_changes_are_exact_gate_input_drift",
+  "rust-test:crates/zrail-testkit/tests/qualification_workflows.rs::self_check_selects_the_zrail_binary_explicitly",
+  "rust-test:crates/zrail-testkit/tests/qualification_workflows.rs::canonical_and_compatibility_toolchains_are_explicit",
   "gate:check",
   "gate:ci",
 ]
