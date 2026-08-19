@@ -16,7 +16,6 @@ From this checkout:
 cargo install --path crates/zrail-cli --locked
 ```
 
-
 ## Use
 
 Create a zsumz-style contract and its resolved lock:
@@ -209,9 +208,9 @@ archives, whitespace, and that Git status is unchanged by the gate.
 
 ## Status
 
-Version 0.0.1 is the initial release. It supports Rust and Cargo
-repositories. zrail analyzes declared source and verified snapshots; it does not
-execute repository code, Cargo, build scripts, gates, or generated programs.
+Version 0.0.1 is the initial release. It supports Rust and Cargo repositories.
+zrail analyzes declared source and verified snapshots; it does not execute
+repository code, Cargo, build scripts, gates, or generated programs.
 
 ## License
 

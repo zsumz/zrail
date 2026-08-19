@@ -3,10 +3,7 @@
 use super::super::{LockError, LockedDependency, LockedDependencyScope, LockedDependencySource};
 use super::valid_root;
 
-pub(super) fn canonicalize(
-    dependency: &mut LockedDependency,
-    semantics: u64,
-) -> Result<(), LockError> {
+pub(super) fn canonicalize(dependency: &mut LockedDependency) -> Result<(), LockError> {
     dependency.features.sort();
     if dependency
         .features
@@ -24,20 +21,15 @@ pub(super) fn canonicalize(
             dependency.name
         )));
     }
-    if semantics < 2 {
-        return Ok(());
-    }
-    validate_complete(dependency, semantics)?;
+    validate_complete(dependency)?;
     validate_source(dependency)
 }
 
-fn validate_complete(dependency: &LockedDependency, semantics: u64) -> Result<(), LockError> {
-    let alias = dependency.alias.as_deref().ok_or_else(|| {
-        LockError(format!(
-            "dependency {} requires an alias under lock semantics {semantics}",
-            dependency.name
-        ))
-    })?;
+fn validate_complete(dependency: &LockedDependency) -> Result<(), LockError> {
+    let alias = dependency
+        .alias
+        .as_deref()
+        .ok_or_else(|| LockError(format!("dependency {} requires an alias", dependency.name)))?;
     if !nonempty(alias) || dependency.optional.is_none() || dependency.default_features.is_none() {
         return Err(LockError(format!(
             "dependency {} requires non-empty alias, optional, and default_features state",
@@ -56,27 +48,23 @@ fn validate_complete(dependency: &LockedDependency, semantics: u64) -> Result<()
     }
     if dependency.source.is_none() {
         return Err(LockError(format!(
-            "dependency {} requires source identity under lock semantics {semantics}",
+            "dependency {} requires source identity",
             dependency.name
         )));
     }
-    if semantics >= 4
-        && dependency
-            .crate_root
-            .as_deref()
-            .is_some_and(|root| !valid_crate_root(root))
+    if dependency
+        .crate_root
+        .as_deref()
+        .is_some_and(|root| !valid_crate_root(root))
     {
         return Err(LockError(format!(
-            "dependency {} has an invalid effective crate root under lock semantics {semantics}",
+            "dependency {} has an invalid effective crate root",
             dependency.name
         )));
     }
-    if semantics >= 4
-        && dependency.scope == LockedDependencyScope::Internal
-        && dependency.crate_root.is_none()
-    {
+    if dependency.scope == LockedDependencyScope::Internal && dependency.crate_root.is_none() {
         return Err(LockError(format!(
-            "internal dependency {} requires an effective crate root under lock semantics {semantics}",
+            "internal dependency {} requires an effective crate root",
             dependency.name
         )));
     }

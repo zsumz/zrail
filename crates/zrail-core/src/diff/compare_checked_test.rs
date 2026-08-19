@@ -64,7 +64,7 @@ fn incompatible_semantics_are_unknown() {
 }
 
 #[test]
-fn rolling_producer_upgrade_with_stable_semantics_is_accepted() {
+fn producer_change_with_stable_semantics_is_accepted() {
     let fixture = fixture();
     let bundle =
         load_contract(&fixture, std::path::Path::new("zrail.toml")).expect("load fixture contract");

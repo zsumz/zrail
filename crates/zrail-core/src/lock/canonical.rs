@@ -29,7 +29,6 @@ fn validate_header(lock: &LockFile) -> Result<(), LockError> {
     if lock.producer.trim().is_empty() {
         return Err(LockError("zrail.lock producer may not be empty".into()));
     }
-    super::compatibility::validate_epochs(lock.schema, lock.semantics)?;
     if !valid_digest(&lock.contract_sha256) {
         return Err(LockError(
             "zrail.lock contract_sha256 must be 64 lowercase hexadecimal characters".into(),
@@ -39,7 +38,6 @@ fn validate_header(lock: &LockFile) -> Result<(), LockError> {
 }
 
 fn canonicalize_packages(lock: &mut LockFile) -> Result<(), LockError> {
-    let semantics = lock.semantics;
     for package in &mut lock.packages {
         if package.name.trim().is_empty() {
             return Err(LockError("locked package names may not be empty".into()));
@@ -51,7 +49,7 @@ fn canonicalize_packages(lock: &mut LockFile) -> Result<(), LockError> {
                     package.name
                 )));
             }
-            dependency::canonicalize(dependency, semantics)?;
+            dependency::canonicalize(dependency)?;
         }
         package.dependencies.sort();
         if package
@@ -99,7 +97,6 @@ fn canonicalize_generated(lock: &mut LockFile) -> Result<(), LockError> {
 }
 
 fn canonicalize_gates(lock: &mut LockFile) -> Result<(), LockError> {
-    let semantics = lock.semantics;
     for gate in &mut lock.gates {
         if !valid_name(&gate.name) {
             return Err(LockError(format!(
@@ -116,12 +113,6 @@ fn canonicalize_gates(lock: &mut LockFile) -> Result<(), LockError> {
         if !valid_digest(&gate.sha256) {
             return Err(LockError(format!(
                 "locked gate {} has an invalid sha256",
-                gate.name
-            )));
-        }
-        if semantics < 7 && !gate.inputs.is_empty() {
-            return Err(LockError(format!(
-                "locked gate {} inputs require semantic epoch 7",
                 gate.name
             )));
         }

@@ -148,7 +148,7 @@ fn proposal_cargo_configuration_is_rejected_without_execution() {
 }
 
 #[test]
-fn newer_producer_with_stable_semantics_is_reviewable() {
+fn changed_producer_with_stable_semantics_is_reviewable() {
     if !git_available() {
         return;
     }

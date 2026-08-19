@@ -1,7 +1,6 @@
 //! Canonical dependency, generated-provenance, and tightening-ratchet state.
 
 mod canonical;
-mod compatibility;
 mod dependency;
 mod file;
 use serde::{Deserialize, Serialize};
@@ -9,16 +8,14 @@ use std::{error::Error, fmt};
 
 pub use dependency::LockedDependencySource;
 
-pub const LOCK_SCHEMA: u64 = 7;
-pub const LOCK_SEMANTICS: u64 = 8;
+pub const LOCK_SCHEMA: u64 = 1;
+pub const LOCK_SEMANTICS: u64 = 1;
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct LockFile {
     pub schema: u64,
-    #[serde(default = "default_semantics")]
     pub semantics: u64,
-    #[serde(alias = "engine")]
     pub producer: String,
     pub contract_sha256: String,
     #[serde(default, rename = "package")]
@@ -27,8 +24,6 @@ pub struct LockFile {
     pub generated: Vec<LockedGeneratedSource>,
     #[serde(default, rename = "gate", skip_serializing_if = "Vec::is_empty")]
     pub gates: Vec<LockedGate>,
-    #[serde(default, rename = "macro", skip_serializing_if = "Vec::is_empty")]
-    pub macros: Vec<LockedMacroDefinition>,
     #[serde(
         default,
         rename = "macro_implementation",
@@ -60,15 +55,6 @@ pub struct LockedGate {
 #[serde(deny_unknown_fields)]
 pub struct LockedGateInput {
     pub path: String,
-    pub sha256: String,
-}
-
-#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct LockedMacroDefinition {
-    pub path: String,
-    pub name: String,
-    pub ordinal: usize,
     pub sha256: String,
 }
 
@@ -154,7 +140,6 @@ impl LockFile {
             packages: Vec::new(),
             generated: Vec::new(),
             gates: Vec::new(),
-            macros: Vec::new(),
             macro_implementations: Vec::new(),
             ratchets: Vec::new(),
         }
@@ -165,7 +150,7 @@ impl LockFile {
     }
 
     pub fn has_supported_schema(&self) -> bool {
-        (1..=LOCK_SCHEMA).contains(&self.schema)
+        self.schema == LOCK_SCHEMA
     }
 
     pub fn same_resolved_state(&self, other: &Self) -> bool {
@@ -174,14 +159,9 @@ impl LockFile {
             && self.packages == other.packages
             && self.generated == other.generated
             && self.gates == other.gates
-            && self.macros == other.macros
             && self.macro_implementations == other.macro_implementations
             && self.ratchets == other.ratchets
     }
-}
-
-const fn default_semantics() -> u64 {
-    1
 }
 
 #[cfg(test)]
