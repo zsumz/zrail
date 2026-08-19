@@ -2,11 +2,14 @@
 
 use std::{ffi::OsString, path::PathBuf};
 
-use super::{Command, CommonOptions, ReviewOptions, as_string, os_value, parse_format, value};
+use super::{
+    Command, CommonOptions, ReviewOptions, as_string, os_value, parse_format, set_once, value,
+};
 use crate::app::error::CliError;
 
 pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
     let mut common = CommonOptions::default();
+    let mut proposal_root = None;
     let mut authority_root = PathBuf::from(".");
     let mut base = OsString::from("HEAD");
     let mut authority_set = false;
@@ -16,7 +19,11 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
     while index < arguments.len() {
         let flag = as_string(&arguments[index])?;
         match flag.as_str() {
-            "--root" => common.root = value(arguments, &mut index, "--root")?,
+            "--root" => set_once(
+                &mut proposal_root,
+                value(arguments, &mut index, "--root")?,
+                "proposal root",
+            )?,
             "--authority-root" if !authority_set => {
                 authority_root = value(arguments, &mut index, "--authority-root")?;
                 authority_set = true;
@@ -42,6 +49,8 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
         }
         index += 1;
     }
+    common.root =
+        proposal_root.ok_or_else(|| CliError::new("review requires --root <proposal>"))?;
     Ok(Command::Review(ReviewOptions {
         common,
         authority_root,
@@ -49,3 +58,7 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
         allow_grants,
     }))
 }
+
+#[cfg(test)]
+#[path = "review_test.rs"]
+mod review_test;

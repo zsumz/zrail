@@ -61,6 +61,8 @@ evidence = [
   "rust-test:crates/zrail-cli/src/app/commands/review_test.rs::unchanged_contract_and_lock_cannot_hide_a_source_violation",
   "rust-test:crates/zrail-cli/src/app/commands/review_test.rs::proposed_policy_weakening_cannot_authorize_violating_source",
   "rust-test:crates/zrail-cli/src/app/commands/review_dependency_test.rs::same_name_git_dependency_cannot_reuse_an_internal_lock",
+  "rust-test:crates/zrail-cli/src/app/args/review_test.rs::missing_proposal_root_is_rejected",
+  "rust-test:crates/zrail-cli/src/app/commands/review_test.rs::unsupported_proposed_schema_fails_for_lock_optional_contract",
   "rust-test:crates/zrail-testkit/tests/dependency_identity.rs::aliases_sources_targets_and_workspace_inheritance_are_locked",
   "gate:architecture-review",
 ]

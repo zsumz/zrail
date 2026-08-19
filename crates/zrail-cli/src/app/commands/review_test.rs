@@ -164,7 +164,31 @@ fn newer_producer_with_stable_semantics_is_reviewable() {
     reset(&fixture);
 }
 
+#[test]
+fn unsupported_proposed_schema_fails_for_lock_optional_contract() {
+    if !git_available() {
+        return;
+    }
+    let contract = CONTRACT.replace("mode = \"locked\"", "mode = \"observed\"");
+    let fixture = fixture_with_contract("optional-future-schema", &contract);
+    let lock_path = fixture.proposal.join("zrail.lock");
+    let mut lock = LockFile::read(&lock_path).expect("read proposed lock");
+    lock.schema = zrail_core::LOCK_SCHEMA + 1;
+    lock.write(&lock_path).expect("write future proposed lock");
+
+    let result = review(&options(&fixture)).expect("review unsupported proposed lock");
+
+    assert_eq!(result.exit_code, 1);
+    assert!(result.text.contains("error[REVIEW-003]"));
+    assert!(result.text.contains("latest supported schema"));
+    reset(&fixture);
+}
+
 fn fixture(name: &str) -> Fixture {
+    fixture_with_contract(name, CONTRACT)
+}
+
+fn fixture_with_contract(name: &str, contract: &str) -> Fixture {
     let base = std::env::temp_dir().join(format!(
         "zrail-review-{name}-{}-{:?}",
         std::process::id(),
@@ -176,7 +200,7 @@ fn fixture(name: &str) -> Fixture {
         base,
     };
     reset(&fixture);
-    write_repository(&fixture.authority);
+    write_repository(&fixture.authority, contract);
     build_lock(&fixture.authority, std::path::Path::new("zrail.toml"))
         .expect("build authority lock")
         .write(&fixture.authority.join("zrail.lock"))
@@ -186,7 +210,7 @@ fn fixture(name: &str) -> Fixture {
     fixture
 }
 
-fn write_repository(root: &std::path::Path) {
+fn write_repository(root: &std::path::Path, contract: &str) {
     fs::create_dir_all(root.join("src")).expect("create source directory");
     fs::write(
         root.join("Cargo.toml"),
@@ -194,7 +218,7 @@ fn write_repository(root: &std::path::Path) {
     )
     .expect("write Cargo manifest");
     fs::write(root.join("src/lib.rs"), "//! fixture\n").expect("write Rust source");
-    fs::write(root.join("zrail.toml"), CONTRACT).expect("write contract");
+    fs::write(root.join("zrail.toml"), contract).expect("write contract");
 }
 
 fn copy_repository(source: &std::path::Path, destination: &std::path::Path) {

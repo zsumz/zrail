@@ -18,3 +18,7 @@ pub(crate) fn doctor(options: &CommonOptions) -> Result<CommandResult, CliError>
     let exit_code = i32::from(!report.is_ready());
     Ok(CommandResult::status(text, exit_code))
 }
+
+#[cfg(test)]
+#[path = "doctor_test.rs"]
+mod doctor_test;

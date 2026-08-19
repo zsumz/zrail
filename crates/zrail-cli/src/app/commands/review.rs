@@ -1,6 +1,8 @@
 //! Protected source review derives proposed architecture without writing it.
 
-use zrail_core::{Finding, LockFile, Report, ReportStatus, load_contract, path::repository_file};
+use zrail_core::{
+    Finding, LOCK_SCHEMA, LockFile, Report, ReportStatus, load_contract, path::repository_file,
+};
 use zrail_rust::check_repository;
 
 use crate::app::{args::ReviewOptions, error::CliError, output::OutputFormat};
@@ -58,6 +60,20 @@ fn lock_attestation(
             .with_help("generate and review the proposed lock before protected review"),
         ]);
     };
+    if !proposed.has_supported_schema() {
+        return Ok(vec![
+            Finding::error(
+                "REVIEW-003",
+                "review.lock",
+                "review",
+                format!(
+                    "proposed zrail.lock uses schema {}, latest supported schema is {}",
+                    proposed.schema, LOCK_SCHEMA
+                ),
+            )
+            .with_help("use a protected zrail engine that understands the proposed lock schema"),
+        ]);
+    }
     if proposed.same_resolved_state(candidate) {
         Ok(Vec::new())
     } else {

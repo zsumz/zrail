@@ -182,6 +182,9 @@ fn doctor_status(
     let Some(current) = current else {
         return "lock-missing";
     };
+    if !current.has_supported_schema() {
+        return "lock-schema-mismatch";
+    }
     if !current.has_current_semantics() {
         return "lock-semantics-mismatch";
     }
