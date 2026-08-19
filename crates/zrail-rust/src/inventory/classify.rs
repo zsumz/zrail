@@ -5,7 +5,7 @@ use std::{ffi::OsStr, path::Path};
 use zrail_core::GeneratedSourceContract;
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
-pub enum FileClass {
+pub(crate) enum FileClass {
     Facade,
     Implementation,
     Test,

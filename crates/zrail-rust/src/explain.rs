@@ -2,13 +2,13 @@
 
 mod evidence;
 mod macro_authority;
+mod model;
 mod owners;
 mod policy;
 mod render;
 
 use std::path::Path;
 
-use serde::{Deserialize, Serialize};
 use zrail_core::{glob_matches, normalize_relative};
 
 use crate::{
@@ -17,60 +17,13 @@ use crate::{
     source::Reachability,
 };
 
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct PathExplanation {
-    pub schema: u64,
-    pub path: String,
-    pub file_class: String,
-    pub reachability: String,
-    pub package: Option<String>,
-    pub layer: Option<String>,
-    pub profiles: Vec<String>,
-    pub scopes: Vec<String>,
-    pub permitted_dependency_layers: Vec<String>,
-    pub external_dependencies: Option<String>,
-    pub denied_effects: Vec<String>,
-    pub denied_symbols: Vec<String>,
-    pub denied_methods: Vec<String>,
-    pub denied_macros: Vec<String>,
-    pub macro_expansion: String,
-    pub allowed_macro_expansions: Vec<String>,
-    pub opaque_macro_inputs: Vec<String>,
-    pub content_bound_macro_implementations: Vec<String>,
-    pub unsafe_code: String,
-    pub lint_suppressions: String,
-    pub expected_sibling_test: Option<String>,
-    pub invariants: Vec<String>,
-    pub capability_owners: Vec<CapabilityOwnerExplanation>,
-    pub call_owners: Vec<CallOwnerExplanation>,
-    pub design_target: Option<usize>,
-    pub hard_ceiling: Option<usize>,
-    pub declarative_shape: Option<bool>,
-    pub module_docs_required: bool,
-    pub sibling_tests_required: bool,
-}
+pub use model::{CallOwnerExplanation, CapabilityOwnerExplanation, PathExplanation};
 
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct CapabilityOwnerExplanation {
-    pub name: String,
-    pub capability: String,
-    pub allow: Vec<String>,
-    pub allowed_here: bool,
-    pub reason: String,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct CallOwnerExplanation {
-    pub name: String,
-    pub call: String,
-    pub allow: Vec<String>,
-    pub allowed_here: bool,
-    pub reason: String,
-}
-
+/// Resolves the effective architecture policy for one repository-relative path.
+///
+/// `config` may be relative to `root`. `path` must be repository-relative and is
+/// normalized before matching; absolute paths and parent traversal are rejected.
+/// The operation reads repository data but does not write files or execute code.
 pub fn explain_path(
     root: &Path,
     config: &Path,
@@ -136,7 +89,7 @@ pub fn explain_path(
         .then(|| policy::sibling_path(&relative))
         .flatten();
     Ok(PathExplanation {
-        schema: 6,
+        schema: 1,
         path: relative,
         file_class: format!("{class:?}").to_ascii_lowercase(),
         reachability: reachability.name().into(),

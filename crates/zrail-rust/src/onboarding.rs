@@ -10,6 +10,11 @@ use crate::{
 
 pub use baseline::{BaselinePlan, BaselineRatchet, BaselineSize, discover_baseline};
 
+/// Discovers conservative Rust source roots from a Cargo repository.
+///
+/// Package directories are normalized, sorted, and deduplicated. A root package
+/// collapses the result to `.` because it already bounds the complete repository.
+/// The operation reads manifests but does not invoke Cargo or modify files.
 pub fn discover_source_roots(root: &Path) -> Result<Vec<String>, CheckError> {
     let inventory = inventory_cargo_repository(root)
         .map_err(|error| CheckError::from_message(error.to_string()))?;

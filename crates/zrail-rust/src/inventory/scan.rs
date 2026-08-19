@@ -23,7 +23,7 @@ const MAX_RUST_SOURCE_BYTES: usize = 2 * 1024 * 1024;
 const MAX_TOTAL_RUST_SOURCE_BYTES: usize = 128 * 1024 * 1024;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct RepositoryInventoryError(String);
+pub(crate) struct RepositoryInventoryError(String);
 
 impl fmt::Display for RepositoryInventoryError {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -33,7 +33,7 @@ impl fmt::Display for RepositoryInventoryError {
 
 impl Error for RepositoryInventoryError {}
 
-pub fn inventory_repository(
+pub(crate) fn inventory_repository(
     root: &Path,
     contract: &Contract,
 ) -> Result<RepositoryInventory, RepositoryInventoryError> {
@@ -58,7 +58,6 @@ pub fn inventory_repository(
             source_bytes = add_source_bytes(source_bytes, source.len())?;
             rust_files.push(RustSourceFile {
                 relative: entry.relative.clone(),
-                absolute: entry.absolute.clone(),
                 class: classify_path(&entry.relative, &contract.source.rust.generated),
                 lines: source.lines().count(),
                 source,

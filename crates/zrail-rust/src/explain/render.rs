@@ -3,6 +3,7 @@
 use super::{PathExplanation, owners};
 
 impl PathExplanation {
+    /// Serializes the explanation as pretty JSON terminated by a newline.
     pub fn json(&self) -> Result<String, serde_json::Error> {
         serde_json::to_string_pretty(self).map(|mut value| {
             value.push('\n');
@@ -10,6 +11,7 @@ impl PathExplanation {
         })
     }
 
+    /// Renders the effective path policy as concise human-readable text.
     pub fn human(&self) -> String {
         format!(
             concat!(

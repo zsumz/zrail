@@ -15,7 +15,6 @@ fn f() { let _ = Hidden::connect("localhost").unwrap(); }
 "#;
     let file = RustSourceFile {
         relative: "crates/a/src/worker.rs".into(),
-        absolute: "worker.rs".into(),
         class: FileClass::Implementation,
         source: source.into(),
         lines: source.lines().count(),
@@ -48,7 +47,6 @@ fn type_alias_function_references_remain_visible_to_call_owners() {
     );
     let file = RustSourceFile {
         relative: "crates/a/src/process.rs".into(),
-        absolute: "process.rs".into(),
         class: FileClass::Implementation,
         source: source.into(),
         lines: source.lines().count(),
@@ -67,7 +65,6 @@ fn inline_modules_are_implementation_inside_facades() {
     let source = "//! facade\nmod hidden { pub fn work() {} }\n";
     let file = RustSourceFile {
         relative: "crates/a/src/lib.rs".into(),
-        absolute: "lib.rs".into(),
         class: FileClass::Facade,
         source: source.into(),
         lines: source.lines().count(),
@@ -90,7 +87,6 @@ fn unsafe_traits_extern_blocks_and_mutable_statics_are_visible() {
     );
     let file = RustSourceFile {
         relative: "crates/a/src/raw.rs".into(),
-        absolute: "raw.rs".into(),
         class: FileClass::Implementation,
         source: source.into(),
         lines: source.lines().count(),
@@ -122,7 +118,6 @@ fn unsafe_attributes_in_legacy_and_2024_forms_are_visible() {
     );
     let file = RustSourceFile {
         relative: "crates/a/src/attributes.rs".into(),
-        absolute: "attributes.rs".into(),
         class: FileClass::Implementation,
         source: source.into(),
         lines: source.lines().count(),
@@ -151,7 +146,6 @@ fn expression_fragments_retain_reusable_facts() {
     let source = r#"dangerous::call(include!("nested.rs"))"#;
     let file = RustSourceFile {
         relative: "crates/a/src/value.rs".into(),
-        absolute: "value.rs".into(),
         class: FileClass::Implementation,
         source: source.into(),
         lines: 1,
@@ -175,7 +169,6 @@ fn item_macro_invocations_are_expansion_boundaries() {
     let source = "//! macro boundary\nmacro_rules! declare { () => {} }\ndeclare!();\n";
     let file = RustSourceFile {
         relative: "crates/a/src/worker.rs".into(),
-        absolute: "worker.rs".into(),
         class: FileClass::Implementation,
         source: source.into(),
         lines: source.lines().count(),

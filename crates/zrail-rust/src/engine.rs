@@ -22,29 +22,49 @@ use self::{
 };
 
 #[derive(Clone, Debug)]
+/// The diagnostics and independently observed state from one repository check.
 pub struct CheckResult {
+    /// The deterministic findings and aggregate report status.
     pub report: Report,
+    /// The lock state derived from the current contract and repository contents.
+    ///
+    /// This value is returned in memory; checking does not write it to disk.
     pub candidate_lock: LockFile,
+    /// The SHA-256 digest of the complete resolved contract bundle.
     pub contract_sha256: String,
+    /// The number of Cargo packages included in the analysis.
     pub packages: usize,
+    /// The number of Rust source files included in the analysis.
     pub rust_files: usize,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
+/// Machine-readable readiness information for a repository and its lock.
 pub struct DoctorReport {
+    /// The schema version of this serialized doctor report.
     pub schema: u64,
+    /// The analyzed repository's resolved root path.
     pub root: String,
+    /// The resolved path to the contract's entry configuration file.
     pub config: String,
+    /// The resolved path where the repository lock is expected.
     pub lock: String,
+    /// The SHA-256 digest of the complete resolved contract bundle.
     pub contract_sha256: String,
+    /// The number of Cargo packages included in the analysis.
     pub packages: usize,
+    /// The number of Rust source files included in the analysis.
     pub rust_files: usize,
+    /// The number of files that contribute to the resolved contract bundle.
     pub contract_sources: usize,
+    /// Lock readiness: `ready`, `lock-missing`, `lock-schema-mismatch`,
+    /// `lock-semantics-mismatch`, and `lock-stale`.
     pub status: String,
 }
 
 impl DoctorReport {
+    /// Serializes the report as pretty JSON terminated by a newline.
     pub fn json(&self) -> Result<String, serde_json::Error> {
         serde_json::to_string_pretty(self).map(|mut value| {
             value.push('\n');
@@ -52,10 +72,12 @@ impl DoctorReport {
         })
     }
 
+    /// Returns whether the repository has no lock-readiness problem.
     pub fn is_ready(&self) -> bool {
         self.status == "ready"
     }
 
+    /// Renders a concise multiline report for a terminal.
     pub fn human(&self) -> String {
         format!(
             concat!(
@@ -82,6 +104,10 @@ impl DoctorReport {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+/// An input, repository-boundary, parsing, or analysis error.
+///
+/// The message is intended for display. Policy violations are returned as
+/// findings in [`CheckResult::report`] rather than as this error type.
 pub struct CheckError(String);
 
 impl CheckError {
@@ -98,6 +124,7 @@ impl fmt::Display for CheckError {
 
 impl Error for CheckError {}
 
+#[doc = include_str!("check_repository.md")]
 pub fn check_repository(
     root: &Path,
     config: &Path,
@@ -108,6 +135,11 @@ pub fn check_repository(
     check_model(model, lock.as_ref())
 }
 
+/// Checks a repository against an already loaded lock without writing files.
+///
+/// `config` may be relative to `root` and must resolve within the repository. This
+/// form is useful when the caller obtained a lock through a separately authorized
+/// workflow instead of reading the repository's lock path.
 pub fn check_repository_with_lock(
     root: &Path,
     config: &Path,
@@ -138,10 +170,18 @@ fn check_model(
     })
 }
 
+/// Builds the lock state observed from a repository and contract.
+///
+/// The returned lock remains in memory. This function neither writes a lock file
+/// nor executes repository code, Cargo, build scripts, or qualification gates.
 pub fn build_lock(root: &Path, config: &Path) -> Result<LockFile, CheckError> {
     candidate_lock(&load_model(root, config)?)
 }
 
+/// Reports whether a repository's configured lock is present, supported, and current.
+///
+/// `config` and `lock` may be relative to `root`; resolved paths must remain within
+/// the repository. The operation is read-only.
 pub fn doctor_repository(
     root: &Path,
     config: &Path,

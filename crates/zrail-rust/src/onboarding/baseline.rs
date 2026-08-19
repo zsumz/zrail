@@ -10,28 +10,41 @@ use crate::{
     source::{Reachability, RustFileFacts},
 };
 
+/// Exact size and test-placement debt discovered for CLI initialization.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BaselinePlan {
+    /// Raised size ceilings, or `None` when the contract has no size policy.
     pub size: Option<BaselineSize>,
+    /// Exact debt entries that can only tighten after initialization.
     pub ratchets: Vec<BaselineRatchet>,
 }
 
+/// Hard line ceilings adjusted to contain the repository's observed source.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BaselineSize {
+    /// The hard ceiling for declarative facade files.
     pub facade_hard: usize,
+    /// The hard ceiling for production implementation files.
     pub implementation_hard: usize,
+    /// The hard ceiling for test-only files.
     pub test_hard: usize,
+    /// The hard ceiling for entry points and auxiliary source.
     pub auxiliary_hard: usize,
 }
 
+/// One exact, tightening debt entry discovered during baseline adoption.
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub struct BaselineRatchet {
+    /// The stable zrail rule name that measures the debt.
     pub rule: &'static str,
+    /// The repository-relative source path carrying the debt.
     pub target: String,
+    /// The generated explanation included in the initial contract.
     pub reason: &'static str,
 }
 
 impl BaselinePlan {
+    /// Creates initialization support with no observed debt or size overrides.
     pub fn empty() -> Self {
         Self {
             size: None,
@@ -40,6 +53,11 @@ impl BaselinePlan {
     }
 }
 
+/// Discovers existing size and inline-test debt for CLI baseline initialization.
+///
+/// `config` identifies the newly rendered contract beneath `root`. The returned
+/// plan raises only the necessary hard ceilings and records exact tightening
+/// ratchets; it does not rewrite the contract or lock.
 pub fn discover_baseline(root: &Path, config: &Path) -> Result<BaselinePlan, CheckError> {
     let model = load_model(root, config)?;
     let contract = &model.bundle.contract;
