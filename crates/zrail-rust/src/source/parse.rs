@@ -1,7 +1,7 @@
 //! Parse each Rust file once and retain reusable architecture facts.
 
 use syn::visit::Visit;
-use zrail_core::{AnalysisQuality, Finding};
+use zrail_core::{AnalysisQuality, Finding, RustSourceContract};
 
 use crate::inventory::{FileClass, RepositoryInventory};
 
@@ -17,7 +17,10 @@ use super::{
 const MAX_FACTS_PER_FILE: usize = 50_000;
 const MAX_TOTAL_SOURCE_FACTS: usize = 1_000_000;
 
-pub(crate) fn index_rust_source(inventory: &RepositoryInventory) -> SourceIndex {
+pub(crate) fn index_rust_source(
+    inventory: &RepositoryInventory,
+    rust: &RustSourceContract,
+) -> SourceIndex {
     let mut index = SourceIndex::default();
     let mut total_facts = 0_usize;
     for source_file in &inventory.rust_files {
@@ -27,7 +30,7 @@ pub(crate) fn index_rust_source(inventory: &RepositoryInventory) -> SourceIndex 
                 .push(analysis_limit(&source_file.relative, error));
             continue;
         }
-        match parse_source(source_file) {
+        match parse_source(source_file, rust) {
             Ok(facts) => {
                 let count = fact_count(&facts);
                 if count > MAX_FACTS_PER_FILE {
@@ -72,9 +75,10 @@ pub(crate) fn index_rust_source(inventory: &RepositoryInventory) -> SourceIndex 
 
 fn parse_source(
     source_file: &crate::inventory::RustSourceFile,
+    rust: &RustSourceContract,
 ) -> Result<RustFileFacts, syn::Error> {
     match syn::parse_file(&source_file.source) {
-        Ok(syntax) => Ok(index_file(source_file, &syntax)),
+        Ok(syntax) => Ok(index_file_with_policy(source_file, rust, &syntax)),
         Err(file_error) => match syn::parse_str::<syn::Expr>(&source_file.source) {
             Ok(expression) => Ok(index_expression(source_file, &expression)),
             Err(_) => Err(file_error),
@@ -119,16 +123,35 @@ fn candidate_count(expansions: &[super::MacroExpansionFact]) -> usize {
         .sum()
 }
 
+#[cfg(test)]
 fn index_file(source_file: &crate::inventory::RustSourceFile, syntax: &syn::File) -> RustFileFacts {
+    index_file_as(source_file, source_file.class, syntax)
+}
+
+fn index_file_with_policy(
+    source_file: &crate::inventory::RustSourceFile,
+    rust: &RustSourceContract,
+    syntax: &syn::File,
+) -> RustFileFacts {
+    let effective =
+        crate::source_policy::effective_file_role(&source_file.relative, source_file.class, rust)
+            .effective;
+    index_file_as(source_file, effective, syntax)
+}
+
+fn index_file_as(
+    source_file: &crate::inventory::RustSourceFile,
+    effective: FileClass,
+    syntax: &syn::File,
+) -> RustFileFacts {
     let imports = ImportMap::from_file(syntax);
     let mut visitor = FactVisitor::new(&imports);
     visitor.visit_file(syntax);
-    let facade_implementation =
-        if matches!(source_file.class, FileClass::Facade | FileClass::EntryPoint) {
-            super::parse_facade::items(&source_file.relative, syntax)
-        } else {
-            Vec::new()
-        };
+    let facade_implementation = if matches!(effective, FileClass::Facade | FileClass::EntryPoint) {
+        super::parse_facade::items(&source_file.relative, syntax)
+    } else {
+        Vec::new()
+    };
     RustFileFacts {
         relative: source_file.relative.clone(),
         packages: Vec::new(),

@@ -2,11 +2,10 @@
 
 use std::path::Path;
 
-use zrail_core::{Budget, Contract, TestMode};
+use zrail_core::{Contract, TestMode};
 
 use crate::{
     engine::{CheckError, load_model},
-    inventory::FileClass,
     source::RustFileFacts,
 };
 
@@ -154,43 +153,17 @@ pub fn discover_baseline_rules(
 
 fn has_debt(rule: BaselineRule, file: &RustFileFacts, contract: &Contract) -> bool {
     if rule == BaselineRule::FileSize {
-        return budget(contract, budget_class(file))
-            .is_some_and(|budget| file.lines > budget.target);
+        return crate::source_policy::budget_for(
+            &file.relative,
+            file.class,
+            file.reachability,
+            &contract.source.rust,
+        )
+        .is_some_and(|budget| file.lines > budget.target);
     }
     if rule == BaselineRule::InlineTests && contract.source.rust.tests != TestMode::Sibling {
         return false;
     }
     crate::rules::count_ratchet::measurement(rule.name(), file, &contract.source.rust)
         .is_some_and(|value| value > 0)
-}
-
-#[derive(Clone, Copy)]
-enum BudgetClass {
-    Facade,
-    Implementation,
-    Test,
-    Auxiliary,
-}
-
-fn budget_class(file: &RustFileFacts) -> BudgetClass {
-    if file.class != FileClass::Generated && file.reachability.is_test_only() {
-        return BudgetClass::Test;
-    }
-    match file.class {
-        FileClass::Facade => BudgetClass::Facade,
-        FileClass::Implementation | FileClass::Test | FileClass::Generated => {
-            BudgetClass::Implementation
-        }
-        FileClass::Auxiliary | FileClass::EntryPoint => BudgetClass::Auxiliary,
-    }
-}
-
-fn budget(contract: &Contract, class: BudgetClass) -> Option<Budget> {
-    let size = contract.source.rust.size.as_ref()?;
-    Some(match class {
-        BudgetClass::Facade => size.facade,
-        BudgetClass::Implementation => size.implementation,
-        BudgetClass::Test => size.test,
-        BudgetClass::Auxiliary => size.auxiliary,
-    })
 }

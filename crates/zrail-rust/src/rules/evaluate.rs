@@ -5,8 +5,8 @@ use zrail_core::{Contract, FindingSink, LockFile};
 use crate::{cargo::CargoWorkspace, inventory::RepositoryInventory, source::SourceIndex};
 
 use super::{
-    capability, cargo_identity, cargo_override, dependency, evidence, generated, hygiene,
-    macro_expansion, repository, size, source_shape, test_placement,
+    capability, cargo_identity, cargo_override, dependency, evidence, file_role, generated,
+    hygiene, macro_expansion, repository, size, source_shape, test_placement,
 };
 
 pub(crate) struct RuleContext<'a> {
@@ -26,6 +26,7 @@ pub(crate) fn evaluate(context: &RuleContext<'_>) -> FindingSink {
     dependency::evaluate(context, &mut findings);
     capability::evaluate(context, &mut findings);
     macro_expansion::evaluate(context, &mut findings);
+    file_role::evaluate(context, &mut findings);
     source_shape::evaluate(context, &mut findings);
     hygiene::evaluate(context, &mut findings);
     test_placement::evaluate(context, &mut findings);

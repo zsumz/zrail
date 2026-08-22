@@ -9,6 +9,7 @@ mod dependency_cycle;
 mod dependency_deny;
 mod evaluate;
 mod evidence;
+mod file_role;
 pub(crate) mod generated;
 mod hygiene;
 mod macro_expansion;

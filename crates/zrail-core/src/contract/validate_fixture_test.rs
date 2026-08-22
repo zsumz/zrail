@@ -56,6 +56,7 @@ pub(super) fn minimal_contract() -> Contract {
                 facades: FacadeMode::Allow,
                 entrypoints: FacadeMode::Allow,
                 tests: TestMode::Allow,
+                file_roles: Vec::new(),
                 generated: Vec::new(),
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),

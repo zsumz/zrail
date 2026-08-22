@@ -29,11 +29,11 @@ pub use load::{
 };
 pub use model::{
     Budget, Contract, CrateRootContract, CrateRootSource, DependenciesContract, DependencyRule,
-    EffectBoundary, FileSizeContract, GateContract, GateKind, GeneratedSourceContract,
-    HygieneContract, InvariantContract, InvariantStatus, ItemMacroContract, LayerContract,
-    LayerDependencies, MacroExpansionAllow, MacroExpansionContract, OutDirSourceContract,
-    OwnerContract, ProfileContract, RatchetContract, RepositoryContract, RustSourceContract,
-    ScopeContract, SourceContract, SymbolBoundary,
+    EffectBoundary, FileRole, FileRoleContract, FileSizeContract, GateContract, GateKind,
+    GeneratedSourceContract, HygieneContract, InvariantContract, InvariantStatus,
+    ItemMacroContract, LayerContract, LayerDependencies, MacroExpansionAllow,
+    MacroExpansionContract, OutDirSourceContract, OwnerContract, ProfileContract, RatchetContract,
+    RepositoryContract, RustSourceContract, ScopeContract, SourceContract, SymbolBoundary,
 };
 pub use modes::{
     CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,

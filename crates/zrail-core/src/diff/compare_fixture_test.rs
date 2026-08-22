@@ -33,6 +33,7 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
                 facades: FacadeMode::Declarative,
                 entrypoints: FacadeMode::Declarative,
                 tests: TestMode::Sibling,
+                file_roles: Vec::new(),
                 generated: Vec::new(),
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),

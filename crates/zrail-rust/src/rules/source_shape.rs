@@ -26,7 +26,13 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
         );
     }
     for file in &context.source.files {
-        let declarative = match file.class {
+        let effective = crate::source_policy::effective_file_role(
+            &file.relative,
+            file.class,
+            &context.contract.source.rust,
+        )
+        .effective;
+        let declarative = match effective {
             FileClass::Facade => context.contract.source.rust.facades == FacadeMode::Declarative,
             FileClass::EntryPoint => {
                 context.contract.source.rust.entrypoints == FacadeMode::Declarative
@@ -34,7 +40,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             _ => false,
         };
         if declarative {
-            let (rail, description) = if file.class == FileClass::EntryPoint {
+            let (rail, description) = if effective == FileClass::EntryPoint {
                 ("rust.entrypoints", "declarative entrypoint")
             } else {
                 ("rust.facades", "declarative facade")

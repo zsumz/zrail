@@ -1,10 +1,8 @@
 //! Typed public schema for `zrail.toml`.
-#[path = "model/dependencies.rs"]
 mod dependencies;
-#[path = "model/evidence.rs"]
 mod evidence;
-#[path = "model/macros.rs"]
 mod macros;
+mod source;
 
 use super::modes::{
     Effect, ExactMode, ExternalDependencyMode, FacadeMode, LintSuppressionMode, ModuleDocsMode,
@@ -14,6 +12,7 @@ pub use dependencies::{CrateRootContract, CrateRootSource, DependenciesContract}
 pub use evidence::{GateContract, GateKind, InvariantContract, InvariantStatus};
 pub use macros::{MacroExpansionAllow, MacroExpansionContract};
 use serde::{Deserialize, Serialize};
+pub use source::{FileRole, FileRoleContract};
 use std::collections::BTreeMap;
 
 #[rustfmt::skip]
@@ -63,8 +62,8 @@ use std::collections::BTreeMap;
     #[serde(default)]
     #[doc = "Governs implementation logic in `main.rs` entrypoints."] pub entrypoints: FacadeMode,
     #[doc = "Governs placement of unit tests relative to implementation files."] pub tests: TestMode,
-    #[serde(default)]
-    #[doc = "Compiler-owned source trees governed by provenance manifests and budgets."] pub generated: Vec<GeneratedSourceContract>,
+    #[serde(default)] #[doc = "Exact reasoned facade and implementation role overrides."] pub file_roles: Vec<FileRoleContract>,
+    #[serde(default)] #[doc = "Compiler-owned source trees governed by provenance manifests and budgets."] pub generated: Vec<GeneratedSourceContract>,
     #[serde(default)]
     #[doc = "Build-script output included into source with an explicit authority chain."] pub out_dir: Vec<OutDirSourceContract>,
     #[serde(default)]

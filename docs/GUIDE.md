@@ -215,6 +215,22 @@ Directory ownership is repository structural policy and therefore accepts only
 the default `all` reachability. `zrail explain` shows each source owner's
 effective reachability.
 
+Rust file roles are inferred from conventional paths. An exceptional source may
+be reclassified only between `facade` and `implementation` with an exact path
+and a durable reason:
+
+```toml
+[[source.rust.file_roles]]
+path = "crates/raft-log/src/raft_log_segment.rs"
+role = "facade"
+reason = "Reviewed public surface; implementation belongs behind child modules."
+```
+
+The effective role drives both declarative-shape enforcement and size budgets.
+Overrides for missing, unreachable, generated, already matching, test,
+entrypoint, or auxiliary source fail as stale or invalid policy. `zrail explain`
+shows the inferred role, effective role, and override reason.
+
 ## Generated inputs
 
 Reviewed generated trees and `OUT_DIR` snapshots bind their source, generator,

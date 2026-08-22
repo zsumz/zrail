@@ -34,6 +34,11 @@ pub fn explain_path(
     let model = load_model(root, config)?;
     let relative = normalize_relative(path).map_err(CheckError::from_message)?;
     let class = classify_path(&relative, &model.bundle.contract.source.rust.generated);
+    let file_role = crate::source_policy::effective_file_role(
+        &relative,
+        class,
+        &model.bundle.contract.source.rust,
+    );
     let reachability = model
         .source
         .files
@@ -94,7 +99,10 @@ pub fn explain_path(
     Ok(PathExplanation {
         schema: 1,
         path: relative,
-        file_class: format!("{class:?}").to_ascii_lowercase(),
+        file_class: crate::source_policy::role_name(class).into(),
+        inferred_file_role: crate::source_policy::role_name(file_role.inferred).into(),
+        effective_file_role: crate::source_policy::role_name(file_role.effective).into(),
+        file_role_reason: file_role.reason.map(str::to_owned),
         reachability: reachability.name(),
         package: package.map(|package| package.name.clone()),
         layer: layer.map(|layer| layer.name.clone()),
@@ -159,7 +167,7 @@ pub fn explain_path(
         design_target: budget.map(|budget| budget.target),
         hard_ceiling: budget.map(|budget| budget.hard),
         declarative_shape: policy::declarative_shape(
-            class,
+            file_role.effective,
             model.bundle.contract.source.rust.facades,
             model.bundle.contract.source.rust.entrypoints,
         ),

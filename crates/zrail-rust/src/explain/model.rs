@@ -13,6 +13,15 @@ pub struct PathExplanation {
     /// The source class: `facade`, `implementation`, `test`, `auxiliary`,
     /// `entrypoint`, or `generated`.
     pub file_class: String,
+    /// The source role inferred from the path and repository layout.
+    #[serde(default)]
+    pub inferred_file_role: String,
+    /// The role after applying an exact reasoned override.
+    #[serde(default)]
+    pub effective_file_role: String,
+    /// Human justification for an effective role override, when present.
+    #[serde(default)]
+    pub file_role_reason: Option<String>,
     /// The source-graph reachability: `unreachable`, `test-only`, `production`, or `both`.
     pub reachability: String,
     /// The most specific Cargo package containing the path, when one exists.

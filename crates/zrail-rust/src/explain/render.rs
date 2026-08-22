@@ -15,7 +15,8 @@ impl PathExplanation {
     pub fn human(&self) -> String {
         format!(
             concat!(
-                "path: {}\nclass: {}\nreachability: {}\npackage: {}\nlayer: {}\n",
+                "path: {}\nclass: {}\ninferred role: {}\neffective role: {}\nrole reason: {}\n",
+                "reachability: {}\npackage: {}\nlayer: {}\n",
                 "profiles: {}\nprofile reachability: {}\nscopes: {}\ndependency layers: {}\n",
                 "external dependencies: {}\ndenied effects: {}\ndenied symbols: {}\n",
                 "denied methods: {}\ndenied macros: {}\nmacro expansion: {}\n",
@@ -27,6 +28,9 @@ impl PathExplanation {
             ),
             self.path,
             self.file_class,
+            self.inferred_file_role,
+            self.effective_file_role,
+            self.file_role_reason.as_deref().unwrap_or("<none>"),
             self.reachability,
             self.package.as_deref().unwrap_or("<none>"),
             self.layer.as_deref().unwrap_or("<none>"),

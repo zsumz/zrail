@@ -239,6 +239,7 @@ fn contract() -> Contract {
                 facades: FacadeMode::Declarative,
                 entrypoints: FacadeMode::Declarative,
                 tests: TestMode::Sibling,
+                file_roles: Vec::new(),
                 generated: Vec::new(),
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),

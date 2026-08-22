@@ -1,5 +1,6 @@
 //! Source-convention and budget permission changes.
 
+mod file_roles;
 mod macros;
 mod out_dir;
 mod size;
@@ -18,6 +19,7 @@ use super::{
 
 pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<ArchitectureChange>) {
     size::compare(before, after, changes);
+    file_roles::compare(before, after, changes);
     compare_generated(before, after, changes);
     out_dir::compare(before, after, changes);
     compare_item_macros(before, after, changes);
