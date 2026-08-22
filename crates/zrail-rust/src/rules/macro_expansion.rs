@@ -19,9 +19,19 @@ use super::RuleContext;
 use diagnostics::{unbound, unreviewed};
 #[cfg(test)]
 use review::candidate_names;
-#[cfg(test)]
 use review::review_without_definitions;
 use review::{MacroBindingResult, review};
+
+pub(super) fn binds_allowance(
+    expansion: &MacroExpansionFact,
+    allowance: &MacroExpansionAllow,
+) -> bool {
+    let allowed = BTreeMap::from([(allowance.name.as_str(), allowance)]);
+    matches!(
+        review_without_definitions(expansion, &allowed),
+        MacroBindingResult::Bound { .. }
+    )
+}
 
 pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     if context.contract.source.rust.macros.mode == MacroExpansionMode::Allow {

@@ -155,8 +155,11 @@ fn item_macro_names_are_complete_rust_paths() {
         .rust
         .item_macros
         .push(crate::ItemMacroContract {
-            path: "src/lib.rs".into(),
             name: "items:::nested".into(),
+            path: Some("src/lib.rs".into()),
+            within: Vec::new(),
+            binding: None,
+            source: None,
             reason: "invalid fixture".into(),
         });
 

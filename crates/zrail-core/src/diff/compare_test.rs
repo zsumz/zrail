@@ -132,8 +132,11 @@ fn generated_selector_removal_auxiliary_and_item_macro_trust_are_grants() {
         .push("exports.rsi".into());
     after.source.rust.generated[0].inputs.clear();
     after.source.rust.item_macros.push(ItemMacroContract {
-        path: "src/lib.rs".into(),
         name: "items".into(),
+        path: Some("src/lib.rs".into()),
+        within: Vec::new(),
+        binding: None,
+        source: None,
         reason: "local macro emits no source edges".into(),
     });
 

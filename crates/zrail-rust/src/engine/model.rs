@@ -55,6 +55,8 @@ pub(crate) fn load_model_with_bundle(
             .unwrap_or_default();
     }
     source.findings.extend(graph.findings);
+    let item_macro_findings = source_graph::review_item_macros(&bundle.contract, &source);
+    source.findings.extend(item_macro_findings);
     Ok(RepositoryModel {
         bundle,
         inventory,

@@ -1,6 +1,7 @@
 //! Validation for Rust source-provenance and expansion boundaries.
 
 mod file_roles;
+mod item_macros;
 mod macros;
 
 use std::collections::BTreeSet;
@@ -16,7 +17,7 @@ pub(super) fn validate_source_contract(contract: &Contract, errors: &mut Validat
     file_roles::validate(contract, errors);
     validate_generated(contract, errors);
     validate_out_dir(contract, errors);
-    validate_item_macros(contract, errors);
+    item_macros::validate(contract, errors);
     macros::validate(contract, errors);
 }
 
@@ -172,26 +173,6 @@ fn validate_auxiliary(generated: &super::GeneratedSourceContract, errors: &mut V
 fn has_source_extension(path: &str) -> bool {
     path.rsplit_once('.')
         .is_some_and(|(_, extension)| matches!(extension, "rs" | "rsi"))
-}
-
-fn validate_item_macros(contract: &Contract, errors: &mut ValidationErrors) {
-    let mut identities = BTreeSet::new();
-    for item_macro in &contract.source.rust.item_macros {
-        validate_repository_literal(&item_macro.path, errors);
-        require_reason("item macro", &item_macro.name, &item_macro.reason, errors);
-        if !valid_rust_path(&item_macro.name) {
-            errors.push(format!(
-                "item macro name must be a Rust path: {:?}",
-                item_macro.name
-            ));
-        }
-        if !identities.insert((&item_macro.path, &item_macro.name)) {
-            errors.push(format!(
-                "duplicate item macro exemption {} in {}",
-                item_macro.name, item_macro.path
-            ));
-        }
-    }
 }
 
 pub(super) fn valid_rust_path(path: &str) -> bool {

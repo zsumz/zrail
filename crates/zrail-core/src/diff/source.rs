@@ -1,6 +1,7 @@
 //! Source-convention and budget permission changes.
 
 mod file_roles;
+mod item_macros;
 mod macros;
 mod out_dir;
 mod size;
@@ -12,7 +13,7 @@ use crate::{Contract, GeneratedSourceContract};
 use super::{
     ArchitectureChange, ChangeKind,
     support::{
-        compare_named_set, compare_number, compare_ordered_mode, compare_set_values, rank_facades,
+        compare_named_set, compare_number, compare_ordered_mode, rank_facades,
         rank_lint_suppressions, rank_module_docs, rank_policy, rank_tests,
     },
 };
@@ -22,7 +23,7 @@ pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<Arc
     file_roles::compare(before, after, changes);
     compare_generated(before, after, changes);
     out_dir::compare(before, after, changes);
-    compare_item_macros(before, after, changes);
+    item_macros::compare(before, after, changes);
     macros::compare(before, after, changes);
     compare_modes(before, after, changes);
     compare_hygiene(before, after, changes);
@@ -100,27 +101,6 @@ fn compare_generated(before: &Contract, after: &Contract, changes: &mut Vec<Arch
             (None, None) => {}
         }
     }
-}
-
-fn compare_item_macros(before: &Contract, after: &Contract, changes: &mut Vec<ArchitectureChange>) {
-    let identities = |contract: &Contract| {
-        contract
-            .source
-            .rust
-            .item_macros
-            .iter()
-            .map(|item_macro| format!("{}:{}", item_macro.path, item_macro.name))
-            .collect::<BTreeSet<_>>()
-    };
-    compare_set_values(
-        "rust.source-graph.item-macro",
-        &identities(before),
-        &identities(after),
-        ChangeKind::Grant,
-        ChangeKind::Revoke,
-        "trusts an item macro not to create source edges",
-        changes,
-    );
 }
 
 fn generated_by_root(

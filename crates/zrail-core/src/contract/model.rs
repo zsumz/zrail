@@ -12,7 +12,7 @@ pub use dependencies::{CrateRootContract, CrateRootSource, DependenciesContract}
 pub use evidence::{GateContract, GateKind, InvariantContract, InvariantStatus};
 pub use macros::{MacroExpansionAllow, MacroExpansionContract};
 use serde::{Deserialize, Serialize};
-pub use source::{FileRole, FileRoleContract};
+pub use source::{FileRole, FileRoleContract, ItemMacroContract};
 use std::collections::BTreeMap;
 
 #[rustfmt::skip]
@@ -98,15 +98,6 @@ use std::collections::BTreeMap;
     #[doc = "Human justification for treating the tree as compiler-owned."] pub reason: String,
     #[serde(default)]
     #[doc = "Generated files with auxiliary semantics and the auxiliary size budget."] pub auxiliary: Vec<String>,
-}
-
-#[rustfmt::skip]
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-#[doc = "Reviewed item-producing macro invocation in repository source."] pub struct ItemMacroContract {
-    #[doc = "Repository-relative Rust source path containing the invocation."] pub path: String,
-    #[doc = "Macro name as written at the invocation site."] pub name: String,
-    #[doc = "Human justification for accepting generated items at this boundary."] pub reason: String,
 }
 
 #[rustfmt::skip]

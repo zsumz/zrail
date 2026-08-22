@@ -18,7 +18,8 @@ use crate::{
 };
 
 pub use model::{
-    CallOwnerExplanation, CapabilityOwnerExplanation, MacroInvocationExplanation, PathExplanation,
+    CallOwnerExplanation, CapabilityOwnerExplanation, ItemMacroAuthorityExplanation,
+    MacroInvocationExplanation, PathExplanation,
 };
 
 /// Resolves the effective architecture policy for one repository-relative path.
@@ -96,6 +97,7 @@ pub fn explain_path(
         .then(|| policy::sibling_path(&relative))
         .flatten();
     let macro_invocations = macro_authority::invocations(&model, &relative);
+    let item_macro_authorities = macro_authority::item_authorities(&model, &relative);
     Ok(PathExplanation {
         schema: 1,
         path: relative,
@@ -154,6 +156,7 @@ pub fn explain_path(
             .collect(),
         content_bound_macro_implementations: macro_authority::implementations(&model),
         macro_invocations,
+        item_macro_authorities,
         unsafe_code: policy::policy_mode(model.bundle.contract.source.rust.hygiene.unsafe_code)
             .into(),
         lint_suppressions: policy::lint_mode(

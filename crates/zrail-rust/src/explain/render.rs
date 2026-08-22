@@ -21,7 +21,8 @@ impl PathExplanation {
                 "external dependencies: {}\ndenied effects: {}\ndenied symbols: {}\n",
                 "denied methods: {}\ndenied macros: {}\nmacro expansion: {}\n",
                 "allowed macro expansions: {}\nopaque macro inputs: {}\n",
-                "content-bound macro implementations: {}\nmacro invocations: {}\nunsafe code: {}\n",
+                "content-bound macro implementations: {}\nmacro invocations: {}\n",
+                "item macro authorities: {}\nunsafe code: {}\n",
                 "lint suppressions: {}\nexpected sibling test: {}\ninvariants: {}\n",
                 "capability owners: {}\ncall owners: {}\nbudget: target {}, hard {}\n",
                 "declarative shape: {}\nmodule docs: {}\nsibling tests: {}\n",
@@ -48,6 +49,7 @@ impl PathExplanation {
             display_list(&self.opaque_macro_inputs),
             display_list(&self.content_bound_macro_implementations),
             display_macro_invocations(&self.macro_invocations),
+            display_item_macro_authorities(&self.item_macro_authorities),
             self.unsafe_code,
             self.lint_suppressions,
             self.expected_sibling_test.as_deref().unwrap_or("<none>"),
@@ -61,6 +63,17 @@ impl PathExplanation {
             self.sibling_tests_required
         )
     }
+}
+
+fn display_item_macro_authorities(values: &[super::ItemMacroAuthorityExplanation]) -> String {
+    if values.is_empty() {
+        return "<none>".into();
+    }
+    values
+        .iter()
+        .map(|value| format!("{} {} ({})", value.name, value.selector, value.binding))
+        .collect::<Vec<_>>()
+        .join("; ")
 }
 
 fn display_macro_invocations(values: &[super::MacroInvocationExplanation]) -> String {

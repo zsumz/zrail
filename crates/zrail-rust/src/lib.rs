@@ -31,8 +31,8 @@ pub use engine::{
     check_repository_with_candidate_contract, check_repository_with_lock, doctor_repository,
 };
 pub use explain::{
-    CallOwnerExplanation, CapabilityOwnerExplanation, MacroInvocationExplanation, PathExplanation,
-    explain_path,
+    CallOwnerExplanation, CapabilityOwnerExplanation, ItemMacroAuthorityExplanation,
+    MacroInvocationExplanation, PathExplanation, explain_path,
 };
 pub use onboarding::{
     BaselinePlan, BaselineRatchet, BaselineRule, BaselineSize, discover_baseline,

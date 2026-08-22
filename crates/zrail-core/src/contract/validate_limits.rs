@@ -70,6 +70,13 @@ fn contract_items(contract: &Contract) -> usize {
     count += contract
         .source
         .rust
+        .item_macros
+        .iter()
+        .map(|allowance| allowance.within.len())
+        .sum::<usize>();
+    count += contract
+        .source
+        .rust
         .generated
         .iter()
         .map(|generated| generated.inputs.len() + generated.auxiliary.len())

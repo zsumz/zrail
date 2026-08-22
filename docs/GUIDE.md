@@ -276,6 +276,41 @@ remain separate authority in `source`; zrail never encodes provenance by
 repeating path segments. `zrail explain` lists each observed macro's written
 spelling, preferred policy name, and resolved origin independently.
 
+Item-producing macros are a separate source-graph boundary because their output
+can declare modules or include source that static traversal cannot see. Existing
+exact-path authority remains valid, while repeated harness macros can be scoped
+by name and repository glob:
+
+```toml
+[[source.rust.item_macros]]
+name = "criterion_group"
+within = ["benches/**"]
+reason = "Reviewed benchmark harness emits no source edges."
+```
+
+Omitting both `path` and `within` grants repository-wide name authority. A
+contract may use either an exact `path` or `within`, never both. Exact paths go
+stale when their invocation disappears; scoped and repository-wide entries go
+stale only when no reachable invocation remains inside their authority.
+
+Name matching alone makes no provenance claim. Set `binding = "exact"` to
+require the same fail-closed macro-origin resolution used by expansion policy;
+an external `source` is accepted only with that explicit exact binding.
+`binding = "conservative"` can cover an unresolved exact spelling but cannot
+claim external provenance. `zrail explain` identifies the item-macro entry that
+actually authorizes each explained file.
+
+External exact binding also requires the dependency's Rust crate root to be
+known from Cargo or a matching `dependencies.crate_root` attestation.
+
+```toml
+binding = "exact"
+
+[source.rust.item_macros.source]
+kind = "registry"
+requirement = "0.5"
+```
+
 ## Cargo
 
 Contract parsing is strict. Unknown keys, stale policy, unresolved source

@@ -58,6 +58,9 @@ pub struct PathExplanation {
     /// Observed macro spellings, preferred policy names, and independent origins.
     #[serde(default)]
     pub macro_invocations: Vec<MacroInvocationExplanation>,
+    /// Scoped item-macro entries that authorize observed invocations in this file.
+    #[serde(default)]
+    pub item_macro_authorities: Vec<ItemMacroAuthorityExplanation>,
     /// The unsafe-code mode: `allow` or `deny`.
     pub unsafe_code: String,
     /// The lint-suppression mode: `allow`, `reasoned`, or `deny`.
@@ -92,6 +95,22 @@ pub struct MacroInvocationExplanation {
     pub preferred: Option<String>,
     /// Compiler, repository, dependency, or unresolved origins, separate from the name.
     pub origins: Vec<String>,
+}
+
+/// One scoped item-producing macro authority effective for an explained path.
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct ItemMacroAuthorityExplanation {
+    /// Macro policy name granted authority.
+    pub name: String,
+    /// Exact path, pattern scope, or repository-wide selector.
+    pub selector: String,
+    /// Name-only, exact, or conservative binding behavior.
+    pub binding: String,
+    /// External dependency provenance, when required.
+    pub source: Option<String>,
+    /// Human-authored justification for the authority.
+    pub reason: String,
 }
 
 /// A capability-owner rule as it applies to an explained path.

@@ -30,7 +30,6 @@ pub(super) fn review<'a>(
     })
 }
 
-#[cfg(test)]
 pub(super) fn review_without_definitions<'a>(
     expansion: &'a MacroExpansionFact,
     allowed: &BTreeMap<&str, &MacroExpansionAllow>,

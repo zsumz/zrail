@@ -3,6 +3,7 @@
 mod boundary;
 mod external_module;
 mod include;
+mod item_macros;
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
@@ -30,6 +31,18 @@ pub(crate) struct SourceGraphAnalysis {
     pub(crate) reachability: BTreeMap<String, Reachability>,
     pub(crate) packages: BTreeMap<String, BTreeSet<String>>,
     pub(crate) findings: Vec<Finding>,
+}
+
+pub(crate) fn item_macro_authorities(contract: &Contract, file: &RustFileFacts) -> Vec<usize> {
+    item_macros::authorities_for_file(contract, file)
+}
+
+pub(crate) fn item_macro_selector(allowance: &zrail_core::ItemMacroContract) -> String {
+    item_macros::selector_name(allowance)
+}
+
+pub(crate) fn review_item_macros(contract: &Contract, source: &SourceIndex) -> Vec<Finding> {
+    item_macros::review(contract, source)
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -60,7 +73,6 @@ struct Walker<'a> {
     entries: BTreeMap<&'a str, RepositoryEntryKind>,
     reached: BTreeMap<String, Reachability>,
     reached_packages: BTreeMap<String, BTreeSet<String>>,
-    seen_item_macros: BTreeSet<(String, String)>,
     seen_out_dir: BTreeSet<(String, String)>,
     reported: BTreeSet<(String, String)>,
     visited: BTreeSet<(String, SubmoduleBase, TraversalContext)>,
@@ -91,7 +103,6 @@ impl<'a> Walker<'a> {
                 .collect(),
             reached: BTreeMap::new(),
             reached_packages: BTreeMap::new(),
-            seen_item_macros: BTreeSet::new(),
             seen_out_dir: BTreeSet::new(),
             reported: BTreeSet::new(),
             visited: BTreeSet::new(),
@@ -105,7 +116,6 @@ impl<'a> Walker<'a> {
             self.walk_file(&path, submodule_base, &context);
         }
         self.reject_orphans();
-        self.reject_stale_item_macros();
         self.reject_stale_out_dir();
         SourceGraphAnalysis {
             reachability: self.reached,
@@ -147,65 +157,17 @@ impl<'a> Walker<'a> {
     }
 
     fn walk_file(&mut self, path: &str, submodule_base: SubmoduleBase, context: &TraversalContext) {
-        let Some(file) = self.facts.get(path) else {
-            return;
+        let (modules, includes) = {
+            let Some(file) = self.facts.get(path) else {
+                return;
+            };
+            (file.modules.clone(), file.includes.clone())
         };
-        let modules = file.modules.clone();
-        let includes = file.includes.clone();
-        let item_macros = file.item_macros.clone();
-        for invocation in item_macros {
-            if self.item_macro_allowed(path, &invocation.name) {
-                self.seen_item_macros
-                    .insert((path.to_owned(), invocation.name));
-            } else {
-                self.unresolved(
-                    path,
-                    invocation.span,
-                    format!(
-                        "item-position macro {}! may create source edges that static analysis cannot resolve",
-                        invocation.name
-                    ),
-                );
-            }
-        }
         for declaration in modules {
             self.walk_module(path, submodule_base, context, &declaration);
         }
         for include in includes {
             self.walk_include(path, context, &include);
-        }
-    }
-
-    fn item_macro_allowed(&self, path: &str, name: &str) -> bool {
-        self.contract
-            .source
-            .rust
-            .item_macros
-            .iter()
-            .any(|item_macro| item_macro.path == path && item_macro.name == name)
-    }
-
-    fn reject_stale_item_macros(&mut self) {
-        for item_macro in &self.contract.source.rust.item_macros {
-            if self
-                .seen_item_macros
-                .contains(&(item_macro.path.clone(), item_macro.name.clone()))
-            {
-                continue;
-            }
-            self.findings.push(
-                zrail_core::Finding::error(
-                    "RUST-GRAPH-005",
-                    "rust.source-graph.item-macro",
-                    "source-graph",
-                    format!(
-                        "item macro exemption {}! matches no reachable invocation",
-                        item_macro.name
-                    ),
-                )
-                .at(&item_macro.path, None)
-                .because(&item_macro.reason),
-            );
         }
     }
 }
