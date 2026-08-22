@@ -31,7 +31,8 @@ pub use engine::{
     check_repository_with_lock, doctor_repository,
 };
 pub use explain::{
-    CallOwnerExplanation, CapabilityOwnerExplanation, PathExplanation, explain_path,
+    CallOwnerExplanation, CapabilityOwnerExplanation, MacroInvocationExplanation, PathExplanation,
+    explain_path,
 };
 pub use onboarding::{
     BaselinePlan, BaselineRatchet, BaselineSize, discover_baseline, discover_source_roots,

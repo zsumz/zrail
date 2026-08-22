@@ -79,6 +79,53 @@ fn explanation_separates_opaque_input_from_content_bound_expansion() {
     fs::remove_dir_all(root).expect("remove explanation fixture");
 }
 
+#[test]
+fn explanation_separates_written_public_and_origin_macro_identity() {
+    let root = std::env::temp_dir().join(format!(
+        "zrail-explain-macro-name-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    let _ = fs::remove_dir_all(&root);
+    fs::create_dir_all(root.join("src")).expect("create explanation fixture");
+    fs::write(
+        root.join("Cargo.toml"),
+        concat!(
+            "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\n",
+            "[dependencies]\nreviewed_quote = { package = \"quote\", version = \"1\" }\n",
+        ),
+    )
+    .expect("write manifest");
+    fs::write(
+        root.join("src/lib.rs"),
+        "//! Macro identity.\nuse reviewed_quote::quote as q;\npub fn run() { let _ = q!(); }\n",
+    )
+    .expect("write source");
+    let contract = MACRO_CONTRACT
+        .replace("name = \"local::query\"", "name = \"quote::quote\"")
+        .replace("inputs = \"opaque\"\n", "")
+        .replace(
+            "definition = \"src/lib.rs\"\nreason = \"Reviewed local query boundary.\"",
+            "reason = \"Reviewed quote boundary.\"\n[source.rust.macros.allow.source]\nkind = \"registry\"\nrequirement = \"1\"",
+        );
+    fs::write(root.join("zrail.toml"), contract).expect("write contract");
+
+    let explanation = explain_path(&root, Path::new("zrail.toml"), Path::new("src/lib.rs"))
+        .expect("explain macro identity");
+
+    assert_eq!(explanation.macro_invocations.len(), 1);
+    let invocation = &explanation.macro_invocations[0];
+    assert_eq!(invocation.written, "q");
+    assert_eq!(invocation.preferred.as_deref(), Some("quote::quote"));
+    assert_eq!(invocation.origins, ["external:quote:registry:crates.io:1"]);
+    assert!(
+        explanation
+            .human()
+            .contains("q -> quote::quote @ external:quote")
+    );
+    fs::remove_dir_all(root).expect("remove explanation fixture");
+}
+
 const MACRO_CONTRACT: &str = r#"schema = 1
 adapters = ["rust"]
 [repository]

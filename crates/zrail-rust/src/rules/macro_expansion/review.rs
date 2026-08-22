@@ -21,7 +21,7 @@ pub(super) fn review<'a>(
     let mut matched = Vec::new();
     let mut saw_named_candidate = false;
     for candidate in &expansion.candidates {
-        let Some(names) = candidate_names(candidate, allowed) else {
+        let Some(names) = candidate_names(expansion, candidate, allowed) else {
             return Review::Unreviewed;
         };
         saw_named_candidate = true;
@@ -47,14 +47,21 @@ pub(super) fn review<'a>(
 }
 
 pub(super) fn candidate_names<'a>(
+    expansion: &'a MacroExpansionFact,
     candidate: &'a MacroCandidate,
     allowed: &BTreeMap<&str, &MacroExpansionAllow>,
 ) -> Option<Vec<&'a str>> {
     let names = candidate.policy_names().collect::<Vec<_>>();
-    names
-        .iter()
-        .all(|name| allowed.contains_key(name))
-        .then_some(names)
+    if names.iter().all(|name| allowed.contains_key(name)) {
+        Some(names)
+    } else if names.len() == 1
+        && candidate.written_alias
+        && allowed.contains_key(expansion.name.as_str())
+    {
+        Some(vec![expansion.name.as_str()])
+    } else {
+        None
+    }
 }
 
 fn unresolved(candidate: &MacroCandidate) -> bool {

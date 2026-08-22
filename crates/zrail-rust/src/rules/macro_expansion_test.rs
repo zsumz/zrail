@@ -18,6 +18,11 @@ fn local_definitions_shadow_intrinsic_shortcuts() {
     assert!(!directly_inspected(&local_include));
     assert!(directly_inspected(&compiler("std::include")));
     assert!(directly_inspected(&compiler("core::concat")));
+
+    let mut aliased = compiler("std::env");
+    aliased.name = "read_env".into();
+    aliased.candidates[0].written_alias = true;
+    assert!(directly_inspected(&aliased));
 }
 
 #[test]
@@ -41,9 +46,9 @@ fn every_conservative_canonical_identity_requires_review() {
         ("tokio::select", &tokio),
     ]);
 
-    assert!(candidate_names(&expansion.candidates[0], &partial).is_none());
+    assert!(candidate_names(&expansion, &expansion.candidates[0], &partial).is_none());
     assert_eq!(
-        candidate_names(&expansion.candidates[0], &complete).map(|names| names.len()),
+        candidate_names(&expansion, &expansion.candidates[0], &complete).map(|names| names.len()),
         Some(2)
     );
 }
@@ -135,6 +140,7 @@ fn repository(name: &str, derivation: MacroDerivation) -> MacroCandidate {
             directory: ".".into(),
         }],
         derivation,
+        written_alias: false,
     }
 }
 
@@ -145,6 +151,7 @@ fn compiler(name: &str) -> MacroExpansionFact {
             observation: fact(name),
             origins: vec![MacroOrigin::CompilerBuiltin],
             derivation: MacroDerivation::Written,
+            written_alias: false,
         }],
     )
 }

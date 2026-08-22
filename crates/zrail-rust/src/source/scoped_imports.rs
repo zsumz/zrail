@@ -83,7 +83,13 @@ fn expand(
     let resolved = (|| {
         let (target, conditional, local_module) = raw.get(alias)?;
         let (first, suffix) = split_root(target);
-        let mut resolution = if raw.contains_key(first) && first != alias {
+        let mut resolution = if first == alias {
+            ScopedAlias {
+                target: first.into(),
+                quality: AnalysisQuality::Exact,
+                local_module: false,
+            }
+        } else if raw.contains_key(first) {
             expand(first, raw, resolve_outer, visiting, cache, depth + 1)?
         } else {
             resolve_outer(first)

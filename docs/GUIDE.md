@@ -188,6 +188,13 @@ namespace, while ambiguous glob candidates must all be allowed. `#[macro_use]`
 imports remain unresolved because their bare namespace cannot be attributed
 exactly without compiler expansion.
 
+Macro policy names are user-spellable Rust paths. Diagnostics prefer the stable
+public path (`quote::quote`) while an exact lexical spelling (`q`) may satisfy
+the same single resolved candidate. Dependency package and source provenance
+remain separate authority in `source`; zrail never encodes provenance by
+repeating path segments. `zrail explain` lists each observed macro's written
+spelling, preferred policy name, and resolved origin independently.
+
 ## Cargo
 
 Contract parsing is strict. Unknown keys, stale policy, unresolved source

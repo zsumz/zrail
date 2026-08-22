@@ -27,30 +27,37 @@ fn validate_allowance(
     findings: &mut FindingSink,
 ) {
     let path = allowance.definition.as_deref().unwrap_or_default();
-    let leaf = allowance
-        .name
-        .rsplit("::")
-        .next()
-        .unwrap_or(&allowance.name);
     let bound_file = context
         .source
         .files
         .iter()
         .find(|file| file.relative == path);
-    let bound = bound_file.map_or(0, |file| {
-        file.macro_definitions
-            .iter()
-            .filter(|definition| definition.name == leaf)
-            .count()
-    });
-    let origins = context
+    let candidates = context
         .source
         .files
         .iter()
         .filter(|file| file.reachability != Reachability::Unreachable)
         .flat_map(|file| &file.macro_expansions)
-        .flat_map(|expansion| &expansion.candidates)
-        .filter(|candidate| candidate.policy_names().any(|name| name == allowance.name))
+        .flat_map(|expansion| {
+            expansion
+                .candidates
+                .iter()
+                .filter(|candidate| candidate.matches_allowance(&expansion.name, &allowance.name))
+        })
+        .collect::<Vec<_>>();
+    let definition_names = candidates
+        .iter()
+        .flat_map(|candidate| candidate.policy_names())
+        .map(|name| name.rsplit("::").next().unwrap_or(name))
+        .collect::<std::collections::BTreeSet<_>>();
+    let bound = bound_file.map_or(0, |file| {
+        file.macro_definitions
+            .iter()
+            .filter(|definition| definition_names.contains(definition.name.as_str()))
+            .count()
+    });
+    let origins = candidates
+        .into_iter()
         .flat_map(|candidate| &candidate.origins)
         .collect::<Vec<_>>();
     let origin_bound = !origins.is_empty()

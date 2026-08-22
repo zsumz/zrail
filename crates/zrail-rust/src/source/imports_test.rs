@@ -67,6 +67,17 @@ fn self_imports_bind_the_parent_path_instead_of_a_synthetic_self_segment() {
 }
 
 #[test]
+fn same_root_imports_do_not_rewrite_already_qualified_paths() {
+    let file = syn::parse_file("use quote::quote;").expect("parse same-root import");
+    let imports = ImportMap::from_file(&file);
+    let bare = syn::parse_str("quote").expect("parse bare path");
+    let qualified = syn::parse_str("quote::quote::quote").expect("parse qualified path");
+
+    assert_eq!(imports.resolve(&bare).0, "quote::quote");
+    assert_eq!(imports.resolve(&qualified).0, "quote::quote::quote");
+}
+
+#[test]
 fn exact_alias_expansion_has_fixed_depth_and_byte_limits() {
     let deep = (0..140).fold(String::new(), |mut source, index| {
         write!(source, "use a{} as a{index};", index + 1).expect("append alias");

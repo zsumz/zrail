@@ -38,6 +38,8 @@ pub(crate) struct MacroCandidate {
     pub(crate) observation: ObservedFact,
     pub(crate) origins: Vec<MacroOrigin>,
     pub(crate) derivation: MacroDerivation,
+    /// Whether the invocation spelling is an exact lexical alias for this candidate.
+    pub(crate) written_alias: bool,
 }
 
 impl MacroCandidate {
@@ -50,6 +52,10 @@ impl MacroCandidate {
             observation,
             origins: vec![MacroOrigin::Pending { local_module }],
             derivation,
+            written_alias: matches!(
+                derivation,
+                MacroDerivation::ExactImport | MacroDerivation::ReExport
+            ),
         }
     }
 
@@ -58,11 +64,24 @@ impl MacroCandidate {
             observation,
             origins: vec![MacroOrigin::Unresolved],
             derivation,
+            written_alias: false,
         }
     }
 
     pub(crate) fn policy_names(&self) -> impl Iterator<Item = &str> {
         self.observation.policy_names()
+    }
+
+    pub(crate) fn allowance_names<'a>(&'a self, written: &'a str) -> Vec<&'a str> {
+        let mut names = self.policy_names().collect::<Vec<_>>();
+        if self.written_alias && names.len() == 1 && names[0] != written && valid_path(written) {
+            names.push(written);
+        }
+        names
+    }
+
+    pub(crate) fn matches_allowance(&self, written: &str, allowance: &str) -> bool {
+        self.allowance_names(written).contains(&allowance)
     }
 }
 
@@ -121,10 +140,28 @@ impl MacroExpansionFact {
             .unwrap_or(AnalysisQuality::Unresolved);
     }
 
-    pub(crate) fn policy_names(&self) -> impl Iterator<Item = &str> {
-        self.candidates
+    pub(crate) fn preferred_policy_name(&self) -> Option<&str> {
+        let names = self
+            .candidates
             .iter()
             .flat_map(MacroCandidate::policy_names)
+            .filter(|name| valid_path(name))
+            .collect::<std::collections::BTreeSet<_>>();
+        if names.len() == 1 {
+            names.into_iter().next()
+        } else {
+            valid_path(&self.name).then_some(self.name.as_str())
+        }
+    }
+
+    pub(crate) fn names_covered_by(&self, allowed: &std::collections::BTreeSet<&str>) -> bool {
+        self.candidates.iter().all(|candidate| {
+            let names = candidate.policy_names().collect::<Vec<_>>();
+            names.iter().all(|name| allowed.contains(name))
+                || (names.len() == 1
+                    && candidate.written_alias
+                    && allowed.contains(self.name.as_str()))
+        })
     }
 
     pub(crate) fn origins(&self) -> impl Iterator<Item = &MacroOrigin> {
@@ -137,6 +174,10 @@ impl MacroExpansionFact {
         self.candidates.len() == 1
             && self.candidates[0].origins.as_slice() == [MacroOrigin::CompilerBuiltin]
     }
+}
+
+fn valid_path(name: &str) -> bool {
+    syn::parse_str::<syn::Path>(name).is_ok()
 }
 
 impl std::ops::Deref for MacroExpansionFact {

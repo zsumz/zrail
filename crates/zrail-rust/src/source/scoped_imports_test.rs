@@ -23,6 +23,14 @@ fn aliases_resolve_against_their_scope_and_outer_imports() {
 }
 
 #[test]
+fn same_named_import_does_not_duplicate_its_public_path() {
+    let file = syn::parse_file("use quote::quote;").expect("parse same-named import");
+    let aliases = collect(file.items.iter(), external);
+
+    assert_eq!(aliases["quote"].target, "quote::quote");
+}
+
+#[test]
 fn alias_cycles_are_unresolved() {
     let file = syn::parse_file("use b as a; use a as b;").expect("parse cyclic imports");
     let aliases = collect(file.items.iter(), external);

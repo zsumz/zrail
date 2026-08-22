@@ -43,6 +43,9 @@ pub struct PathExplanation {
     pub opaque_macro_inputs: Vec<String>,
     /// Observed repository macro implementations bound into the lock.
     pub content_bound_macro_implementations: Vec<String>,
+    /// Observed macro spellings, preferred policy names, and independent origins.
+    #[serde(default)]
+    pub macro_invocations: Vec<MacroInvocationExplanation>,
     /// The unsafe-code mode: `allow` or `deny`.
     pub unsafe_code: String,
     /// The lint-suppression mode: `allow`, `reasoned`, or `deny`.
@@ -65,6 +68,18 @@ pub struct PathExplanation {
     pub module_docs_required: bool,
     /// Whether production tests must use sibling test modules.
     pub sibling_tests_required: bool,
+}
+
+/// One observed macro invocation identity as shown by `zrail explain`.
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct MacroInvocationExplanation {
+    /// The exact path spelling at the invocation site.
+    pub written: String,
+    /// The stable user-spellable policy name, when resolution found one.
+    pub preferred: Option<String>,
+    /// Compiler, repository, dependency, or unresolved origins, separate from the name.
+    pub origins: Vec<String>,
 }
 
 /// A capability-owner rule as it applies to an explained path.

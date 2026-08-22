@@ -76,6 +76,9 @@ impl ImportMap {
             return (String::new(), AnalysisQuality::Unresolved);
         };
         if let Some(prefix) = self.aliases.get(first) {
+            if segments.len() > 1 && visible_root(prefix) == visible_root(first) {
+                return (segments.join("::"), AnalysisQuality::Exact);
+            }
             let mut resolved = prefix.clone();
             if segments.len() > 1 {
                 resolved.push_str("::");
@@ -207,6 +210,11 @@ impl ImportMap {
             }
         }
     }
+}
+
+fn visible_root(path: &str) -> &str {
+    let root = path.split("::").next().unwrap_or(path);
+    root.strip_prefix("r#").unwrap_or(root)
 }
 
 fn join_path(mut prefix: String, remainder: &[String]) -> String {

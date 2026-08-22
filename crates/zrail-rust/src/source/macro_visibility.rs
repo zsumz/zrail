@@ -88,7 +88,7 @@ fn imported_candidate(
     if local {
         observation.canonical.push(original.name.clone());
     }
-    MacroCandidate::pending(
+    let mut candidate = MacroCandidate::pending(
         observation,
         local || repository_path(&import.target),
         if import.re_export {
@@ -96,7 +96,9 @@ fn imported_candidate(
         } else {
             MacroDerivation::ExactImport
         },
-    )
+    );
+    candidate.written_alias = false;
+    candidate
 }
 
 fn unresolved(mut observation: ObservedFact) -> ObservedFact {
@@ -116,6 +118,7 @@ fn candidate_order(left: &MacroCandidate, right: &MacroCandidate) -> std::cmp::O
         .then(left.observation.canonical.cmp(&right.observation.canonical))
         .then(left.observation.quality.cmp(&right.observation.quality))
         .then(left.derivation.cmp(&right.derivation))
+        .then(left.written_alias.cmp(&right.written_alias))
         .then(left.origins.cmp(&right.origins))
 }
 
@@ -124,6 +127,7 @@ fn same_candidate(left: &MacroCandidate, right: &MacroCandidate) -> bool {
         && left.observation.canonical == right.observation.canonical
         && left.observation.quality == right.observation.quality
         && left.derivation == right.derivation
+        && left.written_alias == right.written_alias
         && left.origins == right.origins
 }
 

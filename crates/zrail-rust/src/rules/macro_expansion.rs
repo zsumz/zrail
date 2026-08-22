@@ -97,17 +97,37 @@ fn unbound(file: &crate::source::RustFileFacts, expansion: &MacroExpansionFact) 
 }
 
 fn unreviewed(file: &crate::source::RustFileFacts, expansion: &MacroExpansionFact) -> Finding {
-    Finding::error(
-        "RUST-MACRO-001",
-        "rust.macro-expansion",
-        "source",
-        format!("source invokes unreviewed macro expansion {}", expansion.name),
-    )
-    .at(&file.relative, expansion.span)
-    .with_analysis(expansion.quality)
-    .with_help(
-        "remove the macro or add a reasoned source.rust.macros.allow entry after reviewing its expansion boundary",
-    )
+    let preferred = expansion.preferred_policy_name();
+    let message = preferred
+        .filter(|name| *name != expansion.name)
+        .map_or_else(
+            || {
+                format!(
+                    "source invokes unreviewed macro expansion {}",
+                    expansion.name
+                )
+            },
+            |name| {
+                format!(
+                    "source invokes unreviewed macro expansion {} (preferred policy name {name})",
+                    expansion.name
+                )
+            },
+        );
+    let help = preferred.map_or_else(
+        || {
+            "remove the macro or add a reasoned source.rust.macros.allow entry after reviewing its expansion boundary".into()
+        },
+        |name| {
+            format!(
+                "remove the macro or add source.rust.macros.allow name = {name:?} after reviewing its expansion boundary"
+            )
+        },
+    );
+    Finding::error("RUST-MACRO-001", "rust.macro-expansion", "source", message)
+        .at(&file.relative, expansion.span)
+        .with_analysis(expansion.quality)
+        .with_help(help)
 }
 
 fn stale_allowances(
@@ -148,25 +168,29 @@ fn directly_inspected(expansion: &MacroExpansionFact) -> bool {
     if expansion.quality != AnalysisQuality::Exact || !expansion.is_compiler_builtin() {
         return false;
     }
-    expansion.policy_names().all(|name| {
-        let leaf = name.rsplit("::").next().unwrap_or(name);
-        matches!(
-            leaf,
-            "cfg"
-                | "column"
-                | "concat"
-                | "concat_bytes"
-                | "env"
-                | "file"
-                | "include"
-                | "include_bytes"
-                | "include_str"
-                | "line"
-                | "module_path"
-                | "option_env"
-                | "stringify"
-        )
-    })
+    expansion
+        .candidates
+        .iter()
+        .flat_map(crate::source::MacroCandidate::policy_names)
+        .all(|name| {
+            let leaf = name.rsplit("::").next().unwrap_or(name);
+            matches!(
+                leaf,
+                "cfg"
+                    | "column"
+                    | "concat"
+                    | "concat_bytes"
+                    | "env"
+                    | "file"
+                    | "include"
+                    | "include_bytes"
+                    | "include_str"
+                    | "line"
+                    | "module_path"
+                    | "option_env"
+                    | "stringify"
+            )
+        })
 }
 
 #[cfg(test)]

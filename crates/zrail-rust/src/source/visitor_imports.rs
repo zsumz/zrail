@@ -39,12 +39,12 @@ impl FactVisitor<'_> {
         if local_module {
             observed.canonical.push(resolved.clone());
         }
-        let derivation = if local_module {
-            MacroDerivation::LocalDefinition
-        } else if self.imports.re_exports(path) {
+        let derivation = if self.imports.re_exports(path) {
             MacroDerivation::ReExport
-        } else if scoped || resolved != written_name {
+        } else if resolved != written_name {
             MacroDerivation::ExactImport
+        } else if local_module {
+            MacroDerivation::LocalDefinition
         } else {
             MacroDerivation::Written
         };
@@ -83,6 +83,12 @@ impl FactVisitor<'_> {
         let (root, suffix) = split_root(path);
         for scope in self.local_imports.iter().rev() {
             if let Some(alias) = scope.get(root) {
+                if !suffix.is_empty() && visible_root(&alias.target) == visible_root(root) {
+                    if alias.local_module {
+                        return (path.into(), alias.quality, true, true);
+                    }
+                    continue;
+                }
                 return (
                     format!("{}{suffix}", alias.target),
                     alias.quality,
@@ -97,6 +103,11 @@ impl FactVisitor<'_> {
         let (resolved, quality) = self.imports.resolve(&parsed);
         (resolved, quality, false, false)
     }
+}
+
+fn visible_root(path: &str) -> &str {
+    let root = path.split("::").next().unwrap_or(path);
+    root.strip_prefix("r#").unwrap_or(root)
 }
 
 pub(super) type LocalImportScopes = Vec<BTreeMap<String, scoped_imports::ScopedAlias>>;

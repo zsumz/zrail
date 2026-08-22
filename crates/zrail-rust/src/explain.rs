@@ -17,7 +17,9 @@ use crate::{
     source::Reachability,
 };
 
-pub use model::{CallOwnerExplanation, CapabilityOwnerExplanation, PathExplanation};
+pub use model::{
+    CallOwnerExplanation, CapabilityOwnerExplanation, MacroInvocationExplanation, PathExplanation,
+};
 
 /// Resolves the effective architecture policy for one repository-relative path.
 ///
@@ -88,6 +90,7 @@ pub fn explain_path(
     let expected_sibling_test = sibling_tests_required
         .then(|| policy::sibling_path(&relative))
         .flatten();
+    let macro_invocations = macro_authority::invocations(&model, &relative);
     Ok(PathExplanation {
         schema: 1,
         path: relative,
@@ -141,6 +144,7 @@ pub fn explain_path(
             .map(|allowed| allowed.name.clone())
             .collect(),
         content_bound_macro_implementations: macro_authority::implementations(&model),
+        macro_invocations,
         unsafe_code: policy::policy_mode(model.bundle.contract.source.rust.hygiene.unsafe_code)
             .into(),
         lint_suppressions: policy::lint_mode(
