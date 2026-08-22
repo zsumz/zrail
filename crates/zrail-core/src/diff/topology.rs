@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{Contract, DependencyRule, Effect};
+use crate::{Contract, DependencyRule, Effect, PolicyReachability};
 
 use super::{ArchitectureChange, ChangeKind, support::compare_set_values, topology_policy};
 
@@ -69,6 +69,7 @@ fn compare_profiles(before: &Contract, after: &Contract, changes: &mut Vec<Archi
         .cloned()
         .collect::<BTreeSet<_>>();
     for name in profiles {
+        compare_profile_reachability(before, after, &name, changes);
         let old = denied_effects(before, &name);
         let new = denied_effects(after, &name);
         for effect in new.difference(&old) {
@@ -87,6 +88,38 @@ fn compare_profiles(before: &Contract, after: &Contract, changes: &mut Vec<Archi
                 "profile no longer denies this architectural effect",
             ));
         }
+    }
+}
+
+fn compare_profile_reachability(
+    before: &Contract,
+    after: &Contract,
+    name: &str,
+    changes: &mut Vec<ArchitectureChange>,
+) {
+    let old = before
+        .profiles
+        .get(name)
+        .map(|profile| profile.reachability);
+    let new = after.profiles.get(name).map(|profile| profile.reachability);
+    let (Some(old), Some(new)) = (old, new) else {
+        return;
+    };
+    let kind = match (old, new) {
+        (PolicyReachability::All, PolicyReachability::Production) => Some(ChangeKind::Grant),
+        (PolicyReachability::Production, PolicyReachability::All) => Some(ChangeKind::Revoke),
+        _ => None,
+    };
+    if let Some(kind) = kind {
+        changes.push(
+            ArchitectureChange::new(
+                kind,
+                "effect.reachability",
+                name,
+                "profile source reachability changed",
+            )
+            .values(format!("{old:?}"), format!("{new:?}")),
+        );
     }
 }
 
@@ -148,3 +181,7 @@ fn dependency_denials(rules: &[DependencyRule]) -> BTreeSet<String> {
         })
         .collect()
 }
+
+#[cfg(test)]
+#[path = "topology_test.rs"]
+mod topology_test;

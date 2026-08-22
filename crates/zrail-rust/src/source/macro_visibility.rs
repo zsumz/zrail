@@ -84,6 +84,7 @@ fn imported_candidate(
         } else {
             import.quality
         },
+        guard: original.guard,
     };
     if local {
         observation.canonical.push(original.name.clone());

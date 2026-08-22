@@ -125,6 +125,7 @@ fn fact(name: &str) -> ObservedFact {
         canonical: Vec::new(),
         span: None,
         quality: AnalysisQuality::Exact,
+        guard: crate::source::SyntaxGuard::Ordinary,
     }
 }
 

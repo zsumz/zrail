@@ -10,8 +10,7 @@ use std::{
 use zrail_core::{Finding, FindingSink, TestMode};
 
 use crate::source::{
-    ModuleDeclaration, ModuleTarget, Reachability, RustFileFacts, SubmoduleBase, join_relative,
-    module_target,
+    ModuleDeclaration, ModuleTarget, RustFileFacts, SubmoduleBase, join_relative, module_target,
 };
 
 use super::RuleContext;
@@ -71,7 +70,7 @@ fn check_declarations(context: &RuleContext<'_>, findings: &mut FindingSink) {
         .iter()
         .filter(|file| is_sibling_test(&file.relative))
     {
-        if test.reachability.is_production() {
+        if test.reachability.is_non_test_target() {
             findings.push(
                 Finding::error(
                     "RUST-TEST-004",
@@ -91,7 +90,7 @@ fn check_declarations(context: &RuleContext<'_>, findings: &mut FindingSink) {
             .iter()
             .filter(|(_, _, target)| target.as_deref() == Some(test.relative.as_str()))
             .collect::<Vec<_>>();
-        if test.reachability == Reachability::TestOnly
+        if test.reachability.is_test_only()
             && exact.iter().any(|(_, declaration, _)| declaration.cfg_test)
         {
             continue;

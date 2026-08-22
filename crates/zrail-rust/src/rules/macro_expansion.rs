@@ -12,7 +12,7 @@ use zrail_core::{
     AnalysisQuality, Finding, FindingSink, MacroExpansionAllow, MacroExpansionMode, MacroInputMode,
 };
 
-use crate::source::{MacroExpansionFact, Reachability};
+use crate::source::MacroExpansionFact;
 
 use super::RuleContext;
 
@@ -44,7 +44,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
         .source
         .files
         .iter()
-        .filter(|file| file.reachability != Reachability::Unreachable)
+        .filter(|file| !file.reachability.is_unreachable())
     {
         for expansion in &file.macro_expansions {
             if directly_inspected(expansion) {

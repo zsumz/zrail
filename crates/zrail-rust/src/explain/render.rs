@@ -16,7 +16,7 @@ impl PathExplanation {
         format!(
             concat!(
                 "path: {}\nclass: {}\nreachability: {}\npackage: {}\nlayer: {}\n",
-                "profiles: {}\nscopes: {}\ndependency layers: {}\n",
+                "profiles: {}\nprofile reachability: {}\nscopes: {}\ndependency layers: {}\n",
                 "external dependencies: {}\ndenied effects: {}\ndenied symbols: {}\n",
                 "denied methods: {}\ndenied macros: {}\nmacro expansion: {}\n",
                 "allowed macro expansions: {}\nopaque macro inputs: {}\n",
@@ -31,6 +31,7 @@ impl PathExplanation {
             self.package.as_deref().unwrap_or("<none>"),
             self.layer.as_deref().unwrap_or("<none>"),
             display_list(&self.profiles),
+            display_list(&self.profile_reachability),
             display_list(&self.scopes),
             display_list(&self.permitted_dependency_layers),
             self.external_dependencies.as_deref().unwrap_or("<none>"),

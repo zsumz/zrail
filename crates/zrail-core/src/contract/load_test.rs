@@ -92,6 +92,30 @@ fn unknown_keys_fail_closed() {
     reset(&root);
 }
 
+#[test]
+fn profile_reachability_accepts_only_closed_policy_values() {
+    let root = fixture_root("profile-reachability");
+    reset(&root);
+    fs::create_dir_all(&root).expect("create root");
+    let source = format!(
+        concat!(
+            "{}\n",
+            "[profiles.restricted]\nreachability = \"tests\"\n",
+            "[profiles.restricted.effects]\ndeny = [\"process\"]\n",
+            "[[layer]]\nname = \"app\"\npackages = [\"fixture\"]\n",
+            "profiles = [\"restricted\"]\nreason = \"Fixture.\"\n",
+        ),
+        base_contract("")
+    );
+    fs::write(root.join("zrail.toml"), source).expect("write contract");
+
+    let error =
+        load_contract(&root, Path::new("zrail.toml")).expect_err("unknown reachability must fail");
+
+    assert!(error.to_string().contains("unknown variant `tests`"));
+    reset(&root);
+}
+
 #[cfg(unix)]
 #[test]
 fn contract_symlinks_are_rejected_before_reading() {

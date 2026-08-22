@@ -3,7 +3,7 @@
 use proc_macro2::Span;
 use zrail_core::{AnalysisQuality, SourceSpan};
 
-use super::ObservedFact;
+use super::{ObservedFact, SyntaxGuard};
 
 pub(super) fn fact(name: impl Into<String>, span: Span, quality: AnalysisQuality) -> ObservedFact {
     ObservedFact {
@@ -11,6 +11,7 @@ pub(super) fn fact(name: impl Into<String>, span: Span, quality: AnalysisQuality
         canonical: Vec::new(),
         span: Some(source_span(span)),
         quality,
+        guard: SyntaxGuard::Ordinary,
     }
 }
 

@@ -18,6 +18,9 @@ pub(super) use super::visitor_model::FactVisitor;
 
 impl<'ast> Visit<'ast> for FactVisitor<'_> {
     fn visit_file(&mut self, file: &'ast syn::File) {
+        if file.attrs.iter().any(is_cfg_test) {
+            self.guard_initial_paths();
+        }
         self.with_cfg(&file.attrs, |visitor| {
             visitor.with_import_scope(file.items.iter(), |visitor| {
                 visit::visit_file(visitor, file);

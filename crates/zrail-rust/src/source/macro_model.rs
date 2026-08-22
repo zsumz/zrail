@@ -136,6 +136,13 @@ impl MacroExpansionFact {
             .unwrap_or(AnalysisQuality::Unresolved);
     }
 
+    pub(super) fn mark_test_only(&mut self) {
+        self.observation.mark_test_only();
+        for candidate in &mut self.candidates {
+            candidate.observation.mark_test_only();
+        }
+    }
+
     pub(crate) fn preferred_policy_name(&self) -> Option<&str> {
         let names = self
             .candidates

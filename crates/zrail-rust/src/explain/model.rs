@@ -21,6 +21,9 @@ pub struct PathExplanation {
     pub layer: Option<String>,
     /// The effect-profile names applied by the matched layer.
     pub profiles: Vec<String>,
+    /// File and fact reachability used by each applied effect profile.
+    #[serde(default)]
+    pub profile_reachability: Vec<String>,
     /// The names of source scopes that include the path.
     pub scopes: Vec<String>,
     /// The matched layer and every layer it may depend on.

@@ -2,8 +2,8 @@
 
 use super::validate_contract;
 use crate::contract::{
-    Effect, EffectBoundary, OutDirSourceContract, OwnerContract, OwnerKind, ProfileContract,
-    RatchetContract,
+    Effect, EffectBoundary, OutDirSourceContract, OwnerContract, OwnerKind, PolicyReachability,
+    ProfileContract, RatchetContract,
     validate_fixture_test::{generated, layer, minimal_contract},
 };
 
@@ -41,6 +41,7 @@ fn duplicate_effects_are_rejected() {
     contract.profiles.insert(
         "offline".into(),
         ProfileContract {
+            reachability: PolicyReachability::default(),
             effects: EffectBoundary {
                 deny: vec![Effect::Network, Effect::Network],
             },
@@ -169,6 +170,7 @@ fn unused_profiles_are_rejected_as_stale_policy() {
     contract.profiles.insert(
         "offline".into(),
         ProfileContract {
+            reachability: PolicyReachability::default(),
             effects: EffectBoundary {
                 deny: vec![Effect::Network],
             },
@@ -186,6 +188,7 @@ fn empty_profiles_and_scopes_are_rejected() {
     contract.profiles.insert(
         "empty".into(),
         ProfileContract {
+            reachability: PolicyReachability::default(),
             effects: EffectBoundary { deny: Vec::new() },
         },
     );

@@ -94,6 +94,7 @@ fn pending(name: &str, local_module: bool) -> MacroExpansionFact {
             canonical: Vec::new(),
             span: None,
             quality: AnalysisQuality::Exact,
+            guard: crate::source::SyntaxGuard::Ordinary,
         },
         local_module,
     )

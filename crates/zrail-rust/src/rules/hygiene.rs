@@ -15,7 +15,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
         .source
         .files
         .iter()
-        .filter(|file| file.reachability.is_production())
+        .filter(|file| file.reachability.is_non_test_target())
     {
         for method in &file.methods {
             if hygiene

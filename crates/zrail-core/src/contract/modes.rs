@@ -34,6 +34,17 @@ pub enum Effect {
     Randomness,
 }
 
+#[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
+/// Source reachability considered by an effect profile.
+pub enum PolicyReachability {
+    /// Evaluate effects in every Cargo target and syntax guard.
+    #[default]
+    All,
+    /// Evaluate only ordinary facts reachable from a library or binary target.
+    Production,
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
 /// Policy for how declared workspace membership must match discovered membership.

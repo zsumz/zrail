@@ -5,7 +5,10 @@ use zrail_core::{
     PolicyMode, RustSourceContract, TestMode,
 };
 
-use crate::{inventory::FileClass, source::Reachability};
+use crate::{
+    inventory::FileClass,
+    source::{Reachability, ReachabilityKind},
+};
 
 use super::budget_for;
 
@@ -41,7 +44,7 @@ fn generated_budget_remains_enforced_without_a_handwritten_size_policy() {
         budget_for(
             "src/lib.rs",
             FileClass::Facade,
-            Reachability::Production,
+            Reachability::from_kind(ReachabilityKind::Production),
             &rust
         ),
         None
@@ -49,7 +52,7 @@ fn generated_budget_remains_enforced_without_a_handwritten_size_policy() {
     let generated = budget_for(
         "src/generated/model.rs",
         FileClass::Generated,
-        Reachability::Production,
+        Reachability::from_kind(ReachabilityKind::Production),
         &rust,
     )
     .expect("generated source keeps its declared budget");

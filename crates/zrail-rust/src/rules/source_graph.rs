@@ -12,7 +12,8 @@ use crate::{
     cargo::{CargoTargetKind, CargoWorkspace},
     inventory::{RepositoryEntryKind, RepositoryInventory},
     source::{
-        Reachability, RustFileFacts, SourceIndex, SourceSyntax, SubmoduleBase, join_relative,
+        Reachability, ReachabilityKind, RustFileFacts, SourceIndex, SourceSyntax, SubmoduleBase,
+        join_relative,
     },
 };
 
@@ -41,7 +42,7 @@ impl TraversalContext {
     fn with_test_guard(&self, guarded: bool) -> Self {
         Self {
             reachability: if guarded {
-                Reachability::TestOnly
+                Reachability::test()
             } else {
                 self.reachability
             },
@@ -120,11 +121,7 @@ impl<'a> Walker<'a> {
                 self.missing(&package.manifest_path(), None, message);
             }
             for target in &package.targets {
-                let reachability = if target.kind == CargoTargetKind::Test {
-                    Reachability::TestOnly
-                } else {
-                    Reachability::Production
-                };
+                let reachability = target_reachability(target.kind);
                 match join_relative(&package.directory, &target.path) {
                     Ok(path) => self.follow(
                         &package.manifest_path(),
@@ -211,4 +208,15 @@ impl<'a> Walker<'a> {
             );
         }
     }
+}
+
+const fn target_reachability(kind: CargoTargetKind) -> Reachability {
+    let kind = match kind {
+        CargoTargetKind::Library | CargoTargetKind::Binary => ReachabilityKind::Production,
+        CargoTargetKind::Test => ReachabilityKind::Test,
+        CargoTargetKind::Benchmark => ReachabilityKind::Benchmark,
+        CargoTargetKind::Example => ReachabilityKind::Example,
+        CargoTargetKind::BuildScript => ReachabilityKind::Build,
+    };
+    Reachability::from_kind(kind)
 }

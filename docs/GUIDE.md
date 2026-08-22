@@ -179,6 +179,23 @@ External crate-root attestations bind to the exact registry or Git declaration.
 Roots that no active canonical policy relies on remain unresolved rather than
 being guessed.
 
+Effect profiles evaluate every Cargo target and syntax guard by default. A
+runtime boundary can narrow evaluation to ordinary facts reachable from library
+or binary targets:
+
+```toml
+[profiles.kernel]
+reachability = "production"
+
+[profiles.kernel.effects]
+deny = ["filesystem", "network", "process"]
+```
+
+Production reachability excludes integration tests, benchmarks, examples,
+build scripts, and facts beneath `#[cfg(test)]`, including guarded code inside a
+production-reachable file. `zrail explain` reports both the file's target-domain
+reachability and the fact reachability used by each applied profile.
+
 ## Generated inputs
 
 Reviewed generated trees and `OUT_DIR` snapshots bind their source, generator,

@@ -2,7 +2,7 @@
 
 use zrail_core::AnalysisQuality;
 
-use super::{imports::ImportMap, model::ObservedFact, visitor::FactVisitor};
+use super::{SyntaxGuard, imports::ImportMap, model::ObservedFact, visitor::FactVisitor};
 
 impl<'a> FactVisitor<'a> {
     pub(super) fn new(imports: &'a ImportMap) -> Self {
@@ -14,6 +14,7 @@ impl<'a> FactVisitor<'a> {
                 canonical: Vec::new(),
                 span: None,
                 quality,
+                guard: SyntaxGuard::Ordinary,
             })
             .collect::<Vec<_>>();
         paths.extend(imports.globs().iter().map(|path| ObservedFact {
@@ -21,6 +22,7 @@ impl<'a> FactVisitor<'a> {
             canonical: Vec::new(),
             span: None,
             quality: AnalysisQuality::Conservative,
+            guard: SyntaxGuard::Ordinary,
         }));
         Self {
             imports,

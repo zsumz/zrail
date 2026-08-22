@@ -6,7 +6,7 @@ use zrail_core::{LockedMacroImplementation, MAX_INPUT_BYTES, read_bytes_with_lim
 
 use crate::{
     inventory::RepositoryEntryKind,
-    source::{MacroOrigin, Reachability, join_relative, parent},
+    source::{MacroOrigin, join_relative, parent},
 };
 
 use super::{CheckError, model::RepositoryModel};
@@ -39,7 +39,7 @@ fn trusted_packages(model: &RepositoryModel) -> BTreeSet<(String, String)> {
         .source
         .files
         .iter()
-        .filter(|file| file.reachability != Reachability::Unreachable)
+        .filter(|file| !file.reachability.is_unreachable())
         .flat_map(|file| &file.macro_expansions)
         .filter(|expansion| expansion.names_covered_by(&allowed))
         .flat_map(crate::source::MacroExpansionFact::origins)
@@ -77,7 +77,7 @@ fn manifest(
     add_required_entry(&entries, &manifest_path, &mut inputs)?;
     if let Some(package) = package {
         for file in model.source.files.iter().filter(|file| {
-            file.reachability != Reachability::Unreachable && file.packages.contains(&package.name)
+            !file.reachability.is_unreachable() && file.packages.contains(&package.name)
         }) {
             inputs.insert(file.relative.clone(), file_source(model, &file.relative)?);
             add_compile_inputs(&entries, file, &mut inputs)?;

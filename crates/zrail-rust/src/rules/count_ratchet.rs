@@ -80,18 +80,18 @@ pub(crate) fn measurement(
         "rust.file-size" => Some(file.lines),
         "rust.inline-tests" => file
             .reachability
-            .is_production()
+            .is_non_test_target()
             .then_some(file.tests.len()),
         "rust.module-docs" => (rust.module_docs == ModuleDocsMode::Required
             && file.syntax == SourceSyntax::Items
             && file.class != FileClass::Generated)
             .then_some(usize::from(!file.module_docs)),
         "rust.hygiene.unsafe" => (rust.hygiene.unsafe_code == PolicyMode::Deny
-            && file.reachability.is_production())
+            && file.reachability.is_non_test_target())
         .then_some(file.unsafe_constructs.len()),
         "rust.hygiene.lint-suppressions" => (rust.hygiene.lint_suppressions
             != LintSuppressionMode::Allow
-            && file.reachability.is_production()
+            && file.reachability.is_non_test_target()
             && file.class != FileClass::Generated)
             .then(|| {
                 file.lint_suppressions

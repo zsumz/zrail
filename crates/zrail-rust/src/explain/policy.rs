@@ -45,6 +45,30 @@ pub(super) fn denied_effects(contract: &Contract, layer: Option<&LayerContract>)
         .collect()
 }
 
+pub(super) fn profile_reachability(
+    contract: &Contract,
+    layer: Option<&LayerContract>,
+) -> Vec<String> {
+    let Some(layer) = layer else {
+        return Vec::new();
+    };
+    layer
+        .profiles
+        .iter()
+        .filter_map(|name| {
+            contract.profiles.get(name).map(|profile| {
+                let reachability = match profile.reachability {
+                    zrail_core::PolicyReachability::All => "all files and facts",
+                    zrail_core::PolicyReachability::Production => {
+                        "production files and ordinary facts"
+                    }
+                };
+                format!("{name}: {reachability}")
+            })
+        })
+        .collect()
+}
+
 pub(super) fn denied_symbols(scopes: &[&ScopeContract]) -> Vec<String> {
     scopes
         .iter()

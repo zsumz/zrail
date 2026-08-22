@@ -14,7 +14,7 @@ pub(crate) fn budget_for(
     rust: &RustSourceContract,
 ) -> Option<Budget> {
     let size = rust.size.as_ref();
-    if class != FileClass::Generated && reachability == Reachability::TestOnly {
+    if class != FileClass::Generated && reachability.is_test_only() {
         return size.map(|size| size.test);
     }
     match class {

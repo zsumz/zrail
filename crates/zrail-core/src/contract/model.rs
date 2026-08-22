@@ -6,14 +6,13 @@ mod evidence;
 #[path = "model/macros.rs"]
 mod macros;
 
-pub use dependencies::{CrateRootContract, CrateRootSource, DependenciesContract};
-pub use evidence::{GateContract, GateKind, InvariantContract, InvariantStatus};
-pub use macros::{MacroExpansionAllow, MacroExpansionContract};
-
 use super::modes::{
     Effect, ExactMode, ExternalDependencyMode, FacadeMode, LintSuppressionMode, ModuleDocsMode,
     OwnerKind, PolicyMode, SymlinkMode, TestMode,
 };
+pub use dependencies::{CrateRootContract, CrateRootSource, DependenciesContract};
+pub use evidence::{GateContract, GateKind, InvariantContract, InvariantStatus};
+pub use macros::{MacroExpansionAllow, MacroExpansionContract};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -146,6 +145,8 @@ use std::collections::BTreeMap;
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 #[doc = "Named capability profile applied to one or more architecture layers."] pub struct ProfileContract {
+    #[serde(default)]
+    #[doc = "Source reachability to which this profile applies."] pub reachability: super::PolicyReachability,
     #[doc = "Side effects prohibited for packages using this profile."] pub effects: EffectBoundary,
 }
 

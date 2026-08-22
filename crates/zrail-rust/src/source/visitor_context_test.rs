@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 use syn::visit::Visit;
 
 use super::super::{imports::ImportMap, visitor::FactVisitor};
+use crate::source::SyntaxGuard;
 
 #[test]
 fn enclosing_items_expressions_and_locals_are_test_only() {
@@ -64,6 +65,46 @@ fn ordinary_include_remains_production_context() {
     let includes = includes("fn production() { include!(\"production.rs\"); }\n");
 
     assert_eq!(includes.get("production.rs"), Some(&false));
+}
+
+#[test]
+fn observed_facts_retain_test_only_syntax_guards() {
+    let syntax = syn::parse_file(
+        r#"
+        pub fn production() { std::fs::read("input"); }
+        #[cfg(test)]
+        mod tests {
+            fn guarded() {
+                std::process::Command::new("true");
+                let _ = include_str!("fixture.txt");
+            }
+        }
+        "#,
+    )
+    .expect("parse guarded facts");
+    let imports = ImportMap::from_file(&syntax);
+    let mut visitor = FactVisitor::new(&imports);
+    visitor.visit_file(&syntax);
+
+    let filesystem = visitor
+        .paths
+        .iter()
+        .find(|fact| fact.name == "std::fs::read")
+        .expect("production fact");
+    let process = visitor
+        .paths
+        .iter()
+        .find(|fact| fact.name == "std::process::Command::new")
+        .expect("guarded fact");
+    let compile = visitor
+        .compile_effects
+        .iter()
+        .find(|fact| fact.target.as_deref() == Some("fixture.txt"))
+        .expect("guarded compile effect");
+
+    assert_eq!(filesystem.guard, SyntaxGuard::Ordinary);
+    assert_eq!(process.guard, SyntaxGuard::TestOnly);
+    assert_eq!(compile.invocation.guard, SyntaxGuard::TestOnly);
 }
 
 fn includes(source: &str) -> BTreeMap<String, bool> {

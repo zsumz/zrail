@@ -7,9 +7,79 @@ use super::{attributes::is_cfg_test, visitor::FactVisitor};
 impl FactVisitor<'_> {
     pub(super) fn with_cfg(&mut self, attributes: &[Attribute], visit: impl FnOnce(&mut Self)) {
         let previous = self.test_only_context;
-        self.test_only_context |= attributes.iter().any(is_cfg_test);
+        let guarded = attributes.iter().any(is_cfg_test);
+        let checkpoint = (!previous && guarded).then(|| FactCheckpoint::capture(self));
+        self.test_only_context |= guarded;
         visit(self);
+        if let Some(checkpoint) = checkpoint {
+            checkpoint.mark_test_only(self);
+        }
         self.test_only_context = previous;
+    }
+
+    pub(super) fn guard_initial_paths(&mut self) {
+        for path in &mut self.paths {
+            path.mark_test_only();
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
+struct FactCheckpoint {
+    paths: usize,
+    calls: usize,
+    methods: usize,
+    macros: usize,
+    expansions: usize,
+    opaque_inputs: usize,
+    compile_effects: usize,
+    lint_suppressions: usize,
+    unsafe_constructs: usize,
+    tests: usize,
+    item_macros: usize,
+}
+
+impl FactCheckpoint {
+    fn capture(visitor: &FactVisitor<'_>) -> Self {
+        Self {
+            paths: visitor.paths.len(),
+            calls: visitor.calls.len(),
+            methods: visitor.methods.len(),
+            macros: visitor.macros.len(),
+            expansions: visitor.macro_expansions.len(),
+            opaque_inputs: visitor.opaque_macro_inputs.len(),
+            compile_effects: visitor.compile_effects.len(),
+            lint_suppressions: visitor.lint_suppressions.len(),
+            unsafe_constructs: visitor.unsafe_constructs.len(),
+            tests: visitor.tests.len(),
+            item_macros: visitor.item_macros.len(),
+        }
+    }
+
+    fn mark_test_only(self, visitor: &mut FactVisitor<'_>) {
+        mark(&mut visitor.paths[self.paths..]);
+        mark(&mut visitor.calls[self.calls..]);
+        mark(&mut visitor.methods[self.methods..]);
+        mark(&mut visitor.macros[self.macros..]);
+        mark(&mut visitor.lint_suppressions[self.lint_suppressions..]);
+        mark(&mut visitor.unsafe_constructs[self.unsafe_constructs..]);
+        mark(&mut visitor.tests[self.tests..]);
+        mark(&mut visitor.item_macros[self.item_macros..]);
+        for expansion in &mut visitor.macro_expansions[self.expansions..] {
+            expansion.mark_test_only();
+        }
+        for expansion in &mut visitor.opaque_macro_inputs[self.opaque_inputs..] {
+            expansion.mark_test_only();
+        }
+        for effect in &mut visitor.compile_effects[self.compile_effects..] {
+            effect.invocation.mark_test_only();
+        }
+    }
+}
+
+fn mark(facts: &mut [super::ObservedFact]) {
+    for fact in facts {
+        fact.mark_test_only();
     }
 }
 

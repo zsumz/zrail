@@ -20,9 +20,9 @@ pub use contract::{
     LintSuppressionMode, MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES,
     MacroBindingMode, MacroExpansionAllow, MacroExpansionContract, MacroExpansionMode,
     MacroInputMode, ModuleDocsMode, OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode,
-    ProfileContract, RatchetContract, RepositoryContract, RustSourceContract, ScopeContract,
-    SourceContract, SymbolBoundary, SymlinkMode, TestMode, contract_imports, load_contract,
-    load_contract_with_entry, parse_evidence_reference,
+    PolicyReachability, ProfileContract, RatchetContract, RepositoryContract, RustSourceContract,
+    ScopeContract, SourceContract, SymbolBoundary, SymlinkMode, TestMode, contract_imports,
+    load_contract, load_contract_with_entry, parse_evidence_reference,
 };
 pub use diagnostic::{AnalysisQuality, Finding, FindingSink, Severity, SourceSpan};
 pub use diff::{

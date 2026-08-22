@@ -7,7 +7,7 @@ use zrail_core::{Budget, Contract, TestMode};
 use crate::{
     engine::{CheckError, load_model},
     inventory::FileClass,
-    source::{Reachability, RustFileFacts},
+    source::RustFileFacts,
 };
 
 /// Exact measurable Rust policy debt discovered for CLI adoption.
@@ -173,7 +173,7 @@ enum BudgetClass {
 }
 
 fn budget_class(file: &RustFileFacts) -> BudgetClass {
-    if file.class != FileClass::Generated && file.reachability == Reachability::TestOnly {
+    if file.class != FileClass::Generated && file.reachability.is_test_only() {
         return BudgetClass::Test;
     }
     match file.class {

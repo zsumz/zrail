@@ -39,7 +39,7 @@ pub fn explain_path(
         .files
         .iter()
         .find(|file| file.relative == relative)
-        .map_or(Reachability::Unreachable, |file| file.reachability);
+        .map_or(Reachability::UNREACHABLE, |file| file.reachability);
     let package = model
         .cargo
         .packages
@@ -95,10 +95,11 @@ pub fn explain_path(
         schema: 1,
         path: relative,
         file_class: format!("{class:?}").to_ascii_lowercase(),
-        reachability: reachability.name().into(),
+        reachability: reachability.name(),
         package: package.map(|package| package.name.clone()),
         layer: layer.map(|layer| layer.name.clone()),
         profiles: layer.map_or_else(Vec::new, |layer| layer.profiles.clone()),
+        profile_reachability: policy::profile_reachability(&model.bundle.contract, layer),
         scopes,
         permitted_dependency_layers: policy::dependency_layers(layer),
         external_dependencies: layer
