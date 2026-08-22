@@ -2,24 +2,36 @@
 
 use std::path::{Path, PathBuf};
 
-use zrail_core::ReportStatus;
 use zrail_rust::check_repository;
 
 #[test]
-fn excluded_sibling_workspace_does_not_enter_cargo_or_source_analysis() {
+fn unlisted_package_is_reported_without_entering_ignored_workspaces() {
     let root = fixture_root();
 
     let checked = check_repository(&root, Path::new("zrail.toml"), Path::new("zrail.lock"))
         .expect("check active workspace");
 
-    assert_eq!(
-        checked.report.status,
-        ReportStatus::Pass,
-        "{}",
-        checked.report.human()
-    );
-    assert_eq!(checked.packages, 1);
-    assert_eq!(checked.rust_files, 1);
+    assert!(finding(&checked.report, "DEP-001", "rogue/Cargo.toml"));
+    assert!(finding(
+        &checked.report,
+        "RUST-GRAPH-004",
+        "rogue/src/lib.rs"
+    ));
+    assert!(!checked.report.findings.iter().any(|finding| {
+        finding
+            .path
+            .as_deref()
+            .is_some_and(|path| path.starts_with("reference/") || path.starts_with("sandbox/"))
+    }));
+    assert_eq!(checked.packages, 2);
+    assert_eq!(checked.rust_files, 3);
+}
+
+fn finding(report: &zrail_core::Report, id: &str, path: &str) -> bool {
+    report
+        .findings
+        .iter()
+        .any(|finding| finding.id == id && finding.path.as_deref() == Some(path))
 }
 
 fn fixture_root() -> PathBuf {

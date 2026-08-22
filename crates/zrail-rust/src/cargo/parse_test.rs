@@ -60,6 +60,34 @@ fn path_dependencies_become_implicit_active_members() {
 }
 
 #[test]
+fn ordinary_unlisted_package_is_observed_without_becoming_active() {
+    let root = fixture_root("observed-extra");
+    reset(&root);
+    write(
+        &root.join("Cargo.toml"),
+        "[workspace]\nmembers = ['crates/app']\n",
+    );
+    write(
+        &root.join("crates/app/Cargo.toml"),
+        "[package]\nname = 'app'\nversion = '0.0.0'\n",
+    );
+    write(
+        &root.join("rogue/Cargo.toml"),
+        "[package]\nname = 'rogue'\nversion = '0.0.0'\n",
+    );
+    write(&root.join("crates/app/src/lib.rs"), "//! app\n");
+    write(&root.join("rogue/src/lib.rs"), "//! rogue\n");
+
+    let workspace = load(&root).expect("load workspace with observed extra");
+
+    assert_eq!(workspace.declared_members, ["crates/app"]);
+    assert_eq!(workspace.observed_members, ["crates/app", "rogue"]);
+    assert_eq!(workspace.packages.len(), 1);
+    assert!(workspace.source_is_active("rogue/src/lib.rs"));
+    reset(&root);
+}
+
+#[test]
 fn unrelated_nested_workspace_is_not_resolved_against_the_root() {
     let root = fixture_root("unrelated-workspace");
     reset(&root);
@@ -87,6 +115,37 @@ fn unrelated_nested_workspace_is_not_resolved_against_the_root() {
     assert_eq!(workspace.packages[0].name, "app");
     assert!(workspace.source_is_active("crates/app/src/lib.rs"));
     assert!(!workspace.source_is_active("reference/example/member/src/lib.rs"));
+    reset(&root);
+}
+
+#[test]
+fn unselected_nested_workspace_is_ignored_without_an_exclude_pattern() {
+    let root = fixture_root("nested-workspace");
+    reset(&root);
+    write(
+        &root.join("Cargo.toml"),
+        "[workspace]\nmembers = ['crates/app']\n",
+    );
+    write(
+        &root.join("crates/app/Cargo.toml"),
+        "[package]\nname = 'app'\nversion = '0.0.0'\n",
+    );
+    write(&root.join("crates/app/src/lib.rs"), "//! app\n");
+    write(
+        &root.join("sandbox/Cargo.toml"),
+        "[workspace]\nmembers = ['member']\n",
+    );
+    write(
+        &root.join("sandbox/member/Cargo.toml"),
+        "[package]\nname = 'sandboxed'\nversion = '0.0.0'\n",
+    );
+    write(&root.join("sandbox/member/src/lib.rs"), "//! sandbox\n");
+
+    let workspace = load(&root).expect("ignore independent nested workspace");
+
+    assert_eq!(workspace.observed_members, ["crates/app"]);
+    assert_eq!(workspace.packages.len(), 1);
+    assert!(!workspace.source_is_active("sandbox/member/src/lib.rs"));
     reset(&root);
 }
 

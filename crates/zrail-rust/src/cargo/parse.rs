@@ -90,7 +90,9 @@ pub(crate) fn load_cargo_workspace(
         })
         .map(|package| package.directory.clone())
         .collect::<Vec<_>>();
+    observed_members.extend(plan.observed_extras.iter().cloned());
     observed_members.sort();
+    observed_members.dedup();
     let declared_members = expand_members(&plan.member_patterns, &observed_members, root_package)?;
     let declared_members =
         expand_implicit_members(declared_members, &packages, &plan.exclude_patterns)?;
@@ -110,9 +112,19 @@ pub(crate) fn load_cargo_workspace(
             .map(|manifest| normalized_directory(&inventory.root, manifest))
             .map(|directory| directory.map(|directory| (directory, ManifestScope::Active)))
             .chain(
-                plan.ignored_boundaries
+                plan.observed_extras
                     .into_iter()
-                    .map(|directory| Ok((directory, ManifestScope::Ignored))),
+                    .map(|directory| Ok((directory, ManifestScope::ObservedExtra))),
+            )
+            .chain(
+                plan.excluded_boundaries
+                    .into_iter()
+                    .map(|directory| Ok((directory, ManifestScope::IgnoredExcluded))),
+            )
+            .chain(
+                plan.nested_workspace_boundaries
+                    .into_iter()
+                    .map(|directory| Ok((directory, ManifestScope::IgnoredNestedWorkspace))),
             )
             .collect::<Result<_, _>>()?,
     })

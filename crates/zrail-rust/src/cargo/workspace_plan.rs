@@ -23,7 +23,9 @@ pub(super) struct WorkspacePlan {
     pub(super) member_patterns: Vec<String>,
     pub(super) exclude_patterns: Vec<String>,
     pub(super) selected_manifests: BTreeSet<PathBuf>,
-    pub(super) ignored_boundaries: Vec<String>,
+    pub(super) observed_extras: Vec<String>,
+    pub(super) excluded_boundaries: Vec<String>,
+    pub(super) nested_workspace_boundaries: Vec<String>,
     values: BTreeMap<PathBuf, Value>,
 }
 
@@ -108,18 +110,77 @@ pub(super) fn build(
         .iter()
         .filter_map(|directory| candidates.get(directory).cloned())
         .collect::<BTreeSet<_>>();
-    let ignored_boundaries = candidates
-        .keys()
-        .filter(|directory| !selected.contains(*directory))
-        .cloned()
-        .collect();
+    let unselected = classify_unselected(
+        &candidates,
+        &selected,
+        &exclude_patterns,
+        &mut values,
+        manifest_bytes,
+    )?;
     Ok(WorkspacePlan {
         member_patterns,
         exclude_patterns,
         selected_manifests,
-        ignored_boundaries,
+        observed_extras: unselected.observed,
+        excluded_boundaries: unselected.excluded,
+        nested_workspace_boundaries: unselected.nested,
         values,
     })
+}
+
+struct UnselectedScopes {
+    observed: Vec<String>,
+    excluded: Vec<String>,
+    nested: Vec<String>,
+}
+
+fn classify_unselected(
+    candidates: &BTreeMap<String, PathBuf>,
+    selected: &BTreeSet<String>,
+    exclude_patterns: &[String],
+    values: &mut BTreeMap<PathBuf, Value>,
+    manifest_bytes: &mut usize,
+) -> Result<UnselectedScopes, CargoModelError> {
+    let mut directories = candidates.keys().cloned().collect::<Vec<_>>();
+    directories.sort_by_key(|directory| (directory.matches('/').count(), directory.clone()));
+    let mut scopes = UnselectedScopes {
+        observed: Vec::new(),
+        excluded: Vec::new(),
+        nested: Vec::new(),
+    };
+    for directory in directories {
+        if selected.contains(&directory) {
+            continue;
+        }
+        if excluded_member(&directory, exclude_patterns) {
+            scopes.excluded.push(directory);
+            continue;
+        }
+        if beneath_boundary(&directory, &scopes.excluded)
+            || beneath_boundary(&directory, &scopes.nested)
+        {
+            continue;
+        }
+        let manifest = &candidates[&directory];
+        let value = load(manifest, values, manifest_bytes)?;
+        if value.get("workspace").is_some() {
+            scopes.nested.push(directory);
+        } else if package_name(value)?.is_some() {
+            scopes.observed.push(directory);
+        } else {
+            return Err(CargoModelError(format!(
+                "unlisted Cargo manifest {} contains no [package] or [workspace] table",
+                manifest.display()
+            )));
+        }
+    }
+    Ok(scopes)
+}
+
+fn beneath_boundary(directory: &str, boundaries: &[String]) -> bool {
+    boundaries
+        .iter()
+        .any(|boundary| directory == boundary || directory.starts_with(&format!("{boundary}/")))
 }
 
 fn candidate_manifests(

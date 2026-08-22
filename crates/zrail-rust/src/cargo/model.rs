@@ -177,14 +177,18 @@ impl CargoWorkspace {
             .iter()
             .filter(|(directory, _)| contains_path(directory, path))
             .max_by_key(|(directory, _)| directory_depth(directory))
-            .is_none_or(|(_, scope)| *scope == ManifestScope::Active)
+            .is_none_or(|(_, scope)| {
+                matches!(scope, ManifestScope::Active | ManifestScope::ObservedExtra)
+            })
     }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum ManifestScope {
     Active,
-    Ignored,
+    ObservedExtra,
+    IgnoredExcluded,
+    IgnoredNestedWorkspace,
 }
 
 fn directory_depth(directory: &str) -> usize {
