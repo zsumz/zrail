@@ -1,7 +1,12 @@
 //! Stable, teachable diagnostics shared by every adapter and output format.
 
+mod sink;
+
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+
+pub(crate) use sink::FindingTotals;
+pub use sink::{DiagnosticLimit, FindingSink, MAX_REPORT_FINDINGS};
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -46,7 +51,7 @@ pub struct SourceSpan {
 #[serde(deny_unknown_fields)]
 /// Stable architecture diagnostic shared by adapters and report formats.
 pub struct Finding {
-    /// Stable diagnostic identity, such as `ZR-LIMIT-001`.
+    /// Stable diagnostic identity, such as `RUST-SIZE-001`.
     pub id: String,
     /// Contract rail or analysis rule that produced the finding.
     pub rule: String,
@@ -68,63 +73,6 @@ pub struct Finding {
     pub analysis: AnalysisQuality,
     /// Lowercase SHA-256 identity derived from id, rule, path, message, and span.
     pub fingerprint: String,
-}
-
-/// Maximum findings retained in a finalized bounded sink, including its sentinel.
-pub const MAX_REPORT_FINDINGS: usize = 10_000;
-
-#[derive(Debug, Default)]
-/// Bounded insertion-order collector that reports omitted diagnostics explicitly.
-pub struct FindingSink {
-    findings: Vec<Finding>,
-    omitted: usize,
-}
-
-impl FindingSink {
-    /// Collects findings in iteration order while applying the reporting limit.
-    pub fn from_findings(findings: impl IntoIterator<Item = Finding>) -> Self {
-        let mut sink = Self::default();
-        for finding in findings {
-            sink.push(finding);
-        }
-        sink
-    }
-
-    /// Appends a finding or records it as omitted when the bounded payload is full.
-    /// One slot is reserved for the unresolved sentinel added by [`FindingSink::into_findings`].
-    pub fn push(&mut self, finding: Finding) {
-        if self.findings.len() < MAX_REPORT_FINDINGS - 1 {
-            self.findings.push(finding);
-        } else {
-            self.omitted += 1;
-        }
-    }
-
-    /// Iterates retained findings in insertion order, excluding any future sentinel.
-    pub fn iter(&self) -> impl Iterator<Item = &Finding> {
-        self.findings.iter()
-    }
-
-    /// Finalizes the retained findings in insertion order.
-    /// If anything was omitted, the final item is unresolved `ZR-LIMIT-001` with the exact count.
-    pub fn into_findings(mut self) -> Vec<Finding> {
-        if self.omitted > 0 {
-            self.findings.push(
-                Finding::error(
-                    "ZR-LIMIT-001",
-                    "analysis.diagnostic-limit",
-                    "analysis",
-                    format!(
-                        "diagnostic safety limit reached; {} additional findings omitted",
-                        self.omitted
-                    ),
-                )
-                .with_analysis(AnalysisQuality::Unresolved)
-                .with_help("reduce repository scope or fix the first reported findings"),
-            );
-        }
-        self.findings
-    }
 }
 
 impl Finding {

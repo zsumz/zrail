@@ -239,6 +239,7 @@ fn options(fixture: &Fixture) -> ReviewOptions {
             config: "zrail.toml".into(),
             lock: "zrail.lock".into(),
             format: OutputFormat::Human,
+            ..CommonOptions::default()
         },
         authority_root: fixture.authority.clone(),
         base: "HEAD".into(),

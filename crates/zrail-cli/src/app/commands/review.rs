@@ -3,7 +3,7 @@
 use zrail_core::{
     Finding, LOCK_SCHEMA, LockFile, Report, ReportStatus, load_contract, repository_file,
 };
-use zrail_rust::check_repository;
+use zrail_rust::check_repository_with_limit;
 
 use crate::app::{args::ReviewOptions, error::CliError, output::OutputFormat};
 
@@ -11,8 +11,9 @@ use super::{CommandResult, update_authority};
 
 pub(crate) fn review(options: &ReviewOptions) -> Result<CommandResult, CliError> {
     let common = &options.common;
-    let checked = check_repository(&common.root, &common.config, &common.lock)
-        .map_err(|error| CliError::new(error.to_string()))?;
+    let checked =
+        check_repository_with_limit(&common.root, &common.config, &common.lock, common.limit)
+            .map_err(|error| CliError::new(error.to_string()))?;
     let proposed = load_contract(&common.root, &common.config)
         .map_err(|error| CliError::new(format!("load proposed contract: {error}")))?;
     let architecture = update_authority::compare_from_repository(
@@ -23,9 +24,9 @@ pub(crate) fn review(options: &ReviewOptions) -> Result<CommandResult, CliError>
         &proposed,
         &checked.candidate_lock,
     )?;
-    let mut findings = checked.report.findings;
-    findings.extend(lock_attestation(options, &checked.candidate_lock)?);
-    let source = Report::from_findings(findings);
+    let source = checked
+        .report
+        .with_findings(lock_attestation(options, &checked.candidate_lock)?);
     let failed = source.status != ReportStatus::Pass
         || architecture_denied(&architecture, options.allow_grants);
     let text = match common.format {

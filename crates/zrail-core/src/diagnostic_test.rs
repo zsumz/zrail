@@ -1,6 +1,6 @@
 //! Stable diagnostic ordering and fingerprints.
 
-use super::{Finding, FindingSink, MAX_REPORT_FINDINGS, sort_findings};
+use super::{DiagnosticLimit, Finding, FindingSink, Severity, sort_findings};
 
 #[test]
 fn fingerprints_are_stable_and_sensitive_to_location() {
@@ -26,17 +26,15 @@ fn ordering_is_path_then_location_then_rule() {
 }
 
 #[test]
-fn finding_sink_caps_output_and_marks_omissions_unresolved() {
-    let mut findings = FindingSink::default();
-    for index in 0..=MAX_REPORT_FINDINGS {
-        findings.push(Finding::error("TEST", "test", "test", index.to_string()));
-    }
+fn finding_sink_counts_exact_groups_after_payload_truncation() {
+    let mut findings = FindingSink::with_limit(DiagnosticLimit::Bounded(1));
+    findings.push(Finding::error("TEST", "first", "test", "one"));
+    findings.push(Finding::error("TEST", "first", "test", "two"));
+    findings.push(Finding::error("NOTE", "second", "test", "three").with_severity(Severity::Note));
 
-    let findings = findings.into_findings();
-
-    assert_eq!(findings.len(), MAX_REPORT_FINDINGS);
-    assert_eq!(
-        findings.last().map(|finding| finding.id.as_str()),
-        Some("ZR-LIMIT-001")
-    );
+    assert_eq!(findings.iter().count(), 1);
+    assert_eq!(findings.totals().severity[&Severity::Error], 2);
+    assert_eq!(findings.totals().severity[&Severity::Note], 1);
+    assert_eq!(findings.totals().groups.values().sum::<usize>(), 3);
+    assert!(findings.iter().all(|finding| finding.id != "ZR-LIMIT-001"));
 }

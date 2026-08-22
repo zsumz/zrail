@@ -30,6 +30,7 @@ fn unsupported_lock_schema_exits_nonzero() {
         config: "zrail.toml".into(),
         lock: "zrail.lock".into(),
         format: OutputFormat::Human,
+        ..CommonOptions::default()
     })
     .expect("run doctor");
 

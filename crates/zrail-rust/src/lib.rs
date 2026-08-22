@@ -28,7 +28,8 @@ mod source_policy;
 
 pub use engine::{
     CheckError, CheckResult, DoctorReport, build_lock, check_repository,
-    check_repository_with_candidate_contract, check_repository_with_lock, doctor_repository,
+    check_repository_with_candidate_contract, check_repository_with_limit,
+    check_repository_with_lock, doctor_repository,
 };
 pub use explain::{
     CallOwnerExplanation, CapabilityOwnerExplanation, ItemMacroAuthorityExplanation,

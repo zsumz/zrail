@@ -102,6 +102,7 @@ fn options(root: &std::path::Path) -> UpdateOptions {
             config: "zrail.toml".into(),
             lock: "zrail.lock".into(),
             format: OutputFormat::Human,
+            ..CommonOptions::default()
         },
         base: "HEAD".into(),
         accept_grants: false,

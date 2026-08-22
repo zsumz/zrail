@@ -1,6 +1,6 @@
 //! Evaluation order over the shared repository fact model.
 
-use zrail_core::{Contract, FindingSink, LockFile};
+use zrail_core::{Contract, DiagnosticLimit, FindingSink, LockFile};
 
 use crate::{cargo::CargoWorkspace, inventory::RepositoryInventory, source::SourceIndex};
 
@@ -17,8 +17,9 @@ pub(crate) struct RuleContext<'a> {
     pub(crate) source: &'a SourceIndex,
 }
 
-pub(crate) fn evaluate(context: &RuleContext<'_>) -> FindingSink {
-    let mut findings = FindingSink::from_findings(context.source.findings.clone());
+pub(crate) fn evaluate(context: &RuleContext<'_>, limit: DiagnosticLimit) -> FindingSink {
+    let mut findings =
+        FindingSink::from_findings_with_limit(context.source.findings.clone(), limit);
     repository::evaluate(context, &mut findings);
     cargo_override::evaluate(context, &mut findings);
     cargo_identity::evaluate(context, &mut findings);

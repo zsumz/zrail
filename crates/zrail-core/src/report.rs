@@ -1,10 +1,12 @@
 //! Deterministic human and machine reports.
 
-use std::fmt::Write as _;
+mod render;
 
 use serde::{Deserialize, Serialize};
 
-use crate::diagnostic::{Finding, Severity, sort_findings};
+use crate::diagnostic::{
+    DiagnosticLimit, Finding, FindingSink, FindingTotals, Severity, sort_findings,
+};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -20,7 +22,7 @@ pub enum ReportStatus {
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-/// Finding counts grouped by failure impact.
+/// Exact finding counts and payload-retention totals.
 pub struct ReportSummary {
     /// Number of error-severity findings.
     pub errors: usize,
@@ -28,52 +30,127 @@ pub struct ReportSummary {
     pub warnings: usize,
     /// Number of note-severity findings.
     pub notes: usize,
+    /// Number of individual findings retained in the report payload.
+    pub retained: usize,
+    /// Number of findings counted but omitted from the report payload.
+    pub omitted: usize,
+}
+
+impl ReportSummary {
+    pub(crate) const fn total(self) -> usize {
+        self.errors + self.warnings + self.notes
+    }
+
+    fn record(&mut self, severity: Severity, retained: bool) {
+        match severity {
+            Severity::Error => self.errors += 1,
+            Severity::Warning => self.warnings += 1,
+            Severity::Note => self.notes += 1,
+        }
+        if retained {
+            self.retained += 1;
+        } else {
+            self.omitted += 1;
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+/// Exact count for one diagnostic identity, rule, and severity.
+pub struct ReportGroup {
+    /// Stable diagnostic identifier.
+    pub id: String,
+    /// Contract rail or analysis rule that produced the finding.
+    pub rule: String,
+    /// Failure impact shared by findings in this group.
+    pub severity: Severity,
+    /// Exact number of matching findings, including omitted payloads.
+    pub count: usize,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 /// Deterministic machine- and human-readable architecture analysis result.
 pub struct Report {
-    /// Report wire-format version; currently `1`.
+    /// Report wire-format version; currently `2`.
     pub schema: u64,
     /// Overall pass, fail, or invalid state.
     pub status: ReportStatus,
-    /// Severity counts derived from `findings`.
+    /// Exact severity and payload-retention counts.
     pub summary: ReportSummary,
-    /// Diagnostics in deterministic source order.
+    /// Whether individual findings were omitted from the report payload.
+    pub truncated: bool,
+    /// Configured individual-finding retention limit.
+    pub limit: DiagnosticLimit,
+    /// Exact aggregate counts by diagnostic identity, rule, and severity.
+    pub groups: Vec<ReportGroup>,
+    /// Retained diagnostics in deterministic source order.
     pub findings: Vec<Finding>,
 }
 
 impl Report {
-    /// Builds a schema-1 report from findings sorted deterministically in place.
-    ///
-    /// The status is `Pass` exactly when no finding has [`Severity::Error`]; this
-    /// constructor never emits `Invalid`.
-    pub fn from_findings(mut findings: Vec<Finding>) -> Self {
+    /// Builds a schema-2 report with the default 10,000-finding payload limit.
+    pub fn from_findings(findings: impl IntoIterator<Item = Finding>) -> Self {
+        Self::from_sink(FindingSink::from_findings(findings))
+    }
+
+    /// Builds a schema-2 report with an explicit individual-finding payload limit.
+    pub fn from_findings_with_limit(
+        findings: impl IntoIterator<Item = Finding>,
+        limit: DiagnosticLimit,
+    ) -> Self {
+        Self::from_sink(FindingSink::from_findings_with_limit(findings, limit))
+    }
+
+    /// Builds a schema-2 report from a collector that already holds exact totals.
+    pub fn from_sink(sink: FindingSink) -> Self {
+        let (mut findings, totals, limit) = sink.into_parts();
         sort_findings(&mut findings);
-        let summary = ReportSummary {
-            errors: findings
-                .iter()
-                .filter(|finding| finding.severity == Severity::Error)
-                .count(),
-            warnings: findings
-                .iter()
-                .filter(|finding| finding.severity == Severity::Warning)
-                .count(),
-            notes: findings
-                .iter()
-                .filter(|finding| finding.severity == Severity::Note)
-                .count(),
-        };
+        let summary = summary_from_totals(&totals, findings.len());
         Self {
-            schema: 1,
-            status: if summary.errors == 0 {
-                ReportStatus::Pass
-            } else {
-                ReportStatus::Fail
-            },
+            schema: 2,
+            status: status_from_summary(summary),
             summary,
+            truncated: summary.omitted > 0,
+            limit,
+            groups: groups_from_totals(totals),
             findings,
+        }
+    }
+
+    /// Adds findings while preserving exact pre-existing aggregate counts.
+    #[must_use]
+    pub fn with_findings(mut self, findings: impl IntoIterator<Item = Finding>) -> Self {
+        for finding in findings {
+            let retained = self.limit.retains(self.findings.len());
+            self.summary.record(finding.severity, retained);
+            self.record_group(&finding);
+            if retained {
+                self.findings.push(finding);
+            }
+        }
+        sort_findings(&mut self.findings);
+        self.groups.sort_by(group_order);
+        self.truncated = self.summary.omitted > 0;
+        self.status = status_from_summary(self.summary);
+        self
+    }
+
+    fn record_group(&mut self, finding: &Finding) {
+        if let Some(group) = self.groups.iter_mut().find(|group| {
+            group.id == finding.id
+                && group.rule == finding.rule
+                && group.severity == finding.severity
+        }) {
+            group.count += 1;
+        } else {
+            self.groups.push(ReportGroup {
+                id: finding.id.clone(),
+                rule: finding.rule.clone(),
+                severity: finding.severity,
+                count: 1,
+            });
         }
     }
 
@@ -85,59 +162,50 @@ impl Report {
         })
     }
 
-    /// Renders findings and the summary in their stored deterministic order.
+    /// Renders exact aggregates and retained findings in deterministic order.
     pub fn human(&self) -> String {
-        let mut output = String::new();
-        for finding in &self.findings {
-            let severity = match finding.severity {
-                Severity::Error => "error",
-                Severity::Warning => "warning",
-                Severity::Note => "note",
-            };
-            let _ = writeln!(output, "{severity}[{}]: {}", finding.id, finding.message);
-            if let Some(path) = &finding.path {
-                if let Some(span) = finding.span {
-                    let _ = writeln!(output, "  --> {path}:{}:{}", span.line, span.column);
-                } else {
-                    let _ = writeln!(output, "  --> {path}");
-                }
-            }
-            let _ = writeln!(output, "   = rule: {}", finding.rule);
-            let _ = writeln!(output, "   = analysis: {}", analysis_name(finding.analysis));
-            if let Some(reason) = &finding.reason {
-                let _ = writeln!(output, "   = reason: {reason}");
-            }
-            if let Some(help) = &finding.help {
-                let _ = writeln!(output, "   = help: {help}");
-            }
-            output.push('\n');
-        }
-        let _ = writeln!(
-            output,
-            "Status: {} ({} errors, {} warnings, {} notes)",
-            status_name(self.status),
-            self.summary.errors,
-            self.summary.warnings,
-            self.summary.notes
-        );
-        output
+        render::human(self)
     }
 }
 
-const fn analysis_name(quality: crate::AnalysisQuality) -> &'static str {
-    match quality {
-        crate::AnalysisQuality::Exact => "exact",
-        crate::AnalysisQuality::Conservative => "conservative",
-        crate::AnalysisQuality::Unresolved => "unresolved",
+fn summary_from_totals(totals: &FindingTotals, retained: usize) -> ReportSummary {
+    let total = totals.total();
+    ReportSummary {
+        errors: totals.severity.get(&Severity::Error).copied().unwrap_or(0),
+        warnings: totals
+            .severity
+            .get(&Severity::Warning)
+            .copied()
+            .unwrap_or(0),
+        notes: totals.severity.get(&Severity::Note).copied().unwrap_or(0),
+        retained,
+        omitted: total.saturating_sub(retained),
     }
 }
 
-const fn status_name(status: ReportStatus) -> &'static str {
-    match status {
-        ReportStatus::Pass => "pass",
-        ReportStatus::Fail => "fail",
-        ReportStatus::Invalid => "invalid",
+fn groups_from_totals(totals: FindingTotals) -> Vec<ReportGroup> {
+    totals
+        .groups
+        .into_iter()
+        .map(|(group, count)| ReportGroup {
+            id: group.id,
+            rule: group.rule,
+            severity: group.severity,
+            count,
+        })
+        .collect()
+}
+
+const fn status_from_summary(summary: ReportSummary) -> ReportStatus {
+    if summary.errors == 0 {
+        ReportStatus::Pass
+    } else {
+        ReportStatus::Fail
     }
+}
+
+fn group_order(left: &ReportGroup, right: &ReportGroup) -> std::cmp::Ordering {
+    (&left.id, &left.rule, left.severity).cmp(&(&right.id, &right.rule, right.severity))
 }
 
 #[cfg(test)]

@@ -25,7 +25,10 @@ pub use contract::{
     SymlinkMode, TestMode, contract_imports, load_contract, load_contract_with_entry,
     parse_evidence_reference,
 };
-pub use diagnostic::{AnalysisQuality, Finding, FindingSink, Severity, SourceSpan};
+pub use diagnostic::{
+    AnalysisQuality, DiagnosticLimit, Finding, FindingSink, MAX_REPORT_FINDINGS, Severity,
+    SourceSpan,
+};
 pub use diff::{
     ArchitectureChange, ChangeKind, DiffReport, DiffSummary, compare_architecture,
     compare_architecture_checked,
@@ -41,4 +44,4 @@ pub use lock::{
     LockedGeneratedSource, LockedMacroImplementation, LockedPackage, LockedRatchet,
 };
 pub use path::{glob_matches, normalize_relative, repository_file, repository_relative};
-pub use report::{Report, ReportStatus, ReportSummary};
+pub use report::{Report, ReportGroup, ReportStatus, ReportSummary};

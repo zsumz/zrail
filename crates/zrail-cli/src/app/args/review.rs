@@ -3,7 +3,8 @@
 use std::{ffi::OsString, path::PathBuf};
 
 use super::{
-    Command, CommonOptions, ReviewOptions, as_string, os_value, parse_format, set_once, value,
+    Command, CommonOptions, ReviewOptions, as_string, os_value, parse_format, parse_limit,
+    set_once, value,
 };
 use crate::app::error::CliError;
 
@@ -40,6 +41,9 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
             "--lock" => common.lock = value(arguments, &mut index, "--lock")?,
             "--format" => {
                 common.format = parse_format(&value(arguments, &mut index, "--format")?)?;
+            }
+            "--limit" => {
+                common.limit = parse_limit(&value(arguments, &mut index, "--limit")?)?;
             }
             "--allow-grants" if !allow_grants => allow_grants = true,
             "--allow-grants" => {

@@ -93,6 +93,26 @@ zrail doctor
 zrail explain --path src/lib.rs
 ```
 
+Diagnostic reports use schema 2. Status and the `errors`, `warnings`, `notes`,
+and per-rule `groups` counts cover the complete analysis. The `findings` array
+contains only the retained individual diagnostics; `summary.retained`,
+`summary.omitted`, `truncated`, and `limit` describe that payload. Human output
+uses the same exact totals.
+
+Individual diagnostics default to 10,000. Use `--limit 0` for aggregate-only
+output, a non-negative integer for a different bound, or `--limit all` for the
+complete payload within zrail's existing repository and source safety limits:
+
+```sh
+zrail check --limit 0 --format json
+zrail check --limit 50000
+zrail check --limit all
+```
+
+The common limit is accepted by `check`, `doctor`, `review`, and `explain` so
+automation can use one reporting configuration. It controls display retention
+only; pass/fail decisions and protected review authority always use exact totals.
+
 After committing the initial zrail state, compare later source and policy
 changes with the trusted base:
 

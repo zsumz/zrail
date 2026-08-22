@@ -60,6 +60,7 @@ pub(super) fn options(root: &std::path::Path) -> UpdateOptions {
             config: PathBuf::from("zrail.toml"),
             lock: PathBuf::from("zrail.lock"),
             format: OutputFormat::Human,
+            ..CommonOptions::default()
         },
         base: "HEAD".into(),
         accept_grants: false,

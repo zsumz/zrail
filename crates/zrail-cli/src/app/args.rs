@@ -5,13 +5,18 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use zrail_core::DiagnosticLimit;
+
 use super::{error::CliError, output::OutputFormat};
 
 mod baseline;
 mod diff;
 mod init;
+mod limit;
 mod review;
 mod update;
+
+use limit::parse as parse_limit;
 
 pub(crate) use baseline::BaselineOptions;
 pub(crate) use init::{InitOptions, InitPreset};
@@ -40,6 +45,7 @@ pub(crate) struct CommonOptions {
     pub(crate) config: PathBuf,
     pub(crate) lock: PathBuf,
     pub(crate) format: OutputFormat,
+    pub(crate) limit: DiagnosticLimit,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -72,6 +78,7 @@ impl Default for CommonOptions {
             config: PathBuf::from("zrail.toml"),
             lock: PathBuf::from("zrail.lock"),
             format: OutputFormat::Human,
+            limit: DiagnosticLimit::default(),
         }
     }
 }
@@ -119,6 +126,9 @@ fn parse_common_options(arguments: &[OsString]) -> Result<CommonOptions, CliErro
                 let value = value(arguments, &mut index, "--format")?;
                 options.format = parse_format(&value)?;
             }
+            "--limit" => {
+                options.limit = parse_limit(&value(arguments, &mut index, "--limit")?)?;
+            }
             _ => return Err(CliError::new(format!("unknown option {flag:?}"))),
         }
         index += 1;
@@ -143,6 +153,9 @@ fn parse_explain(arguments: &[OsString]) -> Result<Command, CliError> {
             "--lock" => common.lock = value(arguments, &mut index, "--lock")?,
             "--format" => {
                 common.format = parse_format(&value(arguments, &mut index, "--format")?)?;
+            }
+            "--limit" => {
+                common.limit = parse_limit(&value(arguments, &mut index, "--limit")?)?;
             }
             flag if flag.starts_with('-') => {
                 return Err(CliError::new(format!("unknown option {flag:?}")));

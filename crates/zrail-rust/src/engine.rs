@@ -1,6 +1,7 @@
 //! Public orchestration for checking, locking, and diagnosing a Rust repository.
 
 mod candidate;
+mod doctor;
 mod gates;
 mod lock_compare;
 mod lock_state;
@@ -9,20 +10,19 @@ mod model;
 
 use std::{error::Error, fmt, path::Path};
 
-use serde::{Deserialize, Serialize};
-use zrail_core::{LockFile, Report};
+use zrail_core::{DiagnosticLimit, LockFile, Report};
 
 use crate::rules::{RuleContext, evaluate};
 
 pub(crate) use self::model::{RepositoryModel, load_model};
 
 use self::{
-    lock_compare::{check_lock, requires_lock},
+    lock_compare::check_lock,
     lock_state::{candidate_lock, read_optional_lock},
-    model::resolve,
 };
 
 pub use candidate::{build_lock, check_repository_with_candidate_contract};
+pub use doctor::{DoctorReport, doctor_repository};
 
 #[derive(Clone, Debug)]
 /// The diagnostics and independently observed state from one repository check.
@@ -37,71 +37,6 @@ pub struct CheckResult {
     pub packages: usize,
     /// The number of Rust source files included in the analysis.
     pub rust_files: usize,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-/// Machine-readable readiness information for a repository and its lock.
-pub struct DoctorReport {
-    /// The schema version of this serialized doctor report.
-    pub schema: u64,
-    /// The analyzed repository's resolved root path.
-    pub root: String,
-    /// The resolved path to the contract's entry configuration file.
-    pub config: String,
-    /// The resolved path where the repository lock is expected.
-    pub lock: String,
-    /// The SHA-256 digest of the complete resolved contract bundle.
-    pub contract_sha256: String,
-    /// The number of Cargo packages included in the analysis.
-    pub packages: usize,
-    /// The number of Rust source files included in the analysis.
-    pub rust_files: usize,
-    /// The number of files that contribute to the resolved contract bundle.
-    pub contract_sources: usize,
-    /// Lock readiness: `ready`, `lock-missing`, `lock-schema-mismatch`,
-    /// `lock-semantics-mismatch`, and `lock-stale`.
-    pub status: String,
-}
-
-impl DoctorReport {
-    /// Serializes the report as pretty JSON terminated by a newline.
-    pub fn json(&self) -> Result<String, serde_json::Error> {
-        serde_json::to_string_pretty(self).map(|mut value| {
-            value.push('\n');
-            value
-        })
-    }
-
-    /// Returns whether the repository has no lock-readiness problem.
-    pub fn is_ready(&self) -> bool {
-        self.status == "ready"
-    }
-
-    /// Renders a concise multiline report for a terminal.
-    pub fn human(&self) -> String {
-        format!(
-            concat!(
-                "zrail doctor\n\n",
-                "root: {}\n",
-                "config: {}\n",
-                "lock: {}\n",
-                "contract: {}\n",
-                "packages: {}\n",
-                "rust files: {}\n",
-                "contract sources: {}\n",
-                "status: {}\n",
-            ),
-            self.root,
-            self.config,
-            self.lock,
-            self.contract_sha256,
-            self.packages,
-            self.rust_files,
-            self.contract_sources,
-            self.status
-        )
-    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -133,7 +68,22 @@ pub fn check_repository(
 ) -> Result<CheckResult, CheckError> {
     let model = load_model(root, config)?;
     let lock = read_optional_lock(&model.inventory.root, lock_path)?;
-    check_model(model, lock.as_ref())
+    check_model(model, lock.as_ref(), DiagnosticLimit::default())
+}
+
+/// Checks a repository with an explicit individual-diagnostic payload limit.
+///
+/// Every finding contributes to exact status and aggregate counts even when its
+/// individual payload is omitted. The operation remains read-only.
+pub fn check_repository_with_limit(
+    root: &Path,
+    config: &Path,
+    lock_path: &Path,
+    limit: DiagnosticLimit,
+) -> Result<CheckResult, CheckError> {
+    let model = load_model(root, config)?;
+    let lock = read_optional_lock(&model.inventory.root, lock_path)?;
+    check_model(model, lock.as_ref(), limit)
 }
 
 /// Checks a repository against an already loaded lock without writing files.
@@ -146,95 +96,44 @@ pub fn check_repository_with_lock(
     config: &Path,
     lock: &LockFile,
 ) -> Result<CheckResult, CheckError> {
-    check_model(load_model(root, config)?, Some(lock))
+    check_model(
+        load_model(root, config)?,
+        Some(lock),
+        DiagnosticLimit::default(),
+    )
 }
 
 fn check_model(
     model: model::RepositoryModel,
     lock: Option<&LockFile>,
+    limit: DiagnosticLimit,
 ) -> Result<CheckResult, CheckError> {
     let candidate = candidate_lock(&model)?;
-    Ok(finish_check(model, lock, candidate))
+    Ok(finish_check(model, lock, candidate, limit))
 }
 
 fn finish_check(
     model: model::RepositoryModel,
     lock: Option<&LockFile>,
     candidate: LockFile,
+    limit: DiagnosticLimit,
 ) -> CheckResult {
-    let mut findings = evaluate(&RuleContext {
-        contract: &model.bundle.contract,
-        lock,
-        inventory: &model.inventory,
-        cargo: &model.cargo,
-        source: &model.source,
-    });
+    let mut findings = evaluate(
+        &RuleContext {
+            contract: &model.bundle.contract,
+            lock,
+            inventory: &model.inventory,
+            cargo: &model.cargo,
+            source: &model.source,
+        },
+        limit,
+    );
     check_lock(&model, lock, &candidate, &mut findings);
     CheckResult {
-        report: Report::from_findings(findings.into_findings()),
+        report: Report::from_sink(findings),
         candidate_lock: candidate,
         contract_sha256: model.bundle.sha256,
         packages: model.cargo.packages.len(),
         rust_files: model.source.files.len(),
     }
 }
-
-/// Reports whether a repository's configured lock is present, supported, and current.
-///
-/// `config` and `lock` may be relative to `root`; resolved paths must remain within
-/// the repository. The operation is read-only.
-pub fn doctor_repository(
-    root: &Path,
-    config: &Path,
-    lock: &Path,
-) -> Result<DoctorReport, CheckError> {
-    let model = load_model(root, config)?;
-    let candidate = candidate_lock(&model)?;
-    let current = read_optional_lock(&model.inventory.root, lock)?;
-    let lock_path = resolve(&model.inventory.root, lock)?;
-    let status = doctor_status(
-        requires_lock(&model.bundle.contract),
-        current.as_ref(),
-        &candidate,
-    );
-    Ok(DoctorReport {
-        schema: 1,
-        root: model.inventory.root.to_string_lossy().into_owned(),
-        config: resolve(&model.inventory.root, config)?
-            .to_string_lossy()
-            .into_owned(),
-        lock: lock_path.to_string_lossy().into_owned(),
-        contract_sha256: model.bundle.sha256,
-        packages: model.cargo.packages.len(),
-        rust_files: model.source.files.len(),
-        contract_sources: model.bundle.sources.len(),
-        status: status.into(),
-    })
-}
-
-fn doctor_status(
-    lock_required: bool,
-    current: Option<&LockFile>,
-    candidate: &LockFile,
-) -> &'static str {
-    if !lock_required {
-        return "ready";
-    }
-    let Some(current) = current else {
-        return "lock-missing";
-    };
-    if !current.has_supported_schema() {
-        return "lock-schema-mismatch";
-    }
-    if !current.has_current_semantics() {
-        return "lock-semantics-mismatch";
-    }
-    if !current.same_resolved_state(candidate) {
-        return "lock-stale";
-    }
-    "ready"
-}
-
-#[cfg(test)]
-#[path = "engine_test.rs"]
-mod engine_test;

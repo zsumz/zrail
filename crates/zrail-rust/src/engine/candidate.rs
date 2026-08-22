@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use zrail_core::{ContractBundle, LockFile};
+use zrail_core::{ContractBundle, DiagnosticLimit, LockFile};
 
 use super::{
     CheckError, CheckResult, finish_check,
@@ -30,5 +30,10 @@ pub fn check_repository_with_candidate_contract(
     let model = load_model_with_bundle(root, bundle)?;
     let candidate = candidate_lock(&model)?;
     let accepted = candidate.clone();
-    Ok(finish_check(model, Some(&accepted), candidate))
+    Ok(finish_check(
+        model,
+        Some(&accepted),
+        candidate,
+        DiagnosticLimit::default(),
+    ))
 }

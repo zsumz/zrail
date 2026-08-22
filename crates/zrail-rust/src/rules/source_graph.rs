@@ -7,7 +7,7 @@ mod item_macros;
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
-use zrail_core::{Contract, Finding, FindingSink};
+use zrail_core::{Contract, Finding};
 
 use crate::{
     cargo::{CargoTargetKind, CargoWorkspace},
@@ -68,7 +68,7 @@ struct Walker<'a> {
     contract: &'a Contract,
     inventory: &'a RepositoryInventory,
     cargo: &'a CargoWorkspace,
-    findings: FindingSink,
+    findings: Vec<Finding>,
     facts: BTreeMap<&'a str, &'a RustFileFacts>,
     entries: BTreeMap<&'a str, RepositoryEntryKind>,
     reached: BTreeMap<String, Reachability>,
@@ -90,7 +90,7 @@ impl<'a> Walker<'a> {
             contract,
             inventory,
             cargo,
-            findings: FindingSink::default(),
+            findings: Vec::new(),
             facts: source
                 .files
                 .iter()
@@ -120,7 +120,7 @@ impl<'a> Walker<'a> {
         SourceGraphAnalysis {
             reachability: self.reached,
             packages: self.reached_packages,
-            findings: self.findings.into_findings(),
+            findings: self.findings,
         }
     }
 
