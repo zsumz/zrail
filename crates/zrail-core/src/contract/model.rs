@@ -222,8 +222,8 @@ impl Default for LayerDependencies { fn default() -> Self { Self { external: Ext
 #[doc = "Allow-list boundary for a selected call, capability, or directory owner."] pub struct OwnerContract {
     #[doc = "Stable owner-rule name used in findings and semantic diffs."] pub name: String,
     #[doc = "Kind of source relationship selected by this rule."] pub kind: OwnerKind,
-    #[serde(default)]
-    #[doc = "Repository-relative patterns limiting where the rule is evaluated."] pub within: Vec<String>,
+    #[serde(default)] #[doc = "Source reachability to which call and capability ownership applies."] pub reachability: super::PolicyReachability,
+    #[serde(default)] #[doc = "Repository-relative patterns limiting where the rule is evaluated."] pub within: Vec<String>,
     #[serde(rename = "match")]
     #[doc = "Call, capability, or directory identity governed by this rule."] pub selector: String,
     #[doc = "Package or source identities permitted to own the selected boundary."] pub allow: Vec<String>,

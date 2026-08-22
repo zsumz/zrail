@@ -196,6 +196,25 @@ build scripts, and facts beneath `#[cfg(test)]`, including guarded code inside a
 production-reachable file. `zrail explain` reports both the file's target-domain
 reachability and the fact reachability used by each applied profile.
 
+Call and capability owners also evaluate every target and guard by default. Set
+`reachability = "production"` on an owner to confine both violations and stale
+allowlist checks to runtime-reachable, ordinary facts:
+
+```toml
+[[owner]]
+name = "process-spawn"
+kind = "call"
+within = ["crates/kernel/**"]
+match = "std::process::Command::new"
+allow = ["crates/kernel/src/executor.rs"]
+reachability = "production"
+reason = "Only the executor may launch child processes at runtime."
+```
+
+Directory ownership is repository structural policy and therefore accepts only
+the default `all` reachability. `zrail explain` shows each source owner's
+effective reachability.
+
 ## Generated inputs
 
 Reviewed generated trees and `OUT_DIR` snapshots bind their source, generator,

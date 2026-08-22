@@ -4,15 +4,15 @@ use zrail_core::{AnalysisQuality, Finding, FindingSink, OwnerContract};
 
 use crate::source::{ObservedFact, RustFileFacts};
 
-use super::path_matches;
+use super::{ownership::fact_applies, path_matches};
 
 pub(super) fn check(
     owner: &OwnerContract,
     file: &RustFileFacts,
     findings: &mut FindingSink,
 ) -> bool {
-    let calls = matching(&file.calls, &owner.selector);
-    let reference = matching(&file.paths, &owner.selector)
+    let calls = matching(owner, file, &file.calls);
+    let reference = matching(owner, file, &file.paths)
         .into_iter()
         .find(|reference| {
             reference.span.is_some()
@@ -46,10 +46,14 @@ pub(super) fn check(
     !calls.is_empty()
 }
 
-fn matching<'a>(facts: &'a [ObservedFact], selector: &str) -> Vec<&'a ObservedFact> {
+fn matching<'a>(
+    owner: &OwnerContract,
+    file: &RustFileFacts,
+    facts: &'a [ObservedFact],
+) -> Vec<&'a ObservedFact> {
     facts
         .iter()
-        .filter(|fact| path_matches(selector, fact))
+        .filter(|fact| fact_applies(owner, file, fact) && path_matches(&owner.selector, fact))
         .collect()
 }
 

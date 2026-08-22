@@ -1,8 +1,8 @@
 //! Source-owner validation keeps capabilities and calls exact and bounded.
 
-use crate::{OwnerContract, OwnerKind};
+use crate::{OwnerContract, OwnerKind, PolicyReachability};
 
-use super::{ValidationErrors, validate_call, validate_capability};
+use super::{ValidationErrors, validate_call, validate_capability, validate_directory};
 
 #[test]
 fn capability_owners_require_rust_paths_and_bounded_allowed_files() {
@@ -48,6 +48,20 @@ fn call_owners_require_a_qualified_rust_path() {
     );
 }
 
+#[test]
+fn directory_owners_reject_source_reachability() {
+    let mut invalid = owner();
+    invalid.kind = OwnerKind::Directory;
+    invalid.reachability = PolicyReachability::Production;
+    invalid.within.clear();
+    invalid.selector = "crates/store/**".into();
+    let mut errors = ValidationErrors::new();
+
+    validate_directory(&invalid, &mut errors);
+
+    assert!(errors.finish().join("\n").contains("requires reachability"));
+}
+
 fn errors(owner: &OwnerContract) -> Vec<String> {
     let mut errors = ValidationErrors::new();
     validate_capability(owner, &mut errors);
@@ -58,6 +72,7 @@ fn owner() -> OwnerContract {
     OwnerContract {
         name: "filesystem".into(),
         kind: OwnerKind::Capability,
+        reachability: PolicyReachability::All,
         within: vec!["crates/store/src/**".into()],
         selector: "std::fs".into(),
         allow: vec!["crates/store/src/io.rs".into()],

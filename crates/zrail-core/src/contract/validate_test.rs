@@ -95,6 +95,7 @@ fn owner_allow_paths_must_be_inside_the_selector() {
     contract.owners.push(OwnerContract {
         name: "migrations".into(),
         kind: OwnerKind::Directory,
+        reachability: PolicyReachability::All,
         within: Vec::new(),
         selector: "**/migrations".into(),
         allow: vec!["crates/store/schema".into()],

@@ -97,6 +97,9 @@ pub struct CapabilityOwnerExplanation {
     pub allow: Vec<String>,
     /// Whether the explained path is one of the allowed paths.
     pub allowed_here: bool,
+    /// The source reachability evaluated by this owner.
+    #[serde(default)]
+    pub reachability: String,
     /// The human-authored reason for the ownership boundary.
     pub reason: String,
 }
@@ -113,6 +116,9 @@ pub struct CallOwnerExplanation {
     pub allow: Vec<String>,
     /// Whether the explained path is one of the allowed paths.
     pub allowed_here: bool,
+    /// The source reachability evaluated by this owner.
+    #[serde(default)]
+    pub reachability: String,
     /// The human-authored reason for the ownership boundary.
     pub reason: String,
 }

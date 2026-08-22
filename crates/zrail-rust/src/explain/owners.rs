@@ -20,6 +20,7 @@ pub(super) fn for_path(contract: &Contract, path: &str) -> Vec<CapabilityOwnerEx
             capability: owner.selector.clone(),
             allow: owner.allow.clone(),
             allowed_here: owner.allow.iter().any(|allowed| allowed == path),
+            reachability: reachability(owner.reachability).into(),
             reason: owner.reason.clone(),
         })
         .collect::<Vec<_>>();
@@ -43,6 +44,7 @@ pub(super) fn calls_for_path(contract: &Contract, path: &str) -> Vec<CallOwnerEx
             call: owner.selector.clone(),
             allow: owner.allow.clone(),
             allowed_here: owner.allow.iter().any(|allowed| allowed == path),
+            reachability: reachability(owner.reachability).into(),
             reason: owner.reason.clone(),
         })
         .collect::<Vec<_>>();
@@ -63,8 +65,8 @@ pub(super) fn display(owners: &[CapabilityOwnerExplanation]) -> String {
                 format!("owned by {}", owner.allow.join(", "))
             };
             format!(
-                "{}: {} ({access}; why: {})",
-                owner.name, owner.capability, owner.reason
+                "{}: {} ({access}; reachability {}; why: {})",
+                owner.name, owner.capability, owner.reachability, owner.reason
             )
         })
         .collect::<Vec<_>>()
@@ -84,10 +86,17 @@ pub(super) fn display_calls(owners: &[CallOwnerExplanation]) -> String {
                 format!("owned by {}", owner.allow.join(", "))
             };
             format!(
-                "{}: {} ({access}; why: {})",
-                owner.name, owner.call, owner.reason
+                "{}: {} ({access}; reachability {}; why: {})",
+                owner.name, owner.call, owner.reachability, owner.reason
             )
         })
         .collect::<Vec<_>>()
         .join("; ")
+}
+
+fn reachability(value: zrail_core::PolicyReachability) -> &'static str {
+    match value {
+        zrail_core::PolicyReachability::All => "all",
+        zrail_core::PolicyReachability::Production => "production",
+    }
 }

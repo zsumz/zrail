@@ -1,6 +1,6 @@
 //! Source-owner contracts bind exact Rust paths to bounded source owners.
 
-use crate::{Contract, OwnerContract, OwnerKind, path::glob_matches};
+use crate::{Contract, OwnerContract, OwnerKind, PolicyReachability, path::glob_matches};
 
 use super::{
     super::{
@@ -69,6 +69,12 @@ fn validate_source_owner(owner: &OwnerContract, kind: &str, errors: &mut Validat
 }
 
 fn validate_directory(owner: &OwnerContract, errors: &mut ValidationErrors) {
+    if owner.reachability != PolicyReachability::All {
+        errors.push(format!(
+            "directory owner {:?} requires reachability = \"all\"",
+            owner.name
+        ));
+    }
     if !owner.within.is_empty() {
         errors.push(format!(
             "directory owner {:?} may not declare within",

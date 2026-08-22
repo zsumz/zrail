@@ -1,5 +1,7 @@
 //! Repository, source-scope, and ownership boundary changes.
 
+mod owner;
+
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::{Contract, OwnerContract, ScopeContract};
@@ -126,6 +128,7 @@ pub(super) fn compare_owners(
                         .values(&left.selector, &right.selector),
                     );
                 }
+                owner::compare_reachability(left, right, changes);
                 compare_named_set(
                     "owner.within",
                     name,
@@ -214,3 +217,7 @@ fn owners_by_name(owners: &[OwnerContract]) -> BTreeMap<&str, &OwnerContract> {
         .map(|owner| (owner.name.as_str(), owner))
         .collect()
 }
+
+#[cfg(test)]
+#[path = "boundaries_test.rs"]
+mod boundaries_test;

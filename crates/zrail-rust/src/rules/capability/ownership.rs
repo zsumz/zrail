@@ -2,7 +2,7 @@
 
 use std::collections::BTreeSet;
 
-use zrail_core::{Finding, FindingSink, OwnerKind, glob_matches};
+use zrail_core::{Finding, FindingSink, OwnerKind, PolicyReachability, glob_matches};
 
 use super::{RuleContext, path_matches};
 
@@ -45,7 +45,7 @@ fn check_owner(
         if allowed.contains(file.relative.as_str()) {
             let used = match owner.kind {
                 OwnerKind::Call => super::ownership_call::check(owner, file, findings),
-                OwnerKind::Capability => !matching(&file.paths, &owner.selector).is_empty(),
+                OwnerKind::Capability => !matching(owner, file, &file.paths).is_empty(),
                 OwnerKind::Directory => false,
             };
             if used {
@@ -76,24 +76,34 @@ fn owned_evidence<'a>(
     file: &'a crate::source::RustFileFacts,
 ) -> Vec<&'a crate::source::ObservedFact> {
     if owner.kind == OwnerKind::Capability {
-        return matching(&file.paths, &owner.selector);
+        return matching(owner, file, &file.paths);
     }
-    let calls = matching(&file.calls, &owner.selector);
+    let calls = matching(owner, file, &file.calls);
     if calls.is_empty() {
-        matching(&file.paths, &owner.selector)
+        matching(owner, file, &file.paths)
     } else {
         calls
     }
 }
 
 fn matching<'a>(
+    owner: &zrail_core::OwnerContract,
+    file: &crate::source::RustFileFacts,
     facts: &'a [crate::source::ObservedFact],
-    selector: &str,
 ) -> Vec<&'a crate::source::ObservedFact> {
     facts
         .iter()
-        .filter(|fact| path_matches(selector, fact))
+        .filter(|fact| fact_applies(owner, file, fact) && path_matches(&owner.selector, fact))
         .collect()
+}
+
+pub(super) fn fact_applies(
+    owner: &zrail_core::OwnerContract,
+    file: &crate::source::RustFileFacts,
+    fact: &crate::source::ObservedFact,
+) -> bool {
+    owner.reachability == PolicyReachability::All
+        || fact.is_production_applicable(file.reachability)
 }
 
 fn violation(owner: &zrail_core::OwnerContract, observed: &str) -> String {
@@ -135,20 +145,30 @@ fn reject_unused_owners(
                 "OWN-004",
                 &owner.name,
                 "ownership",
-                format!(
-                    "allowed owner {path:?} reaches no {} of {}",
-                    if owner.kind == OwnerKind::Call {
-                        "direct invocation"
-                    } else {
-                        "use"
-                    },
-                    owner.selector,
-                ),
+                unused_owner_message(owner, path),
             )
             .at(*path, None)
             .because(&owner.reason),
         );
     }
+}
+
+fn unused_owner_message(owner: &zrail_core::OwnerContract, path: &str) -> String {
+    if owner.reachability == PolicyReachability::Production {
+        return format!(
+            "allowed owner {path:?} has no production-reachable use of {}",
+            owner.selector
+        );
+    }
+    format!(
+        "allowed owner {path:?} reaches no {} of {}",
+        if owner.kind == OwnerKind::Call {
+            "direct invocation"
+        } else {
+            "use"
+        },
+        owner.selector,
+    )
 }
 
 fn reject_stale_scope(

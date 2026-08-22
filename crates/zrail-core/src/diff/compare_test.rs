@@ -173,6 +173,7 @@ fn widening_a_capability_owner_is_a_grant() {
     before.owners.push(OwnerContract {
         name: "filesystem".into(),
         kind: OwnerKind::Capability,
+        reachability: crate::PolicyReachability::All,
         within: vec!["src/**".into()],
         selector: "std::fs".into(),
         allow: vec!["src/io.rs".into()],
