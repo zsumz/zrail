@@ -123,6 +123,24 @@ fn opaque_scanning_retains_paths_calls_methods_and_nested_macros() {
 }
 
 #[test]
+fn opaque_scanning_requires_a_delimited_group_after_a_macro_bang() {
+    let imports = ImportMap::default();
+    let mut visitor = FactVisitor::new(&imports);
+    let expression = syn::parse_str::<syn::ExprMacro>(
+        "dsl!(canonical != divergent, !enabled, value ! = other, bare!, call!(), array![], block!{}, path::actual!(value))",
+    )
+    .expect("parse opaque macro syntax");
+
+    assert!(inspect(&mut visitor, &expression.mac, "dsl"));
+    let names = visitor
+        .macro_expansions
+        .iter()
+        .map(|expansion| expansion.name.as_str())
+        .collect::<Vec<_>>();
+    assert_eq!(names, ["call", "array", "block", "path::actual"]);
+}
+
+#[test]
 fn oversized_macro_input_never_enters_recursive_parsing() {
     let source = std::iter::repeat_n("value", 8_193)
         .collect::<Vec<_>>()

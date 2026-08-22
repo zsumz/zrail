@@ -149,8 +149,8 @@ fn scan_path(visitor: &mut FactVisitor<'_>, trees: &[TokenTree], start: usize) -
             .calls
             .push(fact(&name, first.span(), AnalysisQuality::Conservative));
     }
-    if end + 1 < trees.len()
-        && punct(&trees[end + 1], '!')
+    if trees.get(end + 1).is_some_and(|tree| punct(tree, '!'))
+        && let Some(TokenTree::Group(group)) = trees.get(end + 2)
         && let Ok(path) = syn::parse_str::<syn::Path>(&name)
     {
         let (resolved, quality, _, local_module) = visitor.resolve_macro_path(&path);
@@ -160,9 +160,7 @@ fn scan_path(visitor: &mut FactVisitor<'_>, trees: &[TokenTree], start: usize) -
         }
         visitor.macros.push(expansion.clone());
         let expansion = MacroExpansionFact::pending(expansion, local_module);
-        if let Some(TokenTree::Group(group)) = trees.get(end + 2) {
-            super::compile_effects::record_tokens(visitor, group.stream(), &expansion, true);
-        }
+        super::compile_effects::record_tokens(visitor, group.stream(), &expansion, true);
         visitor.macro_expansions.push(expansion);
     }
     end
