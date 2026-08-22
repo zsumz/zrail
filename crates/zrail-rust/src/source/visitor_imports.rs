@@ -2,10 +2,13 @@
 
 use std::collections::BTreeMap;
 
-use syn::{Item, Path};
+use syn::{Item, Path, spanned::Spanned};
 use zrail_core::AnalysisQuality;
 
-use super::{scoped_imports, visitor::FactVisitor};
+use super::{
+    MacroCandidate, MacroDerivation, MacroExpansionFact, fact::fact, scoped_imports,
+    visitor::FactVisitor,
+};
 
 impl FactVisitor<'_> {
     pub(super) fn with_import_scope<'a>(
@@ -27,6 +30,44 @@ impl FactVisitor<'_> {
             .collect::<Vec<_>>()
             .join("::");
         self.resolve_text_scoped(&text)
+    }
+
+    pub(super) fn macro_invocation(&self, path: &Path) -> MacroExpansionFact {
+        let written_name = path_text(path);
+        let (resolved, quality, scoped, local_module) = self.resolve_macro_path(path);
+        let mut observed = fact(resolved.clone(), path.span(), quality);
+        if local_module {
+            observed.canonical.push(resolved.clone());
+        }
+        let derivation = if local_module {
+            MacroDerivation::LocalDefinition
+        } else if self.imports.re_exports(path) {
+            MacroDerivation::ReExport
+        } else if scoped || resolved != written_name {
+            MacroDerivation::ExactImport
+        } else {
+            MacroDerivation::Written
+        };
+        let mut candidates = vec![MacroCandidate::pending(observed, local_module, derivation)];
+        if !scoped {
+            let (imported, overflowed) =
+                super::calls::macro_candidates(path, self.imports, &resolved);
+            if overflowed {
+                let unresolved = fact(&written_name, path.span(), AnalysisQuality::Unresolved);
+                return MacroExpansionFact::with_candidates(
+                    fact(written_name, path.span(), AnalysisQuality::Unresolved),
+                    vec![MacroCandidate::unresolved(
+                        unresolved,
+                        MacroDerivation::GlobImport,
+                    )],
+                );
+            }
+            candidates.extend(imported.into_iter().map(|(observed, derivation)| {
+                MacroCandidate::pending(observed, false, derivation)
+            }));
+        }
+        candidates.dedup_by(|left, right| left.observation.name == right.observation.name);
+        MacroExpansionFact::with_candidates(fact(written_name, path.span(), quality), candidates)
     }
 
     fn resolve_text(&self, path: &str) -> scoped_imports::ScopedAlias {
@@ -64,4 +105,12 @@ fn split_root(path: &str) -> (&str, &str) {
     path.find("::").map_or((path, ""), |separator| {
         (&path[..separator], &path[separator..])
     })
+}
+
+fn path_text(path: &Path) -> String {
+    path.segments
+        .iter()
+        .map(|segment| segment.ident.to_string())
+        .collect::<Vec<_>>()
+        .join("::")
 }

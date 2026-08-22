@@ -31,7 +31,7 @@ fn same_name_registry_and_git_dependencies_use_distinct_attestations() {
         .report
         .findings
         .iter()
-        .filter(|finding| finding.id == "RUST-MACRO-001")
+        .filter(|finding| finding.id == "RUST-MACRO-006")
         .collect::<Vec<_>>();
     assert_eq!(macro_findings.len(), 1);
     assert!(

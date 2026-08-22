@@ -1,6 +1,7 @@
 //! Unexpanded Rust is an explicit, content-bound, reasoned trust boundary.
 
 mod bindings;
+mod review;
 mod source;
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -12,6 +13,10 @@ use zrail_core::{
 use crate::source::{MacroExpansionFact, Reachability};
 
 use super::RuleContext;
+
+#[cfg(test)]
+use review::candidate_names;
+use review::{Review, review};
 
 pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     if context.contract.source.rust.macros.mode == MacroExpansionMode::Allow {
@@ -38,19 +43,19 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             if directly_inspected(expansion) {
                 continue;
             }
-            let matched = reviewed(expansion, &allowed);
-            if matched.is_empty() {
-                findings.push(unreviewed(file, expansion));
-            } else {
-                used.extend(matched);
+            match review(expansion, &allowed) {
+                Review::Allowed(matched) => used.extend(matched),
+                Review::Unbound => findings.push(unbound(file, expansion)),
+                Review::Unreviewed => findings.push(unreviewed(file, expansion)),
             }
         }
         for input in &file.opaque_macro_inputs {
-            let matched = reviewed(input, &allowed);
-            if matched.is_empty()
-                || matched
-                    .iter()
-                    .any(|name| allowed[*name].inputs != MacroInputMode::Opaque)
+            let Review::Allowed(matched) = review(input, &allowed) else {
+                continue;
+            };
+            if matched
+                .iter()
+                .any(|name| allowed[*name].inputs != MacroInputMode::Opaque)
             {
                 findings.push(
                     Finding::error(
@@ -65,13 +70,30 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
                         "use an understood Rust-expression macro form or explicitly set inputs = \"opaque\" after reviewing the DSL boundary",
                     ),
                 );
-            } else {
-                opaque_used.extend(matched);
+                continue;
             }
+            opaque_used.extend(matched);
         }
     }
     stale_allowances(&allowed, &used, &opaque_used, findings);
     bindings::validate(context, &allowed, findings);
+}
+
+fn unbound(file: &crate::source::RustFileFacts, expansion: &MacroExpansionFact) -> Finding {
+    Finding::error(
+        "RUST-MACRO-006",
+        "rust.macro-binding",
+        "source",
+        format!(
+            "reviewed macro allowance could not bind invocation {}",
+            expansion.name
+        ),
+    )
+    .at(&file.relative, expansion.span)
+    .with_analysis(expansion.quality)
+    .with_help(
+        "resolve the macro origin or use binding = \"conservative\" on a name-only allowance after reviewing the unresolved invocation",
+    )
 }
 
 fn unreviewed(file: &crate::source::RustFileFacts, expansion: &MacroExpansionFact) -> Finding {
@@ -119,36 +141,6 @@ fn stale_allowances(
                 .with_help("remove inputs = \"opaque\" until opaque input is actually required"),
             );
         }
-    }
-}
-
-fn reviewed_names<'a>(
-    expansion: &'a MacroExpansionFact,
-    allowed: &BTreeMap<&str, &MacroExpansionAllow>,
-) -> Vec<&'a str> {
-    if expansion.quality == AnalysisQuality::Unresolved {
-        return Vec::new();
-    }
-    let names = expansion.policy_names().collect::<Vec<_>>();
-    if names.iter().all(|name| allowed.contains_key(name)) {
-        names
-    } else {
-        Vec::new()
-    }
-}
-
-fn reviewed<'a>(
-    expansion: &'a MacroExpansionFact,
-    allowed: &BTreeMap<&str, &MacroExpansionAllow>,
-) -> Vec<&'a str> {
-    let names = reviewed_names(expansion, allowed);
-    if names
-        .iter()
-        .all(|name| source::bound(expansion, allowed[name]))
-    {
-        names
-    } else {
-        Vec::new()
     }
 }
 

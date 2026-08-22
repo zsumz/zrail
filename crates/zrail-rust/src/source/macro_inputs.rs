@@ -4,7 +4,7 @@ use proc_macro2::{TokenStream, TokenTree};
 use syn::{Expr, Macro, Pat, Token, parse::Parse, parse::ParseStream, parse::Parser, visit::Visit};
 use zrail_core::AnalysisQuality;
 
-use super::{fact::fact, model::MacroExpansionFact, visitor::FactVisitor};
+use super::{fact::fact, visitor::FactVisitor};
 
 const MAX_SCANNED_TOKENS: usize = 8_192;
 
@@ -153,13 +153,13 @@ fn scan_path(visitor: &mut FactVisitor<'_>, trees: &[TokenTree], start: usize) -
         && let Some(TokenTree::Group(group)) = trees.get(end + 2)
         && let Ok(path) = syn::parse_str::<syn::Path>(&name)
     {
-        let (resolved, quality, _, local_module) = visitor.resolve_macro_path(&path);
-        let mut expansion = fact(resolved.clone(), first.span(), quality);
-        if local_module {
-            expansion.canonical.push(resolved);
-        }
-        visitor.macros.push(expansion.clone());
-        let expansion = MacroExpansionFact::pending(expansion, local_module);
+        let expansion = visitor.macro_invocation(&path);
+        visitor.macros.extend(
+            expansion
+                .candidates
+                .iter()
+                .map(|candidate| candidate.observation.clone()),
+        );
         super::compile_effects::record_tokens(visitor, group.stream(), &expansion, true);
         visitor.macro_expansions.push(expansion);
     }

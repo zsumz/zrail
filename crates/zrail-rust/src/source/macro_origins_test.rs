@@ -15,7 +15,7 @@ fn module_qualified_macro_is_repository_owned() {
     resolve(&mut expansion, &[&package]);
 
     assert_eq!(
-        expansion.origins,
+        expansion.candidates[0].origins,
         [MacroOrigin::Repository {
             package: "app".into(),
             directory: ".".into(),
@@ -37,7 +37,7 @@ fn workspace_dependency_macro_is_repository_owned() {
     resolve(&mut expansion, &[&package]);
 
     assert!(matches!(
-        expansion.origins.as_slice(),
+        expansion.candidates[0].origins.as_slice(),
         [MacroOrigin::Repository { package, directory }]
             if package == "workspace-macros" && directory == "crates/macros"
     ));
@@ -58,7 +58,7 @@ fn external_package_named_local_remains_external() {
     resolve(&mut expansion, &[&package]);
 
     assert!(matches!(
-        expansion.origins.as_slice(),
+        expansion.candidates[0].origins.as_slice(),
         [MacroOrigin::External { package, .. }] if package == "workspace-macros"
     ));
 }
@@ -84,7 +84,7 @@ fn excessive_source_identities_fail_closed() {
 
     resolve(&mut expansion, &[&package]);
 
-    assert_eq!(expansion.origins, [MacroOrigin::Unresolved]);
+    assert_eq!(expansion.candidates[0].origins, [MacroOrigin::Unresolved]);
 }
 
 fn pending(name: &str, local_module: bool) -> MacroExpansionFact {

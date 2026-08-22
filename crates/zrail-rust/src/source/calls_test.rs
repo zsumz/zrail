@@ -1,8 +1,10 @@
 //! Call identities retain aliases and conservative glob-import possibilities.
 
+use std::fmt::Write as _;
+
 use zrail_core::AnalysisQuality;
 
-use super::{ImportMap, candidates, facts};
+use super::{ImportMap, candidates, facts, macro_candidates};
 
 #[test]
 fn aliases_resolve_to_the_exact_called_path() {
@@ -76,6 +78,22 @@ fn type_aliases_add_a_conservative_reference_path() {
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
     }));
+}
+
+#[test]
+fn macro_candidate_sets_fail_closed_at_the_fixed_limit() {
+    let mut imports = String::new();
+    for index in 0..=super::MAX_MACRO_CANDIDATES {
+        writeln!(imports, "use module_{index}::*;").expect("append macro import");
+    }
+    let file = syn::parse_file(&imports).expect("parse bounded macro imports");
+    let imports = ImportMap::from_file(&file);
+    let path = syn::parse_str::<syn::Path>("reviewed").expect("parse macro path");
+
+    let (candidates, overflowed) = macro_candidates(&path, &imports, "reviewed");
+
+    assert!(overflowed);
+    assert!(candidates.is_empty());
 }
 
 fn call(file: &syn::File) -> &syn::ExprCall {

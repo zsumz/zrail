@@ -3,7 +3,13 @@
 use syn::{Expr, ExprCall, spanned::Spanned as _};
 use zrail_core::AnalysisQuality;
 
-use super::{ObservedFact, fact::fact, imports::ImportMap};
+use super::{
+    MacroDerivation, ObservedFact,
+    fact::fact,
+    imports::{ImportCandidateKind, ImportMap},
+};
+
+const MAX_MACRO_CANDIDATES: usize = 64;
 
 pub(super) fn facts(call: &ExprCall, imports: &ImportMap) -> Vec<ObservedFact> {
     let Expr::Path(callee) = call.func.as_ref() else {
@@ -29,9 +35,33 @@ pub(super) fn candidates(
     imports
         .call_candidates(path)
         .into_iter()
-        .filter(|candidate| candidate != resolved)
-        .map(|candidate| fact(candidate, path.span(), AnalysisQuality::Conservative))
+        .filter(|candidate| candidate.path != resolved)
+        .map(|candidate| fact(candidate.path, path.span(), AnalysisQuality::Conservative))
         .collect()
+}
+
+pub(super) fn macro_candidates(
+    path: &syn::Path,
+    imports: &ImportMap,
+    resolved: &str,
+) -> (Vec<(ObservedFact, MacroDerivation)>, bool) {
+    let (candidates, overflowed) = imports.bounded_call_candidates(path, MAX_MACRO_CANDIDATES - 1);
+    let candidates = candidates
+        .into_iter()
+        .filter(|candidate| candidate.path != resolved)
+        .map(|candidate| {
+            let derivation = match candidate.kind {
+                ImportCandidateKind::Exact => MacroDerivation::ExactImport,
+                ImportCandidateKind::Glob => MacroDerivation::GlobImport,
+                ImportCandidateKind::ReExport => MacroDerivation::ReExport,
+            };
+            (
+                fact(candidate.path, path.span(), AnalysisQuality::Conservative),
+                derivation,
+            )
+        })
+        .collect();
+    (candidates, overflowed)
 }
 
 #[cfg(test)]

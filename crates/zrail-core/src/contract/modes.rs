@@ -86,6 +86,17 @@ pub enum MacroInputMode {
     Opaque,
 }
 
+#[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
+/// Confidence required when binding an observed macro invocation to an allowance.
+pub enum MacroBindingMode {
+    #[default]
+    /// Require the macro candidate and its origin to resolve exactly.
+    Exact,
+    /// Permit the exact written spelling when static origin resolution is incomplete.
+    Conservative,
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
 /// Repository policy for symbolic links.

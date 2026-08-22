@@ -4,8 +4,8 @@ use crate::{
     ChangeKind, CrateRootContract, CrateRootSource, DependencyMode, FacadeMode,
     GeneratedSourceContract, ItemMacroContract, LintSuppressionMode, LockFile, LockedDependency,
     LockedDependencyKind, LockedDependencyScope, LockedDependencySource, LockedGeneratedSource,
-    LockedPackage, LockedRatchet, MacroExpansionAllow, MacroExpansionMode, MacroInputMode,
-    OutDirSourceContract, OwnerContract, OwnerKind,
+    LockedPackage, LockedRatchet, MacroBindingMode, MacroExpansionAllow, MacroExpansionMode,
+    MacroInputMode, OutDirSourceContract, OwnerContract, OwnerKind,
 };
 
 use super::compare_architecture;
@@ -80,6 +80,7 @@ fn macro_expansion_denial_revokes_power_and_allowance_grants_it() {
     allowed.source.rust.macros.allow.push(MacroExpansionAllow {
         name: "tokio::select".into(),
         inputs: MacroInputMode::Inspect,
+        binding: MacroBindingMode::Exact,
         definition: None,
         source: None,
         reason: "Reviewed async control-flow expansion.".into(),

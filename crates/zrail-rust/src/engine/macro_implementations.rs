@@ -42,7 +42,7 @@ fn trusted_packages(model: &RepositoryModel) -> BTreeSet<(String, String)> {
         .filter(|file| file.reachability != Reachability::Unreachable)
         .flat_map(|file| &file.macro_expansions)
         .filter(|expansion| expansion.policy_names().all(|name| allowed.contains(name)))
-        .flat_map(|expansion| &expansion.origins)
+        .flat_map(crate::source::MacroExpansionFact::origins)
         .filter_map(|origin| match origin {
             MacroOrigin::Repository { package, directory } => {
                 Some((package.clone(), directory.clone()))

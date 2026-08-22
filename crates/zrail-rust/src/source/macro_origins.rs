@@ -6,40 +6,51 @@ use zrail_core::AnalysisQuality;
 
 use crate::cargo::{CrateRootAuthority, DependencySource, Package, rust_crate_root};
 
-use super::{MacroExpansionFact, MacroOrigin};
+use super::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin};
 
 const MAX_MACRO_ORIGINS: usize = 4;
 
 pub(super) fn resolve(expansion: &mut MacroExpansionFact, packages: &[&Package]) {
-    let local_module = expansion
+    for candidate in &mut expansion.candidates {
+        resolve_candidate(candidate, packages);
+    }
+    expansion.refresh_quality();
+}
+
+fn resolve_candidate(candidate: &mut MacroCandidate, packages: &[&Package]) {
+    let local_module = candidate
         .origins
         .iter()
         .any(|origin| matches!(origin, MacroOrigin::Pending { local_module: true }));
-    if !expansion
+    if !candidate
         .origins
         .iter()
         .any(|origin| matches!(origin, MacroOrigin::Pending { .. }))
     {
         return;
     }
-    if expansion.quality == AnalysisQuality::Unresolved {
-        expansion.origins = vec![MacroOrigin::Unresolved];
+    if candidate.observation.quality == AnalysisQuality::Unresolved {
+        candidate.origins = vec![MacroOrigin::Unresolved];
         return;
     }
-    let root = expansion
+    let root = candidate
+        .observation
         .name
         .split("::")
         .next()
         .map(visible_root)
         .unwrap_or_default();
     let dependencies = dependency_origins(root, packages);
-    expansion.origins = if dependencies.len() > MAX_MACRO_ORIGINS {
+    if !dependencies.is_empty() && candidate.derivation == MacroDerivation::Written {
+        candidate.derivation = MacroDerivation::DependencyRoot;
+    }
+    candidate.origins = if dependencies.len() > MAX_MACRO_ORIGINS {
         vec![MacroOrigin::Unresolved]
     } else if !dependencies.is_empty() && !local_module {
         dependencies
     } else if local_module || matches!(root, "crate" | "self" | "super" | "Self") {
         repository_origins(packages)
-    } else if compiler_builtin(&expansion.name) {
+    } else if compiler_builtin(&candidate.observation.name) {
         vec![MacroOrigin::CompilerBuiltin]
     } else {
         vec![MacroOrigin::Unresolved]

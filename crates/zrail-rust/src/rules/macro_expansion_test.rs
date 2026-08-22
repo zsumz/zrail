@@ -1,10 +1,12 @@
 //! Directly inspected compiler macros cannot be confused with local definitions.
 
-use zrail_core::{AnalysisQuality, MacroExpansionAllow, MacroInputMode};
+use zrail_core::{AnalysisQuality, MacroBindingMode, MacroExpansionAllow, MacroInputMode};
 
-use crate::source::{MacroExpansionFact, MacroOrigin, ObservedFact};
+use crate::source::{
+    MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin, ObservedFact,
+};
 
-use super::{directly_inspected, reviewed_names};
+use super::{Review, candidate_names, directly_inspected, review};
 
 #[test]
 fn local_definitions_shadow_intrinsic_shortcuts() {
@@ -28,8 +30,9 @@ fn arbitrary_expression_macros_are_never_assumed_inspected() {
 #[test]
 fn every_conservative_canonical_identity_requires_review() {
     let mut expansion = expansion("runtime::select");
-    expansion.canonical = vec!["async_std::select".into(), "tokio::select".into()];
-    expansion.quality = AnalysisQuality::Conservative;
+    expansion.candidates[0].observation.canonical =
+        vec!["async_std::select".into(), "tokio::select".into()];
+    expansion.candidates[0].observation.quality = AnalysisQuality::Conservative;
     let async_std = allowance("async_std::select");
     let tokio = allowance("tokio::select");
     let partial = std::collections::BTreeMap::from([("tokio::select", &tokio)]);
@@ -38,34 +41,64 @@ fn every_conservative_canonical_identity_requires_review() {
         ("tokio::select", &tokio),
     ]);
 
-    assert!(reviewed_names(&expansion, &partial).is_empty());
-    assert_eq!(reviewed_names(&expansion, &complete).len(), 2);
-    expansion.quality = AnalysisQuality::Unresolved;
-    assert!(reviewed_names(&expansion, &complete).is_empty());
+    assert!(candidate_names(&expansion.candidates[0], &partial).is_none());
+    assert_eq!(
+        candidate_names(&expansion.candidates[0], &complete).map(|names| names.len()),
+        Some(2)
+    );
 }
 
 #[test]
-fn bare_local_macros_cannot_borrow_a_global_name_allowance() {
-    let panic = allowance("panic");
-    let local_panic = allowance("local::panic");
-    let allowed = std::collections::BTreeMap::from([("panic", &panic)]);
-    let mut local = expansion("panic");
-    local.quality = AnalysisQuality::Unresolved;
+fn exact_allowance_cannot_bind_an_unresolved_written_macro() {
+    let reviewed = allowance("reviewed");
+    let allowed = std::collections::BTreeMap::from([("reviewed", &reviewed)]);
+    let local = unresolved("reviewed");
 
-    assert!(reviewed_names(&local, &allowed).is_empty());
-    assert_eq!(
-        reviewed_names(
-            &expansion("local::panic"),
-            &std::collections::BTreeMap::from([("local::panic", &local_panic)]),
-        ),
-        ["local::panic"]
+    assert!(matches!(review(&local, &allowed), Review::Unbound));
+}
+
+#[test]
+fn conservative_bare_allowance_binds_only_the_written_name() {
+    let mut reviewed = allowance("reviewed");
+    reviewed.binding = MacroBindingMode::Conservative;
+    let allowed = std::collections::BTreeMap::from([("reviewed", &reviewed)]);
+    assert!(matches!(
+        review(&unresolved("reviewed"), &allowed),
+        Review::Allowed(_)
+    ));
+
+    let qualified = allowance("support::reviewed");
+    let qualified_allowed = std::collections::BTreeMap::from([("support::reviewed", &qualified)]);
+    assert!(matches!(
+        review(&unresolved("reviewed"), &qualified_allowed),
+        Review::Unreviewed
+    ));
+}
+
+#[test]
+fn ambiguous_glob_candidates_all_require_allowances() {
+    let expansion = MacroExpansionFact::with_candidates(
+        fact("reviewed"),
+        vec![
+            repository("one::reviewed", MacroDerivation::GlobImport),
+            repository("two::reviewed", MacroDerivation::GlobImport),
+        ],
     );
+    let one = allowance("one::reviewed");
+    let two = allowance("two::reviewed");
+    let partial = std::collections::BTreeMap::from([("one::reviewed", &one)]);
+    let complete =
+        std::collections::BTreeMap::from([("one::reviewed", &one), ("two::reviewed", &two)]);
+
+    assert!(matches!(review(&expansion, &partial), Review::Unreviewed));
+    assert!(matches!(review(&expansion, &complete), Review::Allowed(_)));
 }
 
 fn allowance(name: &str) -> MacroExpansionAllow {
     MacroExpansionAllow {
         name: name.into(),
         inputs: MacroInputMode::Inspect,
+        binding: MacroBindingMode::Exact,
         definition: name.starts_with("local::").then(|| "src/lib.rs".into()),
         source: None,
         reason: "reviewed".into(),
@@ -82,12 +115,36 @@ fn fact(name: &str) -> ObservedFact {
 }
 
 fn expansion(name: &str) -> MacroExpansionFact {
-    MacroExpansionFact::pending(fact(name), false)
+    MacroExpansionFact::with_candidates(
+        fact(name),
+        vec![repository(name, MacroDerivation::Written)],
+    )
+}
+
+fn unresolved(name: &str) -> MacroExpansionFact {
+    let mut observed = fact(name);
+    observed.quality = AnalysisQuality::Unresolved;
+    MacroExpansionFact::unresolved(observed)
+}
+
+fn repository(name: &str, derivation: MacroDerivation) -> MacroCandidate {
+    MacroCandidate {
+        observation: fact(name),
+        origins: vec![MacroOrigin::Repository {
+            package: "fixture".into(),
+            directory: ".".into(),
+        }],
+        derivation,
+    }
 }
 
 fn compiler(name: &str) -> MacroExpansionFact {
-    MacroExpansionFact {
-        observation: fact(name),
-        origins: vec![MacroOrigin::CompilerBuiltin],
-    }
+    MacroExpansionFact::with_candidates(
+        fact(name),
+        vec![MacroCandidate {
+            observation: fact(name),
+            origins: vec![MacroOrigin::CompilerBuiltin],
+            derivation: MacroDerivation::Written,
+        }],
+    )
 }

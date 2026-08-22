@@ -172,7 +172,7 @@ requirement = "1"
             .findings
             .iter()
             .filter(|finding| {
-                finding.id == "RUST-MACRO-001"
+                finding.id == "RUST-MACRO-006"
                     && finding.analysis == zrail_core::AnalysisQuality::Unresolved
             })
             .count(),

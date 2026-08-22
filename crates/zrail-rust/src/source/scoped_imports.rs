@@ -46,7 +46,7 @@ pub(super) fn collect<'a>(
             Item::Macro(item) => {
                 if let Some(name) = &item.ident {
                     let name = name.to_string();
-                    raw.insert(name.clone(), (name, true, false));
+                    raw.insert(name.clone(), (name, true, true));
                 }
             }
             _ => {}

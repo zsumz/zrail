@@ -166,7 +166,7 @@ fn external_package_named_local_needs_external_source_authority() {
     );
     contract(&root, &[allowance("local::reviewed")]);
 
-    assert_finding(&check(&root).findings, "RUST-MACRO-001", "local::reviewed");
+    assert_finding(&check(&root).findings, "RUST-MACRO-006", "local::reviewed");
     reset(&root);
 }
 

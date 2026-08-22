@@ -55,13 +55,13 @@ fn local_modules_shadow_dependency_roots_in_their_lexical_scope() {
 }
 
 #[test]
-fn bare_local_macro_definitions_are_unresolved_only_in_their_scope() {
+fn bare_local_macro_definitions_retain_repository_ownership_in_their_scope() {
     let file = syn::parse_file("macro_rules! panic { () => {} }").expect("parse local macro");
     let aliases = collect(file.items.iter(), external);
 
     assert_eq!(aliases["panic"].target, "panic");
     assert_eq!(aliases["panic"].quality, AnalysisQuality::Unresolved);
-    assert!(!aliases["panic"].local_module);
+    assert!(aliases["panic"].local_module);
 }
 
 #[test]

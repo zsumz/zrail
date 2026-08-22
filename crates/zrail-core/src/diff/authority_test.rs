@@ -1,8 +1,8 @@
 //! Exact content and source identities remain visible in semantic review.
 
 use crate::{
-    ChangeKind, CrateRootContract, CrateRootSource, LockedMacroImplementation, MacroExpansionAllow,
-    MacroExpansionMode, MacroInputMode,
+    ChangeKind, CrateRootContract, CrateRootSource, LockedMacroImplementation, MacroBindingMode,
+    MacroExpansionAllow, MacroExpansionMode, MacroInputMode,
 };
 
 use super::{compare_architecture, compare_fixture_test::contract_with_hard_limit};
@@ -14,6 +14,7 @@ fn opaque_macro_input_is_a_grant_and_local_body_change_is_unknown() {
     before.source.rust.macros.allow.push(MacroExpansionAllow {
         name: "local::query".into(),
         inputs: MacroInputMode::Inspect,
+        binding: MacroBindingMode::Exact,
         definition: Some("src/lib.rs".into()),
         source: None,
         reason: "Reviewed local macro.".into(),
@@ -55,6 +56,33 @@ fn repository_macro_package_authority_adds_as_grant_and_removes_as_revoke() {
 }
 
 #[test]
+fn conservative_macro_binding_is_a_grant_and_exact_binding_is_a_revoke() {
+    let mut exact = contract_with_hard_limit(300);
+    exact.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
+    exact.source.rust.macros.allow.push(MacroExpansionAllow {
+        name: "reviewed".into(),
+        inputs: MacroInputMode::Inspect,
+        binding: MacroBindingMode::Exact,
+        definition: None,
+        source: None,
+        reason: "Reviewed unresolved spelling.".into(),
+    });
+    let mut conservative = exact.clone();
+    conservative.source.rust.macros.allow[0].binding = MacroBindingMode::Conservative;
+
+    let grant = compare_architecture(&exact, None, &conservative, None);
+    let revoke = compare_architecture(&conservative, None, &exact, None);
+    assert!(
+        grant.changes.iter().any(|change| {
+            change.kind == ChangeKind::Grant && change.rail == "rust.macro-binding"
+        })
+    );
+    assert!(revoke.changes.iter().any(|change| {
+        change.kind == ChangeKind::Revoke && change.rail == "rust.macro-binding"
+    }));
+}
+
+#[test]
 fn crate_root_and_external_macro_source_changes_fail_closed() {
     let mut before = contract_with_hard_limit(300);
     let registry_one = registry("1");
@@ -68,6 +96,7 @@ fn crate_root_and_external_macro_source_changes_fail_closed() {
     before.source.rust.macros.allow.push(MacroExpansionAllow {
         name: "runtime::select".into(),
         inputs: MacroInputMode::Inspect,
+        binding: MacroBindingMode::Exact,
         definition: None,
         source: Some(registry_one),
         reason: "Reviewed expansion.".into(),

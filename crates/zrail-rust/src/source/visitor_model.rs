@@ -1,10 +1,9 @@
 //! Mutable facts and effective cfg state owned by one syntax traversal.
 
 use super::{
+    CompileEffectFact, MacroExpansionFact,
     imports::ImportMap,
-    model::{
-        CompileEffectFact, IncludeBoundary, MacroDefinitionFact, MacroExpansionFact, ObservedFact,
-    },
+    model::{IncludeBoundary, MacroDefinitionFact, ObservedFact},
 };
 
 #[derive(Debug)]

@@ -49,8 +49,9 @@ fn validate_allowance(
         .iter()
         .filter(|file| file.reachability != Reachability::Unreachable)
         .flat_map(|file| &file.macro_expansions)
-        .filter(|expansion| expansion.policy_names().any(|name| name == allowance.name))
-        .flat_map(|expansion| &expansion.origins)
+        .flat_map(|expansion| &expansion.candidates)
+        .filter(|candidate| candidate.policy_names().any(|name| name == allowance.name))
+        .flat_map(|candidate| &candidate.origins)
         .collect::<Vec<_>>();
     let origin_bound = !origins.is_empty()
         && origins.iter().all(|origin| match origin {

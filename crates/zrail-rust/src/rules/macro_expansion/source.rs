@@ -4,14 +4,19 @@ use zrail_core::MacroExpansionAllow;
 
 use crate::{
     cargo::source_matches,
-    source::{MacroExpansionFact, MacroOrigin},
+    source::{MacroCandidate, MacroOrigin},
 };
 
-pub(super) fn bound(expansion: &MacroExpansionFact, allowance: &MacroExpansionAllow) -> bool {
-    !expansion.origins.is_empty()
-        && expansion.origins.iter().all(|origin| match origin {
-            MacroOrigin::CompilerBuiltin | MacroOrigin::Repository { .. } => {
+pub(super) fn bound(candidate: &MacroCandidate, allowance: &MacroExpansionAllow) -> bool {
+    !candidate.origins.is_empty()
+        && candidate.origins.iter().all(|origin| match origin {
+            MacroOrigin::CompilerBuiltin => {
+                allowance.source.is_none() && allowance.definition.is_none()
+            }
+            MacroOrigin::Repository { .. } => {
                 allowance.source.is_none()
+                    && (allowance.definition.is_some()
+                        || candidate.policy_names().all(|name| name.contains("::")))
             }
             MacroOrigin::External { source, .. } => allowance
                 .source

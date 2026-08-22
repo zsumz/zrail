@@ -1,6 +1,6 @@
 //! Parse each Rust file once and retain reusable architecture facts.
 
-use syn::{Item, spanned::Spanned, visit::Visit};
+use syn::visit::Visit;
 use zrail_core::{AnalysisQuality, Finding};
 
 use crate::inventory::{FileClass, RepositoryInventory};
@@ -8,9 +8,8 @@ use crate::inventory::{FileClass, RepositoryInventory};
 use super::{
     attributes::has_module_docs,
     depth::check_syntax_depth,
-    fact::fact,
     imports::ImportMap,
-    model::{ObservedFact, Reachability, RustFileFacts, SourceIndex, SourceSyntax},
+    model::{Reachability, RustFileFacts, SourceIndex, SourceSyntax},
     modules::module_declarations,
     visitor::FactVisitor,
 };
@@ -95,10 +94,15 @@ fn fact_count(file: &RustFileFacts) -> usize {
         + file.calls.len()
         + file.methods.len()
         + file.macros.len()
-        + file.macro_expansions.len()
-        + file.opaque_macro_inputs.len()
+        + file.macro_imports.len()
+        + candidate_count(&file.macro_expansions)
+        + candidate_count(&file.opaque_macro_inputs)
         + file.macro_definitions.len()
-        + file.compile_effects.len()
+        + file
+            .compile_effects
+            .iter()
+            .map(|effect| effect.invocation.candidates.len())
+            .sum::<usize>()
         + file.lint_suppressions.len()
         + file.unsafe_constructs.len()
         + file.tests.len()
@@ -108,13 +112,20 @@ fn fact_count(file: &RustFileFacts) -> usize {
         + file.facade_implementation.len()
 }
 
+fn candidate_count(expansions: &[super::MacroExpansionFact]) -> usize {
+    expansions
+        .iter()
+        .map(|expansion| expansion.candidates.len())
+        .sum()
+}
+
 fn index_file(source_file: &crate::inventory::RustSourceFile, syntax: &syn::File) -> RustFileFacts {
     let imports = ImportMap::from_file(syntax);
     let mut visitor = FactVisitor::new(&imports);
     visitor.visit_file(syntax);
     let facade_implementation =
         if matches!(source_file.class, FileClass::Facade | FileClass::EntryPoint) {
-            facade_items(&source_file.relative, syntax)
+            super::parse_facade::items(&source_file.relative, syntax)
         } else {
             Vec::new()
         };
@@ -130,6 +141,7 @@ fn index_file(source_file: &crate::inventory::RustSourceFile, syntax: &syn::File
         calls: visitor.calls,
         methods: visitor.methods,
         macros: visitor.macros,
+        macro_imports: imports.macro_imports(),
         macro_expansions: visitor.macro_expansions,
         opaque_macro_inputs: visitor.opaque_macro_inputs,
         macro_definitions: visitor.macro_definitions,
@@ -163,6 +175,7 @@ fn index_expression(
         calls: visitor.calls,
         methods: visitor.methods,
         macros: visitor.macros,
+        macro_imports: Vec::new(),
         macro_expansions: visitor.macro_expansions,
         opaque_macro_inputs: visitor.opaque_macro_inputs,
         macro_definitions: visitor.macro_definitions,
@@ -174,53 +187,6 @@ fn index_expression(
         includes: visitor.includes,
         item_macros: visitor.item_macros,
         facade_implementation: Vec::new(),
-    }
-}
-
-fn facade_items(relative: &str, syntax: &syn::File) -> Vec<ObservedFact> {
-    syntax
-        .items
-        .iter()
-        .filter_map(|item| {
-            if declarative_item(relative, item) {
-                None
-            } else {
-                let span = match item {
-                    Item::Macro(item_macro) => item_macro.mac.span(),
-                    _ => item.span(),
-                };
-                Some(fact(item_kind(item), span, AnalysisQuality::Exact))
-            }
-        })
-        .collect()
-}
-
-fn declarative_item(relative: &str, item: &Item) -> bool {
-    match item {
-        Item::Mod(module) if module.content.is_none() => true,
-        Item::Use(_) | Item::ExternCrate(_) => true,
-        Item::Fn(function) => relative.ends_with("/main.rs") && function.sig.ident == "main",
-        _ => false,
-    }
-}
-
-fn item_kind(item: &Item) -> String {
-    match item {
-        Item::Const(_) => "const".into(),
-        Item::Enum(_) => "enum".into(),
-        Item::Fn(_) => "function".into(),
-        Item::Impl(_) => "impl".into(),
-        Item::Macro(item_macro) => item_macro
-            .mac
-            .path
-            .segments
-            .last()
-            .map_or_else(|| "macro".into(), |segment| format!("{}!", segment.ident)),
-        Item::Static(_) => "static".into(),
-        Item::Struct(_) => "struct".into(),
-        Item::Trait(_) => "trait".into(),
-        Item::Type(_) => "type".into(),
-        _ => "item".into(),
     }
 }
 

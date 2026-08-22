@@ -11,7 +11,6 @@ use zrail_core::AnalysisQuality;
 use super::{
     attributes::{is_cfg_test, is_test_attribute},
     fact::fact,
-    model::MacroExpansionFact,
     visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
 };
 
@@ -106,26 +105,18 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
             visit::visit_macro(self, invocation);
             return;
         }
-        let (name, quality, scoped, local_module) = self.resolve_macro_path(&invocation.path);
-        let mut expansion = fact(name.clone(), invocation.path.span(), quality);
-        if local_module {
-            expansion.canonical.push(name.clone());
-        }
-        let mut facts = vec![MacroExpansionFact::pending(expansion, local_module)];
-        if !scoped {
-            facts.extend(
-                super::calls::candidates(&invocation.path, self.imports, &name)
-                    .into_iter()
-                    .map(|fact| MacroExpansionFact::pending(fact, false)),
-            );
-        }
-        super::compile_effects::record(self, invocation, &facts[0]);
-        let opaque_input = super::macro_inputs::inspect(self, invocation, &name);
-        self.macros
-            .extend(facts.iter().map(|fact| fact.observation.clone()));
-        self.macro_expansions.extend(facts.iter().cloned());
+        let expansion = self.macro_invocation(&invocation.path);
+        super::compile_effects::record(self, invocation, &expansion);
+        let opaque_input = super::macro_inputs::inspect(self, invocation, &expansion.name);
+        self.macros.extend(
+            expansion
+                .candidates
+                .iter()
+                .map(|fact| fact.observation.clone()),
+        );
+        self.macro_expansions.push(expansion.clone());
         if opaque_input {
-            self.opaque_macro_inputs.extend(facts);
+            self.opaque_macro_inputs.push(expansion);
         }
         visit::visit_macro(self, invocation);
     }

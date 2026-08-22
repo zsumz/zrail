@@ -179,10 +179,14 @@ bind to the exact dependency source. Built-in data macros and `include!` are
 handled directly, and included Rust remains fully analyzed.
 
 An optional `definition` path can narrow a `macro_rules!` allowance, but path
-spelling never establishes origin. Bare allowances are conservative: when a
-package defines a local macro with the same name, use a stable qualified path.
-`#[macro_use]` imports remain unresolved because their bare namespace cannot be
-attributed exactly without compiler expansion.
+spelling never establishes origin. The default `binding = "exact"` rejects an
+allowance when the candidate origin remains unresolved. A name-only allowance
+may opt into `binding = "conservative"` to cover only the exact spelling at the
+invocation site; it cannot claim a `source` or `definition` for that unresolved
+candidate. Repository globs are narrowed against the bounded local macro
+namespace, while ambiguous glob candidates must all be allowed. `#[macro_use]`
+imports remain unresolved because their bare namespace cannot be attributed
+exactly without compiler expansion.
 
 ## Cargo
 

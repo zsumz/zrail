@@ -37,6 +37,6 @@ pub use model::{
 };
 pub use modes::{
     CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,
-    LintSuppressionMode, MacroExpansionMode, MacroInputMode, ModuleDocsMode, OwnerKind, PolicyMode,
-    SymlinkMode, TestMode,
+    LintSuppressionMode, MacroBindingMode, MacroExpansionMode, MacroInputMode, ModuleDocsMode,
+    OwnerKind, PolicyMode, SymlinkMode, TestMode,
 };

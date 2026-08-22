@@ -4,7 +4,7 @@ use proc_macro2::TokenStream;
 use syn::Macro;
 use zrail_core::{AnalysisQuality, Effect};
 
-use super::{MacroExpansionFact, model::CompileEffectFact, visitor::FactVisitor};
+use super::{CompileEffectFact, MacroExpansionFact, visitor::FactVisitor};
 
 pub(super) fn record(
     visitor: &mut FactVisitor<'_>,

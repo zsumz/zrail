@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{Contract, MacroInputMode};
+use crate::{Contract, MacroBindingMode, MacroInputMode};
 
 use super::super::{
     ArchitectureChange, ChangeKind,
@@ -61,6 +61,19 @@ fn compare_existing(
     right: &crate::MacroExpansionAllow,
     changes: &mut Vec<ArchitectureChange>,
 ) {
+    if left.binding != right.binding {
+        let kind = if right.binding == MacroBindingMode::Conservative {
+            ChangeKind::Grant
+        } else {
+            ChangeKind::Revoke
+        };
+        changes.push(ArchitectureChange::new(
+            kind,
+            "rust.macro-binding",
+            name,
+            "changes whether unresolved written macro names may bind",
+        ));
+    }
     if left.inputs != right.inputs {
         let kind = if right.inputs == MacroInputMode::Opaque {
             ChangeKind::Grant

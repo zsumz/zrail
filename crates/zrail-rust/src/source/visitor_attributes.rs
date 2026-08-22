@@ -4,9 +4,9 @@ use syn::{Attribute, spanned::Spanned};
 use zrail_core::AnalysisQuality;
 
 use super::{
+    MacroExpansionFact,
     attributes::{is_lint_suppression, lint_suppression_is_reasoned, unsafe_attribute_names},
     fact::fact,
-    model::MacroExpansionFact,
     visitor::FactVisitor,
 };
 
@@ -60,20 +60,7 @@ impl FactVisitor<'_> {
         match super::macro_expansion::attribute_paths(attribute) {
             Ok(paths) => {
                 for path in paths {
-                    let (name, quality, scoped, local_module) = self.resolve_macro_path(&path);
-                    let mut expansion = fact(name.clone(), path.span(), quality);
-                    if local_module {
-                        expansion.canonical.push(name.clone());
-                    }
-                    let mut facts = vec![MacroExpansionFact::pending(expansion, local_module)];
-                    if !scoped {
-                        facts.extend(
-                            super::calls::candidates(&path, self.imports, &name)
-                                .into_iter()
-                                .map(|fact| MacroExpansionFact::pending(fact, false)),
-                        );
-                    }
-                    self.macro_expansions.extend(facts);
+                    self.macro_expansions.push(self.macro_invocation(&path));
                 }
             }
             Err(()) => self

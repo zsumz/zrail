@@ -26,6 +26,7 @@ pub(crate) fn canonicalize(
         .map(|package| (package.name.as_str(), package))
         .collect::<BTreeMap<_, _>>();
     let macro_definitions = package_macro_definitions(index, contexts);
+    let macro_visibility = super::macro_visibility::MacroVisibility::collect(index);
     let mut findings = Vec::new();
     for file in &mut index.files {
         let selected: Vec<&Package> = contexts.get(&file.relative).map_or_else(
@@ -62,16 +63,21 @@ pub(crate) fn canonicalize(
                     .map(|effect| &mut effect.invocation),
             )
         {
-            if !expansion.name.contains("::")
-                && local_macros
-                    .as_ref()
-                    .is_none_or(|names| names.contains(expansion.name.as_str()))
-            {
-                expansion.canonical.clear();
-                expansion.quality = AnalysisQuality::Unresolved;
+            for candidate in &mut expansion.candidates {
+                let observed = &mut candidate.observation;
+                if !observed.name.contains("::")
+                    && local_macros
+                        .as_ref()
+                        .is_none_or(|names| names.contains(observed.name.as_str()))
+                {
+                    observed.canonical.clear();
+                    observed.quality = AnalysisQuality::Unresolved;
+                }
             }
+            expansion.refresh_quality();
+            macro_visibility.resolve(expansion, &file.relative, local_macros.as_ref());
         }
-        let observed = observed_roots(file);
+        let observed = super::canonical_observed::roots(file);
         let (roots, overflowed) = dependency_roots(&selected, &observed);
         findings.extend(
             overflowed
@@ -97,7 +103,9 @@ pub(crate) fn canonicalize(
                     .map(|effect| &mut effect.invocation),
             )
         {
-            canonicalize_fact_bounded(&mut expansion.observation, &roots, &overflowed);
+            for candidate in &mut expansion.candidates {
+                canonicalize_fact_bounded(&mut candidate.observation, &roots, &overflowed);
+            }
             super::macro_origins::resolve(expansion, &selected);
         }
     }
@@ -129,27 +137,6 @@ fn dependency_roots(
         }
     }
     (roots, overflowed)
-}
-
-fn observed_roots(file: &super::RustFileFacts) -> BTreeSet<String> {
-    file.paths
-        .iter()
-        .chain(&file.calls)
-        .chain(&file.macros)
-        .chain(file.macro_expansions.iter().map(|fact| &fact.observation))
-        .chain(
-            file.opaque_macro_inputs
-                .iter()
-                .map(|fact| &fact.observation),
-        )
-        .chain(&file.item_macros)
-        .chain(
-            file.compile_effects
-                .iter()
-                .map(|effect| &effect.invocation.observation),
-        )
-        .filter_map(|fact| split_root(&fact.name).map(|(root, _)| visible_root(root).into()))
-        .collect()
 }
 
 fn package_for_file<'a>(packages: &'a [Package], file: &str) -> Option<&'a Package> {

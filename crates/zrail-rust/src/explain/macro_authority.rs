@@ -21,20 +21,22 @@ pub(super) fn implementations(model: &RepositoryModel) -> Vec<String> {
         .iter()
         .flat_map(|file| &file.macro_expansions)
         .flat_map(|expansion| {
-            expansion
-                .policy_names()
-                .filter(|name| allowed.contains(name))
-                .flat_map(|name| {
-                    expansion
-                        .origins
-                        .iter()
-                        .filter_map(move |origin| match origin {
-                            MacroOrigin::Repository { package, directory } => {
-                                Some(format!("{name}@{package}:{directory}"))
-                            }
-                            _ => None,
-                        })
-                })
+            expansion.candidates.iter().flat_map(|candidate| {
+                candidate
+                    .policy_names()
+                    .filter(|name| allowed.contains(name))
+                    .flat_map(|name| {
+                        candidate
+                            .origins
+                            .iter()
+                            .filter_map(move |origin| match origin {
+                                MacroOrigin::Repository { package, directory } => {
+                                    Some(format!("{name}@{package}:{directory}"))
+                                }
+                                _ => None,
+                            })
+                    })
+            })
         })
         .collect::<BTreeSet<_>>()
         .into_iter()

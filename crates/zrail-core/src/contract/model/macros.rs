@@ -2,7 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::contract::{CrateRootSource, MacroExpansionMode, MacroInputMode};
+use crate::contract::{CrateRootSource, MacroBindingMode, MacroExpansionMode, MacroInputMode};
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -24,6 +24,9 @@ pub struct MacroExpansionAllow {
     #[serde(default)]
     /// Whether invocations must expose their token input to analysis.
     pub inputs: MacroInputMode,
+    #[serde(default)]
+    /// Confidence required to bind invocations to this authority.
+    pub binding: MacroBindingMode,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     /// Optional package-qualified macro definition identity.
     pub definition: Option<String>,

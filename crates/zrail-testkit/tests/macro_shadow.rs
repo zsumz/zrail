@@ -66,7 +66,7 @@ fn bare_local_macro_cannot_borrow_a_standard_name_allowance() {
         report
             .findings
             .iter()
-            .any(|finding| { finding.id == "RUST-MACRO-001" && finding.message.contains("panic") })
+            .any(|finding| { finding.id == "RUST-MACRO-006" && finding.message.contains("panic") })
     );
     fs::remove_dir_all(root).expect("remove fixture");
 }
@@ -98,7 +98,7 @@ fn cross_file_macro_scope_cannot_borrow_a_standard_name_allowance() {
         .report;
 
     assert!(report.findings.iter().any(|finding| {
-        finding.id == "RUST-MACRO-001"
+        finding.id == "RUST-MACRO-006"
             && finding.path.as_deref() == Some("src/child.rs")
             && finding.analysis == zrail_core::AnalysisQuality::Unresolved
     }));
@@ -127,7 +127,7 @@ fn block_local_macro_cannot_borrow_a_standard_name_allowance() {
         .report;
 
     assert!(report.findings.iter().any(|finding| {
-        finding.id == "RUST-MACRO-001"
+        finding.id == "RUST-MACRO-006"
             && finding.message.contains("panic")
             && finding.analysis == zrail_core::AnalysisQuality::Unresolved
     }));
@@ -159,7 +159,7 @@ fn macro_use_namespace_cannot_be_allowlisted_as_exact() {
         .report;
 
     assert!(report.findings.iter().any(|finding| {
-        finding.id == "RUST-MACRO-001"
+        finding.id == "RUST-MACRO-006"
             && finding.message.contains("macro_use")
             && finding.analysis == zrail_core::AnalysisQuality::Unresolved
     }));
