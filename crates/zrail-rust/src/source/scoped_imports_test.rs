@@ -4,7 +4,7 @@ use std::fmt::Write as _;
 
 use zrail_core::AnalysisQuality;
 
-use super::{ScopedAlias, collect};
+use super::{ScopedAlias, SyntaxGuard, collect};
 
 #[test]
 fn aliases_resolve_against_their_scope_and_outer_imports() {
@@ -46,6 +46,26 @@ fn conditional_aliases_never_create_exact_macro_authority() {
 
     assert_eq!(aliases["rt"].target, "tokio");
     assert_eq!(aliases["rt"].quality, AnalysisQuality::Unresolved);
+}
+
+#[test]
+fn test_only_aliases_retain_exact_guarded_authority() {
+    let file = syn::parse_file("#[cfg(test)] use tokio as rt;").expect("parse guarded import");
+    let aliases = collect(file.items.iter(), external);
+
+    assert_eq!(aliases["rt"].target, "tokio");
+    assert_eq!(aliases["rt"].quality, AnalysisQuality::Exact);
+    assert_eq!(aliases["rt"].guard, SyntaxGuard::TestOnly);
+}
+
+#[test]
+fn test_only_aliases_cannot_shadow_production_scope() {
+    let file = syn::parse_file("use production as rt; #[cfg(test)] use test_support as rt;")
+        .expect("parse overlapping aliases");
+    let aliases = collect(file.items.iter(), external);
+
+    assert_eq!(aliases["rt"].target, "production");
+    assert_eq!(aliases["rt"].guard, SyntaxGuard::Ordinary);
 }
 
 #[test]
@@ -102,5 +122,6 @@ fn external(name: &str) -> ScopedAlias {
         target: name.into(),
         quality: AnalysisQuality::Exact,
         local_module: false,
+        guard: SyntaxGuard::Ordinary,
     }
 }

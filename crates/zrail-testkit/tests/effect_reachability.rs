@@ -66,7 +66,7 @@ fn omitted_profile_reachability_preserves_all_fact_behavior() {
             finding.id == "EFFECT-001" && finding.path.as_deref() == Some("src/lib.rs")
         })
         .count();
-    assert_eq!(guarded_library_effects, 2, "{}", report.human());
+    assert_eq!(guarded_library_effects, 8, "{}", report.human());
     reset(&root);
 }
 
@@ -164,6 +164,8 @@ build = "build.rs"
 
 const LIBRARY: &str = concat!(
     "//! Library.\n",
+    "#[cfg(test)] use std::process::Command;\n",
+    "#[cfg(test)] use std::process::*;\n",
     "#[path = \"shared.rs\"]\n",
     "mod shared;\n",
     "#[cfg(test)]\n",

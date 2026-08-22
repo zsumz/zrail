@@ -4,7 +4,7 @@ use std::fmt::Write as _;
 
 use zrail_core::AnalysisQuality;
 
-use super::ImportMap;
+use super::{ImportMap, SyntaxGuard};
 
 #[test]
 fn renamed_imports_resolve_to_their_declared_capability() {
@@ -12,15 +12,22 @@ fn renamed_imports_resolve_to_their_declared_capability() {
         syn::parse_file("use std::{net::TcpStream as Hidden, fs::*};").expect("parse imports");
     let imports = ImportMap::from_file(&file);
     let path = syn::parse_str::<syn::Path>("Hidden::connect").expect("parse path");
-    let (resolved, quality) = imports.resolve(&path);
+    let (resolved, quality) = imports.resolve(&path, SyntaxGuard::Ordinary);
 
     assert_eq!(resolved, "std::net::TcpStream::connect");
     assert_eq!(quality, AnalysisQuality::Exact);
     assert_eq!(
         imports.declared_paths(),
-        [("std::net::TcpStream", AnalysisQuality::Exact)]
+        [(
+            "std::net::TcpStream",
+            AnalysisQuality::Exact,
+            SyntaxGuard::Ordinary
+        )]
     );
-    assert_eq!(imports.globs(), &["std::fs"]);
+    assert_eq!(
+        imports.declared_globs(),
+        [("std::fs", SyntaxGuard::Ordinary)]
+    );
 }
 
 #[test]
@@ -30,7 +37,7 @@ fn alias_chains_resolve_to_the_original_crate() {
     let imports = ImportMap::from_file(&file);
     let path = syn::parse_str::<syn::Path>("client::connect").expect("parse path");
 
-    let (resolved, quality) = imports.resolve(&path);
+    let (resolved, quality) = imports.resolve(&path, SyntaxGuard::Ordinary);
 
     assert_eq!(resolved, "network::client::connect");
     assert_eq!(quality, AnalysisQuality::Exact);
@@ -42,7 +49,7 @@ fn alias_cycles_are_reported_as_unresolved() {
     let imports = ImportMap::from_file(&file);
     let path = syn::parse_str::<syn::Path>("a::call").expect("parse path");
 
-    let (_, quality) = imports.resolve(&path);
+    let (_, quality) = imports.resolve(&path, SyntaxGuard::Ordinary);
 
     assert_eq!(quality, AnalysisQuality::Unresolved);
 }
@@ -57,11 +64,11 @@ fn self_imports_bind_the_parent_path_instead_of_a_synthetic_self_segment() {
     let files = syn::parse_str::<syn::Path>("files::read").expect("parse fs path");
 
     assert_eq!(
-        imports.resolve(&net),
+        imports.resolve(&net, SyntaxGuard::Ordinary),
         ("std::net::TcpListener".into(), AnalysisQuality::Exact)
     );
     assert_eq!(
-        imports.resolve(&files),
+        imports.resolve(&files, SyntaxGuard::Ordinary),
         ("std::fs::read".into(), AnalysisQuality::Exact)
     );
 }
@@ -73,8 +80,14 @@ fn same_root_imports_do_not_rewrite_already_qualified_paths() {
     let bare = syn::parse_str("quote").expect("parse bare path");
     let qualified = syn::parse_str("quote::quote::quote").expect("parse qualified path");
 
-    assert_eq!(imports.resolve(&bare).0, "quote::quote");
-    assert_eq!(imports.resolve(&qualified).0, "quote::quote::quote");
+    assert_eq!(
+        imports.resolve(&bare, SyntaxGuard::Ordinary).0,
+        "quote::quote"
+    );
+    assert_eq!(
+        imports.resolve(&qualified, SyntaxGuard::Ordinary).0,
+        "quote::quote::quote"
+    );
 }
 
 #[test]
@@ -85,7 +98,10 @@ fn exact_alias_expansion_has_fixed_depth_and_byte_limits() {
     });
     let imports = ImportMap::from_file(&syn::parse_file(&deep).expect("parse deep aliases"));
     let path = syn::parse_str::<syn::Path>("a0::call").expect("parse deep alias call");
-    assert_eq!(imports.resolve(&path).1, AnalysisQuality::Unresolved);
+    assert_eq!(
+        imports.resolve(&path, SyntaxGuard::Ordinary).1,
+        AnalysisQuality::Unresolved
+    );
 
     let long = std::iter::repeat_n("segment", 160)
         .collect::<Vec<_>>()
@@ -93,7 +109,10 @@ fn exact_alias_expansion_has_fixed_depth_and_byte_limits() {
     let source = format!("use {long} as bounded;");
     let imports = ImportMap::from_file(&syn::parse_file(&source).expect("parse long alias"));
     let path = syn::parse_str::<syn::Path>("bounded::call").expect("parse bounded alias call");
-    assert_eq!(imports.resolve(&path).1, AnalysisQuality::Unresolved);
+    assert_eq!(
+        imports.resolve(&path, SyntaxGuard::Ordinary).1,
+        AnalysisQuality::Unresolved
+    );
 }
 
 #[test]
@@ -103,7 +122,51 @@ fn conditional_top_level_imports_are_never_exact_authority() {
     let path = syn::parse_str::<syn::Path>("rt::select").expect("parse aliased macro path");
 
     assert_eq!(
-        imports.resolve(&path),
+        imports.resolve(&path, SyntaxGuard::Ordinary),
         ("tokio::select".into(), AnalysisQuality::Unresolved)
+    );
+}
+
+#[test]
+fn test_only_imports_are_available_only_to_test_syntax() {
+    let file = syn::parse_file(
+        "#[cfg(test)] use std::process::Command; #[cfg(test)] use std::process::*;",
+    )
+    .expect("parse test-only imports");
+    let imports = ImportMap::from_file(&file);
+    let path = syn::parse_str::<syn::Path>("Command::new").expect("parse imported path");
+
+    assert_eq!(
+        imports.resolve(&path, SyntaxGuard::Ordinary),
+        ("Command::new".into(), AnalysisQuality::Unresolved)
+    );
+    assert_eq!(
+        imports.resolve(&path, SyntaxGuard::TestOnly),
+        ("std::process::Command::new".into(), AnalysisQuality::Exact)
+    );
+    assert_eq!(
+        imports.declared_globs(),
+        [("std::process", SyntaxGuard::TestOnly)]
+    );
+}
+
+#[test]
+fn test_only_aliases_cannot_replace_production_aliases() {
+    let file = syn::parse_file("use production::Command; #[cfg(test)] use test_support::Command;")
+        .expect("parse overlapping imports");
+    let imports = ImportMap::from_file(&file);
+    let path = syn::parse_str::<syn::Path>("Command::new").expect("parse imported path");
+
+    assert_eq!(
+        imports.resolve(&path, SyntaxGuard::Ordinary),
+        ("production::Command::new".into(), AnalysisQuality::Exact)
+    );
+    assert_eq!(
+        imports
+            .call_candidates(&path, SyntaxGuard::Ordinary)
+            .into_iter()
+            .map(|candidate| candidate.path)
+            .collect::<Vec<_>>(),
+        ["production::Command::new"]
     );
 }

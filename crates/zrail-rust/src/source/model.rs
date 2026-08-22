@@ -91,11 +91,33 @@ impl Reachability {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum SyntaxGuard {
     #[default]
     Ordinary,
     TestOnly,
+}
+
+impl SyntaxGuard {
+    pub(crate) const fn for_test_only(test_only: bool) -> Self {
+        if test_only {
+            Self::TestOnly
+        } else {
+            Self::Ordinary
+        }
+    }
+
+    pub(crate) const fn available_in(self, context: Self) -> bool {
+        matches!(self, Self::Ordinary) || matches!(context, Self::TestOnly)
+    }
+
+    pub(crate) const fn combine(self, other: Self) -> Self {
+        if matches!(self, Self::TestOnly) || matches!(other, Self::TestOnly) {
+            Self::TestOnly
+        } else {
+            Self::Ordinary
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -112,6 +134,7 @@ pub(crate) struct MacroImportFact {
     pub(crate) name: String,
     pub(crate) target: String,
     pub(crate) quality: AnalysisQuality,
+    pub(crate) guard: SyntaxGuard,
     pub(crate) re_export: bool,
 }
 

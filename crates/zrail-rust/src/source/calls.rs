@@ -4,25 +4,25 @@ use syn::{Expr, ExprCall, spanned::Spanned as _};
 use zrail_core::AnalysisQuality;
 
 use super::{
-    MacroDerivation, ObservedFact,
+    MacroDerivation, ObservedFact, SyntaxGuard,
     fact::fact,
     imports::{ImportCandidateKind, ImportMap},
 };
 
 const MAX_MACRO_CANDIDATES: usize = 64;
 
-pub(super) fn facts(call: &ExprCall, imports: &ImportMap) -> Vec<ObservedFact> {
+pub(super) fn facts(call: &ExprCall, imports: &ImportMap, guard: SyntaxGuard) -> Vec<ObservedFact> {
     let Expr::Path(callee) = call.func.as_ref() else {
         return Vec::new();
     };
-    let (resolved, quality) = imports.resolve(&callee.path);
+    let (resolved, quality) = imports.resolve(&callee.path, guard);
     if resolved.is_empty() {
         return Vec::new();
     }
     let span = callee.path.span();
     let mut observed = vec![fact(resolved.clone(), span, quality)];
     if callee.qself.is_none() {
-        observed.extend(candidates(&callee.path, imports, &resolved));
+        observed.extend(candidates(&callee.path, imports, &resolved, guard));
     }
     observed
 }
@@ -31,9 +31,10 @@ pub(super) fn candidates(
     path: &syn::Path,
     imports: &ImportMap,
     resolved: &str,
+    guard: SyntaxGuard,
 ) -> Vec<ObservedFact> {
     imports
-        .call_candidates(path)
+        .call_candidates(path, guard)
         .into_iter()
         .filter(|candidate| candidate.path != resolved)
         .map(|candidate| fact(candidate.path, path.span(), AnalysisQuality::Conservative))
@@ -44,8 +45,10 @@ pub(super) fn macro_candidates(
     path: &syn::Path,
     imports: &ImportMap,
     resolved: &str,
+    guard: SyntaxGuard,
 ) -> (Vec<(ObservedFact, MacroDerivation)>, bool) {
-    let (candidates, overflowed) = imports.bounded_call_candidates(path, MAX_MACRO_CANDIDATES - 1);
+    let (candidates, overflowed) =
+        imports.bounded_call_candidates(path, MAX_MACRO_CANDIDATES - 1, guard);
     let candidates = candidates
         .into_iter()
         .filter(|candidate| candidate.path != resolved)

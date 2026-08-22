@@ -28,11 +28,20 @@ impl MacroVisibility {
                 continue;
             }
             match self.imports_for(file, &candidate.observation.name) {
-                VisibilityLookup::Known(imports) if !imports.is_empty() => {
+                VisibilityLookup::Known(imports)
+                    if imports
+                        .iter()
+                        .any(|import| import.guard.available_in(candidate.observation.guard)) =>
+                {
                     resolved_leaves.insert(leaf(&candidate.observation.name).to_owned());
-                    candidates.extend(imports.into_iter().map(|import| {
-                        imported_candidate(&candidate.observation, import, local_macros)
-                    }));
+                    candidates.extend(
+                        imports
+                            .into_iter()
+                            .filter(|import| import.guard.available_in(candidate.observation.guard))
+                            .map(|import| {
+                                imported_candidate(&candidate.observation, import, local_macros)
+                            }),
+                    );
                 }
                 VisibilityLookup::Known(_) | VisibilityLookup::Unknown
                     if contains_local(local_macros, &candidate.observation.name) =>

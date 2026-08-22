@@ -2,29 +2,39 @@
 
 use syn::UseTree;
 
-use super::imports::ImportMap;
+use super::{
+    SyntaxGuard,
+    import_helpers::{insert_guard, insert_primary_alias},
+    imports::ImportMap,
+};
 
 pub(super) fn collect_use(
     imports: &mut ImportMap,
     prefix: Vec<String>,
     tree: &UseTree,
     conditional: bool,
+    guard: SyntaxGuard,
     re_export: bool,
 ) {
     match tree {
         UseTree::Path(path) => {
             let mut nested = prefix;
             nested.push(path.ident.to_string());
-            collect_use(imports, nested, &path.tree, conditional, re_export);
+            collect_use(imports, nested, &path.tree, conditional, guard, re_export);
         }
         UseTree::Name(name) if name.ident == "self" => {
             if let Some(alias) = prefix.last() {
-                imports.aliases.insert(alias.clone(), prefix.join("::"));
-                if conditional {
-                    imports.unresolved.insert(alias.clone());
-                }
+                insert_primary_alias(
+                    &mut imports.aliases,
+                    &mut imports.alias_guards,
+                    &mut imports.unresolved,
+                    alias.clone(),
+                    prefix.join("::"),
+                    conditional,
+                    guard,
+                );
                 if re_export {
-                    imports.re_exports.insert(alias.clone());
+                    insert_guard(&mut imports.re_exports, alias.clone(), guard);
                 }
             }
         }
@@ -36,6 +46,7 @@ pub(super) fn collect_use(
                 name.ident.to_string(),
                 &target,
                 conditional,
+                guard,
                 re_export,
             );
         }
@@ -46,6 +57,7 @@ pub(super) fn collect_use(
                     rename.rename.to_string(),
                     &prefix,
                     conditional,
+                    guard,
                     re_export,
                 );
             }
@@ -58,19 +70,20 @@ pub(super) fn collect_use(
                 rename.rename.to_string(),
                 &target,
                 conditional,
+                guard,
                 re_export,
             );
         }
         UseTree::Glob(_) => {
             let glob = prefix.join("::");
             if re_export {
-                imports.re_export_globs.insert(glob.clone());
+                insert_guard(&mut imports.re_export_globs, glob.clone(), guard);
             }
-            imports.globs.push(glob);
+            insert_guard(&mut imports.globs, glob, guard);
         }
         UseTree::Group(group) => {
             for item in &group.items {
-                collect_use(imports, prefix.clone(), item, conditional, re_export);
+                collect_use(imports, prefix.clone(), item, conditional, guard, re_export);
             }
         }
     }
@@ -81,13 +94,19 @@ fn insert_alias(
     alias: String,
     target: &[String],
     conditional: bool,
+    guard: SyntaxGuard,
     re_export: bool,
 ) {
-    imports.aliases.insert(alias.clone(), target.join("::"));
-    if conditional {
-        imports.unresolved.insert(alias.clone());
-    }
+    insert_primary_alias(
+        &mut imports.aliases,
+        &mut imports.alias_guards,
+        &mut imports.unresolved,
+        alias.clone(),
+        target.join("::"),
+        conditional,
+        guard,
+    );
     if re_export {
-        imports.re_exports.insert(alias);
+        insert_guard(&mut imports.re_exports, alias, guard);
     }
 }

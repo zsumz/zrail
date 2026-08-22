@@ -143,7 +143,7 @@ fn process(doc: &str) -> String {
 
 fn guarded_process(doc: &str) -> String {
     format!(
-        "//! {doc}\n#[cfg(test)]\nfn run() {{ let _ = std::process::Command::new(\"true\"); }}\n"
+        "//! {doc}\n#[cfg(test)] use std::process::Command;\n#[cfg(test)] use std::process::*;\n#[cfg(test)]\nfn run() {{ let _ = Command::new(\"true\"); }}\n"
     )
 }
 

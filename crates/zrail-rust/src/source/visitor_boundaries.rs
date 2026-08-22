@@ -64,7 +64,7 @@ impl FactVisitor<'_> {
             boundary.cfg_test = self.test_only_context || item.attrs.iter().any(is_cfg_test);
             self.includes.push(boundary);
         } else if item.ident.is_none() {
-            let (name, _) = self.imports.resolve(&item.mac.path);
+            let (name, _) = self.imports.resolve(&item.mac.path, self.syntax_guard());
             self.item_macros.push(fact(
                 name,
                 item.mac.path.span(),

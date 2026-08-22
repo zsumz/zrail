@@ -72,6 +72,43 @@ requirement = "1"
 }
 
 #[test]
+fn test_only_dependency_reexport_cannot_authorize_a_production_macro() {
+    let root = repository(
+        "guarded-reexport",
+        "//! Guarded re-export fixture.\n#[cfg(test)] pub use reviewed_json::json as reviewed;\npub fn run() { let _ = reviewed!({\"ok\": true}); }\n",
+        r#"
+[[source.rust.macros.allow]]
+name = "serde_json::json"
+inputs = "opaque"
+reason = "Reviewed dependency expansion boundary."
+[source.rust.macros.allow.source]
+kind = "registry"
+requirement = "1"
+"#,
+    );
+    fs::write(
+        root.join("Cargo.toml"),
+        format!(
+            "{MANIFEST}\n[dependencies]\nreviewed_json = {{ package = \"serde_json\", version = \"1\" }}\n"
+        ),
+    )
+    .expect("write dependency manifest");
+    lock(&root);
+
+    let report = check(&root);
+
+    assert!(
+        report.findings.iter().any(|finding| {
+            matches!(finding.id.as_str(), "RUST-MACRO-001" | "RUST-MACRO-006")
+                && finding.message.contains("reviewed")
+        }),
+        "{:#?}",
+        report.findings
+    );
+    reset(&root);
+}
+
+#[test]
 fn ambiguous_globs_emit_one_diagnostic_until_every_candidate_is_allowed() {
     let source = r"//! Ambiguous glob fixture.
 mod one { macro_rules! reviewed { () => { 1 }; } pub(crate) use reviewed; }

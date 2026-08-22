@@ -29,7 +29,8 @@ impl FactVisitor<'_> {
             .map(|segment| segment.ident.to_string())
             .collect::<Vec<_>>()
             .join("::");
-        self.resolve_text_scoped(&text)
+        let (target, quality, scoped, local_module, _) = self.resolve_text_scoped(&text);
+        (target, quality, scoped, local_module)
     }
 
     pub(super) fn macro_invocation(&self, path: &Path) -> MacroExpansionFact {
@@ -39,7 +40,7 @@ impl FactVisitor<'_> {
         if local_module {
             observed.canonical.push(resolved.clone());
         }
-        let derivation = if self.imports.re_exports(path) {
+        let derivation = if self.imports.re_exports(path, self.syntax_guard()) {
             MacroDerivation::ReExport
         } else if resolved != written_name {
             MacroDerivation::ExactImport
@@ -51,7 +52,7 @@ impl FactVisitor<'_> {
         let mut candidates = vec![MacroCandidate::pending(observed, local_module, derivation)];
         if !scoped {
             let (imported, overflowed) =
-                super::calls::macro_candidates(path, self.imports, &resolved);
+                super::calls::macro_candidates(path, self.imports, &resolved, self.syntax_guard());
             if overflowed {
                 let unresolved = fact(&written_name, path.span(), AnalysisQuality::Unresolved);
                 return MacroExpansionFact::with_candidates(
@@ -71,21 +72,28 @@ impl FactVisitor<'_> {
     }
 
     fn resolve_text(&self, path: &str) -> scoped_imports::ScopedAlias {
-        let (target, quality, _, local_module) = self.resolve_text_scoped(path);
+        let (target, quality, _, local_module, guard) = self.resolve_text_scoped(path);
         scoped_imports::ScopedAlias {
             target,
             quality,
             local_module,
+            guard,
         }
     }
 
-    fn resolve_text_scoped(&self, path: &str) -> (String, AnalysisQuality, bool, bool) {
+    fn resolve_text_scoped(
+        &self,
+        path: &str,
+    ) -> (String, AnalysisQuality, bool, bool, super::SyntaxGuard) {
         let (root, suffix) = split_root(path);
         for scope in self.local_imports.iter().rev() {
             if let Some(alias) = scope.get(root) {
+                if !alias.guard.available_in(self.syntax_guard()) {
+                    continue;
+                }
                 if !suffix.is_empty() && visible_root(&alias.target) == visible_root(root) {
                     if alias.local_module {
-                        return (path.into(), alias.quality, true, true);
+                        return (path.into(), alias.quality, true, true, alias.guard);
                     }
                     continue;
                 }
@@ -94,14 +102,23 @@ impl FactVisitor<'_> {
                     alias.quality,
                     true,
                     alias.local_module,
+                    alias.guard,
                 );
             }
         }
         let Ok(parsed) = syn::parse_str::<Path>(path) else {
-            return (path.into(), AnalysisQuality::Unresolved, false, false);
+            return (
+                path.into(),
+                AnalysisQuality::Unresolved,
+                false,
+                false,
+                super::SyntaxGuard::Ordinary,
+            );
         };
-        let (resolved, quality) = self.imports.resolve(&parsed);
-        (resolved, quality, false, false)
+        let (resolved, quality, guard) = self
+            .imports
+            .resolve_with_guard(&parsed, self.syntax_guard());
+        (resolved, quality, false, false, guard)
     }
 }
 

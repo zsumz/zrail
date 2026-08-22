@@ -2,9 +2,13 @@
 
 use syn::{Attribute, Expr, ForeignItem, ImplItem, Item, TraitItem};
 
-use super::{attributes::is_cfg_test, visitor::FactVisitor};
+use super::{SyntaxGuard, attributes::is_cfg_test, visitor::FactVisitor};
 
 impl FactVisitor<'_> {
+    pub(super) const fn syntax_guard(&self) -> SyntaxGuard {
+        SyntaxGuard::for_test_only(self.test_only_context)
+    }
+
     pub(super) fn with_cfg(&mut self, attributes: &[Attribute], visit: impl FnOnce(&mut Self)) {
         let previous = self.test_only_context;
         let guarded = attributes.iter().any(is_cfg_test);

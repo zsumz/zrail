@@ -1,13 +1,16 @@
 //! Conservative file-wide call aliases for scope-sensitive Rust syntax.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 
 use syn::{Type, UseTree, visit::Visit as _};
 
+use super::{SyntaxGuard, attributes::is_cfg_test, import_helpers::insert_guard};
+
 #[derive(Default)]
 pub(super) struct CallCandidates {
-    pub(super) aliases: BTreeMap<String, BTreeSet<String>>,
-    pub(super) globs: Vec<String>,
+    pub(super) aliases: BTreeMap<String, BTreeMap<String, SyntaxGuard>>,
+    pub(super) globs: BTreeMap<String, SyntaxGuard>,
+    test_only_context: bool,
 }
 
 pub(super) fn collect(file: &syn::File) -> CallCandidates {
@@ -17,32 +20,56 @@ pub(super) fn collect(file: &syn::File) -> CallCandidates {
 }
 
 pub(super) fn normalize(
-    candidates: &mut BTreeMap<String, BTreeSet<String>>,
+    candidates: &mut BTreeMap<String, BTreeMap<String, SyntaxGuard>>,
     aliases: &BTreeMap<String, String>,
+    alias_guards: &BTreeMap<String, SyntaxGuard>,
 ) {
     for targets in candidates.values_mut() {
-        *targets = targets
-            .iter()
-            .map(|target| expand_exact_prefix(target, aliases))
-            .collect();
+        let mut normalized = BTreeMap::new();
+        for (target, guard) in &*targets {
+            let (target, alias_guard) = expand_exact_prefix(target, aliases, alias_guards);
+            insert_guard(&mut normalized, target, guard.combine(alias_guard));
+        }
+        *targets = normalized;
     }
 }
 
 impl<'ast> syn::visit::Visit<'ast> for CallCandidates {
+    fn visit_file(&mut self, file: &'ast syn::File) {
+        let previous = self.test_only_context;
+        self.test_only_context |= file.attrs.iter().any(is_cfg_test);
+        syn::visit::visit_file(self, file);
+        self.test_only_context = previous;
+    }
+
+    fn visit_item(&mut self, item: &'ast syn::Item) {
+        let previous = self.test_only_context;
+        self.test_only_context |= super::visitor_context::item_attrs(item)
+            .iter()
+            .any(is_cfg_test);
+        syn::visit::visit_item(self, item);
+        self.test_only_context = previous;
+    }
+
     fn visit_item_extern_crate(&mut self, item: &'ast syn::ItemExternCrate) {
         let alias = item
             .rename
             .as_ref()
             .map_or_else(|| item.ident.to_string(), |(_, name)| name.to_string());
-        self.aliases
-            .entry(alias)
-            .or_default()
-            .insert(item.ident.to_string());
+        self.aliases.entry(alias).or_default().insert(
+            item.ident.to_string(),
+            SyntaxGuard::for_test_only(self.test_only_context),
+        );
         syn::visit::visit_item_extern_crate(self, item);
     }
 
     fn visit_item_use(&mut self, item: &'ast syn::ItemUse) {
-        collect_use(self, Vec::new(), &item.tree);
+        collect_use(
+            self,
+            Vec::new(),
+            &item.tree,
+            SyntaxGuard::for_test_only(self.test_only_context),
+        );
         syn::visit::visit_item_use(self, item);
     }
 
@@ -53,67 +80,85 @@ impl<'ast> syn::visit::Visit<'ast> for CallCandidates {
             self.aliases
                 .entry(item.ident.to_string())
                 .or_default()
-                .insert(path_text(&target.path));
+                .insert(
+                    path_text(&target.path),
+                    SyntaxGuard::for_test_only(self.test_only_context),
+                );
         }
         syn::visit::visit_item_type(self, item);
     }
 }
 
-fn collect_use(candidates: &mut CallCandidates, prefix: Vec<String>, tree: &UseTree) {
+fn collect_use(
+    candidates: &mut CallCandidates,
+    prefix: Vec<String>,
+    tree: &UseTree,
+    guard: SyntaxGuard,
+) {
     match tree {
         UseTree::Path(path) => {
             let mut nested = prefix;
             nested.push(path.ident.to_string());
-            collect_use(candidates, nested, &path.tree);
+            collect_use(candidates, nested, &path.tree, guard);
         }
         UseTree::Name(name) if name.ident == "self" => {
             if let Some(alias) = prefix.last() {
-                insert_alias(candidates, alias, &prefix);
+                insert_alias(candidates, alias, &prefix, guard);
             }
         }
         UseTree::Name(name) => {
             let mut target = prefix;
             target.push(name.ident.to_string());
-            insert_alias(candidates, &name.ident.to_string(), &target);
+            insert_alias(candidates, &name.ident.to_string(), &target, guard);
         }
         UseTree::Rename(rename) => {
             let mut target = prefix;
             if rename.ident != "self" {
                 target.push(rename.ident.to_string());
             }
-            insert_alias(candidates, &rename.rename.to_string(), &target);
+            insert_alias(candidates, &rename.rename.to_string(), &target, guard);
         }
-        UseTree::Glob(_) => candidates.globs.push(prefix.join("::")),
+        UseTree::Glob(_) => insert_guard(&mut candidates.globs, prefix.join("::"), guard),
         UseTree::Group(group) => {
             for item in &group.items {
-                collect_use(candidates, prefix.clone(), item);
+                collect_use(candidates, prefix.clone(), item, guard);
             }
         }
     }
 }
 
-fn insert_alias(candidates: &mut CallCandidates, alias: &str, target: &[String]) {
+fn insert_alias(
+    candidates: &mut CallCandidates,
+    alias: &str,
+    target: &[String],
+    guard: SyntaxGuard,
+) {
     if !target.is_empty() {
         candidates
             .aliases
             .entry(alias.to_owned())
             .or_default()
-            .insert(target.join("::"));
+            .insert(target.join("::"), guard);
     }
 }
 
-fn expand_exact_prefix(target: &str, aliases: &BTreeMap<String, String>) -> String {
+fn expand_exact_prefix(
+    target: &str,
+    aliases: &BTreeMap<String, String>,
+    alias_guards: &BTreeMap<String, SyntaxGuard>,
+) -> (String, SyntaxGuard) {
     let mut segments = target.split("::");
     let first = segments.next().unwrap_or_default();
     let remainder = segments.collect::<Vec<_>>();
     aliases.get(first).map_or_else(
-        || target.to_owned(),
+        || (target.to_owned(), SyntaxGuard::Ordinary),
         |prefix| {
-            if remainder.is_empty() {
+            let path = if remainder.is_empty() {
                 prefix.clone()
             } else {
                 format!("{prefix}::{}", remainder.join("::"))
-            }
+            };
+            (path, alias_guards.get(first).copied().unwrap_or_default())
         },
     )
 }

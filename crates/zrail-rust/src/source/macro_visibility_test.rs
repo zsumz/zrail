@@ -68,6 +68,7 @@ fn external_imports_do_not_borrow_same_leaf_local_definitions() {
         name: "reviewed".into(),
         target: "dependency::reviewed".into(),
         quality: AnalysisQuality::Exact,
+        guard: crate::source::SyntaxGuard::Ordinary,
         re_export: false,
     };
 

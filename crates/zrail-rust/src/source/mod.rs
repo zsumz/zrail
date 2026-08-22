@@ -9,6 +9,7 @@ mod depth;
 mod fact;
 mod import_aliases;
 mod import_candidates;
+mod import_helpers;
 mod imports;
 mod imports_collect;
 mod includes;
