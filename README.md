@@ -27,11 +27,73 @@
 
 ## Install
 
+### Prebuilt binary
+
+Release archives contain the `zrail` executable, license, and README. Select the
+target matching the machine that will run zrail:
+
+| Platform | Target | Archive |
+| --- | --- | --- |
+| Linux x86-64, glibc | `x86_64-unknown-linux-gnu` | `.tar.gz` |
+| Linux ARM64, glibc | `aarch64-unknown-linux-gnu` | `.tar.gz` |
+| Linux x86-64, musl | `x86_64-unknown-linux-musl` | `.tar.gz` |
+| Linux ARM64, musl | `aarch64-unknown-linux-musl` | `.tar.gz` |
+| macOS Intel | `x86_64-apple-darwin` | `.tar.gz` |
+| macOS Apple Silicon | `aarch64-apple-darwin` | `.tar.gz` |
+| Windows x86-64 | `x86_64-pc-windows-msvc` | `.zip` |
+
+For Linux x86-64 with glibc, download and verify one exact release like this
+(replace `0.0.1` with the reviewed version):
+
+```sh
+ZRAIL_VERSION=0.0.1
+ZRAIL_TARGET=x86_64-unknown-linux-gnu
+ZRAIL_ARCHIVE="zrail-${ZRAIL_VERSION}-${ZRAIL_TARGET}.tar.gz"
+ZRAIL_RELEASE="https://github.com/zsumz/zrail/releases/download/v${ZRAIL_VERSION}"
+curl -fLO "${ZRAIL_RELEASE}/${ZRAIL_ARCHIVE}"
+curl -fLO "${ZRAIL_RELEASE}/SHA256SUMS"
+grep "  ${ZRAIL_ARCHIVE}$" SHA256SUMS | sha256sum --check
+tar -xzf "${ZRAIL_ARCHIVE}"
+./zrail --version
+```
+
+Use `LC_ALL=C shasum -a 256 --check` in place of `sha256sum --check` on macOS.
+On Windows, compare `Get-FileHash -Algorithm SHA256 <archive>` with the
+archive's `SHA256SUMS` entry before expanding the zip. GitHub-hosted provenance
+can be verified with:
+
+```sh
+gh attestation verify "${ZRAIL_ARCHIVE}" --repo zsumz/zrail
+```
+
+CI should use the same checked archive instead of compiling zrail on every run:
+
+```yaml
+- name: Download verified zrail binary
+  env:
+    ZRAIL_VERSION: 0.0.1
+    ZRAIL_TARGET: x86_64-unknown-linux-gnu
+  run: |
+    archive="zrail-${ZRAIL_VERSION}-${ZRAIL_TARGET}.tar.gz"
+    release="https://github.com/zsumz/zrail/releases/download/v${ZRAIL_VERSION}"
+    curl -fLO "${release}/${archive}"
+    curl -fLO "${release}/SHA256SUMS"
+    grep "  ${archive}$" SHA256SUMS | sha256sum --check
+    tar -xzf "${archive}"
+    mkdir -p "$HOME/.local/bin"
+    install -m 0755 zrail "$HOME/.local/bin/zrail"
+- run: zrail check
+```
+
+### Cargo fallback
+
+If no prebuilt target fits, install from the locked registry source:
+
 ```sh
 cargo install zrail --locked
 ```
 
-Rust 1.96 or newer is required.
+Building from source requires Rust 1.96 or newer.
 
 ## Start
 

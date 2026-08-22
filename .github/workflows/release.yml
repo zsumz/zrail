@@ -1,0 +1,274 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+
+defaults:
+  run:
+    shell: bash
+
+# Repository rules must protect v* tags. The release environment must require
+# review and permit deployments only from those protected tags.
+jobs:
+  qualify:
+    name: qualify protected tag
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    environment: release
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Require a version tag reachable from the protected branch
+        id: version
+        run: |
+          tag="$GITHUB_REF_NAME"
+          [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          git fetch --no-tags origin "${{ github.event.repository.default_branch }}"
+          git merge-base --is-ancestor "$GITHUB_SHA" FETCH_HEAD
+          version="${tag#v}"
+          manifest_version="$(python3 -c 'import pathlib,tomllib; print(tomllib.loads(pathlib.Path("Cargo.toml").read_text())["workspace"]["package"]["version"])')"
+          test "$version" = "$manifest_version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Reject repository-local Cargo configuration
+        run: |
+          for cargo_config in .cargo/config .cargo/config.toml; do
+            if [[ -e "$cargo_config" || -L "$cargo_config" ]]; then
+              echo "repository-local Cargo configuration is not permitted: $cargo_config" >&2
+              exit 1
+            fi
+          done
+
+      - name: Set up pinned Rust
+        uses: ./.github/actions/setup-rust
+
+      - name: Fetch locked dependencies
+        run: cargo fetch --locked
+
+      - name: Run complete qualification gate offline
+        run: scripts/check
+
+  build:
+    name: build ${{ matrix.target }}
+    needs: qualify
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            runner: ubuntu-24.04
+            archive: tar.gz
+            python: python3
+          - target: aarch64-unknown-linux-gnu
+            runner: ubuntu-24.04-arm
+            archive: tar.gz
+            python: python3
+          - target: x86_64-unknown-linux-musl
+            runner: ubuntu-24.04
+            archive: tar.gz
+            python: python3
+          - target: aarch64-unknown-linux-musl
+            runner: ubuntu-24.04-arm
+            archive: tar.gz
+            python: python3
+          - target: x86_64-apple-darwin
+            runner: macos-15-intel
+            archive: tar.gz
+            python: python3
+          - target: aarch64-apple-darwin
+            runner: macos-15
+            archive: tar.gz
+            python: python3
+          - target: x86_64-pc-windows-msvc
+            runner: windows-2025
+            archive: zip
+            python: python
+    env:
+      ZRAIL_TARGET: ${{ matrix.target }}
+      ZRAIL_VERSION: ${{ needs.qualify.outputs.version }}
+    steps:
+      - name: Check out qualified source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Reject repository-local Cargo configuration
+        run: |
+          for cargo_config in .cargo/config .cargo/config.toml; do
+            if [[ -e "$cargo_config" || -L "$cargo_config" ]]; then
+              echo "repository-local Cargo configuration is not permitted: $cargo_config" >&2
+              exit 1
+            fi
+          done
+
+      - name: Set up pinned Rust
+        uses: ./.github/actions/setup-rust
+
+      - name: Add release target
+        run: rustup target add "$ZRAIL_TARGET"
+
+      - name: Install musl linker
+        if: runner.os == 'Linux' && contains(matrix.target, 'musl')
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends musl-tools
+          target_key="$(printf '%s' "$ZRAIL_TARGET" | tr '[:lower:]-' '[:upper:]_')"
+          echo "CARGO_TARGET_${target_key}_LINKER=musl-gcc" >> "$GITHUB_ENV"
+
+      - name: Fetch locked dependencies
+        run: cargo fetch --locked
+
+      - name: Build locked release binary offline
+        run: >-
+          cargo build --release --locked --offline
+          -p zrail --bin zrail --target "$ZRAIL_TARGET"
+
+      - name: Verify produced binary and smoke check
+        run: |
+          binary="target/$ZRAIL_TARGET/release/zrail"
+          if [[ "$RUNNER_OS" == "Windows" ]]; then binary="$binary.exe"; fi
+          test "$("$binary" --version)" = "zrail $ZRAIL_VERSION"
+          "$binary" check --root "$GITHUB_WORKSPACE"
+
+      - name: Package deterministic archive
+        run: |
+          binary="target/$ZRAIL_TARGET/release/zrail"
+          if [[ "$RUNNER_OS" == "Windows" ]]; then binary="$binary.exe"; fi
+          archive="dist/zrail-$ZRAIL_VERSION-$ZRAIL_TARGET.${{ matrix.archive }}"
+          "${{ matrix.python }}" scripts/package-release.py \
+            --binary "$binary" --license LICENSE --readme README.md --output "$archive"
+
+      - name: Upload immutable build artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-${{ matrix.target }}
+          path: dist/zrail-${{ env.ZRAIL_VERSION }}-${{ matrix.target }}.${{ matrix.archive }}
+          if-no-files-found: error
+          compression-level: 0
+
+  linux-runtime:
+    name: clean runtime ${{ matrix.target }}
+    needs: [qualify, build]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            runner: ubuntu-24.04
+            image: ubuntu:24.04
+          - target: aarch64-unknown-linux-gnu
+            runner: ubuntu-24.04-arm
+            image: ubuntu:24.04
+          - target: x86_64-unknown-linux-musl
+            runner: ubuntu-24.04
+            image: alpine:3.22
+          - target: aarch64-unknown-linux-musl
+            runner: ubuntu-24.04-arm
+            image: alpine:3.22
+    steps:
+      - name: Download Linux archive
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: release-${{ matrix.target }}
+          path: archive
+
+      - name: Run without a Rust toolchain in a clean container
+        env:
+          ZRAIL_VERSION: ${{ needs.qualify.outputs.version }}
+        run: |
+          mkdir -p runtime smoke/src
+          tar -xzf "archive/zrail-$ZRAIL_VERSION-${{ matrix.target }}.tar.gz" -C runtime
+          printf '[package]\nname = "smoke"\nversion = "0.0.0"\nedition = "2024"\n' > smoke/Cargo.toml
+          printf 'fn main() {}\n' > smoke/src/main.rs
+          docker run --rm \
+            --volume "$PWD/runtime:/release:ro" \
+            --volume "$PWD/smoke:/work" \
+            "${{ matrix.image }}" sh -c \
+            '/release/zrail --version && /release/zrail init --preset rust /work && /release/zrail check --root /work'
+
+  publish:
+    name: attest and publish
+    needs: [qualify, build, linux-runtime]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: release
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ZRAIL_VERSION: ${{ needs.qualify.outputs.version }}
+    steps:
+      - name: Check out reviewed release metadata
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Download every qualified archive
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+
+      - name: Require the exact release set and generate checksums
+        run: |
+          expected=(
+            "zrail-$ZRAIL_VERSION-x86_64-unknown-linux-gnu.tar.gz"
+            "zrail-$ZRAIL_VERSION-aarch64-unknown-linux-gnu.tar.gz"
+            "zrail-$ZRAIL_VERSION-x86_64-unknown-linux-musl.tar.gz"
+            "zrail-$ZRAIL_VERSION-aarch64-unknown-linux-musl.tar.gz"
+            "zrail-$ZRAIL_VERSION-x86_64-apple-darwin.tar.gz"
+            "zrail-$ZRAIL_VERSION-aarch64-apple-darwin.tar.gz"
+            "zrail-$ZRAIL_VERSION-x86_64-pc-windows-msvc.zip"
+          )
+          test "$(find dist -maxdepth 1 -type f -name 'zrail-*' | wc -l | tr -d ' ')" = 7
+          for archive in "${expected[@]}"; do test -f "dist/$archive"; done
+          (cd dist && sha256sum "${expected[@]}" > SHA256SUMS)
+          (cd dist && sha256sum --check SHA256SUMS)
+
+      - name: Extract reviewed release notes
+        run: >-
+          python3 scripts/release-notes.py
+          "$ZRAIL_VERSION" CHANGELOG.md "$RUNNER_TEMP/release-notes.md"
+
+      - name: Attest archive provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: |
+            dist/zrail-*.tar.gz
+            dist/zrail-*.zip
+
+      - name: Create draft, upload complete release, then publish
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --verify-tag --draft --title "zrail $ZRAIL_VERSION" \
+            --notes-file "$RUNNER_TEMP/release-notes.md"
+          gh release upload "$GITHUB_REF_NAME" dist/zrail-* dist/SHA256SUMS
+          gh release edit "$GITHUB_REF_NAME" --draft=false

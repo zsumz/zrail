@@ -375,6 +375,21 @@ Canonical qualification uses Rust 1.97.1. A compile-only job checks all targets
 and features with Rust 1.96.1, preserving the Rust 1.96 source compatibility
 floor without qualifying releases on the older compiler.
 
+Release tags use a separate protected workflow. Repository rules must restrict
+`v*` tags, and the `release` environment must require review and allow only
+those protected tags. Before repository code runs, the workflow proves that the
+tagged commit is reachable from the protected default branch and that the tag
+version matches `Cargo.toml`. It then runs the complete qualification gate,
+builds all seven targets with the pinned toolchain and lockfile, smoke-checks
+every binary, and exercises Linux archives in clean containers without Rust.
+
+No release is visible until every target and clean-runtime check succeeds. The
+publisher requires the exact archive set, verifies `SHA256SUMS`, creates GitHub
+build-provenance attestations, and publishes a draft only after extracting the
+matching reviewed section from `CHANGELOG.md`. Release actions are pinned to
+full commit identities; the workflow does not accept proposal or manual source
+inputs.
+
 `QUAL-02` defines the protected-deployment requirement: proposed checker changes
 must not authorize violations or grants in the same pull request. The required
 result must come from a ruleset workflow or App outside the proposal's write
