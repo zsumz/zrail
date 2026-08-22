@@ -4,6 +4,7 @@ use zrail_core::{AnalysisQuality, Finding, SourceSpan};
 
 use crate::inventory::FileClass;
 
+use super::SubmoduleBase;
 use super::macro_model::{CompileEffectFact, MacroExpansionFact};
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -136,6 +137,15 @@ pub(crate) struct MacroImportFact {
     pub(crate) quality: AnalysisQuality,
     pub(crate) guard: SyntaxGuard,
     pub(crate) re_export: bool,
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) struct ResolvedModuleEdge {
+    pub(crate) parent: String,
+    pub(crate) module_name: String,
+    pub(crate) child: String,
+    pub(crate) child_base: SubmoduleBase,
+    pub(crate) reachability: Reachability,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]

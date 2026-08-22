@@ -1,6 +1,8 @@
 //! External module declarations become exact Rust source-graph edges.
 
-use crate::source::{ModuleDeclaration, ModuleTarget, SourceSyntax, SubmoduleBase, module_target};
+use crate::source::{
+    ModuleDeclaration, ModuleTarget, ResolvedModuleEdge, SourceSyntax, SubmoduleBase, module_target,
+};
 
 use super::{TraversalContext, Walker};
 
@@ -15,14 +17,18 @@ impl Walker<'_> {
         let label = format!("module {:?}", declaration.name);
         let target_context = context.with_test_guard(declaration.cfg_test);
         match module_target(source, submodule_base, declaration) {
-            Ok(ModuleTarget::Exact(path)) => self.follow(
-                source,
+            Ok(ModuleTarget::Exact(path)) => self.follow_module(
+                ResolvedModuleEdge {
+                    parent: source.to_owned(),
+                    module_name: declaration.name.clone(),
+                    child: path,
+                    child_base: SubmoduleBase::SourceParent,
+                    reachability: target_context.reachability,
+                },
                 declaration.span,
-                path,
                 &label,
-                SubmoduleBase::SourceParent,
                 SourceSyntax::Items,
-                target_context,
+                &target_context,
             ),
             Ok(ModuleTarget::Search { direct, nested }) => {
                 let candidates = [
@@ -33,14 +39,18 @@ impl Walker<'_> {
                 .filter(|(path, _)| self.entries.contains_key(path.as_str()))
                 .collect::<Vec<_>>();
                 match candidates.as_slice() {
-                    [(path, submodule_base)] => self.follow(
-                        source,
+                    [(path, submodule_base)] => self.follow_module(
+                        ResolvedModuleEdge {
+                            parent: source.to_owned(),
+                            module_name: declaration.name.clone(),
+                            child: path.clone(),
+                            child_base: *submodule_base,
+                            reachability: target_context.reachability,
+                        },
                         declaration.span,
-                        path.clone(),
                         &label,
-                        *submodule_base,
                         SourceSyntax::Items,
-                        target_context,
+                        &target_context,
                     ),
                     [] => self.missing(
                         source,

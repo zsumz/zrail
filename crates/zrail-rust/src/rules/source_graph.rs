@@ -13,8 +13,8 @@ use crate::{
     cargo::{CargoTargetKind, CargoWorkspace},
     inventory::{RepositoryEntryKind, RepositoryInventory},
     source::{
-        Reachability, ReachabilityKind, RustFileFacts, SourceIndex, SourceSyntax, SubmoduleBase,
-        join_relative,
+        Reachability, ReachabilityKind, ResolvedModuleEdge, RustFileFacts, SourceIndex,
+        SourceSyntax, SubmoduleBase, join_relative,
     },
 };
 
@@ -30,6 +30,7 @@ pub(crate) fn analyze(
 pub(crate) struct SourceGraphAnalysis {
     pub(crate) reachability: BTreeMap<String, Reachability>,
     pub(crate) packages: BTreeMap<String, BTreeSet<String>>,
+    pub(crate) module_edges: Vec<ResolvedModuleEdge>,
     pub(crate) findings: Vec<Finding>,
 }
 
@@ -75,6 +76,7 @@ struct Walker<'a> {
     reached_packages: BTreeMap<String, BTreeSet<String>>,
     seen_out_dir: BTreeSet<(String, String)>,
     reported: BTreeSet<(String, String)>,
+    module_edges: BTreeSet<ResolvedModuleEdge>,
     visited: BTreeSet<(String, SubmoduleBase, TraversalContext)>,
     queue: VecDeque<(String, SubmoduleBase, TraversalContext)>,
 }
@@ -105,6 +107,7 @@ impl<'a> Walker<'a> {
             reached_packages: BTreeMap::new(),
             seen_out_dir: BTreeSet::new(),
             reported: BTreeSet::new(),
+            module_edges: BTreeSet::new(),
             visited: BTreeSet::new(),
             queue: VecDeque::new(),
         }
@@ -120,6 +123,7 @@ impl<'a> Walker<'a> {
         SourceGraphAnalysis {
             reachability: self.reached,
             packages: self.reached_packages,
+            module_edges: self.module_edges.into_iter().collect(),
             findings: self.findings,
         }
     }

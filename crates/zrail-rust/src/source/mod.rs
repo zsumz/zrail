@@ -40,7 +40,8 @@ pub(crate) use macro_model::{
 };
 pub(crate) use model::{
     IncludeBoundary, IncludeContext, MacroImportFact, ModuleDeclaration, ObservedFact,
-    Reachability, ReachabilityKind, RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
+    Reachability, ReachabilityKind, ResolvedModuleEdge, RustFileFacts, SourceIndex, SourceSyntax,
+    SyntaxGuard,
 };
 pub(crate) use parse::index_rust_source;
 pub(crate) use paths::{

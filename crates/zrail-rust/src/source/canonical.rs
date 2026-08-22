@@ -7,7 +7,7 @@ use zrail_core::{AnalysisQuality, Finding};
 use crate::cargo::{CargoWorkspace, CrateRootAuthority, Package, rust_crate_root};
 
 use super::{
-    ObservedFact, SourceIndex,
+    ObservedFact, ResolvedModuleEdge, SourceIndex,
     macro_definitions::{local_macro_names, package_macro_definitions},
 };
 
@@ -19,6 +19,7 @@ pub(crate) fn canonicalize(
     index: &mut SourceIndex,
     cargo: &CargoWorkspace,
     contexts: &BTreeMap<String, BTreeSet<String>>,
+    module_edges: &[ResolvedModuleEdge],
 ) {
     let packages = cargo
         .packages
@@ -26,7 +27,7 @@ pub(crate) fn canonicalize(
         .map(|package| (package.name.as_str(), package))
         .collect::<BTreeMap<_, _>>();
     let macro_definitions = package_macro_definitions(index, contexts);
-    let macro_visibility = super::macro_visibility::MacroVisibility::collect(index);
+    let macro_visibility = super::macro_visibility::MacroVisibility::collect(index, module_edges);
     let mut findings = Vec::new();
     for file in &mut index.files {
         let selected: Vec<&Package> = contexts.get(&file.relative).map_or_else(

@@ -1,0 +1,90 @@
+//! Macro visibility consumes the exact module edges selected by the source graph.
+
+use std::{fs, path::Path};
+
+use zrail_core::ReportStatus;
+use zrail_rust::{build_lock, check_repository};
+
+#[test]
+fn direct_module_child_ignores_an_unselected_source_parent_candidate() {
+    let root = std::env::temp_dir().join(format!(
+        "zrail-macro-module-edges-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    reset(&root);
+    fs::create_dir_all(root.join("src/foo")).expect("create fixture directories");
+    write(&root, "Cargo.toml", MANIFEST);
+    write(&root, "src/lib.rs", "//! Library.\nmod foo;\nmod child;\n");
+    write(&root, "src/child.rs", "//! Root child.\npub fn run() {}\n");
+    write(
+        &root,
+        "src/foo.rs",
+        "//! Direct module.\nmacro_rules! reviewed { () => {}; }\npub(crate) use reviewed;\nmod child;\n",
+    );
+    write(
+        &root,
+        "src/foo/child.rs",
+        "//! Nested child.\nuse super::*;\npub fn run() { reviewed!(); }\n",
+    );
+    write(&root, "zrail.toml", CONTRACT);
+    build_lock(&root, "zrail.toml".as_ref())
+        .expect("build fixture lock")
+        .write(&root.join("zrail.lock"))
+        .expect("write fixture lock");
+
+    let report = check_repository(&root, "zrail.toml".as_ref(), "zrail.lock".as_ref())
+        .expect("check exact module visibility")
+        .report;
+
+    assert_eq!(report.status, ReportStatus::Pass, "{}", report.human());
+    reset(&root);
+}
+
+fn write(root: &Path, path: &str, contents: &str) {
+    fs::write(root.join(path), contents).expect("write fixture file");
+}
+
+fn reset(root: &Path) {
+    if root.exists() {
+        fs::remove_dir_all(root).expect("reset fixture");
+    }
+}
+
+const MANIFEST: &str = "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\n";
+
+const CONTRACT: &str = r#"schema = 1
+adapters = ["rust"]
+
+[repository]
+roots = ["."]
+exclude = []
+workspace_members = "exact"
+nested_git = "deny"
+submodules = "deny"
+symlinks = "inside"
+
+[dependencies]
+mode = "observed"
+unassigned_packages = "allow"
+cycles = "deny"
+
+[source.rust]
+module_docs = "required"
+facades = "allow"
+tests = "allow"
+
+[source.rust.macros]
+mode = "deny-unreviewed"
+
+[[source.rust.macros.allow]]
+name = "super::reviewed"
+definition = "src/foo.rs"
+reason = "Reviewed repository macro expansion."
+
+[source.rust.hygiene]
+unsafe = "deny"
+lint_suppressions = "allow"
+deny_methods = []
+deny_macros = []
+"#;

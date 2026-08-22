@@ -41,7 +41,7 @@ pub(crate) fn load_model_with_bundle(
         .retain(|file| cargo.source_is_active(&file.relative));
     let mut source = index_rust_source(&inventory, &bundle.contract.source.rust);
     let graph = source_graph::analyze(&bundle.contract, &inventory, &cargo, &source);
-    canonicalize_dependency_roots(&mut source, &cargo, &graph.packages);
+    canonicalize_dependency_roots(&mut source, &cargo, &graph.packages, &graph.module_edges);
     for file in &mut source.files {
         file.packages = graph
             .packages

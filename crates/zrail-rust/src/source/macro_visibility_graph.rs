@@ -2,9 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use super::{
-    MacroImportFact, ModuleDeclaration, ModuleTarget, SourceIndex, SubmoduleBase, module_target,
-};
+use super::{MacroImportFact, ResolvedModuleEdge, SourceIndex};
 
 const MAX_EDGES_PER_MODULE: usize = 4;
 const MAX_IMPORTS_PER_NAME: usize = 4;
@@ -25,27 +23,15 @@ pub(super) enum VisibilityLookup<'a> {
 }
 
 impl MacroVisibility {
-    pub(super) fn collect(index: &SourceIndex) -> Self {
+    pub(super) fn collect(index: &SourceIndex, module_edges: &[ResolvedModuleEdge]) -> Self {
         let mut visibility = Self::default();
-        let files = index
-            .files
-            .iter()
-            .map(|file| file.relative.clone())
-            .collect::<BTreeSet<_>>();
         for file in &index.files {
             for import in &file.macro_imports {
                 visibility.insert_import(&file.relative, import);
             }
-            for declaration in &file.modules {
-                let targets = module_targets(&file.relative, declaration, &files);
-                if targets.len() == 1 {
-                    visibility.insert_edge(&file.relative, &declaration.name, &targets[0]);
-                } else if targets.len() > 1 {
-                    visibility
-                        .child_overflow
-                        .insert((file.relative.clone(), declaration.name.clone()));
-                }
-            }
+        }
+        for edge in module_edges {
+            visibility.insert_edge(&edge.parent, &edge.module_name, &edge.child);
         }
         visibility
     }
@@ -171,33 +157,6 @@ impl MacroVisibility {
             MAX_EDGES_PER_MODULE,
         );
     }
-}
-
-fn module_targets(
-    source: &str,
-    declaration: &ModuleDeclaration,
-    files: &BTreeSet<String>,
-) -> Vec<String> {
-    let mut targets = BTreeSet::new();
-    for base in [
-        SubmoduleBase::SourceParent,
-        SubmoduleBase::FileStemDirectory,
-    ] {
-        match module_target(source, base, declaration) {
-            Ok(ModuleTarget::Exact(path)) if files.contains(&path) => {
-                targets.insert(path);
-            }
-            Ok(ModuleTarget::Search { direct, nested }) => {
-                targets.extend(
-                    [direct, nested]
-                        .into_iter()
-                        .filter(|path| files.contains(path)),
-                );
-            }
-            Ok(ModuleTarget::Exact(_)) | Err(_) => {}
-        }
-    }
-    targets.into_iter().collect()
 }
 
 fn insert_bounded<K: Ord + Clone, V: Ord>(

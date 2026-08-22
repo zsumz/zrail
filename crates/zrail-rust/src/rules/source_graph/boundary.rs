@@ -4,7 +4,7 @@ use zrail_core::{AnalysisQuality, Finding, SourceSpan, glob_matches};
 
 use crate::{
     inventory::{FileClass, RepositoryEntryKind},
-    source::{ResolutionError, SourceSyntax, SubmoduleBase},
+    source::{ResolutionError, ResolvedModuleEdge, SourceSyntax, SubmoduleBase},
 };
 
 use super::{TraversalContext, Walker};
@@ -20,13 +20,55 @@ impl Walker<'_> {
         expected_syntax: SourceSyntax,
         context: TraversalContext,
     ) {
+        let _ = self.follow_resolved(
+            origin,
+            span,
+            target,
+            label,
+            submodule_base,
+            expected_syntax,
+            context,
+        );
+    }
+
+    pub(super) fn follow_module(
+        &mut self,
+        edge: ResolvedModuleEdge,
+        span: Option<SourceSpan>,
+        label: &str,
+        expected_syntax: SourceSyntax,
+        context: &TraversalContext,
+    ) {
+        if self.follow_resolved(
+            &edge.parent,
+            span,
+            edge.child.clone(),
+            label,
+            edge.child_base,
+            expected_syntax,
+            context.clone(),
+        ) {
+            self.module_edges.insert(edge);
+        }
+    }
+
+    fn follow_resolved(
+        &mut self,
+        origin: &str,
+        span: Option<SourceSpan>,
+        target: String,
+        label: &str,
+        submodule_base: SubmoduleBase,
+        expected_syntax: SourceSyntax,
+        context: TraversalContext,
+    ) -> bool {
         if !self.under_roots(&target) || self.excluded(&target) {
             self.boundary(
                 origin,
                 span,
                 format!("{label} resolves outside the indexed Rust roots: {target}"),
             );
-            return;
+            return false;
         }
         let indexable = target.to_ascii_lowercase().ends_with(".rs")
             || self
@@ -39,14 +81,17 @@ impl Walker<'_> {
                 span,
                 format!("{label} does not resolve to an indexable .rs file: {target}"),
             );
-            return;
+            return false;
         }
         match self.entries.get(target.as_str()) {
-            None => self.missing(
-                origin,
-                span,
-                format!("{label} source does not exist: {target}"),
-            ),
+            None => {
+                self.missing(
+                    origin,
+                    span,
+                    format!("{label} source does not exist: {target}"),
+                );
+                false
+            }
             Some(RepositoryEntryKind::File) => {
                 self.reached
                     .entry(target.clone())
@@ -62,7 +107,7 @@ impl Walker<'_> {
                         span,
                         format!("{label} source could not be indexed exactly: {target}"),
                     );
-                    return;
+                    return false;
                 };
                 if file.syntax != expected_syntax {
                     self.unresolved(
@@ -74,19 +119,22 @@ impl Walker<'_> {
                             syntax_name(file.syntax)
                         ),
                     );
-                    return;
+                    return false;
                 }
                 let state = (target, submodule_base, context);
-                if !self.visited.insert(state.clone()) {
-                    return;
+                if self.visited.insert(state.clone()) {
+                    self.queue.push_back(state);
                 }
-                self.queue.push_back(state);
+                true
             }
-            Some(_) => self.boundary(
-                origin,
-                span,
-                format!("{label} resolves to a symlink or non-file boundary: {target}"),
-            ),
+            Some(_) => {
+                self.boundary(
+                    origin,
+                    span,
+                    format!("{label} resolves to a symlink or non-file boundary: {target}"),
+                );
+                false
+            }
         }
     }
 
