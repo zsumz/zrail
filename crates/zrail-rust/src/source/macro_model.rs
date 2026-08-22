@@ -79,10 +79,6 @@ impl MacroCandidate {
         }
         names
     }
-
-    pub(crate) fn matches_allowance(&self, written: &str, allowance: &str) -> bool {
-        self.allowance_names(written).contains(&allowance)
-    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]

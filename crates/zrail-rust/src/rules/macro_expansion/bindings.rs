@@ -1,53 +1,24 @@
-//! Optional `macro_rules!` definition hints must narrow exact repository origins.
+//! Optional `macro_rules!` definition hints must narrow the observed candidate.
 
-use std::collections::BTreeMap;
+use zrail_core::MacroExpansionAllow;
 
-use zrail_core::{Finding, FindingSink, MacroExpansionAllow};
+use crate::source::{MacroCandidate, MacroOrigin};
 
-use crate::source::{MacroOrigin, Reachability};
+use super::{super::RuleContext, failure::MacroBindingFailure};
 
-use super::super::RuleContext;
-
-pub(super) fn validate(
+pub(super) fn failure(
     context: &RuleContext<'_>,
-    allowed: &BTreeMap<&str, &MacroExpansionAllow>,
-    findings: &mut FindingSink,
-) {
-    for allowance in allowed
-        .values()
-        .filter(|allowance| allowance.definition.is_some())
-    {
-        validate_allowance(context, allowance, findings);
-    }
-}
-
-fn validate_allowance(
-    context: &RuleContext<'_>,
+    candidate: &MacroCandidate,
     allowance: &MacroExpansionAllow,
-    findings: &mut FindingSink,
-) {
-    let path = allowance.definition.as_deref().unwrap_or_default();
+) -> Option<MacroBindingFailure> {
+    let path = allowance.definition.as_deref()?;
     let bound_file = context
         .source
         .files
         .iter()
         .find(|file| file.relative == path);
-    let candidates = context
-        .source
-        .files
-        .iter()
-        .filter(|file| file.reachability != Reachability::Unreachable)
-        .flat_map(|file| &file.macro_expansions)
-        .flat_map(|expansion| {
-            expansion
-                .candidates
-                .iter()
-                .filter(|candidate| candidate.matches_allowance(&expansion.name, &allowance.name))
-        })
-        .collect::<Vec<_>>();
-    let definition_names = candidates
-        .iter()
-        .flat_map(|candidate| candidate.policy_names())
+    let definition_names = candidate
+        .policy_names()
         .map(|name| name.rsplit("::").next().unwrap_or(name))
         .collect::<std::collections::BTreeSet<_>>();
     let bound = bound_file.map_or(0, |file| {
@@ -56,30 +27,30 @@ fn validate_allowance(
             .filter(|definition| definition_names.contains(definition.name.as_str()))
             .count()
     });
-    let origins = candidates
+    let observed_packages = candidate
+        .origins
+        .iter()
+        .filter_map(|origin| match origin {
+            MacroOrigin::Repository { package, .. } => Some(package.clone()),
+            _ => None,
+        })
+        .collect::<std::collections::BTreeSet<_>>()
         .into_iter()
-        .flat_map(|candidate| &candidate.origins)
         .collect::<Vec<_>>();
-    let origin_bound = !origins.is_empty()
-        && origins.iter().all(|origin| match origin {
+    let origin_bound = !observed_packages.is_empty()
+        && candidate.origins.iter().all(|origin| match origin {
             MacroOrigin::Repository { package, .. } => {
                 bound_file.is_some_and(|file| file.packages.contains(package))
             }
             _ => false,
         });
     if bound != 1 || !origin_bound {
-        findings.push(
-            Finding::error(
-                "RUST-MACRO-005",
-                "rust.macro-definition",
-                "source",
-                format!(
-                    "repository macro allowance {:?} resolves to {bound} matching definitions in {path:?}, but that path is not its exact observed implementation package",
-                    allowance.name,
-                ),
-            )
-            .because(&allowance.reason)
-            .with_help("bind the optional definition hint to one macro_rules! definition in the observed repository implementation package"),
-        );
+        Some(MacroBindingFailure::DefinitionMismatch {
+            allowance: allowance.name.clone(),
+            configured: path.into(),
+            observed_packages,
+        })
+    } else {
+        None
     }
 }

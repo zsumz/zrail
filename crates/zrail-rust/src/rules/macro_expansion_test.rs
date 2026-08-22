@@ -6,7 +6,7 @@ use crate::source::{
     MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin, ObservedFact,
 };
 
-use super::{Review, candidate_names, directly_inspected, review};
+use super::{MacroBindingResult, candidate_names, directly_inspected, review_without_definitions};
 
 #[test]
 fn local_definitions_shadow_intrinsic_shortcuts() {
@@ -59,7 +59,10 @@ fn exact_allowance_cannot_bind_an_unresolved_written_macro() {
     let allowed = std::collections::BTreeMap::from([("reviewed", &reviewed)]);
     let local = unresolved("reviewed");
 
-    assert!(matches!(review(&local, &allowed), Review::Unbound));
+    assert!(matches!(
+        review_without_definitions(&local, &allowed),
+        MacroBindingResult::Rejected { .. }
+    ));
 }
 
 #[test]
@@ -68,15 +71,15 @@ fn conservative_bare_allowance_binds_only_the_written_name() {
     reviewed.binding = MacroBindingMode::Conservative;
     let allowed = std::collections::BTreeMap::from([("reviewed", &reviewed)]);
     assert!(matches!(
-        review(&unresolved("reviewed"), &allowed),
-        Review::Allowed(_)
+        review_without_definitions(&unresolved("reviewed"), &allowed),
+        MacroBindingResult::Bound { .. }
     ));
 
     let qualified = allowance("support::reviewed");
     let qualified_allowed = std::collections::BTreeMap::from([("support::reviewed", &qualified)]);
     assert!(matches!(
-        review(&unresolved("reviewed"), &qualified_allowed),
-        Review::Unreviewed
+        review_without_definitions(&unresolved("reviewed"), &qualified_allowed),
+        MacroBindingResult::NoNameMatch
     ));
 }
 
@@ -95,8 +98,14 @@ fn ambiguous_glob_candidates_all_require_allowances() {
     let complete =
         std::collections::BTreeMap::from([("one::reviewed", &one), ("two::reviewed", &two)]);
 
-    assert!(matches!(review(&expansion, &partial), Review::Unreviewed));
-    assert!(matches!(review(&expansion, &complete), Review::Allowed(_)));
+    assert!(matches!(
+        review_without_definitions(&expansion, &partial),
+        MacroBindingResult::Rejected { .. }
+    ));
+    assert!(matches!(
+        review_without_definitions(&expansion, &complete),
+        MacroBindingResult::Bound { .. }
+    ));
 }
 
 fn allowance(name: &str) -> MacroExpansionAllow {

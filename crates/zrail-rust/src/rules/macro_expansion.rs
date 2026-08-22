@@ -1,6 +1,8 @@
 //! Unexpanded Rust is an explicit, content-bound, reasoned trust boundary.
 
 mod bindings;
+mod diagnostics;
+mod failure;
 mod review;
 mod source;
 
@@ -14,9 +16,12 @@ use crate::source::{MacroExpansionFact, Reachability};
 
 use super::RuleContext;
 
+use diagnostics::{unbound, unreviewed};
 #[cfg(test)]
 use review::candidate_names;
-use review::{Review, review};
+#[cfg(test)]
+use review::review_without_definitions;
+use review::{MacroBindingResult, review};
 
 pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     if context.contract.source.rust.macros.mode == MacroExpansionMode::Allow {
@@ -32,6 +37,8 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
         .map(|allowed| (allowed.name.as_str(), allowed))
         .collect::<BTreeMap<_, _>>();
     let mut used = BTreeSet::new();
+    let mut rejected = BTreeSet::new();
+    let mut opaque_attempted = BTreeSet::new();
     let mut opaque_used = BTreeSet::new();
     for file in context
         .source
@@ -43,16 +50,35 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             if directly_inspected(expansion) {
                 continue;
             }
-            match review(expansion, &allowed) {
-                Review::Allowed(matched) => used.extend(matched),
-                Review::Unbound => findings.push(unbound(file, expansion)),
-                Review::Unreviewed => findings.push(unreviewed(file, expansion)),
+            match review(context, expansion, &allowed) {
+                MacroBindingResult::Bound { allowances, .. } => {
+                    used.extend(allowances);
+                }
+                MacroBindingResult::Rejected {
+                    attempted: matched,
+                    reasons,
+                } => {
+                    rejected.extend(matched.iter().copied());
+                    findings.push(unbound(file, expansion, &matched, &reasons));
+                }
+                MacroBindingResult::NoNameMatch => findings.push(unreviewed(file, expansion)),
             }
         }
         for input in &file.opaque_macro_inputs {
-            let Review::Allowed(matched) = review(input, &allowed) else {
-                continue;
+            let (matched, confidence) = match review(context, input, &allowed) {
+                MacroBindingResult::Bound {
+                    allowances,
+                    confidence,
+                } => (allowances, confidence),
+                MacroBindingResult::Rejected {
+                    attempted: matched, ..
+                } => {
+                    opaque_attempted.extend(matched);
+                    continue;
+                }
+                MacroBindingResult::NoNameMatch => continue,
             };
+            opaque_attempted.extend(matched.iter().copied());
             if matched
                 .iter()
                 .any(|name| allowed[*name].inputs != MacroInputMode::Opaque)
@@ -65,7 +91,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
                         format!("macro {} has unreviewed opaque input", input.name),
                     )
                     .at(&file.relative, input.span)
-                    .with_analysis(input.quality)
+                    .with_analysis(confidence)
                     .with_help(
                         "use an understood Rust-expression macro form or explicitly set inputs = \"opaque\" after reviewing the DSL boundary",
                     ),
@@ -75,69 +101,26 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             opaque_used.extend(matched);
         }
     }
-    stale_allowances(&allowed, &used, &opaque_used, findings);
-    bindings::validate(context, &allowed, findings);
-}
-
-fn unbound(file: &crate::source::RustFileFacts, expansion: &MacroExpansionFact) -> Finding {
-    Finding::error(
-        "RUST-MACRO-006",
-        "rust.macro-binding",
-        "source",
-        format!(
-            "reviewed macro allowance could not bind invocation {}",
-            expansion.name
-        ),
-    )
-    .at(&file.relative, expansion.span)
-    .with_analysis(expansion.quality)
-    .with_help(
-        "resolve the macro origin or use binding = \"conservative\" on a name-only allowance after reviewing the unresolved invocation",
-    )
-}
-
-fn unreviewed(file: &crate::source::RustFileFacts, expansion: &MacroExpansionFact) -> Finding {
-    let preferred = expansion.preferred_policy_name();
-    let message = preferred
-        .filter(|name| *name != expansion.name)
-        .map_or_else(
-            || {
-                format!(
-                    "source invokes unreviewed macro expansion {}",
-                    expansion.name
-                )
-            },
-            |name| {
-                format!(
-                    "source invokes unreviewed macro expansion {} (preferred policy name {name})",
-                    expansion.name
-                )
-            },
-        );
-    let help = preferred.map_or_else(
-        || {
-            "remove the macro or add a reasoned source.rust.macros.allow entry after reviewing its expansion boundary".into()
-        },
-        |name| {
-            format!(
-                "remove the macro or add source.rust.macros.allow name = {name:?} after reviewing its expansion boundary"
-            )
-        },
+    let mut attempted = used;
+    attempted.extend(rejected);
+    stale_allowances(
+        &allowed,
+        &attempted,
+        &opaque_attempted,
+        &opaque_used,
+        findings,
     );
-    Finding::error("RUST-MACRO-001", "rust.macro-expansion", "source", message)
-        .at(&file.relative, expansion.span)
-        .with_analysis(expansion.quality)
-        .with_help(help)
 }
 
 fn stale_allowances(
     allowed: &BTreeMap<&str, &MacroExpansionAllow>,
-    used: &BTreeSet<&str>,
+    attempted: &BTreeSet<&str>,
+    opaque_attempted: &BTreeSet<&str>,
     opaque_used: &BTreeSet<&str>,
     findings: &mut FindingSink,
 ) {
     for (name, allowance) in allowed {
-        if !used.contains(name) {
+        if !attempted.contains(name) {
             findings.push(
                 Finding::error(
                     "RUST-MACRO-002",
@@ -149,7 +132,10 @@ fn stale_allowances(
                 .with_help("remove stale macro expansion authority"),
             );
         }
-        if allowance.inputs == MacroInputMode::Opaque && !opaque_used.contains(name) {
+        if allowance.inputs == MacroInputMode::Opaque
+            && !opaque_attempted.contains(name)
+            && !opaque_used.contains(name)
+        {
             findings.push(
                 Finding::error(
                     "RUST-MACRO-004",

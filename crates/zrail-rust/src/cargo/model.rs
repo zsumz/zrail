@@ -56,6 +56,46 @@ pub(crate) enum DependencySource {
     },
 }
 
+impl DependencySource {
+    pub(crate) fn identity(&self) -> String {
+        match self {
+            Self::WorkspaceMember {
+                directory,
+                requirement,
+            } => format!(
+                "workspace:{directory}:version={}",
+                requirement.as_deref().unwrap_or("")
+            ),
+            Self::RepositoryPath { path, requirement } => format!(
+                "path:{path}:version={}",
+                requirement.as_deref().unwrap_or("")
+            ),
+            Self::Registry {
+                registry,
+                index,
+                requirement,
+            } => format!(
+                "registry:{}:{}:{requirement}",
+                registry.as_deref().unwrap_or("crates-io"),
+                index.as_deref().unwrap_or("default-index")
+            ),
+            Self::Git {
+                repository,
+                branch,
+                tag,
+                rev,
+                requirement,
+            } => format!(
+                "git:{repository}:branch={}:tag={}:rev={}:version={}",
+                branch.as_deref().unwrap_or(""),
+                tag.as_deref().unwrap_or(""),
+                rev.as_deref().unwrap_or(""),
+                requirement.as_deref().unwrap_or("")
+            ),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct Package {
     pub(crate) name: String,
