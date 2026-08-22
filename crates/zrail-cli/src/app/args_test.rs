@@ -128,6 +128,32 @@ fn update_requires_explicit_grant_acceptance() {
 }
 
 #[test]
+fn baseline_parses_dry_run_rule_and_grant_authority() {
+    let command = parse([
+        OsString::from("zrail"),
+        OsString::from("baseline"),
+        OsString::from("--rule"),
+        OsString::from("rust.file-size"),
+        OsString::from("--dry-run"),
+        OsString::from("--format"),
+        OsString::from("json"),
+        OsString::from("--accept-grants"),
+    ])
+    .expect("parse baseline command");
+    let Command::Baseline(options) = command else {
+        panic!("expected baseline command");
+    };
+
+    assert_eq!(options.rule.as_deref(), Some("rust.file-size"));
+    assert!(options.dry_run);
+    assert!(options.accept_grants);
+    assert_eq!(
+        options.common.format,
+        crate::app::output::OutputFormat::Json
+    );
+}
+
+#[test]
 fn review_separates_trusted_authority_from_proposed_source() {
     let command = parse([
         OsString::from("zrail"),

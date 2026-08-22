@@ -22,7 +22,7 @@ pub use contract::{
     MacroInputMode, ModuleDocsMode, OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode,
     ProfileContract, RatchetContract, RepositoryContract, RustSourceContract, ScopeContract,
     SourceContract, SymbolBoundary, SymlinkMode, TestMode, contract_imports, load_contract,
-    parse_evidence_reference,
+    load_contract_with_entry, parse_evidence_reference,
 };
 pub use diagnostic::{AnalysisQuality, Finding, FindingSink, Severity, SourceSpan};
 pub use diff::{

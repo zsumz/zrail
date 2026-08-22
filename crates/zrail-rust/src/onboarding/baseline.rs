@@ -43,6 +43,64 @@ pub struct BaselineRatchet {
     pub reason: &'static str,
 }
 
+/// Registered measurable Rust debt that baseline adoption may ratchet.
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub enum BaselineRule {
+    /// Per-file source lines above the configured target.
+    FileSize,
+    /// Inline unit-test modules in production source.
+    InlineTests,
+    /// Missing module-level responsibility documentation.
+    ModuleDocs,
+    /// Unsafe constructs forbidden by strict hygiene policy.
+    Unsafe,
+    /// Lint-suppression attributes governed by strict hygiene policy.
+    LintSuppressions,
+}
+
+impl BaselineRule {
+    /// Complete deterministic registry of baseline-adoptable debt.
+    pub const ALL: [Self; 5] = [
+        Self::FileSize,
+        Self::InlineTests,
+        Self::ModuleDocs,
+        Self::Unsafe,
+        Self::LintSuppressions,
+    ];
+
+    /// Stable contract rule name.
+    pub const fn name(self) -> &'static str {
+        match self {
+            Self::FileSize => "rust.file-size",
+            Self::InlineTests => "rust.inline-tests",
+            Self::ModuleDocs => "rust.module-docs",
+            Self::Unsafe => "rust.hygiene.unsafe",
+            Self::LintSuppressions => "rust.hygiene.lint-suppressions",
+        }
+    }
+
+    /// Resolves one exact registered rule name.
+    pub fn named(name: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|rule| rule.name() == name)
+    }
+
+    const fn reason(self) -> &'static str {
+        match self {
+            Self::FileSize => {
+                "Observed by `zrail baseline`; reduce this legacy file below its target."
+            }
+            Self::InlineTests => "Observed by `zrail baseline`; move tests to a sibling module.",
+            Self::ModuleDocs => {
+                "Observed by `zrail baseline`; add a concise module responsibility statement."
+            }
+            Self::Unsafe => "Observed by `zrail baseline`; remove or isolate unsafe constructs.",
+            Self::LintSuppressions => {
+                "Observed by `zrail baseline`; remove or justify lint suppressions."
+            }
+        }
+    }
+}
+
 impl BaselinePlan {
     /// Creates initialization support with no observed debt or size overrides.
     pub fn empty() -> Self {
@@ -59,6 +117,15 @@ impl BaselinePlan {
 /// plan records exact tightening ratchets without relaxing class-wide hard
 /// ceilings; it does not rewrite the contract or lock.
 pub fn discover_baseline(root: &Path, config: &Path) -> Result<BaselinePlan, CheckError> {
+    discover_baseline_rules(root, config, &BaselineRule::ALL)
+}
+
+/// Discovers only the selected registered Rust debt kinds.
+pub fn discover_baseline_rules(
+    root: &Path,
+    config: &Path,
+    rules: &[BaselineRule],
+) -> Result<BaselinePlan, CheckError> {
     let model = load_model(root, config)?;
     let contract = &model.bundle.contract;
     let mut plan = BaselinePlan {
@@ -71,51 +138,30 @@ pub fn discover_baseline(root: &Path, config: &Path) -> Result<BaselinePlan, Che
         ratchets: Vec::new(),
     };
     for file in &model.source.files {
-        let class = budget_class(file);
-        if budget(contract, class).is_some_and(|budget| file.lines > budget.target) {
-            plan.ratchets.push(BaselineRatchet {
-                rule: "rust.file-size",
-                target: file.relative.clone(),
-                reason: "Observed by `zrail init --baseline`; split this source file.",
-            });
-        }
-        if contract.source.rust.tests == TestMode::Sibling
-            && file.reachability.is_production()
-            && !file.tests.is_empty()
-        {
-            plan.ratchets.push(BaselineRatchet {
-                rule: "rust.inline-tests",
-                target: file.relative.clone(),
-                reason: "Observed by `zrail init --baseline`; move tests to a sibling module.",
-            });
-        }
-        for (rule, reason) in [
-            (
-                "rust.module-docs",
-                "Observed by zrail baseline; add a concise module responsibility statement.",
-            ),
-            (
-                "rust.hygiene.unsafe",
-                "Observed by zrail baseline; remove or isolate unsafe constructs.",
-            ),
-            (
-                "rust.hygiene.lint-suppressions",
-                "Observed by zrail baseline; remove or justify lint suppressions.",
-            ),
-        ] {
-            if crate::rules::count_ratchet::measurement(rule, file, &contract.source.rust)
-                .is_some_and(|value| value > 0)
-            {
+        for rule in rules {
+            if has_debt(*rule, file, contract) {
                 plan.ratchets.push(BaselineRatchet {
-                    rule,
+                    rule: rule.name(),
                     target: file.relative.clone(),
-                    reason,
+                    reason: rule.reason(),
                 });
             }
         }
     }
     plan.ratchets.sort();
     Ok(plan)
+}
+
+fn has_debt(rule: BaselineRule, file: &RustFileFacts, contract: &Contract) -> bool {
+    if rule == BaselineRule::FileSize {
+        return budget(contract, budget_class(file))
+            .is_some_and(|budget| file.lines > budget.target);
+    }
+    if rule == BaselineRule::InlineTests && contract.source.rust.tests != TestMode::Sibling {
+        return false;
+    }
+    crate::rules::count_ratchet::measurement(rule.name(), file, &contract.source.rust)
+        .is_some_and(|value| value > 0)
 }
 
 #[derive(Clone, Copy)]

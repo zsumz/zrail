@@ -2,8 +2,7 @@
 
 use std::{
     collections::{BTreeMap, BTreeSet},
-    error::Error,
-    fmt, fs,
+    fs,
     path::{Path, PathBuf},
 };
 
@@ -22,7 +21,13 @@ pub const MAX_IMPORT_DIRECTIVES: usize = 256;
 
 use super::{discover, hash::contract_sha256, merge::MergeState, validate::validate_contract};
 
+#[path = "load/entry.rs"]
+mod entry;
+#[path = "load/error.rs"]
+mod error;
 mod file;
+pub use entry::load_contract_with_entry;
+pub use error::ContractError;
 pub(super) use file::ContractFile;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -45,51 +50,29 @@ pub struct ContractBundle {
     pub sha256: String,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
-/// One or more human-readable contract loading or validation failures.
-/// Messages are deterministic for deterministic input, but are not a stable machine protocol.
-pub struct ContractError {
-    messages: Vec<String>,
-}
-
-impl ContractError {
-    /// Creates an error containing exactly one human-readable message.
-    pub fn one(message: impl Into<String>) -> Self {
-        Self {
-            messages: vec![message.into()],
-        }
-    }
-
-    pub(crate) fn many(messages: Vec<String>) -> Self {
-        Self { messages }
-    }
-
-    /// Returns all failure messages in their deterministic reporting order.
-    pub fn messages(&self) -> &[String] {
-        &self.messages
-    }
-}
-
-impl fmt::Display for ContractError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(formatter, "{}", self.messages.join("\n"))
-    }
-}
-
-impl Error for ContractError {}
-
 /// Loads, merges, and validates a repository-bounded architecture contract.
 /// `root` is canonicalized; `config` and every import must be regular, non-symlink files inside it.
 /// Imports are deterministic. Inaccessible files, escapes, aliases, import-graph errors, malformed
 /// TOML, unknown keys, merge or validation failures, and safety-limit violations return
 /// [`ContractError`]; no partial contract is returned.
 pub fn load_contract(root: &Path, config: &Path) -> Result<ContractBundle, ContractError> {
+    load_contract_entry(root, config, None)
+}
+
+pub(super) fn load_contract_entry(
+    root: &Path,
+    config: &Path,
+    entry: Option<&str>,
+) -> Result<ContractBundle, ContractError> {
     let root = fs::canonicalize(root).map_err(|error| {
         ContractError::one(format!("open repository {}: {error}", root.display()))
     })?;
     let config = repository_file(&root, config).map_err(ContractError::one)?;
+    if let Some(content) = entry {
+        entry::validate(&config, content)?;
+    }
     let mut loader = Loader::new(root);
-    loader.load(&config)?;
+    loader.load(&config, entry)?;
     let contract = loader.state.finish()?;
     validate_contract(&contract)?;
     loader
@@ -131,7 +114,7 @@ impl Loader {
         }
     }
 
-    fn load(&mut self, path: &Path) -> Result<(), ContractError> {
+    fn load(&mut self, path: &Path, entry: Option<&str>) -> Result<(), ContractError> {
         if self.stack.len() == MAX_IMPORT_DEPTH {
             return Err(ContractError::one(format!(
                 "contract imports exceed the {MAX_IMPORT_DEPTH}-level safety limit"
@@ -162,7 +145,9 @@ impl Loader {
             )));
         }
         self.stack.push(canonical.clone());
-        let content = read_text(path).map_err(ContractError::one)?;
+        let content = entry
+            .map(str::to_owned)
+            .map_or_else(|| read_text(path).map_err(ContractError::one), Ok)?;
         self.bytes = self
             .bytes
             .checked_add(content.len())
@@ -191,7 +176,7 @@ impl Loader {
         });
         self.state.merge(file, &origin)?;
         for import in imports {
-            self.load(&import)?;
+            self.load(&import, None)?;
         }
         self.stack.pop();
         Ok(())

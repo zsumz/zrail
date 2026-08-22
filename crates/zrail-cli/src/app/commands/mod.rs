@@ -1,5 +1,10 @@
 //! Individual command implementations.
 
+mod baseline;
+mod baseline_edit;
+mod baseline_output;
+mod baseline_plan;
+mod baseline_write;
 mod check;
 mod diff;
 mod doctor;
@@ -15,6 +20,7 @@ mod review;
 mod update;
 mod update_authority;
 
+pub(crate) use baseline::baseline;
 pub(crate) use check::check;
 pub(crate) use diff::diff;
 pub(crate) use doctor::doctor;

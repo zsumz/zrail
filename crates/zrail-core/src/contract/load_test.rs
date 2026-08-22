@@ -5,7 +5,29 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use super::load_contract;
+use super::{load_contract, load_contract_with_entry};
+
+#[test]
+fn entry_overlay_preserves_identity_and_imports_without_writing() {
+    let root = fixture_root("contract-overlay");
+    reset(&root);
+    fs::create_dir_all(root.join("zrail.d")).expect("create fragments");
+    let original = base_contract("zrail.d/layer.toml");
+    fs::write(root.join("zrail.toml"), &original).expect("write root contract");
+    fs::write(root.join("zrail.d/layer.toml"), "# preserved fragment\n").expect("write fragment");
+    let patched = format!("{original}\n# proposed bytes\n");
+
+    let bundle = load_contract_with_entry(&root, Path::new("zrail.toml"), &patched)
+        .expect("load proposed contract");
+
+    assert_eq!(bundle.sources[1].path, "zrail.toml");
+    assert_eq!(bundle.sources[1].content, patched);
+    assert_eq!(
+        fs::read_to_string(root.join("zrail.toml")).unwrap(),
+        original
+    );
+    reset(&root);
+}
 
 #[test]
 fn local_fragments_merge_without_order_dependent_overrides() {

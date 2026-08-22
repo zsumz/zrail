@@ -27,7 +27,7 @@ pub(crate) fn init(options: &InitOptions) -> Result<CommandResult, CliError> {
     let template = init_template::render(&roots, options.preset, &baseline);
     create_text(&config, &template).map_err(CliError::new)?;
     if options.baseline {
-        baseline = match init_baseline::apply(&root, &config, &roots, options.preset) {
+        baseline = match init_baseline::apply(&root, &config) {
             Ok(baseline) => baseline,
             Err(error) => return Err(rollback_error(&config, &error)),
         };

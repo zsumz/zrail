@@ -28,12 +28,13 @@ mod source_policy;
 
 pub use engine::{
     CheckError, CheckResult, DoctorReport, build_lock, check_repository,
-    check_repository_with_lock, doctor_repository,
+    check_repository_with_candidate_contract, check_repository_with_lock, doctor_repository,
 };
 pub use explain::{
     CallOwnerExplanation, CapabilityOwnerExplanation, MacroInvocationExplanation, PathExplanation,
     explain_path,
 };
 pub use onboarding::{
-    BaselinePlan, BaselineRatchet, BaselineSize, discover_baseline, discover_source_roots,
+    BaselinePlan, BaselineRatchet, BaselineRule, BaselineSize, discover_baseline,
+    discover_baseline_rules, discover_source_roots,
 };

@@ -1,5 +1,6 @@
 //! Public orchestration for checking, locking, and diagnosing a Rust repository.
 
+mod candidate;
 mod gates;
 mod lock_compare;
 mod lock_state;
@@ -21,14 +22,14 @@ use self::{
     model::resolve,
 };
 
+pub use candidate::{build_lock, check_repository_with_candidate_contract};
+
 #[derive(Clone, Debug)]
 /// The diagnostics and independently observed state from one repository check.
 pub struct CheckResult {
     /// The deterministic findings and aggregate report status.
     pub report: Report,
-    /// The lock state derived from the current contract and repository contents.
-    ///
-    /// This value is returned in memory; checking does not write it to disk.
+    /// Current contract and repository state, returned without writing it to disk.
     pub candidate_lock: LockFile,
     /// The SHA-256 digest of the complete resolved contract bundle.
     pub contract_sha256: String,
@@ -153,6 +154,14 @@ fn check_model(
     lock: Option<&LockFile>,
 ) -> Result<CheckResult, CheckError> {
     let candidate = candidate_lock(&model)?;
+    Ok(finish_check(model, lock, candidate))
+}
+
+fn finish_check(
+    model: model::RepositoryModel,
+    lock: Option<&LockFile>,
+    candidate: LockFile,
+) -> CheckResult {
     let mut findings = evaluate(&RuleContext {
         contract: &model.bundle.contract,
         lock,
@@ -161,21 +170,13 @@ fn check_model(
         source: &model.source,
     });
     check_lock(&model, lock, &candidate, &mut findings);
-    Ok(CheckResult {
+    CheckResult {
         report: Report::from_findings(findings.into_findings()),
         candidate_lock: candidate,
         contract_sha256: model.bundle.sha256,
         packages: model.cargo.packages.len(),
         rust_files: model.source.files.len(),
-    })
-}
-
-/// Builds the lock state observed from a repository and contract.
-///
-/// The returned lock remains in memory. This function neither writes a lock file
-/// nor executes repository code, Cargo, build scripts, or qualification gates.
-pub fn build_lock(root: &Path, config: &Path) -> Result<LockFile, CheckError> {
-    candidate_lock(&load_model(root, config)?)
+    }
 }
 
 /// Reports whether a repository's configured lock is present, supported, and current.

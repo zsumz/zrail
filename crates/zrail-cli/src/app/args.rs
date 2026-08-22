@@ -7,11 +7,13 @@ use std::{
 
 use super::{error::CliError, output::OutputFormat};
 
+mod baseline;
 mod diff;
 mod init;
 mod review;
 mod update;
 
+pub(crate) use baseline::BaselineOptions;
 pub(crate) use init::{InitOptions, InitPreset};
 pub(crate) use update::UpdateOptions;
 
@@ -19,6 +21,7 @@ pub(crate) use update::UpdateOptions;
 pub(crate) enum Command {
     Check(CommonOptions),
     Doctor(CommonOptions),
+    Baseline(BaselineOptions),
     Update(UpdateOptions),
     Explain {
         common: CommonOptions,
@@ -86,6 +89,7 @@ pub(crate) fn parse(arguments: impl IntoIterator<Item = OsString>) -> Result<Com
     match command.as_str() {
         "check" => Ok(Command::Check(parse_common(&remaining)?)),
         "doctor" => Ok(Command::Doctor(parse_common(&remaining)?)),
+        "baseline" => baseline::parse(&remaining),
         "update" => update::parse(&remaining),
         "explain" | "guide" => parse_explain(&remaining),
         "diff" => diff::parse(&remaining),

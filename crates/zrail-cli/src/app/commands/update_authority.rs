@@ -25,6 +25,22 @@ pub(super) fn compare(
     )
 }
 
+pub(super) fn compare_current(
+    before: &ContractBundle,
+    before_lock: Option<&LockFile>,
+    after: &ContractBundle,
+    candidate: &LockFile,
+) -> DiffReport {
+    compare_architecture_checked(
+        &before.contract,
+        &before.sha256,
+        before_lock,
+        &after.contract,
+        &after.sha256,
+        Some(candidate),
+    )
+}
+
 pub(super) fn compare_from_repository(
     authority_root: &std::path::Path,
     base: &std::ffi::OsStr,

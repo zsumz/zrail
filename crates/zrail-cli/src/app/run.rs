@@ -17,6 +17,7 @@ const HELP: &str = concat!(
     "USAGE\n",
     "  zrail init [ROOT] [--preset zsumz|rust] [--baseline]\n",
     "  zrail check [--root ROOT] [--format human|json]\n",
+    "  zrail baseline [--root ROOT] [--rule RULE] [--dry-run] [--format human|json] [--accept-grants]\n",
     "  zrail update [--base REVISION] [--root ROOT] [--format human|json] [--accept-grants]\n",
     "  zrail doctor [--root ROOT] [--format human|json]\n",
     "  zrail explain --path PATH [--root ROOT] [--format human|json]\n",
@@ -40,6 +41,7 @@ fn run_command(command: &Command) -> i32 {
     let result = match command {
         Command::Check(options) => commands::check(options),
         Command::Doctor(options) => commands::doctor(options),
+        Command::Baseline(options) => commands::baseline(options),
         Command::Update(options) => commands::update(options),
         Command::Explain { common, path } => commands::explain(common, path),
         Command::Diff(options) => commands::diff(options),
@@ -60,6 +62,7 @@ fn command_format(command: &Command) -> OutputFormat {
     match command {
         Command::Check(options) | Command::Doctor(options) => options.format,
         Command::Update(options) => options.common.format,
+        Command::Baseline(options) => options.common.format,
         Command::Explain { common, .. } => common.format,
         Command::Diff(options) => options.format,
         Command::Review(options) => options.common.format,

@@ -8,7 +8,10 @@ use crate::{
     cargo::load_cargo_workspace, engine::CheckError, inventory::inventory_cargo_repository,
 };
 
-pub use baseline::{BaselinePlan, BaselineRatchet, BaselineSize, discover_baseline};
+pub use baseline::{
+    BaselinePlan, BaselineRatchet, BaselineRule, BaselineSize, discover_baseline,
+    discover_baseline_rules,
+};
 
 /// Discovers conservative Rust source roots from a Cargo repository.
 ///

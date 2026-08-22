@@ -1,24 +1,20 @@
-//! Baseline preparation replaces only the newly created provisional contract.
+//! Initialization delegates measurable-debt planning to `zrail baseline`.
 
 use std::path::Path;
 
 use zrail_core::replace_text;
-use zrail_rust::{BaselinePlan, discover_baseline};
+use zrail_rust::BaselinePlan;
 
-use crate::app::args::InitPreset;
+use super::super::baseline_plan;
 
-use super::init_template;
-
-pub(super) fn apply(
-    root: &Path,
-    config: &Path,
-    roots: &[String],
-    preset: InitPreset,
-) -> Result<BaselinePlan, String> {
-    let baseline =
-        discover_baseline(root, Path::new("zrail.toml")).map_err(|error| error.to_string())?;
-    replace_text(config, &init_template::render(roots, preset, &baseline))?;
-    Ok(baseline)
+pub(super) fn apply(root: &Path, config: &Path) -> Result<BaselinePlan, String> {
+    let prepared = baseline_plan::prepare(root, Path::new("zrail.toml"), None)
+        .map_err(|error| error.message)?;
+    replace_text(config, &prepared.patched_contract)?;
+    Ok(BaselinePlan {
+        size: None,
+        ratchets: prepared.added,
+    })
 }
 
 #[cfg(test)]

@@ -66,6 +66,23 @@ file and may only decrease. The corresponding strict policy remains active for
 every new file; reaching zero makes the contract ratchet stale so it must be
 removed rather than retained as dormant authority.
 
+For a hand-authored contract, baseline the existing policy instead of running
+`init`:
+
+```sh
+# author zrail.toml
+zrail check
+zrail baseline --dry-run
+zrail baseline --accept-grants
+zrail check
+```
+
+`baseline` preserves comments, existing ratchets, and human-authored reasons.
+It can add only registered measurable debt, and it refuses to write while any
+other violation remains. Use `--rule rust.file-size` to plan one registered debt
+kind, or `--format json` to inspect added, preserved, and rejected candidates.
+Grant acceptance is a human review boundary and must not be automated.
+
 ## Work
 
 The everyday commands are read-only:
@@ -222,6 +239,7 @@ resolution and qualification execution.
 | Command | Purpose |
 | --- | --- |
 | `zrail init` | Write explicit policy and its initial lock |
+| `zrail baseline` | Add reviewed tightening ratchets to an existing contract |
 | `zrail check` | Check repository architecture without modifying files |
 | `zrail doctor` | Diagnose setup and compatibility problems |
 | `zrail explain` | Explain the policy and findings for one path |

@@ -45,6 +45,16 @@ The `rust` preset fits conventional inline and integration tests. Run
 `zrail init` for the zsumz preset: sibling tests, reviewed macro expansion, and
 300-line source targets. Add `--baseline` when adopting existing code.
 
+If you already maintain `zrail.toml`, preview measurable legacy debt before
+granting its exact tightening ratchets:
+
+```sh
+zrail check
+zrail baseline --dry-run
+zrail baseline --accept-grants
+zrail check
+```
+
 After committing the initial `zrail.toml` and `zrail.lock`, review later changes
 with:
 

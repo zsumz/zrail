@@ -25,7 +25,7 @@ pub use evidence::{EvidenceReference, parse_evidence_reference};
 pub use imports::contract_imports;
 pub use load::{
     ContractBundle, ContractError, ContractSource, MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES,
-    MAX_IMPORT_DIRECTIVES, load_contract,
+    MAX_IMPORT_DIRECTIVES, load_contract, load_contract_with_entry,
 };
 pub use model::{
     Budget, Contract, CrateRootContract, CrateRootSource, DependenciesContract, DependencyRule,

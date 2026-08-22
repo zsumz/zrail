@@ -24,6 +24,13 @@ pub(crate) struct RepositoryModel {
 pub(crate) fn load_model(root: &Path, config: &Path) -> Result<RepositoryModel, CheckError> {
     let bundle =
         load_contract(root, config).map_err(|error| CheckError::from_message(error.to_string()))?;
+    load_model_with_bundle(root, bundle)
+}
+
+pub(crate) fn load_model_with_bundle(
+    root: &Path,
+    bundle: ContractBundle,
+) -> Result<RepositoryModel, CheckError> {
     let mut inventory = inventory_repository(root, &bundle.contract)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     let mut cargo = load_cargo_workspace(&inventory)
