@@ -77,21 +77,6 @@ fn check_file(
         }
         return;
     };
-    if file.lines > budget.hard {
-        findings.push(
-            Finding::error(
-                "RUST-SIZE-001",
-                "rust.file-size.hard",
-                "source-size",
-                format!(
-                    "source is {} lines, above its absolute {}-line ceiling",
-                    file.lines, budget.hard
-                ),
-            )
-            .at(&file.relative, None)
-            .with_help("split the responsibility at a semantic module boundary"),
-        );
-    }
     if file.lines <= budget.target {
         if contract_ratchet.is_some() || locked_ratchet.is_some() {
             findings.push(
@@ -107,22 +92,46 @@ fn check_file(
         }
         return;
     }
-    let Some(contract_ratchet) = contract_ratchet else {
+    if let Some(contract_ratchet) = contract_ratchet {
+        check_ratchet(file, contract_ratchet, locked_ratchet, findings);
+        return;
+    }
+    if file.lines > budget.hard {
         findings.push(
             Finding::error(
-                "RUST-SIZE-002",
-                "rust.file-size.target",
+                "RUST-SIZE-001",
+                "rust.file-size.hard",
                 "source-size",
                 format!(
-                    "source is {} lines, above its {}-line design target",
-                    file.lines, budget.target
+                    "source is {} lines, above its absolute {}-line ceiling",
+                    file.lines, budget.hard
                 ),
             )
             .at(&file.relative, None)
-            .with_help("split the file or add a reviewed ratchet with a concrete reason"),
+            .with_help("split the responsibility at a semantic module boundary"),
         );
-        return;
-    };
+    }
+    findings.push(
+        Finding::error(
+            "RUST-SIZE-002",
+            "rust.file-size.target",
+            "source-size",
+            format!(
+                "source is {} lines, above its {}-line design target",
+                file.lines, budget.target
+            ),
+        )
+        .at(&file.relative, None)
+        .with_help("split the file or add a reviewed ratchet with a concrete reason"),
+    );
+}
+
+fn check_ratchet(
+    file: &crate::source::RustFileFacts,
+    contract_ratchet: &zrail_core::RatchetContract,
+    locked_ratchet: Option<&LockedRatchet>,
+    findings: &mut FindingSink,
+) {
     let Some(locked_ratchet) = locked_ratchet else {
         findings.push(
             Finding::error(

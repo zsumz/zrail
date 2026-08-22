@@ -34,6 +34,7 @@ fn baseline_records_size_and_inline_test_debt_as_ratchets() {
     assert!(result.text.contains("Recorded debt: 2 ratchets"));
     assert!(contract.contains("tests = \"sibling\""));
     assert_eq!(contract.matches("target = 300").count(), 4);
+    assert_eq!(contract.matches("hard = 300").count(), 4);
     assert!(contract.contains("rule = \"rust.file-size\""));
     assert!(contract.contains("rule = \"rust.inline-tests\""));
     assert_eq!(lock.matches("target = \"src/lib.rs\"").count(), 2);

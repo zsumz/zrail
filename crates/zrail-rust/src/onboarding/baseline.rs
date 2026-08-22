@@ -13,13 +13,13 @@ use crate::{
 /// Exact size and test-placement debt discovered for CLI initialization.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BaselinePlan {
-    /// Raised size ceilings, or `None` when the contract has no size policy.
+    /// Preserved size ceilings, or `None` when the contract has no size policy.
     pub size: Option<BaselineSize>,
     /// Exact debt entries that can only tighten after initialization.
     pub ratchets: Vec<BaselineRatchet>,
 }
 
-/// Hard line ceilings adjusted to contain the repository's observed source.
+/// Class-wide hard line ceilings preserved from the strict contract.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BaselineSize {
     /// The hard ceiling for declarative facade files.
@@ -56,8 +56,8 @@ impl BaselinePlan {
 /// Discovers existing size and inline-test debt for CLI baseline initialization.
 ///
 /// `config` identifies the newly rendered contract beneath `root`. The returned
-/// plan raises only the necessary hard ceilings and records exact tightening
-/// ratchets; it does not rewrite the contract or lock.
+/// plan records exact tightening ratchets without relaxing class-wide hard
+/// ceilings; it does not rewrite the contract or lock.
 pub fn discover_baseline(root: &Path, config: &Path) -> Result<BaselinePlan, CheckError> {
     let model = load_model(root, config)?;
     let contract = &model.bundle.contract;
@@ -73,7 +73,6 @@ pub fn discover_baseline(root: &Path, config: &Path) -> Result<BaselinePlan, Che
     for file in &model.source.files {
         let class = budget_class(file);
         if budget(contract, class).is_some_and(|budget| file.lines > budget.target) {
-            plan.raise_hard(class, file.lines);
             plan.ratchets.push(BaselineRatchet {
                 rule: "rust.file-size",
                 target: file.relative.clone(),
@@ -124,19 +123,4 @@ fn budget(contract: &Contract, class: BudgetClass) -> Option<Budget> {
         BudgetClass::Test => size.test,
         BudgetClass::Auxiliary => size.auxiliary,
     })
-}
-
-impl BaselinePlan {
-    fn raise_hard(&mut self, class: BudgetClass, value: usize) {
-        let Some(size) = &mut self.size else {
-            return;
-        };
-        let hard = match class {
-            BudgetClass::Facade => &mut size.facade_hard,
-            BudgetClass::Implementation => &mut size.implementation_hard,
-            BudgetClass::Test => &mut size.test_hard,
-            BudgetClass::Auxiliary => &mut size.auxiliary_hard,
-        };
-        *hard = (*hard).max(value);
-    }
 }
