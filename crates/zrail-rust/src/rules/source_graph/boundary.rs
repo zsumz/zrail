@@ -1,10 +1,10 @@
 //! Source graph targets must remain regular, indexed Rust files inside declared roots.
 
-use zrail_core::{AnalysisQuality, Finding, SourceSpan, glob_matches};
+use zrail_core::{Finding, SourceSpan, glob_matches};
 
 use crate::{
     inventory::{FileClass, RepositoryEntryKind},
-    source::{ResolutionError, ResolvedModuleEdge, SourceSyntax, SubmoduleBase},
+    source::{ResolvedModuleEdge, SourceSyntax, SubmoduleBase},
 };
 
 use super::{TraversalContext, Walker};
@@ -174,35 +174,6 @@ impl Walker<'_> {
         })
     }
 
-    pub(super) fn resolution_error(
-        &mut self,
-        origin: &str,
-        span: Option<SourceSpan>,
-        error: &ResolutionError,
-        label: &str,
-    ) {
-        let message = format!("{label} cannot be resolved: {}", error.message());
-        match error {
-            ResolutionError::Escape(_) => self.boundary(origin, span, message),
-            ResolutionError::Unresolved(_) => self.unresolved(origin, span, message),
-        }
-    }
-
-    pub(super) fn missing(&mut self, origin: &str, span: Option<SourceSpan>, message: String) {
-        if !self.reported.insert((origin.into(), message.clone())) {
-            return;
-        }
-        self.findings.push(
-            Finding::error(
-                "RUST-GRAPH-001",
-                "rust.source-graph.presence",
-                "source-graph",
-                message,
-            )
-            .at(origin, span),
-        );
-    }
-
     fn under_roots(&self, path: &str) -> bool {
         self.contract
             .repository
@@ -219,7 +190,7 @@ impl Walker<'_> {
             .any(|pattern| glob_matches(pattern, path) || path.starts_with(&format!("{pattern}/")))
     }
 
-    fn boundary(&mut self, origin: &str, span: Option<SourceSpan>, message: String) {
+    pub(super) fn boundary(&mut self, origin: &str, span: Option<SourceSpan>, message: String) {
         if !self.reported.insert((origin.into(), message.clone())) {
             return;
         }
@@ -231,23 +202,6 @@ impl Walker<'_> {
                 message,
             )
             .at(origin, span),
-        );
-    }
-
-    pub(super) fn unresolved(&mut self, origin: &str, span: Option<SourceSpan>, message: String) {
-        if !self.reported.insert((origin.into(), message.clone())) {
-            return;
-        }
-        self.findings.push(
-            Finding::error(
-                "RUST-GRAPH-003",
-                "rust.source-graph.analysis",
-                "source-graph",
-                message,
-            )
-            .at(origin, span)
-            .with_analysis(AnalysisQuality::Unresolved)
-            .with_help("replace the boundary with a literal repository-local .rs source path"),
         );
     }
 }

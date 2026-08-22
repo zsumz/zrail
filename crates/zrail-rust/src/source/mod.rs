@@ -10,6 +10,7 @@ mod fact;
 mod import_aliases;
 mod import_candidates;
 mod import_helpers;
+mod import_projection;
 mod imports;
 mod imports_collect;
 mod includes;
@@ -21,6 +22,7 @@ mod macro_origins;
 mod macro_visibility;
 mod macro_visibility_graph;
 mod model;
+mod module_edge;
 mod modules;
 mod parse;
 mod parse_facade;
@@ -40,9 +42,9 @@ pub(crate) use macro_model::{
 };
 pub(crate) use model::{
     IncludeBoundary, IncludeContext, MacroImportFact, ModuleDeclaration, ObservedFact,
-    Reachability, ReachabilityKind, ResolvedModuleEdge, RustFileFacts, SourceIndex, SourceSyntax,
-    SyntaxGuard,
+    Reachability, ReachabilityKind, RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
 };
+pub(crate) use module_edge::ResolvedModuleEdge;
 pub(crate) use parse::index_rust_source;
 pub(crate) use paths::{
     ModuleTarget, ResolutionError, SubmoduleBase, join_relative, module_target, parent,

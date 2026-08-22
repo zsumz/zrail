@@ -217,6 +217,16 @@ pub(super) fn resolve_inside(
     }
 }
 
+pub(super) fn nested_boundary_error(origin: Option<&str>, nested: &str) -> CargoModelError {
+    let edge = origin.map_or_else(
+        || "workspace member".to_owned(),
+        |origin| format!("path dependency from {origin:?}"),
+    );
+    CargoModelError(format!(
+        "{edge} crosses from workspace \".\" into nested workspace {nested:?}; multi-workspace dependency resolution is not yet supported"
+    ))
+}
+
 #[cfg(test)]
 #[path = "workspace_test.rs"]
 mod workspace_test;

@@ -1,6 +1,7 @@
 //! Cargo roots and Rust source edges must form one closed, analyzable graph.
 
 mod boundary;
+mod diagnostics;
 mod external_module;
 mod include;
 mod item_macros;

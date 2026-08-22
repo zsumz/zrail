@@ -14,8 +14,8 @@ use super::{
     dependency_spec::WorkspaceDependencies,
     parse::{CargoModelError, package_name, read_manifest_counted},
     workspace::{
-        excluded_member, expand_members, normalized_directory, workspace_excludes,
-        workspace_members,
+        excluded_member, expand_members, nested_boundary_error, normalized_directory,
+        workspace_excludes, workspace_members,
     },
 };
 
@@ -78,7 +78,7 @@ pub(super) fn build(
         })?;
         let value = load(manifest, &mut values, manifest_bytes)?;
         if directory != "." && value.get("workspace").is_some() {
-            return Err(boundary_error(
+            return Err(nested_boundary_error(
                 origins.get(&directory).and_then(Option::as_deref),
                 &directory,
             ));
@@ -215,7 +215,7 @@ fn reject_nested_ancestor(
             .get("workspace")
             .is_some()
         {
-            return Err(boundary_error(origin, &ancestor));
+            return Err(nested_boundary_error(origin, &ancestor));
         }
     }
     Ok(())
@@ -233,14 +233,4 @@ fn load<'a>(
     values
         .get(manifest)
         .ok_or_else(|| CargoModelError("Cargo manifest cache lost a loaded value".into()))
-}
-
-fn boundary_error(origin: Option<&str>, nested: &str) -> CargoModelError {
-    let edge = origin.map_or_else(
-        || "workspace member".to_owned(),
-        |origin| format!("path dependency from {origin:?}"),
-    );
-    CargoModelError(format!(
-        "{edge} crosses from workspace \".\" into nested workspace {nested:?}; multi-workspace dependency resolution is not yet supported"
-    ))
 }
