@@ -24,6 +24,30 @@ fn classifies_root_package_tests_and_auxiliary_programs() {
 }
 
 #[test]
+fn recognizes_only_conventional_test_filenames() {
+    for path in [
+        "src/tests.rs",
+        "src/raft_tests.rs",
+        "src/raft_test.rs",
+        "src/tests/helpers.rs",
+    ] {
+        assert_eq!(classify_path(path, &[]), FileClass::Test, "{path}");
+    }
+    for path in [
+        "src/contest.rs",
+        "src/latest.rs",
+        "src/test.rs",
+        "src/tests_support.rs",
+    ] {
+        assert_eq!(
+            classify_path(path, &[]),
+            FileClass::Implementation,
+            "{path}"
+        );
+    }
+}
+
+#[test]
 fn generated_roots_override_ordinary_source_shape() {
     let generated = [zrail_core::GeneratedSourceContract {
         root: "src/generated".into(),

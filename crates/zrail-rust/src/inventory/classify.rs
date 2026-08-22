@@ -25,7 +25,7 @@ pub(crate) fn classify_path(relative: &str, generated: &[GeneratedSourceContract
         .any(|source| under_root(relative, &source.root))
     {
         FileClass::Generated
-    } else if has_component(path, "tests") || name.ends_with("_test.rs") {
+    } else if has_component(path, "tests") || is_test_filename(name) {
         FileClass::Test
     } else if name == "main.rs" {
         FileClass::EntryPoint
@@ -36,6 +36,10 @@ pub(crate) fn classify_path(relative: &str, generated: &[GeneratedSourceContract
     } else {
         FileClass::Implementation
     }
+}
+
+fn is_test_filename(name: &str) -> bool {
+    name == "tests.rs" || name.ends_with("_test.rs") || name.ends_with("_tests.rs")
 }
 
 pub(crate) fn under_root(path: &str, root: &str) -> bool {

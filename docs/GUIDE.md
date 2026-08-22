@@ -231,6 +231,12 @@ Overrides for missing, unreachable, generated, already matching, test,
 entrypoint, or auxiliary source fail as stale or invalid policy. `zrail explain`
 shows the inferred role, effective role, and override reason.
 
+Conventional `tests.rs`, `*_test.rs`, and `*_tests.rs` filenames receive test
+tooling defaults and budgets, as does source beneath a `tests/` directory.
+`test.rs` remains an ordinary implementation filename; source-graph
+reachability independently determines whether any file is production or test
+reachable.
+
 ## Generated inputs
 
 Reviewed generated trees and `OUT_DIR` snapshots bind their source, generator,
