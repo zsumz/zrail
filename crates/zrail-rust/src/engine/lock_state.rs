@@ -59,7 +59,13 @@ pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckE
     for ratchet in &model.bundle.contract.ratchets {
         if let Some(value) = sources
             .get(ratchet.target.as_str())
-            .and_then(|file| ratchet_value(&ratchet.rule, file))
+            .and_then(|file| {
+                crate::rules::count_ratchet::measurement(
+                    &ratchet.rule,
+                    file,
+                    &model.bundle.contract.source.rust,
+                )
+            })
             .filter(|value| *value > 0)
         {
             lock.ratchets.push(LockedRatchet {
@@ -111,14 +117,6 @@ fn locked_source(source: &DependencySource) -> LockedDependencySource {
             rev: rev.clone(),
             requirement: requirement.clone(),
         },
-    }
-}
-
-fn ratchet_value(rule: &str, file: &crate::source::RustFileFacts) -> Option<usize> {
-    match rule {
-        "rust.file-size" => Some(file.lines),
-        "rust.inline-tests" => Some(file.tests.len()),
-        _ => None,
     }
 }
 

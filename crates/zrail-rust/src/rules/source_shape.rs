@@ -8,25 +8,24 @@ use crate::{
 };
 
 use super::RuleContext;
+use super::count_ratchet::{self, CountRatchetSpec};
 
 pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
+    if context.contract.source.rust.module_docs == ModuleDocsMode::Required {
+        count_ratchet::evaluate(
+            context,
+            CountRatchetSpec {
+                rule: "rust.module-docs",
+                finding_id: "RUST-DOC-002",
+                finding_rule: "rust.module-docs.ratchet",
+                category: "source-shape",
+                debt: "missing module documentation",
+            },
+            findings,
+            report_missing_module_docs,
+        );
+    }
     for file in &context.source.files {
-        if file.syntax == SourceSyntax::Items
-            && file.class != FileClass::Generated
-            && context.contract.source.rust.module_docs == ModuleDocsMode::Required
-            && !file.module_docs
-        {
-            findings.push(
-                Finding::error(
-                    "RUST-DOC-001",
-                    "rust.module-docs",
-                    "source-shape",
-                    "Rust source is missing its module contract (`//!`)",
-                )
-                .at(&file.relative, None)
-                .with_help("start the file with a concise `//!` responsibility statement"),
-            );
-        }
         let declarative = match file.class {
             FileClass::Facade => context.contract.source.rust.facades == FacadeMode::Declarative,
             FileClass::EntryPoint => {
@@ -57,6 +56,22 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
                 );
             }
         }
+    }
+}
+
+fn report_missing_module_docs(file: &crate::source::RustFileFacts, findings: &mut FindingSink) {
+    if file.syntax == SourceSyntax::Items && file.class != FileClass::Generated && !file.module_docs
+    {
+        findings.push(
+            Finding::error(
+                "RUST-DOC-001",
+                "rust.module-docs",
+                "source-shape",
+                "Rust source is missing its module contract (`//!`)",
+            )
+            .at(&file.relative, None)
+            .with_help("start the file with a concise `//!` responsibility statement"),
+        );
     }
 }
 

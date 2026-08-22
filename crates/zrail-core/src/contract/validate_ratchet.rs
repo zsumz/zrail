@@ -3,8 +3,9 @@
 use std::collections::BTreeSet;
 
 use super::{
-    Contract, TestMode, validate_limits::ValidationErrors,
-    validate_paths::validate_repository_literal, validate_sets::require_reason,
+    Contract, LintSuppressionMode, ModuleDocsMode, PolicyMode, RustSourceContract, TestMode,
+    validate_limits::ValidationErrors, validate_paths::validate_repository_literal,
+    validate_sets::require_reason,
 };
 
 pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
@@ -25,6 +26,12 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
             errors.push(format!(
                 "file-size ratchet for {:?} has no handwritten or generated size policy",
                 ratchet.target
+            ));
+        }
+        if !compatible_with_rust_policy(&ratchet.rule, &contract.source.rust) {
+            errors.push(format!(
+                "ratchet {} requires its corresponding strict Rust source policy",
+                ratchet.rule
             ));
         }
         validate_repository_literal(&ratchet.target, errors);
@@ -51,11 +58,29 @@ fn under_root(path: &str, root: &str) -> bool {
 }
 
 fn supported_rule(rule: &str) -> bool {
-    matches!(rule, "rust.file-size" | "rust.inline-tests")
+    matches!(
+        rule,
+        "rust.file-size"
+            | "rust.inline-tests"
+            | "rust.module-docs"
+            | "rust.hygiene.unsafe"
+            | "rust.hygiene.lint-suppressions"
+    )
 }
 
 fn compatible_with_test_mode(rule: &str, mode: TestMode) -> bool {
     rule != "rust.inline-tests" || mode == TestMode::Sibling
+}
+
+fn compatible_with_rust_policy(rule: &str, rust: &RustSourceContract) -> bool {
+    match rule {
+        "rust.module-docs" => rust.module_docs == ModuleDocsMode::Required,
+        "rust.hygiene.unsafe" => rust.hygiene.unsafe_code == PolicyMode::Deny,
+        "rust.hygiene.lint-suppressions" => {
+            rust.hygiene.lint_suppressions != LintSuppressionMode::Allow
+        }
+        _ => true,
+    }
 }
 
 #[cfg(test)]

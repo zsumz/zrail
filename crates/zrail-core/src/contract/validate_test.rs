@@ -67,6 +67,28 @@ fn wildcard_ratchet_targets_are_rejected() {
 }
 
 #[test]
+fn adoption_ratchets_are_rejected_without_strict_policy() {
+    for rule in [
+        "rust.module-docs",
+        "rust.hygiene.unsafe",
+        "rust.hygiene.lint-suppressions",
+    ] {
+        let mut contract = minimal_contract();
+        contract.ratchets.push(RatchetContract {
+            rule: rule.into(),
+            target: "crates/legacy.rs".into(),
+            reason: "legacy debt".into(),
+        });
+
+        let error = validate_contract(&contract).expect_err("disabled policy must reject ratchet");
+        assert!(
+            error.to_string().contains("strict Rust source policy"),
+            "{rule}: {error}"
+        );
+    }
+}
+
+#[test]
 fn owner_allow_paths_must_be_inside_the_selector() {
     let mut contract = minimal_contract();
     contract.owners.push(OwnerContract {

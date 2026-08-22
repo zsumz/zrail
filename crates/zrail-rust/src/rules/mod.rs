@@ -3,6 +3,7 @@
 mod capability;
 mod cargo_identity;
 mod cargo_override;
+pub(crate) mod count_ratchet;
 mod dependency;
 mod dependency_cycle;
 mod dependency_deny;

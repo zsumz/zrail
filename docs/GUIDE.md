@@ -60,6 +60,12 @@ Baseline records supported violations as exact, tightening ratchets. New debt
 fails. Cleanup makes the lock stale so it can be tightened. Unsupported
 violations abort initialization without leaving partial files.
 
+Ratchets are migration debt, not permanent exemptions. File-size, inline-test,
+missing-module-doc, unsafe, and lint-suppression counts are locked to an exact
+file and may only decrease. The corresponding strict policy remains active for
+every new file; reaching zero makes the contract ratchet stale so it must be
+removed rather than retained as dormant authority.
+
 ## Work
 
 The everyday commands are read-only:

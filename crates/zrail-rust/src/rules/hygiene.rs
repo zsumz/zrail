@@ -4,7 +4,10 @@ use zrail_core::{Finding, FindingSink, LintSuppressionMode, PolicyMode};
 
 use crate::inventory::FileClass;
 
-use super::RuleContext;
+use super::{
+    RuleContext,
+    count_ratchet::{self, CountRatchetSpec},
+};
 
 pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     let hygiene = &context.contract.source.rust.hygiene;
@@ -51,42 +54,78 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
                 );
             }
         }
-        if hygiene.lint_suppressions != LintSuppressionMode::Allow
-            && file.class != FileClass::Generated
-        {
-            for suppression in file.lint_suppressions.iter().filter(|suppression| {
-                hygiene.lint_suppressions == LintSuppressionMode::Deny
-                    || suppression.name == "unreasoned lint suppression"
-            }) {
-                findings.push(
-                    Finding::error(
-                        "RUST-HYG-003",
-                        "rust.hygiene.lint-suppression",
-                        "source-hygiene",
-                        if suppression.name == "unreasoned lint suppression" {
-                            "production source suppresses a compiler or Clippy lint without a reason"
-                        } else {
-                            "production source suppresses a compiler or Clippy lint"
-                        },
-                    )
-                    .at(&file.relative, suppression.span)
-                    .with_help("fix the warning or configure the lint once at workspace scope"),
-                );
-            }
-        }
-        if hygiene.unsafe_code == PolicyMode::Deny {
-            for unsafe_construct in &file.unsafe_constructs {
-                findings.push(
-                    Finding::error(
-                        "RUST-HYG-004",
-                        "rust.hygiene.unsafe",
-                        "source-hygiene",
-                        format!("production source contains {}", unsafe_construct.name),
-                    )
-                    .at(&file.relative, unsafe_construct.span),
-                );
-            }
-        }
+    }
+    if hygiene.lint_suppressions != LintSuppressionMode::Allow {
+        count_ratchet::evaluate(
+            context,
+            CountRatchetSpec {
+                rule: "rust.hygiene.lint-suppressions",
+                finding_id: "RUST-HYG-006",
+                finding_rule: "rust.hygiene.lint-suppression.ratchet",
+                category: "source-hygiene",
+                debt: "lint-suppression violations",
+            },
+            findings,
+            |file, findings| report_lint_suppressions(file, hygiene.lint_suppressions, findings),
+        );
+    }
+    if hygiene.unsafe_code == PolicyMode::Deny {
+        count_ratchet::evaluate(
+            context,
+            CountRatchetSpec {
+                rule: "rust.hygiene.unsafe",
+                finding_id: "RUST-HYG-005",
+                finding_rule: "rust.hygiene.unsafe.ratchet",
+                category: "source-hygiene",
+                debt: "unsafe constructs",
+            },
+            findings,
+            report_unsafe_constructs,
+        );
+    }
+}
+
+fn report_lint_suppressions(
+    file: &crate::source::RustFileFacts,
+    mode: LintSuppressionMode,
+    findings: &mut FindingSink,
+) {
+    if file.class == FileClass::Generated {
+        return;
+    }
+    for suppression in file
+        .lint_suppressions
+        .iter()
+        .filter(|suppression| count_ratchet::lint_suppression_violates(mode, suppression))
+    {
+        findings.push(
+            Finding::error(
+                "RUST-HYG-003",
+                "rust.hygiene.lint-suppression",
+                "source-hygiene",
+                if suppression.name == "unreasoned lint suppression" {
+                    "production source suppresses a compiler or Clippy lint without a reason"
+                } else {
+                    "production source suppresses a compiler or Clippy lint"
+                },
+            )
+            .at(&file.relative, suppression.span)
+            .with_help("fix the warning or configure the lint once at workspace scope"),
+        );
+    }
+}
+
+fn report_unsafe_constructs(file: &crate::source::RustFileFacts, findings: &mut FindingSink) {
+    for unsafe_construct in &file.unsafe_constructs {
+        findings.push(
+            Finding::error(
+                "RUST-HYG-004",
+                "rust.hygiene.unsafe",
+                "source-hygiene",
+                format!("production source contains {}", unsafe_construct.name),
+            )
+            .at(&file.relative, unsafe_construct.span),
+        );
     }
 }
 

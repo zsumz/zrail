@@ -1,4 +1,4 @@
-//! Existing size and inline-test debt becomes exact, tightening ratchets.
+//! Existing measurable Rust policy debt becomes exact, tightening ratchets.
 
 use std::path::Path;
 
@@ -10,7 +10,7 @@ use crate::{
     source::{Reachability, RustFileFacts},
 };
 
-/// Exact size and test-placement debt discovered for CLI initialization.
+/// Exact measurable Rust policy debt discovered for CLI adoption.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BaselinePlan {
     /// Preserved size ceilings, or `None` when the contract has no size policy.
@@ -53,7 +53,7 @@ impl BaselinePlan {
     }
 }
 
-/// Discovers existing size and inline-test debt for CLI baseline initialization.
+/// Discovers existing measurable Rust debt for CLI baseline adoption.
 ///
 /// `config` identifies the newly rendered contract beneath `root`. The returned
 /// plan records exact tightening ratchets without relaxing class-wide hard
@@ -88,6 +88,30 @@ pub fn discover_baseline(root: &Path, config: &Path) -> Result<BaselinePlan, Che
                 target: file.relative.clone(),
                 reason: "Observed by `zrail init --baseline`; move tests to a sibling module.",
             });
+        }
+        for (rule, reason) in [
+            (
+                "rust.module-docs",
+                "Observed by zrail baseline; add a concise module responsibility statement.",
+            ),
+            (
+                "rust.hygiene.unsafe",
+                "Observed by zrail baseline; remove or isolate unsafe constructs.",
+            ),
+            (
+                "rust.hygiene.lint-suppressions",
+                "Observed by zrail baseline; remove or justify lint suppressions.",
+            ),
+        ] {
+            if crate::rules::count_ratchet::measurement(rule, file, &contract.source.rust)
+                .is_some_and(|value| value > 0)
+            {
+                plan.ratchets.push(BaselineRatchet {
+                    rule,
+                    target: file.relative.clone(),
+                    reason,
+                });
+            }
         }
     }
     plan.ratchets.sort();
