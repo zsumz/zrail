@@ -1,6 +1,8 @@
 //! Literal and verified `OUT_DIR` includes become exact source-graph edges.
 
-use crate::source::{IncludeBoundary, IncludeContext, SourceSyntax, join_relative, parent};
+use crate::source::{
+    IncludeBoundary, IncludeContext, SourceSyntax, SubmoduleBase, join_relative, parent,
+};
 
 use super::{TraversalContext, Walker};
 
@@ -35,7 +37,7 @@ impl Walker<'_> {
                 include.span,
                 path,
                 &format!("literal include {relative:?}"),
-                true,
+                SubmoduleBase::SourceParent,
                 syntax(include.context),
                 context,
             ),
@@ -77,7 +79,7 @@ impl Walker<'_> {
             include.span,
             target,
             &format!("OUT_DIR include {output:?}"),
-            true,
+            SubmoduleBase::SourceParent,
             syntax(include.context),
             context,
         );

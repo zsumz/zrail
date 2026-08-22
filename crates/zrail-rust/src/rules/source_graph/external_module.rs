@@ -1,6 +1,6 @@
 //! External module declarations become exact Rust source-graph edges.
 
-use crate::source::{ModuleDeclaration, ModuleTarget, SourceSyntax, module_target};
+use crate::source::{ModuleDeclaration, ModuleTarget, SourceSyntax, SubmoduleBase, module_target};
 
 use super::{TraversalContext, Walker};
 
@@ -8,34 +8,37 @@ impl Walker<'_> {
     pub(super) fn walk_module(
         &mut self,
         source: &str,
-        directory_owned: bool,
+        submodule_base: SubmoduleBase,
         context: &TraversalContext,
         declaration: &ModuleDeclaration,
     ) {
         let label = format!("module {:?}", declaration.name);
         let target_context = context.with_test_guard(declaration.cfg_test);
-        match module_target(source, directory_owned, declaration) {
+        match module_target(source, submodule_base, declaration) {
             Ok(ModuleTarget::Exact(path)) => self.follow(
                 source,
                 declaration.span,
                 path,
                 &label,
-                false,
+                SubmoduleBase::SourceParent,
                 SourceSyntax::Items,
                 target_context,
             ),
             Ok(ModuleTarget::Search { direct, nested }) => {
-                let candidates = [direct, nested]
-                    .into_iter()
-                    .filter(|path| self.entries.contains_key(path.as_str()))
-                    .collect::<Vec<_>>();
+                let candidates = [
+                    (direct, SubmoduleBase::FileStemDirectory),
+                    (nested, SubmoduleBase::SourceParent),
+                ]
+                .into_iter()
+                .filter(|(path, _)| self.entries.contains_key(path.as_str()))
+                .collect::<Vec<_>>();
                 match candidates.as_slice() {
-                    [path] => self.follow(
+                    [(path, submodule_base)] => self.follow(
                         source,
                         declaration.span,
-                        (*path).clone(),
+                        path.clone(),
                         &label,
-                        false,
+                        *submodule_base,
                         SourceSyntax::Items,
                         target_context,
                     ),

@@ -1,0 +1,27 @@
+schema = 1
+adapters = ["rust"]
+
+[repository]
+roots = ["."]
+exclude = []
+workspace_members = "exact"
+nested_git = "deny"
+submodules = "deny"
+symlinks = "inside"
+
+[dependencies]
+mode = "observed"
+unassigned_packages = "allow"
+cycles = "deny"
+
+[source.rust]
+module_docs = "allow"
+facades = "allow"
+entrypoints = "allow"
+tests = "allow"
+
+[source.rust.hygiene]
+unsafe = "deny"
+lint_suppressions = "deny"
+deny_methods = []
+deny_macros = []

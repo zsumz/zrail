@@ -11,7 +11,9 @@ use zrail_core::{Contract, Finding, FindingSink};
 use crate::{
     cargo::{CargoTargetKind, CargoWorkspace},
     inventory::{RepositoryEntryKind, RepositoryInventory},
-    source::{Reachability, RustFileFacts, SourceIndex, SourceSyntax, join_relative},
+    source::{
+        Reachability, RustFileFacts, SourceIndex, SourceSyntax, SubmoduleBase, join_relative,
+    },
 };
 
 pub(crate) fn analyze(
@@ -60,8 +62,8 @@ struct Walker<'a> {
     seen_item_macros: BTreeSet<(String, String)>,
     seen_out_dir: BTreeSet<(String, String)>,
     reported: BTreeSet<(String, String)>,
-    visited: BTreeSet<(String, bool, TraversalContext)>,
-    queue: VecDeque<(String, bool, TraversalContext)>,
+    visited: BTreeSet<(String, SubmoduleBase, TraversalContext)>,
+    queue: VecDeque<(String, SubmoduleBase, TraversalContext)>,
 }
 
 impl<'a> Walker<'a> {
@@ -98,8 +100,8 @@ impl<'a> Walker<'a> {
 
     fn run(mut self) -> SourceGraphAnalysis {
         self.seed_cargo_targets();
-        while let Some((path, directory_owned, context)) = self.queue.pop_front() {
-            self.walk_file(&path, directory_owned, &context);
+        while let Some((path, submodule_base, context)) = self.queue.pop_front() {
+            self.walk_file(&path, submodule_base, &context);
         }
         self.reject_orphans();
         self.reject_stale_item_macros();
@@ -129,7 +131,7 @@ impl<'a> Walker<'a> {
                         None,
                         path,
                         &format!("Cargo target {:?}", target.path),
-                        true,
+                        SubmoduleBase::SourceParent,
                         SourceSyntax::Items,
                         TraversalContext {
                             reachability,
@@ -147,7 +149,7 @@ impl<'a> Walker<'a> {
         }
     }
 
-    fn walk_file(&mut self, path: &str, directory_owned: bool, context: &TraversalContext) {
+    fn walk_file(&mut self, path: &str, submodule_base: SubmoduleBase, context: &TraversalContext) {
         let Some(file) = self.facts.get(path) else {
             return;
         };
@@ -170,7 +172,7 @@ impl<'a> Walker<'a> {
             }
         }
         for declaration in modules {
-            self.walk_module(path, directory_owned, context, &declaration);
+            self.walk_module(path, submodule_base, context, &declaration);
         }
         for include in includes {
             self.walk_include(path, context, &include);

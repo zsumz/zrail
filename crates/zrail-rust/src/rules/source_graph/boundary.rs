@@ -4,7 +4,7 @@ use zrail_core::{AnalysisQuality, Finding, SourceSpan, glob_matches};
 
 use crate::{
     inventory::{FileClass, RepositoryEntryKind},
-    source::{ResolutionError, SourceSyntax},
+    source::{ResolutionError, SourceSyntax, SubmoduleBase},
 };
 
 use super::{TraversalContext, Walker};
@@ -16,7 +16,7 @@ impl Walker<'_> {
         span: Option<SourceSpan>,
         target: String,
         label: &str,
-        directory_owned: bool,
+        submodule_base: SubmoduleBase,
         expected_syntax: SourceSyntax,
         context: TraversalContext,
     ) {
@@ -76,7 +76,7 @@ impl Walker<'_> {
                     );
                     return;
                 }
-                let state = (target, directory_owned, context);
+                let state = (target, submodule_base, context);
                 if !self.visited.insert(state.clone()) {
                     return;
                 }

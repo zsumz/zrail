@@ -33,4 +33,6 @@ pub(crate) use model::{
     ModuleDeclaration, ObservedFact, Reachability, RustFileFacts, SourceIndex, SourceSyntax,
 };
 pub(crate) use parse::index_rust_source;
-pub(crate) use paths::{ModuleTarget, ResolutionError, join_relative, module_target, parent};
+pub(crate) use paths::{
+    ModuleTarget, ResolutionError, SubmoduleBase, join_relative, module_target, parent,
+};

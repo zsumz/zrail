@@ -2,7 +2,7 @@
 
 use std::collections::BTreeSet;
 
-use crate::source::ModuleDeclaration;
+use crate::source::{ModuleDeclaration, SubmoduleBase};
 
 use super::resolved_module_target;
 
@@ -12,11 +12,22 @@ fn parent_module_declarations_reach_sibling_tests() {
     let declaration = declaration("worker_test", None);
 
     assert_eq!(
-        resolved_module_target("src/lib.rs", true, &declaration, &files).as_deref(),
+        resolved_module_target(
+            "src/lib.rs",
+            SubmoduleBase::SourceParent,
+            &declaration,
+            &files,
+        )
+        .as_deref(),
         Some("src/worker_test.rs")
     );
     assert_eq!(
-        resolved_module_target("src/worker.rs", false, &declaration, &files),
+        resolved_module_target(
+            "src/worker.rs",
+            SubmoduleBase::FileStemDirectory,
+            &declaration,
+            &files,
+        ),
         None
     );
 }
@@ -27,7 +38,13 @@ fn exact_path_can_link_a_test_from_its_implementation_file() {
     let declaration = declaration("tests", Some("worker_test.rs"));
 
     assert_eq!(
-        resolved_module_target("src/worker.rs", false, &declaration, &files).as_deref(),
+        resolved_module_target(
+            "src/worker.rs",
+            SubmoduleBase::FileStemDirectory,
+            &declaration,
+            &files,
+        )
+        .as_deref(),
         Some("src/worker_test.rs")
     );
 }

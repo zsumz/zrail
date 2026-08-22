@@ -2,21 +2,29 @@
 
 use zrail_core::SourceSpan;
 
-use super::{ModuleTarget, join_relative, module_target};
+use super::{ModuleTarget, SubmoduleBase, join_relative, module_target};
 use crate::source::model::{InlineModulePath, ModuleDeclaration};
 
 #[test]
 fn module_paths_follow_rust_file_layout_rules() {
     let direct = declaration("worker");
     assert_eq!(
-        module_target("crates/demo/src/lib.rs", true, &direct),
+        module_target(
+            "crates/demo/src/lib.rs",
+            SubmoduleBase::SourceParent,
+            &direct,
+        ),
         Ok(ModuleTarget::Search {
             direct: "crates/demo/src/worker.rs".into(),
             nested: "crates/demo/src/worker/mod.rs".into(),
         })
     );
     assert_eq!(
-        module_target("crates/demo/src/worker.rs", false, &declaration("nested")),
+        module_target(
+            "crates/demo/src/worker.rs",
+            SubmoduleBase::FileStemDirectory,
+            &declaration("nested"),
+        ),
         Ok(ModuleTarget::Search {
             direct: "crates/demo/src/worker/nested.rs".into(),
             nested: "crates/demo/src/worker/nested/mod.rs".into(),
@@ -29,7 +37,11 @@ fn path_attributes_resolve_at_their_rust_defined_bases() {
     let mut renamed = declaration("worker");
     renamed.path = Some("alternate.rs".into());
     assert_eq!(
-        module_target("crates/demo/src/lib.rs", true, &renamed),
+        module_target(
+            "crates/demo/src/lib.rs",
+            SubmoduleBase::SourceParent,
+            &renamed,
+        ),
         Ok(ModuleTarget::Exact("crates/demo/src/alternate.rs".into()))
     );
     renamed.inline_ancestors.push(InlineModulePath {
@@ -38,7 +50,11 @@ fn path_attributes_resolve_at_their_rust_defined_bases() {
         unresolved_path: false,
     });
     assert_eq!(
-        module_target("crates/demo/src/host.rs", false, &renamed),
+        module_target(
+            "crates/demo/src/host.rs",
+            SubmoduleBase::FileStemDirectory,
+            &renamed,
+        ),
         Ok(ModuleTarget::Exact(
             "crates/demo/src/host/platform/alternate.rs".into()
         ))
@@ -55,7 +71,11 @@ fn inline_path_attributes_replace_the_first_logical_component() {
         unresolved_path: false,
     });
     assert_eq!(
-        module_target("crates/demo/src/host.rs", false, &declaration),
+        module_target(
+            "crates/demo/src/host.rs",
+            SubmoduleBase::FileStemDirectory,
+            &declaration,
+        ),
         Ok(ModuleTarget::Exact(
             "crates/demo/src/thread_files/local.rs".into()
         ))
@@ -65,17 +85,51 @@ fn inline_path_attributes_replace_the_first_logical_component() {
 #[test]
 fn cargo_roots_are_mod_rs_regardless_of_their_file_name() {
     assert_eq!(
-        module_target("crates/demo/src/custom.rs", true, &declaration("nested")),
+        module_target(
+            "crates/demo/src/custom.rs",
+            SubmoduleBase::SourceParent,
+            &declaration("nested"),
+        ),
         Ok(ModuleTarget::Search {
             direct: "crates/demo/src/nested.rs".into(),
             nested: "crates/demo/src/nested/mod.rs".into(),
         })
     );
     assert_eq!(
-        module_target("crates/demo/src/lib.rs", false, &declaration("nested")),
+        module_target(
+            "crates/demo/src/lib.rs",
+            SubmoduleBase::FileStemDirectory,
+            &declaration("nested"),
+        ),
         Ok(ModuleTarget::Search {
             direct: "crates/demo/src/lib/nested.rs".into(),
             nested: "crates/demo/src/lib/nested/mod.rs".into(),
+        })
+    );
+}
+
+#[test]
+fn exact_path_modules_give_children_the_loaded_sources_parent() {
+    assert_eq!(
+        module_target(
+            "crates/demo/src/proxy.rs",
+            SubmoduleBase::SourceParent,
+            &declaration("child"),
+        ),
+        Ok(ModuleTarget::Search {
+            direct: "crates/demo/src/child.rs".into(),
+            nested: "crates/demo/src/child/mod.rs".into(),
+        })
+    );
+    assert_eq!(
+        module_target(
+            "crates/demo/src/alt/proxy.rs",
+            SubmoduleBase::SourceParent,
+            &declaration("child"),
+        ),
+        Ok(ModuleTarget::Search {
+            direct: "crates/demo/src/alt/child.rs".into(),
+            nested: "crates/demo/src/alt/child/mod.rs".into(),
         })
     );
 }

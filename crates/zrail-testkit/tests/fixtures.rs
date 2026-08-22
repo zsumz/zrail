@@ -30,9 +30,11 @@ fn verified_generated_fragments_pass() {
 }
 
 #[test]
-fn exact_rust_source_graph_passes() {
-    let report = check("source_graph_good");
-    assert_eq!(report.status, ReportStatus::Pass, "{}", report.human());
+fn exact_rust_source_graphs_pass() {
+    for fixture in ["source_graph_good", "path_loaded_module"] {
+        let report = check(fixture);
+        assert_eq!(report.status, ReportStatus::Pass, "{}", report.human());
+    }
 }
 
 #[test]

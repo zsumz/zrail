@@ -10,6 +10,12 @@ pub(crate) enum ModuleTarget {
     Search { direct: String, nested: String },
 }
 
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) enum SubmoduleBase {
+    SourceParent,
+    FileStemDirectory,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) enum ResolutionError {
     Escape(String),
@@ -53,7 +59,7 @@ pub(crate) fn join_relative(base: &str, relative: &str) -> Result<String, Resolu
 
 pub(crate) fn module_target(
     source: &str,
-    directory_owned: bool,
+    submodule_base: SubmoduleBase,
     declaration: &ModuleDeclaration,
 ) -> Result<ModuleTarget, ResolutionError> {
     if declaration.unresolved_path {
@@ -67,14 +73,14 @@ pub(crate) fn module_target(
         return declaration.path.as_deref().map_or_else(
             || {
                 search_target(
-                    &module_directory(source, directory_owned)?,
+                    &module_directory(source, submodule_base)?,
                     &declaration.name,
                 )
             },
             |path| join_relative(&source_parent, path).map(ModuleTarget::Exact),
         );
     }
-    let mut base = module_directory(source, directory_owned)?;
+    let mut base = module_directory(source, submodule_base)?;
     for (index, ancestor) in declaration.inline_ancestors.iter().enumerate() {
         if ancestor.unresolved_path {
             return Err(ResolutionError::Unresolved(format!(
@@ -102,25 +108,25 @@ pub(crate) fn parent(path: &str) -> String {
         .map_or_else(|| ".".to_owned(), |parent| parent.to_string_lossy().into())
 }
 
-fn module_directory(source: &str, directory_owned: bool) -> Result<String, ResolutionError> {
+fn module_directory(
+    source: &str,
+    submodule_base: SubmoduleBase,
+) -> Result<String, ResolutionError> {
     let path = Path::new(source);
     let parent = parent(source);
-    let file_name = path
-        .file_name()
-        .and_then(|name| name.to_str())
-        .unwrap_or("");
-    if directory_owned || file_name == "mod.rs" {
-        Ok(parent)
-    } else {
-        let stem = path
-            .file_stem()
-            .and_then(|stem| stem.to_str())
-            .ok_or_else(|| {
-                ResolutionError::Unresolved(format!(
-                    "Rust source has no UTF-8 file stem: {source:?}"
-                ))
-            })?;
-        join_relative(&parent, stem)
+    match submodule_base {
+        SubmoduleBase::SourceParent => Ok(parent),
+        SubmoduleBase::FileStemDirectory => {
+            let stem = path
+                .file_stem()
+                .and_then(|stem| stem.to_str())
+                .ok_or_else(|| {
+                    ResolutionError::Unresolved(format!(
+                        "Rust source has no UTF-8 file stem: {source:?}"
+                    ))
+                })?;
+            join_relative(&parent, stem)
+        }
     }
 }
 

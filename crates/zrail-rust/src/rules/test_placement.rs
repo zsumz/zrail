@@ -10,7 +10,8 @@ use std::{
 use zrail_core::{Finding, FindingSink, TestMode};
 
 use crate::source::{
-    ModuleDeclaration, ModuleTarget, Reachability, RustFileFacts, join_relative, module_target,
+    ModuleDeclaration, ModuleTarget, Reachability, RustFileFacts, SubmoduleBase, join_relative,
+    module_target,
 };
 
 use super::RuleContext;
@@ -47,11 +48,15 @@ fn check_declarations(context: &RuleContext<'_>, findings: &mut FindingSink) {
         .iter()
         .flat_map(|source| {
             let file_paths = &file_paths;
-            let directory_owned = crate_roots.contains(&source.relative) || is_mod_rs(source);
+            let submodule_base = if crate_roots.contains(&source.relative) || is_mod_rs(source) {
+                SubmoduleBase::SourceParent
+            } else {
+                SubmoduleBase::FileStemDirectory
+            };
             source.modules.iter().map(move |declaration| {
                 let target = resolved_module_target(
                     &source.relative,
-                    directory_owned,
+                    submodule_base,
                     declaration,
                     file_paths,
                 );
@@ -130,11 +135,11 @@ fn check_declarations(context: &RuleContext<'_>, findings: &mut FindingSink) {
 
 fn resolved_module_target(
     source: &str,
-    directory_owned: bool,
+    submodule_base: SubmoduleBase,
     declaration: &ModuleDeclaration,
     files: &BTreeSet<&str>,
 ) -> Option<String> {
-    match module_target(source, directory_owned, declaration).ok()? {
+    match module_target(source, submodule_base, declaration).ok()? {
         ModuleTarget::Exact(path) => files.contains(path.as_str()).then_some(path),
         ModuleTarget::Search { direct, nested } => {
             match (
