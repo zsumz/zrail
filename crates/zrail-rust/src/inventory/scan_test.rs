@@ -57,6 +57,29 @@ fn repository_root_and_manifest_names_are_exact() {
 }
 
 #[test]
+fn manifest_discovery_stays_inside_declared_roots() {
+    let root = fixture_root("manifest-roots");
+    reset(&root);
+    fs::create_dir_all(root.join("crates/active")).expect("create active package");
+    fs::create_dir_all(root.join("reference/example")).expect("create reference package");
+    fs::write(
+        root.join("crates/active/Cargo.toml"),
+        "[package]\nname = 'active'\n",
+    )
+    .expect("write active manifest");
+    fs::write(root.join("reference/example/Cargo.toml"), "not valid TOML")
+        .expect("write unrelated manifest");
+
+    let inventory = inventory_repository(&root, &contract()).expect("inventory fixture");
+
+    assert_eq!(
+        inventory.manifest_paths,
+        [inventory.root.join("crates/active/Cargo.toml")]
+    );
+    reset(&root);
+}
+
+#[test]
 fn inventory_rejects_oversized_rust_source() {
     let root = fixture_root("inventory-oversized");
     if root.exists() {

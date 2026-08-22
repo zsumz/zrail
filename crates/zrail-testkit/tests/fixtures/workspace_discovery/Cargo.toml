@@ -1,0 +1,4 @@
+[workspace]
+members = ["crates/app"]
+exclude = ["reference/*"]
+resolver = "3"

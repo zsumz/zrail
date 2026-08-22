@@ -1,0 +1,6 @@
+[workspace]
+members = ["member"]
+resolver = "3"
+
+[workspace.dependencies]
+missing-from-root = { path = "shared" }

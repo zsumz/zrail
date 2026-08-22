@@ -11,6 +11,7 @@ mod target_explicit;
 mod target_fields;
 mod targets;
 mod workspace;
+mod workspace_plan;
 
 pub(crate) use crate_roots::{apply_attestations, attestation_matches, source_matches};
 pub(crate) use model::{

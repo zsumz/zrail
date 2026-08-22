@@ -1,5 +1,7 @@
 //! Normalized Cargo packages and dependency edges.
 
+use std::collections::BTreeMap;
+
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum DependencyKind {
     Normal,
@@ -126,6 +128,31 @@ pub(crate) struct CargoWorkspace {
     pub(crate) observed_members: Vec<String>,
     pub(crate) packages: Vec<Package>,
     pub(crate) authority_surfaces: Vec<CargoAuthoritySurface>,
+    pub(crate) manifest_scopes: BTreeMap<String, ManifestScope>,
+}
+
+impl CargoWorkspace {
+    pub(crate) fn source_is_active(&self, path: &str) -> bool {
+        self.manifest_scopes
+            .iter()
+            .filter(|(directory, _)| contains_path(directory, path))
+            .max_by_key(|(directory, _)| directory_depth(directory))
+            .is_none_or(|(_, scope)| *scope == ManifestScope::Active)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ManifestScope {
+    Active,
+    Ignored,
+}
+
+fn directory_depth(directory: &str) -> usize {
+    usize::from(directory != ".") + directory.matches('/').count()
+}
+
+fn contains_path(directory: &str, path: &str) -> bool {
+    directory == "." || path == directory || path.starts_with(&format!("{directory}/"))
 }
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]

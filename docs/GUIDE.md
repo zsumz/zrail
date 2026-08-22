@@ -189,6 +189,12 @@ attributed exactly without compiler expansion.
 Contract parsing is strict. Unknown keys, stale policy, unresolved source
 boundaries, missing evidence, and unreviewed lock changes fail closed.
 
+Cargo package and source analysis follows the active root workspace. Declared
+members and in-repository path dependencies are included; unrelated or excluded
+nested workspaces remain separate repository boundaries. An active path
+dependency that crosses into a nested workspace fails explicitly because zrail
+does not guess across multiple workspace inheritance roots.
+
 Repository-controlled Cargo source overrides and registry mappings are rejected
 until zrail can attest their effective resolution. Root `.cargo/config` and
 `.cargo/config.toml` are rejected because Cargo can use them to alter dependency

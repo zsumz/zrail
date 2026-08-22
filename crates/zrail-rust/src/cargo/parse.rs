@@ -9,14 +9,14 @@ use crate::inventory::RepositoryInventory;
 
 use super::{
     dependencies::{collect_dependencies, workspace_dependencies},
-    model::{CargoWorkspace, Package},
+    model::{CargoWorkspace, ManifestScope, Package},
     overrides,
     targets::collect_target_roots,
     workspace::{
         excluded_member, expand_implicit_members, expand_members, normalized_directory,
-        resolve_workspace_dependencies, workspace_excludes, workspace_members,
-        workspace_package_edition,
+        resolve_workspace_dependencies, workspace_package_edition,
     },
+    workspace_plan,
 };
 
 const MAX_TOTAL_MANIFEST_BYTES: usize = 64 * 1024 * 1024;
@@ -40,39 +40,41 @@ pub(crate) fn load_cargo_workspace(
     let root = read_manifest_counted(&root_manifest, &mut manifest_bytes)?;
     let workspace_dependencies = workspace_dependencies(&root).map_err(CargoModelError)?;
     let workspace_edition = workspace_package_edition(&root)?;
-    let member_patterns = workspace_members(&root)?;
-    let exclude_patterns = workspace_excludes(&root)?;
     let root_package = package_name(&root)?.is_some();
     if !root_package && root.get("workspace").is_none() {
         return Err(CargoModelError(
             "root Cargo.toml requires a [package] or [workspace] table".into(),
         ));
     }
+    let plan = workspace_plan::build(
+        inventory,
+        &root_manifest,
+        root,
+        &workspace_dependencies,
+        root_package,
+        &mut manifest_bytes,
+    )?;
     let mut packages = Vec::new();
     let mut authority_surfaces = Vec::new();
-    for manifest in &inventory.manifest_paths {
-        let value = if manifest == &root_manifest {
-            root.clone()
-        } else {
-            read_manifest_counted(manifest, &mut manifest_bytes)?
-        };
+    for manifest in &plan.selected_manifests {
+        let value = plan.value(manifest)?;
         let directory = normalized_directory(&inventory.root, manifest)?;
         let manifest_path = if directory == "." {
             "Cargo.toml".into()
         } else {
             format!("{directory}/Cargo.toml")
         };
-        overrides::manifest(&value, &manifest_path, &mut authority_surfaces);
-        let Some(name) = package_name(&value)? else {
+        overrides::manifest(value, &manifest_path, &mut authority_surfaces);
+        let Some(name) = package_name(value)? else {
             continue;
         };
         packages.push(Package {
             name,
-            dependencies: collect_dependencies(&value, &workspace_dependencies, &directory)
+            dependencies: collect_dependencies(value, &workspace_dependencies, &directory)
                 .map_err(CargoModelError)?,
             directory,
             targets: collect_target_roots(
-                &value,
+                value,
                 manifest.parent().unwrap_or(&inventory.root),
                 workspace_edition.as_deref(),
             )
@@ -84,13 +86,14 @@ pub(crate) fn load_cargo_workspace(
     let mut observed_members = packages
         .iter()
         .filter(|package| {
-            package.directory == "." || !excluded_member(&package.directory, &exclude_patterns)
+            package.directory == "." || !excluded_member(&package.directory, &plan.exclude_patterns)
         })
         .map(|package| package.directory.clone())
         .collect::<Vec<_>>();
     observed_members.sort();
-    let declared_members = expand_members(&member_patterns, &observed_members, root_package)?;
-    let declared_members = expand_implicit_members(declared_members, &packages, &exclude_patterns)?;
+    let declared_members = expand_members(&plan.member_patterns, &observed_members, root_package)?;
+    let declared_members =
+        expand_implicit_members(declared_members, &packages, &plan.exclude_patterns)?;
     resolve_workspace_dependencies(&mut packages, &declared_members)?;
     authority_surfaces.extend(overrides::named_registries(&packages));
     authority_surfaces.extend(overrides::configuration(inventory));
@@ -101,10 +104,24 @@ pub(crate) fn load_cargo_workspace(
         observed_members,
         packages,
         authority_surfaces,
+        manifest_scopes: plan
+            .selected_manifests
+            .iter()
+            .map(|manifest| normalized_directory(&inventory.root, manifest))
+            .map(|directory| directory.map(|directory| (directory, ManifestScope::Active)))
+            .chain(
+                plan.ignored_boundaries
+                    .into_iter()
+                    .map(|directory| Ok((directory, ManifestScope::Ignored))),
+            )
+            .collect::<Result<_, _>>()?,
     })
 }
 
-fn read_manifest_counted(path: &Path, total: &mut usize) -> Result<Value, CargoModelError> {
+pub(super) fn read_manifest_counted(
+    path: &Path,
+    total: &mut usize,
+) -> Result<Value, CargoModelError> {
     let source = read_text(path).map_err(CargoModelError)?;
     *total = total
         .checked_add(source.len())
@@ -119,7 +136,7 @@ fn read_manifest_counted(path: &Path, total: &mut usize) -> Result<Value, CargoM
         .map_err(|error| CargoModelError(format!("parse {}: {error}", path.display())))
 }
 
-fn package_name(value: &Value) -> Result<Option<String>, CargoModelError> {
+pub(super) fn package_name(value: &Value) -> Result<Option<String>, CargoModelError> {
     let Some(package) = value.get("package") else {
         return Ok(None);
     };

@@ -120,6 +120,7 @@ fn cargo_manifests(
         let excluded = contract.is_some_and(|contract| excluded(contract, &entry.relative));
         if entry.kind != RepositoryEntryKind::File
             || excluded
+            || contract.is_some_and(|contract| !under_roots(contract, &entry.relative))
             || Path::new(&entry.relative)
                 .file_name()
                 .is_none_or(|name| name != "Cargo.toml")

@@ -90,6 +90,40 @@ fn virtual_workspace_discovers_custom_package_directories() {
 }
 
 #[test]
+fn initialization_discovers_only_active_workspace_roots() {
+    let root = fixture_root("active-workspace");
+    reset(&root);
+    fs::create_dir_all(&root).expect("create root");
+    fs::write(
+        root.join("Cargo.toml"),
+        "[workspace]\nmembers = ['crates/app']\nexclude = ['reference/*']\nresolver = '3'\n",
+    )
+    .expect("write workspace");
+    write_package(&root.join("crates/app"), "app");
+    fs::create_dir_all(root.join("reference/example/member/src"))
+        .expect("create reference workspace");
+    fs::write(
+        root.join("reference/example/Cargo.toml"),
+        "[workspace]\nmembers = ['member']\n[workspace.dependencies]\nlocal = { path = 'shared' }\n",
+    )
+    .expect("write reference workspace");
+    fs::write(
+        root.join("reference/example/member/Cargo.toml"),
+        "[package]\nname = 'reference'\nversion = '0.0.0'\n[dependencies]\nlocal.workspace = true\n",
+    )
+    .expect("write reference member");
+
+    let result = initialize(&root).expect("initialize active workspace");
+    let contract = fs::read_to_string(root.join("zrail.toml")).expect("read contract");
+
+    assert_eq!(result.exit_code, 0);
+    assert!(contract.contains("roots = [\"crates/app\"]"));
+    assert!(!contract.contains("reference/example"));
+    assert_ready(&root);
+    reset(&root);
+}
+
+#[test]
 fn strict_test_placement_refuses_inline_test_debt_without_partial_state() {
     let root = fixture_root("inline-tests");
     reset(&root);

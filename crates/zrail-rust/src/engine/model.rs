@@ -24,11 +24,14 @@ pub(crate) struct RepositoryModel {
 pub(crate) fn load_model(root: &Path, config: &Path) -> Result<RepositoryModel, CheckError> {
     let bundle =
         load_contract(root, config).map_err(|error| CheckError::from_message(error.to_string()))?;
-    let inventory = inventory_repository(root, &bundle.contract)
+    let mut inventory = inventory_repository(root, &bundle.contract)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     let mut cargo = load_cargo_workspace(&inventory)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     apply_attestations(&mut cargo, &bundle.contract.dependencies.crate_roots);
+    inventory
+        .rust_files
+        .retain(|file| cargo.source_is_active(&file.relative));
     let mut source = index_rust_source(&inventory);
     let graph = source_graph::analyze(&bundle.contract, &inventory, &cargo, &source);
     canonicalize_dependency_roots(&mut source, &cargo, &graph.packages);
