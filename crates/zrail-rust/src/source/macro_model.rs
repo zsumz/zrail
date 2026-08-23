@@ -87,6 +87,7 @@ pub(crate) struct MacroExpansionFact {
     pub(crate) observation: ObservedFact,
     /// Every statically feasible policy identity for this one invocation.
     pub(crate) candidates: Vec<MacroCandidate>,
+    builtin_derive_syntax: bool,
 }
 
 impl MacroExpansionFact {
@@ -101,6 +102,7 @@ impl MacroExpansionFact {
         Self {
             observation,
             candidates: vec![candidate],
+            builtin_derive_syntax: false,
         }
     }
 
@@ -109,6 +111,7 @@ impl MacroExpansionFact {
         Self {
             observation,
             candidates: vec![candidate],
+            builtin_derive_syntax: false,
         }
     }
 
@@ -122,6 +125,7 @@ impl MacroExpansionFact {
         Self {
             observation,
             candidates: vec![candidate],
+            builtin_derive_syntax: true,
         }
     }
 
@@ -145,7 +149,16 @@ impl MacroExpansionFact {
         Self {
             observation,
             candidates,
+            builtin_derive_syntax: false,
         }
+    }
+
+    pub(crate) fn mark_builtin_derive_syntax(&mut self) {
+        self.builtin_derive_syntax = true;
+    }
+
+    pub(crate) const fn has_builtin_derive_syntax(&self) -> bool {
+        self.builtin_derive_syntax
     }
 
     pub(crate) fn refresh_quality(&mut self) {

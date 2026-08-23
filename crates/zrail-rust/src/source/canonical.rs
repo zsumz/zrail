@@ -7,7 +7,7 @@ use zrail_core::{AnalysisQuality, Finding};
 use crate::cargo::{CargoWorkspace, CrateRootAuthority, Package, rust_crate_root};
 
 use super::{
-    ObservedFact, ResolvedModuleEdge, SourceIndex,
+    MacroOrigin, ObservedFact, ResolvedModuleEdge, SourceIndex,
     macro_definitions::{local_macro_names, package_macro_definitions},
 };
 
@@ -64,9 +64,12 @@ pub(crate) fn canonicalize(
                     .map(|effect| &mut effect.invocation),
             )
         {
+            let builtin_derive_syntax = expansion.has_builtin_derive_syntax();
             for candidate in &mut expansion.candidates {
                 let observed = &mut candidate.observation;
-                if !observed.name.contains("::")
+                if !builtin_derive_syntax
+                    && !matches!(candidate.origins.as_slice(), [MacroOrigin::CompilerBuiltin])
+                    && !observed.name.contains("::")
                     && local_macros
                         .as_ref()
                         .is_none_or(|names| names.contains(observed.name.as_str()))

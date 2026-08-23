@@ -14,6 +14,7 @@ mod import_projection;
 mod imports;
 mod imports_collect;
 mod includes;
+mod macro_builtin;
 mod macro_definitions;
 mod macro_expansion;
 mod macro_inputs;

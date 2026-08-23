@@ -15,6 +15,7 @@ pub(super) fn resolve(expansion: &mut MacroExpansionFact, packages: &[&Package])
         resolve_candidate(candidate, packages);
     }
     expansion.refresh_quality();
+    super::macro_builtin::normalize_derive(expansion);
 }
 
 fn resolve_candidate(candidate: &mut MacroCandidate, packages: &[&Package]) {

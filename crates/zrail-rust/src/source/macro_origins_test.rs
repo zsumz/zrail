@@ -4,7 +4,7 @@ use zrail_core::AnalysisQuality;
 
 use crate::cargo::{CrateRootAuthority, Dependency, DependencyKind, DependencySource, Package};
 
-use super::{MacroExpansionFact, MacroOrigin, resolve};
+use super::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin, resolve};
 use crate::source::ObservedFact;
 
 #[test]
@@ -20,6 +20,29 @@ fn module_qualified_macro_is_repository_owned() {
             package: "app".into(),
             directory: ".".into(),
         }]
+    );
+}
+
+#[test]
+fn resolved_compiler_derive_uses_its_written_builtin_identity() {
+    let observation = observed("Debug");
+    let mut expansion = MacroExpansionFact::with_candidates(
+        observation,
+        vec![MacroCandidate::pending(
+            observed("std::fmt::Debug"),
+            false,
+            MacroDerivation::ExactImport,
+        )],
+    );
+    expansion.mark_builtin_derive_syntax();
+
+    resolve(&mut expansion, &[]);
+
+    assert_eq!(expansion.candidates.len(), 1);
+    assert_eq!(expansion.candidates[0].observation.name, "Debug");
+    assert_eq!(
+        expansion.candidates[0].origins,
+        [MacroOrigin::CompilerBuiltin]
     );
 }
 
@@ -136,16 +159,17 @@ fn local_standard_name_shadow_remains_unresolved() {
 }
 
 fn pending(name: &str, local_module: bool) -> MacroExpansionFact {
-    MacroExpansionFact::pending(
-        ObservedFact {
-            name: name.into(),
-            canonical: Vec::new(),
-            span: None,
-            quality: AnalysisQuality::Exact,
-            guard: crate::source::SyntaxGuard::Ordinary,
-        },
-        local_module,
-    )
+    MacroExpansionFact::pending(observed(name), local_module)
+}
+
+fn observed(name: &str) -> ObservedFact {
+    ObservedFact {
+        name: name.into(),
+        canonical: Vec::new(),
+        span: None,
+        quality: AnalysisQuality::Exact,
+        guard: crate::source::SyntaxGuard::Ordinary,
+    }
 }
 
 fn package(dependencies: Vec<Dependency>) -> Package {

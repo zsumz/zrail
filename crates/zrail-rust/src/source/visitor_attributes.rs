@@ -60,7 +60,7 @@ impl FactVisitor<'_> {
         match super::macro_expansion::attribute_paths(attribute) {
             Ok(expansions) => {
                 for expansion in expansions {
-                    let (resolved, _, _, local_module) = self.resolve_macro_path(&expansion.path);
+                    let (resolved, quality, _, _) = self.resolve_macro_path(&expansion.path);
                     let observed = fact(
                         expansion
                             .path
@@ -74,9 +74,14 @@ impl FactVisitor<'_> {
                     );
                     let compiler_derive = expansion.kind
                         == super::macro_expansion::ExpansionKind::Derive
-                        && !local_module
+                        && quality == AnalysisQuality::Exact
                         && super::macro_expansion::is_compiler_derive(&expansion.path, &resolved);
                     let mut invocation = self.macro_invocation(&expansion.path);
+                    if expansion.kind == super::macro_expansion::ExpansionKind::Derive
+                        && super::macro_expansion::is_builtin_derive(&expansion.path)
+                    {
+                        invocation.mark_builtin_derive_syntax();
+                    }
                     if compiler_derive {
                         invocation.observation = observed;
                         invocation.bind_compiler_candidate(&resolved);
