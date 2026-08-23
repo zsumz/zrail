@@ -107,6 +107,42 @@ fn observed_facts_retain_test_only_syntax_guards() {
     assert_eq!(compile.invocation.guard, SyntaxGuard::TestOnly);
 }
 
+#[test]
+fn statement_macro_inputs_retain_outer_test_only_guard() {
+    let syntax = syn::parse_file(
+        r#"
+        pub fn run() {
+            #[cfg(test)]
+            assert!(std::process::Command::new("true").status().is_ok());
+        }
+        "#,
+    )
+    .expect("parse guarded statement macro");
+    let imports = ImportMap::from_file(&syntax);
+    let mut visitor = FactVisitor::new(&imports);
+    visitor.visit_file(&syntax);
+
+    let path = visitor
+        .paths
+        .iter()
+        .find(|fact| fact.name == "std::process::Command::new")
+        .expect("inspected process path");
+    let call = visitor
+        .calls
+        .iter()
+        .find(|fact| fact.name == "std::process::Command::new")
+        .expect("inspected process call");
+    let expansion = visitor
+        .macro_expansions
+        .iter()
+        .find(|expansion| expansion.name == "assert")
+        .expect("assert expansion");
+
+    assert_eq!(path.guard, SyntaxGuard::TestOnly);
+    assert_eq!(call.guard, SyntaxGuard::TestOnly);
+    assert_eq!(expansion.guard, SyntaxGuard::TestOnly);
+}
+
 fn includes(source: &str) -> BTreeMap<String, bool> {
     let syntax = syn::parse_file(source).expect("parse cfg context fixture");
     let imports = ImportMap::from_file(&syntax);

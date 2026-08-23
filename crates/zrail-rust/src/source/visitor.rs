@@ -137,8 +137,10 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_stmt_macro(&mut self, statement: &'ast StmtMacro) {
-        self.record_statement_macro(statement);
-        visit::visit_stmt_macro(self, statement);
+        self.with_cfg(&statement.attrs, |visitor| {
+            visitor.record_statement_macro(statement);
+            visit::visit_stmt_macro(visitor, statement);
+        });
     }
 
     fn visit_expr_unsafe(&mut self, expression: &'ast syn::ExprUnsafe) {
