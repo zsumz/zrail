@@ -6,9 +6,11 @@ use syn::{Item, Path, spanned::Spanned};
 use zrail_core::AnalysisQuality;
 
 use super::{
-    MacroCandidate, MacroDerivation, MacroExpansionFact, fact::fact, scoped_imports,
-    visitor::FactVisitor,
+    MacroCandidate, MacroDerivation, MacroExpansionFact, SyntaxGuard, fact::fact, scoped_globs,
+    scoped_imports, visitor::FactVisitor,
 };
+
+const MAX_MACRO_CANDIDATES: usize = 64;
 
 impl FactVisitor<'_> {
     pub(super) fn with_import_scope<'a>(
@@ -16,8 +18,11 @@ impl FactVisitor<'_> {
         items: impl Iterator<Item = &'a Item>,
         visit: impl FnOnce(&mut Self),
     ) {
-        let aliases = scoped_imports::collect(items, |path| self.resolve_text(path));
-        self.local_imports.push(aliases);
+        let items = items.collect::<Vec<_>>();
+        let aliases =
+            scoped_imports::collect(items.iter().copied(), |path| self.resolve_text(path));
+        let globs = scoped_globs::collect(items.iter().copied());
+        self.local_imports.push(LocalImportScope { aliases, globs });
         visit(self);
         self.local_imports.pop();
     }
@@ -66,9 +71,46 @@ impl FactVisitor<'_> {
             candidates.extend(imported.into_iter().map(|(observed, derivation)| {
                 MacroCandidate::pending(observed, false, derivation)
             }));
+            candidates.extend(self.local_macro_candidates(path, &resolved));
         }
+        candidates.sort_by(|left, right| left.observation.name.cmp(&right.observation.name));
         candidates.dedup_by(|left, right| left.observation.name == right.observation.name);
+        if candidates.len() > MAX_MACRO_CANDIDATES {
+            let unresolved = fact(&written_name, path.span(), AnalysisQuality::Unresolved);
+            return MacroExpansionFact::with_candidates(
+                unresolved.clone(),
+                vec![MacroCandidate::unresolved(
+                    unresolved,
+                    MacroDerivation::GlobImport,
+                )],
+            );
+        }
         MacroExpansionFact::with_candidates(fact(written_name, path.span(), quality), candidates)
+    }
+
+    fn local_macro_candidates(&self, path: &Path, resolved: &str) -> Vec<MacroCandidate> {
+        let written = path_text(path);
+        let mut candidates = BTreeMap::new();
+        for scope in &self.local_imports {
+            for (glob, guard) in &scope.globs {
+                if !guard.available_in(self.syntax_guard()) {
+                    continue;
+                }
+                let (resolved_glob, _, _, _, _) = self.resolve_text_scoped(glob);
+                let name = format!("{resolved_glob}::{written}");
+                if name != resolved {
+                    super::import_helpers::insert_guard(&mut candidates, name, *guard);
+                }
+            }
+        }
+        candidates
+            .into_iter()
+            .map(|(name, guard)| {
+                let mut observed = fact(name, path.span(), AnalysisQuality::Conservative);
+                observed.guard = guard;
+                MacroCandidate::pending(observed, false, MacroDerivation::GlobImport)
+            })
+            .collect()
     }
 
     fn resolve_text(&self, path: &str) -> scoped_imports::ScopedAlias {
@@ -87,7 +129,7 @@ impl FactVisitor<'_> {
     ) -> (String, AnalysisQuality, bool, bool, super::SyntaxGuard) {
         let (root, suffix) = split_root(path);
         for scope in self.local_imports.iter().rev() {
-            if let Some(alias) = scope.get(root) {
+            if let Some(alias) = scope.aliases.get(root) {
                 if !alias.guard.available_in(self.syntax_guard()) {
                     continue;
                 }
@@ -127,7 +169,13 @@ fn visible_root(path: &str) -> &str {
     root.strip_prefix("r#").unwrap_or(root)
 }
 
-pub(super) type LocalImportScopes = Vec<BTreeMap<String, scoped_imports::ScopedAlias>>;
+#[derive(Debug)]
+pub(super) struct LocalImportScope {
+    aliases: BTreeMap<String, scoped_imports::ScopedAlias>,
+    globs: BTreeMap<String, SyntaxGuard>,
+}
+
+pub(super) type LocalImportScopes = Vec<LocalImportScope>;
 
 fn split_root(path: &str) -> (&str, &str) {
     path.find("::").map_or((path, ""), |separator| {
@@ -142,3 +190,7 @@ fn path_text(path: &Path) -> String {
         .collect::<Vec<_>>()
         .join("::")
 }
+
+#[cfg(test)]
+#[path = "visitor_imports_test.rs"]
+mod visitor_imports_test;

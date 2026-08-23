@@ -28,6 +28,7 @@ mod modules;
 mod parse;
 mod parse_facade;
 mod paths;
+mod scoped_globs;
 mod scoped_imports;
 mod visitor;
 mod visitor_attributes;

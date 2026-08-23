@@ -76,7 +76,7 @@ impl MacroVisibility {
     fn start_nodes(&self, file: &str, root: Option<&str>) -> Option<Vec<String>> {
         match root {
             Some("self") => Some(vec![file.to_owned()]),
-            Some("super") => self.parent_nodes(file),
+            Some("super") => self.parent_nodes_or_inline(file),
             Some("crate") => self.root_nodes(file),
             Some(module) => self.child_nodes(&[file.to_owned()], module),
             None => None,
@@ -113,6 +113,19 @@ impl MacroVisibility {
             None
         } else {
             self.parents.get(file).cloned()
+        }
+    }
+
+    fn parent_nodes_or_inline(&self, file: &str) -> Option<Vec<String>> {
+        if self.parent_overflow.contains(file) {
+            None
+        } else {
+            Some(
+                self.parents
+                    .get(file)
+                    .cloned()
+                    .unwrap_or_else(|| vec![file.to_owned()]),
+            )
         }
     }
 
