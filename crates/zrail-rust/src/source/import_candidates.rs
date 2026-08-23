@@ -2,9 +2,14 @@
 
 use std::collections::BTreeMap;
 
-use syn::{Type, UseTree, visit::Visit as _};
+use syn::{Attribute, Type, UseTree, visit::Visit as _};
 
-use super::{SyntaxGuard, attributes::is_cfg_test, import_helpers::insert_guard};
+use super::{
+    SyntaxGuard,
+    attributes::is_cfg_test,
+    import_helpers::insert_guard,
+    visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
+};
 
 #[derive(Default)]
 pub(super) struct CallCandidates {
@@ -36,19 +41,61 @@ pub(super) fn normalize(
 
 impl<'ast> syn::visit::Visit<'ast> for CallCandidates {
     fn visit_file(&mut self, file: &'ast syn::File) {
-        let previous = self.test_only_context;
-        self.test_only_context |= file.attrs.iter().any(is_cfg_test);
-        syn::visit::visit_file(self, file);
-        self.test_only_context = previous;
+        self.with_cfg(&file.attrs, |visitor| {
+            syn::visit::visit_file(visitor, file);
+        });
     }
 
     fn visit_item(&mut self, item: &'ast syn::Item) {
-        let previous = self.test_only_context;
-        self.test_only_context |= super::visitor_context::item_attrs(item)
-            .iter()
-            .any(is_cfg_test);
-        syn::visit::visit_item(self, item);
-        self.test_only_context = previous;
+        self.with_cfg(item_attrs(item), |visitor| {
+            syn::visit::visit_item(visitor, item);
+        });
+    }
+
+    fn visit_impl_item(&mut self, item: &'ast syn::ImplItem) {
+        self.with_cfg(impl_attrs(item), |visitor| {
+            syn::visit::visit_impl_item(visitor, item);
+        });
+    }
+
+    fn visit_trait_item(&mut self, item: &'ast syn::TraitItem) {
+        self.with_cfg(trait_attrs(item), |visitor| {
+            syn::visit::visit_trait_item(visitor, item);
+        });
+    }
+
+    fn visit_foreign_item(&mut self, item: &'ast syn::ForeignItem) {
+        self.with_cfg(foreign_attrs(item), |visitor| {
+            syn::visit::visit_foreign_item(visitor, item);
+        });
+    }
+
+    fn visit_expr(&mut self, expression: &'ast syn::Expr) {
+        self.with_cfg(expr_attrs(expression), |visitor| {
+            syn::visit::visit_expr(visitor, expression);
+        });
+    }
+
+    fn visit_local(&mut self, local: &'ast syn::Local) {
+        self.with_cfg(&local.attrs, |visitor| {
+            syn::visit::visit_local(visitor, local);
+        });
+    }
+
+    fn visit_arm(&mut self, arm: &'ast syn::Arm) {
+        self.with_cfg(&arm.attrs, |visitor| syn::visit::visit_arm(visitor, arm));
+    }
+
+    fn visit_field(&mut self, field: &'ast syn::Field) {
+        self.with_cfg(&field.attrs, |visitor| {
+            syn::visit::visit_field(visitor, field);
+        });
+    }
+
+    fn visit_variant(&mut self, variant: &'ast syn::Variant) {
+        self.with_cfg(&variant.attrs, |visitor| {
+            syn::visit::visit_variant(visitor, variant);
+        });
     }
 
     fn visit_item_extern_crate(&mut self, item: &'ast syn::ItemExternCrate) {
@@ -86,6 +133,15 @@ impl<'ast> syn::visit::Visit<'ast> for CallCandidates {
                 );
         }
         syn::visit::visit_item_type(self, item);
+    }
+}
+
+impl CallCandidates {
+    fn with_cfg(&mut self, attributes: &[Attribute], visit: impl FnOnce(&mut Self)) {
+        let previous = self.test_only_context;
+        self.test_only_context |= attributes.iter().any(is_cfg_test);
+        visit(self);
+        self.test_only_context = previous;
     }
 }
 

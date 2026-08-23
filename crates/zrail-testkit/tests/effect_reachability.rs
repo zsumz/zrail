@@ -97,6 +97,37 @@ fn explain_reports_target_and_profile_fact_reachability() {
     reset(&root);
 }
 
+#[test]
+fn test_guarded_block_import_cannot_create_a_production_process_candidate() {
+    let root = std::env::temp_dir().join(format!(
+        "zrail-effect-block-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    reset(&root);
+    fs::create_dir_all(root.join("src")).expect("create fixture directory");
+    write(&root, "Cargo.toml", BLOCK_MANIFEST);
+    write(&root, "src/lib.rs", BLOCK_GUARD_SOURCE);
+    write(
+        &root,
+        "zrail.toml",
+        CONTRACT.replace("{reachability}", "reachability = \"production\"\n"),
+    );
+
+    let report = check(&root);
+
+    assert!(
+        !report.findings.iter().any(|finding| {
+            finding.id == "EFFECT-001"
+                && finding.path.as_deref() == Some("src/lib.rs")
+                && finding.message.contains("process")
+        }),
+        "{}",
+        report.human()
+    );
+    reset(&root);
+}
+
 fn repository(name: &str, production_only: bool) -> PathBuf {
     let root = std::env::temp_dir().join(format!(
         "zrail-effect-reachability-{name}-{}-{:?}",
@@ -160,6 +191,25 @@ name = "fixture"
 version = "0.0.0"
 edition = "2024"
 build = "build.rs"
+"#;
+
+const BLOCK_MANIFEST: &str = r#"[package]
+name = "fixture"
+version = "0.0.0"
+edition = "2024"
+"#;
+
+const BLOCK_GUARD_SOURCE: &str = r#"//! Library.
+pub struct Command;
+impl Command { pub fn new() -> Self { Self } }
+pub fn run() {
+    #[cfg(test)]
+    {
+        use std::process::Command;
+        let _ = Command::new("true");
+    }
+    let _ = Command::new();
+}
 "#;
 
 const LIBRARY: &str = concat!(
