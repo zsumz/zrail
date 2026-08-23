@@ -3,9 +3,9 @@
 use zrail_core::LockFile;
 
 use super::{
-    super::git_base::git_available,
+    git_base::git_available,
     review,
-    review_test::{fixture, options, reset},
+    review_fixture::{fixture, options, reset},
 };
 
 #[test]

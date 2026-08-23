@@ -39,6 +39,13 @@ mod git_base_migration_test;
 mod review_dependency_test;
 
 #[cfg(test)]
+mod review_fixture;
+
+#[cfg(test)]
+#[path = "review_lock_test.rs"]
+mod review_lock_test;
+
+#[cfg(test)]
 #[path = "update_contract_test.rs"]
 mod update_contract_test;
 

@@ -142,7 +142,3 @@ fn json(
 #[cfg(test)]
 #[path = "review_test.rs"]
 mod review_test;
-
-#[cfg(test)]
-#[path = "review_lock_test.rs"]
-mod review_lock_test;
