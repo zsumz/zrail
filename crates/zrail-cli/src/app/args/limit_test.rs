@@ -8,36 +8,16 @@ use super::super::{Command, parse};
 
 #[test]
 fn diagnostic_limits_are_available_on_diagnostic_commands() {
-    let cases = [
-        ("check", "0", DiagnosticLimit::Bounded(0)),
-        ("doctor", "50000", DiagnosticLimit::Bounded(50_000)),
-    ];
-    for (name, value, expected) in cases {
-        let command = parse([
-            OsString::from("zrail"),
-            OsString::from(name),
-            OsString::from("--limit"),
-            OsString::from(value),
-        ])
-        .expect("parse diagnostic limit");
-        let (Command::Check(common) | Command::Doctor(common)) = command else {
-            panic!("expected common diagnostic command");
-        };
-        assert_eq!(common.limit, expected);
-    }
-
-    let Command::Explain { common, .. } = parse([
+    let Command::Check(common) = parse([
         OsString::from("zrail"),
-        OsString::from("explain"),
-        OsString::from("--path"),
-        OsString::from("src/lib.rs"),
+        OsString::from("check"),
         OsString::from("--limit"),
-        OsString::from("all"),
+        OsString::from("0"),
     ])
-    .expect("parse explain limit") else {
-        panic!("expected explain command");
+    .expect("parse check limit") else {
+        panic!("expected check command");
     };
-    assert_eq!(common.limit, DiagnosticLimit::All);
+    assert_eq!(common.limit, DiagnosticLimit::Bounded(0));
 
     let Command::Review(options) = parse([
         OsString::from("zrail"),
@@ -51,6 +31,19 @@ fn diagnostic_limits_are_available_on_diagnostic_commands() {
         panic!("expected review command");
     };
     assert_eq!(options.common.limit, DiagnosticLimit::Bounded(10_000));
+}
+
+#[test]
+fn commands_without_finding_payloads_reject_diagnostic_limits() {
+    for arguments in [
+        vec!["doctor", "--limit", "50000"],
+        vec!["explain", "--path", "src/lib.rs", "--limit", "all"],
+    ] {
+        let arguments = std::iter::once(OsString::from("zrail"))
+            .chain(arguments.into_iter().map(OsString::from));
+        let error = parse(arguments).expect_err("inert limit must be rejected");
+        assert!(error.message.contains("unknown option \"--limit\""));
+    }
 }
 
 #[test]

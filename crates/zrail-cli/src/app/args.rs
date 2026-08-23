@@ -94,7 +94,7 @@ pub(crate) fn parse(arguments: impl IntoIterator<Item = OsString>) -> Result<Com
         .map_err(|_| CliError::new("command is not valid UTF-8"))?;
     let remaining = arguments.collect::<Vec<_>>();
     match command.as_str() {
-        "check" => Ok(Command::Check(parse_common(&remaining)?)),
+        "check" => Ok(Command::Check(parse_common_with_limit(&remaining)?)),
         "doctor" => Ok(Command::Doctor(parse_common(&remaining)?)),
         "baseline" => baseline::parse(&remaining),
         "update" => update::parse(&remaining),
@@ -110,10 +110,17 @@ pub(crate) fn parse(arguments: impl IntoIterator<Item = OsString>) -> Result<Com
 }
 
 fn parse_common(arguments: &[OsString]) -> Result<CommonOptions, CliError> {
-    parse_common_options(arguments)
+    parse_common_options(arguments, false)
 }
 
-fn parse_common_options(arguments: &[OsString]) -> Result<CommonOptions, CliError> {
+fn parse_common_with_limit(arguments: &[OsString]) -> Result<CommonOptions, CliError> {
+    parse_common_options(arguments, true)
+}
+
+fn parse_common_options(
+    arguments: &[OsString],
+    allow_limit: bool,
+) -> Result<CommonOptions, CliError> {
     let mut options = CommonOptions::default();
     let mut index = 0;
     while index < arguments.len() {
@@ -126,7 +133,7 @@ fn parse_common_options(arguments: &[OsString]) -> Result<CommonOptions, CliErro
                 let value = value(arguments, &mut index, "--format")?;
                 options.format = parse_format(&value)?;
             }
-            "--limit" => {
+            "--limit" if allow_limit => {
                 options.limit = parse_limit(&value(arguments, &mut index, "--limit")?)?;
             }
             _ => return Err(CliError::new(format!("unknown option {flag:?}"))),
@@ -153,9 +160,6 @@ fn parse_explain(arguments: &[OsString]) -> Result<Command, CliError> {
             "--lock" => common.lock = value(arguments, &mut index, "--lock")?,
             "--format" => {
                 common.format = parse_format(&value(arguments, &mut index, "--format")?)?;
-            }
-            "--limit" => {
-                common.limit = parse_limit(&value(arguments, &mut index, "--limit")?)?;
             }
             flag if flag.starts_with('-') => {
                 return Err(CliError::new(format!("unknown option {flag:?}")));

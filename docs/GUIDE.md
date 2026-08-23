@@ -109,9 +109,10 @@ zrail check --limit 50000
 zrail check --limit all
 ```
 
-The common limit is accepted by `check`, `doctor`, `review`, and `explain` so
-automation can use one reporting configuration. It controls display retention
-only; pass/fail decisions and protected review authority always use exact totals.
+`--limit` is accepted by `check` and `review`, whose output contains diagnostic
+findings. Doctor and explain reports have no bounded finding payload and reject
+the option. Retention never changes pass/fail decisions or protected review
+authority; those always use exact totals.
 
 After committing the initial zrail state, compare later source and policy
 changes with the trusted base:
