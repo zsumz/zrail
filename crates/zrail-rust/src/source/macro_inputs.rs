@@ -161,7 +161,6 @@ fn scan_path(visitor: &mut FactVisitor<'_>, trees: &[TokenTree], start: usize) -
                 .map(|candidate| candidate.observation.clone()),
         );
         super::compile_effects::record_tokens(visitor, group.stream(), &expansion, true);
-        visitor.macro_expansions.push(expansion);
     }
     end
 }

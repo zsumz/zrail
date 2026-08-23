@@ -72,6 +72,37 @@ pub fn run() {
     reset(&root);
 }
 
+#[test]
+fn opaque_input_macro_tokens_are_not_compiler_expansions() {
+    let root = repository(
+        "opaque-macro-tokens",
+        "dsl = { package = \"dsl-package\", version = \"1\" }",
+    );
+    write(
+        &root,
+        "src/lib.rs",
+        "//! Opaque syntax fixture.\npub fn run() { dsl::query!(impl_oracle_call!(() => ())); }\n",
+    );
+    write(
+        &root,
+        "zrail.toml",
+        &format!(
+            "{CONTRACT}\n{}",
+            allowance(
+                "dsl_package::query",
+                true,
+                "[source.rust.macros.allow.source]\nkind = \"registry\"\nrequirement = \"1\"\n",
+            )
+        ),
+    );
+
+    let report = check(&root);
+    assert!(!report.findings.iter().any(|finding| {
+        finding.id.starts_with("RUST-MACRO") && finding.message.contains("impl_oracle_call")
+    }));
+    reset(&root);
+}
+
 fn repository(name: &str, dependency: &str) -> PathBuf {
     let root =
         std::env::temp_dir().join(format!("zrail-macro-nested-{name}-{}", std::process::id()));
