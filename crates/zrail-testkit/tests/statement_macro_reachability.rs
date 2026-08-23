@@ -29,6 +29,15 @@ fn test_only_statement_macro_input_is_not_production_authority() {
         "{}",
         report.human()
     );
+    assert!(
+        report.findings.iter().any(|finding| {
+            finding.id == "OWN-004"
+                && finding.rule == "runtime-process"
+                && finding.message.contains("no production-reachable use")
+        }),
+        "{}",
+        report.human()
+    );
     reset(&root);
 }
 
