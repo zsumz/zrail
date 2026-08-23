@@ -36,9 +36,18 @@ pub(crate) fn canonicalize(
         compilation_edges,
         compilation_includes,
     );
+    let include_bindings = super::include_bindings::IncludeBindings::collect(
+        index,
+        compilation_roots,
+        compilation_edges,
+        compilation_includes,
+    );
     let macro_visibility = super::macro_visibility::MacroVisibility::collect(index, module_edges);
     let mut findings = Vec::new();
     for file in &mut index.files {
+        if let Some(finding) = include_bindings.apply(file) {
+            findings.push(finding);
+        }
         let selected: Vec<&Package> = contexts.get(&file.relative).map_or_else(
             || {
                 package_for_file(&cargo.packages, &file.relative)

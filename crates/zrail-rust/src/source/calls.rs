@@ -5,13 +5,18 @@ use zrail_core::AnalysisQuality;
 
 use super::{
     MacroDerivation, ObservedFact, SyntaxGuard,
-    fact::fact,
+    fact::{fact, written_fact},
     imports::{ImportCandidateKind, ImportMap},
 };
 
 const MAX_MACRO_CANDIDATES: usize = 64;
 
-pub(super) fn facts(call: &ExprCall, imports: &ImportMap, guard: SyntaxGuard) -> Vec<ObservedFact> {
+pub(super) fn facts(
+    call: &ExprCall,
+    imports: &ImportMap,
+    guard: SyntaxGuard,
+    lexical_scope: &[zrail_core::SourceSpan],
+) -> Vec<ObservedFact> {
     let Expr::Path(callee) = call.func.as_ref() else {
         return Vec::new();
     };
@@ -20,7 +25,20 @@ pub(super) fn facts(call: &ExprCall, imports: &ImportMap, guard: SyntaxGuard) ->
         return Vec::new();
     }
     let span = callee.path.span();
-    let mut observed = vec![fact(resolved.clone(), span, quality)];
+    let written = callee
+        .path
+        .segments
+        .iter()
+        .map(|segment| segment.ident.to_string())
+        .collect::<Vec<_>>()
+        .join("::");
+    let mut observed = vec![written_fact(
+        resolved.clone(),
+        written,
+        span,
+        quality,
+        lexical_scope,
+    )];
     if callee.qself.is_none() {
         observed.extend(candidates(&callee.path, imports, &resolved, guard));
     }

@@ -75,13 +75,7 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_path(&mut self, path: &'ast syn::Path) {
-        let guard = self.syntax_guard();
-        let (name, quality) = self.imports.resolve(path, guard);
-        if !name.is_empty() {
-            self.paths.push(fact(name.as_str(), path.span(), quality));
-            self.paths
-                .extend(super::calls::candidates(path, self.imports, &name, guard));
-        }
+        self.record_path(path);
         visit::visit_path(self, path);
     }
 
@@ -91,8 +85,12 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_expr_call(&mut self, call: &'ast ExprCall) {
-        self.calls
-            .extend(super::calls::facts(call, self.imports, self.syntax_guard()));
+        self.calls.extend(super::calls::facts(
+            call,
+            self.imports,
+            self.syntax_guard(),
+            &self.lexical_scope,
+        ));
         visit::visit_expr_call(self, call);
     }
 

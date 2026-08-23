@@ -11,10 +11,12 @@ impl<'a> FactVisitor<'a> {
             .into_iter()
             .map(|(path, quality, guard)| ObservedFact {
                 name: path.to_owned(),
+                written: None,
                 canonical: Vec::new(),
                 span: None,
                 quality,
                 guard,
+                lexical_scope: Vec::new(),
             })
             .collect::<Vec<_>>();
         paths.extend(
@@ -23,10 +25,12 @@ impl<'a> FactVisitor<'a> {
                 .into_iter()
                 .map(|(path, guard)| ObservedFact {
                     name: path.to_owned(),
+                    written: None,
                     canonical: Vec::new(),
                     span: None,
                     quality: AnalysisQuality::Conservative,
                     guard,
+                    lexical_scope: Vec::new(),
                 }),
         );
         Self {
@@ -41,6 +45,7 @@ impl<'a> FactVisitor<'a> {
             macro_expansions: Vec::new(),
             opaque_macro_inputs: Vec::new(),
             macro_definitions: Vec::new(),
+            import_bindings: Vec::new(),
             compile_effects: Vec::new(),
             lint_suppressions: Vec::new(),
             unsafe_constructs: Vec::new(),

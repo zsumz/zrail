@@ -50,9 +50,11 @@ fn raw_identifiers_cannot_change_policy_identity() {
 fn fact(name: &str, quality: AnalysisQuality) -> ObservedFact {
     ObservedFact {
         name: name.into(),
+        written: None,
         canonical: Vec::new(),
         span: None,
         quality,
         guard: crate::source::SyntaxGuard::Ordinary,
+        lexical_scope: Vec::new(),
     }
 }

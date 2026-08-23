@@ -72,10 +72,12 @@ fn excessive_shared_alias_identities_fail_closed_without_a_cross_product() {
 fn observed(name: &str, quality: AnalysisQuality) -> ObservedFact {
     ObservedFact {
         name: name.into(),
+        written: None,
         canonical: Vec::new(),
         span: None,
         quality,
         guard: crate::source::SyntaxGuard::Ordinary,
+        lexical_scope: Vec::new(),
     }
 }
 

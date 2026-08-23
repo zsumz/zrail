@@ -39,10 +39,21 @@ impl SyntaxGuard {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct ObservedFact {
     pub(crate) name: String,
+    pub(crate) written: Option<String>,
     pub(crate) canonical: Vec<String>,
     pub(crate) span: Option<SourceSpan>,
     pub(crate) quality: AnalysisQuality,
     pub(crate) guard: SyntaxGuard,
+    pub(crate) lexical_scope: Vec<SourceSpan>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct ImportBindingFact {
+    pub(crate) name: Option<String>,
+    pub(crate) target: String,
+    pub(crate) quality: AnalysisQuality,
+    pub(crate) guard: SyntaxGuard,
+    pub(crate) lexical_scope: Vec<SourceSpan>,
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -146,6 +157,7 @@ pub(crate) struct RustFileFacts {
     pub(crate) macro_expansions: Vec<MacroExpansionFact>,
     pub(crate) opaque_macro_inputs: Vec<MacroExpansionFact>,
     pub(crate) macro_definitions: Vec<MacroDefinitionFact>,
+    pub(crate) import_bindings: Vec<ImportBindingFact>,
     pub(crate) compile_effects: Vec<CompileEffectFact>,
     pub(crate) lint_suppressions: Vec<ObservedFact>,
     pub(crate) unsafe_constructs: Vec<ObservedFact>,

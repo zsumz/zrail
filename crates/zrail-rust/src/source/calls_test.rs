@@ -14,7 +14,7 @@ fn aliases_resolve_to_the_exact_called_path() {
     .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary);
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Exact
@@ -27,7 +27,7 @@ fn glob_imports_add_a_conservative_called_path() {
         .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary);
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
@@ -42,7 +42,7 @@ fn function_local_imports_add_a_conservative_called_path() {
     .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary);
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
@@ -57,7 +57,7 @@ fn type_aliases_add_a_conservative_called_path() {
     .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary);
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative

@@ -94,6 +94,7 @@ fn imported_candidate(
         } else {
             import.target.clone()
         },
+        written: original.written.clone(),
         canonical: Vec::new(),
         span: original.span,
         quality: if local {
@@ -102,6 +103,7 @@ fn imported_candidate(
             import.quality
         },
         guard: original.guard,
+        lexical_scope: original.lexical_scope.clone(),
     };
     if local {
         observation.canonical.push(original.name.clone());

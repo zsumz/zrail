@@ -17,10 +17,12 @@ pub(super) fn repository_candidate(
     MacroCandidate {
         observation: ObservedFact {
             name: policy_name.into(),
+            written: None,
             canonical: Vec::new(),
             span: expansion.span,
             quality: AnalysisQuality::Exact,
             guard: expansion.guard,
+            lexical_scope: expansion.lexical_scope.clone(),
         },
         origins: vec![MacroOrigin::Repository {
             package: site.package,

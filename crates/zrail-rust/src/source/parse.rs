@@ -103,6 +103,7 @@ fn fact_count(file: &RustFileFacts) -> usize {
         + candidate_count(&file.macro_expansions)
         + candidate_count(&file.opaque_macro_inputs)
         + file.macro_definitions.len()
+        + file.import_bindings.len()
         + file
             .compile_effects
             .iter()
@@ -169,6 +170,7 @@ fn index_file_as(
         macro_expansions: visitor.macro_expansions,
         opaque_macro_inputs: visitor.opaque_macro_inputs,
         macro_definitions: visitor.macro_definitions,
+        import_bindings: visitor.import_bindings,
         compile_effects: visitor.compile_effects,
         lint_suppressions: visitor.lint_suppressions,
         unsafe_constructs: visitor.unsafe_constructs,
@@ -203,6 +205,7 @@ fn index_expression(
         macro_expansions: visitor.macro_expansions,
         opaque_macro_inputs: visitor.opaque_macro_inputs,
         macro_definitions: visitor.macro_definitions,
+        import_bindings: visitor.import_bindings,
         compile_effects: visitor.compile_effects,
         lint_suppressions: visitor.lint_suppressions,
         unsafe_constructs: visitor.unsafe_constructs,

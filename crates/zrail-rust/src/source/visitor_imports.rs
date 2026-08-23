@@ -6,8 +6,8 @@ use syn::{Item, Path, spanned::Spanned};
 use zrail_core::AnalysisQuality;
 
 use super::{
-    MacroCandidate, MacroDerivation, MacroExpansionFact, SyntaxGuard, fact::fact, scoped_globs,
-    scoped_imports, visitor::FactVisitor,
+    MacroCandidate, MacroDerivation, MacroExpansionFact, SyntaxGuard, fact::fact,
+    ordinary_bindings, scoped_globs, scoped_imports, visitor::FactVisitor,
 };
 
 const MAX_MACRO_CANDIDATES: usize = 64;
@@ -22,6 +22,13 @@ impl FactVisitor<'_> {
         let aliases =
             scoped_imports::collect(items.iter().copied(), |path| self.resolve_text(path));
         let globs = scoped_globs::collect(items.iter().copied());
+        let enclosing_guard = self.syntax_guard();
+        let lexical_scope = self.lexical_scope.clone();
+        self.import_bindings.extend(ordinary_bindings::collect(
+            items.iter().copied(),
+            enclosing_guard,
+            &lexical_scope,
+        ));
         self.local_imports.push(LocalImportScope { aliases, globs });
         visit(self);
         self.local_imports.pop();

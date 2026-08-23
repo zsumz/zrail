@@ -165,10 +165,12 @@ fn pending(name: &str, local_module: bool) -> MacroExpansionFact {
 fn observed(name: &str) -> ObservedFact {
     ObservedFact {
         name: name.into(),
+        written: None,
         canonical: Vec::new(),
         span: None,
         quality: AnalysisQuality::Exact,
         guard: crate::source::SyntaxGuard::Ordinary,
+        lexical_scope: Vec::new(),
     }
 }
 

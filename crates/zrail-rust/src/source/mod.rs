@@ -15,7 +15,12 @@ mod import_helpers;
 mod import_projection;
 mod imports;
 mod imports_collect;
+mod include_alias_exports;
+mod include_binding_helpers;
+mod include_binding_resolution;
+mod include_bindings;
 mod include_edge;
+mod include_glob_resolution;
 mod includes;
 mod macro_builtin;
 mod macro_definition_candidate;
@@ -33,6 +38,7 @@ mod macro_visibility_reachability;
 mod model;
 mod module_edge;
 mod modules;
+mod ordinary_bindings;
 mod parse;
 mod parse_facade;
 mod paths;
@@ -47,6 +53,7 @@ mod visitor_context;
 mod visitor_imports;
 mod visitor_init;
 mod visitor_model;
+mod visitor_paths;
 
 pub(crate) use canonical::canonicalize as canonicalize_dependency_roots;
 pub(crate) use compilation::{CompilationDomain, CompilationMode};
@@ -54,8 +61,8 @@ pub(crate) use compile_effect_model::CompileEffectFact;
 pub(crate) use include_edge::{CompilationIncludeEdge, IncludeOccurrenceId};
 pub(crate) use macro_model::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin};
 pub(crate) use model::{
-    IncludeBoundary, IncludeContext, MacroImportFact, ModuleDeclaration, ObservedFact,
-    RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
+    ImportBindingFact, IncludeBoundary, IncludeContext, MacroImportFact, ModuleDeclaration,
+    ObservedFact, RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
 };
 pub(crate) use module_edge::{CompilationModuleEdge, ResolvedModuleEdge};
 pub(crate) use parse::index_rust_source;
