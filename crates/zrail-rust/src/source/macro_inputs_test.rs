@@ -114,12 +114,7 @@ fn opaque_scanning_retains_paths_calls_methods_and_nested_macros() {
             .any(|call| call.name == "std::process::Command::new")
     );
     assert!(visitor.methods.iter().any(|method| method.name == "unwrap"));
-    assert!(
-        visitor
-            .macro_expansions
-            .iter()
-            .any(|macro_| macro_.name == "nested")
-    );
+    assert!(visitor.macros.iter().any(|macro_| macro_.name == "nested"));
 }
 
 #[test]
@@ -133,9 +128,9 @@ fn opaque_scanning_requires_a_delimited_group_after_a_macro_bang() {
 
     assert!(inspect(&mut visitor, &expression.mac, "dsl"));
     let names = visitor
-        .macro_expansions
+        .macros
         .iter()
-        .map(|expansion| expansion.name.as_str())
+        .map(|macro_| macro_.name.as_str())
         .collect::<Vec<_>>();
     assert_eq!(names, ["call", "array", "block", "path::actual"]);
 }
