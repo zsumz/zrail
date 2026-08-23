@@ -112,6 +112,19 @@ impl MacroExpansionFact {
         }
     }
 
+    pub(crate) fn compiler_builtin(observation: ObservedFact) -> Self {
+        let candidate = MacroCandidate {
+            observation: observation.clone(),
+            origins: vec![MacroOrigin::CompilerBuiltin],
+            derivation: MacroDerivation::Written,
+            written_alias: false,
+        };
+        Self {
+            observation,
+            candidates: vec![candidate],
+        }
+    }
+
     pub(crate) fn with_candidates(
         mut observation: ObservedFact,
         candidates: Vec<MacroCandidate>,

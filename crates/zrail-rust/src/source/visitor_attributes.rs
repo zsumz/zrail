@@ -58,9 +58,31 @@ impl FactVisitor<'_> {
 
     fn record_attribute_expansions(&mut self, attribute: &Attribute) {
         match super::macro_expansion::attribute_paths(attribute) {
-            Ok(paths) => {
-                for path in paths {
-                    self.macro_expansions.push(self.macro_invocation(&path));
+            Ok(expansions) => {
+                for expansion in expansions {
+                    let (resolved, _, _, local_module) = self.resolve_macro_path(&expansion.path);
+                    let observed = fact(
+                        expansion
+                            .path
+                            .segments
+                            .iter()
+                            .map(|segment| segment.ident.to_string())
+                            .collect::<Vec<_>>()
+                            .join("::"),
+                        expansion.path.span(),
+                        AnalysisQuality::Exact,
+                    );
+                    let expansion = if expansion.kind
+                        == super::macro_expansion::ExpansionKind::Derive
+                        && !local_module
+                        && !self.imports.has_applicable_macro_globs(self.syntax_guard())
+                        && super::macro_expansion::is_compiler_derive(&expansion.path, &resolved)
+                    {
+                        MacroExpansionFact::compiler_builtin(observed)
+                    } else {
+                        self.macro_invocation(&expansion.path)
+                    };
+                    self.macro_expansions.push(expansion);
                 }
             }
             Err(()) => self

@@ -11,6 +11,12 @@ use super::{
 };
 
 impl ImportMap {
+    pub(super) fn has_applicable_macro_globs(&self, context: SyntaxGuard) -> bool {
+        self.macro_globs
+            .values()
+            .any(|guard| guard.available_in(context))
+    }
+
     pub(super) fn declared_paths(&self) -> Vec<(&str, AnalysisQuality, SyntaxGuard)> {
         let mut paths = self
             .aliases

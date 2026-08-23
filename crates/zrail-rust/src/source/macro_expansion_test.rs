@@ -1,6 +1,6 @@
 //! Attribute expansion extraction distinguishes inert metadata from generated Rust.
 
-use super::attribute_paths;
+use super::{ExpansionKind, attribute_paths, is_builtin_derive, is_compiler_derive};
 
 #[test]
 fn derives_custom_attributes_and_nested_cfg_attributes_are_boundaries() {
@@ -15,8 +15,10 @@ fn derives_custom_attributes_and_nested_cfg_attributes_are_boundaries() {
         .attrs
         .iter()
         .flat_map(|attribute| attribute_paths(attribute).expect("parse attribute expansion"))
-        .map(|path| {
-            path.segments
+        .map(|expansion| {
+            expansion
+                .path
+                .segments
                 .iter()
                 .map(|segment| segment.ident.to_string())
                 .collect::<Vec<_>>()
@@ -25,6 +27,24 @@ fn derives_custom_attributes_and_nested_cfg_attributes_are_boundaries() {
         .collect::<Vec<_>>();
 
     assert_eq!(names, ["Debug", "serde::Serialize", "tokio::main"]);
+}
+
+#[test]
+fn only_unqualified_standard_derives_are_compiler_builtins() {
+    let item: syn::ItemStruct = syn::parse_quote! {
+        #[derive(Debug, dependency::Debug)]
+        struct Message;
+    };
+    let expansions = attribute_paths(&item.attrs[0]).expect("parse derive expansions");
+
+    assert_eq!(expansions[0].kind, ExpansionKind::Derive);
+    assert!(is_builtin_derive(&expansions[0].path));
+    assert!(!is_builtin_derive(&expansions[1].path));
+    assert!(is_compiler_derive(&expansions[0].path, "std::fmt::Debug"));
+    assert!(!is_compiler_derive(
+        &expansions[0].path,
+        "dependency::Debug"
+    ));
 }
 
 #[test]

@@ -2,13 +2,24 @@
 
 use syn::{Attribute, Meta, Path, Token, punctuated::Punctuated};
 
-pub(super) fn attribute_paths(attribute: &Attribute) -> Result<Vec<Path>, ()> {
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(super) enum ExpansionKind {
+    Attribute,
+    Derive,
+}
+
+pub(super) struct ExpansionPath {
+    pub(super) path: Path,
+    pub(super) kind: ExpansionKind,
+}
+
+pub(super) fn attribute_paths(attribute: &Attribute) -> Result<Vec<ExpansionPath>, ()> {
     let mut paths = Vec::new();
     collect_meta(&attribute.meta, &mut paths)?;
     Ok(paths)
 }
 
-fn collect_meta(meta: &Meta, paths: &mut Vec<Path>) -> Result<(), ()> {
+fn collect_meta(meta: &Meta, paths: &mut Vec<ExpansionPath>) -> Result<(), ()> {
     if meta.path().is_ident("derive") {
         let Meta::List(list) = meta else {
             return Err(());
@@ -19,7 +30,10 @@ fn collect_meta(meta: &Meta, paths: &mut Vec<Path>) -> Result<(), ()> {
         if derives.is_empty() {
             return Err(());
         }
-        paths.extend(derives);
+        paths.extend(derives.into_iter().map(|path| ExpansionPath {
+            path,
+            kind: ExpansionKind::Derive,
+        }));
         return Ok(());
     }
     if meta.path().is_ident("cfg_attr") {
@@ -38,9 +52,45 @@ fn collect_meta(meta: &Meta, paths: &mut Vec<Path>) -> Result<(), ()> {
         return Ok(());
     }
     if !is_inert(meta.path()) {
-        paths.push(meta.path().clone());
+        paths.push(ExpansionPath {
+            path: meta.path().clone(),
+            kind: ExpansionKind::Attribute,
+        });
     }
     Ok(())
+}
+
+pub(super) fn is_builtin_derive(path: &Path) -> bool {
+    path.get_ident().is_some_and(|name| {
+        matches!(
+            name.to_string().as_str(),
+            "Clone"
+                | "Copy"
+                | "Debug"
+                | "Default"
+                | "Eq"
+                | "Hash"
+                | "Ord"
+                | "PartialEq"
+                | "PartialOrd"
+        )
+    })
+}
+
+pub(super) fn is_compiler_derive(path: &Path, resolved: &str) -> bool {
+    if !is_builtin_derive(path) {
+        return false;
+    }
+    let name = path
+        .get_ident()
+        .map(ToString::to_string)
+        .unwrap_or_default();
+    if resolved == name {
+        return true;
+    }
+    let root = resolved.split("::").next().unwrap_or_default();
+    let leaf = resolved.rsplit("::").next().unwrap_or(resolved);
+    matches!(root, "core" | "std") && leaf == name
 }
 
 fn is_inert(path: &Path) -> bool {
