@@ -290,6 +290,14 @@ invocation across a splice. Until that import projection is exact,
 the invocation requires an explicit name-only `binding = "conservative"`
 allowance and cannot borrow compiler or dependency-source authority.
 
+Ordinary paths and direct calls use the same occurrence-specific namespaces.
+Explicit imports, glob imports, type aliases, lexical scopes, `cfg(test)`
+domains, and nested or repeated includes are projected onto every applicable
+source instance. A projected call remains exact only when every instance
+resolves to the same identity; disagreement is conservative, and incomplete
+lookup is unresolved. Call ownership therefore cannot accept a physical-file
+spelling that an include-spliced binding resolves to an owned call.
+
 An optional `definition` path can narrow a `macro_rules!` allowance, but path
 spelling never establishes origin. The default `binding = "exact"` rejects an
 allowance when the candidate origin remains unresolved. A name-only allowance
