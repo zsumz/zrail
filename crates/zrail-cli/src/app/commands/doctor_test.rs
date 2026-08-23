@@ -2,7 +2,7 @@
 
 use std::{fs, path::PathBuf};
 
-use zrail_core::LOCK_SCHEMA;
+use zrail_core::{LOCK_SCHEMA, LOCK_SEMANTICS};
 use zrail_rust::build_lock;
 
 use crate::app::{args::CommonOptions, output::OutputFormat};
@@ -36,6 +36,36 @@ fn unsupported_lock_schema_exits_nonzero() {
 
     assert_eq!(result.exit_code, 1);
     assert!(result.text.contains("status: lock-schema-mismatch"));
+    fs::remove_dir_all(root).expect("remove doctor fixture");
+}
+
+#[test]
+fn old_lock_semantics_exit_nonzero() {
+    let root = fixture_root().with_extension("semantics");
+    if root.exists() {
+        fs::remove_dir_all(&root).expect("reset doctor fixture");
+    }
+    fs::create_dir_all(root.join("src")).expect("create doctor source");
+    fs::write(root.join("Cargo.toml"), MANIFEST).expect("write Cargo manifest");
+    fs::write(root.join("src/lib.rs"), "//! fixture\n").expect("write Rust source");
+    fs::write(root.join("zrail.toml"), CONTRACT).expect("write contract");
+    let mut lock =
+        build_lock(&root, std::path::Path::new("zrail.toml")).expect("build supported lock");
+    lock.semantics = LOCK_SEMANTICS - 1;
+    lock.write(&root.join("zrail.lock"))
+        .expect("write old-semantics lock");
+
+    let result = doctor(&CommonOptions {
+        root: root.clone(),
+        config: "zrail.toml".into(),
+        lock: "zrail.lock".into(),
+        format: OutputFormat::Human,
+        ..CommonOptions::default()
+    })
+    .expect("run doctor");
+
+    assert_eq!(result.exit_code, 1);
+    assert!(result.text.contains("status: lock-semantics-mismatch"));
     fs::remove_dir_all(root).expect("remove doctor fixture");
 }
 

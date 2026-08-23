@@ -2,7 +2,7 @@
 
 use std::{fs, path::PathBuf};
 
-use zrail_core::{LockFile, load_contract};
+use zrail_core::{LOCK_SEMANTICS, LockFile, load_contract};
 
 use crate::app::{
     args::{DiffMode, DiffOptions},
@@ -30,10 +30,10 @@ fn deny_grants_rejects_stale_contract_digest() {
 }
 
 #[test]
-fn deny_grants_rejects_incompatible_semantics() {
+fn deny_grants_rejects_old_semantics() {
     let (before, after) = fixture("engine");
     write_lock(&before, |_| {});
-    write_lock(&after, |lock| lock.semantics = 999);
+    write_lock(&after, |lock| lock.semantics = LOCK_SEMANTICS - 1);
 
     let output = diff(&options(&before, &after)).expect("compare incompatible lock");
 

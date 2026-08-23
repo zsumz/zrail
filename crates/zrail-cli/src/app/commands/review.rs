@@ -1,7 +1,8 @@
 //! Protected source review derives proposed architecture without writing it.
 
 use zrail_core::{
-    Finding, LOCK_SCHEMA, LockFile, Report, ReportStatus, load_contract, repository_file,
+    Finding, LOCK_SCHEMA, LOCK_SEMANTICS, LockFile, Report, ReportStatus, load_contract,
+    repository_file,
 };
 use zrail_rust::check_repository_with_limit;
 
@@ -75,6 +76,20 @@ fn lock_attestation(
             .with_help("use a protected zrail engine that understands the proposed lock schema"),
         ]);
     }
+    if !proposed.has_current_semantics() {
+        return Ok(vec![
+            Finding::error(
+                "REVIEW-004",
+                "review.lock",
+                "review",
+                format!(
+                    "proposed zrail.lock uses semantics {}, current semantics are {}",
+                    proposed.semantics, LOCK_SEMANTICS
+                ),
+            )
+            .with_help("regenerate the proposed lock with the protected zrail engine"),
+        ]);
+    }
     if proposed.same_resolved_state(candidate) {
         Ok(Vec::new())
     } else {
@@ -127,3 +142,7 @@ fn json(
 #[cfg(test)]
 #[path = "review_test.rs"]
 mod review_test;
+
+#[cfg(test)]
+#[path = "review_lock_test.rs"]
+mod review_lock_test;

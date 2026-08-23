@@ -2,7 +2,7 @@
 
 use std::{fs, path::PathBuf};
 
-use zrail_core::{DiffReport, DiffSummary, LockFile};
+use zrail_core::{DiffReport, DiffSummary};
 use zrail_rust::build_lock;
 
 use crate::app::{
@@ -148,23 +148,6 @@ fn proposal_cargo_configuration_is_rejected_without_execution() {
 }
 
 #[test]
-fn changed_producer_with_stable_semantics_is_reviewable() {
-    if !git_available() {
-        return;
-    }
-    let fixture = fixture("producer");
-    let lock_path = fixture.proposal.join("zrail.lock");
-    let mut lock = LockFile::read(&lock_path).expect("read proposed lock");
-    lock.producer = "0.0.2".into();
-    lock.write(&lock_path).expect("write newer producer");
-
-    let result = review(&options(&fixture)).expect("review newer producer");
-
-    assert_eq!(result.exit_code, 0);
-    reset(&fixture);
-}
-
-#[test]
 fn unsupported_proposed_schema_fails_for_lock_optional_contract() {
     if !git_available() {
         return;
@@ -172,7 +155,7 @@ fn unsupported_proposed_schema_fails_for_lock_optional_contract() {
     let contract = CONTRACT.replace("mode = \"locked\"", "mode = \"observed\"");
     let fixture = fixture_with_contract("optional-future-schema", &contract);
     let lock_path = fixture.proposal.join("zrail.lock");
-    let mut lock = LockFile::read(&lock_path).expect("read proposed lock");
+    let mut lock = zrail_core::LockFile::read(&lock_path).expect("read proposed lock");
     lock.schema = zrail_core::LOCK_SCHEMA + 1;
     lock.write(&lock_path).expect("write future proposed lock");
 
@@ -184,11 +167,11 @@ fn unsupported_proposed_schema_fails_for_lock_optional_contract() {
     reset(&fixture);
 }
 
-fn fixture(name: &str) -> Fixture {
+pub(super) fn fixture(name: &str) -> Fixture {
     fixture_with_contract(name, CONTRACT)
 }
 
-fn fixture_with_contract(name: &str, contract: &str) -> Fixture {
+pub(super) fn fixture_with_contract(name: &str, contract: &str) -> Fixture {
     let base = std::env::temp_dir().join(format!(
         "zrail-review-{name}-{}-{:?}",
         std::process::id(),
@@ -232,7 +215,7 @@ fn copy_repository(source: &std::path::Path, destination: &std::path::Path) {
     }
 }
 
-fn options(fixture: &Fixture) -> ReviewOptions {
+pub(super) fn options(fixture: &Fixture) -> ReviewOptions {
     ReviewOptions {
         common: CommonOptions {
             root: fixture.proposal.clone(),
@@ -247,19 +230,19 @@ fn options(fixture: &Fixture) -> ReviewOptions {
     }
 }
 
-fn reset(fixture: &Fixture) {
+pub(super) fn reset(fixture: &Fixture) {
     if fixture.base.exists() {
         fs::remove_dir_all(&fixture.base).expect("reset fixture");
     }
 }
 
-struct Fixture {
+pub(super) struct Fixture {
     base: PathBuf,
     authority: PathBuf,
-    proposal: PathBuf,
+    pub(super) proposal: PathBuf,
 }
 
-const CONTRACT: &str = r#"schema = 1
+pub(super) const CONTRACT: &str = r#"schema = 1
 adapters = ["rust"]
 
 [repository]

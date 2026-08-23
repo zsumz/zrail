@@ -1,6 +1,6 @@
 //! Doctor readiness is explicit and machine-readable.
 
-use zrail_core::{LOCK_SCHEMA, LockFile};
+use zrail_core::{LOCK_SCHEMA, LOCK_SEMANTICS, LockFile};
 
 use super::{DoctorReport, doctor_status};
 
@@ -33,6 +33,19 @@ fn unsupported_required_lock_schema_is_not_ready() {
         "lock-schema-mismatch"
     );
     assert!(!report("lock-schema-mismatch").is_ready());
+}
+
+#[test]
+fn old_required_lock_semantics_are_not_ready() {
+    let candidate = LockFile::new("0".repeat(64));
+    let mut old = candidate.clone();
+    old.semantics = LOCK_SEMANTICS - 1;
+
+    assert_eq!(
+        doctor_status(true, Some(&old), &candidate),
+        "lock-semantics-mismatch"
+    );
+    assert!(!report("lock-semantics-mismatch").is_ready());
 }
 
 fn report(status: &str) -> DoctorReport {

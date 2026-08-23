@@ -1,6 +1,6 @@
 //! Authority-aware diffs reject stale or incompatible lock inputs.
 
-use crate::{ChangeKind, LockFile, LockedPackage, load_contract};
+use crate::{ChangeKind, LOCK_SEMANTICS, LockFile, LockedPackage, load_contract};
 
 use super::compare_architecture_checked;
 
@@ -54,6 +54,39 @@ fn incompatible_semantics_are_unknown() {
     );
 
     assert_eq!(report.summary.unknown, 2);
+    assert!(
+        report
+            .changes
+            .iter()
+            .all(|change| change.rail == "lock.authority")
+    );
+    reset(&fixture);
+}
+
+#[test]
+fn mixed_old_and_current_semantics_are_unknown_not_resolved_changes() {
+    let fixture = fixture();
+    let bundle =
+        load_contract(&fixture, std::path::Path::new("zrail.toml")).expect("load fixture contract");
+    let mut before = LockFile::new(&bundle.sha256);
+    before.semantics = LOCK_SEMANTICS - 1;
+    let after = LockFile::new(&bundle.sha256);
+
+    let report = compare_architecture_checked(
+        &bundle.contract,
+        &bundle.sha256,
+        Some(&before),
+        &bundle.contract,
+        &bundle.sha256,
+        Some(&after),
+    );
+
+    assert_eq!(report.summary.unknown, 1);
+    assert_eq!(report.summary.grants, 0);
+    assert_eq!(report.summary.debt, 0);
+    assert!(report.changes.iter().any(|change| {
+        change.kind == ChangeKind::Unknown && change.subject == "before:semantics"
+    }));
     assert!(
         report
             .changes
