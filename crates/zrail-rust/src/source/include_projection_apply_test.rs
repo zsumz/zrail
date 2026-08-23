@@ -89,6 +89,56 @@ fn successful_projection_stays_inside_the_total_fact_limit() {
     }));
 }
 
+#[test]
+fn duplicate_projection_consumes_one_retained_fact_slot() {
+    let mut index = fixture_index();
+    let duplicate = index.files[0].calls[0].clone();
+    index.files[0].calls.push(duplicate);
+    let bindings = bindings(&index);
+    let physical_facts = index.files.iter().map(fact_count).sum::<usize>();
+
+    let findings = bindings.apply_with_limits(
+        &mut index,
+        ProjectionLimits {
+            work: 1_000,
+            total_facts: physical_facts + 1,
+        },
+    );
+
+    assert!(findings.is_empty());
+    assert_eq!(
+        index.files.iter().map(fact_count).sum::<usize>(),
+        physical_facts + 1
+    );
+}
+
+#[test]
+fn successful_projection_is_independent_of_file_order() {
+    let mut forward = fixture_index();
+    let forward_bindings = bindings(&forward);
+    let forward_findings = forward_bindings.apply_with_limits(
+        &mut forward,
+        ProjectionLimits {
+            work: 1_000,
+            total_facts: 100,
+        },
+    );
+
+    let mut reversed = fixture_index();
+    reversed.files.reverse();
+    let reversed_bindings = bindings(&reversed);
+    let reversed_findings = reversed_bindings.apply_with_limits(
+        &mut reversed,
+        ProjectionLimits {
+            work: 1_000,
+            total_facts: 100,
+        },
+    );
+
+    assert_eq!(forward_findings, reversed_findings);
+    assert_eq!(observed_names(&forward), observed_names(&reversed));
+}
+
 fn bindings(index: &SourceIndex) -> IncludeBindings {
     let domain = domain();
     IncludeBindings::collect(
@@ -184,6 +234,24 @@ fn fact_lengths(index: &SourceIndex) -> Vec<(String, usize, usize)> {
         .collect::<Vec<_>>();
     lengths.sort();
     lengths
+}
+
+fn observed_names(index: &SourceIndex) -> Vec<(String, Vec<String>)> {
+    let mut observed = index
+        .files
+        .iter()
+        .map(|file| {
+            let mut names = file
+                .calls
+                .iter()
+                .map(|fact| fact.name.clone())
+                .collect::<Vec<_>>();
+            names.sort();
+            (file.relative.clone(), names)
+        })
+        .collect::<Vec<_>>();
+    observed.sort();
+    observed
 }
 
 fn domain() -> CompilationDomain {

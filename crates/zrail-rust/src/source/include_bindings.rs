@@ -123,7 +123,8 @@ pub(super) fn project(
     budget: &mut ProjectionBudget,
     remaining_file_facts: &mut usize,
 ) -> Result<Vec<ObservedFact>, ProjectionLimit> {
-    let mut additions = Vec::new();
+    let mut additions =
+        BTreeMap::<(String, Option<zrail_core::SourceSpan>, SyntaxGuard), ObservedFact>::new();
     for fact in facts.iter().filter(|fact| fact.written.is_some()) {
         budget.consume_work()?;
         let instances = bindings.active_instances(file, fact.guard, budget)?;
@@ -192,29 +193,30 @@ pub(super) fn project(
             if name == fact.name {
                 continue;
             }
-            additions.push(ObservedFact {
-                name,
-                written: None,
-                canonical: Vec::new(),
-                span: fact.span,
-                quality,
-                guard: if fact.guard == SyntaxGuard::TestOnly || !candidate.production {
-                    SyntaxGuard::TestOnly
-                } else {
-                    SyntaxGuard::Ordinary
+            let guard = if fact.guard == SyntaxGuard::TestOnly || !candidate.production {
+                SyntaxGuard::TestOnly
+            } else {
+                SyntaxGuard::Ordinary
+            };
+            let key = (name.clone(), fact.span, guard);
+            if let Some(existing) = additions.get_mut(&key) {
+                existing.quality = existing.quality.max(quality);
+                continue;
+            }
+            budget.retain_fact(remaining_file_facts)?;
+            additions.insert(
+                key,
+                ObservedFact {
+                    name,
+                    written: None,
+                    canonical: Vec::new(),
+                    span: fact.span,
+                    quality,
+                    guard,
+                    lexical_scope: fact.lexical_scope.clone(),
                 },
-                lexical_scope: fact.lexical_scope.clone(),
-            });
+            );
         }
     }
-    additions.sort_by(|left, right| {
-        (&left.name, left.span, left.guard).cmp(&(&right.name, right.span, right.guard))
-    });
-    additions.dedup_by(|left, right| {
-        left.name == right.name && left.span == right.span && left.guard == right.guard
-    });
-    for _ in &additions {
-        budget.retain_fact(remaining_file_facts)?;
-    }
-    Ok(additions)
+    Ok(additions.into_values().collect())
 }
