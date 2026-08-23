@@ -35,6 +35,8 @@ All notable zrail changes are recorded here for reviewed release notes.
   protected lock mutation now fail closed across their adversarial edge cases.
 - Domain-dependent textual macro shadowing now requires authority for every
   feasible origin and content-binds reviewed repository implementations.
+- Literal and verified generated includes now preserve occurrence-specific
+  textual macro order and fail closed on unresolved cross-file aliases.
 
 ## [0.0.1] - 2026-08-22
 

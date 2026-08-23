@@ -280,6 +280,16 @@ package, including helper macros and internal proc macros. External allowances
 bind to the exact dependency source. Built-in data macros and `include!` are
 handled directly, and included Rust remains fully analyzed.
 
+Literal and verified generated `include!` sources retain occurrence-specific
+lexical splices. Textual `macro_rules!` lookup follows caller prefixes, nested
+includes, source order, lexical scope, and Cargo compilation domains; item
+includes can introduce definitions into the caller suffix, while expression
+includes cannot leak definitions beyond their expression scope. Cross-file
+`use` aliases are conservatively unresolved when they could change a macro
+invocation across a splice. Until that import projection is exact,
+the invocation requires an explicit name-only `binding = "conservative"`
+allowance and cannot borrow compiler or dependency-source authority.
+
 An optional `definition` path can narrow a `macro_rules!` allowance, but path
 spelling never establishes origin. The default `binding = "exact"` rejects an
 allowance when the candidate origin remains unresolved. A name-only allowance
