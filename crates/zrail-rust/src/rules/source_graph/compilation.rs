@@ -61,6 +61,7 @@ impl Walker<'_> {
         ) {
             self.compilation_edges.insert(CompilationModuleEdge {
                 parent: edge.parent.clone(),
+                module_name: edge.module_name.clone(),
                 child: edge.child.clone(),
                 domain: context.domain.clone(),
                 parent_scope: parent_scope.to_vec(),

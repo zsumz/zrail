@@ -23,6 +23,7 @@ pub(super) fn repository_candidate(
             quality: AnalysisQuality::Exact,
             guard: expansion.guard,
             lexical_scope: expansion.lexical_scope.clone(),
+            namespace: super::FactNamespace::Unknown,
         },
         origins: vec![MacroOrigin::Repository {
             package: site.package,

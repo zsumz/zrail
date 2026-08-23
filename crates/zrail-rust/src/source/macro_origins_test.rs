@@ -171,12 +171,14 @@ fn observed(name: &str) -> ObservedFact {
         quality: AnalysisQuality::Exact,
         guard: crate::source::SyntaxGuard::Ordinary,
         lexical_scope: Vec::new(),
+        namespace: crate::source::FactNamespace::Unknown,
     }
 }
 
 fn package(dependencies: Vec<Dependency>) -> Package {
     Package {
         name: "app".into(),
+        edition: "2024".into(),
         directory: ".".into(),
         dependencies,
         targets: Vec::new(),

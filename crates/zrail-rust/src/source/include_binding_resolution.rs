@@ -1,219 +1,253 @@
-//! Bounded lexical lookup projects imports through exact include occurrences.
+//! Bounded Rust lookup resolves written paths to effective policy identities.
 
-use std::collections::BTreeSet;
-
-use zrail_core::{AnalysisQuality, SourceSpan};
+use zrail_core::AnalysisQuality;
 
 use super::{
-    IncludeContext, SourceEntry, SourceInstanceId, SyntaxGuard,
-    include_binding_helpers::{join, normalize, select_site, split_root, unresolved},
-    include_bindings::{BindingSite, IncludeBindings, ResolvedPath},
+    SourceInstanceId, SyntaxGuard,
+    include_binding_helpers::{normalize, split_root, unresolved},
+    include_bindings::{IncludeBindings, ResolvedPath},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
+    include_resolution_state::{
+        EffectiveModule, LookupMode, ResolutionKey, ResolutionTrail, ResolutionUsage,
+    },
 };
 
 pub(super) const MAX_BINDING_STEPS: usize = 128;
-const MAX_BINDING_CANDIDATES: usize = 64;
+pub(super) const MAX_BINDING_CANDIDATES: usize = 64;
 
 impl IncludeBindings {
     pub(super) fn resolve_written(
         &self,
         instance: SourceInstanceId,
         written: &str,
-        scope: &[SourceSpan],
-        seen: &mut BTreeSet<(SourceInstanceId, String, Vec<SourceSpan>)>,
+        scope: &[zrail_core::SourceSpan],
+        trail: &mut ResolutionTrail,
         depth: usize,
         budget: &mut ProjectionBudget,
+        usage: ResolutionUsage,
+    ) -> Result<Vec<ResolvedPath>, ProjectionLimit> {
+        let Some(module) = self.effective_module(instance, scope, budget)? else {
+            return Ok(vec![unresolved(written)]);
+        };
+        self.resolve_in(
+            instance,
+            written,
+            scope,
+            trail,
+            depth,
+            budget,
+            LookupMode::lexical(module),
+            usage,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub(super) fn resolve_in(
+        &self,
+        instance: SourceInstanceId,
+        written: &str,
+        scope: &[zrail_core::SourceSpan],
+        trail: &mut ResolutionTrail,
+        depth: usize,
+        budget: &mut ProjectionBudget,
+        mode: LookupMode,
+        usage: ResolutionUsage,
     ) -> Result<Vec<ResolvedPath>, ProjectionLimit> {
         budget.consume_work()?;
-        if depth >= MAX_BINDING_STEPS {
+        if depth >= MAX_BINDING_STEPS
+            || written.len() > super::include_binding_helpers::MAX_RESOLVED_PATH_BYTES
+        {
             return Ok(vec![unresolved(written)]);
         }
         let Some(source) = self.instances.get(instance) else {
             return Ok(vec![unresolved(written)]);
         };
+        if let Some(external) = written.strip_prefix("::") {
+            if source.domain.edition == "2015" {
+                let Some(crate_path) = super::include_binding_helpers::join("crate::", external)
+                else {
+                    return Ok(vec![unresolved(written)]);
+                };
+                let mut resolved = self.resolve_in(
+                    instance,
+                    &crate_path,
+                    scope,
+                    trail,
+                    depth + 1,
+                    budget,
+                    mode,
+                    usage,
+                )?;
+                for candidate in &mut resolved {
+                    candidate.requires_projection = true;
+                }
+                return Ok(resolved);
+            }
+            let Some(location) =
+                self.resolve_qualifiers(instance, &format!("crate::{external}"), scope, budget)?
+            else {
+                return Ok(vec![unresolved(written)]);
+            };
+            if location.unresolved {
+                return Ok(vec![unresolved(written)]);
+            }
+            let mut resolved = self.resolve_in(
+                location.instance,
+                &location.written,
+                &location.scope,
+                trail,
+                depth + 1,
+                budget,
+                LookupMode::explicit_extern(mode.consumer.clone()),
+                usage,
+            )?;
+            for candidate in &mut resolved {
+                candidate.crossed_include |= location.crossed_include;
+                candidate.requires_projection = true;
+            }
+            return Ok(resolved);
+        }
         let context = SyntaxGuard::for_test_only(source.domain.mode.enables_cfg_test());
         let qualified = self.resolve_qualifiers(instance, written, scope, budget)?;
-        let (instance, written, scope, crossed_include) =
-            qualified
-                .as_ref()
-                .map_or((instance, written, scope, false), |location| {
-                    (
-                        location.instance,
-                        location.written.as_str(),
-                        location.scope.as_slice(),
-                        location.crossed_include,
-                    )
-                });
+        let (instance, written, scope, crossed_include, mode) = qualified.as_ref().map_or(
+            (instance, written, scope, false, mode.clone()),
+            |location| {
+                (
+                    location.instance,
+                    location.written.as_str(),
+                    location.scope.as_slice(),
+                    location.crossed_include,
+                    mode.module(),
+                )
+            },
+        );
         if qualified
             .as_ref()
             .is_some_and(|location| location.unresolved)
         {
             return Ok(vec![unresolved(written)]);
         }
-        if let Some(mut resolved) =
-            self.resolve_aliases(instance, written, scope, context, seen, depth, budget)?
+        let Some(module) = self.effective_module(instance, scope, budget)? else {
+            return Ok(vec![unresolved(written)]);
+        };
+        if let Some(mut resolved) = self.resolve_aliases(
+            instance, written, scope, context, trail, depth, budget, &mode, &module, usage,
+        )? && !resolved.is_empty()
         {
             for candidate in &mut resolved {
                 candidate.crossed_include |= crossed_include;
+                candidate.requires_projection |= qualified.is_some();
             }
             return Ok(resolved);
         }
-        let globs = self.glob_sites(instance, scope, context, budget)?;
+        let globs = self.glob_sites(instance, scope, context, budget, &mode, &module)?;
         if globs.len() > MAX_BINDING_CANDIDATES {
             return Ok(vec![unresolved(written)]);
         }
-        if globs.is_empty() {
-            return Ok(vec![ResolvedPath {
-                name: written.into(),
-                quality: AnalysisQuality::Exact,
-                crossed_include,
-            }]);
-        }
         let mut resolved = Vec::new();
         for site in globs {
-            resolved.extend(self.expand_glob(&site, written, context, seen, depth + 1, budget)?);
+            resolved.extend(self.expand_glob(&site, written, trail, depth + 1, budget, usage)?);
             if resolved.len() > MAX_BINDING_CANDIDATES {
                 return Ok(vec![unresolved(written)]);
             }
         }
         let mut resolved = normalize(resolved);
+        if resolved.is_empty() {
+            return self.missing(
+                instance,
+                written,
+                scope,
+                crossed_include,
+                &mode,
+                &module,
+                budget,
+            );
+        }
+        if self.namespace_is_opaque(instance, scope, mode.exact_scope(), budget)? {
+            for candidate in &mut resolved {
+                candidate.quality = AnalysisQuality::Unresolved;
+                candidate.requires_projection = true;
+            }
+        }
         for candidate in &mut resolved {
             candidate.crossed_include |= crossed_include;
+            candidate.requires_projection |= qualified.is_some();
         }
         Ok(resolved)
     }
 
-    pub(super) fn resolve_aliases(
+    #[allow(clippy::too_many_arguments)]
+    fn resolve_aliases(
         &self,
         instance: SourceInstanceId,
         written: &str,
-        scope: &[SourceSpan],
+        scope: &[zrail_core::SourceSpan],
         context: SyntaxGuard,
-        seen: &mut BTreeSet<(SourceInstanceId, String, Vec<SourceSpan>)>,
+        trail: &mut ResolutionTrail,
         depth: usize,
         budget: &mut ProjectionBudget,
+        mode: &LookupMode,
+        module: &EffectiveModule,
+        usage: ResolutionUsage,
     ) -> Result<Option<Vec<ResolvedPath>>, ProjectionLimit> {
         budget.consume_work()?;
-        if depth >= MAX_BINDING_STEPS {
-            return Ok(Some(vec![unresolved(written)]));
-        }
         let (root, suffix) = split_root(written);
-        let sites = self.alias_sites(instance, root, scope, context, budget)?;
+        let mut sites = self.alias_sites(
+            instance, root, suffix, scope, context, budget, mode, module, usage,
+        )?;
         if sites.is_empty() {
             return Ok(None);
         }
         if sites.len() > MAX_BINDING_CANDIDATES {
             return Ok(Some(vec![unresolved(written)]));
         }
-        let key = (instance, root.to_owned(), scope.to_vec());
-        if !seen.insert(key.clone()) {
-            return Ok(Some(vec![unresolved(written)]));
+        let key = ResolutionKey::Alias {
+            instance: sites[0].instance,
+            name: root.into(),
+            scope: sites[0].binding.lexical_scope.clone(),
+        };
+        let owns_key = trail.insert(key.clone());
+        if !owns_key {
+            sites.retain(|site| {
+                !matches!(
+                    site.binding.kind,
+                    super::BindingKind::Import | super::BindingKind::TypeAlias
+                ) || split_root(&site.binding.target).0 != root
+            });
+            if sites.is_empty() {
+                return Ok(None);
+            }
         }
+        let ambiguous = sites.len() > 1;
         let mut resolved = Vec::new();
         for site in sites {
-            let target = join(&site.binding.target, suffix);
-            let target_root = split_root(&target).0;
-            let expanded = if target_root == root {
-                vec![ResolvedPath {
-                    name: target,
-                    quality: site.binding.quality,
-                    crossed_include: site.crossed_include,
-                }]
-            } else {
-                self.resolve_aliases(
-                    site.instance,
-                    &target,
-                    &site.binding.lexical_scope,
-                    context,
-                    seen,
-                    depth + 1,
-                    budget,
-                )?
-                .unwrap_or_else(|| {
-                    vec![ResolvedPath {
-                        name: target,
-                        quality: AnalysisQuality::Exact,
-                        crossed_include: false,
-                    }]
-                })
-                .into_iter()
-                .map(|mut candidate| {
-                    candidate.quality = candidate.quality.max(site.binding.quality);
-                    candidate.crossed_include |= site.crossed_include;
-                    candidate
-                })
-                .collect()
-            };
+            let mut expanded = self.expand_binding(
+                &site,
+                written,
+                suffix,
+                trail,
+                depth + 1,
+                budget,
+                mode,
+                usage,
+            )?;
+            if ambiguous {
+                for candidate in &mut expanded {
+                    candidate.quality = AnalysisQuality::Unresolved;
+                    candidate.requires_projection = true;
+                }
+            }
             resolved.extend(expanded);
             if resolved.len() > MAX_BINDING_CANDIDATES {
-                seen.remove(&key);
+                if owns_key {
+                    trail.remove(&key);
+                }
                 return Ok(Some(vec![unresolved(written)]));
             }
         }
-        seen.remove(&key);
+        if owns_key {
+            trail.remove(&key);
+        }
         Ok(Some(normalize(resolved)))
-    }
-
-    fn alias_sites(
-        &self,
-        instance: SourceInstanceId,
-        name: &str,
-        scope: &[SourceSpan],
-        context: SyntaxGuard,
-        budget: &mut ProjectionBudget,
-    ) -> Result<Vec<BindingSite>, ProjectionLimit> {
-        let mut selected = Vec::new();
-        let mut depth = None;
-        let Some(source) = self.instances.get(instance) else {
-            return Ok(Vec::new());
-        };
-        for binding in self
-            .files
-            .get(&source.file)
-            .and_then(|bindings| bindings.named.get(name))
-            .into_iter()
-            .flatten()
-        {
-            budget.consume_work()?;
-            if binding.name.as_deref() == Some(name)
-                && binding.guard.available_in(context)
-                && scope.starts_with(&binding.lexical_scope)
-            {
-                select_site(
-                    &mut selected,
-                    &mut depth,
-                    binding.lexical_scope.len(),
-                    BindingSite {
-                        binding: binding.clone(),
-                        instance,
-                        crossed_include: false,
-                    },
-                );
-            }
-        }
-        for (edge, child) in self.instances.includes_from(instance) {
-            budget.consume_work()?;
-            if edge.context != IncludeContext::Items || !scope.starts_with(&edge.parent_scope) {
-                continue;
-            }
-            for mut site in
-                self.exported_alias_sites(*child, name, context, &mut BTreeSet::new(), budget)?
-            {
-                site.crossed_include = true;
-                select_site(&mut selected, &mut depth, edge.parent_scope.len(), site);
-            }
-        }
-        if !selected.is_empty() {
-            return Ok(selected);
-        }
-        if let (Some(parent), SourceEntry::Include(edge)) = (source.parent, &source.entered_from) {
-            let mut inherited =
-                self.alias_sites(parent, name, &edge.parent_scope, context, budget)?;
-            for site in &mut inherited {
-                site.crossed_include = true;
-            }
-            return Ok(inherited);
-        }
-        Ok(Vec::new())
     }
 }

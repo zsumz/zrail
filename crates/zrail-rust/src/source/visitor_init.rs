@@ -17,6 +17,7 @@ impl<'a> FactVisitor<'a> {
                 quality,
                 guard,
                 lexical_scope: Vec::new(),
+                namespace: super::FactNamespace::Unknown,
             })
             .collect::<Vec<_>>();
         paths.extend(
@@ -31,6 +32,7 @@ impl<'a> FactVisitor<'a> {
                     quality: AnalysisQuality::Conservative,
                     guard,
                     lexical_scope: Vec::new(),
+                    namespace: super::FactNamespace::Unknown,
                 }),
         );
         Self {
@@ -38,6 +40,7 @@ impl<'a> FactVisitor<'a> {
             local_imports: Vec::new(),
             test_only_context: false,
             lexical_scope: Vec::new(),
+            next_path_namespace: super::FactNamespace::Unknown,
             paths,
             calls: Vec::new(),
             methods: Vec::new(),
@@ -53,6 +56,7 @@ impl<'a> FactVisitor<'a> {
             tests: Vec::new(),
             includes: Vec::new(),
             item_macros: Vec::new(),
+            opaque_binding_macros: Vec::new(),
         }
     }
 }

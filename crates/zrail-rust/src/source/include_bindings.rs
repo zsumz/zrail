@@ -6,16 +6,17 @@ use zrail_core::AnalysisQuality;
 
 use super::{
     CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot, ImportBindingFact,
-    ObservedFact, SourceIndex, SourceInstanceId, SourceInstances, SyntaxGuard,
+    ModuleBinding, SourceIndex, SourceInstanceId, SourceInstances, SyntaxGuard,
     include_binding_catalog::FileBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
+    include_resolution_state::EffectiveModule,
 };
-
-const MAX_PROJECTED_IDENTITIES: usize = 64;
 
 pub(super) struct IncludeBindings {
     pub(super) files: BTreeMap<String, FileBindings>,
-    pub(super) inline_module_scopes: BTreeMap<String, BTreeSet<zrail_core::SourceSpan>>,
+    pub(super) inline_module_names: BTreeMap<String, BTreeMap<zrail_core::SourceSpan, String>>,
+    pub(super) opaque_namespace_scopes:
+        BTreeMap<String, BTreeSet<(Vec<zrail_core::SourceSpan>, SyntaxGuard)>>,
     pub(super) instances: SourceInstances,
 }
 
@@ -23,6 +24,7 @@ pub(super) struct IncludeBindings {
 pub(super) struct BindingSite {
     pub(super) binding: ImportBindingFact,
     pub(super) instance: SourceInstanceId,
+    pub(super) module: EffectiveModule,
     pub(super) crossed_include: bool,
 }
 
@@ -31,24 +33,7 @@ pub(super) struct ResolvedPath {
     pub(super) name: String,
     pub(super) quality: AnalysisQuality,
     pub(super) crossed_include: bool,
-}
-
-struct CandidateAggregate {
-    instances: usize,
-    quality: AnalysisQuality,
-    production: bool,
-    crossed_include: bool,
-}
-
-impl Default for CandidateAggregate {
-    fn default() -> Self {
-        Self {
-            instances: 0,
-            quality: AnalysisQuality::Exact,
-            production: false,
-            crossed_include: false,
-        }
-    }
+    pub(super) requires_projection: bool,
 }
 
 impl Default for ResolvedPath {
@@ -57,6 +42,7 @@ impl Default for ResolvedPath {
             name: String::new(),
             quality: AnalysisQuality::Exact,
             crossed_include: false,
+            requires_projection: false,
         }
     }
 }
@@ -79,13 +65,35 @@ impl IncludeBindings {
                     )
                 })
                 .collect(),
-            inline_module_scopes: index
+            inline_module_names: index
                 .files
                 .iter()
                 .map(|file| {
                     (
                         file.relative.clone(),
-                        file.inline_module_scopes.iter().copied().collect(),
+                        file.import_bindings
+                            .iter()
+                            .filter_map(|binding| match binding.kind {
+                                super::BindingKind::Module(ModuleBinding::Inline(span)) => {
+                                    binding.name.as_ref().map(|name| (span, name.clone()))
+                                }
+                                _ => None,
+                            })
+                            .collect(),
+                    )
+                })
+                .collect(),
+            opaque_namespace_scopes: index
+                .files
+                .iter()
+                .map(|file| {
+                    (
+                        file.relative.clone(),
+                        file.item_macros
+                            .iter()
+                            .chain(&file.opaque_binding_macros)
+                            .map(|fact| (fact.lexical_scope.clone(), fact.guard))
+                            .collect(),
                     )
                 })
                 .collect(),
@@ -112,107 +120,4 @@ impl IncludeBindings {
         }
         Ok(active)
     }
-}
-
-pub(super) fn project(
-    bindings: &IncludeBindings,
-    file: &str,
-    facts: &[ObservedFact],
-    uncertain: &mut Option<zrail_core::SourceSpan>,
-    budget: &mut ProjectionBudget,
-    remaining_file_facts: &mut usize,
-) -> Result<Vec<ObservedFact>, ProjectionLimit> {
-    let mut additions =
-        BTreeMap::<(String, Option<zrail_core::SourceSpan>, SyntaxGuard), ObservedFact>::new();
-    for fact in facts.iter().filter(|fact| fact.written.is_some()) {
-        budget.consume_work()?;
-        let instances = bindings.active_instances(file, fact.guard, budget)?;
-        if instances.is_empty() {
-            continue;
-        }
-        let mut aggregate = BTreeMap::<String, CandidateAggregate>::new();
-        let mut compatible = true;
-        let mut common = None;
-        for instance in &instances {
-            let mut seen = BTreeSet::new();
-            let resolved = bindings.resolve_written(
-                *instance,
-                fact.written.as_deref().unwrap_or(&fact.name),
-                &fact.lexical_scope,
-                &mut seen,
-                0,
-                budget,
-            )?;
-            compatible &= resolved.len() == 1;
-            let names = resolved
-                .iter()
-                .map(|candidate| candidate.name.as_str())
-                .collect::<BTreeSet<_>>();
-            let only = (names.len() == 1)
-                .then(|| names.iter().next().copied())
-                .flatten();
-            common = match (common, only) {
-                (None, name) => name.map(str::to_owned),
-                (Some(current), Some(name)) if current == name => Some(current),
-                _ => {
-                    compatible = false;
-                    None
-                }
-            };
-            for candidate in resolved {
-                let entry = aggregate.entry(candidate.name).or_default();
-                entry.instances += 1;
-                entry.quality = entry.quality.max(candidate.quality);
-                entry.crossed_include |= candidate.crossed_include;
-                entry.production |= bindings
-                    .instances
-                    .get(*instance)
-                    .is_some_and(|source| !source.domain.mode.enables_cfg_test());
-            }
-        }
-        if aggregate.len() > MAX_PROJECTED_IDENTITIES {
-            *uncertain = uncertain.or(fact.span);
-            continue;
-        }
-        for (name, candidate) in aggregate {
-            let complete = compatible && candidate.instances == instances.len();
-            let quality = if candidate.quality == AnalysisQuality::Unresolved {
-                if candidate.crossed_include {
-                    *uncertain = uncertain.or(fact.span);
-                }
-                AnalysisQuality::Unresolved
-            } else if complete {
-                AnalysisQuality::Exact
-            } else {
-                AnalysisQuality::Conservative
-            };
-            if name == fact.name {
-                continue;
-            }
-            let guard = if fact.guard == SyntaxGuard::TestOnly || !candidate.production {
-                SyntaxGuard::TestOnly
-            } else {
-                SyntaxGuard::Ordinary
-            };
-            let key = (name.clone(), fact.span, guard);
-            if let Some(existing) = additions.get_mut(&key) {
-                existing.quality = existing.quality.max(quality);
-                continue;
-            }
-            budget.retain_fact(remaining_file_facts)?;
-            additions.insert(
-                key,
-                ObservedFact {
-                    name,
-                    written: None,
-                    canonical: Vec::new(),
-                    span: fact.span,
-                    quality,
-                    guard,
-                    lexical_scope: fact.lexical_scope.clone(),
-                },
-            );
-        }
-    }
-    Ok(additions.into_values().collect())
 }

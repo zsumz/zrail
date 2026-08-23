@@ -1,4 +1,4 @@
-//! Glob imports project conservatively through bounded include namespaces.
+//! Glob imports reach a bounded Rust fixed point without escaping module floors.
 
 use std::collections::BTreeSet;
 
@@ -6,10 +6,13 @@ use zrail_core::{AnalysisQuality, SourceSpan};
 
 use super::{
     IncludeContext, SourceEntry, SourceInstanceId, SyntaxGuard,
-    include_binding_helpers::join,
-    include_binding_resolution::MAX_BINDING_STEPS,
+    include_binding_helpers::{join, unresolved},
+    include_binding_resolution::{MAX_BINDING_CANDIDATES, MAX_BINDING_STEPS},
     include_bindings::{BindingSite, IncludeBindings, ResolvedPath},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
+    include_resolution_state::{
+        EffectiveModule, LookupMode, ResolutionKey, ResolutionTrail, ResolutionUsage,
+    },
 };
 
 impl IncludeBindings {
@@ -17,50 +20,70 @@ impl IncludeBindings {
         &self,
         site: &BindingSite,
         written: &str,
-        context: SyntaxGuard,
-        seen: &mut BTreeSet<(SourceInstanceId, String, Vec<SourceSpan>)>,
+        trail: &mut ResolutionTrail,
         depth: usize,
         budget: &mut ProjectionBudget,
+        usage: ResolutionUsage,
     ) -> Result<Vec<ResolvedPath>, ProjectionLimit> {
         budget.consume_work()?;
-        Ok(self
-            .resolve_aliases(
-                site.instance,
-                &site.binding.target,
-                &site.binding.lexical_scope,
-                context,
-                seen,
-                depth,
-                budget,
-            )?
-            .unwrap_or_else(|| {
-                vec![ResolvedPath {
-                    name: site.binding.target.clone(),
-                    quality: AnalysisQuality::Exact,
-                    crossed_include: false,
-                }]
-            })
+        let key = ResolutionKey::Glob {
+            instance: site.instance,
+            target: site.binding.target.clone(),
+            scope: site.binding.lexical_scope.clone(),
+        };
+        if !trail.insert(key.clone()) {
+            return Ok(Vec::new());
+        }
+        let Some(target) = join(&site.binding.target, &format!("::{written}")) else {
+            trail.remove(&key);
+            return Ok(vec![unresolved(written)]);
+        };
+        let Some(target) = self.anchor_target(site, target) else {
+            trail.remove(&key);
+            return Ok(vec![unresolved(written)]);
+        };
+        let resolved = self.resolve_in(
+            site.instance,
+            &target,
+            &site.binding.lexical_scope,
+            trail,
+            depth,
+            budget,
+            LookupMode::glob_target(site.module.clone()),
+            usage,
+        )?;
+        trail.remove(&key);
+        Ok(resolved
             .into_iter()
             .map(|candidate| ResolvedPath {
-                name: join(&candidate.name, &format!("::{written}")),
+                name: candidate.name,
                 quality: candidate
                     .quality
                     .max(site.binding.quality)
                     .max(AnalysisQuality::Conservative),
                 crossed_include: candidate.crossed_include || site.crossed_include,
+                requires_projection: true,
             })
             .collect())
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub(super) fn glob_sites(
         &self,
         instance: SourceInstanceId,
         scope: &[SourceSpan],
         context: SyntaxGuard,
         budget: &mut ProjectionBudget,
+        mode: &LookupMode,
+        module: &EffectiveModule,
     ) -> Result<Vec<BindingSite>, ProjectionLimit> {
         let Some(source) = self.instances.get(instance) else {
             return Ok(Vec::new());
+        };
+        let floor = if mode.exact_scope() {
+            scope.len()
+        } else {
+            self.lexical_floor(&source.file, scope, budget)?
         };
         let mut sites = Vec::new();
         for binding in self
@@ -70,34 +93,73 @@ impl IncludeBindings {
             .flat_map(|bindings| &bindings.globs)
         {
             budget.consume_work()?;
-            if binding.name.is_none()
-                && scope.starts_with(&binding.lexical_scope)
-                && binding.guard.available_in(context)
-            {
+            let visible = if mode.exact_scope() {
+                scope == binding.lexical_scope
+            } else {
+                binding.lexical_scope.len() >= floor && scope.starts_with(&binding.lexical_scope)
+            };
+            if binding.guard.available_in(context) && visible {
+                let mut binding = binding.clone();
+                binding.quality = binding.quality.max(self.visibility_quality(
+                    &binding.visibility,
+                    module,
+                    &mode.consumer,
+                ));
                 sites.push(BindingSite {
-                    binding: binding.clone(),
+                    binding,
                     instance,
+                    module: module.clone(),
                     crossed_include: false,
                 });
+                if sites.len() > MAX_BINDING_CANDIDATES {
+                    return Ok(sites);
+                }
             }
         }
         for (edge, child) in self.instances.includes_from(instance) {
             budget.consume_work()?;
-            if edge.context == IncludeContext::Items && scope.starts_with(&edge.parent_scope) {
-                sites.extend(self.exported_glob_sites(
-                    *child,
-                    context,
-                    &mut BTreeSet::new(),
-                    budget,
-                )?);
+            let visible = if mode.exact_scope() {
+                scope == edge.parent_scope
+            } else {
+                edge.parent_scope.len() >= floor && scope.starts_with(&edge.parent_scope)
+            };
+            if edge.context == IncludeContext::Items && visible {
+                for mut site in
+                    self.exported_glob_sites(*child, context, &mut BTreeSet::new(), budget)?
+                {
+                    site.binding.quality = site.binding.quality.max(self.visibility_quality(
+                        &site.binding.visibility,
+                        &site.module,
+                        &mode.consumer,
+                    ));
+                    sites.push(site);
+                    if sites.len() > MAX_BINDING_CANDIDATES {
+                        return Ok(sites);
+                    }
+                }
             }
         }
-        if let (Some(parent), SourceEntry::Include(edge)) = (source.parent, &source.entered_from) {
-            sites.extend(self.glob_sites(parent, &edge.parent_scope, context, budget)?);
-        }
-        if source.parent.is_some() {
-            for site in &mut sites {
-                site.crossed_include |= site.instance != instance;
+        if floor == 0
+            && let (Some(parent), SourceEntry::Include(edge)) =
+                (source.parent, &source.entered_from)
+        {
+            let Some(parent_module) = self.effective_module(parent, &edge.parent_scope, budget)?
+            else {
+                return Ok(sites);
+            };
+            for mut site in self.glob_sites(
+                parent,
+                &edge.parent_scope,
+                context,
+                budget,
+                mode,
+                &parent_module,
+            )? {
+                site.crossed_include = true;
+                sites.push(site);
+                if sites.len() > MAX_BINDING_CANDIDATES {
+                    break;
+                }
             }
         }
         Ok(sites)
@@ -125,21 +187,33 @@ impl IncludeBindings {
             .flat_map(|bindings| &bindings.globs)
         {
             budget.consume_work()?;
-            if binding.name.is_none()
-                && binding.lexical_scope.is_empty()
-                && binding.guard.available_in(context)
-            {
+            if binding.lexical_scope.is_empty() && binding.guard.available_in(context) {
+                let Some(module) = self.effective_module(instance, &[], budget)? else {
+                    continue;
+                };
                 sites.push(BindingSite {
                     binding: binding.clone(),
                     instance,
+                    module,
                     crossed_include: true,
                 });
+                if sites.len() > MAX_BINDING_CANDIDATES {
+                    break;
+                }
             }
         }
         for (edge, child) in self.instances.includes_from(instance) {
             budget.consume_work()?;
             if edge.context == IncludeContext::Items && edge.parent_scope.is_empty() {
-                sites.extend(self.exported_glob_sites(*child, context, seen, budget)?);
+                for site in self.exported_glob_sites(*child, context, seen, budget)? {
+                    sites.push(site);
+                    if sites.len() > MAX_BINDING_CANDIDATES {
+                        break;
+                    }
+                }
+            }
+            if sites.len() > MAX_BINDING_CANDIDATES {
+                break;
             }
         }
         seen.remove(&instance);

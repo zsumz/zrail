@@ -1,8 +1,9 @@
 //! Syntax visitor collecting source facts after import resolution.
 
 use syn::{
-    Attribute, Block, ExprCall, ExprMacro, ExprMethodCall, ItemFn, ItemForeignMod, ItemImpl,
-    ItemMacro, ItemMod, ItemStatic, ItemTrait, Macro, Signature, Stmt, StmtMacro,
+    Attribute, Block, ExprCall, ExprMacro, ExprMethodCall, ExprPath, ItemFn, ItemForeignMod,
+    ItemImpl, ItemMacro, ItemMod, ItemStatic, ItemTrait, Macro, Signature, Stmt, StmtMacro,
+    TypePath,
     spanned::Spanned,
     visit::{self, Visit},
 };
@@ -77,6 +78,19 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     fn visit_path(&mut self, path: &'ast syn::Path) {
         self.record_path(path);
         visit::visit_path(self, path);
+    }
+
+    fn visit_expr_path(&mut self, expression: &'ast ExprPath) {
+        let previous =
+            std::mem::replace(&mut self.next_path_namespace, super::FactNamespace::Value);
+        visit::visit_expr_path(self, expression);
+        self.next_path_namespace = previous;
+    }
+
+    fn visit_type_path(&mut self, path: &'ast TypePath) {
+        let previous = std::mem::replace(&mut self.next_path_namespace, super::FactNamespace::Type);
+        visit::visit_type_path(self, path);
+        self.next_path_namespace = previous;
     }
 
     fn visit_attribute(&mut self, attribute: &'ast Attribute) {

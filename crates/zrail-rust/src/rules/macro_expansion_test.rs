@@ -128,6 +128,7 @@ fn fact(name: &str) -> ObservedFact {
         quality: AnalysisQuality::Exact,
         guard: crate::source::SyntaxGuard::Ordinary,
         lexical_scope: Vec::new(),
+        namespace: crate::source::FactNamespace::Unknown,
     }
 }
 

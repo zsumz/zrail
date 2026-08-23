@@ -35,6 +35,7 @@ pub(crate) struct SourceInstance {
 pub(crate) struct SourceInstances {
     instances: Vec<SourceInstance>,
     by_file: BTreeMap<String, Vec<SourceInstanceId>>,
+    module_children: BTreeMap<SourceInstanceId, Vec<(CompilationModuleEdge, SourceInstanceId)>>,
     include_children: BTreeMap<SourceInstanceId, Vec<(CompilationIncludeEdge, SourceInstanceId)>>,
     pub(crate) complete: bool,
 }
@@ -50,6 +51,7 @@ impl SourceInstances {
         let mut graph = Self {
             instances: Vec::new(),
             by_file: BTreeMap::new(),
+            module_children: BTreeMap::new(),
             include_children: BTreeMap::new(),
             complete: true,
         };
@@ -74,6 +76,11 @@ impl SourceInstances {
                     edge.child.clone(),
                     SourceEntry::Module((*edge).clone()),
                 ) {
+                    graph
+                        .module_children
+                        .entry(parent)
+                        .or_default()
+                        .push(((*edge).clone(), child));
                     queue.push_back(child);
                 }
             }
@@ -110,6 +117,13 @@ impl SourceInstances {
         self.include_children
             .get(&parent)
             .map_or(&[], Vec::as_slice)
+    }
+
+    pub(crate) fn modules_from(
+        &self,
+        parent: SourceInstanceId,
+    ) -> &[(CompilationModuleEdge, SourceInstanceId)] {
+        self.module_children.get(&parent).map_or(&[], Vec::as_slice)
     }
 
     fn add_child(

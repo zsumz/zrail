@@ -77,12 +77,14 @@ fn in_tree_path_dependencies_are_implicit_members() {
     let packages = [
         Package {
             name: "root".into(),
+            edition: "2024".into(),
             directory: ".".into(),
             dependencies: vec![path_dependency("member", "crates/member")],
             targets: Vec::new(),
         },
         Package {
             name: "member".into(),
+            edition: "2024".into(),
             directory: "crates/member".into(),
             dependencies: Vec::new(),
             targets: vec![library_target("runtime_core")],
@@ -100,6 +102,7 @@ fn only_exact_declared_member_paths_become_internal() {
     let mut packages = [
         Package {
             name: "root".into(),
+            edition: "2024".into(),
             directory: ".".into(),
             dependencies: vec![
                 path_dependency("member", "crates/member"),
@@ -109,12 +112,14 @@ fn only_exact_declared_member_paths_become_internal() {
         },
         Package {
             name: "member".into(),
+            edition: "2024".into(),
             directory: "crates/member".into(),
             dependencies: Vec::new(),
             targets: vec![library_target("runtime_core")],
         },
         Package {
             name: "excluded".into(),
+            edition: "2024".into(),
             directory: "crates/excluded".into(),
             dependencies: Vec::new(),
             targets: vec![library_target("excluded")],
@@ -145,12 +150,14 @@ fn explicit_package_rename_owns_the_rust_visible_root() {
     let mut packages = [
         Package {
             name: "root".into(),
+            edition: "2024".into(),
             directory: ".".into(),
             dependencies: vec![renamed],
             targets: Vec::new(),
         },
         Package {
             name: "member".into(),
+            edition: "2024".into(),
             directory: "crates/member".into(),
             dependencies: Vec::new(),
             targets: vec![library_target("different_library_name")],

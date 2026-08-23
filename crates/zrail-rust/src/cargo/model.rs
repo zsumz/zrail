@@ -99,6 +99,7 @@ impl DependencySource {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct Package {
     pub(crate) name: String,
+    pub(crate) edition: String,
     pub(crate) directory: String,
     pub(crate) dependencies: Vec<Dependency>,
     pub(crate) targets: Vec<CargoTarget>,

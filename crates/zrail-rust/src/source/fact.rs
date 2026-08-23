@@ -14,6 +14,7 @@ pub(super) fn fact(name: impl Into<String>, span: Span, quality: AnalysisQuality
         quality,
         guard: SyntaxGuard::Ordinary,
         lexical_scope: Vec::new(),
+        namespace: super::FactNamespace::Unknown,
     }
 }
 

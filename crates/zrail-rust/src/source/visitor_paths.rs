@@ -11,19 +11,24 @@ impl FactVisitor<'_> {
         if name.is_empty() {
             return;
         }
-        let written = path
+        let mut written = path
             .segments
             .iter()
             .map(|segment| segment.ident.to_string())
             .collect::<Vec<_>>()
             .join("::");
-        self.paths.push(written_fact(
+        if path.leading_colon.is_some() {
+            written.insert_str(0, "::");
+        }
+        let mut fact = written_fact(
             name.as_str(),
             written,
             path.span(),
             quality,
             &self.lexical_scope,
-        ));
+        );
+        fact.namespace = std::mem::take(&mut self.next_path_namespace);
+        self.paths.push(fact);
         self.paths
             .extend(super::calls::candidates(path, self.imports, &name, guard));
     }

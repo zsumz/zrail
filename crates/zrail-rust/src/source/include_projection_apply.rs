@@ -3,16 +3,18 @@
 use zrail_core::{AnalysisQuality, Finding};
 
 use super::{
-    ObservedFact, RustFileFacts, SourceIndex,
-    include_bindings::{IncludeBindings, project},
+    ObservedFact, RustFileFacts, SourceIndex, SourceSyntax,
+    include_binding_projection::{CallSite, FactKey, FactProjection, project},
+    include_bindings::IncludeBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimit, ProjectionLimits},
+    include_resolution_state::ResolutionUsage,
     parse::{MAX_FACTS_PER_FILE, fact_count},
 };
 
 struct FileProjection {
     index: usize,
-    paths: Vec<ObservedFact>,
-    calls: Vec<ObservedFact>,
+    paths: FactProjection,
+    calls: FactProjection,
 }
 
 impl IncludeBindings {
@@ -53,10 +55,25 @@ impl IncludeBindings {
                 return vec![budget_exhausted(ProjectionLimit::Facts)];
             };
             let mut uncertain = None;
+            let project_expression = file.syntax == SourceSyntax::Expression;
+            let call_sites = file
+                .calls
+                .iter()
+                .map(|fact| {
+                    (
+                        fact.span,
+                        fact.written.as_deref().unwrap_or(&fact.name).to_owned(),
+                        fact.guard,
+                    )
+                })
+                .collect::<std::collections::BTreeSet<CallSite>>();
             let paths = match project(
                 self,
                 &file.relative,
                 &file.paths,
+                ResolutionUsage::Path,
+                &call_sites,
+                project_expression,
                 &mut uncertain,
                 &mut budget,
                 &mut remaining_file_facts,
@@ -68,6 +85,9 @@ impl IncludeBindings {
                 self,
                 &file.relative,
                 &file.calls,
+                ResolutionUsage::Call,
+                &call_sites,
+                project_expression,
                 &mut uncertain,
                 &mut budget,
                 &mut remaining_file_facts,
@@ -85,11 +105,27 @@ impl IncludeBindings {
             });
         }
         for projection in planned {
-            index.files[projection.index].paths.extend(projection.paths);
-            index.files[projection.index].calls.extend(projection.calls);
+            let file = &mut index.files[projection.index];
+            apply_projection(&mut file.paths, projection.paths);
+            apply_projection(&mut file.calls, projection.calls);
         }
         findings
     }
+}
+
+fn apply_projection(facts: &mut Vec<ObservedFact>, projection: FactProjection) {
+    facts.retain(|fact| {
+        !projection
+            .removals
+            .contains(&(fact.name.clone(), fact.span, fact.guard))
+    });
+    for fact in facts.iter_mut() {
+        let key: FactKey = (fact.name.clone(), fact.span, fact.guard);
+        if let Some(quality) = projection.qualities.get(&key) {
+            fact.quality = *quality;
+        }
+    }
+    facts.extend(projection.additions);
 }
 
 fn has_written_facts(file: &RustFileFacts) -> bool {
@@ -104,7 +140,7 @@ fn unresolved(path: Option<&str>, span: Option<zrail_core::SourceSpan>) -> Findi
         "RUST-INCLUDE-002",
         "rust.source.include-bindings",
         "source",
-        "include-spliced ordinary path bindings could not be resolved completely",
+        "ordinary Rust path bindings could not be resolved completely",
     );
     if let Some(path) = path {
         finding = finding.at(path, span);
@@ -123,12 +159,12 @@ fn budget_exhausted(limit: ProjectionLimit) -> Finding {
         "RUST-INCLUDE-002",
         "rust.source.include-bindings",
         "source",
-        format!(
-            "repository-wide include binding projection exhausted its {exhausted} safety budget"
-        ),
+        format!("repository-wide Rust binding projection exhausted its {exhausted} safety budget"),
     )
     .with_analysis(AnalysisQuality::Unresolved)
-    .with_help("reduce include occurrences or binding indirection before trusting source authority")
+    .with_help(
+        "reduce namespace occurrences or binding indirection before trusting source authority",
+    )
 }
 
 #[cfg(test)]

@@ -17,14 +17,21 @@ mod imports;
 mod imports_collect;
 mod include_alias_exports;
 mod include_binding_catalog;
+mod include_binding_expansion;
 mod include_binding_helpers;
+mod include_binding_lookup;
+mod include_binding_missing;
+mod include_binding_projection;
 mod include_binding_resolution;
 mod include_bindings;
 mod include_edge;
 mod include_glob_resolution;
+mod include_module_identity;
+mod include_namespace_completeness;
 mod include_projection_apply;
 mod include_projection_budget;
 mod include_qualifiers;
+mod include_resolution_state;
 mod includes;
 mod macro_builtin;
 mod macro_definition_candidate;
@@ -42,6 +49,7 @@ mod macro_visibility_reachability;
 mod model;
 mod module_edge;
 mod modules;
+mod ordinary_binding_facts;
 mod ordinary_bindings;
 mod parse;
 mod parse_facade;
@@ -65,7 +73,8 @@ pub(crate) use compile_effect_model::CompileEffectFact;
 pub(crate) use include_edge::{CompilationIncludeEdge, IncludeOccurrenceId};
 pub(crate) use macro_model::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin};
 pub(crate) use model::{
-    ImportBindingFact, IncludeBoundary, IncludeContext, MacroImportFact, ModuleDeclaration,
+    BindingAnchor, BindingKind, BindingVisibility, FactNamespace, ImportBindingFact,
+    IncludeBoundary, IncludeContext, MacroImportFact, ModuleBinding, ModuleDeclaration,
     ObservedFact, RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
 };
 pub(crate) use module_edge::{CompilationModuleEdge, ResolvedModuleEdge};

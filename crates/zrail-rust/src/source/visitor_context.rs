@@ -51,6 +51,7 @@ struct FactCheckpoint {
     unsafe_constructs: usize,
     tests: usize,
     item_macros: usize,
+    opaque_binding_macros: usize,
     macro_definitions: usize,
 }
 
@@ -68,6 +69,7 @@ impl FactCheckpoint {
             unsafe_constructs: visitor.unsafe_constructs.len(),
             tests: visitor.tests.len(),
             item_macros: visitor.item_macros.len(),
+            opaque_binding_macros: visitor.opaque_binding_macros.len(),
             macro_definitions: visitor.macro_definitions.len(),
         }
     }
@@ -81,6 +83,7 @@ impl FactCheckpoint {
         mark(&mut visitor.unsafe_constructs[self.unsafe_constructs..]);
         mark(&mut visitor.tests[self.tests..]);
         mark(&mut visitor.item_macros[self.item_macros..]);
+        mark(&mut visitor.opaque_binding_macros[self.opaque_binding_macros..]);
         for definition in &mut visitor.macro_definitions[self.macro_definitions..] {
             definition.mark_test_only();
         }

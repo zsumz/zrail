@@ -15,6 +15,7 @@ fn attestations_resolve_only_uninspected_external_packages() {
         observed_members: Vec::new(),
         packages: vec![Package {
             name: "app".into(),
+            edition: "2024".into(),
             directory: ".".into(),
             dependencies: vec![dependency(
                 "runtime",

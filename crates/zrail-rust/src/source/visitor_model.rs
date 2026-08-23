@@ -12,6 +12,7 @@ pub(super) struct FactVisitor<'a> {
     pub(super) local_imports: super::visitor_imports::LocalImportScopes,
     pub(super) test_only_context: bool,
     pub(super) lexical_scope: Vec<zrail_core::SourceSpan>,
+    pub(super) next_path_namespace: super::FactNamespace,
     pub(super) paths: Vec<ObservedFact>,
     pub(super) calls: Vec<ObservedFact>,
     pub(super) methods: Vec<ObservedFact>,
@@ -27,4 +28,5 @@ pub(super) struct FactVisitor<'a> {
     pub(super) tests: Vec<ObservedFact>,
     pub(super) includes: Vec<IncludeBoundary>,
     pub(super) item_macros: Vec<ObservedFact>,
+    pub(super) opaque_binding_macros: Vec<ObservedFact>,
 }

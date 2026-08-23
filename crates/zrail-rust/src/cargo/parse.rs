@@ -11,6 +11,7 @@ use super::{
     dependencies::{collect_dependencies, workspace_dependencies},
     model::{CargoWorkspace, ManifestScope, Package},
     overrides,
+    target_discovery::package_edition,
     targets::collect_target_roots,
     workspace::{
         excluded_member, expand_implicit_members, expand_members, normalized_directory,
@@ -70,6 +71,14 @@ pub(crate) fn load_cargo_workspace(
         };
         packages.push(Package {
             name,
+            edition: package_edition(
+                value
+                    .get("package")
+                    .and_then(Value::as_table)
+                    .ok_or_else(|| CargoModelError("Cargo package requires [package]".into()))?,
+                workspace_edition.as_deref(),
+            )
+            .map_err(CargoModelError)?,
             dependencies: collect_dependencies(value, &workspace_dependencies, &directory)
                 .map_err(CargoModelError)?,
             directory,

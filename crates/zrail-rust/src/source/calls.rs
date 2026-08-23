@@ -25,13 +25,16 @@ pub(super) fn facts(
         return Vec::new();
     }
     let span = callee.path.span();
-    let written = callee
+    let mut written = callee
         .path
         .segments
         .iter()
         .map(|segment| segment.ident.to_string())
         .collect::<Vec<_>>()
         .join("::");
+    if callee.path.leading_colon.is_some() {
+        written.insert_str(0, "::");
+    }
     let mut observed = vec![written_fact(
         resolved.clone(),
         written,

@@ -6,9 +6,9 @@ use crate::inventory::FileClass;
 
 use super::*;
 use crate::source::{
-    CompilationDomain, CompilationIncludeEdge, CompilationMode, CompilationRoot, ImportBindingFact,
-    IncludeContext, IncludeOccurrenceId, Reachability, SourceSyntax, SyntaxGuard,
-    include_bindings::IncludeBindings, include_projection_budget::ProjectionLimits,
+    BindingKind, CompilationDomain, CompilationIncludeEdge, CompilationMode, CompilationRoot,
+    ImportBindingFact, IncludeContext, IncludeOccurrenceId, Reachability, SourceSyntax,
+    SyntaxGuard, include_bindings::IncludeBindings, include_projection_budget::ProjectionLimits,
 };
 
 #[test]
@@ -80,13 +80,10 @@ fn successful_projection_stays_inside_the_total_fact_limit() {
     assert!(findings.is_empty());
     assert_eq!(
         index.files.iter().map(fact_count).sum::<usize>(),
-        physical_facts + 1
+        physical_facts
     );
-    assert!(index.files.iter().any(|file| {
-        file.calls
-            .iter()
-            .any(|fact| fact.name == "std::process::Command::new")
-    }));
+    assert_eq!(projected_call_count(&index), 1);
+    assert_eq!(named_call_count(&index, "Spawn::new"), 0);
 }
 
 #[test]
@@ -108,8 +105,9 @@ fn duplicate_projection_consumes_one_retained_fact_slot() {
     assert!(findings.is_empty());
     assert_eq!(
         index.files.iter().map(fact_count).sum::<usize>(),
-        physical_facts + 1
+        physical_facts - 1
     );
+    assert_eq!(projected_call_count(&index), 1);
 }
 
 #[test]
@@ -173,6 +171,7 @@ fn fixture_index() -> SourceIndex {
                     quality: AnalysisQuality::Exact,
                     guard: SyntaxGuard::Ordinary,
                     lexical_scope: Vec::new(),
+                    namespace: crate::source::FactNamespace::Unknown,
                 }],
                 Vec::new(),
             ),
@@ -182,6 +181,9 @@ fn fixture_index() -> SourceIndex {
                 vec![ImportBindingFact {
                     name: Some("Spawn".into()),
                     target: "std::process::Command".into(),
+                    kind: BindingKind::Import,
+                    anchor: crate::source::BindingAnchor::Lexical,
+                    visibility: crate::source::BindingVisibility::Private,
                     quality: AnalysisQuality::Exact,
                     guard: SyntaxGuard::Ordinary,
                     lexical_scope: Vec::new(),
@@ -222,6 +224,7 @@ fn file(
         modules: Vec::new(),
         includes: Vec::new(),
         item_macros: Vec::new(),
+        opaque_binding_macros: Vec::new(),
         facade_implementation: Vec::new(),
     }
 }
@@ -254,9 +257,23 @@ fn observed_names(index: &SourceIndex) -> Vec<(String, Vec<String>)> {
     observed
 }
 
+fn projected_call_count(index: &SourceIndex) -> usize {
+    named_call_count(index, "std::process::Command::new")
+}
+
+fn named_call_count(index: &SourceIndex, name: &str) -> usize {
+    index
+        .files
+        .iter()
+        .flat_map(|file| &file.calls)
+        .filter(|fact| fact.name == name)
+        .count()
+}
+
 fn domain() -> CompilationDomain {
     CompilationDomain {
         package: "fixture".into(),
+        edition: "2024".into(),
         target: "fixture".into(),
         mode: CompilationMode::Library,
     }

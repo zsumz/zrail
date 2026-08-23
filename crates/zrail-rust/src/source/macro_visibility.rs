@@ -104,6 +104,7 @@ fn imported_candidate(
         },
         guard: original.guard,
         lexical_scope: original.lexical_scope.clone(),
+        namespace: original.namespace,
     };
     if local {
         observation.canonical.push(original.name.clone());

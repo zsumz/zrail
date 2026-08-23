@@ -57,52 +57,69 @@ impl FactVisitor<'_> {
     }
 
     fn record_attribute_expansions(&mut self, attribute: &Attribute) {
-        match super::macro_expansion::attribute_paths(attribute) {
-            Ok(expansions) => {
-                for expansion in expansions {
-                    let (resolved, quality, _, _) = self.resolve_macro_path(&expansion.path);
-                    let observed = fact(
-                        expansion
-                            .path
-                            .segments
-                            .iter()
-                            .map(|segment| segment.ident.to_string())
-                            .collect::<Vec<_>>()
-                            .join("::"),
-                        expansion.path.span(),
-                        AnalysisQuality::Exact,
-                    );
-                    let compiler_derive = expansion.kind
-                        == super::macro_expansion::ExpansionKind::Derive
-                        && quality == AnalysisQuality::Exact
-                        && super::macro_expansion::is_compiler_derive(&expansion.path, &resolved);
-                    let mut invocation = self.macro_invocation(&expansion.path);
-                    if expansion.kind == super::macro_expansion::ExpansionKind::Derive
-                        && super::macro_expansion::is_builtin_derive(&expansion.path)
-                    {
-                        invocation.mark_builtin_derive_syntax();
-                    }
-                    if compiler_derive {
-                        invocation.observation = observed;
-                        invocation.bind_compiler_candidate(&resolved);
-                    }
-                    self.macro_expansions.push(invocation);
-                }
-            }
-            Err(()) => self
-                .macro_expansions
+        let Ok(expansions) = super::macro_expansion::attribute_paths(attribute) else {
+            let name = format!(
+                "unparsed attribute {}",
+                attribute
+                    .path()
+                    .segments
+                    .last()
+                    .map_or("<empty>".into(), |segment| segment.ident.to_string())
+            );
+            self.macro_expansions
                 .push(MacroExpansionFact::unresolved(fact(
-                    format!(
-                        "unparsed attribute {}",
-                        attribute
-                            .path()
-                            .segments
-                            .last()
-                            .map_or("<empty>".into(), |segment| segment.ident.to_string())
-                    ),
+                    &name,
                     attribute.span(),
                     AnalysisQuality::Unresolved,
-                ))),
+                )));
+            self.record_opaque_attribute(attribute.path(), attribute.span());
+            return;
+        };
+        for expansion in expansions {
+            let (resolved, quality, _, _) = self.resolve_macro_path(&expansion.path);
+            let observed = fact(
+                expansion
+                    .path
+                    .segments
+                    .iter()
+                    .map(|segment| segment.ident.to_string())
+                    .collect::<Vec<_>>()
+                    .join("::"),
+                expansion.path.span(),
+                AnalysisQuality::Exact,
+            );
+            let compiler_derive = expansion.kind == super::macro_expansion::ExpansionKind::Derive
+                && quality == AnalysisQuality::Exact
+                && super::macro_expansion::is_compiler_derive(&expansion.path, &resolved);
+            if !compiler_derive {
+                self.record_opaque_attribute(&expansion.path, expansion.path.span());
+            }
+            let mut invocation = self.macro_invocation(&expansion.path);
+            if expansion.kind == super::macro_expansion::ExpansionKind::Derive
+                && super::macro_expansion::is_builtin_derive(&expansion.path)
+            {
+                invocation.mark_builtin_derive_syntax();
+            }
+            if compiler_derive {
+                invocation.observation = observed;
+                invocation.bind_compiler_candidate(&resolved);
+            }
+            self.macro_expansions.push(invocation);
         }
+    }
+
+    fn record_opaque_attribute(&mut self, path: &syn::Path, span: proc_macro2::Span) {
+        let mut opaque = fact(
+            path.segments
+                .iter()
+                .map(|segment| segment.ident.to_string())
+                .collect::<Vec<_>>()
+                .join("::"),
+            span,
+            AnalysisQuality::Unresolved,
+        );
+        opaque.guard = self.syntax_guard();
+        opaque.lexical_scope.clone_from(&self.lexical_scope);
+        self.opaque_binding_macros.push(opaque);
     }
 }

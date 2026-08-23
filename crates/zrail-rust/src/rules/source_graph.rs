@@ -166,6 +166,7 @@ impl<'a> Walker<'a> {
                 for (mode, reachability) in target_domains(target.kind) {
                     let domain = CompilationDomain {
                         package: package.name.clone(),
+                        edition: package.edition.clone(),
                         target: target.name.clone(),
                         mode,
                     };

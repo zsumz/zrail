@@ -59,23 +59,33 @@ pub(super) fn auto_discovery_default(
     package: &toml::map::Map<String, Value>,
     workspace_edition: Option<&str>,
 ) -> Result<bool, String> {
-    let edition = match package.get("edition") {
-        None => "2015",
-        Some(Value::String(edition)) => edition,
-        Some(Value::Table(value))
-            if value.get("workspace").and_then(Value::as_bool) == Some(true) =>
-        {
-            workspace_edition.ok_or_else(|| {
-                "package.edition inherits missing workspace.package.edition".to_owned()
-            })?
-        }
-        Some(_) => return Err("package.edition must be a string or workspace inheritance".into()),
-    };
-    if !matches!(edition, "2015" | "2018" | "2021" | "2024") {
-        return Err(format!("package.edition {edition:?} is unsupported"));
-    }
+    let edition = package_edition(package, workspace_edition)?;
     let manual = ["lib", "bin", "example", "test", "bench"]
         .iter()
         .any(|key| manifest.get(key).is_some());
     Ok(edition != "2015" || !manual)
+}
+
+pub(super) fn package_edition(
+    package: &toml::map::Map<String, Value>,
+    workspace_edition: Option<&str>,
+) -> Result<String, String> {
+    let edition = match package.get("edition") {
+        None => "2015".to_owned(),
+        Some(Value::String(edition)) => edition.clone(),
+        Some(Value::Table(value))
+            if value.get("workspace").and_then(Value::as_bool) == Some(true) =>
+        {
+            workspace_edition
+                .ok_or_else(|| {
+                    "package.edition inherits missing workspace.package.edition".to_owned()
+                })?
+                .to_owned()
+        }
+        Some(_) => return Err("package.edition must be a string or workspace inheritance".into()),
+    };
+    if !matches!(edition.as_str(), "2015" | "2018" | "2021" | "2024") {
+        return Err(format!("package.edition {edition:?} is unsupported"));
+    }
+    Ok(edition)
 }

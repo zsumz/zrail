@@ -29,6 +29,7 @@ impl CompilationMode {
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct CompilationDomain {
     pub(crate) package: String,
+    pub(crate) edition: String,
     pub(crate) target: String,
     pub(crate) mode: CompilationMode,
 }

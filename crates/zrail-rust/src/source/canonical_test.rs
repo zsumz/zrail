@@ -78,6 +78,7 @@ fn observed(name: &str, quality: AnalysisQuality) -> ObservedFact {
         quality,
         guard: crate::source::SyntaxGuard::Ordinary,
         lexical_scope: Vec::new(),
+        namespace: crate::source::FactNamespace::Unknown,
     }
 }
 
@@ -96,6 +97,7 @@ fn roots(entries: &[(&str, &[&str])]) -> BTreeMap<String, BTreeSet<String>> {
 fn package(index: usize, alias: &str) -> Package {
     Package {
         name: format!("package-{index}"),
+        edition: "2024".into(),
         directory: format!("crates/package-{index}"),
         dependencies: vec![Dependency {
             alias: alias.into(),

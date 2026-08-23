@@ -18,6 +18,7 @@ pub(crate) struct ResolvedModuleEdge {
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct CompilationModuleEdge {
     pub(crate) parent: String,
+    pub(crate) module_name: String,
     pub(crate) child: String,
     pub(crate) domain: CompilationDomain,
     pub(crate) parent_scope: Vec<SourceSpan>,

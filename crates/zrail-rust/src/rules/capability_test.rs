@@ -56,5 +56,6 @@ fn fact(name: &str, quality: AnalysisQuality) -> ObservedFact {
         quality,
         guard: crate::source::SyntaxGuard::Ordinary,
         lexical_scope: Vec::new(),
+        namespace: crate::source::FactNamespace::Unknown,
     }
 }

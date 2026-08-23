@@ -3,7 +3,14 @@
 use syn::{Item, Type, UseTree};
 use zrail_core::{AnalysisQuality, SourceSpan};
 
-use super::{ImportBindingFact, SyntaxGuard, attributes::is_cfg_test};
+use super::{
+    BindingAnchor, BindingKind, ImportBindingFact, SyntaxGuard,
+    attributes::is_cfg_test,
+    ordinary_binding_facts::{
+        BindingContext, foreign, item_guard, local, module, path_text, push, quality, use_target,
+        visibility,
+    },
+};
 
 pub(super) fn collect<'a>(
     items: impl Iterator<Item = &'a Item>,
@@ -21,6 +28,12 @@ pub(super) fn collect<'a>(
                     &mut bindings,
                     Vec::new(),
                     &item.tree,
+                    if item.leading_colon.is_some() {
+                        BindingAnchor::Absolute
+                    } else {
+                        BindingAnchor::UsePath
+                    },
+                    visibility(&item.vis),
                     quality(&item.attrs, guard),
                     guard,
                     lexical_scope,
@@ -36,61 +49,107 @@ pub(super) fn collect<'a>(
                     &mut bindings,
                     Some(name),
                     item.ident.to_string(),
+                    BindingKind::Import,
+                    if item.ident == "self" {
+                        BindingAnchor::CrateRoot
+                    } else {
+                        BindingAnchor::ExternRoot
+                    },
+                    visibility(&item.vis),
                     quality(&item.attrs, guard),
                     guard,
                     lexical_scope,
                 );
             }
             Item::Type(item) => {
-                if let Type::Path(target) = item.ty.as_ref()
-                    && target.qself.is_none()
-                {
-                    let guard = item_guard(&item.attrs, enclosing_guard);
-                    push(
-                        &mut bindings,
-                        Some(item.ident.to_string()),
+                let guard = item_guard(&item.attrs, enclosing_guard);
+                let (target, kind, anchor) = match item.ty.as_ref() {
+                    Type::Path(target) if target.qself.is_none() => (
                         path_text(&target.path),
-                        quality(&item.attrs, guard),
-                        guard,
-                        lexical_scope,
-                    );
-                }
+                        BindingKind::TypeAlias,
+                        if target.path.leading_colon.is_some() {
+                            BindingAnchor::Absolute
+                        } else {
+                            BindingAnchor::Lexical
+                        },
+                    ),
+                    _ => (
+                        item.ident.to_string(),
+                        BindingKind::OpaqueAlias,
+                        BindingAnchor::Lexical,
+                    ),
+                };
+                push(
+                    &mut bindings,
+                    Some(item.ident.to_string()),
+                    target,
+                    kind,
+                    anchor,
+                    visibility(&item.vis),
+                    quality(&item.attrs, guard),
+                    guard,
+                    lexical_scope,
+                );
             }
             Item::Enum(item) => local(
                 &mut bindings,
                 item.ident.to_string(),
-                &item.attrs,
-                enclosing_guard,
-                lexical_scope,
+                BindingKind::LocalType,
+                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
             ),
-            Item::Mod(item) => local(
-                &mut bindings,
-                item.ident.to_string(),
-                &item.attrs,
-                enclosing_guard,
-                lexical_scope,
-            ),
-            Item::Struct(item) => local(
-                &mut bindings,
-                item.ident.to_string(),
-                &item.attrs,
-                enclosing_guard,
-                lexical_scope,
-            ),
+            Item::Mod(item) => module(&mut bindings, item, enclosing_guard, lexical_scope),
+            Item::Struct(item) => {
+                let kind = if matches!(item.fields, syn::Fields::Unnamed(_) | syn::Fields::Unit) {
+                    BindingKind::LocalConstructor
+                } else {
+                    BindingKind::LocalType
+                };
+                local(
+                    &mut bindings,
+                    item.ident.to_string(),
+                    kind,
+                    context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+                );
+            }
             Item::Trait(item) => local(
                 &mut bindings,
                 item.ident.to_string(),
-                &item.attrs,
-                enclosing_guard,
-                lexical_scope,
+                BindingKind::LocalType,
+                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+            ),
+            Item::TraitAlias(item) => local(
+                &mut bindings,
+                item.ident.to_string(),
+                BindingKind::LocalType,
+                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
             ),
             Item::Union(item) => local(
                 &mut bindings,
                 item.ident.to_string(),
-                &item.attrs,
-                enclosing_guard,
-                lexical_scope,
+                BindingKind::LocalType,
+                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
             ),
+            Item::Const(item) => local(
+                &mut bindings,
+                item.ident.to_string(),
+                BindingKind::LocalValue,
+                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+            ),
+            Item::Fn(item) => local(
+                &mut bindings,
+                item.sig.ident.to_string(),
+                BindingKind::LocalValue,
+                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+            ),
+            Item::Static(item) => local(
+                &mut bindings,
+                item.ident.to_string(),
+                BindingKind::LocalValue,
+                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+            ),
+            Item::ForeignMod(item) => {
+                foreign(&mut bindings, item, enclosing_guard, lexical_scope);
+            }
             _ => {}
         }
     }
@@ -101,6 +160,8 @@ fn collect_use(
     bindings: &mut Vec<ImportBindingFact>,
     prefix: Vec<String>,
     tree: &UseTree,
+    anchor: BindingAnchor,
+    visibility: super::BindingVisibility,
     quality: AnalysisQuality,
     guard: SyntaxGuard,
     scope: &[SourceSpan],
@@ -109,14 +170,19 @@ fn collect_use(
         UseTree::Path(path) => {
             let mut nested = prefix;
             nested.push(path.ident.to_string());
-            collect_use(bindings, nested, &path.tree, quality, guard, scope);
+            collect_use(
+                bindings, nested, &path.tree, anchor, visibility, quality, guard, scope,
+            );
         }
         UseTree::Name(name) if name.ident == "self" => {
             if let Some(alias) = prefix.last() {
                 push(
                     bindings,
                     Some(alias.clone()),
-                    prefix.join("::"),
+                    use_target(&prefix),
+                    BindingKind::Import,
+                    anchor,
+                    visibility.clone(),
                     quality,
                     guard,
                     scope,
@@ -129,7 +195,10 @@ fn collect_use(
             push(
                 bindings,
                 Some(name.ident.to_string()),
-                target.join("::"),
+                use_target(&target),
+                BindingKind::Import,
+                anchor,
+                visibility.clone(),
                 quality,
                 guard,
                 scope,
@@ -144,7 +213,10 @@ fn collect_use(
                 push(
                     bindings,
                     Some(rename.rename.to_string()),
-                    target.join("::"),
+                    use_target(&target),
+                    BindingKind::Import,
+                    anchor,
+                    visibility.clone(),
                     quality,
                     guard,
                     scope,
@@ -155,7 +227,10 @@ fn collect_use(
             push(
                 bindings,
                 None,
-                prefix.join("::"),
+                use_target(&prefix),
+                BindingKind::Glob,
+                anchor,
+                visibility.clone(),
                 quality.max(AnalysisQuality::Conservative),
                 guard,
                 scope,
@@ -163,66 +238,32 @@ fn collect_use(
         }
         UseTree::Group(group) => {
             for tree in &group.items {
-                collect_use(bindings, prefix.clone(), tree, quality, guard, scope);
+                collect_use(
+                    bindings,
+                    prefix.clone(),
+                    tree,
+                    anchor,
+                    visibility.clone(),
+                    quality,
+                    guard,
+                    scope,
+                );
             }
         }
         UseTree::Glob(_) => {}
     }
 }
 
-fn local(
-    bindings: &mut Vec<ImportBindingFact>,
-    name: String,
-    attributes: &[syn::Attribute],
-    guard: SyntaxGuard,
-    scope: &[SourceSpan],
-) {
-    let guard = item_guard(attributes, guard);
-    push(
-        bindings,
-        Some(name.clone()),
-        name,
-        quality(attributes, guard),
-        guard,
+fn context<'a>(
+    attributes: &'a [syn::Attribute],
+    visibility: &'a syn::Visibility,
+    enclosing_guard: SyntaxGuard,
+    scope: &'a [SourceSpan],
+) -> BindingContext<'a> {
+    BindingContext {
+        attributes,
+        visibility,
+        enclosing_guard,
         scope,
-    );
-}
-
-fn push(
-    bindings: &mut Vec<ImportBindingFact>,
-    name: Option<String>,
-    target: String,
-    quality: AnalysisQuality,
-    guard: SyntaxGuard,
-    lexical_scope: &[SourceSpan],
-) {
-    bindings.push(ImportBindingFact {
-        name,
-        target,
-        quality,
-        guard,
-        lexical_scope: lexical_scope.to_vec(),
-    });
-}
-
-fn quality(attributes: &[syn::Attribute], guard: SyntaxGuard) -> AnalysisQuality {
-    if guard == SyntaxGuard::Ordinary && super::scoped_imports::conditional(attributes) {
-        AnalysisQuality::Unresolved
-    } else {
-        AnalysisQuality::Exact
     }
-}
-
-fn item_guard(attributes: &[syn::Attribute], enclosing: SyntaxGuard) -> SyntaxGuard {
-    enclosing.combine(SyntaxGuard::for_test_only(
-        attributes.iter().any(is_cfg_test),
-    ))
-}
-
-fn path_text(path: &syn::Path) -> String {
-    path.segments
-        .iter()
-        .map(|segment| segment.ident.to_string())
-        .collect::<Vec<_>>()
-        .join("::")
 }

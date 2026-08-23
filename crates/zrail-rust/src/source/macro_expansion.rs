@@ -19,6 +19,14 @@ pub(super) fn attribute_paths(attribute: &Attribute) -> Result<Vec<ExpansionPath
     Ok(paths)
 }
 
+pub(super) fn can_replace_item(attribute: &Attribute) -> bool {
+    attribute_paths(attribute).map_or(true, |expansions| {
+        expansions
+            .iter()
+            .any(|expansion| expansion.kind == ExpansionKind::Attribute)
+    })
+}
+
 fn collect_meta(meta: &Meta, paths: &mut Vec<ExpansionPath>) -> Result<(), ()> {
     if meta.path().is_ident("derive") {
         let Meta::List(list) = meta else {

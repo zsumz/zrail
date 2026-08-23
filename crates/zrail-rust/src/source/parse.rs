@@ -116,6 +116,7 @@ pub(super) fn fact_count(file: &RustFileFacts) -> usize {
         + file.modules.len()
         + file.includes.len()
         + file.item_macros.len()
+        + file.opaque_binding_macros.len()
         + file.facade_implementation.len()
 }
 
@@ -180,6 +181,7 @@ fn index_file_as(
         modules: module_declarations(syntax),
         includes: visitor.includes,
         item_macros: visitor.item_macros,
+        opaque_binding_macros: visitor.opaque_binding_macros,
         facade_implementation,
     }
 }
@@ -216,6 +218,7 @@ fn index_expression(
         modules: Vec::new(),
         includes: visitor.includes,
         item_macros: visitor.item_macros,
+        opaque_binding_macros: visitor.opaque_binding_macros,
         facade_implementation: Vec::new(),
     }
 }

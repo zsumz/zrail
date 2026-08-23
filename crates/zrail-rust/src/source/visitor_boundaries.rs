@@ -68,11 +68,9 @@ impl FactVisitor<'_> {
             self.includes.push(boundary);
         } else if item.ident.is_none() {
             let (name, _) = self.imports.resolve(&item.mac.path, self.syntax_guard());
-            self.item_macros.push(fact(
-                name,
-                item.mac.path.span(),
-                AnalysisQuality::Unresolved,
-            ));
+            let mut boundary = fact(name, item.mac.path.span(), AnalysisQuality::Unresolved);
+            boundary.lexical_scope.clone_from(&self.lexical_scope);
+            self.item_macros.push(boundary);
         }
     }
 
@@ -99,6 +97,15 @@ impl FactVisitor<'_> {
             }
             return;
         }
+        let include_count = self.includes.len();
         self.record_expression_macro(&statement.mac, statement.attrs.iter().any(is_cfg_test));
+        if self.includes.len() == include_count {
+            let (name, _) = self
+                .imports
+                .resolve(&statement.mac.path, self.syntax_guard());
+            let mut opaque = fact(name, statement.mac.path.span(), AnalysisQuality::Unresolved);
+            opaque.lexical_scope.clone_from(&self.lexical_scope);
+            self.opaque_binding_macros.push(opaque);
+        }
     }
 }

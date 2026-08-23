@@ -45,15 +45,61 @@ pub(crate) struct ObservedFact {
     pub(crate) quality: AnalysisQuality,
     pub(crate) guard: SyntaxGuard,
     pub(crate) lexical_scope: Vec<SourceSpan>,
+    pub(crate) namespace: FactNamespace,
+}
+
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub(crate) enum FactNamespace {
+    #[default]
+    Unknown,
+    Type,
+    Value,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct ImportBindingFact {
     pub(crate) name: Option<String>,
     pub(crate) target: String,
+    pub(crate) kind: BindingKind,
+    pub(crate) anchor: BindingAnchor,
+    pub(crate) visibility: BindingVisibility,
     pub(crate) quality: AnalysisQuality,
     pub(crate) guard: SyntaxGuard,
     pub(crate) lexical_scope: Vec<SourceSpan>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum BindingKind {
+    Import,
+    Glob,
+    TypeAlias,
+    OpaqueAlias,
+    Module(ModuleBinding),
+    LocalType,
+    LocalConstructor,
+    LocalValue,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum BindingAnchor {
+    Lexical,
+    UsePath,
+    Absolute,
+    ExternRoot,
+    CrateRoot,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ModuleBinding {
+    Inline(SourceSpan),
+    External(SourceSpan),
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) enum BindingVisibility {
+    Public,
+    Private,
+    Restricted(Vec<String>),
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -166,6 +212,7 @@ pub(crate) struct RustFileFacts {
     pub(crate) modules: Vec<ModuleDeclaration>,
     pub(crate) includes: Vec<IncludeBoundary>,
     pub(crate) item_macros: Vec<ObservedFact>,
+    pub(crate) opaque_binding_macros: Vec<ObservedFact>,
     pub(crate) facade_implementation: Vec<ObservedFact>,
 }
 
