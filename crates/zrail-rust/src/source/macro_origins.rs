@@ -30,7 +30,12 @@ fn resolve_candidate(candidate: &mut MacroCandidate, packages: &[&Package]) {
         return;
     }
     if candidate.observation.quality == AnalysisQuality::Unresolved {
-        candidate.origins = vec![MacroOrigin::Unresolved];
+        if local_module && !compiler_builtin(&candidate.observation.name) {
+            candidate.observation.quality = AnalysisQuality::Conservative;
+            candidate.origins = repository_origins(packages);
+        } else {
+            candidate.origins = vec![MacroOrigin::Unresolved];
+        }
         return;
     }
     let root = candidate
@@ -41,6 +46,9 @@ fn resolve_candidate(candidate: &mut MacroCandidate, packages: &[&Package]) {
         .map(visible_root)
         .unwrap_or_default();
     let dependencies = dependency_origins(root, packages);
+    let own_package = packages
+        .iter()
+        .any(|package| rust_crate_root(&package.name) == root);
     if !dependencies.is_empty() && candidate.derivation == MacroDerivation::Written {
         candidate.derivation = MacroDerivation::DependencyRoot;
     }
@@ -48,7 +56,7 @@ fn resolve_candidate(candidate: &mut MacroCandidate, packages: &[&Package]) {
         vec![MacroOrigin::Unresolved]
     } else if !dependencies.is_empty() && !local_module {
         dependencies
-    } else if local_module || matches!(root, "crate" | "self" | "super" | "Self") {
+    } else if local_module || own_package || matches!(root, "crate" | "self" | "super" | "Self") {
         repository_origins(packages)
     } else if compiler_builtin(&candidate.observation.name) {
         vec![MacroOrigin::CompilerBuiltin]

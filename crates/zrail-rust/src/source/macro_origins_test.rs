@@ -44,6 +44,22 @@ fn workspace_dependency_macro_is_repository_owned() {
 }
 
 #[test]
+fn package_crate_root_is_repository_owned_for_integration_targets() {
+    let package = package(Vec::new());
+    let mut expansion = pending("app::reviewed", false);
+
+    resolve(&mut expansion, &[&package]);
+
+    assert_eq!(
+        expansion.candidates[0].origins,
+        [MacroOrigin::Repository {
+            package: "app".into(),
+            directory: ".".into(),
+        }]
+    );
+}
+
+#[test]
 fn external_package_named_local_remains_external() {
     let package = package(vec![dependency(
         "local",
@@ -81,6 +97,38 @@ fn excessive_source_identities_fail_closed() {
         .collect();
     let package = package(dependencies);
     let mut expansion = pending("runtime::select", false);
+
+    resolve(&mut expansion, &[&package]);
+
+    assert_eq!(expansion.candidates[0].origins, [MacroOrigin::Unresolved]);
+}
+
+#[test]
+fn bounded_local_macro_definition_retains_repository_origin() {
+    let package = package(Vec::new());
+    let mut expansion = pending("reviewed", true);
+    expansion.candidates[0].observation.quality = AnalysisQuality::Unresolved;
+
+    resolve(&mut expansion, &[&package]);
+
+    assert_eq!(
+        expansion.candidates[0].origins,
+        [MacroOrigin::Repository {
+            package: "app".into(),
+            directory: ".".into(),
+        }]
+    );
+    assert_eq!(
+        expansion.candidates[0].observation.quality,
+        AnalysisQuality::Conservative
+    );
+}
+
+#[test]
+fn local_standard_name_shadow_remains_unresolved() {
+    let package = package(Vec::new());
+    let mut expansion = pending("panic", true);
+    expansion.candidates[0].observation.quality = AnalysisQuality::Unresolved;
 
     resolve(&mut expansion, &[&package]);
 
