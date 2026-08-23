@@ -4,7 +4,9 @@ use zrail_core::{LockFile, ReportStatus, repository_file};
 
 use crate::app::{args::BaselineOptions, error::CliError};
 
-use super::{CommandResult, baseline_output, baseline_plan, baseline_write, update_authority};
+use super::{
+    CommandResult, baseline_output, baseline_plan, baseline_write, mutation_paths, update_authority,
+};
 
 pub(crate) fn baseline(options: &BaselineOptions) -> Result<CommandResult, CliError> {
     let plan = baseline_plan::prepare(
@@ -23,6 +25,7 @@ pub(crate) fn baseline(options: &BaselineOptions) -> Result<CommandResult, CliEr
             1,
         ));
     }
+    mutation_paths::reject_lock_contract_overlap(&plan.root, &plan.before, &options.common.lock)?;
     let lock_path = repository_file(&plan.root, &options.common.lock).map_err(CliError::new)?;
     let current = match LockFile::read_optional(&lock_path) {
         Ok(lock) => lock,

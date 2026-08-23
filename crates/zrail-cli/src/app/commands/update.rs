@@ -14,10 +14,13 @@ use crate::app::{
     output::{OutputFormat, json_escape},
 };
 
-use super::{CommandResult, update_authority};
+use super::{CommandResult, mutation_paths, update_authority};
 
 pub(crate) fn update(options: &UpdateOptions) -> Result<CommandResult, CliError> {
     let common = &options.common;
+    let bundle = load_contract(&common.root, &common.config)
+        .map_err(|error| CliError::new(error.to_string()))?;
+    mutation_paths::reject_lock_contract_overlap(&common.root, &bundle, &common.lock)?;
     let candidate = build_lock(&common.root, &common.config)
         .map_err(|error| CliError::new(error.to_string()))?;
     let checked = check_repository_with_lock(&common.root, &common.config, &candidate)
@@ -43,8 +46,6 @@ pub(crate) fn update(options: &UpdateOptions) -> Result<CommandResult, CliError>
             ));
         }
     };
-    let bundle = load_contract(&common.root, &common.config)
-        .map_err(|error| CliError::new(error.to_string()))?;
     if current.is_none() && !options.accept_grants {
         let missing = compare_architecture_checked(
             &bundle.contract,

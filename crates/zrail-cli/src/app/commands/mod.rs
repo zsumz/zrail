@@ -15,6 +15,7 @@ mod git_process;
 mod init;
 mod init_preset;
 mod init_template;
+mod mutation_paths;
 mod result;
 mod review;
 mod update;
@@ -44,6 +45,9 @@ mod review_fixture;
 #[cfg(test)]
 #[path = "review_lock_test.rs"]
 mod review_lock_test;
+
+#[cfg(test)]
+mod mutation_paths_test;
 
 #[cfg(test)]
 #[path = "update_contract_test.rs"]
