@@ -51,6 +51,7 @@ pub(crate) fn review_item_macros(contract: &Contract, source: &SourceIndex) -> V
 struct TraversalContext {
     reachability: Reachability,
     package: String,
+    test_guarded: bool,
 }
 
 impl TraversalContext {
@@ -62,6 +63,7 @@ impl TraversalContext {
                 self.reachability
             },
             package: self.package.clone(),
+            test_guarded: self.test_guarded || guarded,
         }
     }
 }
@@ -148,6 +150,7 @@ impl<'a> Walker<'a> {
                         TraversalContext {
                             reachability,
                             package: package.name.clone(),
+                            test_guarded: false,
                         },
                     ),
                     Err(error) => self.resolution_error(

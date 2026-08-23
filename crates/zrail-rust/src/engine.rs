@@ -125,6 +125,7 @@ fn finish_check(
             inventory: &model.inventory,
             cargo: &model.cargo,
             source: &model.source,
+            module_edges: &model.module_edges,
         },
         limit,
     );

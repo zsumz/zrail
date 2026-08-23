@@ -8,7 +8,7 @@ use crate::{
     cargo::{CargoWorkspace, apply_attestations, load_cargo_workspace},
     inventory::{RepositoryInventory, inventory_repository},
     rules::source_graph,
-    source::{SourceIndex, canonicalize_dependency_roots, index_rust_source},
+    source::{ResolvedModuleEdge, SourceIndex, canonicalize_dependency_roots, index_rust_source},
 };
 
 use super::CheckError;
@@ -19,6 +19,7 @@ pub(crate) struct RepositoryModel {
     pub(crate) inventory: RepositoryInventory,
     pub(crate) cargo: CargoWorkspace,
     pub(crate) source: SourceIndex,
+    pub(crate) module_edges: Vec<ResolvedModuleEdge>,
 }
 
 pub(crate) fn load_model(root: &Path, config: &Path) -> Result<RepositoryModel, CheckError> {
@@ -62,6 +63,7 @@ pub(crate) fn load_model_with_bundle(
         inventory,
         cargo,
         source,
+        module_edges: graph.module_edges,
     })
 }
 

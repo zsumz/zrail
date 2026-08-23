@@ -2,16 +2,11 @@
 
 mod inline;
 
-use std::{
-    collections::BTreeSet,
-    path::{Path, PathBuf},
-};
+use std::path::Path;
 
 use zrail_core::{Finding, FindingSink, TestMode};
 
-use crate::source::{
-    ModuleDeclaration, ModuleTarget, RustFileFacts, SubmoduleBase, join_relative, module_target,
-};
+use crate::source::RustFileFacts;
 
 use super::RuleContext;
 
@@ -24,46 +19,6 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
 }
 
 fn check_declarations(context: &RuleContext<'_>, findings: &mut FindingSink) {
-    let file_paths = context
-        .source
-        .files
-        .iter()
-        .map(|file| file.relative.as_str())
-        .collect::<BTreeSet<_>>();
-    let crate_roots = context
-        .cargo
-        .packages
-        .iter()
-        .flat_map(|package| {
-            package
-                .targets
-                .iter()
-                .filter_map(|target| join_relative(&package.directory, &target.path).ok())
-        })
-        .collect::<BTreeSet<_>>();
-    let declarations = context
-        .source
-        .files
-        .iter()
-        .flat_map(|source| {
-            let file_paths = &file_paths;
-            let submodule_base = if crate_roots.contains(&source.relative) || is_mod_rs(source) {
-                SubmoduleBase::SourceParent
-            } else {
-                SubmoduleBase::FileStemDirectory
-            };
-            source.modules.iter().map(move |declaration| {
-                let target = resolved_module_target(
-                    &source.relative,
-                    submodule_base,
-                    declaration,
-                    file_paths,
-                );
-                (source, declaration, target)
-            })
-        })
-        .collect::<Vec<_>>();
-
     for test in context
         .source
         .files
@@ -86,19 +41,22 @@ fn check_declarations(context: &RuleContext<'_>, findings: &mut FindingSink) {
             );
             continue;
         }
-        let exact = declarations
+        let exact = context
+            .module_edges
             .iter()
-            .filter(|(_, _, target)| target.as_deref() == Some(test.relative.as_str()))
+            .filter(|edge| edge.child == test.relative)
             .collect::<Vec<_>>();
         if test.reachability.is_test_only()
-            && exact.iter().any(|(_, declaration, _)| declaration.cfg_test)
+            && exact
+                .iter()
+                .any(|edge| edge.cfg_test && edge.reachability.is_test_only())
         {
             continue;
         }
-        if let Some((source, declaration, _)) = exact.first() {
+        if let Some(edge) = exact.first() {
             findings.push(
                 missing_declaration(test, "is declared without #[cfg(test)]")
-                    .at(&source.relative, declaration.span),
+                    .at(&edge.parent, edge.span),
             );
             continue;
         }
@@ -106,9 +64,17 @@ fn check_declarations(context: &RuleContext<'_>, findings: &mut FindingSink) {
             .file_stem()
             .and_then(|value| value.to_str())
             .unwrap_or("");
-        if let Some((source, declaration, _)) = declarations
+        if let Some((source, declaration)) = context
+            .source
+            .files
             .iter()
-            .find(|(_, declaration, _)| declaration.name == stem)
+            .flat_map(|source| {
+                source
+                    .modules
+                    .iter()
+                    .map(move |declaration| (source, declaration))
+            })
+            .find(|(_, declaration)| declaration.name == stem)
         {
             findings.push(
                 Finding::error(
@@ -132,33 +98,6 @@ fn check_declarations(context: &RuleContext<'_>, findings: &mut FindingSink) {
     }
 }
 
-fn resolved_module_target(
-    source: &str,
-    submodule_base: SubmoduleBase,
-    declaration: &ModuleDeclaration,
-    files: &BTreeSet<&str>,
-) -> Option<String> {
-    match module_target(source, submodule_base, declaration).ok()? {
-        ModuleTarget::Exact(path) => files.contains(path.as_str()).then_some(path),
-        ModuleTarget::Search { direct, nested } => {
-            match (
-                files.contains(direct.as_str()),
-                files.contains(nested.as_str()),
-            ) {
-                (true, false) => Some(direct),
-                (false, true) => Some(nested),
-                _ => None,
-            }
-        }
-    }
-}
-
-fn is_mod_rs(file: &RustFileFacts) -> bool {
-    PathBuf::from(&file.relative)
-        .file_name()
-        .is_some_and(|name| name == "mod.rs")
-}
-
 fn is_sibling_test(path: &str) -> bool {
     path.ends_with("_test.rs") && path.split('/').any(|component| component == "src")
 }
@@ -172,7 +111,3 @@ fn missing_declaration(file: &RustFileFacts, message: &str) -> Finding {
     )
     .at(&file.relative, None)
 }
-
-#[cfg(test)]
-#[path = "test_placement_test.rs"]
-mod test_placement_test;

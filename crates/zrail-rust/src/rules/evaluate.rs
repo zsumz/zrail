@@ -2,7 +2,11 @@
 
 use zrail_core::{Contract, DiagnosticLimit, FindingSink, LockFile};
 
-use crate::{cargo::CargoWorkspace, inventory::RepositoryInventory, source::SourceIndex};
+use crate::{
+    cargo::CargoWorkspace,
+    inventory::RepositoryInventory,
+    source::{ResolvedModuleEdge, SourceIndex},
+};
 
 use super::{
     capability, cargo_identity, cargo_override, dependency, evidence, file_role, generated,
@@ -15,6 +19,7 @@ pub(crate) struct RuleContext<'a> {
     pub(crate) inventory: &'a RepositoryInventory,
     pub(crate) cargo: &'a CargoWorkspace,
     pub(crate) source: &'a SourceIndex,
+    pub(crate) module_edges: &'a [ResolvedModuleEdge],
 }
 
 pub(crate) fn evaluate(context: &RuleContext<'_>, limit: DiagnosticLimit) -> FindingSink {
