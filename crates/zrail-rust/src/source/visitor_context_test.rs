@@ -111,7 +111,12 @@ fn observed_facts_retain_test_only_syntax_guards() {
 fn statement_macro_inputs_retain_outer_test_only_guard() {
     let syntax = syn::parse_file(
         r#"
+        #[cfg(test)]
+        macro_rules! item_only { () => {}; }
+
         pub fn run() {
+            #[cfg(test)]
+            macro_rules! statement_only { () => {}; }
             #[cfg(test)]
             assert!(std::process::Command::new("true").status().is_ok());
         }
@@ -141,6 +146,14 @@ fn statement_macro_inputs_retain_outer_test_only_guard() {
     assert_eq!(path.guard, SyntaxGuard::TestOnly);
     assert_eq!(call.guard, SyntaxGuard::TestOnly);
     assert_eq!(expansion.guard, SyntaxGuard::TestOnly);
+    for name in ["item_only", "statement_only"] {
+        let definition = visitor
+            .macro_definitions
+            .iter()
+            .find(|definition| definition.name == name)
+            .unwrap_or_else(|| panic!("missing {name} definition"));
+        assert_eq!(definition.guard, SyntaxGuard::TestOnly, "{name}");
+    }
 }
 
 fn includes(source: &str) -> BTreeMap<String, bool> {

@@ -7,7 +7,7 @@ use zrail_core::{AnalysisQuality, Finding};
 use crate::cargo::{CargoWorkspace, CrateRootAuthority, Package, rust_crate_root};
 
 use super::{
-    MacroOrigin, ObservedFact, ResolvedModuleEdge, SourceIndex,
+    MacroOrigin, ObservedFact, ResolvedModuleEdge, SourceIndex, SyntaxGuard,
     macro_definitions::{local_macro_names, package_macro_definitions},
 };
 
@@ -43,12 +43,20 @@ pub(crate) fn canonicalize(
                     .collect()
             },
         );
-        let local_macros = local_macro_names(&selected, &macro_definitions);
+        let ordinary_local_macros =
+            local_macro_names(&selected, &macro_definitions, SyntaxGuard::Ordinary);
+        let test_local_macros =
+            local_macro_names(&selected, &macro_definitions, SyntaxGuard::TestOnly);
+        let file_reachability = file.reachability;
         for expansion in &mut file.macros {
+            let local_macros =
+                if expansion.guard == SyntaxGuard::TestOnly || !file_reachability.is_production() {
+                    test_local_macros.as_ref()
+                } else {
+                    ordinary_local_macros.as_ref()
+                };
             if !expansion.name.contains("::")
-                && local_macros
-                    .as_ref()
-                    .is_none_or(|names| names.contains(expansion.name.as_str()))
+                && local_macros.is_none_or(|names| names.contains(expansion.name.as_str()))
             {
                 expansion.canonical.clear();
                 expansion.quality = AnalysisQuality::Unresolved;
@@ -64,27 +72,26 @@ pub(crate) fn canonicalize(
                     .map(|effect| &mut effect.invocation),
             )
         {
+            let local_macros =
+                if expansion.guard == SyntaxGuard::TestOnly || !file_reachability.is_production() {
+                    test_local_macros.as_ref()
+                } else {
+                    ordinary_local_macros.as_ref()
+                };
             let builtin_derive_syntax = expansion.has_builtin_derive_syntax();
             for candidate in &mut expansion.candidates {
                 let observed = &mut candidate.observation;
                 if !builtin_derive_syntax
                     && !matches!(candidate.origins.as_slice(), [MacroOrigin::CompilerBuiltin])
                     && !observed.name.contains("::")
-                    && local_macros
-                        .as_ref()
-                        .is_none_or(|names| names.contains(observed.name.as_str()))
+                    && local_macros.is_none_or(|names| names.contains(observed.name.as_str()))
                 {
                     observed.canonical.clear();
                     observed.quality = AnalysisQuality::Unresolved;
                 }
             }
             expansion.refresh_quality();
-            macro_visibility.resolve(
-                expansion,
-                &file.relative,
-                file.reachability,
-                local_macros.as_ref(),
-            );
+            macro_visibility.resolve(expansion, &file.relative, file.reachability, local_macros);
         }
         let observed = super::canonical_observed::roots(file);
         let (roots, overflowed) = dependency_roots(&selected, &observed);

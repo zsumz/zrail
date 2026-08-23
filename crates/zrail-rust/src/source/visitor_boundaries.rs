@@ -58,6 +58,7 @@ impl FactVisitor<'_> {
                 name: name.to_string(),
                 sha256: sha256_hex(item.mac.tokens.to_string().as_bytes()),
                 span: Some(source_span(name.span())),
+                guard: self.syntax_guard(),
             });
         }
         if let Some(mut boundary) = include_boundary(&item.mac, IncludeContext::Items) {
@@ -89,6 +90,7 @@ impl FactVisitor<'_> {
                     name: name.to_string(),
                     sha256: sha256_hex(statement.mac.tokens.to_string().as_bytes()),
                     span: Some(source_span(name.span())),
+                    guard: self.syntax_guard(),
                 });
             }
             return;

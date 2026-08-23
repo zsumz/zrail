@@ -59,6 +59,13 @@ pub(crate) struct MacroDefinitionFact {
     pub(crate) name: String,
     pub(crate) sha256: String,
     pub(crate) span: Option<SourceSpan>,
+    pub(crate) guard: SyntaxGuard,
+}
+
+impl MacroDefinitionFact {
+    pub(super) fn mark_test_only(&mut self) {
+        self.guard = SyntaxGuard::TestOnly;
+    }
 }
 
 impl ObservedFact {
