@@ -5,6 +5,10 @@ use std::{fs, path::Path};
 use zrail_core::Report;
 use zrail_rust::{build_lock, check_repository};
 
+#[path = "include_call_ownership/module_reexports.rs"]
+mod module_reexports;
+#[path = "include_call_ownership/namespace_deep_audit.rs"]
+mod namespace_deep_audit;
 #[path = "include_call_ownership/ordinary_qualified.rs"]
 mod ordinary_qualified;
 #[path = "include_call_ownership/qualified.rs"]
