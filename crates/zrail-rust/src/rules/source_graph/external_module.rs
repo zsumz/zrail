@@ -15,7 +15,9 @@ impl Walker<'_> {
         declaration: &ModuleDeclaration,
     ) {
         let label = format!("module {:?}", declaration.name);
-        let target_context = context.with_test_guard(declaration.cfg_test);
+        let Some(target_context) = context.with_test_guard(declaration.cfg_test) else {
+            return;
+        };
         match module_target(source, submodule_base, declaration) {
             Ok(ModuleTarget::Exact(path)) => self.follow_module(
                 ResolvedModuleEdge {
@@ -27,6 +29,7 @@ impl Walker<'_> {
                     cfg_test: target_context.test_guarded,
                     span: declaration.span,
                 },
+                &declaration.lexical_scope,
                 declaration.span,
                 &label,
                 SourceSyntax::Items,
@@ -51,6 +54,7 @@ impl Walker<'_> {
                             cfg_test: target_context.test_guarded,
                             span: declaration.span,
                         },
+                        &declaration.lexical_scope,
                         declaration.span,
                         &label,
                         SourceSyntax::Items,

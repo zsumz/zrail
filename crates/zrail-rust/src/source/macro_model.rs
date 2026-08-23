@@ -1,6 +1,6 @@
 //! One macro invocation owns every bounded candidate identity and origin.
 
-use zrail_core::{AnalysisQuality, Effect};
+use zrail_core::AnalysisQuality;
 
 use crate::cargo::DependencySource;
 
@@ -40,6 +40,8 @@ pub(crate) struct MacroCandidate {
     pub(crate) derivation: MacroDerivation,
     /// Whether the invocation spelling is an exact lexical alias for this candidate.
     pub(crate) written_alias: bool,
+    /// Exact repository definition site when textual lookup selected one.
+    pub(crate) definition: Option<String>,
 }
 
 impl MacroCandidate {
@@ -56,6 +58,7 @@ impl MacroCandidate {
                 derivation,
                 MacroDerivation::ExactImport | MacroDerivation::ReExport
             ),
+            definition: None,
         }
     }
 
@@ -65,6 +68,7 @@ impl MacroCandidate {
             origins: vec![MacroOrigin::Unresolved],
             derivation,
             written_alias: false,
+            definition: None,
         }
     }
 
@@ -87,6 +91,7 @@ pub(crate) struct MacroExpansionFact {
     pub(crate) observation: ObservedFact,
     /// Every statically feasible policy identity for this one invocation.
     pub(crate) candidates: Vec<MacroCandidate>,
+    pub(crate) lexical_scope: Vec<zrail_core::SourceSpan>,
     builtin_derive_syntax: bool,
 }
 
@@ -102,6 +107,7 @@ impl MacroExpansionFact {
         Self {
             observation,
             candidates: vec![candidate],
+            lexical_scope: Vec::new(),
             builtin_derive_syntax: false,
         }
     }
@@ -111,6 +117,7 @@ impl MacroExpansionFact {
         Self {
             observation,
             candidates: vec![candidate],
+            lexical_scope: Vec::new(),
             builtin_derive_syntax: false,
         }
     }
@@ -121,10 +128,12 @@ impl MacroExpansionFact {
             origins: vec![MacroOrigin::CompilerBuiltin],
             derivation: MacroDerivation::Written,
             written_alias: false,
+            definition: None,
         };
         Self {
             observation,
             candidates: vec![candidate],
+            lexical_scope: Vec::new(),
             builtin_derive_syntax: true,
         }
     }
@@ -149,12 +158,18 @@ impl MacroExpansionFact {
         Self {
             observation,
             candidates,
+            lexical_scope: Vec::new(),
             builtin_derive_syntax: false,
         }
     }
 
     pub(crate) fn mark_builtin_derive_syntax(&mut self) {
         self.builtin_derive_syntax = true;
+    }
+
+    pub(crate) fn with_lexical_scope(mut self, scope: &[zrail_core::SourceSpan]) -> Self {
+        self.lexical_scope = scope.to_vec();
+        self
     }
 
     pub(crate) const fn has_builtin_derive_syntax(&self) -> bool {
@@ -215,26 +230,4 @@ impl MacroExpansionFact {
 
 fn valid_path(name: &str) -> bool {
     syn::parse_str::<syn::Path>(name).is_ok()
-}
-
-impl std::ops::Deref for MacroExpansionFact {
-    type Target = ObservedFact;
-
-    fn deref(&self) -> &Self::Target {
-        &self.observation
-    }
-}
-
-impl std::ops::DerefMut for MacroExpansionFact {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.observation
-    }
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct CompileEffectFact {
-    pub(crate) effect: Effect,
-    pub(crate) invocation: MacroExpansionFact,
-    pub(crate) target: Option<String>,
-    pub(crate) opaque_input: bool,
 }

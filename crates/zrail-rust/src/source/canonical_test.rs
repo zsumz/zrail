@@ -7,8 +7,8 @@ use zrail_core::AnalysisQuality;
 use crate::cargo::{CrateRootAuthority, Dependency, DependencyKind, DependencySource, Package};
 
 use super::{
-    MAX_IDENTITIES_PER_ROOT, MAX_MACRO_DEFINITIONS_PER_PACKAGE, MacroDefinitionSet, ObservedFact,
-    canonicalize_fact, canonicalize_fact_bounded, dependency_roots, local_macro_names,
+    MAX_IDENTITIES_PER_ROOT, ObservedFact, canonicalize_fact, canonicalize_fact_bounded,
+    dependency_roots,
 };
 
 #[test]
@@ -67,59 +67,6 @@ fn excessive_shared_alias_identities_fail_closed_without_a_cross_product() {
     assert!(overflowed.contains("runtime"));
     assert_eq!(fact.quality, AnalysisQuality::Unresolved);
     assert!(fact.canonical.is_empty());
-}
-
-#[test]
-fn excessive_package_macro_names_fail_closed_without_an_unbounded_union() {
-    let package = package(0, "runtime");
-    let definitions = std::collections::BTreeMap::from([(
-        package.name.clone(),
-        MacroDefinitionSet {
-            ordinary: (0..=MAX_MACRO_DEFINITIONS_PER_PACKAGE)
-                .map(|index| format!("macro_{index}"))
-                .collect(),
-            test_only: BTreeSet::new(),
-            overflowed: true,
-        },
-    )]);
-
-    assert!(
-        local_macro_names(
-            &[&package],
-            &definitions,
-            crate::source::SyntaxGuard::Ordinary,
-        )
-        .is_none()
-    );
-}
-
-#[test]
-fn test_context_adds_guarded_macro_definitions_without_exposing_them_to_production() {
-    let package = package(0, "runtime");
-    let definitions = BTreeMap::from([(
-        package.name.clone(),
-        MacroDefinitionSet {
-            ordinary: BTreeSet::from(["ordinary".into()]),
-            test_only: BTreeSet::from(["guarded".into()]),
-            overflowed: false,
-        },
-    )]);
-
-    let production = local_macro_names(
-        &[&package],
-        &definitions,
-        crate::source::SyntaxGuard::Ordinary,
-    )
-    .expect("bounded production namespace");
-    let test = local_macro_names(
-        &[&package],
-        &definitions,
-        crate::source::SyntaxGuard::TestOnly,
-    )
-    .expect("bounded test namespace");
-
-    assert_eq!(production, BTreeSet::from(["ordinary"]));
-    assert_eq!(test, BTreeSet::from(["guarded", "ordinary"]));
 }
 
 fn observed(name: &str, quality: AnalysisQuality) -> ObservedFact {

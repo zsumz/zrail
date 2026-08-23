@@ -1,96 +1,190 @@
-//! Bounded package-level shadowing evidence for lexical macro definitions.
+//! Textual macro definitions resolve inside exact Cargo and lexical namespaces.
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::cargo::Package;
+use zrail_core::AnalysisQuality;
 
-use super::{SourceIndex, SyntaxGuard};
+use crate::cargo::{CargoWorkspace, Package};
 
-pub(super) const MAX_MACRO_DEFINITIONS_PER_PACKAGE: usize = 256;
+use super::macro_definition_candidate::{
+    candidate_order, discard_file_wide_definition_guess, local_policy_name, repository_candidate,
+};
+use super::{
+    CompilationDomain, CompilationModuleEdge, MacroCandidate, MacroDerivation, MacroExpansionFact,
+    SourceIndex, SyntaxGuard, model::MacroDefinitionFact,
+};
 
-#[derive(Default)]
-pub(super) struct MacroDefinitionSet {
-    pub(super) ordinary: BTreeSet<String>,
-    pub(super) test_only: BTreeSet<String>,
-    pub(super) overflowed: bool,
+const MAX_DEFINITIONS_PER_DOMAIN: usize = 256;
+const MAX_VISIBLE_DEFINITIONS: usize = 64;
+
+pub(super) struct MacroDefinitions {
+    pub(super) files: BTreeMap<String, Vec<MacroDefinitionFact>>,
+    pub(super) packages: BTreeMap<String, PackageOrigin>,
+    pub(super) domains: BTreeMap<String, BTreeSet<CompilationDomain>>,
+    pub(super) parents: BTreeMap<(String, CompilationDomain), Vec<CompilationModuleEdge>>,
+    names: BTreeMap<CompilationDomain, BTreeSet<String>>,
+    overflowed: BTreeSet<CompilationDomain>,
 }
 
-pub(super) fn package_macro_definitions(
-    index: &SourceIndex,
-    contexts: &BTreeMap<String, BTreeSet<String>>,
-) -> BTreeMap<String, MacroDefinitionSet> {
-    let mut definitions = BTreeMap::<String, MacroDefinitionSet>::new();
-    for file in &index.files {
-        let Some(packages) = contexts.get(&file.relative) else {
-            continue;
+#[derive(Clone)]
+pub(super) struct PackageOrigin {
+    pub(super) name: String,
+    pub(super) directory: String,
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(super) struct DefinitionSite {
+    pub(super) file: String,
+    pub(super) package: String,
+    pub(super) directory: String,
+}
+
+pub(super) struct Resolution {
+    pub(super) sites: BTreeSet<DefinitionSite>,
+    pub(super) all_paths_local: bool,
+}
+
+impl MacroDefinitions {
+    pub(super) fn collect(
+        index: &SourceIndex,
+        cargo: &CargoWorkspace,
+        domains: &BTreeMap<String, BTreeSet<CompilationDomain>>,
+        edges: &[CompilationModuleEdge],
+    ) -> Self {
+        let mut definitions = Self {
+            files: index
+                .files
+                .iter()
+                .map(|file| (file.relative.clone(), file.macro_definitions.clone()))
+                .collect(),
+            packages: cargo
+                .packages
+                .iter()
+                .map(|package| (package.name.clone(), package_origin(package)))
+                .collect(),
+            domains: domains.clone(),
+            parents: BTreeMap::new(),
+            names: BTreeMap::new(),
+            overflowed: BTreeSet::new(),
         };
-        let mut ordinary = BTreeSet::new();
-        let mut test_only = BTreeSet::new();
-        for definition in &file.macro_definitions {
-            if definition.guard == SyntaxGuard::TestOnly || !file.reachability.is_production() {
-                test_only.insert(definition.name.clone());
-            } else {
-                ordinary.insert(definition.name.clone());
-            }
-            if ordinary.len() + test_only.len() > MAX_MACRO_DEFINITIONS_PER_PACKAGE {
-                ordinary.clear();
-                test_only.clear();
-                break;
-            }
+        for edge in edges {
+            definitions
+                .parents
+                .entry((edge.child.clone(), edge.domain.clone()))
+                .or_default()
+                .push(edge.clone());
         }
-        for package in packages {
-            merge_file_definitions(
-                definitions.entry(package.clone()).or_default(),
-                &ordinary,
-                &test_only,
-                !file.macro_definitions.is_empty(),
+        definitions.collect_names();
+        definitions
+    }
+
+    pub(super) fn local_names<'a>(
+        &'a self,
+        file: &str,
+        guard: SyntaxGuard,
+    ) -> Option<BTreeSet<&'a str>> {
+        let mut names = BTreeSet::new();
+        for domain in self.active_domains(file, guard)? {
+            if self.overflowed.contains(domain) {
+                return None;
+            }
+            names.extend(
+                self.names
+                    .get(domain)
+                    .into_iter()
+                    .flatten()
+                    .map(String::as_str),
             );
+            if names.len() > MAX_DEFINITIONS_PER_DOMAIN {
+                return None;
+            }
         }
+        Some(names)
     }
-    definitions
-}
 
-fn merge_file_definitions(
-    entry: &mut MacroDefinitionSet,
-    ordinary: &BTreeSet<String>,
-    test_only: &BTreeSet<String>,
-    had_definitions: bool,
-) {
-    if ordinary.is_empty() && test_only.is_empty() && had_definitions {
-        entry.overflowed = true;
-        entry.ordinary.clear();
-        entry.test_only.clear();
-    } else if !entry.overflowed {
-        entry.ordinary.extend(ordinary.iter().cloned());
-        entry.test_only.extend(test_only.iter().cloned());
-        if entry.ordinary.len() + entry.test_only.len() > MAX_MACRO_DEFINITIONS_PER_PACKAGE {
-            entry.overflowed = true;
-            entry.ordinary.clear();
-            entry.test_only.clear();
+    pub(super) fn apply(&self, file: &str, expansion: &mut MacroExpansionFact) {
+        if expansion.name.contains("::") {
+            return;
         }
-    }
-}
-
-pub(super) fn local_macro_names<'a>(
-    packages: &[&Package],
-    definitions: &'a BTreeMap<String, MacroDefinitionSet>,
-    context: SyntaxGuard,
-) -> Option<BTreeSet<&'a str>> {
-    let mut names = BTreeSet::new();
-    for package in packages {
-        let Some(definitions) = definitions.get(package.name.as_str()) else {
-            continue;
+        let Some(domains) = self.active_domains(file, expansion.guard) else {
+            Self::add_unknown(expansion);
+            return;
         };
-        if definitions.overflowed {
-            return None;
+        let mut sites = BTreeSet::new();
+        let mut every_domain_local = !domains.is_empty();
+        for domain in domains {
+            let mut seen = BTreeSet::new();
+            let resolution = self.resolve(
+                file,
+                domain,
+                &expansion.name,
+                &expansion.lexical_scope,
+                expansion.span,
+                &mut seen,
+            );
+            let Some(resolution) = resolution else {
+                Self::add_unknown(expansion);
+                return;
+            };
+            every_domain_local &= resolution.all_paths_local;
+            sites.extend(resolution.sites);
+            if sites.len() > MAX_VISIBLE_DEFINITIONS {
+                Self::add_unknown(expansion);
+                return;
+            }
         }
-        names.extend(definitions.ordinary.iter().map(String::as_str));
-        if context == SyntaxGuard::TestOnly {
-            names.extend(definitions.test_only.iter().map(String::as_str));
+        let policy_name = local_policy_name(expansion);
+        if every_domain_local {
+            expansion.candidates.clear();
+        } else {
+            discard_file_wide_definition_guess(expansion);
         }
-        if names.len() > MAX_MACRO_DEFINITIONS_PER_PACKAGE {
-            return None;
+        let candidates = sites
+            .into_iter()
+            .map(|site| repository_candidate(expansion, &policy_name, site))
+            .collect::<Vec<_>>();
+        expansion.candidates.extend(candidates);
+        expansion.candidates.sort_by(candidate_order);
+        expansion.candidates.dedup();
+        expansion.refresh_quality();
+    }
+
+    fn collect_names(&mut self) {
+        for (file, domains) in &self.domains {
+            let definitions = self.files.get(file).into_iter().flatten();
+            for domain in domains {
+                if self.overflowed.contains(domain) {
+                    continue;
+                }
+                let names = self.names.entry(domain.clone()).or_default();
+                names.extend(
+                    definitions
+                        .clone()
+                        .map(|definition| definition.name.clone()),
+                );
+                if names.len() > MAX_DEFINITIONS_PER_DOMAIN {
+                    self.names.remove(domain);
+                    self.overflowed.insert(domain.clone());
+                }
+            }
         }
     }
-    Some(names)
+
+    fn add_unknown(expansion: &mut MacroExpansionFact) {
+        let mut observation = expansion.observation.clone();
+        observation.canonical.clear();
+        observation.quality = AnalysisQuality::Unresolved;
+        expansion.candidates.push(MacroCandidate::unresolved(
+            observation,
+            MacroDerivation::LocalDefinition,
+        ));
+        expansion.refresh_quality();
+    }
+}
+
+fn package_origin(package: &Package) -> PackageOrigin {
+    PackageOrigin {
+        name: package.name.clone(),
+        directory: package.directory.clone(),
+    }
 }

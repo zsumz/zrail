@@ -21,6 +21,16 @@ impl FactVisitor<'_> {
         self.test_only_context = previous;
     }
 
+    pub(super) fn with_lexical_scope(
+        &mut self,
+        span: proc_macro2::Span,
+        visit: impl FnOnce(&mut Self),
+    ) {
+        self.lexical_scope.push(super::fact::source_span(span));
+        visit(self);
+        self.lexical_scope.pop();
+    }
+
     pub(super) fn guard_initial_paths(&mut self) {
         for path in &mut self.paths {
             path.mark_test_only();

@@ -37,7 +37,12 @@ pub(super) fn failure(
         .collect::<std::collections::BTreeSet<_>>()
         .into_iter()
         .collect::<Vec<_>>();
-    let origin_bound = !observed_packages.is_empty()
+    let definition_bound = candidate
+        .definition
+        .as_deref()
+        .is_none_or(|observed| observed == path);
+    let origin_bound = definition_bound
+        && !observed_packages.is_empty()
         && candidate.origins.iter().all(|origin| match origin {
             MacroOrigin::Repository { package, .. } => {
                 bound_file.is_some_and(|file| file.packages.contains(package))

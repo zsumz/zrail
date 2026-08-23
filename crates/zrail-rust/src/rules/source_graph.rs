@@ -14,8 +14,8 @@ use crate::{
     cargo::{CargoTargetKind, CargoWorkspace},
     inventory::{RepositoryEntryKind, RepositoryInventory},
     source::{
-        Reachability, ReachabilityKind, ResolvedModuleEdge, RustFileFacts, SourceIndex,
-        SourceSyntax, SubmoduleBase, join_relative,
+        CompilationDomain, CompilationMode, CompilationModuleEdge, Reachability, ReachabilityKind,
+        ResolvedModuleEdge, RustFileFacts, SourceIndex, SourceSyntax, SubmoduleBase, join_relative,
     },
 };
 
@@ -31,6 +31,8 @@ pub(crate) fn analyze(
 pub(crate) struct SourceGraphAnalysis {
     pub(crate) reachability: BTreeMap<String, Reachability>,
     pub(crate) packages: BTreeMap<String, BTreeSet<String>>,
+    pub(crate) compilation_domains: BTreeMap<String, BTreeSet<CompilationDomain>>,
+    pub(crate) compilation_edges: Vec<CompilationModuleEdge>,
     pub(crate) module_edges: Vec<ResolvedModuleEdge>,
     pub(crate) findings: Vec<Finding>,
 }
@@ -51,20 +53,25 @@ pub(crate) fn review_item_macros(contract: &Contract, source: &SourceIndex) -> V
 struct TraversalContext {
     reachability: Reachability,
     package: String,
+    domain: CompilationDomain,
     test_guarded: bool,
 }
 
 impl TraversalContext {
-    fn with_test_guard(&self, guarded: bool) -> Self {
-        Self {
+    fn with_test_guard(&self, guarded: bool) -> Option<Self> {
+        if guarded && !self.domain.mode.enables_cfg_test() {
+            return None;
+        }
+        Some(Self {
             reachability: if guarded {
                 Reachability::test()
             } else {
                 self.reachability
             },
             package: self.package.clone(),
+            domain: self.domain.clone(),
             test_guarded: self.test_guarded || guarded,
-        }
+        })
     }
 }
 
@@ -77,9 +84,11 @@ struct Walker<'a> {
     entries: BTreeMap<&'a str, RepositoryEntryKind>,
     reached: BTreeMap<String, Reachability>,
     reached_packages: BTreeMap<String, BTreeSet<String>>,
+    reached_domains: BTreeMap<String, BTreeSet<CompilationDomain>>,
     seen_out_dir: BTreeSet<(String, String)>,
     reported: BTreeSet<(String, String)>,
     module_edges: BTreeSet<ResolvedModuleEdge>,
+    compilation_edges: BTreeSet<CompilationModuleEdge>,
     visited: BTreeSet<(String, SubmoduleBase, TraversalContext)>,
     queue: VecDeque<(String, SubmoduleBase, TraversalContext)>,
 }
@@ -108,9 +117,11 @@ impl<'a> Walker<'a> {
                 .collect(),
             reached: BTreeMap::new(),
             reached_packages: BTreeMap::new(),
+            reached_domains: BTreeMap::new(),
             seen_out_dir: BTreeSet::new(),
             reported: BTreeSet::new(),
             module_edges: BTreeSet::new(),
+            compilation_edges: BTreeSet::new(),
             visited: BTreeSet::new(),
             queue: VecDeque::new(),
         }
@@ -126,6 +137,8 @@ impl<'a> Walker<'a> {
         SourceGraphAnalysis {
             reachability: self.reached,
             packages: self.reached_packages,
+            compilation_domains: self.reached_domains,
+            compilation_edges: self.compilation_edges.into_iter().collect(),
             module_edges: self.module_edges.into_iter().collect(),
             findings: self.findings,
         }
@@ -138,27 +151,34 @@ impl<'a> Walker<'a> {
                 self.missing(&package.manifest_path(), None, message);
             }
             for target in &package.targets {
-                let reachability = target_reachability(target.kind);
-                match join_relative(&package.directory, &target.path) {
-                    Ok(path) => self.follow(
-                        &package.manifest_path(),
-                        None,
-                        path,
-                        &format!("Cargo target {:?}", target.path),
-                        SubmoduleBase::SourceParent,
-                        SourceSyntax::Items,
-                        TraversalContext {
-                            reachability,
-                            package: package.name.clone(),
-                            test_guarded: false,
-                        },
-                    ),
-                    Err(error) => self.resolution_error(
-                        &package.manifest_path(),
-                        None,
-                        &error,
-                        &format!("Cargo target {:?}", target.path),
-                    ),
+                for (mode, reachability) in target_domains(target.kind) {
+                    let domain = CompilationDomain {
+                        package: package.name.clone(),
+                        target: target.name.clone(),
+                        mode,
+                    };
+                    match join_relative(&package.directory, &target.path) {
+                        Ok(path) => self.follow(
+                            &package.manifest_path(),
+                            None,
+                            path,
+                            &format!("Cargo target {:?}", target.path),
+                            SubmoduleBase::SourceParent,
+                            SourceSyntax::Items,
+                            TraversalContext {
+                                reachability,
+                                package: package.name.clone(),
+                                domain,
+                                test_guarded: false,
+                            },
+                        ),
+                        Err(error) => self.resolution_error(
+                            &package.manifest_path(),
+                            None,
+                            &error,
+                            &format!("Cargo target {:?}", target.path),
+                        ),
+                    }
                 }
             }
         }
@@ -189,4 +209,25 @@ const fn target_reachability(kind: CargoTargetKind) -> Reachability {
         CargoTargetKind::BuildScript => ReachabilityKind::Build,
     };
     Reachability::from_kind(kind)
+}
+
+fn target_domains(kind: CargoTargetKind) -> Vec<(CompilationMode, Reachability)> {
+    let reachability = target_reachability(kind);
+    match kind {
+        CargoTargetKind::Library => vec![
+            (CompilationMode::Library, reachability),
+            (CompilationMode::LibraryTest, reachability),
+        ],
+        CargoTargetKind::Binary => vec![
+            (CompilationMode::Binary, reachability),
+            (CompilationMode::BinaryTest, reachability),
+        ],
+        CargoTargetKind::Test => vec![(CompilationMode::IntegrationTest, reachability)],
+        CargoTargetKind::Benchmark => vec![(CompilationMode::Benchmark, reachability)],
+        CargoTargetKind::Example => vec![
+            (CompilationMode::Example, reachability),
+            (CompilationMode::ExampleTest, reachability),
+        ],
+        CargoTargetKind::BuildScript => vec![(CompilationMode::BuildScript, reachability)],
+    }
 }

@@ -5,7 +5,7 @@ use zrail_core::{AnalysisQuality, Finding, SourceSpan};
 use crate::inventory::FileClass;
 
 use super::Reachability;
-use super::macro_model::{CompileEffectFact, MacroExpansionFact};
+use super::{CompileEffectFact, macro_model::MacroExpansionFact};
 
 #[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum SyntaxGuard {
@@ -60,6 +60,7 @@ pub(crate) struct MacroDefinitionFact {
     pub(crate) sha256: String,
     pub(crate) span: Option<SourceSpan>,
     pub(crate) guard: SyntaxGuard,
+    pub(crate) lexical_scope: Vec<SourceSpan>,
 }
 
 impl MacroDefinitionFact {
@@ -99,6 +100,7 @@ pub(crate) struct ModuleDeclaration {
     pub(crate) cfg_test: bool,
     pub(crate) unresolved_path: bool,
     pub(crate) inline_ancestors: Vec<InlineModulePath>,
+    pub(crate) lexical_scope: Vec<SourceSpan>,
     pub(crate) span: Option<SourceSpan>,
 }
 

@@ -213,21 +213,25 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
         }
         self.visit_visibility(&module.vis);
         if let Some((_, items)) = &module.content {
-            self.with_import_scope(items.iter(), |visitor| {
-                for item in items {
-                    visitor.visit_item(item);
-                }
+            self.with_lexical_scope(module.ident.span(), |visitor| {
+                visitor.with_import_scope(items.iter(), |visitor| {
+                    for item in items {
+                        visitor.visit_item(item);
+                    }
+                });
             });
         }
     }
 
     fn visit_block(&mut self, block: &'ast Block) {
-        self.with_import_scope(
-            block.stmts.iter().filter_map(|statement| match statement {
-                Stmt::Item(item) => Some(item),
-                _ => None,
-            }),
-            |visitor| visit::visit_block(visitor, block),
-        );
+        self.with_lexical_scope(block.span(), |visitor| {
+            visitor.with_import_scope(
+                block.stmts.iter().filter_map(|statement| match statement {
+                    Stmt::Item(item) => Some(item),
+                    _ => None,
+                }),
+                |visitor| visit::visit_block(visitor, block),
+            );
+        });
     }
 }

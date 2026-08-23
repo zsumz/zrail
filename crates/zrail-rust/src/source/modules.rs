@@ -1,7 +1,8 @@
 //! External module declarations retain inline ancestry for exact path resolution.
 
 use syn::{
-    ItemMod,
+    Block, ItemMod,
+    spanned::Spanned,
     visit::{self, Visit},
 };
 
@@ -21,6 +22,7 @@ pub(super) fn module_declarations(file: &syn::File) -> Vec<ModuleDeclaration> {
 #[derive(Default)]
 struct ModuleCollector {
     inline_ancestors: Vec<InlineModulePath>,
+    lexical_scope: Vec<zrail_core::SourceSpan>,
     declarations: Vec<ModuleDeclaration>,
     test_only_context: bool,
 }
@@ -78,6 +80,7 @@ impl<'ast> Visit<'ast> for ModuleCollector {
                 cfg_test,
                 unresolved_path,
                 inline_ancestors: self.inline_ancestors.clone(),
+                lexical_scope: self.lexical_scope.clone(),
                 span: Some(source_span(module.ident.span())),
             });
             return;
@@ -87,13 +90,21 @@ impl<'ast> Visit<'ast> for ModuleCollector {
             path,
             unresolved_path,
         });
+        self.lexical_scope.push(source_span(module.ident.span()));
         let previous_context = self.test_only_context;
         self.test_only_context = cfg_test;
         for item in items {
             visit::visit_item(self, item);
         }
         self.test_only_context = previous_context;
+        self.lexical_scope.pop();
         self.inline_ancestors.pop();
+    }
+
+    fn visit_block(&mut self, block: &'ast Block) {
+        self.lexical_scope.push(source_span(block.span()));
+        visit::visit_block(self, block);
+        self.lexical_scope.pop();
     }
 }
 

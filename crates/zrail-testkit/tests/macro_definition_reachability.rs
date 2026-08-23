@@ -6,7 +6,7 @@ use zrail_core::Report;
 use zrail_rust::check_repository;
 
 #[test]
-fn test_only_local_definition_does_not_shadow_a_production_compiler_macro() {
+fn ordinary_invocation_requires_its_test_domain_local_definition() {
     let root = repository(
         "guarded-compiler",
         MANIFEST,
@@ -14,12 +14,12 @@ fn test_only_local_definition_does_not_shadow_a_production_compiler_macro() {
         &compiler_allowances(&["assert"]),
     );
 
-    assert_no_macro_findings(&check(&root));
+    assert_macro_findings(&check(&root), &["assert"]);
     reset(&root);
 }
 
 #[test]
-fn test_only_source_target_does_not_shadow_a_production_compiler_macro() {
+fn child_module_definition_does_not_shadow_its_parent() {
     let root = repository(
         "test-target-compiler",
         MANIFEST,
@@ -35,7 +35,7 @@ fn test_only_source_target_does_not_shadow_a_production_compiler_macro() {
 }
 
 #[test]
-fn test_only_local_definition_does_not_shadow_an_exact_dependency_macro() {
+fn external_allowance_cannot_attest_a_test_domain_local_definition() {
     let root = repository(
         "guarded-dependency",
         DEPENDENCY_MANIFEST,
@@ -43,7 +43,7 @@ fn test_only_local_definition_does_not_shadow_an_exact_dependency_macro() {
         DEPENDENCY_ALLOWANCE,
     );
 
-    assert_no_macro_findings(&check(&root));
+    assert_macro_findings(&check(&root), &["json"]);
     reset(&root);
 }
 
@@ -70,6 +70,38 @@ fn test_invocation_sees_ordinary_and_test_only_definitions() {
     );
 
     assert_macro_findings(&check(&root), &["assert", "panic"]);
+    reset(&root);
+}
+
+#[test]
+fn definition_after_invocation_does_not_shadow_the_compiler() {
+    let root = repository(
+        "definition-after-use",
+        MANIFEST,
+        &[("src/lib.rs", DEFINITION_AFTER_USE)],
+        &compiler_allowances(&["assert"]),
+    );
+
+    assert_no_macro_findings(&check(&root));
+    reset(&root);
+}
+
+#[test]
+fn integration_definition_does_not_contaminate_other_cargo_targets() {
+    let root = repository(
+        "target-domains",
+        TARGET_MANIFEST,
+        &[
+            ("src/lib.rs", COMPILER_ASSERT),
+            ("tests/proof.rs", LOCAL_ASSERT),
+            ("benches/perf.rs", COMPILER_ASSERT),
+            ("examples/demo.rs", COMPILER_ASSERT),
+            ("build.rs", COMPILER_ASSERT),
+        ],
+        &compiler_allowances(&["assert"]),
+    );
+
+    assert_no_macro_findings(&check(&root));
     reset(&root);
 }
 
@@ -131,6 +163,9 @@ fn compiler_allowances(names: &[&str]) -> String {
 }
 
 fn write(root: &std::path::Path, path: &str, contents: &str) {
+    if let Some(parent) = root.join(path).parent() {
+        fs::create_dir_all(parent).expect("create fixture parent");
+    }
     fs::write(root.join(path), contents).expect("write fixture");
 }
 
@@ -144,6 +179,12 @@ const MANIFEST: &str = "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedit
 const DEPENDENCY_MANIFEST: &str = concat!(
     "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\n",
     "[dependencies]\nreviewed_json = { package = \"serde_json\", version = \"1\" }\n",
+);
+const TARGET_MANIFEST: &str = concat!(
+    "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\nbuild = \"build.rs\"\n",
+    "[[bench]]\nname = \"perf\"\npath = \"benches/perf.rs\"\n",
+    "[[example]]\nname = \"demo\"\npath = \"examples/demo.rs\"\n",
+    "[[test]]\nname = \"proof\"\npath = \"tests/proof.rs\"\n",
 );
 
 const GUARDED_COMPILER: &str = r"//! Library.
@@ -183,6 +224,14 @@ macro_rules! panic { ($($tokens:tt)*) => {}; }
 #[cfg(test)]
 fn proof() { assert!(true); panic!("boom"); }
 "#;
+
+const DEFINITION_AFTER_USE: &str = r"//! Library.
+pub fn run() { assert!(true); }
+macro_rules! assert { ($($tokens:tt)*) => {}; }
+";
+const COMPILER_ASSERT: &str = "//! Target.\npub fn run() { assert!(true); }\n";
+const LOCAL_ASSERT: &str =
+    "//! Integration target.\nmacro_rules! assert { ($($tokens:tt)*) => {}; }\n";
 
 const DEPENDENCY_ALLOWANCE: &str = r#"
 [[source.rust.macros.allow]]

@@ -100,7 +100,7 @@ fn cross_file_macro_scope_cannot_borrow_a_standard_name_allowance() {
     assert!(report.findings.iter().any(|finding| {
         finding.id == "RUST-MACRO-006"
             && finding.path.as_deref() == Some("src/child.rs")
-            && finding.analysis == zrail_core::AnalysisQuality::Unresolved
+            && finding.analysis == zrail_core::AnalysisQuality::Exact
     }));
     fs::remove_dir_all(root).expect("remove fixture");
 }
@@ -129,7 +129,7 @@ fn block_local_macro_cannot_borrow_a_standard_name_allowance() {
     assert!(report.findings.iter().any(|finding| {
         finding.id == "RUST-MACRO-006"
             && finding.message.contains("panic")
-            && finding.analysis == zrail_core::AnalysisQuality::Unresolved
+            && finding.analysis == zrail_core::AnalysisQuality::Exact
     }));
     fs::remove_dir_all(root).expect("remove fixture");
 }

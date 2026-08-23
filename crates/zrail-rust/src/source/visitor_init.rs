@@ -33,6 +33,7 @@ impl<'a> FactVisitor<'a> {
             imports,
             local_imports: Vec::new(),
             test_only_context: false,
+            lexical_scope: Vec::new(),
             paths,
             calls: Vec::new(),
             methods: Vec::new(),

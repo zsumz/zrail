@@ -54,7 +54,14 @@ pub(crate) fn load_model_with_bundle(
             .copied()
             .unwrap_or_default();
     }
-    canonicalize_dependency_roots(&mut source, &cargo, &graph.packages, &graph.module_edges);
+    canonicalize_dependency_roots(
+        &mut source,
+        &cargo,
+        &graph.packages,
+        &graph.module_edges,
+        &graph.compilation_domains,
+        &graph.compilation_edges,
+    );
     source.findings.extend(graph.findings);
     let item_macro_findings = source_graph::review_item_macros(&bundle.contract, &source);
     source.findings.extend(item_macro_findings);

@@ -11,6 +11,7 @@ pub(super) struct FactVisitor<'a> {
     pub(super) imports: &'a ImportMap,
     pub(super) local_imports: super::visitor_imports::LocalImportScopes,
     pub(super) test_only_context: bool,
+    pub(super) lexical_scope: Vec<zrail_core::SourceSpan>,
     pub(super) paths: Vec<ObservedFact>,
     pub(super) calls: Vec<ObservedFact>,
     pub(super) methods: Vec<ObservedFact>,

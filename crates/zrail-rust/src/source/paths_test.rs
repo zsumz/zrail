@@ -147,6 +147,7 @@ fn declaration(name: &str) -> ModuleDeclaration {
         cfg_test: false,
         unresolved_path: false,
         inline_ancestors: Vec::new(),
+        lexical_scope: Vec::new(),
         span: Some(SourceSpan {
             line: 1,
             column: 1,

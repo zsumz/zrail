@@ -13,7 +13,9 @@ impl Walker<'_> {
         context: &TraversalContext,
         include: &IncludeBoundary,
     ) {
-        let context = context.with_test_guard(include.cfg_test);
+        let Some(context) = context.with_test_guard(include.cfg_test) else {
+            return;
+        };
         if let Some(output) = &include.out_dir {
             self.walk_out_dir(source, context, include, output);
             return;

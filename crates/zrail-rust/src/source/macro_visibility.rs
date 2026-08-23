@@ -137,6 +137,7 @@ fn candidate_order(left: &MacroCandidate, right: &MacroCandidate) -> std::cmp::O
         .then(left.observation.quality.cmp(&right.observation.quality))
         .then(left.derivation.cmp(&right.derivation))
         .then(left.written_alias.cmp(&right.written_alias))
+        .then(left.definition.cmp(&right.definition))
         .then(left.origins.cmp(&right.origins))
 }
 
@@ -146,6 +147,7 @@ fn same_candidate(left: &MacroCandidate, right: &MacroCandidate) -> bool {
         && left.observation.quality == right.observation.quality
         && left.derivation == right.derivation
         && left.written_alias == right.written_alias
+        && left.definition == right.definition
         && left.origins == right.origins
 }
 

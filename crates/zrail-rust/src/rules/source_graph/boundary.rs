@@ -4,7 +4,7 @@ use zrail_core::{Finding, SourceSpan, glob_matches};
 
 use crate::{
     inventory::{FileClass, RepositoryEntryKind},
-    source::{ResolvedModuleEdge, SourceSyntax, SubmoduleBase},
+    source::{CompilationModuleEdge, ResolvedModuleEdge, SourceSyntax, SubmoduleBase},
 };
 
 use super::{TraversalContext, Walker};
@@ -34,6 +34,7 @@ impl Walker<'_> {
     pub(super) fn follow_module(
         &mut self,
         edge: ResolvedModuleEdge,
+        parent_scope: &[SourceSpan],
         span: Option<SourceSpan>,
         label: &str,
         expected_syntax: SourceSyntax,
@@ -48,6 +49,13 @@ impl Walker<'_> {
             expected_syntax,
             context.clone(),
         ) {
+            self.compilation_edges.insert(CompilationModuleEdge {
+                parent: edge.parent.clone(),
+                child: edge.child.clone(),
+                domain: context.domain.clone(),
+                parent_scope: parent_scope.to_vec(),
+                span: edge.span,
+            });
             self.module_edges.insert(edge);
         }
     }
@@ -101,6 +109,10 @@ impl Walker<'_> {
                     .entry(target.clone())
                     .or_default()
                     .insert(context.package.clone());
+                self.reached_domains
+                    .entry(target.clone())
+                    .or_default()
+                    .insert(context.domain.clone());
                 let Some(file) = self.facts.get(target.as_str()) else {
                     self.unresolved(
                         origin,

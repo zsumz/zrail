@@ -66,7 +66,8 @@ impl FactVisitor<'_> {
                         unresolved,
                         MacroDerivation::GlobImport,
                     )],
-                );
+                )
+                .with_lexical_scope(&self.lexical_scope);
             }
             candidates.extend(imported.into_iter().map(|(observed, derivation)| {
                 MacroCandidate::pending(observed, false, derivation)
@@ -83,9 +84,11 @@ impl FactVisitor<'_> {
                     unresolved,
                     MacroDerivation::GlobImport,
                 )],
-            );
+            )
+            .with_lexical_scope(&self.lexical_scope);
         }
         MacroExpansionFact::with_candidates(fact(written_name, path.span(), quality), candidates)
+            .with_lexical_scope(&self.lexical_scope)
     }
 
     fn local_macro_candidates(&self, path: &Path, resolved: &str) -> Vec<MacroCandidate> {

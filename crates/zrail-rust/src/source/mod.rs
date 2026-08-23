@@ -4,6 +4,8 @@ mod attributes;
 mod calls;
 mod canonical;
 mod canonical_observed;
+mod compilation;
+mod compile_effect_model;
 mod compile_effects;
 mod depth;
 mod fact;
@@ -15,10 +17,13 @@ mod imports;
 mod imports_collect;
 mod includes;
 mod macro_builtin;
+mod macro_definition_candidate;
+mod macro_definition_resolution;
 mod macro_definitions;
 mod macro_expansion;
 mod macro_inputs;
 mod macro_model;
+mod macro_model_access;
 mod macro_origins;
 mod macro_visibility;
 mod macro_visibility_collect;
@@ -42,14 +47,14 @@ mod visitor_init;
 mod visitor_model;
 
 pub(crate) use canonical::canonicalize as canonicalize_dependency_roots;
-pub(crate) use macro_model::{
-    CompileEffectFact, MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin,
-};
+pub(crate) use compilation::{CompilationDomain, CompilationMode};
+pub(crate) use compile_effect_model::CompileEffectFact;
+pub(crate) use macro_model::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin};
 pub(crate) use model::{
     IncludeBoundary, IncludeContext, MacroImportFact, ModuleDeclaration, ObservedFact,
     RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
 };
-pub(crate) use module_edge::ResolvedModuleEdge;
+pub(crate) use module_edge::{CompilationModuleEdge, ResolvedModuleEdge};
 pub(crate) use parse::index_rust_source;
 pub(crate) use paths::{
     ModuleTarget, ResolutionError, SubmoduleBase, join_relative, module_target, parent,

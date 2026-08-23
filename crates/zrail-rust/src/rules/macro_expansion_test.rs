@@ -151,6 +151,7 @@ fn repository(name: &str, derivation: MacroDerivation) -> MacroCandidate {
         }],
         derivation,
         written_alias: false,
+        definition: None,
     }
 }
 
@@ -162,6 +163,7 @@ fn compiler(name: &str) -> MacroExpansionFact {
             origins: vec![MacroOrigin::CompilerBuiltin],
             derivation: MacroDerivation::Written,
             written_alias: false,
+            definition: None,
         }],
     )
 }
