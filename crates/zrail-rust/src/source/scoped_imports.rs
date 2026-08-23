@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use syn::{Item, UseTree};
 use zrail_core::AnalysisQuality;
 
-use super::{SyntaxGuard, attributes::is_cfg_test};
+use super::{SyntaxGuard, attributes::cfg_guard};
 
 const MAX_EXPANDED_ALIAS_BYTES: usize = 1_024;
 const MAX_ALIAS_HOPS: usize = 128;
@@ -28,7 +28,7 @@ pub(super) fn collect<'a>(
     for item in items {
         match item {
             Item::Use(item) => {
-                let guard = SyntaxGuard::for_test_only(item.attrs.iter().any(is_cfg_test));
+                let guard = cfg_guard(&item.attrs);
                 collect_use(
                     &mut raw,
                     Vec::new(),
@@ -49,13 +49,13 @@ pub(super) fn collect<'a>(
                         item.ident.to_string(),
                         conditional(&item.attrs),
                         false,
-                        SyntaxGuard::for_test_only(item.attrs.iter().any(is_cfg_test)),
+                        cfg_guard(&item.attrs),
                     ),
                 );
             }
             Item::Mod(module) => {
                 let guarded = conditional(&module.attrs);
-                let guard = SyntaxGuard::for_test_only(module.attrs.iter().any(is_cfg_test));
+                let guard = cfg_guard(&module.attrs);
                 let name = module.ident.to_string();
                 insert_raw(&mut raw, name.clone(), (name, guarded, true, guard));
             }
@@ -65,12 +65,7 @@ pub(super) fn collect<'a>(
                     insert_raw(
                         &mut raw,
                         name.clone(),
-                        (
-                            name,
-                            true,
-                            true,
-                            SyntaxGuard::for_test_only(item.attrs.iter().any(is_cfg_test)),
-                        ),
+                        (name, true, true, cfg_guard(&item.attrs)),
                     );
                 }
             }
@@ -123,7 +118,7 @@ fn expand(
             resolution.target.push_str(suffix);
         }
         resolution.guard = resolution.guard.combine(*guard);
-        if *conditional && *guard == SyntaxGuard::Ordinary {
+        if *conditional && (*guard == SyntaxGuard::Ordinary || guard.is_conditional()) {
             resolution.quality = AnalysisQuality::Unresolved;
         }
         resolution.local_module |= *local_module;

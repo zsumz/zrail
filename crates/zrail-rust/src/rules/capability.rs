@@ -89,7 +89,12 @@ fn check_exact_scopes(context: &RuleContext<'_>, findings: &mut FindingSink) {
             .filter(|file| matches_scope(&file.relative, &scope.include, &scope.exclude))
         {
             for denied in &scope.symbols.deny {
-                for path in file.paths.iter().filter(|path| path_matches(denied, path)) {
+                for path in file
+                    .paths
+                    .iter()
+                    .chain(&file.macros)
+                    .filter(|path| path_matches(denied, path))
+                {
                     findings.push(
                         Finding::error(
                             "CAP-001",

@@ -32,8 +32,12 @@ impl MacroVisibility {
                 continue;
             }
             let reachability = match candidate.observation.guard {
-                SyntaxGuard::Ordinary => file_reachability,
-                SyntaxGuard::TestOnly => Reachability::test(),
+                SyntaxGuard::Ordinary
+                | SyntaxGuard::ProductionOnly
+                | SyntaxGuard::Conditional
+                | SyntaxGuard::ConditionalProductionOnly => file_reachability,
+                SyntaxGuard::TestOnly | SyntaxGuard::ConditionalTestOnly => Reachability::test(),
+                SyntaxGuard::Never => Reachability::UNREACHABLE,
             };
             match self.imports_for(file, &candidate.observation.name, reachability) {
                 VisibilityLookup::Known(imports)

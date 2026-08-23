@@ -12,6 +12,7 @@ use super::{
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::{
         EffectiveModule, LookupMode, ResolutionKey, ResolutionTrail, ResolutionUsage,
+        ResolveRequest,
     },
 };
 
@@ -43,14 +44,16 @@ impl IncludeBindings {
             return Ok(vec![unresolved(written)]);
         };
         let resolved = self.resolve_in(
-            site.instance,
-            &target,
-            &site.binding.lexical_scope,
+            ResolveRequest {
+                instance: site.instance,
+                written: &target,
+                scope: &site.binding.lexical_scope,
+                depth,
+                mode: LookupMode::glob_target(site.module.clone()),
+                usage,
+            },
             trail,
-            depth,
             budget,
-            LookupMode::glob_target(site.module.clone()),
-            usage,
         )?;
         trail.remove(&key);
         Ok(resolved
@@ -67,7 +70,6 @@ impl IncludeBindings {
             .collect())
     }
 
-    #[allow(clippy::too_many_arguments)]
     pub(super) fn glob_sites(
         &self,
         instance: SourceInstanceId,

@@ -112,7 +112,7 @@ fn repository_origins(packages: &[&Package]) -> Vec<MacroOrigin> {
     }
 }
 
-fn compiler_builtin(name: &str) -> bool {
+pub(super) fn compiler_builtin(name: &str) -> bool {
     let mut segments = name.split("::");
     let root = segments.next().unwrap_or_default();
     let leaf = name.rsplit("::").next().unwrap_or(name);

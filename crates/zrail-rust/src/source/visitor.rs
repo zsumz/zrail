@@ -10,7 +10,8 @@ use syn::{
 use zrail_core::AnalysisQuality;
 
 use super::{
-    attributes::{is_cfg_test, is_test_attribute},
+    SyntaxGuard,
+    attributes::{cfg_guard, is_test_attribute},
     fact::fact,
     visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
 };
@@ -19,8 +20,9 @@ pub(super) use super::visitor_model::FactVisitor;
 
 impl<'ast> Visit<'ast> for FactVisitor<'_> {
     fn visit_file(&mut self, file: &'ast syn::File) {
-        if file.attrs.iter().any(is_cfg_test) {
-            self.guard_initial_paths();
+        let guard = cfg_guard(&file.attrs);
+        if guard != SyntaxGuard::Ordinary {
+            self.guard_initial_paths(guard);
         }
         self.with_cfg(&file.attrs, |visitor| {
             visitor.with_import_scope(file.items.iter(), |visitor| {
@@ -80,6 +82,8 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
         visit::visit_path(self, path);
     }
 
+    fn visit_visibility(&mut self, _: &'ast syn::Visibility) {}
+
     fn visit_expr_path(&mut self, expression: &'ast ExprPath) {
         let previous =
             std::mem::replace(&mut self.next_path_namespace, super::FactNamespace::Value);
@@ -95,7 +99,6 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
 
     fn visit_attribute(&mut self, attribute: &'ast Attribute) {
         self.record_attribute(attribute);
-        visit::visit_attribute(self, attribute);
     }
 
     fn visit_expr_call(&mut self, call: &'ast ExprCall) {
@@ -119,7 +122,6 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
 
     fn visit_macro(&mut self, invocation: &'ast Macro) {
         if invocation.path.is_ident("macro_rules") {
-            visit::visit_macro(self, invocation);
             return;
         }
         let expansion = self.macro_invocation(&invocation.path);
@@ -135,7 +137,6 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
         if opaque_input {
             self.opaque_macro_inputs.push(expansion);
         }
-        visit::visit_macro(self, invocation);
     }
 
     fn visit_item_macro(&mut self, item: &'ast ItemMacro) {
@@ -144,7 +145,7 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_expr_macro(&mut self, expression: &'ast ExprMacro) {
-        self.record_expression_macro(&expression.mac, expression.attrs.iter().any(is_cfg_test));
+        self.record_expression_macro(&expression.mac);
         visit::visit_expr_macro(self, expression);
     }
 
@@ -156,11 +157,7 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_expr_unsafe(&mut self, expression: &'ast syn::ExprUnsafe) {
-        self.unsafe_constructs.push(fact(
-            "unsafe block",
-            expression.unsafe_token.span,
-            AnalysisQuality::Exact,
-        ));
+        self.record_unsafe_expression(expression);
         visit::visit_expr_unsafe(self, expression);
     }
 
@@ -176,35 +173,17 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_signature(&mut self, signature: &'ast Signature) {
-        if signature.unsafety.is_some() {
-            self.unsafe_constructs.push(fact(
-                "unsafe function",
-                signature.span(),
-                AnalysisQuality::Exact,
-            ));
-        }
+        self.record_unsafe_signature(signature);
         visit::visit_signature(self, signature);
     }
 
     fn visit_item_impl(&mut self, implementation: &'ast ItemImpl) {
-        if implementation.unsafety.is_some() {
-            self.unsafe_constructs.push(fact(
-                "unsafe impl",
-                implementation.impl_token.span,
-                AnalysisQuality::Exact,
-            ));
-        }
+        self.record_unsafe_impl(implementation);
         visit::visit_item_impl(self, implementation);
     }
 
     fn visit_item_trait(&mut self, item: &'ast ItemTrait) {
-        if item.unsafety.is_some() {
-            self.unsafe_constructs.push(fact(
-                "unsafe trait",
-                item.trait_token.span,
-                AnalysisQuality::Exact,
-            ));
-        }
+        self.record_unsafe_trait(item);
         visit::visit_item_trait(self, item);
     }
 

@@ -33,3 +33,7 @@ impl FactVisitor<'_> {
             .extend(super::calls::candidates(path, self.imports, &name, guard));
     }
 }
+
+#[cfg(test)]
+#[path = "visitor_paths_test.rs"]
+mod visitor_paths_test;

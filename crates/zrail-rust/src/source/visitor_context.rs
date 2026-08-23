@@ -1,24 +1,24 @@
-//! Effective test-only cfg context follows every attribute-bearing syntax node.
+//! Effective cfg domain follows every attribute-bearing syntax node.
 
 use syn::{Attribute, Expr, ForeignItem, ImplItem, Item, TraitItem};
 
-use super::{SyntaxGuard, attributes::is_cfg_test, visitor::FactVisitor};
+use super::{SyntaxGuard, attributes::cfg_guard, visitor::FactVisitor};
 
 impl FactVisitor<'_> {
     pub(super) const fn syntax_guard(&self) -> SyntaxGuard {
-        SyntaxGuard::for_test_only(self.test_only_context)
+        self.guard_context
     }
 
     pub(super) fn with_cfg(&mut self, attributes: &[Attribute], visit: impl FnOnce(&mut Self)) {
-        let previous = self.test_only_context;
-        let guarded = attributes.iter().any(is_cfg_test);
-        let checkpoint = (!previous && guarded).then(|| FactCheckpoint::capture(self));
-        self.test_only_context |= guarded;
+        let previous = self.guard_context;
+        let effective = previous.combine(cfg_guard(attributes));
+        let checkpoint = (effective != previous).then(|| FactCheckpoint::capture(self));
+        self.guard_context = effective;
         visit(self);
         if let Some(checkpoint) = checkpoint {
-            checkpoint.mark_test_only(self);
+            checkpoint.apply_guard(self, effective);
         }
-        self.test_only_context = previous;
+        self.guard_context = previous;
     }
 
     pub(super) fn with_lexical_scope(
@@ -31,9 +31,9 @@ impl FactVisitor<'_> {
         self.lexical_scope.pop();
     }
 
-    pub(super) fn guard_initial_paths(&mut self) {
+    pub(super) fn guard_initial_paths(&mut self, guard: SyntaxGuard) {
         for path in &mut self.paths {
-            path.mark_test_only();
+            path.apply_guard(guard);
         }
     }
 }
@@ -74,34 +74,43 @@ impl FactCheckpoint {
         }
     }
 
-    fn mark_test_only(self, visitor: &mut FactVisitor<'_>) {
-        mark(&mut visitor.paths[self.paths..]);
-        mark(&mut visitor.calls[self.calls..]);
-        mark(&mut visitor.methods[self.methods..]);
-        mark(&mut visitor.macros[self.macros..]);
-        mark(&mut visitor.lint_suppressions[self.lint_suppressions..]);
-        mark(&mut visitor.unsafe_constructs[self.unsafe_constructs..]);
-        mark(&mut visitor.tests[self.tests..]);
-        mark(&mut visitor.item_macros[self.item_macros..]);
-        mark(&mut visitor.opaque_binding_macros[self.opaque_binding_macros..]);
+    fn apply_guard(self, visitor: &mut FactVisitor<'_>, guard: SyntaxGuard) {
+        apply(&mut visitor.paths[self.paths..], guard);
+        apply(&mut visitor.calls[self.calls..], guard);
+        apply(&mut visitor.methods[self.methods..], guard);
+        apply(&mut visitor.macros[self.macros..], guard);
+        apply(
+            &mut visitor.lint_suppressions[self.lint_suppressions..],
+            guard,
+        );
+        apply(
+            &mut visitor.unsafe_constructs[self.unsafe_constructs..],
+            guard,
+        );
+        apply(&mut visitor.tests[self.tests..], guard);
+        apply(&mut visitor.item_macros[self.item_macros..], guard);
+        apply(
+            &mut visitor.opaque_binding_macros[self.opaque_binding_macros..],
+            guard,
+        );
         for definition in &mut visitor.macro_definitions[self.macro_definitions..] {
-            definition.mark_test_only();
+            definition.apply_guard(guard);
         }
         for expansion in &mut visitor.macro_expansions[self.expansions..] {
-            expansion.mark_test_only();
+            expansion.apply_guard(guard);
         }
         for expansion in &mut visitor.opaque_macro_inputs[self.opaque_inputs..] {
-            expansion.mark_test_only();
+            expansion.apply_guard(guard);
         }
         for effect in &mut visitor.compile_effects[self.compile_effects..] {
-            effect.invocation.mark_test_only();
+            effect.invocation.apply_guard(guard);
         }
     }
 }
 
-fn mark(facts: &mut [super::ObservedFact]) {
+fn apply(facts: &mut [super::ObservedFact], guard: SyntaxGuard) {
     for fact in facts {
-        fact.mark_test_only();
+        fact.apply_guard(guard);
     }
 }
 

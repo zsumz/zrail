@@ -72,8 +72,12 @@ impl LookupMode {
         }
     }
 
-    pub(super) fn binding_target(module: EffectiveModule) -> Self {
-        Self::lexical(module)
+    pub(super) fn binding_target(module: EffectiveModule, speculative: bool) -> Self {
+        Self {
+            kind: LookupKind::Lexical,
+            consumer: module,
+            speculative,
+        }
     }
 
     pub(super) fn glob_target(module: EffectiveModule) -> Self {
@@ -90,6 +94,15 @@ pub(super) enum ResolutionUsage {
     Path,
     Type,
     Call,
+}
+
+pub(super) struct ResolveRequest<'a> {
+    pub(super) instance: SourceInstanceId,
+    pub(super) written: &'a str,
+    pub(super) scope: &'a [SourceSpan],
+    pub(super) depth: usize,
+    pub(super) mode: LookupMode,
+    pub(super) usage: ResolutionUsage,
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]

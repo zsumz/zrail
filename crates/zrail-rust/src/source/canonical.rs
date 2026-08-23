@@ -4,25 +4,28 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::{AnalysisQuality, Finding};
 
-use crate::cargo::{CargoWorkspace, CrateRootAuthority, Package, rust_crate_root};
+use crate::cargo::{CrateRootAuthority, Package, rust_crate_root};
 
 use super::{
-    CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot,
-    ObservedFact, ResolvedModuleEdge, SourceIndex, macro_definitions::MacroDefinitions,
+    CanonicalizationContext, ObservedFact, SourceIndex, macro_definitions::MacroDefinitions,
 };
 
 const MAX_IDENTITIES_PER_ROOT: usize = 4;
 
 pub(crate) fn canonicalize(
     index: &mut SourceIndex,
-    cargo: &CargoWorkspace,
-    contexts: &BTreeMap<String, BTreeSet<String>>,
-    module_edges: &[ResolvedModuleEdge],
-    compilation_domains: &BTreeMap<String, BTreeSet<CompilationDomain>>,
-    compilation_roots: &[CompilationRoot],
-    compilation_edges: &[CompilationModuleEdge],
-    compilation_includes: &[CompilationIncludeEdge],
+    context: CanonicalizationContext<'_>,
+    review_bindings: impl FnOnce(&SourceIndex) -> super::BindingMacroPolicy,
 ) {
+    let CanonicalizationContext {
+        cargo,
+        packages: contexts,
+        module_edges,
+        compilation_domains,
+        compilation_roots,
+        compilation_edges,
+        compilation_includes,
+    } = context;
     let packages = cargo
         .packages
         .iter()
@@ -36,15 +39,8 @@ pub(crate) fn canonicalize(
         compilation_edges,
         compilation_includes,
     );
-    let include_bindings = super::include_bindings::IncludeBindings::collect(
-        index,
-        compilation_roots,
-        compilation_edges,
-        compilation_includes,
-    );
     let macro_visibility = super::macro_visibility::MacroVisibility::collect(index, module_edges);
     let mut findings = Vec::new();
-    findings.extend(include_bindings.apply(index));
     for file in &mut index.files {
         let selected: Vec<&Package> = contexts.get(&file.relative).map_or_else(
             || {
@@ -80,20 +76,6 @@ pub(crate) fn canonicalize(
         }
         let observed = super::canonical_observed::roots(file);
         let (roots, overflowed) = dependency_roots(&selected, &observed);
-        findings.extend(
-            overflowed
-                .iter()
-                .map(|root| identity_limit(&file.relative, root)),
-        );
-        for fact in file
-            .paths
-            .iter_mut()
-            .chain(&mut file.calls)
-            .chain(&mut file.macros)
-            .chain(&mut file.item_macros)
-        {
-            canonicalize_fact_bounded(fact, &roots, &overflowed);
-        }
         for expansion in file
             .macro_expansions
             .iter_mut()
@@ -108,6 +90,47 @@ pub(crate) fn canonicalize(
                 canonicalize_fact_bounded(&mut candidate.observation, &roots, &overflowed);
             }
             super::macro_origins::resolve(expansion, &selected);
+        }
+    }
+    let binding_macros = review_bindings(index);
+    binding_macros.apply(index);
+    let include_bindings = super::include_bindings::IncludeBindings::collect(
+        index,
+        compilation_roots,
+        compilation_edges,
+        compilation_includes,
+        &binding_macros,
+    );
+    findings.extend(include_bindings.apply(index));
+    for file in &mut index.files {
+        let selected: Vec<&Package> = contexts.get(&file.relative).map_or_else(
+            || {
+                package_for_file(&cargo.packages, &file.relative)
+                    .into_iter()
+                    .collect()
+            },
+            |names| {
+                names
+                    .iter()
+                    .filter_map(|name| packages.get(name.as_str()).copied())
+                    .collect()
+            },
+        );
+        let observed = super::canonical_observed::roots(file);
+        let (roots, overflowed) = dependency_roots(&selected, &observed);
+        findings.extend(
+            overflowed
+                .iter()
+                .map(|root| identity_limit(&file.relative, root)),
+        );
+        for fact in file
+            .paths
+            .iter_mut()
+            .chain(&mut file.calls)
+            .chain(&mut file.macros)
+            .chain(&mut file.item_macros)
+        {
+            canonicalize_fact_bounded(fact, &roots, &overflowed);
         }
     }
     index.findings.extend(findings);

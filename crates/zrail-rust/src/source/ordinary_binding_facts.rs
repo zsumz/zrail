@@ -1,11 +1,13 @@
 //! Binding facts retain namespace kind, visibility, guards, and absolute anchors.
 
-use syn::{Attribute, Visibility};
+use syn::{Attribute, Visibility, spanned::Spanned};
 use zrail_core::{AnalysisQuality, SourceSpan};
 
 use super::{
     BindingAnchor, BindingKind, BindingVisibility, ImportBindingFact, ModuleBinding, SyntaxGuard,
-    attributes::is_cfg_test, fact::source_span,
+    attributes::{cfg_conditions_are_exact, cfg_guard},
+    fact::source_span,
+    macro_binding_policy::MacroOccurrence,
 };
 
 #[derive(Clone, Copy)]
@@ -13,6 +15,18 @@ pub(super) struct BindingContext<'a> {
     pub(super) attributes: &'a [Attribute],
     pub(super) visibility: &'a Visibility,
     pub(super) enclosing_guard: SyntaxGuard,
+    pub(super) scope: &'a [SourceSpan],
+}
+
+pub(super) struct BindingDraft<'a> {
+    pub(super) name: Option<String>,
+    pub(super) target: String,
+    pub(super) kind: BindingKind,
+    pub(super) anchor: BindingAnchor,
+    pub(super) visibility: BindingVisibility,
+    pub(super) quality: AnalysisQuality,
+    pub(super) replacement_macros: Vec<MacroOccurrence>,
+    pub(super) guard: SyntaxGuard,
     pub(super) scope: &'a [SourceSpan],
 }
 
@@ -25,14 +39,17 @@ pub(super) fn local(
     let guard = item_guard(context.attributes, context.enclosing_guard);
     push(
         bindings,
-        Some(name.clone()),
-        name,
-        kind,
-        BindingAnchor::Lexical,
-        visibility(context.visibility),
-        quality(context.attributes, guard),
-        guard,
-        context.scope,
+        BindingDraft {
+            name: Some(name.clone()),
+            target: name,
+            kind,
+            anchor: BindingAnchor::Lexical,
+            visibility: visibility(context.visibility),
+            quality: quality(context.attributes),
+            replacement_macros: replacement_macros(context.attributes, guard, context.scope),
+            guard,
+            scope: context.scope,
+        },
     );
 }
 
@@ -52,14 +69,17 @@ pub(super) fn module(
     let name = item.ident.to_string();
     push(
         bindings,
-        Some(name.clone()),
-        name,
-        BindingKind::Module(module),
-        BindingAnchor::Lexical,
-        visibility(&item.vis),
-        quality(&item.attrs, guard),
-        guard,
-        scope,
+        BindingDraft {
+            name: Some(name.clone()),
+            target: name,
+            kind: BindingKind::Module(module),
+            anchor: BindingAnchor::Lexical,
+            visibility: visibility(&item.vis),
+            quality: quality(&item.attrs),
+            replacement_macros: replacement_macros(&item.attrs, guard, scope),
+            guard,
+            scope,
+        },
     );
 }
 
@@ -70,7 +90,8 @@ pub(super) fn foreign(
     scope: &[SourceSpan],
 ) {
     let guard = item_guard(&block.attrs, enclosing_guard);
-    let outer_quality = quality(&block.attrs, guard);
+    let outer_quality = quality(&block.attrs);
+    let outer_macros = replacement_macros(&block.attrs, guard, scope);
     for item in &block.items {
         let (name, kind, attributes, visibility) = match item {
             syn::ForeignItem::Fn(item) => (
@@ -105,50 +126,80 @@ pub(super) fn foreign(
                 scope,
             },
         );
-        bindings[start].quality = bindings[start].quality.max(outer_quality);
+        let binding = &mut bindings[start];
+        binding.quality_without_macros = binding.quality_without_macros.max(outer_quality);
+        binding
+            .replacement_macros
+            .extend(outer_macros.iter().cloned());
+        binding.replacement_macros.sort();
+        binding.replacement_macros.dedup();
+        binding.quality = if binding.replacement_macros.is_empty() {
+            binding.quality_without_macros
+        } else {
+            AnalysisQuality::Unresolved
+        };
     }
 }
 
-#[allow(clippy::too_many_arguments)]
-pub(super) fn push(
-    bindings: &mut Vec<ImportBindingFact>,
-    name: Option<String>,
-    target: String,
-    kind: BindingKind,
-    anchor: BindingAnchor,
-    visibility: BindingVisibility,
-    quality: AnalysisQuality,
-    guard: SyntaxGuard,
-    lexical_scope: &[SourceSpan],
-) {
+pub(super) fn push(bindings: &mut Vec<ImportBindingFact>, draft: BindingDraft<'_>) {
+    let quality = if draft.replacement_macros.is_empty() {
+        draft.quality
+    } else {
+        AnalysisQuality::Unresolved
+    };
     bindings.push(ImportBindingFact {
-        name,
-        target,
-        kind,
-        anchor,
-        visibility,
+        name: draft.name,
+        target: draft.target,
+        kind: draft.kind,
+        anchor: draft.anchor,
+        visibility: draft.visibility,
         quality,
-        guard,
-        lexical_scope: lexical_scope.to_vec(),
+        quality_without_macros: draft.quality,
+        replacement_macros: draft.replacement_macros,
+        guard: draft.guard,
+        lexical_scope: draft.scope.to_vec(),
     });
 }
 
-pub(super) fn quality(attributes: &[Attribute], guard: SyntaxGuard) -> AnalysisQuality {
-    if attributes
-        .iter()
-        .any(super::macro_expansion::can_replace_item)
-        || (guard == SyntaxGuard::Ordinary && super::scoped_imports::conditional(attributes))
-    {
+pub(super) fn quality(attributes: &[Attribute]) -> AnalysisQuality {
+    if super::scoped_imports::conditional(attributes) && !cfg_conditions_are_exact(attributes) {
         AnalysisQuality::Unresolved
     } else {
         AnalysisQuality::Exact
     }
 }
 
+pub(super) fn replacement_macros(
+    attributes: &[Attribute],
+    guard: SyntaxGuard,
+    scope: &[SourceSpan],
+) -> Vec<MacroOccurrence> {
+    let mut occurrences = attributes
+        .iter()
+        .filter(|attribute| super::macro_expansion::can_replace_item(attribute))
+        .flat_map(|attribute| {
+            super::macro_expansion::attribute_paths(attribute).map_or_else(
+                |()| vec![attribute.path().clone()],
+                |expansions| {
+                    expansions
+                        .into_iter()
+                        .filter(|expansion| {
+                            expansion.kind == super::macro_expansion::ExpansionKind::Attribute
+                        })
+                        .map(|expansion| expansion.path)
+                        .collect()
+                },
+            )
+        })
+        .map(|path| MacroOccurrence::new(source_span(path.span()), guard, scope))
+        .collect::<Vec<_>>();
+    occurrences.sort();
+    occurrences.dedup();
+    occurrences
+}
+
 pub(super) fn item_guard(attributes: &[Attribute], enclosing: SyntaxGuard) -> SyntaxGuard {
-    enclosing.combine(SyntaxGuard::for_test_only(
-        attributes.iter().any(is_cfg_test),
-    ))
+    enclosing.combine(cfg_guard(attributes))
 }
 
 pub(super) fn visibility(value: &Visibility) -> BindingVisibility {

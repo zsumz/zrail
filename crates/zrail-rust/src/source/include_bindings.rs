@@ -10,6 +10,7 @@ use super::{
     include_binding_catalog::FileBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::EffectiveModule,
+    macro_binding_policy::BindingMacroPolicy,
 };
 
 pub(super) struct IncludeBindings {
@@ -53,6 +54,7 @@ impl IncludeBindings {
         roots: &[CompilationRoot],
         modules: &[CompilationModuleEdge],
         includes: &[CompilationIncludeEdge],
+        binding_macros: &BindingMacroPolicy,
     ) -> Self {
         Self {
             files: index
@@ -92,6 +94,7 @@ impl IncludeBindings {
                         file.item_macros
                             .iter()
                             .chain(&file.opaque_binding_macros)
+                            .filter(|fact| binding_macros.retains_opacity(&file.relative, fact))
                             .map(|fact| (fact.lexical_scope.clone(), fact.guard))
                             .collect(),
                     )

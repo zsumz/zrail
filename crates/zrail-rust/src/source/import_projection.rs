@@ -71,7 +71,7 @@ impl ImportMap {
         limit: usize,
         context: SyntaxGuard,
     ) -> (Vec<ImportCandidate>, bool) {
-        self.collect_candidates_with_globs(path, limit, context, &self.macro_globs)
+        self.collect_candidates_with_globs(path, limit, context, &self.macro_globs, true)
     }
 
     fn collect_candidates(
@@ -80,7 +80,7 @@ impl ImportMap {
         limit: usize,
         context: SyntaxGuard,
     ) -> (Vec<ImportCandidate>, bool) {
-        self.collect_candidates_with_globs(path, limit, context, &self.globs)
+        self.collect_candidates_with_globs(path, limit, context, &self.globs, false)
     }
 
     fn collect_candidates_with_globs(
@@ -89,6 +89,7 @@ impl ImportMap {
         limit: usize,
         context: SyntaxGuard,
         globs: &BTreeMap<String, SyntaxGuard>,
+        overlap_domains: bool,
     ) -> (Vec<ImportCandidate>, bool) {
         let segments = path
             .segments
@@ -101,13 +102,13 @@ impl ImportMap {
         let remainder = &segments[1..];
         let mut candidates = BTreeMap::new();
         for (prefix, guard) in self.call_aliases.get(first).into_iter().flatten() {
-            if !guard.available_in(context) {
+            if !available(*guard, context, overlap_domains) {
                 continue;
             }
             let kind = if self
                 .re_exports
                 .get(first)
-                .is_some_and(|guard| guard.available_in(context))
+                .is_some_and(|guard| available(*guard, context, overlap_domains))
             {
                 ImportCandidateKind::ReExport
             } else {
@@ -120,13 +121,13 @@ impl ImportMap {
         }
         let syntactic = segments.join("::");
         for (glob, guard) in globs {
-            if !guard.available_in(context) {
+            if !available(*guard, context, overlap_domains) {
                 continue;
             }
             let kind = if self
                 .re_export_globs
                 .get(glob)
-                .is_some_and(|guard| guard.available_in(context))
+                .is_some_and(|guard| available(*guard, context, overlap_domains))
             {
                 ImportCandidateKind::ReExport
             } else {
@@ -153,5 +154,13 @@ impl ImportMap {
             .first()
             .and_then(|segment| self.re_exports.get(&segment.ident.to_string()))
             .is_some_and(|guard| guard.available_in(context))
+    }
+}
+
+fn available(candidate: SyntaxGuard, context: SyntaxGuard, overlap_domains: bool) -> bool {
+    if overlap_domains {
+        candidate.overlaps(context)
+    } else {
+        candidate.available_in(context)
     }
 }

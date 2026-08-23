@@ -10,7 +10,7 @@ use super::{
 pub(super) struct FactVisitor<'a> {
     pub(super) imports: &'a ImportMap,
     pub(super) local_imports: super::visitor_imports::LocalImportScopes,
-    pub(super) test_only_context: bool,
+    pub(super) guard_context: super::SyntaxGuard,
     pub(super) lexical_scope: Vec<zrail_core::SourceSpan>,
     pub(super) next_path_namespace: super::FactNamespace,
     pub(super) paths: Vec<ObservedFact>,

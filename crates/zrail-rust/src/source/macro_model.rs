@@ -185,10 +185,10 @@ impl MacroExpansionFact {
             .unwrap_or(AnalysisQuality::Unresolved);
     }
 
-    pub(super) fn mark_test_only(&mut self) {
-        self.observation.mark_test_only();
+    pub(super) fn apply_guard(&mut self, guard: super::SyntaxGuard) {
+        self.observation.apply_guard(guard);
         for candidate in &mut self.candidates {
-            candidate.observation.mark_test_only();
+            candidate.observation.apply_guard(guard);
         }
     }
 

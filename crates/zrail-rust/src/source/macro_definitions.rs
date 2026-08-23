@@ -24,6 +24,10 @@ pub(super) struct MacroDefinitions {
     pub(super) packages: BTreeMap<String, PackageOrigin>,
     pub(super) domains: BTreeMap<String, BTreeSet<CompilationDomain>>,
     pub(super) instances: SourceInstances,
+    pub(super) inline_module_names: BTreeMap<String, BTreeMap<zrail_core::SourceSpan, String>>,
+    pub(super) qualified_sites:
+        BTreeMap<(super::SourceInstanceId, String), BTreeSet<DefinitionSite>>,
+    pub(super) qualified_sites_complete: bool,
     names: BTreeMap<CompilationDomain, BTreeSet<String>>,
     overflowed: BTreeSet<CompilationDomain>,
 }
@@ -45,6 +49,7 @@ pub(super) struct Resolution {
     pub(super) sites: BTreeSet<DefinitionSite>,
     pub(super) all_paths_local: bool,
     pub(super) include_scope_uncertain: bool,
+    pub(super) definition_exact: bool,
 }
 
 impl MacroDefinitions {
@@ -69,10 +74,14 @@ impl MacroDefinitions {
                 .collect(),
             domains: domains.clone(),
             instances: SourceInstances::build(roots, edges, includes),
+            inline_module_names: super::macro_qualified_definition::inline_module_names(index),
+            qualified_sites: BTreeMap::new(),
+            qualified_sites_complete: true,
             names: BTreeMap::new(),
             overflowed: BTreeSet::new(),
         };
         definitions.collect_names();
+        definitions.collect_qualified_sites();
         definitions
     }
 
@@ -116,10 +125,11 @@ impl MacroDefinitions {
         let mut sites = BTreeSet::new();
         let mut every_instance_local = !instances.is_empty();
         let mut include_scope_uncertain = false;
-        for instance in instances {
+        let mut definitions_exact = true;
+        for instance in &instances {
             let mut seen = BTreeSet::new();
             let resolution = self.resolve(
-                instance,
+                *instance,
                 &expansion.name,
                 &expansion.lexical_scope,
                 expansion.span,
@@ -131,6 +141,7 @@ impl MacroDefinitions {
             };
             every_instance_local &= resolution.all_paths_local;
             include_scope_uncertain |= resolution.include_scope_uncertain;
+            definitions_exact &= resolution.definition_exact;
             sites.extend(resolution.sites);
             if sites.len() > MAX_VISIBLE_DEFINITIONS {
                 Self::add_unknown(expansion);
@@ -151,6 +162,10 @@ impl MacroDefinitions {
             .map(|site| repository_candidate(expansion, &policy_name, site))
             .collect::<Vec<_>>();
         expansion.candidates.extend(candidates);
+        self.attach_qualified_definitions(expansion, &instances);
+        if !definitions_exact {
+            Self::add_unknown(expansion);
+        }
         expansion.candidates.sort_by(candidate_order);
         expansion.candidates.dedup();
         expansion.refresh_quality();
@@ -176,6 +191,7 @@ impl MacroDefinitions {
             };
             include_scope_uncertain |= resolution.include_scope_uncertain;
         }
+        self.attach_qualified_definitions(expansion, instances);
         if include_scope_uncertain {
             add_include_scope_uncertainty(expansion);
             expansion.candidates.sort_by(candidate_order);
@@ -192,11 +208,9 @@ impl MacroDefinitions {
                     continue;
                 }
                 let names = self.names.entry(domain.clone()).or_default();
-                names.extend(
-                    definitions
-                        .clone()
-                        .map(|definition| definition.name.clone()),
-                );
+                for definition in definitions.clone() {
+                    names.insert(definition.name.clone());
+                }
                 if names.len() > MAX_DEFINITIONS_PER_DOMAIN {
                     self.names.remove(domain);
                     self.overflowed.insert(domain.clone());

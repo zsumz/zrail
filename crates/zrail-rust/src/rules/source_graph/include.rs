@@ -11,7 +11,7 @@ impl Walker<'_> {
         context: &TraversalContext,
         include: &IncludeBoundary,
     ) {
-        let Some(context) = context.with_test_guard(include.cfg_test) else {
+        let Some(context) = context.with_guard(include.guard) else {
             return;
         };
         if let Some(output) = &include.out_dir {

@@ -2,30 +2,27 @@
 
 use std::collections::BTreeSet;
 
-use zrail_core::SourceSpan;
-
 use super::{
-    BindingKind, IncludeContext, SourceEntry, SourceInstanceId, SyntaxGuard,
+    BindingKind, IncludeContext, SourceEntry, SyntaxGuard,
     include_binding_resolution::MAX_BINDING_CANDIDATES,
     include_bindings::{BindingSite, IncludeBindings},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
-    include_resolution_state::{EffectiveModule, LookupMode, ResolutionUsage},
+    include_resolution_state::{EffectiveModule, ResolutionUsage, ResolveRequest},
 };
 
 impl IncludeBindings {
-    #[allow(clippy::too_many_arguments)]
     pub(super) fn alias_sites(
         &self,
-        instance: SourceInstanceId,
+        request: &ResolveRequest<'_>,
         name: &str,
         suffix: &str,
-        scope: &[SourceSpan],
         context: SyntaxGuard,
-        budget: &mut ProjectionBudget,
-        mode: &LookupMode,
         module: &EffectiveModule,
-        usage: ResolutionUsage,
+        budget: &mut ProjectionBudget,
     ) -> Result<Vec<BindingSite>, ProjectionLimit> {
+        let instance = request.instance;
+        let scope = request.scope;
+        let mode = &request.mode;
         let Some(source) = self.instances.get(instance) else {
             return Ok(Vec::new());
         };
@@ -100,7 +97,7 @@ impl IncludeBindings {
             }
         }
         if !selected.is_empty() {
-            filter_namespace(&mut selected, suffix, usage);
+            filter_namespace(&mut selected, suffix, request.usage);
             return Ok(selected);
         }
         if floor == 0
@@ -111,16 +108,21 @@ impl IncludeBindings {
             else {
                 return Ok(Vec::new());
             };
+            let parent_request = ResolveRequest {
+                instance: parent,
+                written: request.written,
+                scope: &edge.parent_scope,
+                depth: request.depth,
+                mode: request.mode.clone(),
+                usage: request.usage,
+            };
             let mut inherited = self.alias_sites(
-                parent,
+                &parent_request,
                 name,
                 suffix,
-                &edge.parent_scope,
                 context,
-                budget,
-                mode,
                 &parent_module,
-                usage,
+                budget,
             )?;
             for site in &mut inherited {
                 site.crossed_include = true;

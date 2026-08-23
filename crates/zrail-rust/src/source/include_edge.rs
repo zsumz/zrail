@@ -2,7 +2,7 @@
 
 use zrail_core::SourceSpan;
 
-use super::{CompilationDomain, IncludeContext};
+use super::{CompilationDomain, IncludeContext, SyntaxGuard};
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct IncludeOccurrenceId {
@@ -24,6 +24,7 @@ pub(crate) struct CompilationIncludeEdge {
     pub(crate) parent: String,
     pub(crate) child: String,
     pub(crate) domain: CompilationDomain,
+    pub(crate) guard: SyntaxGuard,
     pub(crate) context: IncludeContext,
     pub(crate) parent_scope: Vec<SourceSpan>,
     pub(crate) include_span: SourceSpan,

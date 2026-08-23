@@ -5,71 +5,86 @@ use super::{
     include_binding_helpers::{canonical_name, join, split_root, unresolved},
     include_bindings::{BindingSite, IncludeBindings, ResolvedPath},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
-    include_resolution_state::{LookupMode, ResolutionTrail, ResolutionUsage},
+    include_resolution_state::{LookupMode, ResolutionTrail, ResolutionUsage, ResolveRequest},
 };
 
 impl IncludeBindings {
-    #[allow(clippy::too_many_arguments)]
     pub(super) fn expand_binding(
         &self,
         site: &BindingSite,
-        written: &str,
+        request: &ResolveRequest<'_>,
         suffix: &str,
         trail: &mut ResolutionTrail,
-        depth: usize,
         budget: &mut ProjectionBudget,
-        mode: &LookupMode,
-        usage: ResolutionUsage,
     ) -> Result<Vec<ResolvedPath>, ProjectionLimit> {
         budget.consume_work()?;
         let mut resolved = match site.binding.kind {
-            BindingKind::Module(module) => self.expand_module(
-                site, module, written, suffix, trail, depth, budget, mode, usage,
-            )?,
-            BindingKind::LocalType if usage == ResolutionUsage::Call && suffix.is_empty() => {
+            BindingKind::Module(module) => {
+                self.expand_module(site, module, request, suffix, trail, budget)?
+            }
+            BindingKind::LocalType
+                if request.usage == ResolutionUsage::Call && suffix.is_empty() =>
+            {
                 Vec::new()
             }
             BindingKind::LocalType | BindingKind::LocalConstructor | BindingKind::LocalValue => {
-                let Some(name) = canonical_name(&site.module.names, written) else {
-                    return Ok(vec![unresolved(written)]);
+                let Some(name) = canonical_name(&site.module.names, request.written) else {
+                    return Ok(vec![unresolved(request.written)]);
                 };
                 vec![ResolvedPath {
-                    requires_projection: name != written || site.crossed_include,
+                    requires_projection: name != request.written || site.crossed_include,
+                    name,
+                    quality: site.binding.quality,
+                    crossed_include: site.crossed_include,
+                }]
+            }
+            BindingKind::OpaqueAlias
+                if request.usage == ResolutionUsage::Type && suffix.is_empty() =>
+            {
+                let name = canonical_name(&site.module.names, request.written)
+                    .unwrap_or_else(|| request.written.into());
+                vec![ResolvedPath {
+                    requires_projection: name != request.written || site.crossed_include,
                     name,
                     quality: site.binding.quality,
                     crossed_include: site.crossed_include,
                 }]
             }
             BindingKind::OpaqueAlias => {
-                let name =
-                    canonical_name(&site.module.names, written).unwrap_or_else(|| written.into());
+                let name = canonical_name(&site.module.names, request.written)
+                    .unwrap_or_else(|| request.written.into());
                 vec![unresolved(&name)]
             }
             BindingKind::Import | BindingKind::TypeAlias => {
                 let Some(target) = join(&site.binding.target, suffix) else {
-                    return Ok(vec![unresolved(written)]);
+                    return Ok(vec![unresolved(request.written)]);
                 };
                 let Some(target) = self.anchor_target(site, target) else {
-                    return Ok(vec![unresolved(written)]);
+                    return Ok(vec![unresolved(request.written)]);
                 };
                 self.resolve_in(
-                    site.instance,
-                    &target,
-                    &site.binding.lexical_scope,
+                    ResolveRequest {
+                        instance: site.instance,
+                        written: &target,
+                        scope: &site.binding.lexical_scope,
+                        depth: request.depth,
+                        mode: LookupMode::binding_target(
+                            site.module.clone(),
+                            !suffix.is_empty() || site.binding.kind == BindingKind::Import,
+                        ),
+                        usage: request.usage,
+                    },
                     trail,
-                    depth,
                     budget,
-                    LookupMode::binding_target(site.module.clone()),
-                    usage,
                 )?
             }
-            BindingKind::Glob => vec![unresolved(written)],
+            BindingKind::Glob => vec![unresolved(request.written)],
         };
         for candidate in &mut resolved {
             candidate.quality = candidate.quality.max(site.binding.quality);
             candidate.crossed_include |= site.crossed_include;
             candidate.requires_projection |= site.crossed_include
-                || mode.exact_scope()
+                || request.mode.exact_scope()
                 || matches!(
                     site.binding.kind,
                     BindingKind::Import | BindingKind::TypeAlias
@@ -78,22 +93,18 @@ impl IncludeBindings {
         Ok(resolved)
     }
 
-    #[allow(clippy::too_many_arguments)]
     fn expand_module(
         &self,
         site: &BindingSite,
         module: ModuleBinding,
-        written: &str,
+        request: &ResolveRequest<'_>,
         suffix: &str,
         trail: &mut ResolutionTrail,
-        depth: usize,
         budget: &mut ProjectionBudget,
-        mode: &LookupMode,
-        usage: ResolutionUsage,
     ) -> Result<Vec<ResolvedPath>, ProjectionLimit> {
         let Some(member) = suffix.strip_prefix("::") else {
-            let name =
-                canonical_name(&site.module.names, written).unwrap_or_else(|| written.into());
+            let name = canonical_name(&site.module.names, request.written)
+                .unwrap_or_else(|| request.written.into());
             return Ok(vec![ResolvedPath {
                 name,
                 quality: site.binding.quality,
@@ -103,17 +114,19 @@ impl IncludeBindings {
         };
         let locations = self.module_locations(site, module, budget)?;
         let [(instance, scope)] = locations.as_slice() else {
-            return Ok(vec![unresolved(written)]);
+            return Ok(vec![unresolved(request.written)]);
         };
         self.resolve_in(
-            *instance,
-            member,
-            scope,
+            ResolveRequest {
+                instance: *instance,
+                written: member,
+                scope,
+                depth: request.depth,
+                mode: request.mode.module(),
+                usage: request.usage,
+            },
             trail,
-            depth,
             budget,
-            mode.module(),
-            usage,
         )
     }
 

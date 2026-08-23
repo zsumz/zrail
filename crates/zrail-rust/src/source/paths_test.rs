@@ -3,6 +3,7 @@
 use zrail_core::SourceSpan;
 
 use super::{ModuleTarget, SubmoduleBase, join_relative, module_target};
+use crate::source::SyntaxGuard;
 use crate::source::model::{InlineModulePath, ModuleDeclaration};
 
 #[test]
@@ -144,7 +145,7 @@ fn declaration(name: &str) -> ModuleDeclaration {
     ModuleDeclaration {
         name: name.into(),
         path: None,
-        cfg_test: false,
+        guard: SyntaxGuard::Ordinary,
         unresolved_path: false,
         inline_ancestors: Vec::new(),
         lexical_scope: Vec::new(),

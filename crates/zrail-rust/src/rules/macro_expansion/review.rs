@@ -4,9 +4,11 @@ use std::collections::BTreeMap;
 
 use zrail_core::{AnalysisQuality, MacroBindingMode, MacroExpansionAllow};
 
-use crate::source::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin};
+use crate::source::{
+    MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin, SourceIndex,
+};
 
-use super::{super::RuleContext, bindings, failure::MacroBindingFailure, source};
+use super::{bindings, failure::MacroBindingFailure, source};
 
 pub(super) enum MacroBindingResult<'a> {
     Bound {
@@ -21,12 +23,12 @@ pub(super) enum MacroBindingResult<'a> {
 }
 
 pub(super) fn review<'a>(
-    context: &RuleContext<'_>,
+    source: &SourceIndex,
     expansion: &'a MacroExpansionFact,
     allowed: &BTreeMap<&str, &MacroExpansionAllow>,
 ) -> MacroBindingResult<'a> {
     review_with(expansion, allowed, |candidate, allowance| {
-        bindings::failure(context, candidate, allowance)
+        bindings::failure(source, candidate, allowance)
     })
 }
 

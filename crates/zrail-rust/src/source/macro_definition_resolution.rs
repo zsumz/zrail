@@ -27,12 +27,13 @@ impl MacroDefinitions {
         let (definition, include_scope_uncertain) = self
             .preceding_definition(instance, name, scope, point?, seen)
             .ok()?;
-        if let Some(site) = definition {
+        if let Some((site, definition_exact)) = definition {
             seen.remove(&instance);
             return Some(Resolution {
                 sites: BTreeSet::from([site]),
                 all_paths_local: true,
                 include_scope_uncertain,
+                definition_exact,
             });
         }
         let source = self.instances.get(instance)?;
@@ -43,6 +44,7 @@ impl MacroDefinitions {
                 sites: BTreeSet::new(),
                 all_paths_local: false,
                 include_scope_uncertain: false,
+                definition_exact: true,
             },
             (Some(parent), SourceEntry::Module(edge)) => {
                 self.resolve(parent, name, &edge.parent_scope, edge.span, seen)?
@@ -61,6 +63,7 @@ impl MacroDefinitions {
             _ => return None,
         };
         resolved.include_scope_uncertain |= include_scope_uncertain;
+        resolved.definition_exact &= source.guard.is_exact();
         seen.remove(&instance);
         Some(resolved)
     }
@@ -72,7 +75,7 @@ impl MacroDefinitions {
         scope: &[SourceSpan],
         point: SourceSpan,
         seen: &mut BTreeSet<SourceInstanceId>,
-    ) -> Result<(Option<DefinitionSite>, bool), ()> {
+    ) -> Result<(Option<(DefinitionSite, bool)>, bool), ()> {
         let source = self.instances.get(instance).ok_or(())?;
         let mut selected = self
             .visible_local_definition(&source.file, &source.domain, name, scope, Some(point))
@@ -81,6 +84,7 @@ impl MacroDefinitions {
                     definition.lexical_scope.len(),
                     definition.span.ok_or(())?,
                     self.site(&source.file, &source.domain)?,
+                    source.guard.is_exact() && definition.guard.is_exact(),
                 ))
             })
             .transpose()?;
@@ -93,18 +97,26 @@ impl MacroDefinitions {
                 continue;
             }
             include_scope_uncertain = true;
-            let Some(site) = self.exported_definition(*child, name, seen)? else {
+            let Some((site, exact)) = self.exported_definition(*child, name, seen)? else {
                 continue;
             };
-            let candidate = (edge.parent_scope.len(), edge.include_span, site);
+            let candidate = (
+                edge.parent_scope.len(),
+                edge.include_span,
+                site,
+                exact && edge.guard.is_exact(),
+            );
             if selected
                 .as_ref()
-                .is_none_or(|current| candidate_key(&candidate) > candidate_key(current))
+                .is_none_or(|current| (candidate.0, candidate.1) > (current.0, current.1))
             {
                 selected = Some(candidate);
             }
         }
-        Ok((selected.map(|(_, _, site)| site), include_scope_uncertain))
+        Ok((
+            selected.map(|(_, _, site, exact)| (site, exact)),
+            include_scope_uncertain,
+        ))
     }
 
     fn exported_definition(
@@ -112,7 +124,7 @@ impl MacroDefinitions {
         instance: SourceInstanceId,
         name: &str,
         seen: &mut BTreeSet<SourceInstanceId>,
-    ) -> Result<Option<DefinitionSite>, ()> {
+    ) -> Result<Option<(DefinitionSite, bool)>, ()> {
         if !seen.insert(instance) || seen.len() > MAX_LOOKUP_STEPS {
             return Err(());
         }
@@ -123,6 +135,7 @@ impl MacroDefinitions {
                 Ok((
                     definition.span.ok_or(())?,
                     self.site(&source.file, &source.domain)?,
+                    source.guard.is_exact() && definition.guard.is_exact(),
                 ))
             })
             .transpose()?;
@@ -130,10 +143,10 @@ impl MacroDefinitions {
             if edge.context != IncludeContext::Items || !edge.parent_scope.is_empty() {
                 continue;
             }
-            let Some(site) = self.exported_definition(*child, name, seen)? else {
+            let Some((site, exact)) = self.exported_definition(*child, name, seen)? else {
                 continue;
             };
-            let candidate = (edge.include_span, site);
+            let candidate = (edge.include_span, site, exact && edge.guard.is_exact());
             if selected
                 .as_ref()
                 .is_none_or(|current| candidate.0 > current.0)
@@ -142,7 +155,7 @@ impl MacroDefinitions {
             }
         }
         seen.remove(&instance);
-        Ok(selected.map(|(_, site)| site))
+        Ok(selected.map(|(_, site, exact)| (site, exact)))
     }
 
     fn visible_local_definition(
@@ -203,7 +216,11 @@ impl MacroDefinitions {
         )
     }
 
-    fn site(&self, file: &str, domain: &CompilationDomain) -> Result<DefinitionSite, ()> {
+    pub(super) fn site(
+        &self,
+        file: &str,
+        domain: &CompilationDomain,
+    ) -> Result<DefinitionSite, ()> {
         let package = self.packages.get(&domain.package).ok_or(())?;
         Ok(DefinitionSite {
             file: file.into(),
@@ -211,10 +228,6 @@ impl MacroDefinitions {
             directory: package.directory.clone(),
         })
     }
-}
-
-fn candidate_key(candidate: &(usize, SourceSpan, DefinitionSite)) -> (usize, SourceSpan) {
-    (candidate.0, candidate.1)
 }
 
 fn domain_guard(domain: &CompilationDomain) -> SyntaxGuard {

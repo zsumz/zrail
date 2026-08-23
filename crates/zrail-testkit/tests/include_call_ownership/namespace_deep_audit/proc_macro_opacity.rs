@@ -15,7 +15,7 @@ fn attribute_macro_generated_import_fails_closed() {
     write_executor(&root);
     write_lock(&root);
 
-    assert_fail_closed(&check(&root), "attribute-macro-import");
+    assert_fail_closed(&check(&root));
     reset(&root);
 }
 
@@ -30,7 +30,7 @@ fn derive_macro_generated_import_fails_closed() {
     write_executor(&root);
     write_lock(&root);
 
-    assert_fail_closed(&check(&root), "derive-macro-import");
+    assert_fail_closed(&check(&root));
     reset(&root);
 }
 
@@ -49,7 +49,7 @@ fn attribute_replaced_benign_import_fails_closed() {
     write_executor(&root);
     write_lock(&root);
 
-    assert_fail_closed(&check(&root), "attribute-replaced-import");
+    assert_fail_closed(&check(&root));
     reset(&root);
 }
 
@@ -68,7 +68,7 @@ fn attribute_replaced_benign_module_fails_closed() {
     write_executor(&root);
     write_lock(&root);
 
-    assert_fail_closed(&check(&root), "attribute-replaced-module");
+    assert_fail_closed(&check(&root));
     reset(&root);
 }
 
@@ -81,15 +81,21 @@ fn proc_macro_fixture(name: &str, contract: &str) -> std::path::PathBuf {
     root
 }
 
-fn assert_fail_closed(report: &Report, rule: &str) {
+fn assert_fail_closed(report: &Report) {
     assert!(
         report.findings.iter().any(|finding| {
             finding.path.as_deref() == Some("src/lib.rs")
-                && (finding.id == "RUST-INCLUDE-002"
-                    || (finding.id.starts_with("OWN-")
-                        && finding.rule == rule
-                        && finding.analysis != AnalysisQuality::Exact))
+                && finding.id == "RUST-INCLUDE-002"
+                && finding.analysis == AnalysisQuality::Unresolved
         }),
+        "{}",
+        report.human()
+    );
+    assert!(
+        !report
+            .findings
+            .iter()
+            .any(|finding| finding.id.starts_with("RUST-MACRO-")),
         "{}",
         report.human()
     );

@@ -11,7 +11,6 @@ use super::{
 };
 
 impl IncludeBindings {
-    #[allow(clippy::too_many_arguments)]
     pub(super) fn missing(
         &self,
         instance: SourceInstanceId,

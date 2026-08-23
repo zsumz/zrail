@@ -114,6 +114,24 @@ fn inline_module_globs_do_not_become_file_wide_macro_candidates() {
     assert_eq!(candidates[0].0.name, "dependency::assert");
 }
 
+#[test]
+fn ordinary_macro_occurrences_include_test_only_alias_candidates() {
+    let file = syn::parse_file("use serde::Serialize as Model; #[cfg(test)] use other::Model;")
+        .expect("parse guarded macro aliases");
+    let imports = ImportMap::from_file(&file);
+    let path = syn::parse_str::<syn::Path>("Model").expect("parse macro path");
+
+    let (candidates, overflowed) =
+        macro_candidates(&path, &imports, "serde::Serialize", SyntaxGuard::Ordinary);
+
+    assert!(!overflowed);
+    assert!(
+        candidates
+            .iter()
+            .any(|(candidate, _)| candidate.name == "other::Model")
+    );
+}
+
 fn call(file: &syn::File) -> &syn::ExprCall {
     let Some(syn::Item::Fn(function)) = file.items.last() else {
         panic!("last item is a function");

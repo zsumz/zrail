@@ -2,7 +2,7 @@
 
 use super::{RustFileFacts, parse};
 
-pub(super) const MAX_TOTAL_PROJECTION_WORK: usize = 1_000_000;
+pub(super) const MAX_TOTAL_PROJECTION_WORK: usize = 4_000_000;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(super) enum ProjectionLimit {

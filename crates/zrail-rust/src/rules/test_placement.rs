@@ -49,7 +49,7 @@ fn check_declarations(context: &RuleContext<'_>, findings: &mut FindingSink) {
         if test.reachability.is_test_only()
             && exact
                 .iter()
-                .any(|edge| edge.cfg_test && edge.reachability.is_test_only())
+                .any(|edge| edge.guard.is_test_only() && edge.reachability.is_test_only())
         {
             continue;
         }

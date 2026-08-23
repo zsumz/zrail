@@ -6,7 +6,7 @@ use syn::{Attribute, Type, UseTree, visit::Visit as _};
 
 use super::{
     SyntaxGuard,
-    attributes::is_cfg_test,
+    attributes::cfg_guard,
     import_helpers::insert_guard,
     visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
 };
@@ -15,7 +15,7 @@ use super::{
 pub(super) struct CallCandidates {
     pub(super) aliases: BTreeMap<String, BTreeMap<String, SyntaxGuard>>,
     pub(super) globs: BTreeMap<String, SyntaxGuard>,
-    test_only_context: bool,
+    guard: SyntaxGuard,
 }
 
 pub(super) fn collect(file: &syn::File) -> CallCandidates {
@@ -103,20 +103,15 @@ impl<'ast> syn::visit::Visit<'ast> for CallCandidates {
             .rename
             .as_ref()
             .map_or_else(|| item.ident.to_string(), |(_, name)| name.to_string());
-        self.aliases.entry(alias).or_default().insert(
-            item.ident.to_string(),
-            SyntaxGuard::for_test_only(self.test_only_context),
-        );
+        self.aliases
+            .entry(alias)
+            .or_default()
+            .insert(item.ident.to_string(), self.guard);
         syn::visit::visit_item_extern_crate(self, item);
     }
 
     fn visit_item_use(&mut self, item: &'ast syn::ItemUse) {
-        collect_use(
-            self,
-            Vec::new(),
-            &item.tree,
-            SyntaxGuard::for_test_only(self.test_only_context),
-        );
+        collect_use(self, Vec::new(), &item.tree, self.guard);
         syn::visit::visit_item_use(self, item);
     }
 
@@ -127,10 +122,7 @@ impl<'ast> syn::visit::Visit<'ast> for CallCandidates {
             self.aliases
                 .entry(item.ident.to_string())
                 .or_default()
-                .insert(
-                    path_text(&target.path),
-                    SyntaxGuard::for_test_only(self.test_only_context),
-                );
+                .insert(path_text(&target.path), self.guard);
         }
         syn::visit::visit_item_type(self, item);
     }
@@ -138,10 +130,10 @@ impl<'ast> syn::visit::Visit<'ast> for CallCandidates {
 
 impl CallCandidates {
     fn with_cfg(&mut self, attributes: &[Attribute], visit: impl FnOnce(&mut Self)) {
-        let previous = self.test_only_context;
-        self.test_only_context |= attributes.iter().any(is_cfg_test);
+        let previous = self.guard;
+        self.guard = self.guard.combine(cfg_guard(attributes));
         visit(self);
-        self.test_only_context = previous;
+        self.guard = previous;
     }
 }
 

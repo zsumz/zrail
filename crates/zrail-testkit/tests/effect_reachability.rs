@@ -2,7 +2,7 @@
 
 use std::{fs, path::PathBuf};
 
-use zrail_core::Report;
+use zrail_core::{AnalysisQuality, Report};
 use zrail_rust::{check_repository, explain_path};
 
 #[test]
@@ -59,14 +59,43 @@ fn omitted_profile_reachability_preserves_all_fact_behavior() {
             report.human()
         );
     }
-    let guarded_library_effects = report
+    let mut library_effects = report
         .findings
         .iter()
         .filter(|finding| {
             finding.id == "EFFECT-001" && finding.path.as_deref() == Some("src/lib.rs")
         })
-        .count();
-    assert_eq!(guarded_library_effects, 8, "{}", report.human());
+        .map(|finding| (finding.span.map(|span| span.line), finding.analysis))
+        .collect::<Vec<_>>();
+    library_effects.sort();
+    assert_eq!(
+        library_effects,
+        [
+            (None, AnalysisQuality::Exact),
+            (Some(9), AnalysisQuality::Conservative),
+            (Some(12), AnalysisQuality::Exact),
+        ],
+        "{}",
+        report.human()
+    );
+    let mut shared_effects = report
+        .findings
+        .iter()
+        .filter(|finding| {
+            finding.id == "EFFECT-001" && finding.path.as_deref() == Some("src/shared.rs")
+        })
+        .map(|finding| (finding.span.map(|span| span.line), finding.analysis))
+        .collect::<Vec<_>>();
+    shared_effects.sort();
+    assert_eq!(
+        shared_effects,
+        [
+            (Some(2), AnalysisQuality::Exact),
+            (Some(4), AnalysisQuality::Exact),
+        ],
+        "{}",
+        report.human()
+    );
     reset(&root);
 }
 

@@ -12,28 +12,11 @@ pub(crate) enum SyntaxGuard {
     #[default]
     Ordinary,
     TestOnly,
-}
-
-impl SyntaxGuard {
-    pub(crate) const fn for_test_only(test_only: bool) -> Self {
-        if test_only {
-            Self::TestOnly
-        } else {
-            Self::Ordinary
-        }
-    }
-
-    pub(crate) const fn available_in(self, context: Self) -> bool {
-        matches!(self, Self::Ordinary) || matches!(context, Self::TestOnly)
-    }
-
-    pub(crate) const fn combine(self, other: Self) -> Self {
-        if matches!(self, Self::TestOnly) || matches!(other, Self::TestOnly) {
-            Self::TestOnly
-        } else {
-            Self::Ordinary
-        }
-    }
+    ProductionOnly,
+    Conditional,
+    ConditionalTestOnly,
+    ConditionalProductionOnly,
+    Never,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -64,6 +47,8 @@ pub(crate) struct ImportBindingFact {
     pub(crate) anchor: BindingAnchor,
     pub(crate) visibility: BindingVisibility,
     pub(crate) quality: AnalysisQuality,
+    pub(crate) quality_without_macros: AnalysisQuality,
+    pub(crate) replacement_macros: Vec<super::macro_binding_policy::MacroOccurrence>,
     pub(crate) guard: SyntaxGuard,
     pub(crate) lexical_scope: Vec<SourceSpan>,
 }
@@ -121,8 +106,8 @@ pub(crate) struct MacroDefinitionFact {
 }
 
 impl MacroDefinitionFact {
-    pub(super) fn mark_test_only(&mut self) {
-        self.guard = SyntaxGuard::TestOnly;
+    pub(super) fn apply_guard(&mut self, guard: SyntaxGuard) {
+        self.guard = self.guard.combine(guard);
     }
 }
 
@@ -135,11 +120,11 @@ impl ObservedFact {
     }
 
     pub(crate) const fn is_production_applicable(&self, reachability: Reachability) -> bool {
-        reachability.is_production() && matches!(self.guard, SyntaxGuard::Ordinary)
+        reachability.is_production() && self.guard.is_production_applicable()
     }
 
-    pub(super) fn mark_test_only(&mut self) {
-        self.guard = SyntaxGuard::TestOnly;
+    pub(super) fn apply_guard(&mut self, guard: SyntaxGuard) {
+        self.guard = self.guard.combine(guard);
     }
 }
 
@@ -154,7 +139,7 @@ pub(crate) struct InlineModulePath {
 pub(crate) struct ModuleDeclaration {
     pub(crate) name: String,
     pub(crate) path: Option<String>,
-    pub(crate) cfg_test: bool,
+    pub(crate) guard: SyntaxGuard,
     pub(crate) unresolved_path: bool,
     pub(crate) inline_ancestors: Vec<InlineModulePath>,
     pub(crate) lexical_scope: Vec<SourceSpan>,
@@ -179,7 +164,7 @@ pub(crate) struct IncludeBoundary {
     pub(crate) out_dir: Option<String>,
     pub(crate) expression: String,
     pub(crate) generated: bool,
-    pub(crate) cfg_test: bool,
+    pub(crate) guard: SyntaxGuard,
     pub(crate) context: IncludeContext,
     pub(crate) lexical_scope: Vec<SourceSpan>,
     pub(crate) occurrence: IncludeOccurrenceId,

@@ -113,7 +113,7 @@ impl FactVisitor<'_> {
         let mut candidates = BTreeMap::new();
         for scope in &self.local_imports {
             for (glob, guard) in &scope.globs {
-                if !guard.available_in(self.syntax_guard()) {
+                if !guard.overlaps(self.syntax_guard()) {
                     continue;
                 }
                 let (resolved_glob, _, _, _, _) = self.resolve_text_scoped(glob);

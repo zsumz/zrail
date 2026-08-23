@@ -60,23 +60,25 @@ struct TraversalContext {
     reachability: Reachability,
     package: String,
     domain: CompilationDomain,
-    test_guarded: bool,
+    guard: crate::source::SyntaxGuard,
 }
 
 impl TraversalContext {
-    fn with_test_guard(&self, guarded: bool) -> Option<Self> {
-        if guarded && !self.domain.mode.enables_cfg_test() {
+    fn with_guard(&self, guard: crate::source::SyntaxGuard) -> Option<Self> {
+        let guard = self.guard.combine(guard);
+        let domain = crate::source::SyntaxGuard::for_test_only(self.domain.mode.enables_cfg_test());
+        if !guard.available_in(domain) {
             return None;
         }
         Some(Self {
-            reachability: if guarded {
+            reachability: if guard.is_test_only() {
                 Reachability::test()
             } else {
                 self.reachability
             },
             package: self.package.clone(),
             domain: self.domain.clone(),
-            test_guarded: self.test_guarded || guarded,
+            guard,
         })
     }
 }
@@ -182,7 +184,7 @@ impl<'a> Walker<'a> {
                                 reachability,
                                 package: package.name.clone(),
                                 domain,
-                                test_guarded: false,
+                                guard: crate::source::SyntaxGuard::Ordinary,
                             },
                         ),
                         Err(error) => self.resolution_error(

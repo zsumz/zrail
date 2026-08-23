@@ -43,7 +43,7 @@ pub(super) fn insert_primary_alias(
         }
         Some(_) => {}
     }
-    if conditional && guard == SyntaxGuard::Ordinary {
+    if conditional && guard.is_conditional() {
         unresolved.insert(alias);
     }
 }

@@ -114,12 +114,23 @@ evidence = [
   "rust-test:crates/zrail-testkit/tests/macro_shadow.rs::cross_file_macro_scope_cannot_borrow_a_standard_name_allowance",
   "rust-test:crates/zrail-testkit/tests/macro_shadow.rs::local_module_shadow_cannot_borrow_dependency_macro_authority",
   "rust-test:crates/zrail-testkit/tests/macro_shadow.rs::macro_use_namespace_cannot_be_allowlisted_as_exact",
+  "rust-test:crates/zrail-testkit/tests/macro_expansion/binding_opacity.rs::exact_source_bound_serde_review_keeps_the_namespace_complete",
+  "rust-test:crates/zrail-testkit/tests/macro_expansion/binding_opacity.rs::ordinary_source_bound_serde_review_keeps_the_namespace_opaque",
+  "rust-test:crates/zrail-testkit/tests/macro_expansion/binding_opacity.rs::wrong_source_attribute_cannot_borrow_binding_clean_authority",
+  "rust-test:crates/zrail-testkit/tests/macro_expansion/binding_opacity.rs::wrong_source_derive_cannot_borrow_binding_clean_authority",
+  "rust-test:crates/zrail-core/src/contract/validate_source/macros_test.rs::source_bound_no_binding_attestation_is_valid",
+  "rust-test:crates/zrail-core/src/contract/validate_source/macros_test.rs::git_revision_bound_no_binding_attestation_is_valid",
+  "rust-test:crates/zrail-core/src/contract/validate_source/macros_test.rs::no_binding_attestation_rejects_mutable_external_sources",
+  "rust-test:crates/zrail-testkit/tests/macro_expansion/definition_binding.rs::external_qualified_definition_binds_its_exact_file",
+  "rust-test:crates/zrail-testkit/tests/macro_expansion/definition_binding.rs::same_package_same_leaf_definition_cannot_lend_binding_authority",
+  "rust-test:crates/zrail-testkit/tests/macro_expansion/definition_binding.rs::test_definition_cannot_borrow_production_definition_binding_authority",
+  "rust-test:crates/zrail-testkit/tests/macro_expansion/definition_binding.rs::feature_definition_cannot_borrow_complement_definition_binding_authority",
   "gate:check",
 ]
 
 [[invariant]]
 id = "INCLUDE-01"
-title = "Include splices preserve lexical macro and ordinary path authority"
+title = "Rust namespaces preserve lexical macro and ordinary path authority"
 status = "enforced"
 document = "README.md#checks"
 evidence = [
@@ -128,6 +139,8 @@ evidence = [
   "rust-test:crates/zrail-testkit/tests/macro_include_authority.rs::included_definition_shadows_compiler_macro_after_include",
   "rust-test:crates/zrail-testkit/tests/macro_include_splices.rs::repeated_include_occurrences_receive_distinct_macro_environments",
   "rust-test:crates/zrail-testkit/tests/macro_include_qualified_alias.rs::qualified_include_alias_requires_conservative_written_authority",
+  "rust-test:crates/zrail-testkit/tests/macro_expansion/definition_binding.rs::test_definition_cannot_borrow_production_definition_binding_authority",
+  "rust-test:crates/zrail-testkit/tests/macro_expansion/definition_binding.rs::feature_definition_cannot_borrow_complement_definition_binding_authority",
   "rust-test:crates/zrail-testkit/tests/include_call_ownership.rs::caller_alias_used_by_included_call_cannot_bypass_call_ownership",
   "rust-test:crates/zrail-testkit/tests/include_call_ownership.rs::included_alias_used_by_caller_cannot_bypass_call_ownership",
   "rust-test:crates/zrail-testkit/tests/include_call_ownership.rs::test_only_include_alias_changes_only_the_test_compilation",
@@ -143,6 +156,23 @@ evidence = [
   "rust-test:crates/zrail-testkit/tests/include_call_ownership/qualified.rs::nested_self_super_uses_the_effective_parent_module",
   "rust-test:crates/zrail-testkit/tests/include_call_ownership/qualified.rs::qualified_alias_in_the_allowed_owner_remains_exact",
   "rust-test:crates/zrail-testkit/tests/include_call_ownership/qualified.rs::test_only_qualified_alias_does_not_affect_production",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/ordinary_qualified.rs::same_file_self_alias_cannot_bypass_call_ownership",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/ordinary_qualified.rs::crate_root_alias_cannot_bypass_call_ownership",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/ordinary_qualified.rs::external_child_super_alias_cannot_bypass_call_ownership",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/ordinary_qualified.rs::inline_child_self_super_alias_cannot_bypass_call_ownership",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/ordinary_qualified.rs::test_only_qualified_alias_does_not_change_production_identity",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/ordinary_qualified.rs::qualified_alias_in_an_allowed_owner_remains_exact",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/module_reexports.rs::inline_module_reexport_cannot_bypass_call_ownership",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/module_reexports.rs::external_module_reexport_reaches_every_ordinary_path_consumer",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/module_reexports.rs::include_introduced_module_reexport_cannot_bypass_call_ownership",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/module_reexports.rs::alias_imported_from_a_module_continues_through_its_namespace",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/module_reexports.rs::nested_super_module_reexport_cannot_bypass_call_ownership",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/module_reexports.rs::module_aliases_stay_separate_across_compilation_domains",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/module_reexports.rs::ambiguous_module_namespace_fails_closed_inside_the_owner",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/namespace_deep_audit/value_namespace.rs::module_and_value_alias_with_the_same_spelling_reach_the_reexported_value",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/namespace_deep_audit/macro_opacity.rs::statement_macro_generated_import_fails_closed",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/namespace_deep_audit/proc_macro_opacity.rs::attribute_replaced_benign_import_fails_closed",
+  "rust-test:crates/zrail-testkit/tests/include_call_ownership/namespace_deep_audit/visibility.rs::edition_2015_bare_pub_in_respects_crate_root_visibility",
   "rust-test:crates/zrail-rust/src/source/include_projection_apply_test.rs::work_exhaustion_is_transactional_and_independent_of_file_order",
   "rust-test:crates/zrail-rust/src/source/include_projection_apply_test.rs::fact_exhaustion_retains_no_partial_projection",
   "rust-test:crates/zrail-rust/src/source/include_projection_apply_test.rs::successful_projection_stays_inside_the_total_fact_limit",
@@ -182,7 +212,7 @@ root = "serde"
 reason = "The published serde library exposes the serde crate root."
 [dependencies.crate_root.source]
 kind = "registry"
-requirement = "1.0.229"
+requirement = "=1.0.229"
 
 [[dependencies.crate_root]]
 package = "serde_json"
@@ -283,24 +313,27 @@ reason = "Test-only failure branches use Rust's standard panic expansion."
 
 [[source.rust.macros.allow]]
 name = "serde"
-reason = "Serde helper attributes configure the reviewed serde derive expansions."
+bindings = "none"
+reason = "Reviewed serde helper attributes preserve the ordinary namespace exactly."
 [source.rust.macros.allow.source]
 kind = "registry"
-requirement = "1.0.229"
+requirement = "=1.0.229"
 
 [[source.rust.macros.allow]]
 name = "serde::Deserialize"
-reason = "Strict wire models use the reviewed serde Deserialize derive expansion."
+bindings = "none"
+reason = "Reviewed serde Deserialize expansions preserve the ordinary namespace exactly."
 [source.rust.macros.allow.source]
 kind = "registry"
-requirement = "1.0.229"
+requirement = "=1.0.229"
 
 [[source.rust.macros.allow]]
 name = "serde::Serialize"
-reason = "Strict wire models use the reviewed serde Serialize derive expansion."
+bindings = "none"
+reason = "Reviewed serde Serialize expansions preserve the ordinary namespace exactly."
 [source.rust.macros.allow.source]
 kind = "registry"
-requirement = "1.0.229"
+requirement = "=1.0.229"
 
 [[source.rust.macros.allow]]
 name = "syn::Token"

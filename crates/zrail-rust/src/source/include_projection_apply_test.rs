@@ -139,6 +139,7 @@ fn successful_projection_is_independent_of_file_order() {
 
 fn bindings(index: &SourceIndex) -> IncludeBindings {
     let domain = domain();
+    let binding_macros = crate::source::BindingMacroPolicy::default();
     IncludeBindings::collect(
         index,
         &[CompilationRoot {
@@ -150,11 +151,13 @@ fn bindings(index: &SourceIndex) -> IncludeBindings {
             parent: "src/lib.rs".into(),
             child: "src/imports.rs".into(),
             domain,
+            guard: SyntaxGuard::Ordinary,
             context: IncludeContext::Items,
             parent_scope: Vec::new(),
             include_span: span(),
             occurrence: IncludeOccurrenceId::new(span()),
         }],
+        &binding_macros,
     )
 }
 
@@ -185,6 +188,8 @@ fn fixture_index() -> SourceIndex {
                     anchor: crate::source::BindingAnchor::Lexical,
                     visibility: crate::source::BindingVisibility::Private,
                     quality: AnalysisQuality::Exact,
+                    quality_without_macros: AnalysisQuality::Exact,
+                    replacement_macros: Vec::new(),
                     guard: SyntaxGuard::Ordinary,
                     lexical_scope: Vec::new(),
                 }],
@@ -287,3 +292,6 @@ const fn span() -> SourceSpan {
         end_column: 1,
     }
 }
+
+#[path = "include_projection_apply_test/tests/scale.rs"]
+mod scale;

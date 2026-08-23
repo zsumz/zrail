@@ -38,7 +38,7 @@ impl<'a> FactVisitor<'a> {
         Self {
             imports,
             local_imports: Vec::new(),
-            test_only_context: false,
+            guard_context: super::SyntaxGuard::Ordinary,
             lexical_scope: Vec::new(),
             next_path_namespace: super::FactNamespace::Unknown,
             paths,

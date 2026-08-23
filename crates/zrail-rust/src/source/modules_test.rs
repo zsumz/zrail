@@ -1,6 +1,7 @@
 //! Module facts preserve explicit paths, inline bases, and conditional uncertainty.
 
 use super::module_declarations;
+use crate::source::SyntaxGuard;
 
 #[test]
 fn external_modules_retain_inline_path_context() {
@@ -78,7 +79,11 @@ fn external_modules_inherit_nested_inline_test_context() {
     let declarations = module_declarations(&syntax);
 
     assert_eq!(declarations.len(), 2);
-    assert!(declarations.iter().all(|declaration| declaration.cfg_test));
+    assert!(
+        declarations
+            .iter()
+            .all(|declaration| declaration.guard == SyntaxGuard::TestOnly)
+    );
     assert_eq!(declarations[0].name, "support");
     assert_eq!(declarations[1].name, "nested");
 }
@@ -101,7 +106,11 @@ fn external_modules_inherit_file_function_and_method_test_context() {
     let declarations = module_declarations(&syntax);
 
     assert_eq!(declarations.len(), 2);
-    assert!(declarations.iter().all(|declaration| declaration.cfg_test));
+    assert!(
+        declarations
+            .iter()
+            .all(|declaration| declaration.guard == SyntaxGuard::TestOnly)
+    );
 }
 
 #[test]
@@ -112,5 +121,16 @@ fn external_modules_inherit_file_inner_test_context() {
     let declarations = module_declarations(&syntax);
 
     assert_eq!(declarations.len(), 1);
-    assert!(declarations[0].cfg_test);
+    assert_eq!(declarations[0].guard, SyntaxGuard::TestOnly);
+}
+
+#[test]
+fn negated_test_module_is_production_only() {
+    let syntax = syn::parse_file("#[cfg(not(test))]\nmod production;")
+        .expect("parse production-only module");
+
+    let declarations = module_declarations(&syntax);
+
+    assert_eq!(declarations.len(), 1);
+    assert_eq!(declarations[0].guard, SyntaxGuard::ProductionOnly);
 }

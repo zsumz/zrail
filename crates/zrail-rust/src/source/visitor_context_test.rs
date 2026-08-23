@@ -49,7 +49,7 @@ fn enclosing_items_expressions_and_locals_are_test_only() {
         "local.rs",
         "arm.rs",
     ] {
-        assert_eq!(includes.get(path), Some(&true), "{path}");
+        assert_eq!(includes.get(path), Some(&SyntaxGuard::TestOnly), "{path}");
     }
 }
 
@@ -57,14 +57,41 @@ fn enclosing_items_expressions_and_locals_are_test_only() {
 fn file_inner_cfg_applies_to_all_boundaries() {
     let includes = includes("#![cfg(test)]\ninclude!(\"file.rs\");\n");
 
-    assert_eq!(includes.get("file.rs"), Some(&true));
+    assert_eq!(includes.get("file.rs"), Some(&SyntaxGuard::TestOnly));
 }
 
 #[test]
 fn ordinary_include_remains_production_context() {
     let includes = includes("fn production() { include!(\"production.rs\"); }\n");
 
-    assert_eq!(includes.get("production.rs"), Some(&false));
+    assert_eq!(includes.get("production.rs"), Some(&SyntaxGuard::Ordinary));
+}
+
+#[test]
+fn negated_test_include_is_production_only() {
+    let includes = includes("#[cfg(not(test))]\ninclude!(\"production.rs\");\n");
+
+    assert_eq!(
+        includes.get("production.rs"),
+        Some(&SyntaxGuard::ProductionOnly)
+    );
+}
+
+#[test]
+fn arbitrary_cfg_include_is_conditional() {
+    let includes = includes("#[cfg(feature = \"mutating\")]\ninclude!(\"feature.rs\");\n");
+
+    assert_eq!(includes.get("feature.rs"), Some(&SyntaxGuard::Conditional));
+}
+
+#[test]
+fn arbitrary_cfg_inside_test_context_preserves_both_constraints() {
+    let includes = includes("#[cfg(test)]\nmod tests { #[cfg(unix)] include!(\"unix.rs\"); }\n");
+
+    assert_eq!(
+        includes.get("unix.rs"),
+        Some(&SyntaxGuard::ConditionalTestOnly)
+    );
 }
 
 #[test]
@@ -156,7 +183,7 @@ fn statement_macro_inputs_retain_outer_test_only_guard() {
     }
 }
 
-fn includes(source: &str) -> BTreeMap<String, bool> {
+fn includes(source: &str) -> BTreeMap<String, SyntaxGuard> {
     let syntax = syn::parse_file(source).expect("parse cfg context fixture");
     let imports = ImportMap::from_file(&syntax);
     let mut visitor = FactVisitor::new(&imports);
@@ -167,7 +194,7 @@ fn includes(source: &str) -> BTreeMap<String, bool> {
         .map(|boundary| {
             (
                 boundary.path.expect("literal include boundary"),
-                boundary.cfg_test,
+                boundary.guard,
             )
         })
         .collect()

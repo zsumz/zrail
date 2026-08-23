@@ -25,6 +25,9 @@ impl IncludeBindings {
         budget: &mut ProjectionBudget,
     ) -> Result<Option<QualifiedLocation>, ProjectionLimit> {
         let segments = written.split("::").collect::<Vec<_>>();
+        if segments.len() == 1 {
+            return Ok(None);
+        }
         let mut consumed = 0;
         let mut location = QualifiedLocation {
             instance,

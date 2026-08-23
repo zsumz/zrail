@@ -8,6 +8,7 @@ use super::{
     ObservedFact, SyntaxGuard,
     include_bindings::IncludeBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
+    include_projection_candidates::{CandidateAggregate, aggregate},
     include_resolution_state::ResolutionUsage,
 };
 
@@ -22,51 +23,40 @@ pub(super) struct FactProjection {
     pub(super) removals: BTreeSet<FactKey>,
 }
 
-struct CandidateAggregate {
-    instances: usize,
-    quality: AnalysisQuality,
-    production: bool,
-    requires_projection: bool,
+pub(super) struct ProjectionRequest<'a> {
+    pub(super) bindings: &'a IncludeBindings,
+    pub(super) file: &'a str,
+    pub(super) facts: &'a [ObservedFact],
+    pub(super) usage: ResolutionUsage,
+    pub(super) call_sites: &'a BTreeSet<CallSite>,
+    pub(super) project_expression: bool,
 }
 
-impl Default for CandidateAggregate {
-    fn default() -> Self {
-        Self {
-            instances: 0,
-            quality: AnalysisQuality::Exact,
-            production: false,
-            requires_projection: false,
-        }
-    }
-}
-
-#[allow(clippy::too_many_arguments)]
 pub(super) fn project(
-    bindings: &IncludeBindings,
-    file: &str,
-    facts: &[ObservedFact],
-    usage: ResolutionUsage,
-    call_sites: &BTreeSet<CallSite>,
-    project_expression: bool,
+    request: &ProjectionRequest<'_>,
     uncertain: &mut Option<zrail_core::SourceSpan>,
     budget: &mut ProjectionBudget,
     remaining_file_facts: &mut usize,
 ) -> Result<FactProjection, ProjectionLimit> {
-    let existing = facts
+    let existing = request
+        .facts
         .iter()
         .map(|fact| ((fact.name.clone(), fact.span, fact.guard), fact.quality))
         .collect::<BTreeMap<_, _>>();
     let mut additions = BTreeMap::<FactKey, ObservedFact>::new();
     let mut qualities = BTreeMap::<FactKey, AnalysisQuality>::new();
     let mut removals = BTreeSet::new();
-    for fact in facts.iter().filter(|fact| fact.written.is_some()) {
+    for fact in request.facts.iter().filter(|fact| fact.written.is_some()) {
         budget.consume_work()?;
-        let usage = fact_usage(fact, usage, call_sites);
-        let instances = bindings.active_instances(file, fact.guard, budget)?;
+        let usage = fact_usage(fact, request.usage, request.call_sites);
+        let instances = request
+            .bindings
+            .active_instances(request.file, fact.guard, budget)?;
         if instances.is_empty() {
             continue;
         }
-        let (aggregate, compatible) = aggregate(bindings, fact, &instances, usage, budget)?;
+        let (aggregate, compatible, test_coverage) =
+            aggregate(request.bindings, fact, &instances, usage, budget)?;
         if aggregate.len() > MAX_PROJECTED_IDENTITIES {
             *uncertain = uncertain.or(fact.span);
             continue;
@@ -79,7 +69,8 @@ pub(super) fn project(
             });
         if authoritative {
             removals.extend(
-                facts
+                request
+                    .facts
                     .iter()
                     .filter(|stale| {
                         stale.span == fact.span
@@ -89,18 +80,22 @@ pub(super) fn project(
                     .map(|stale| (stale.name.clone(), stale.span, stale.guard)),
             );
         }
+        let mut retention = RetentionState {
+            project_expression: request.project_expression,
+            existing: &existing,
+            additions: &mut additions,
+            qualities: &mut qualities,
+            uncertain,
+            budget,
+            remaining_file_facts,
+        };
         retain_candidates(
             fact,
             aggregate,
             compatible,
             instances.len(),
-            project_expression,
-            &existing,
-            &mut additions,
-            &mut qualities,
-            uncertain,
-            budget,
-            remaining_file_facts,
+            test_coverage,
+            &mut retention,
         )?;
     }
     Ok(FactProjection {
@@ -131,111 +126,71 @@ fn fact_usage(
     }
 }
 
-fn aggregate(
-    bindings: &IncludeBindings,
-    fact: &ObservedFact,
-    instances: &[super::SourceInstanceId],
-    usage: ResolutionUsage,
-    budget: &mut ProjectionBudget,
-) -> Result<(BTreeMap<String, CandidateAggregate>, bool), ProjectionLimit> {
-    let mut aggregate = BTreeMap::<String, CandidateAggregate>::new();
-    let mut compatible = true;
-    let mut common = None;
-    for instance in instances {
-        let mut seen = BTreeSet::new();
-        let resolved = bindings.resolve_written(
-            *instance,
-            fact.written.as_deref().unwrap_or(&fact.name),
-            &fact.lexical_scope,
-            &mut seen,
-            0,
-            budget,
-            usage,
-        )?;
-        compatible &= resolved.len() == 1;
-        let names = resolved
-            .iter()
-            .map(|candidate| candidate.name.as_str())
-            .collect::<BTreeSet<_>>();
-        let only = (names.len() == 1)
-            .then(|| names.iter().next().copied())
-            .flatten();
-        common = match (common, only) {
-            (None, name) => name.map(str::to_owned),
-            (Some(current), Some(name)) if current == name => Some(current),
-            _ => {
-                compatible = false;
-                None
-            }
-        };
-        for candidate in resolved {
-            let entry = aggregate.entry(candidate.name).or_default();
-            entry.instances += 1;
-            entry.quality = entry.quality.max(candidate.quality);
-            entry.requires_projection |= candidate.requires_projection;
-            entry.production |= bindings
-                .instances
-                .get(*instance)
-                .is_some_and(|source| !source.domain.mode.enables_cfg_test());
-        }
-    }
-    Ok((aggregate, compatible))
+struct RetentionState<'a> {
+    project_expression: bool,
+    existing: &'a BTreeMap<FactKey, AnalysisQuality>,
+    additions: &'a mut BTreeMap<FactKey, ObservedFact>,
+    qualities: &'a mut BTreeMap<FactKey, AnalysisQuality>,
+    uncertain: &'a mut Option<zrail_core::SourceSpan>,
+    budget: &'a mut ProjectionBudget,
+    remaining_file_facts: &'a mut usize,
 }
 
-#[allow(clippy::too_many_arguments)]
 fn retain_candidates(
     fact: &ObservedFact,
     aggregate: BTreeMap<String, CandidateAggregate>,
     compatible: bool,
     instance_count: usize,
-    project_expression: bool,
-    existing: &BTreeMap<FactKey, AnalysisQuality>,
-    additions: &mut BTreeMap<FactKey, ObservedFact>,
-    qualities: &mut BTreeMap<FactKey, AnalysisQuality>,
-    uncertain: &mut Option<zrail_core::SourceSpan>,
-    budget: &mut ProjectionBudget,
-    remaining_file_facts: &mut usize,
+    test_coverage: super::include_projection_candidates::TestCoverage,
+    state: &mut RetentionState<'_>,
 ) -> Result<(), ProjectionLimit> {
     for (name, candidate) in aggregate {
-        let complete = compatible && candidate.instances == instance_count;
+        let complete = (compatible && candidate.instances == instance_count)
+            || (!candidate.production
+                && test_coverage.instances > 0
+                && test_coverage.compatible
+                && candidate.test_instances == test_coverage.instances);
         let quality = if candidate.quality == AnalysisQuality::Unresolved {
             if candidate.requires_projection {
-                *uncertain = uncertain.or(fact.span);
+                *state.uncertain = (*state.uncertain).or(fact.span);
             }
             AnalysisQuality::Unresolved
-        } else if complete {
-            AnalysisQuality::Exact
         } else {
-            AnalysisQuality::Conservative
+            candidate.quality.max(if complete {
+                AnalysisQuality::Exact
+            } else {
+                AnalysisQuality::Conservative
+            })
         };
-        let guard = if fact.guard == SyntaxGuard::TestOnly || !candidate.production {
-            SyntaxGuard::TestOnly
+        let guard = if candidate.production {
+            fact.guard
         } else {
-            SyntaxGuard::Ordinary
+            fact.guard.combine(SyntaxGuard::TestOnly)
         };
         if name == fact.name
             && guard == fact.guard
             && quality == fact.quality
             && !candidate.requires_projection
             && complete
-            && !project_expression
+            && !state.project_expression
         {
             continue;
         }
         let key = (name.clone(), fact.span, guard);
-        if existing.contains_key(&key) {
-            qualities
+        if state.existing.contains_key(&key) {
+            state
+                .qualities
                 .entry(key)
                 .and_modify(|existing| *existing = (*existing).max(quality))
                 .or_insert(quality);
             continue;
         }
-        if let Some(existing) = additions.get_mut(&key) {
+        if let Some(existing) = state.additions.get_mut(&key) {
             existing.quality = existing.quality.max(quality);
             continue;
         }
-        budget.retain_fact(remaining_file_facts)?;
-        additions.insert(
+        state.budget.retain_fact(state.remaining_file_facts)?;
+        state.additions.insert(
             key,
             ObservedFact {
                 name,

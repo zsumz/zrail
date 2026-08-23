@@ -8,7 +8,10 @@ use crate::{
     cargo::{CargoWorkspace, apply_attestations, load_cargo_workspace},
     inventory::{RepositoryInventory, inventory_repository},
     rules::source_graph,
-    source::{ResolvedModuleEdge, SourceIndex, canonicalize_dependency_roots, index_rust_source},
+    source::{
+        CanonicalizationContext, ResolvedModuleEdge, SourceIndex, canonicalize_dependency_roots,
+        index_rust_source,
+    },
 };
 
 use super::CheckError;
@@ -56,13 +59,16 @@ pub(crate) fn load_model_with_bundle(
     }
     canonicalize_dependency_roots(
         &mut source,
-        &cargo,
-        &graph.packages,
-        &graph.module_edges,
-        &graph.compilation_domains,
-        &graph.compilation_roots,
-        &graph.compilation_edges,
-        &graph.compilation_includes,
+        CanonicalizationContext {
+            cargo: &cargo,
+            packages: &graph.packages,
+            module_edges: &graph.module_edges,
+            compilation_domains: &graph.compilation_domains,
+            compilation_roots: &graph.compilation_roots,
+            compilation_edges: &graph.compilation_edges,
+            compilation_includes: &graph.compilation_includes,
+        },
+        |source| crate::rules::binding_macro_policy(&bundle.contract, source),
     );
     source.findings.extend(graph.findings);
     let item_macro_findings = source_graph::review_item_macros(&bundle.contract, &source);

@@ -20,3 +20,4 @@ mod source_shape;
 mod test_placement;
 
 pub(crate) use evaluate::{RuleContext, evaluate};
+pub(crate) use macro_expansion::binding_policy as binding_macro_policy;

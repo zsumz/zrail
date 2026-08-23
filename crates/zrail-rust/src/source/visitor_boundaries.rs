@@ -1,10 +1,12 @@
 //! Macro positions identify includes and unresolved item-producing expansion.
 
-use syn::{ItemForeignMod, ItemMacro, ItemMod, ItemStatic, Macro, StmtMacro, spanned::Spanned};
+use syn::{
+    ExprUnsafe, ItemForeignMod, ItemImpl, ItemMacro, ItemMod, ItemStatic, ItemTrait, Macro,
+    Signature, StmtMacro, spanned::Spanned,
+};
 use zrail_core::{AnalysisQuality, sha256_hex};
 
 use super::{
-    attributes::is_cfg_test,
     fact::{fact, source_span},
     includes::include_boundary,
     model::{IncludeContext, MacroDefinitionFact},
@@ -12,6 +14,44 @@ use super::{
 };
 
 impl FactVisitor<'_> {
+    pub(super) fn record_unsafe_expression(&mut self, expression: &ExprUnsafe) {
+        self.unsafe_constructs.push(fact(
+            "unsafe block",
+            expression.unsafe_token.span,
+            AnalysisQuality::Exact,
+        ));
+    }
+
+    pub(super) fn record_unsafe_signature(&mut self, signature: &Signature) {
+        if signature.unsafety.is_some() {
+            self.unsafe_constructs.push(fact(
+                "unsafe function",
+                signature.span(),
+                AnalysisQuality::Exact,
+            ));
+        }
+    }
+
+    pub(super) fn record_unsafe_impl(&mut self, implementation: &ItemImpl) {
+        if implementation.unsafety.is_some() {
+            self.unsafe_constructs.push(fact(
+                "unsafe impl",
+                implementation.impl_token.span,
+                AnalysisQuality::Exact,
+            ));
+        }
+    }
+
+    pub(super) fn record_unsafe_trait(&mut self, item: &ItemTrait) {
+        if item.unsafety.is_some() {
+            self.unsafe_constructs.push(fact(
+                "unsafe trait",
+                item.trait_token.span,
+                AnalysisQuality::Exact,
+            ));
+        }
+    }
+
     pub(super) fn record_foreign_mod(&mut self, item: &ItemForeignMod) {
         self.unsafe_constructs.push(fact(
             if item.unsafety.is_some() {
@@ -42,7 +82,7 @@ impl FactVisitor<'_> {
                 AnalysisQuality::Exact,
             ));
         }
-        let cfg_test = module.content.is_some() && module.attrs.iter().any(is_cfg_test);
+        let cfg_test = module.content.is_some() && self.syntax_guard().is_test_only();
         if cfg_test {
             self.tests.push(fact(
                 format!("inline module {}", module.ident),
@@ -63,7 +103,7 @@ impl FactVisitor<'_> {
             });
         }
         if let Some(mut boundary) = include_boundary(&item.mac, IncludeContext::Items) {
-            boundary.cfg_test = self.test_only_context || item.attrs.iter().any(is_cfg_test);
+            boundary.guard = self.syntax_guard();
             boundary.lexical_scope.clone_from(&self.lexical_scope);
             self.includes.push(boundary);
         } else if item.ident.is_none() {
@@ -74,9 +114,9 @@ impl FactVisitor<'_> {
         }
     }
 
-    pub(super) fn record_expression_macro(&mut self, invocation: &Macro, cfg_test: bool) {
+    pub(super) fn record_expression_macro(&mut self, invocation: &Macro) {
         if let Some(mut boundary) = include_boundary(invocation, IncludeContext::Expression) {
-            boundary.cfg_test = self.test_only_context || cfg_test;
+            boundary.guard = self.syntax_guard();
             boundary.lexical_scope.clone_from(&self.lexical_scope);
             self.includes.push(boundary);
         }
@@ -98,11 +138,15 @@ impl FactVisitor<'_> {
             return;
         }
         let include_count = self.includes.len();
-        self.record_expression_macro(&statement.mac, statement.attrs.iter().any(is_cfg_test));
+        self.record_expression_macro(&statement.mac);
         if self.includes.len() == include_count {
-            let (name, _) = self
-                .imports
-                .resolve(&statement.mac.path, self.syntax_guard());
+            let (name, quality, _, local_module) = self.resolve_macro_path(&statement.mac.path);
+            if quality == AnalysisQuality::Exact
+                && !local_module
+                && super::macro_origins::compiler_builtin(&name)
+            {
+                return;
+            }
             let mut opaque = fact(name, statement.mac.path.span(), AnalysisQuality::Unresolved);
             opaque.lexical_scope.clone_from(&self.lexical_scope);
             self.opaque_binding_macros.push(opaque);

@@ -1,6 +1,7 @@
 //! Include fact tests distinguish literal and generated source boundaries.
 
 use super::{IncludeContext, include_boundary};
+use crate::source::SyntaxGuard;
 
 #[test]
 fn literal_and_generated_includes_are_distinct() {
@@ -9,7 +10,7 @@ fn literal_and_generated_includes_are_distinct() {
     assert_eq!(boundary.path.as_deref(), Some("local.rs"));
     assert_eq!(boundary.out_dir, None);
     assert!(!boundary.generated);
-    assert!(!boundary.cfg_test);
+    assert_eq!(boundary.guard, SyntaxGuard::Ordinary);
     assert_eq!(boundary.context, IncludeContext::Items);
 
     let generated = parse_macro(r#"include!(concat!(env!("OUT_DIR"), "/generated.rs"));"#);

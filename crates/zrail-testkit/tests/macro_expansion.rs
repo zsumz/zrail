@@ -5,6 +5,11 @@ use std::{fs, path::PathBuf};
 use zrail_core::{Finding, ReportStatus};
 use zrail_rust::{build_lock, check_repository};
 
+#[path = "macro_expansion/binding_opacity.rs"]
+mod binding_opacity;
+#[path = "macro_expansion/definition_binding.rs"]
+mod definition_binding;
+
 #[test]
 fn local_macro_cannot_hide_unsafe_code_or_process_effects() {
     let root = repository(

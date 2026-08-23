@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, VecDeque};
 
-use super::{CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge};
+use super::{CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, SyntaxGuard};
 
 const MAX_SOURCE_INSTANCES: usize = 4096;
 const MAX_SOURCE_INSTANCE_DEPTH: usize = 128;
@@ -27,6 +27,7 @@ pub(crate) enum SourceEntry {
 pub(crate) struct SourceInstance {
     pub(crate) file: String,
     pub(crate) domain: CompilationDomain,
+    pub(crate) guard: SyntaxGuard,
     pub(crate) parent: Option<SourceInstanceId>,
     pub(crate) entered_from: SourceEntry,
     depth: usize,
@@ -62,6 +63,7 @@ impl SourceInstances {
                 root.domain.clone(),
                 None,
                 SourceEntry::CargoRoot,
+                SyntaxGuard::Ordinary,
                 0,
             ) {
                 queue.push_back(id);
@@ -138,11 +140,17 @@ impl SourceInstances {
             self.complete = false;
             return None;
         }
+        let guard = match &entry {
+            SourceEntry::Module(edge) => edge.guard,
+            SourceEntry::Include(edge) => edge.guard,
+            SourceEntry::CargoRoot => return None,
+        };
         self.push(
             file,
             parent_instance.domain.clone(),
             Some(parent),
             entry,
+            guard,
             depth,
         )
     }
@@ -153,6 +161,7 @@ impl SourceInstances {
         domain: CompilationDomain,
         parent: Option<SourceInstanceId>,
         entered_from: SourceEntry,
+        guard: SyntaxGuard,
         depth: usize,
     ) -> Option<SourceInstanceId> {
         if self.instances.len() >= MAX_SOURCE_INSTANCES {
@@ -164,6 +173,7 @@ impl SourceInstances {
         self.instances.push(SourceInstance {
             file,
             domain,
+            guard,
             parent,
             entered_from,
             depth,

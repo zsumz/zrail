@@ -4,7 +4,7 @@ use zrail_core::{AnalysisQuality, Finding};
 
 use super::{
     ObservedFact, RustFileFacts, SourceIndex, SourceSyntax,
-    include_binding_projection::{CallSite, FactKey, FactProjection, project},
+    include_binding_projection::{CallSite, FactKey, FactProjection, ProjectionRequest, project},
     include_bindings::IncludeBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimit, ProjectionLimits},
     include_resolution_state::ResolutionUsage,
@@ -68,12 +68,14 @@ impl IncludeBindings {
                 })
                 .collect::<std::collections::BTreeSet<CallSite>>();
             let paths = match project(
-                self,
-                &file.relative,
-                &file.paths,
-                ResolutionUsage::Path,
-                &call_sites,
-                project_expression,
+                &ProjectionRequest {
+                    bindings: self,
+                    file: &file.relative,
+                    facts: &file.paths,
+                    usage: ResolutionUsage::Path,
+                    call_sites: &call_sites,
+                    project_expression,
+                },
                 &mut uncertain,
                 &mut budget,
                 &mut remaining_file_facts,
@@ -82,12 +84,14 @@ impl IncludeBindings {
                 Err(limit) => return vec![budget_exhausted(limit)],
             };
             let calls = match project(
-                self,
-                &file.relative,
-                &file.calls,
-                ResolutionUsage::Call,
-                &call_sites,
-                project_expression,
+                &ProjectionRequest {
+                    bindings: self,
+                    file: &file.relative,
+                    facts: &file.calls,
+                    usage: ResolutionUsage::Call,
+                    call_sites: &call_sites,
+                    project_expression,
+                },
                 &mut uncertain,
                 &mut budget,
                 &mut remaining_file_facts,

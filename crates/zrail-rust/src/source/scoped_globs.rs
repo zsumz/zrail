@@ -4,18 +4,13 @@ use std::collections::BTreeMap;
 
 use syn::{Item, UseTree};
 
-use super::{SyntaxGuard, attributes::is_cfg_test, import_helpers::insert_guard};
+use super::{SyntaxGuard, attributes::cfg_guard, import_helpers::insert_guard};
 
 pub(super) fn collect<'a>(items: impl Iterator<Item = &'a Item>) -> BTreeMap<String, SyntaxGuard> {
     let mut globs = BTreeMap::new();
     for item in items {
         if let Item::Use(item) = item {
-            collect_use(
-                &mut globs,
-                Vec::new(),
-                &item.tree,
-                SyntaxGuard::for_test_only(item.attrs.iter().any(is_cfg_test)),
-            );
+            collect_use(&mut globs, Vec::new(), &item.tree, cfg_guard(&item.attrs));
         }
     }
     globs

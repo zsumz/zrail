@@ -16,6 +16,7 @@ pub(super) enum MacroBindingFailure {
     DefinitionMismatch {
         allowance: String,
         configured: String,
+        observed_definitions: Vec<String>,
         observed_packages: Vec<String>,
     },
     CandidateNotCovered {
@@ -47,9 +48,11 @@ impl MacroBindingFailure {
             Self::DefinitionMismatch {
                 allowance,
                 configured,
+                observed_definitions,
                 observed_packages,
             } => format!(
-                "allowance {allowance:?} configures definition {configured:?}, observed implementation package(s) {}",
+                "allowance {allowance:?} configures definition {configured:?}, observed definition(s) {} in implementation package(s) {}",
+                listed(observed_definitions),
                 listed(observed_packages)
             ),
             Self::CandidateNotCovered { candidate, missing } => format!(

@@ -1,5 +1,6 @@
 //! Unexpanded Rust is an explicit, content-bound, reasoned trust boundary.
 
+mod binding_policy;
 mod bindings;
 mod diagnostics;
 mod failure;
@@ -21,6 +22,8 @@ use diagnostics::{unbound, unreviewed};
 use review::candidate_names;
 use review::review_without_definitions;
 use review::{MacroBindingResult, review};
+
+pub(crate) use binding_policy::build as binding_policy;
 
 pub(super) fn binds_allowance(
     expansion: &MacroExpansionFact,
@@ -60,7 +63,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             if directly_inspected(expansion) {
                 continue;
             }
-            match review(context, expansion, &allowed) {
+            match review(context.source, expansion, &allowed) {
                 MacroBindingResult::Bound { allowances, .. } => {
                     used.extend(allowances);
                 }
@@ -75,7 +78,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             }
         }
         for input in &file.opaque_macro_inputs {
-            let (matched, confidence) = match review(context, input, &allowed) {
+            let (matched, confidence) = match review(context.source, input, &allowed) {
                 MacroBindingResult::Bound {
                     allowances,
                     confidence,

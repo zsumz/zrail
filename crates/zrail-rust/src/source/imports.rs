@@ -6,7 +6,10 @@ use syn::Item;
 use zrail_core::AnalysisQuality;
 
 use super::import_helpers::{insert_guard, insert_primary_alias, visible_root};
-use super::{SyntaxGuard, attributes::is_cfg_test};
+use super::{
+    SyntaxGuard,
+    attributes::{cfg_conditions_are_exact, cfg_guard},
+};
 
 #[derive(Clone, Debug, Default)]
 pub(super) struct ImportMap {
@@ -35,19 +38,17 @@ pub(super) struct ImportCandidate {
 impl ImportMap {
     pub(super) fn from_file(file: &syn::File) -> Self {
         let mut imports = Self::default();
-        let file_guard = SyntaxGuard::for_test_only(file.attrs.iter().any(is_cfg_test));
+        let file_guard = cfg_guard(&file.attrs);
         for item in &file.items {
             match item {
                 Item::Use(item) => {
-                    let guard = file_guard.combine(SyntaxGuard::for_test_only(
-                        item.attrs.iter().any(is_cfg_test),
-                    ));
+                    let guard = file_guard.combine(cfg_guard(&item.attrs));
                     super::imports_collect::collect_use(
                         &mut imports,
                         Vec::new(),
                         &item.tree,
                         super::scoped_imports::conditional(&item.attrs)
-                            && guard == SyntaxGuard::Ordinary,
+                            && !cfg_conditions_are_exact(&item.attrs),
                         guard,
                         !matches!(item.vis, syn::Visibility::Inherited),
                     );
@@ -57,16 +58,15 @@ impl ImportMap {
                         .rename
                         .as_ref()
                         .map_or_else(|| item.ident.to_string(), |(_, name)| name.to_string());
-                    let guard = file_guard.combine(SyntaxGuard::for_test_only(
-                        item.attrs.iter().any(is_cfg_test),
-                    ));
+                    let guard = file_guard.combine(cfg_guard(&item.attrs));
                     insert_primary_alias(
                         &mut imports.aliases,
                         &mut imports.alias_guards,
                         &mut imports.unresolved,
                         alias.clone(),
                         item.ident.to_string(),
-                        super::scoped_imports::conditional(&item.attrs),
+                        super::scoped_imports::conditional(&item.attrs)
+                            && !cfg_conditions_are_exact(&item.attrs),
                         guard,
                     );
                     if !matches!(item.vis, syn::Visibility::Inherited) {

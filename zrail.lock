@@ -2,7 +2,7 @@
 schema = 1
 semantics = 2
 producer = "0.0.2"
-contract_sha256 = "84a25e457d36646c5dbebb0b677258a62a3b9530bd950ebc91d3f9d3b8ab334d"
+contract_sha256 = "c114784d9d73bf79fcdd346212e0d42d407a05572d51bf9628a4dae42fd89995"
 ratchet = []
 
 [[package]]
@@ -51,7 +51,7 @@ features = ["derive"]
 
 [package.dependency.source]
 kind = "registry"
-requirement = "1.0.229"
+requirement = "=1.0.229"
 
 [[package.dependency]]
 alias = "serde_json"
@@ -121,7 +121,7 @@ features = ["derive"]
 
 [package.dependency.source]
 kind = "registry"
-requirement = "1.0.229"
+requirement = "=1.0.229"
 
 [[package.dependency]]
 alias = "serde_json"
@@ -232,7 +232,7 @@ sha256 = "7066af9c9876fc4f998a35dafa81084a22ff63dd21841e3f47ef7a3f7046db25"
 
 [[gate.input]]
 path = "Cargo.toml"
-sha256 = "b3238d705820ed3ecbaac6657cae518bf5277c5301d8d8062f88494af4148f8f"
+sha256 = "9db51c5525d94ade430d56ecd406f99f86025e9dcc3d1e24f155ba8b05ae0ae7"
 
 [[gate.input]]
 path = "clippy.toml"

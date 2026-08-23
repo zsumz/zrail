@@ -1,15 +1,15 @@
 //! Ordinary type-path bindings retain every guarded declaration in one lexical scope.
 
-use syn::{Item, Type, UseTree};
-use zrail_core::{AnalysisQuality, SourceSpan};
+use syn::{Item, Type};
+use zrail_core::SourceSpan;
 
 use super::{
     BindingAnchor, BindingKind, ImportBindingFact, SyntaxGuard,
-    attributes::is_cfg_test,
     ordinary_binding_facts::{
-        BindingContext, foreign, item_guard, local, module, path_text, push, quality, use_target,
-        visibility,
+        BindingContext, BindingDraft, foreign, item_guard, local, module, path_text, push, quality,
+        replacement_macros, visibility,
     },
+    ordinary_use_bindings::{UseBindingContext, collect_use},
 };
 
 pub(super) fn collect<'a>(
@@ -21,23 +21,20 @@ pub(super) fn collect<'a>(
     for item in items {
         match item {
             Item::Use(item) => {
-                let guard = enclosing_guard.combine(SyntaxGuard::for_test_only(
-                    item.attrs.iter().any(is_cfg_test),
-                ));
-                collect_use(
-                    &mut bindings,
-                    Vec::new(),
-                    &item.tree,
-                    if item.leading_colon.is_some() {
+                let guard = item_guard(&item.attrs, enclosing_guard);
+                let context = UseBindingContext {
+                    anchor: if item.leading_colon.is_some() {
                         BindingAnchor::Absolute
                     } else {
                         BindingAnchor::UsePath
                     },
-                    visibility(&item.vis),
-                    quality(&item.attrs, guard),
+                    visibility: visibility(&item.vis),
+                    quality: quality(&item.attrs),
+                    replacement_macros: replacement_macros(&item.attrs, guard, lexical_scope),
                     guard,
-                    lexical_scope,
-                );
+                    scope: lexical_scope,
+                };
+                collect_use(&mut bindings, Vec::new(), &item.tree, &context);
             }
             Item::ExternCrate(item) => {
                 let guard = item_guard(&item.attrs, enclosing_guard);
@@ -47,18 +44,21 @@ pub(super) fn collect<'a>(
                     .map_or_else(|| item.ident.to_string(), |(_, name)| name.to_string());
                 push(
                     &mut bindings,
-                    Some(name),
-                    item.ident.to_string(),
-                    BindingKind::Import,
-                    if item.ident == "self" {
-                        BindingAnchor::CrateRoot
-                    } else {
-                        BindingAnchor::ExternRoot
+                    BindingDraft {
+                        name: Some(name),
+                        target: item.ident.to_string(),
+                        kind: BindingKind::Import,
+                        anchor: if item.ident == "self" {
+                            BindingAnchor::CrateRoot
+                        } else {
+                            BindingAnchor::ExternRoot
+                        },
+                        visibility: visibility(&item.vis),
+                        quality: quality(&item.attrs),
+                        replacement_macros: replacement_macros(&item.attrs, guard, lexical_scope),
+                        guard,
+                        scope: lexical_scope,
                     },
-                    visibility(&item.vis),
-                    quality(&item.attrs, guard),
-                    guard,
-                    lexical_scope,
                 );
             }
             Item::Type(item) => {
@@ -81,14 +81,17 @@ pub(super) fn collect<'a>(
                 };
                 push(
                     &mut bindings,
-                    Some(item.ident.to_string()),
-                    target,
-                    kind,
-                    anchor,
-                    visibility(&item.vis),
-                    quality(&item.attrs, guard),
-                    guard,
-                    lexical_scope,
+                    BindingDraft {
+                        name: Some(item.ident.to_string()),
+                        target,
+                        kind,
+                        anchor,
+                        visibility: visibility(&item.vis),
+                        quality: quality(&item.attrs),
+                        replacement_macros: replacement_macros(&item.attrs, guard, lexical_scope),
+                        guard,
+                        scope: lexical_scope,
+                    },
                 );
             }
             Item::Enum(item) => local(
@@ -154,104 +157,6 @@ pub(super) fn collect<'a>(
         }
     }
     bindings
-}
-
-fn collect_use(
-    bindings: &mut Vec<ImportBindingFact>,
-    prefix: Vec<String>,
-    tree: &UseTree,
-    anchor: BindingAnchor,
-    visibility: super::BindingVisibility,
-    quality: AnalysisQuality,
-    guard: SyntaxGuard,
-    scope: &[SourceSpan],
-) {
-    match tree {
-        UseTree::Path(path) => {
-            let mut nested = prefix;
-            nested.push(path.ident.to_string());
-            collect_use(
-                bindings, nested, &path.tree, anchor, visibility, quality, guard, scope,
-            );
-        }
-        UseTree::Name(name) if name.ident == "self" => {
-            if let Some(alias) = prefix.last() {
-                push(
-                    bindings,
-                    Some(alias.clone()),
-                    use_target(&prefix),
-                    BindingKind::Import,
-                    anchor,
-                    visibility.clone(),
-                    quality,
-                    guard,
-                    scope,
-                );
-            }
-        }
-        UseTree::Name(name) => {
-            let mut target = prefix;
-            target.push(name.ident.to_string());
-            push(
-                bindings,
-                Some(name.ident.to_string()),
-                use_target(&target),
-                BindingKind::Import,
-                anchor,
-                visibility.clone(),
-                quality,
-                guard,
-                scope,
-            );
-        }
-        UseTree::Rename(rename) => {
-            let mut target = prefix;
-            if rename.ident != "self" {
-                target.push(rename.ident.to_string());
-            }
-            if !target.is_empty() {
-                push(
-                    bindings,
-                    Some(rename.rename.to_string()),
-                    use_target(&target),
-                    BindingKind::Import,
-                    anchor,
-                    visibility.clone(),
-                    quality,
-                    guard,
-                    scope,
-                );
-            }
-        }
-        UseTree::Glob(_) if !prefix.is_empty() => {
-            push(
-                bindings,
-                None,
-                use_target(&prefix),
-                BindingKind::Glob,
-                anchor,
-                visibility.clone(),
-                quality.max(AnalysisQuality::Conservative),
-                guard,
-                scope,
-            );
-        }
-        UseTree::Group(group) => {
-            for tree in &group.items {
-                collect_use(
-                    bindings,
-                    prefix.clone(),
-                    tree,
-                    anchor,
-                    visibility.clone(),
-                    quality,
-                    guard,
-                    scope,
-                );
-            }
-        }
-        UseTree::Glob(_) => {}
-    }
 }
 
 fn context<'a>(

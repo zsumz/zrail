@@ -7,7 +7,8 @@ use syn::{
 };
 
 use super::{
-    attributes::{has_conditional_path_attribute, has_path_attribute, is_cfg_test, path_attribute},
+    SyntaxGuard,
+    attributes::{cfg_guard, has_conditional_path_attribute, has_path_attribute, path_attribute},
     fact::source_span,
     model::{InlineModulePath, ModuleDeclaration},
     visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
@@ -24,7 +25,7 @@ struct ModuleCollector {
     inline_ancestors: Vec<InlineModulePath>,
     lexical_scope: Vec<zrail_core::SourceSpan>,
     declarations: Vec<ModuleDeclaration>,
-    test_only_context: bool,
+    guard_context: SyntaxGuard,
 }
 
 impl<'ast> Visit<'ast> for ModuleCollector {
@@ -72,12 +73,12 @@ impl<'ast> Visit<'ast> for ModuleCollector {
         let path = path_attribute(&module.attrs);
         let unresolved_path = has_conditional_path_attribute(&module.attrs)
             || (has_path_attribute(&module.attrs) && path.is_none());
-        let cfg_test = self.test_only_context || module.attrs.iter().any(is_cfg_test);
+        let guard = self.guard_context;
         let Some((_, items)) = &module.content else {
             self.declarations.push(ModuleDeclaration {
                 name: module.ident.to_string(),
                 path,
-                cfg_test,
+                guard,
                 unresolved_path,
                 inline_ancestors: self.inline_ancestors.clone(),
                 lexical_scope: self.lexical_scope.clone(),
@@ -91,12 +92,9 @@ impl<'ast> Visit<'ast> for ModuleCollector {
             unresolved_path,
         });
         self.lexical_scope.push(source_span(module.ident.span()));
-        let previous_context = self.test_only_context;
-        self.test_only_context = cfg_test;
         for item in items {
-            visit::visit_item(self, item);
+            self.visit_item(item);
         }
-        self.test_only_context = previous_context;
         self.lexical_scope.pop();
         self.inline_ancestors.pop();
     }
@@ -110,10 +108,10 @@ impl<'ast> Visit<'ast> for ModuleCollector {
 
 impl ModuleCollector {
     fn with_cfg(&mut self, attributes: &[syn::Attribute], visit: impl FnOnce(&mut Self)) {
-        let previous = self.test_only_context;
-        self.test_only_context |= attributes.iter().any(is_cfg_test);
+        let previous = self.guard_context;
+        self.guard_context = previous.combine(cfg_guard(attributes));
         visit(self);
-        self.test_only_context = previous;
+        self.guard_context = previous;
     }
 }
 

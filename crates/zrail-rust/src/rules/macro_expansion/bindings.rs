@@ -2,21 +2,17 @@
 
 use zrail_core::MacroExpansionAllow;
 
-use crate::source::{MacroCandidate, MacroOrigin};
+use crate::source::{MacroCandidate, MacroOrigin, SourceIndex};
 
-use super::{super::RuleContext, failure::MacroBindingFailure};
+use super::failure::MacroBindingFailure;
 
 pub(super) fn failure(
-    context: &RuleContext<'_>,
+    source: &SourceIndex,
     candidate: &MacroCandidate,
     allowance: &MacroExpansionAllow,
 ) -> Option<MacroBindingFailure> {
     let path = allowance.definition.as_deref()?;
-    let bound_file = context
-        .source
-        .files
-        .iter()
-        .find(|file| file.relative == path);
+    let bound_file = source.files.iter().find(|file| file.relative == path);
     let definition_names = candidate
         .policy_names()
         .map(|name| name.rsplit("::").next().unwrap_or(name))
@@ -37,10 +33,7 @@ pub(super) fn failure(
         .collect::<std::collections::BTreeSet<_>>()
         .into_iter()
         .collect::<Vec<_>>();
-    let definition_bound = candidate
-        .definition
-        .as_deref()
-        .is_none_or(|observed| observed == path);
+    let definition_bound = candidate.definition.as_deref() == Some(path);
     let origin_bound = definition_bound
         && !observed_packages.is_empty()
         && candidate.origins.iter().all(|origin| match origin {
@@ -53,6 +46,7 @@ pub(super) fn failure(
         Some(MacroBindingFailure::DefinitionMismatch {
             allowance: allowance.name.clone(),
             configured: path.into(),
+            observed_definitions: candidate.definition.iter().cloned().collect(),
             observed_packages,
         })
     } else {
