@@ -5,6 +5,8 @@ use std::{fs, path::Path};
 use zrail_core::Report;
 use zrail_rust::{build_lock, check_repository};
 
+#[path = "include_call_ownership/ordinary_qualified.rs"]
+mod ordinary_qualified;
 #[path = "include_call_ownership/qualified.rs"]
 mod qualified;
 
@@ -213,6 +215,17 @@ fn assert_no_owned_call(report: &Report, rule: &str, path: &str) {
         !report.findings.iter().any(|finding| {
             finding.id == "OWN-003" && finding.rule == rule && finding.path.as_deref() == Some(path)
         }),
+        "{}",
+        report.human()
+    );
+}
+
+fn assert_no_owner_findings(report: &Report, rule: &str) {
+    assert!(
+        !report
+            .findings
+            .iter()
+            .any(|finding| finding.id.starts_with("OWN-") && finding.rule == rule),
         "{}",
         report.human()
     );

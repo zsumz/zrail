@@ -1,8 +1,8 @@
 //! Qualified module paths retain include-spliced ordinary bindings.
 
 use super::{
-    PRODUCTION_OWNER, assert_no_owned_call, assert_owned_call, check, fixture, reset, write,
-    write_executor, write_lock,
+    PRODUCTION_OWNER, assert_no_owned_call, assert_no_owner_findings, assert_owned_call, check,
+    fixture, reset, write, write_executor, write_lock,
 };
 
 #[test]
@@ -147,7 +147,7 @@ fn qualified_alias_in_the_allowed_owner_remains_exact() {
     write_lock(&root);
 
     let report = check(&root);
-    assert_no_owned_call(&report, "process-spawn", "src/executor.rs");
+    assert_no_owner_findings(&report, "process-spawn");
     reset(&root);
 }
 

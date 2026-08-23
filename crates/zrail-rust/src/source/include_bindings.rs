@@ -118,7 +118,6 @@ pub(super) fn project(
     bindings: &IncludeBindings,
     file: &str,
     facts: &[ObservedFact],
-    project_local: bool,
     uncertain: &mut Option<zrail_core::SourceSpan>,
     budget: &mut ProjectionBudget,
     remaining_file_facts: &mut usize,
@@ -176,9 +175,6 @@ pub(super) fn project(
             continue;
         }
         for (name, candidate) in aggregate {
-            if !candidate.crossed_include && !project_local {
-                continue;
-            }
             let complete = compatible && candidate.instances == instances.len();
             let quality = if candidate.quality == AnalysisQuality::Unresolved {
                 if candidate.crossed_include {

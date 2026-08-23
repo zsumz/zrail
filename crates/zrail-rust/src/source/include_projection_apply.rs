@@ -3,7 +3,7 @@
 use zrail_core::{AnalysisQuality, Finding};
 
 use super::{
-    ObservedFact, RustFileFacts, SourceIndex, SourceSyntax,
+    ObservedFact, RustFileFacts, SourceIndex,
     include_bindings::{IncludeBindings, project},
     include_projection_budget::{ProjectionBudget, ProjectionLimit, ProjectionLimits},
     parse::{MAX_FACTS_PER_FILE, fact_count},
@@ -53,12 +53,10 @@ impl IncludeBindings {
                 return vec![budget_exhausted(ProjectionLimit::Facts)];
             };
             let mut uncertain = None;
-            let project_local = file.syntax == SourceSyntax::Expression;
             let paths = match project(
                 self,
                 &file.relative,
                 &file.paths,
-                project_local,
                 &mut uncertain,
                 &mut budget,
                 &mut remaining_file_facts,
@@ -70,7 +68,6 @@ impl IncludeBindings {
                 self,
                 &file.relative,
                 &file.calls,
-                project_local,
                 &mut uncertain,
                 &mut budget,
                 &mut remaining_file_facts,
