@@ -78,3 +78,20 @@ pub(super) fn discard_file_wide_definition_guess(expansion: &mut MacroExpansionF
         }
     }
 }
+
+pub(super) fn add_include_scope_uncertainty(expansion: &mut MacroExpansionFact) {
+    if !expansion
+        .candidates
+        .iter()
+        .any(|candidate| candidate.derivation == MacroDerivation::Written)
+    {
+        return;
+    }
+    let mut observation = expansion.observation.clone();
+    observation.canonical = vec![expansion.name.clone()];
+    observation.quality = AnalysisQuality::Unresolved;
+    expansion.candidates.push(MacroCandidate::unresolved(
+        observation,
+        MacroDerivation::Written,
+    ));
+}

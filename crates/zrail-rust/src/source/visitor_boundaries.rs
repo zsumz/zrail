@@ -64,6 +64,7 @@ impl FactVisitor<'_> {
         }
         if let Some(mut boundary) = include_boundary(&item.mac, IncludeContext::Items) {
             boundary.cfg_test = self.test_only_context || item.attrs.iter().any(is_cfg_test);
+            boundary.lexical_scope.clone_from(&self.lexical_scope);
             self.includes.push(boundary);
         } else if item.ident.is_none() {
             let (name, _) = self.imports.resolve(&item.mac.path, self.syntax_guard());
@@ -78,6 +79,7 @@ impl FactVisitor<'_> {
     pub(super) fn record_expression_macro(&mut self, invocation: &Macro, cfg_test: bool) {
         if let Some(mut boundary) = include_boundary(invocation, IncludeContext::Expression) {
             boundary.cfg_test = self.test_only_context || cfg_test;
+            boundary.lexical_scope.clone_from(&self.lexical_scope);
             self.includes.push(boundary);
         }
     }

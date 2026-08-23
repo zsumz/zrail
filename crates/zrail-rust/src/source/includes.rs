@@ -3,6 +3,7 @@
 use syn::{Expr, Macro, Token, parse::Parser, punctuated::Punctuated, spanned::Spanned};
 
 use super::{
+    IncludeOccurrenceId,
     fact::source_span,
     model::{IncludeBoundary, IncludeContext},
 };
@@ -16,6 +17,7 @@ pub(super) fn include_boundary(
     }
     let expression = invocation.tokens.to_string();
     let out_dir = out_dir_path(invocation);
+    let span = source_span(invocation.span());
     Some(IncludeBoundary {
         path: literal_include_path(invocation),
         generated: out_dir.is_some() || expression.contains("OUT_DIR"),
@@ -23,7 +25,9 @@ pub(super) fn include_boundary(
         expression,
         cfg_test: false,
         context,
-        span: Some(source_span(invocation.span())),
+        lexical_scope: Vec::new(),
+        occurrence: IncludeOccurrenceId::new(span),
+        span: Some(span),
     })
 }
 

@@ -1,6 +1,7 @@
 //! Cargo roots and Rust source edges must form one closed, analyzable graph.
 
 mod boundary;
+mod compilation;
 mod diagnostics;
 mod external_module;
 mod include;
@@ -11,13 +12,16 @@ use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use zrail_core::{Contract, Finding};
 
 use crate::{
-    cargo::{CargoTargetKind, CargoWorkspace},
+    cargo::CargoWorkspace,
     inventory::{RepositoryEntryKind, RepositoryInventory},
     source::{
-        CompilationDomain, CompilationMode, CompilationModuleEdge, Reachability, ReachabilityKind,
-        ResolvedModuleEdge, RustFileFacts, SourceIndex, SourceSyntax, SubmoduleBase, join_relative,
+        CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot,
+        Reachability, ResolvedModuleEdge, RustFileFacts, SourceIndex, SourceSyntax, SubmoduleBase,
+        join_relative,
     },
 };
+
+use compilation::target_domains;
 
 pub(crate) fn analyze(
     contract: &Contract,
@@ -32,7 +36,9 @@ pub(crate) struct SourceGraphAnalysis {
     pub(crate) reachability: BTreeMap<String, Reachability>,
     pub(crate) packages: BTreeMap<String, BTreeSet<String>>,
     pub(crate) compilation_domains: BTreeMap<String, BTreeSet<CompilationDomain>>,
+    pub(crate) compilation_roots: Vec<CompilationRoot>,
     pub(crate) compilation_edges: Vec<CompilationModuleEdge>,
+    pub(crate) compilation_includes: Vec<CompilationIncludeEdge>,
     pub(crate) module_edges: Vec<ResolvedModuleEdge>,
     pub(crate) findings: Vec<Finding>,
 }
@@ -89,6 +95,8 @@ struct Walker<'a> {
     reported: BTreeSet<(String, String)>,
     module_edges: BTreeSet<ResolvedModuleEdge>,
     compilation_edges: BTreeSet<CompilationModuleEdge>,
+    compilation_includes: BTreeSet<CompilationIncludeEdge>,
+    compilation_roots: BTreeSet<CompilationRoot>,
     visited: BTreeSet<(String, SubmoduleBase, TraversalContext)>,
     queue: VecDeque<(String, SubmoduleBase, TraversalContext)>,
 }
@@ -122,6 +130,8 @@ impl<'a> Walker<'a> {
             reported: BTreeSet::new(),
             module_edges: BTreeSet::new(),
             compilation_edges: BTreeSet::new(),
+            compilation_includes: BTreeSet::new(),
+            compilation_roots: BTreeSet::new(),
             visited: BTreeSet::new(),
             queue: VecDeque::new(),
         }
@@ -138,7 +148,9 @@ impl<'a> Walker<'a> {
             reachability: self.reached,
             packages: self.reached_packages,
             compilation_domains: self.reached_domains,
+            compilation_roots: self.compilation_roots.into_iter().collect(),
             compilation_edges: self.compilation_edges.into_iter().collect(),
+            compilation_includes: self.compilation_includes.into_iter().collect(),
             module_edges: self.module_edges.into_iter().collect(),
             findings: self.findings,
         }
@@ -158,7 +170,7 @@ impl<'a> Walker<'a> {
                         mode,
                     };
                     match join_relative(&package.directory, &target.path) {
-                        Ok(path) => self.follow(
+                        Ok(path) => self.follow_root(
                             &package.manifest_path(),
                             None,
                             path,
@@ -197,37 +209,5 @@ impl<'a> Walker<'a> {
         for include in includes {
             self.walk_include(path, context, &include);
         }
-    }
-}
-
-const fn target_reachability(kind: CargoTargetKind) -> Reachability {
-    let kind = match kind {
-        CargoTargetKind::Library | CargoTargetKind::Binary => ReachabilityKind::Production,
-        CargoTargetKind::Test => ReachabilityKind::Test,
-        CargoTargetKind::Benchmark => ReachabilityKind::Benchmark,
-        CargoTargetKind::Example => ReachabilityKind::Example,
-        CargoTargetKind::BuildScript => ReachabilityKind::Build,
-    };
-    Reachability::from_kind(kind)
-}
-
-fn target_domains(kind: CargoTargetKind) -> Vec<(CompilationMode, Reachability)> {
-    let reachability = target_reachability(kind);
-    match kind {
-        CargoTargetKind::Library => vec![
-            (CompilationMode::Library, reachability),
-            (CompilationMode::LibraryTest, reachability),
-        ],
-        CargoTargetKind::Binary => vec![
-            (CompilationMode::Binary, reachability),
-            (CompilationMode::BinaryTest, reachability),
-        ],
-        CargoTargetKind::Test => vec![(CompilationMode::IntegrationTest, reachability)],
-        CargoTargetKind::Benchmark => vec![(CompilationMode::Benchmark, reachability)],
-        CargoTargetKind::Example => vec![
-            (CompilationMode::Example, reachability),
-            (CompilationMode::ExampleTest, reachability),
-        ],
-        CargoTargetKind::BuildScript => vec![(CompilationMode::BuildScript, reachability)],
     }
 }

@@ -5,7 +5,7 @@ use zrail_core::{AnalysisQuality, Finding, SourceSpan};
 use crate::inventory::FileClass;
 
 use super::Reachability;
-use super::{CompileEffectFact, macro_model::MacroExpansionFact};
+use super::{CompileEffectFact, IncludeOccurrenceId, macro_model::MacroExpansionFact};
 
 #[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum SyntaxGuard {
@@ -110,7 +110,7 @@ pub(crate) enum SourceSyntax {
     Expression,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum IncludeContext {
     Items,
     Expression,
@@ -124,6 +124,8 @@ pub(crate) struct IncludeBoundary {
     pub(crate) generated: bool,
     pub(crate) cfg_test: bool,
     pub(crate) context: IncludeContext,
+    pub(crate) lexical_scope: Vec<SourceSpan>,
+    pub(crate) occurrence: IncludeOccurrenceId,
     pub(crate) span: Option<SourceSpan>,
 }
 

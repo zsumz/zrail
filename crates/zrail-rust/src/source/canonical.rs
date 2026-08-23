@@ -7,8 +7,8 @@ use zrail_core::{AnalysisQuality, Finding};
 use crate::cargo::{CargoWorkspace, CrateRootAuthority, Package, rust_crate_root};
 
 use super::{
-    CompilationDomain, CompilationModuleEdge, ObservedFact, ResolvedModuleEdge, SourceIndex,
-    macro_definitions::MacroDefinitions,
+    CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot,
+    ObservedFact, ResolvedModuleEdge, SourceIndex, macro_definitions::MacroDefinitions,
 };
 
 const MAX_IDENTITIES_PER_ROOT: usize = 4;
@@ -19,15 +19,23 @@ pub(crate) fn canonicalize(
     contexts: &BTreeMap<String, BTreeSet<String>>,
     module_edges: &[ResolvedModuleEdge],
     compilation_domains: &BTreeMap<String, BTreeSet<CompilationDomain>>,
+    compilation_roots: &[CompilationRoot],
     compilation_edges: &[CompilationModuleEdge],
+    compilation_includes: &[CompilationIncludeEdge],
 ) {
     let packages = cargo
         .packages
         .iter()
         .map(|package| (package.name.as_str(), package))
         .collect::<BTreeMap<_, _>>();
-    let macro_definitions =
-        MacroDefinitions::collect(index, cargo, compilation_domains, compilation_edges);
+    let macro_definitions = MacroDefinitions::collect(
+        index,
+        cargo,
+        compilation_domains,
+        compilation_roots,
+        compilation_edges,
+        compilation_includes,
+    );
     let macro_visibility = super::macro_visibility::MacroVisibility::collect(index, module_edges);
     let mut findings = Vec::new();
     for file in &mut index.files {

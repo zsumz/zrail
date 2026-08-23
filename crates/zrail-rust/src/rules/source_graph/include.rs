@@ -1,8 +1,6 @@
 //! Literal and verified `OUT_DIR` includes become exact source-graph edges.
 
-use crate::source::{
-    IncludeBoundary, IncludeContext, SourceSyntax, SubmoduleBase, join_relative, parent,
-};
+use crate::source::{IncludeBoundary, IncludeContext, SourceSyntax, join_relative, parent};
 
 use super::{TraversalContext, Walker};
 
@@ -17,7 +15,7 @@ impl Walker<'_> {
             return;
         };
         if let Some(output) = &include.out_dir {
-            self.walk_out_dir(source, context, include, output);
+            self.walk_out_dir(source, &context, include, output);
             return;
         }
         let Some(relative) = &include.path else {
@@ -34,14 +32,13 @@ impl Walker<'_> {
             return;
         };
         match join_relative(&parent(source), relative) {
-            Ok(path) => self.follow(
+            Ok(path) => self.follow_include(
                 source,
-                include.span,
                 path,
                 &format!("literal include {relative:?}"),
-                SubmoduleBase::SourceParent,
                 syntax(include.context),
-                context,
+                include,
+                &context,
             ),
             Err(error) => self.resolution_error(
                 source,
@@ -55,7 +52,7 @@ impl Walker<'_> {
     fn walk_out_dir(
         &mut self,
         source: &str,
-        context: TraversalContext,
+        context: &TraversalContext,
         include: &IncludeBoundary,
         output: &str,
     ) {
@@ -76,13 +73,12 @@ impl Walker<'_> {
         };
         self.seen_out_dir
             .insert((source.to_owned(), output.to_owned()));
-        self.follow(
+        self.follow_include(
             source,
-            include.span,
             target,
             &format!("OUT_DIR include {output:?}"),
-            SubmoduleBase::SourceParent,
             syntax(include.context),
+            include,
             context,
         );
     }

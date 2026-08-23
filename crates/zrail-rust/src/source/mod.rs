@@ -15,6 +15,7 @@ mod import_helpers;
 mod import_projection;
 mod imports;
 mod imports_collect;
+mod include_edge;
 mod includes;
 mod macro_builtin;
 mod macro_definition_candidate;
@@ -38,6 +39,7 @@ mod paths;
 mod reachability;
 mod scoped_globs;
 mod scoped_imports;
+mod source_instance;
 mod visitor;
 mod visitor_attributes;
 mod visitor_boundaries;
@@ -49,6 +51,7 @@ mod visitor_model;
 pub(crate) use canonical::canonicalize as canonicalize_dependency_roots;
 pub(crate) use compilation::{CompilationDomain, CompilationMode};
 pub(crate) use compile_effect_model::CompileEffectFact;
+pub(crate) use include_edge::{CompilationIncludeEdge, IncludeOccurrenceId};
 pub(crate) use macro_model::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin};
 pub(crate) use model::{
     IncludeBoundary, IncludeContext, MacroImportFact, ModuleDeclaration, ObservedFact,
@@ -60,3 +63,4 @@ pub(crate) use paths::{
     ModuleTarget, ResolutionError, SubmoduleBase, join_relative, module_target, parent,
 };
 pub(crate) use reachability::{Reachability, ReachabilityKind};
+pub(crate) use source_instance::{CompilationRoot, SourceEntry, SourceInstanceId, SourceInstances};

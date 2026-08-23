@@ -7,11 +7,13 @@ use zrail_core::AnalysisQuality;
 use crate::cargo::{CargoWorkspace, Package};
 
 use super::macro_definition_candidate::{
-    candidate_order, discard_file_wide_definition_guess, local_policy_name, repository_candidate,
+    add_include_scope_uncertainty, candidate_order, discard_file_wide_definition_guess,
+    local_policy_name, repository_candidate,
 };
 use super::{
-    CompilationDomain, CompilationModuleEdge, MacroCandidate, MacroDerivation, MacroExpansionFact,
-    SourceIndex, SyntaxGuard, model::MacroDefinitionFact,
+    CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot,
+    MacroCandidate, MacroDerivation, MacroExpansionFact, SourceIndex, SourceInstances, SyntaxGuard,
+    model::MacroDefinitionFact,
 };
 
 const MAX_DEFINITIONS_PER_DOMAIN: usize = 256;
@@ -21,7 +23,7 @@ pub(super) struct MacroDefinitions {
     pub(super) files: BTreeMap<String, Vec<MacroDefinitionFact>>,
     pub(super) packages: BTreeMap<String, PackageOrigin>,
     pub(super) domains: BTreeMap<String, BTreeSet<CompilationDomain>>,
-    pub(super) parents: BTreeMap<(String, CompilationDomain), Vec<CompilationModuleEdge>>,
+    pub(super) instances: SourceInstances,
     names: BTreeMap<CompilationDomain, BTreeSet<String>>,
     overflowed: BTreeSet<CompilationDomain>,
 }
@@ -42,6 +44,7 @@ pub(super) struct DefinitionSite {
 pub(super) struct Resolution {
     pub(super) sites: BTreeSet<DefinitionSite>,
     pub(super) all_paths_local: bool,
+    pub(super) include_scope_uncertain: bool,
 }
 
 impl MacroDefinitions {
@@ -49,7 +52,9 @@ impl MacroDefinitions {
         index: &SourceIndex,
         cargo: &CargoWorkspace,
         domains: &BTreeMap<String, BTreeSet<CompilationDomain>>,
+        roots: &[CompilationRoot],
         edges: &[CompilationModuleEdge],
+        includes: &[CompilationIncludeEdge],
     ) -> Self {
         let mut definitions = Self {
             files: index
@@ -63,17 +68,10 @@ impl MacroDefinitions {
                 .map(|package| (package.name.clone(), package_origin(package)))
                 .collect(),
             domains: domains.clone(),
-            parents: BTreeMap::new(),
+            instances: SourceInstances::build(roots, edges, includes),
             names: BTreeMap::new(),
             overflowed: BTreeSet::new(),
         };
-        for edge in edges {
-            definitions
-                .parents
-                .entry((edge.child.clone(), edge.domain.clone()))
-                .or_default()
-                .push(edge.clone());
-        }
         definitions.collect_names();
         definitions
     }
@@ -103,20 +101,25 @@ impl MacroDefinitions {
     }
 
     pub(super) fn apply(&self, file: &str, expansion: &mut MacroExpansionFact) {
-        if expansion.name.contains("::") {
-            return;
-        }
-        let Some(domains) = self.active_domains(file, expansion.guard) else {
+        let Some(instances) = self.active_instances(file, expansion.guard) else {
             Self::add_unknown(expansion);
             return;
         };
+        if instances.is_empty() {
+            Self::add_unknown(expansion);
+            return;
+        }
+        if expansion.name.contains("::") {
+            self.apply_qualified(expansion, &instances);
+            return;
+        }
         let mut sites = BTreeSet::new();
-        let mut every_domain_local = !domains.is_empty();
-        for domain in domains {
+        let mut every_instance_local = !instances.is_empty();
+        let mut include_scope_uncertain = false;
+        for instance in instances {
             let mut seen = BTreeSet::new();
             let resolution = self.resolve(
-                file,
-                domain,
+                instance,
                 &expansion.name,
                 &expansion.lexical_scope,
                 expansion.span,
@@ -126,7 +129,8 @@ impl MacroDefinitions {
                 Self::add_unknown(expansion);
                 return;
             };
-            every_domain_local &= resolution.all_paths_local;
+            every_instance_local &= resolution.all_paths_local;
+            include_scope_uncertain |= resolution.include_scope_uncertain;
             sites.extend(resolution.sites);
             if sites.len() > MAX_VISIBLE_DEFINITIONS {
                 Self::add_unknown(expansion);
@@ -134,10 +138,13 @@ impl MacroDefinitions {
             }
         }
         let policy_name = local_policy_name(expansion);
-        if every_domain_local {
+        if every_instance_local {
             expansion.candidates.clear();
         } else {
             discard_file_wide_definition_guess(expansion);
+            if include_scope_uncertain {
+                add_include_scope_uncertainty(expansion);
+            }
         }
         let candidates = sites
             .into_iter()
@@ -147,6 +154,34 @@ impl MacroDefinitions {
         expansion.candidates.sort_by(candidate_order);
         expansion.candidates.dedup();
         expansion.refresh_quality();
+    }
+
+    fn apply_qualified(
+        &self,
+        expansion: &mut MacroExpansionFact,
+        instances: &[super::SourceInstanceId],
+    ) {
+        let mut include_scope_uncertain = false;
+        for instance in instances {
+            let mut seen = BTreeSet::new();
+            let Some(resolution) = self.resolve(
+                *instance,
+                &expansion.name,
+                &expansion.lexical_scope,
+                expansion.span,
+                &mut seen,
+            ) else {
+                Self::add_unknown(expansion);
+                return;
+            };
+            include_scope_uncertain |= resolution.include_scope_uncertain;
+        }
+        if include_scope_uncertain {
+            add_include_scope_uncertainty(expansion);
+            expansion.candidates.sort_by(candidate_order);
+            expansion.candidates.dedup();
+            expansion.refresh_quality();
+        }
     }
 
     fn collect_names(&mut self) {

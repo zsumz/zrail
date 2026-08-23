@@ -4,63 +4,13 @@ use zrail_core::{Finding, SourceSpan, glob_matches};
 
 use crate::{
     inventory::{FileClass, RepositoryEntryKind},
-    source::{CompilationModuleEdge, ResolvedModuleEdge, SourceSyntax, SubmoduleBase},
+    source::{SourceSyntax, SubmoduleBase},
 };
 
 use super::{TraversalContext, Walker};
 
 impl Walker<'_> {
-    pub(super) fn follow(
-        &mut self,
-        origin: &str,
-        span: Option<SourceSpan>,
-        target: String,
-        label: &str,
-        submodule_base: SubmoduleBase,
-        expected_syntax: SourceSyntax,
-        context: TraversalContext,
-    ) {
-        let _ = self.follow_resolved(
-            origin,
-            span,
-            target,
-            label,
-            submodule_base,
-            expected_syntax,
-            context,
-        );
-    }
-
-    pub(super) fn follow_module(
-        &mut self,
-        edge: ResolvedModuleEdge,
-        parent_scope: &[SourceSpan],
-        span: Option<SourceSpan>,
-        label: &str,
-        expected_syntax: SourceSyntax,
-        context: &TraversalContext,
-    ) {
-        if self.follow_resolved(
-            &edge.parent,
-            span,
-            edge.child.clone(),
-            label,
-            edge.child_base,
-            expected_syntax,
-            context.clone(),
-        ) {
-            self.compilation_edges.insert(CompilationModuleEdge {
-                parent: edge.parent.clone(),
-                child: edge.child.clone(),
-                domain: context.domain.clone(),
-                parent_scope: parent_scope.to_vec(),
-                span: edge.span,
-            });
-            self.module_edges.insert(edge);
-        }
-    }
-
-    fn follow_resolved(
+    pub(super) fn follow_resolved(
         &mut self,
         origin: &str,
         span: Option<SourceSpan>,
