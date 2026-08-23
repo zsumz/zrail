@@ -81,6 +81,7 @@ fn macro_expansion_denial_revokes_power_and_allowance_grants_it() {
         name: "tokio::select".into(),
         inputs: MacroInputMode::Inspect,
         binding: MacroBindingMode::Exact,
+        bindings: crate::MacroExpansionBindings::Opaque,
         definition: None,
         source: None,
         reason: "Reviewed async control-flow expansion.".into(),

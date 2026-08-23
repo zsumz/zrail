@@ -2,7 +2,9 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::contract::{CrateRootSource, MacroBindingMode, MacroExpansionMode, MacroInputMode};
+use crate::contract::{
+    CrateRootSource, MacroBindingMode, MacroExpansionBindings, MacroExpansionMode, MacroInputMode,
+};
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -27,6 +29,9 @@ pub struct MacroExpansionAllow {
     #[serde(default)]
     /// Confidence required to bind invocations to this authority.
     pub binding: MacroBindingMode,
+    #[serde(default)]
+    /// Whether exact review proves zero ordinary-namespace delta for this expansion.
+    pub bindings: MacroExpansionBindings,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     /// Optional package-qualified macro definition identity.
     pub definition: Option<String>,

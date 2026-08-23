@@ -2,7 +2,10 @@
 
 use std::collections::BTreeSet;
 
-use zrail_core::{Contract, ItemMacroContract, MacroExpansionAllow, MacroInputMode, glob_matches};
+use zrail_core::{
+    Contract, ItemMacroContract, MacroExpansionAllow, MacroExpansionBindings, MacroInputMode,
+    glob_matches,
+};
 
 use crate::{
     rules::macro_expansion,
@@ -115,6 +118,7 @@ fn binding_matches(allowance: &ItemMacroContract, expansion: Option<&MacroExpans
         name: allowance.name.clone(),
         inputs: MacroInputMode::Inspect,
         binding,
+        bindings: MacroExpansionBindings::Opaque,
         definition: None,
         source: allowance.source.clone(),
         reason: allowance.reason.clone(),

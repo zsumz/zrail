@@ -18,12 +18,12 @@ pub use contract::{
     FileRoleContract, FileSizeContract, GateContract, GateKind, GeneratedSourceContract,
     HygieneContract, InvariantContract, InvariantStatus, ItemMacroContract, LayerContract,
     LayerDependencies, LintSuppressionMode, MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES,
-    MAX_IMPORT_DIRECTIVES, MacroBindingMode, MacroExpansionAllow, MacroExpansionContract,
-    MacroExpansionMode, MacroInputMode, ModuleDocsMode, OutDirSourceContract, OwnerContract,
-    OwnerKind, PolicyMode, PolicyReachability, ProfileContract, RatchetContract,
-    RepositoryContract, RustSourceContract, ScopeContract, SourceContract, SymbolBoundary,
-    SymlinkMode, TestMode, contract_imports, load_contract, load_contract_with_entry,
-    parse_evidence_reference,
+    MAX_IMPORT_DIRECTIVES, MacroBindingMode, MacroExpansionAllow, MacroExpansionBindings,
+    MacroExpansionContract, MacroExpansionMode, MacroInputMode, ModuleDocsMode,
+    OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode, PolicyReachability,
+    ProfileContract, RatchetContract, RepositoryContract, RustSourceContract, ScopeContract,
+    SourceContract, SymbolBoundary, SymlinkMode, TestMode, contract_imports, load_contract,
+    load_contract_with_entry, parse_evidence_reference,
 };
 pub use diagnostic::{
     AnalysisQuality, DiagnosticLimit, Finding, FindingSink, MAX_REPORT_FINDINGS, Severity,

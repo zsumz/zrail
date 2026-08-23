@@ -99,6 +99,18 @@ pub enum MacroInputMode {
 
 #[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
+/// Reviewed claim about ordinary Rust namespace mutation by a macro expansion.
+pub enum MacroExpansionBindings {
+    #[default]
+    /// Expansion may replace an annotated item or introduce bindings unavailable to analysis.
+    Opaque,
+    #[serde(rename = "none")]
+    /// Review attests zero namespace delta, including preservation of the annotated item subtree.
+    None,
+}
+
+#[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
 /// Confidence required when binding an observed macro invocation to an allowance.
 pub enum MacroBindingMode {
     #[default]

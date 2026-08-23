@@ -15,6 +15,7 @@ fn opaque_macro_input_is_a_grant_and_local_body_change_is_unknown() {
         name: "local::query".into(),
         inputs: MacroInputMode::Inspect,
         binding: MacroBindingMode::Exact,
+        bindings: crate::MacroExpansionBindings::Opaque,
         definition: Some("src/lib.rs".into()),
         source: None,
         reason: "Reviewed local macro.".into(),
@@ -63,6 +64,7 @@ fn conservative_macro_binding_is_a_grant_and_exact_binding_is_a_revoke() {
         name: "reviewed".into(),
         inputs: MacroInputMode::Inspect,
         binding: MacroBindingMode::Exact,
+        bindings: crate::MacroExpansionBindings::Opaque,
         definition: None,
         source: None,
         reason: "Reviewed unresolved spelling.".into(),
@@ -83,6 +85,32 @@ fn conservative_macro_binding_is_a_grant_and_exact_binding_is_a_revoke() {
 }
 
 #[test]
+fn no_binding_attestation_is_a_grant_and_removal_is_a_revoke() {
+    let mut opaque = contract_with_hard_limit(300);
+    opaque.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
+    opaque.source.rust.macros.allow.push(MacroExpansionAllow {
+        name: "serde::Serialize".into(),
+        inputs: MacroInputMode::Inspect,
+        binding: MacroBindingMode::Exact,
+        bindings: crate::MacroExpansionBindings::Opaque,
+        definition: None,
+        source: Some(registry("1")),
+        reason: "Reviewed expansion.".into(),
+    });
+    let mut preserved = opaque.clone();
+    preserved.source.rust.macros.allow[0].bindings = crate::MacroExpansionBindings::None;
+
+    let grant = compare_architecture(&opaque, None, &preserved, None);
+    let revoke = compare_architecture(&preserved, None, &opaque, None);
+    assert!(grant.changes.iter().any(|change| {
+        change.kind == ChangeKind::Grant && change.rail == "rust.macro-bindings"
+    }));
+    assert!(revoke.changes.iter().any(|change| {
+        change.kind == ChangeKind::Revoke && change.rail == "rust.macro-bindings"
+    }));
+}
+
+#[test]
 fn crate_root_and_external_macro_source_changes_fail_closed() {
     let mut before = contract_with_hard_limit(300);
     let registry_one = registry("1");
@@ -97,6 +125,7 @@ fn crate_root_and_external_macro_source_changes_fail_closed() {
         name: "runtime::select".into(),
         inputs: MacroInputMode::Inspect,
         binding: MacroBindingMode::Exact,
+        bindings: crate::MacroExpansionBindings::Opaque,
         definition: None,
         source: Some(registry_one),
         reason: "Reviewed expansion.".into(),

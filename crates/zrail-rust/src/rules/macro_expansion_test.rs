@@ -1,6 +1,8 @@
 //! Directly inspected compiler macros cannot be confused with local definitions.
 
-use zrail_core::{AnalysisQuality, MacroBindingMode, MacroExpansionAllow, MacroInputMode};
+use zrail_core::{
+    AnalysisQuality, MacroBindingMode, MacroExpansionAllow, MacroExpansionBindings, MacroInputMode,
+};
 
 use crate::source::{
     MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin, ObservedFact,
@@ -113,6 +115,7 @@ fn allowance(name: &str) -> MacroExpansionAllow {
         name: name.into(),
         inputs: MacroInputMode::Inspect,
         binding: MacroBindingMode::Exact,
+        bindings: MacroExpansionBindings::Opaque,
         definition: name.starts_with("local::").then(|| "src/lib.rs".into()),
         source: None,
         reason: "reviewed".into(),

@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{Contract, MacroBindingMode, MacroInputMode};
+use crate::{Contract, MacroBindingMode, MacroExpansionBindings, MacroInputMode};
 
 use super::super::{
     ArchitectureChange, ChangeKind,
@@ -85,6 +85,19 @@ fn compare_existing(
             "rust.macro-input",
             name,
             "changes whether opaque macro input is trusted",
+        ));
+    }
+    if left.bindings != right.bindings {
+        let kind = if right.bindings == MacroExpansionBindings::None {
+            ChangeKind::Grant
+        } else {
+            ChangeKind::Revoke
+        };
+        changes.push(ArchitectureChange::new(
+            kind,
+            "rust.macro-bindings",
+            name,
+            "changes whether reviewed expansion may replace items or introduce lexical bindings",
         ));
     }
     if left.definition != right.definition {
