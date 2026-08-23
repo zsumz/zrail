@@ -29,3 +29,7 @@ pub(super) fn reject_lock_contract_overlap(
     }
     Ok(())
 }
+
+#[cfg(test)]
+#[path = "mutation_paths_test.rs"]
+mod mutation_paths_test;

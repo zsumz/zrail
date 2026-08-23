@@ -47,9 +47,6 @@ mod review_fixture;
 mod review_lock_test;
 
 #[cfg(test)]
-mod mutation_paths_test;
-
-#[cfg(test)]
 #[path = "update_contract_test.rs"]
 mod update_contract_test;
 

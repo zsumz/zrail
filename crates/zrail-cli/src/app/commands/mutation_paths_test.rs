@@ -7,7 +7,7 @@ use crate::app::{
     output::OutputFormat,
 };
 
-use super::{baseline, update, update_fixture_test};
+use super::super::{baseline, update, update_fixture_test};
 
 #[derive(Clone, Copy, Debug)]
 enum Collision {
