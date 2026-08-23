@@ -43,10 +43,10 @@ target matching the machine that will run zrail:
 | Windows x86-64 | `x86_64-pc-windows-msvc` | `.zip` |
 
 For Linux x86-64 with glibc, download and verify one exact release like this
-(replace `0.0.1` with the reviewed version):
+(replace `0.0.2` with the reviewed version):
 
 ```sh
-ZRAIL_VERSION=0.0.1
+ZRAIL_VERSION=0.0.2
 ZRAIL_TARGET=x86_64-unknown-linux-gnu
 ZRAIL_ARCHIVE="zrail-${ZRAIL_VERSION}-${ZRAIL_TARGET}.tar.gz"
 ZRAIL_RELEASE="https://github.com/zsumz/zrail/releases/download/v${ZRAIL_VERSION}"
@@ -71,7 +71,7 @@ CI should use the same checked archive instead of compiling zrail on every run:
 ```yaml
 - name: Download verified zrail binary
   env:
-    ZRAIL_VERSION: 0.0.1
+    ZRAIL_VERSION: 0.0.2
     ZRAIL_TARGET: x86_64-unknown-linux-gnu
   run: |
     archive="zrail-${ZRAIL_VERSION}-${ZRAIL_TARGET}.tar.gz"
