@@ -298,6 +298,12 @@ resolves to the same identity; disagreement is conservative, and incomplete
 lookup is unresolved. Call ownership therefore cannot accept a physical-file
 spelling that an include-spliced binding resolves to an owned call.
 
+Qualified `self`, `crate`, and `super` paths navigate the effective module
+before binding lookup; include edges do not create module boundaries. The
+repository plans all ordinary include projections transactionally under shared
+work and fact budgets, so exhaustion emits one unresolved diagnostic and
+retains no partial authority result.
+
 An optional `definition` path can narrow a `macro_rules!` allowance, but path
 spelling never establishes origin. The default `binding = "exact"` rejects an
 allowance when the candidate origin remains unresolved. A name-only allowance
