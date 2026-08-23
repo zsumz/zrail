@@ -54,17 +54,10 @@ impl MacroVisibility {
             module_index += 1;
         }
         for module in prefix.iter().skip(module_index) {
-            let mut next = Vec::new();
-            for node in &nodes {
-                let key = (node.clone(), (*module).to_owned());
-                if self.child_overflow.contains(&key) {
-                    return VisibilityLookup::Unknown;
-                }
-                next.extend(self.children.get(&key).into_iter().flatten().cloned());
-            }
-            next.sort();
-            next.dedup();
-            if next.is_empty() || next.len() > MAX_EDGES_PER_MODULE {
+            let Some(next) = self.child_nodes(&nodes, module) else {
+                return VisibilityLookup::Unknown;
+            };
+            if next.is_empty() {
                 return VisibilityLookup::Known(Vec::new());
             }
             nodes = next;
@@ -85,8 +78,34 @@ impl MacroVisibility {
             Some("self") => Some(vec![file.to_owned()]),
             Some("super") => self.parent_nodes(file),
             Some("crate") => self.root_nodes(file),
-            _ => None,
+            Some(module) => self.child_nodes(&[file.to_owned()], module),
+            None => None,
         }
+    }
+
+    pub(super) fn repository_candidate(&self, file: &str, path: &str) -> bool {
+        if super::macro_visibility::repository_path(path) {
+            return true;
+        }
+        let Some(root) = path.split("::").next() else {
+            return false;
+        };
+        let key = (file.to_owned(), root.to_owned());
+        self.children.contains_key(&key) || self.child_overflow.contains(&key)
+    }
+
+    fn child_nodes(&self, nodes: &[String], module: &str) -> Option<Vec<String>> {
+        let mut children = Vec::new();
+        for node in nodes {
+            let key = (node.clone(), module.to_owned());
+            if self.child_overflow.contains(&key) {
+                return None;
+            }
+            children.extend(self.children.get(&key).into_iter().flatten().cloned());
+        }
+        children.sort();
+        children.dedup();
+        (children.len() <= MAX_EDGES_PER_MODULE).then_some(children)
     }
 
     fn parent_nodes(&self, file: &str) -> Option<Vec<String>> {

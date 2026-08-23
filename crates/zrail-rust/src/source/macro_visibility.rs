@@ -22,7 +22,7 @@ impl MacroVisibility {
         let mut resolved_leaves = BTreeSet::new();
         for candidate in invocation.candidates.drain(..) {
             if candidate.derivation != MacroDerivation::GlobImport
-                || !repository_path(&candidate.observation.name)
+                || !self.repository_candidate(file, &candidate.observation.name)
             {
                 candidates.push(candidate);
                 continue;
@@ -141,7 +141,7 @@ fn same_candidate(left: &MacroCandidate, right: &MacroCandidate) -> bool {
         && left.origins == right.origins
 }
 
-fn repository_path(path: &str) -> bool {
+pub(super) fn repository_path(path: &str) -> bool {
     path.split("::")
         .next()
         .is_some_and(|root| matches!(root, "crate" | "self" | "super"))

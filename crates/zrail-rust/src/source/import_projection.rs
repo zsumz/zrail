@@ -65,13 +65,13 @@ impl ImportMap {
         self.collect_candidates(path, usize::MAX, context).0
     }
 
-    pub(super) fn bounded_call_candidates(
+    pub(super) fn bounded_macro_candidates(
         &self,
         path: &syn::Path,
         limit: usize,
         context: SyntaxGuard,
     ) -> (Vec<ImportCandidate>, bool) {
-        self.collect_candidates(path, limit, context)
+        self.collect_candidates_with_globs(path, limit, context, &self.macro_globs)
     }
 
     fn collect_candidates(
@@ -79,6 +79,16 @@ impl ImportMap {
         path: &syn::Path,
         limit: usize,
         context: SyntaxGuard,
+    ) -> (Vec<ImportCandidate>, bool) {
+        self.collect_candidates_with_globs(path, limit, context, &self.globs)
+    }
+
+    fn collect_candidates_with_globs(
+        &self,
+        path: &syn::Path,
+        limit: usize,
+        context: SyntaxGuard,
+        globs: &BTreeMap<String, SyntaxGuard>,
     ) -> (Vec<ImportCandidate>, bool) {
         let segments = path
             .segments
@@ -109,7 +119,7 @@ impl ImportMap {
             }
         }
         let syntactic = segments.join("::");
-        for (glob, guard) in &self.globs {
+        for (glob, guard) in globs {
             if !guard.available_in(context) {
                 continue;
             }

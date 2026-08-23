@@ -48,7 +48,7 @@ pub(super) fn macro_candidates(
     guard: SyntaxGuard,
 ) -> (Vec<(ObservedFact, MacroDerivation)>, bool) {
     let (candidates, overflowed) =
-        imports.bounded_call_candidates(path, MAX_MACRO_CANDIDATES - 1, guard);
+        imports.bounded_macro_candidates(path, MAX_MACRO_CANDIDATES - 1, guard);
     let candidates = candidates
         .into_iter()
         .filter(|candidate| candidate.path != resolved)

@@ -97,6 +97,23 @@ fn macro_candidate_sets_fail_closed_at_the_fixed_limit() {
     assert!(candidates.is_empty());
 }
 
+#[test]
+fn inline_module_globs_do_not_become_file_wide_macro_candidates() {
+    let file = syn::parse_file(
+        "use dependency::*; mod tests { use super::*; fn run() { assert!(true); } }",
+    )
+    .expect("parse nested glob imports");
+    let imports = ImportMap::from_file(&file);
+    let path = syn::parse_str::<syn::Path>("assert").expect("parse macro path");
+
+    let (candidates, overflowed) =
+        macro_candidates(&path, &imports, "assert", SyntaxGuard::Ordinary);
+
+    assert!(!overflowed);
+    assert_eq!(candidates.len(), 1);
+    assert_eq!(candidates[0].0.name, "dependency::assert");
+}
+
 fn call(file: &syn::File) -> &syn::ExprCall {
     let Some(syn::Item::Fn(function)) = file.items.last() else {
         panic!("last item is a function");

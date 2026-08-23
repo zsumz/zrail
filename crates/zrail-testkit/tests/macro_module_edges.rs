@@ -41,6 +41,46 @@ fn direct_module_child_ignores_an_unselected_source_parent_candidate() {
     reset(&root);
 }
 
+#[test]
+fn bare_local_module_glob_does_not_claim_unexported_macros() {
+    let root = std::env::temp_dir().join(format!(
+        "zrail-macro-local-module-glob-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    reset(&root);
+    fs::create_dir_all(root.join("src")).expect("create fixture directories");
+    write(&root, "Cargo.toml", MANIFEST);
+    write(
+        &root,
+        "src/lib.rs",
+        "//! Library.\nmod support;\nuse support::*;\n#[derive(Clone)]\npub struct Model;\n",
+    );
+    write(
+        &root,
+        "src/support.rs",
+        "//! Test support.\npub struct Helper;\n",
+    );
+    write(
+        &root,
+        "zrail.toml",
+        &CONTRACT
+            .replace("super::reviewed", "Clone")
+            .replace("definition = \"src/foo.rs\"\n", ""),
+    );
+    build_lock(&root, "zrail.toml".as_ref())
+        .expect("build fixture lock")
+        .write(&root.join("zrail.lock"))
+        .expect("write fixture lock");
+
+    let report = check_repository(&root, "zrail.toml".as_ref(), "zrail.lock".as_ref())
+        .expect("check local module glob visibility")
+        .report;
+
+    assert_eq!(report.status, ReportStatus::Pass, "{}", report.human());
+    reset(&root);
+}
+
 fn write(root: &Path, path: &str, contents: &str) {
     fs::write(root.join(path), contents).expect("write fixture file");
 }

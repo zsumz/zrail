@@ -15,6 +15,7 @@ pub(super) struct ImportMap {
     pub(super) call_aliases: BTreeMap<String, BTreeMap<String, SyntaxGuard>>,
     pub(super) unresolved: BTreeSet<String>,
     pub(super) globs: BTreeMap<String, SyntaxGuard>,
+    pub(super) macro_globs: BTreeMap<String, SyntaxGuard>,
     pub(super) re_exports: BTreeMap<String, SyntaxGuard>,
     pub(super) re_export_globs: BTreeMap<String, SyntaxGuard>,
 }
@@ -75,6 +76,7 @@ impl ImportMap {
                 _ => {}
             }
         }
+        imports.macro_globs = imports.globs.clone();
         let candidates = super::import_candidates::collect(file);
         imports.call_aliases = candidates.aliases;
         for (path, guard) in candidates.globs {
