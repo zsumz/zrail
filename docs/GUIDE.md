@@ -280,6 +280,17 @@ package, including helper macros and internal proc macros. External allowances
 bind to the exact dependency source. Built-in data macros and `include!` are
 handled directly, and included Rust remains fully analyzed.
 
+Ordinary macro permission does not make expansion output visible. Attribute,
+derive, and item macros therefore keep the surrounding namespace opaque unless
+an exact allowance with `source` or `definition` provenance separately sets
+`bindings = "none"`. That grant attests zero ordinary-namespace delta: the
+reviewed expansion preserves the annotated item subtree with the same binding
+kind, target, visibility, cfg domain, and child namespace, and introduces no
+surrounding lexical bindings. External attestations require an exact registry
+version or full Git object ID. The attestation is applied only to occurrences
+whose complete resolved origin matches it; a same-spelling macro from another
+source or conditional definition remains opaque and fails binding review.
+
 Literal and verified generated `include!` sources retain occurrence-specific
 lexical splices. Textual `macro_rules!` lookup follows caller prefixes, nested
 includes, source order, lexical scope, and Cargo compilation domains; item
@@ -291,16 +302,17 @@ the invocation requires an explicit name-only `binding = "conservative"`
 allowance and cannot borrow compiler or dependency-source authority.
 
 Ordinary paths and direct calls use the same occurrence-specific namespaces.
-Explicit imports, glob imports, type aliases, lexical scopes, `cfg(test)`
-domains, and nested or repeated includes are projected onto every applicable
-source instance. A projected call remains exact only when every instance
-resolves to the same identity; disagreement is conservative, and incomplete
-lookup is unresolved. Call ownership therefore cannot accept a physical-file
-spelling that an include-spliced binding resolves to an owned call.
+Explicit imports, glob imports, type aliases, module re-exports, visibility,
+Rust editions, lexical scopes, `cfg(test)` domains, and nested or repeated
+includes are projected onto every applicable source instance. A projected call
+remains exact only when every instance resolves to the same identity;
+disagreement is conservative, and incomplete or macro-opaque lookup is
+unresolved. Call ownership therefore cannot accept a physical-file spelling
+that the effective Rust namespace resolves to an owned call.
 
 Qualified `self`, `crate`, and `super` paths navigate the effective module
 before binding lookup; include edges do not create module boundaries. The
-repository plans all ordinary include projections transactionally under shared
+repository plans all ordinary namespace projections transactionally under shared
 work and fact budgets, so exhaustion emits one unresolved diagnostic and
 retains no partial authority result.
 
