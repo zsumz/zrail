@@ -69,6 +69,37 @@ fn dependency_alias_cannot_borrow_builtin_derive_authority() {
     reset(&root);
 }
 
+#[test]
+fn dependency_glob_candidates_remain_subject_to_macro_policy() {
+    let root = std::env::temp_dir().join(format!(
+        "zrail-macro-globbed-derive-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    reset(&root);
+    fs::create_dir_all(root.join("src")).expect("create fixture");
+    write(
+        &root,
+        "Cargo.toml",
+        "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\n[dependencies]\nproptest = \"1\"\n",
+    );
+    write(
+        &root,
+        "src/lib.rs",
+        "//! Fixture.\nuse proptest::prelude::*;\n#[derive(Clone, Debug)]\npub struct Model;\n",
+    );
+    write(&root, "zrail.toml", CONTRACT);
+
+    let report = check_repository(&root, "zrail.toml".as_ref(), "zrail.lock".as_ref())
+        .expect("check globbed derive")
+        .report;
+
+    assert!(report.findings.iter().any(|finding| {
+        finding.id == "RUST-MACRO-006" && finding.message.contains("proptest::prelude")
+    }));
+    reset(&root);
+}
+
 fn write(root: &Path, path: &str, contents: &str) {
     fs::write(root.join(path), contents).expect("write fixture file");
 }

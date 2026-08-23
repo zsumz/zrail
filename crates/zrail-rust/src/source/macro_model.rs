@@ -125,6 +125,14 @@ impl MacroExpansionFact {
         }
     }
 
+    pub(crate) fn bind_compiler_candidate(&mut self, resolved: &str) {
+        self.candidates
+            .retain(|candidate| candidate.observation.name != resolved);
+        self.candidates
+            .extend(Self::compiler_builtin(self.observation.clone()).candidates);
+        self.refresh_quality();
+    }
+
     pub(crate) fn with_candidates(
         mut observation: ObservedFact,
         candidates: Vec<MacroCandidate>,

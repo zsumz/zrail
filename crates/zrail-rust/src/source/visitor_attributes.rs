@@ -72,17 +72,16 @@ impl FactVisitor<'_> {
                         expansion.path.span(),
                         AnalysisQuality::Exact,
                     );
-                    let expansion = if expansion.kind
+                    let compiler_derive = expansion.kind
                         == super::macro_expansion::ExpansionKind::Derive
                         && !local_module
-                        && !self.imports.has_applicable_macro_globs(self.syntax_guard())
-                        && super::macro_expansion::is_compiler_derive(&expansion.path, &resolved)
-                    {
-                        MacroExpansionFact::compiler_builtin(observed)
-                    } else {
-                        self.macro_invocation(&expansion.path)
-                    };
-                    self.macro_expansions.push(expansion);
+                        && super::macro_expansion::is_compiler_derive(&expansion.path, &resolved);
+                    let mut invocation = self.macro_invocation(&expansion.path);
+                    if compiler_derive {
+                        invocation.observation = observed;
+                        invocation.bind_compiler_candidate(&resolved);
+                    }
+                    self.macro_expansions.push(invocation);
                 }
             }
             Err(()) => self
