@@ -2,19 +2,20 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use zrail_core::{AnalysisQuality, Finding};
+use zrail_core::AnalysisQuality;
 
 use super::{
     CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot, ImportBindingFact,
-    ObservedFact, RustFileFacts, SourceIndex, SourceInstanceId, SourceInstances, SourceSyntax,
-    SyntaxGuard,
+    ObservedFact, SourceIndex, SourceInstanceId, SourceInstances, SyntaxGuard,
+    include_binding_catalog::FileBindings,
+    include_projection_budget::{ProjectionBudget, ProjectionLimit},
 };
 
 const MAX_PROJECTED_IDENTITIES: usize = 64;
-const MAX_PROJECTED_FACTS_PER_FILE: usize = 50_000;
 
 pub(super) struct IncludeBindings {
-    pub(super) files: BTreeMap<String, Vec<ImportBindingFact>>,
+    pub(super) files: BTreeMap<String, FileBindings>,
+    pub(super) inline_module_scopes: BTreeMap<String, BTreeSet<zrail_core::SourceSpan>>,
     pub(super) instances: SourceInstances,
 }
 
@@ -71,61 +72,61 @@ impl IncludeBindings {
             files: index
                 .files
                 .iter()
-                .map(|file| (file.relative.clone(), file.import_bindings.clone()))
+                .map(|file| {
+                    (
+                        file.relative.clone(),
+                        FileBindings::collect(&file.import_bindings),
+                    )
+                })
+                .collect(),
+            inline_module_scopes: index
+                .files
+                .iter()
+                .map(|file| {
+                    (
+                        file.relative.clone(),
+                        file.inline_module_scopes.iter().copied().collect(),
+                    )
+                })
                 .collect(),
             instances: SourceInstances::build(roots, modules, includes),
         }
     }
 
-    pub(super) fn apply(&self, file: &mut RustFileFacts) -> Option<Finding> {
-        if !self.instances.complete {
-            return has_written_facts(file).then(|| unresolved(file, None));
+    pub(super) fn active_instances(
+        &self,
+        file: &str,
+        guard: SyntaxGuard,
+        budget: &mut ProjectionBudget,
+    ) -> Result<Vec<SourceInstanceId>, ProjectionLimit> {
+        let mut active = Vec::new();
+        for id in self.instances.for_file(file) {
+            budget.consume_work()?;
+            if self.instances.get(*id).is_some_and(|instance| {
+                guard.available_in(SyntaxGuard::for_test_only(
+                    instance.domain.mode.enables_cfg_test(),
+                ))
+            }) {
+                active.push(*id);
+            }
         }
-        let mut uncertain = None;
-        let project_local = file.syntax == SourceSyntax::Expression;
-        project(
-            self,
-            &file.relative,
-            &mut file.paths,
-            project_local,
-            &mut uncertain,
-        );
-        project(
-            self,
-            &file.relative,
-            &mut file.calls,
-            project_local,
-            &mut uncertain,
-        );
-        uncertain.map(|span| unresolved(file, Some(span)))
-    }
-
-    pub(super) fn active_instances(&self, file: &str, guard: SyntaxGuard) -> Vec<SourceInstanceId> {
-        self.instances
-            .for_file(file)
-            .iter()
-            .copied()
-            .filter(|id| {
-                self.instances.get(*id).is_some_and(|instance| {
-                    guard.available_in(SyntaxGuard::for_test_only(
-                        instance.domain.mode.enables_cfg_test(),
-                    ))
-                })
-            })
-            .collect()
+        Ok(active)
     }
 }
 
-fn project(
+pub(super) fn project(
     bindings: &IncludeBindings,
     file: &str,
-    facts: &mut Vec<ObservedFact>,
+    facts: &[ObservedFact],
     project_local: bool,
     uncertain: &mut Option<zrail_core::SourceSpan>,
-) {
+    budget: &mut ProjectionBudget,
+    remaining_file_facts: &mut usize,
+) -> Result<Vec<ObservedFact>, ProjectionLimit> {
     let mut additions = Vec::new();
     for fact in facts.iter().filter(|fact| fact.written.is_some()) {
-        let instances = bindings.active_instances(file, fact.guard);
+        budget.consume_work()?;
+        let instances = bindings.active_instances(file, fact.guard, budget)?;
         if instances.is_empty() {
             continue;
         }
@@ -140,7 +141,8 @@ fn project(
                 &fact.lexical_scope,
                 &mut seen,
                 0,
-            );
+                budget,
+            )?;
             compatible &= resolved.len() == 1;
             let names = resolved
                 .iter()
@@ -203,10 +205,6 @@ fn project(
                 },
                 lexical_scope: fact.lexical_scope.clone(),
             });
-            if additions.len() > MAX_PROJECTED_FACTS_PER_FILE {
-                *uncertain = uncertain.or(fact.span);
-                return;
-            }
         }
     }
     additions.sort_by(|left, right| {
@@ -215,24 +213,8 @@ fn project(
     additions.dedup_by(|left, right| {
         left.name == right.name && left.span == right.span && left.guard == right.guard
     });
-    facts.extend(additions);
-}
-
-fn has_written_facts(file: &RustFileFacts) -> bool {
-    file.paths
-        .iter()
-        .chain(&file.calls)
-        .any(|fact| fact.written.is_some())
-}
-
-fn unresolved(file: &RustFileFacts, span: Option<zrail_core::SourceSpan>) -> Finding {
-    Finding::error(
-        "RUST-INCLUDE-002",
-        "rust.source.include-bindings",
-        "source",
-        "include-spliced ordinary path bindings could not be resolved completely",
-    )
-    .at(&file.relative, span)
-    .with_analysis(AnalysisQuality::Unresolved)
-    .with_help("reduce include or import indirection before trusting path and call authority")
+    for _ in &additions {
+        budget.retain_fact(remaining_file_facts)?;
+    }
+    Ok(additions)
 }

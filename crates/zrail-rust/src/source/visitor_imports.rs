@@ -24,6 +24,16 @@ impl FactVisitor<'_> {
         let globs = scoped_globs::collect(items.iter().copied());
         let enclosing_guard = self.syntax_guard();
         let lexical_scope = self.lexical_scope.clone();
+        self.inline_module_scopes
+            .extend(items.iter().filter_map(|item| {
+                let Item::Mod(module) = item else {
+                    return None;
+                };
+                module
+                    .content
+                    .as_ref()
+                    .map(|_| super::fact::source_span(module.ident.span()))
+            }));
         self.import_bindings.extend(ordinary_bindings::collect(
             items.iter().copied(),
             enclosing_guard,

@@ -15,8 +15,8 @@ use super::{
     visitor::FactVisitor,
 };
 
-const MAX_FACTS_PER_FILE: usize = 50_000;
-const MAX_TOTAL_SOURCE_FACTS: usize = 1_000_000;
+pub(super) const MAX_FACTS_PER_FILE: usize = 50_000;
+pub(super) const MAX_TOTAL_SOURCE_FACTS: usize = 1_000_000;
 
 pub(crate) fn index_rust_source(
     inventory: &RepositoryInventory,
@@ -94,7 +94,7 @@ fn analysis_limit(path: &str, message: String) -> Finding {
         .with_help("reduce the source input before trusting architecture analysis")
 }
 
-fn fact_count(file: &RustFileFacts) -> usize {
+pub(super) fn fact_count(file: &RustFileFacts) -> usize {
     file.paths.len()
         + file.calls.len()
         + file.methods.len()
@@ -104,6 +104,7 @@ fn fact_count(file: &RustFileFacts) -> usize {
         + candidate_count(&file.opaque_macro_inputs)
         + file.macro_definitions.len()
         + file.import_bindings.len()
+        + file.inline_module_scopes.len()
         + file
             .compile_effects
             .iter()
@@ -171,6 +172,7 @@ fn index_file_as(
         opaque_macro_inputs: visitor.opaque_macro_inputs,
         macro_definitions: visitor.macro_definitions,
         import_bindings: visitor.import_bindings,
+        inline_module_scopes: visitor.inline_module_scopes,
         compile_effects: visitor.compile_effects,
         lint_suppressions: visitor.lint_suppressions,
         unsafe_constructs: visitor.unsafe_constructs,
@@ -206,6 +208,7 @@ fn index_expression(
         opaque_macro_inputs: visitor.opaque_macro_inputs,
         macro_definitions: visitor.macro_definitions,
         import_bindings: visitor.import_bindings,
+        inline_module_scopes: visitor.inline_module_scopes,
         compile_effects: visitor.compile_effects,
         lint_suppressions: visitor.lint_suppressions,
         unsafe_constructs: visitor.unsafe_constructs,

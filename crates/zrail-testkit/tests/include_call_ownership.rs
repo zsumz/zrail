@@ -5,6 +5,9 @@ use std::{fs, path::Path};
 use zrail_core::Report;
 use zrail_rust::{build_lock, check_repository};
 
+#[path = "include_call_ownership/qualified.rs"]
+mod qualified;
+
 #[test]
 fn caller_alias_used_by_included_call_cannot_bypass_call_ownership() {
     let root = fixture("caller-alias", "");

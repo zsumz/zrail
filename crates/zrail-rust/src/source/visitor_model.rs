@@ -20,6 +20,7 @@ pub(super) struct FactVisitor<'a> {
     pub(super) opaque_macro_inputs: Vec<MacroExpansionFact>,
     pub(super) macro_definitions: Vec<MacroDefinitionFact>,
     pub(super) import_bindings: Vec<ImportBindingFact>,
+    pub(super) inline_module_scopes: Vec<zrail_core::SourceSpan>,
     pub(super) compile_effects: Vec<CompileEffectFact>,
     pub(super) lint_suppressions: Vec<ObservedFact>,
     pub(super) unsafe_constructs: Vec<ObservedFact>,

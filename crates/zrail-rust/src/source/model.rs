@@ -158,6 +158,7 @@ pub(crate) struct RustFileFacts {
     pub(crate) opaque_macro_inputs: Vec<MacroExpansionFact>,
     pub(crate) macro_definitions: Vec<MacroDefinitionFact>,
     pub(crate) import_bindings: Vec<ImportBindingFact>,
+    pub(crate) inline_module_scopes: Vec<SourceSpan>,
     pub(crate) compile_effects: Vec<CompileEffectFact>,
     pub(crate) lint_suppressions: Vec<ObservedFact>,
     pub(crate) unsafe_constructs: Vec<ObservedFact>,
