@@ -79,7 +79,12 @@ pub(crate) fn canonicalize(
                 }
             }
             expansion.refresh_quality();
-            macro_visibility.resolve(expansion, &file.relative, local_macros.as_ref());
+            macro_visibility.resolve(
+                expansion,
+                &file.relative,
+                file.reachability,
+                local_macros.as_ref(),
+            );
         }
         let observed = super::canonical_observed::roots(file);
         let (roots, overflowed) = dependency_roots(&selected, &observed);

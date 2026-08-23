@@ -4,7 +4,10 @@ use std::collections::BTreeSet;
 
 use zrail_core::AnalysisQuality;
 
-use super::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroImportFact, ObservedFact};
+use super::{
+    MacroCandidate, MacroDerivation, MacroExpansionFact, MacroImportFact, ObservedFact,
+    Reachability, SyntaxGuard,
+};
 
 pub(super) use super::macro_visibility_graph::MacroVisibility;
 use super::macro_visibility_graph::VisibilityLookup;
@@ -16,6 +19,7 @@ impl MacroVisibility {
         &self,
         invocation: &mut MacroExpansionFact,
         file: &str,
+        file_reachability: Reachability,
         local_macros: Option<&BTreeSet<&str>>,
     ) {
         let mut candidates = Vec::new();
@@ -27,7 +31,11 @@ impl MacroVisibility {
                 candidates.push(candidate);
                 continue;
             }
-            match self.imports_for(file, &candidate.observation.name) {
+            let reachability = match candidate.observation.guard {
+                SyntaxGuard::Ordinary => file_reachability,
+                SyntaxGuard::TestOnly => Reachability::test(),
+            };
+            match self.imports_for(file, &candidate.observation.name, reachability) {
                 VisibilityLookup::Known(imports)
                     if imports
                         .iter()

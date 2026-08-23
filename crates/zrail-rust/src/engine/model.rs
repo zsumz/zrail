@@ -41,7 +41,6 @@ pub(crate) fn load_model_with_bundle(
         .retain(|file| cargo.source_is_active(&file.relative));
     let mut source = index_rust_source(&inventory, &bundle.contract.source.rust);
     let graph = source_graph::analyze(&bundle.contract, &inventory, &cargo, &source);
-    canonicalize_dependency_roots(&mut source, &cargo, &graph.packages, &graph.module_edges);
     for file in &mut source.files {
         file.packages = graph
             .packages
@@ -54,6 +53,7 @@ pub(crate) fn load_model_with_bundle(
             .copied()
             .unwrap_or_default();
     }
+    canonicalize_dependency_roots(&mut source, &cargo, &graph.packages, &graph.module_edges);
     source.findings.extend(graph.findings);
     let item_macro_findings = source_graph::review_item_macros(&bundle.contract, &source);
     source.findings.extend(item_macro_findings);

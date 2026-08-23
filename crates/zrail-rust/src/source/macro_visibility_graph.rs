@@ -2,19 +2,19 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use super::{MacroImportFact, ResolvedModuleEdge, SourceIndex};
-
-const MAX_EDGES_PER_MODULE: usize = 4;
-const MAX_IMPORTS_PER_NAME: usize = 4;
+use super::macro_visibility_reachability::{
+    Edges, VisibilityNode, bounded_nodes, insert_reachable, intersect_edges,
+};
+use super::{MacroImportFact, Reachability};
 
 #[derive(Default)]
 pub(super) struct MacroVisibility {
-    imports: BTreeMap<(String, String), Vec<MacroImportFact>>,
-    import_overflow: BTreeSet<(String, String)>,
-    children: BTreeMap<(String, String), Vec<String>>,
-    child_overflow: BTreeSet<(String, String)>,
-    parents: BTreeMap<String, Vec<String>>,
-    parent_overflow: BTreeSet<String>,
+    pub(super) imports: BTreeMap<(String, String), Vec<MacroImportFact>>,
+    pub(super) import_overflow: BTreeSet<(String, String)>,
+    pub(super) children: BTreeMap<(String, String), Edges>,
+    pub(super) child_overflow: BTreeSet<(String, String)>,
+    pub(super) parents: BTreeMap<String, Edges>,
+    pub(super) parent_overflow: BTreeSet<String>,
 }
 
 pub(super) enum VisibilityLookup<'a> {
@@ -23,26 +23,18 @@ pub(super) enum VisibilityLookup<'a> {
 }
 
 impl MacroVisibility {
-    pub(super) fn collect(index: &SourceIndex, module_edges: &[ResolvedModuleEdge]) -> Self {
-        let mut visibility = Self::default();
-        for file in &index.files {
-            for import in &file.macro_imports {
-                visibility.insert_import(&file.relative, import);
-            }
-        }
-        for edge in module_edges {
-            visibility.insert_edge(&edge.parent, &edge.module_name, &edge.child);
-        }
-        visibility
-    }
-
-    pub(super) fn imports_for<'a>(&'a self, file: &str, path: &str) -> VisibilityLookup<'a> {
+    pub(super) fn imports_for<'a>(
+        &'a self,
+        file: &str,
+        path: &str,
+        reachability: Reachability,
+    ) -> VisibilityLookup<'a> {
         let segments = path.split("::").collect::<Vec<_>>();
         let Some((name, prefix)) = segments.split_last() else {
             return VisibilityLookup::Unknown;
         };
         let root = prefix.first().copied();
-        let Some(mut nodes) = self.start_nodes(file, root) else {
+        let Some(mut nodes) = self.start_nodes(file, root, reachability) else {
             return VisibilityLookup::Unknown;
         };
         let mut module_index = 1;
@@ -63,8 +55,11 @@ impl MacroVisibility {
             nodes = next;
         }
         let mut imports = Vec::new();
-        for node in nodes {
-            let key = (node, (*name).to_owned());
+        for node in nodes
+            .into_iter()
+            .filter(|node| node.reachability.covers(reachability))
+        {
+            let key = (node.file, (*name).to_owned());
             if self.import_overflow.contains(&key) {
                 return VisibilityLookup::Unknown;
             }
@@ -73,12 +68,21 @@ impl MacroVisibility {
         VisibilityLookup::Known(imports)
     }
 
-    fn start_nodes(&self, file: &str, root: Option<&str>) -> Option<Vec<String>> {
+    fn start_nodes(
+        &self,
+        file: &str,
+        root: Option<&str>,
+        reachability: Reachability,
+    ) -> Option<Vec<VisibilityNode>> {
+        let node = VisibilityNode {
+            file: file.to_owned(),
+            reachability,
+        };
         match root {
-            Some("self") => Some(vec![file.to_owned()]),
-            Some("super") => self.parent_nodes_or_inline(file),
-            Some("crate") => self.root_nodes(file),
-            Some(module) => self.child_nodes(&[file.to_owned()], module),
+            Some("self") => Some(vec![node]),
+            Some("super") => self.parent_nodes_or_inline(&node),
+            Some("crate") => self.root_nodes(node),
+            Some(module) => self.child_nodes(&[node], module),
             None => None,
         }
     }
@@ -94,120 +98,86 @@ impl MacroVisibility {
         self.children.contains_key(&key) || self.child_overflow.contains(&key)
     }
 
-    fn child_nodes(&self, nodes: &[String], module: &str) -> Option<Vec<String>> {
-        let mut children = Vec::new();
+    fn child_nodes(&self, nodes: &[VisibilityNode], module: &str) -> Option<Vec<VisibilityNode>> {
+        let mut children = Edges::new();
         for node in nodes {
-            let key = (node.clone(), module.to_owned());
+            let key = (node.file.clone(), module.to_owned());
             if self.child_overflow.contains(&key) {
                 return None;
             }
-            children.extend(self.children.get(&key).into_iter().flatten().cloned());
+            for (child, edge_reachability) in self.children.get(&key).into_iter().flatten() {
+                insert_reachable(
+                    &mut children,
+                    child,
+                    node.reachability.intersection(*edge_reachability),
+                );
+            }
         }
-        children.sort();
-        children.dedup();
-        (children.len() <= MAX_EDGES_PER_MODULE).then_some(children)
+        bounded_nodes(children)
     }
 
-    fn parent_nodes(&self, file: &str) -> Option<Vec<String>> {
-        if self.parent_overflow.contains(file) {
-            None
-        } else {
-            self.parents.get(file).cloned()
+    fn parent_nodes(&self, node: &VisibilityNode) -> Option<Vec<VisibilityNode>> {
+        if self.parent_overflow.contains(&node.file) {
+            return None;
         }
+        let edges = self.parents.get(&node.file)?;
+        bounded_nodes(intersect_edges(edges, node.reachability))
     }
 
-    fn parent_nodes_or_inline(&self, file: &str) -> Option<Vec<String>> {
-        if self.parent_overflow.contains(file) {
+    fn parent_nodes_or_inline(&self, node: &VisibilityNode) -> Option<Vec<VisibilityNode>> {
+        if self.parent_overflow.contains(&node.file) {
             None
         } else {
-            Some(
-                self.parents
-                    .get(file)
-                    .cloned()
-                    .unwrap_or_else(|| vec![file.to_owned()]),
+            self.parents.get(&node.file).map_or_else(
+                || Some(vec![node.clone()]),
+                |edges| bounded_nodes(intersect_edges(edges, node.reachability)),
             )
         }
     }
 
-    fn parents_of(&self, nodes: &[String]) -> Option<Vec<String>> {
-        let mut parents = Vec::new();
+    fn parents_of(&self, nodes: &[VisibilityNode]) -> Option<Vec<VisibilityNode>> {
+        let mut parents = Edges::new();
         for node in nodes {
-            parents.extend(self.parent_nodes(node)?);
+            for parent in self.parent_nodes(node)? {
+                insert_reachable(&mut parents, &parent.file, parent.reachability);
+            }
         }
-        parents.sort();
-        parents.dedup();
-        (!parents.is_empty() && parents.len() <= MAX_EDGES_PER_MODULE).then_some(parents)
+        if parents.is_empty() {
+            None
+        } else {
+            bounded_nodes(parents)
+        }
     }
 
-    fn root_nodes(&self, file: &str) -> Option<Vec<String>> {
-        let mut current = vec![file.to_owned()];
+    fn root_nodes(&self, node: VisibilityNode) -> Option<Vec<VisibilityNode>> {
+        let mut current = vec![node];
         let mut seen = BTreeSet::new();
         loop {
-            let mut parents = Vec::new();
+            let mut parents = Edges::new();
+            let mut roots = Vec::new();
             for node in &current {
-                if !seen.insert(node.clone()) || self.parent_overflow.contains(node) {
+                if !seen.insert(node.clone()) || self.parent_overflow.contains(&node.file) {
                     return None;
                 }
-                parents.extend(self.parents.get(node).into_iter().flatten().cloned());
+                let Some(edges) = self.parents.get(&node.file) else {
+                    roots.push(node.clone());
+                    continue;
+                };
+                for (parent, edge_reachability) in edges {
+                    insert_reachable(
+                        &mut parents,
+                        parent,
+                        node.reachability.intersection(*edge_reachability),
+                    );
+                }
             }
-            parents.sort();
-            parents.dedup();
+            if !roots.is_empty() {
+                return parents.is_empty().then_some(roots);
+            }
             if parents.is_empty() {
-                return Some(current);
+                return Some(Vec::new());
             }
-            if parents.len() > MAX_EDGES_PER_MODULE {
-                return None;
-            }
-            current = parents;
-        }
-    }
-
-    fn insert_import(&mut self, file: &str, import: &MacroImportFact) {
-        let key = (file.to_owned(), import.name.clone());
-        insert_bounded(
-            &mut self.imports,
-            &mut self.import_overflow,
-            key,
-            import.clone(),
-            MAX_IMPORTS_PER_NAME,
-        );
-    }
-
-    fn insert_edge(&mut self, parent: &str, name: &str, child: &str) {
-        insert_bounded(
-            &mut self.children,
-            &mut self.child_overflow,
-            (parent.to_owned(), name.to_owned()),
-            child.to_owned(),
-            MAX_EDGES_PER_MODULE,
-        );
-        insert_bounded(
-            &mut self.parents,
-            &mut self.parent_overflow,
-            child.to_owned(),
-            parent.to_owned(),
-            MAX_EDGES_PER_MODULE,
-        );
-    }
-}
-
-fn insert_bounded<K: Ord + Clone, V: Ord>(
-    map: &mut BTreeMap<K, Vec<V>>,
-    overflow: &mut BTreeSet<K>,
-    key: K,
-    value: V,
-    limit: usize,
-) {
-    if overflow.contains(&key) {
-        return;
-    }
-    let values = map.entry(key.clone()).or_default();
-    match values.binary_search(&value) {
-        Ok(_) => {}
-        Err(index) if values.len() < limit => values.insert(index, value),
-        Err(_) => {
-            map.remove(&key);
-            overflow.insert(key);
+            current = bounded_nodes(parents)?;
         }
     }
 }

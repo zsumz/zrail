@@ -21,13 +21,16 @@ mod macro_inputs;
 mod macro_model;
 mod macro_origins;
 mod macro_visibility;
+mod macro_visibility_collect;
 mod macro_visibility_graph;
+mod macro_visibility_reachability;
 mod model;
 mod module_edge;
 mod modules;
 mod parse;
 mod parse_facade;
 mod paths;
+mod reachability;
 mod scoped_globs;
 mod scoped_imports;
 mod visitor;
@@ -44,10 +47,11 @@ pub(crate) use macro_model::{
 };
 pub(crate) use model::{
     IncludeBoundary, IncludeContext, MacroImportFact, ModuleDeclaration, ObservedFact,
-    Reachability, ReachabilityKind, RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
+    RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
 };
 pub(crate) use module_edge::ResolvedModuleEdge;
 pub(crate) use parse::index_rust_source;
 pub(crate) use paths::{
     ModuleTarget, ResolutionError, SubmoduleBase, join_relative, module_target, parent,
 };
+pub(crate) use reachability::{Reachability, ReachabilityKind};

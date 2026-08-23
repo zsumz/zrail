@@ -4,7 +4,10 @@ use std::collections::BTreeSet;
 
 use zrail_core::AnalysisQuality;
 
-use super::super::{MacroCandidate, MacroDerivation, MacroExpansionFact, ObservedFact};
+use super::super::{
+    MacroCandidate, MacroDerivation, MacroExpansionFact, ObservedFact, Reachability,
+    ReachabilityKind,
+};
 
 use super::{MacroVisibility, imported_candidate};
 
@@ -32,7 +35,12 @@ fn repository_globs_remove_only_the_redundant_unresolved_spelling() {
     );
     let local = BTreeSet::from(["reviewed"]);
 
-    MacroVisibility::default().resolve(&mut invocation, "src/lib.rs", Some(&local));
+    MacroVisibility::default().resolve(
+        &mut invocation,
+        "src/lib.rs",
+        Reachability::from_kind(ReachabilityKind::Production),
+        Some(&local),
+    );
 
     assert_eq!(invocation.candidates.len(), 1);
     assert_eq!(invocation.candidates[0].observation.name, "super::reviewed");
@@ -56,7 +64,12 @@ fn unknown_or_external_names_remain_conservative() {
         ],
     );
 
-    MacroVisibility::default().resolve(&mut invocation, "src/lib.rs", Some(&BTreeSet::new()));
+    MacroVisibility::default().resolve(
+        &mut invocation,
+        "src/lib.rs",
+        Reachability::from_kind(ReachabilityKind::Production),
+        Some(&BTreeSet::new()),
+    );
 
     assert_eq!(invocation.candidates.len(), 2);
 }

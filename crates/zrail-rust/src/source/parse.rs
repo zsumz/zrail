@@ -6,10 +6,11 @@ use zrail_core::{AnalysisQuality, Finding, RustSourceContract};
 use crate::inventory::{FileClass, RepositoryInventory};
 
 use super::{
+    Reachability,
     attributes::has_module_docs,
     depth::check_syntax_depth,
     imports::ImportMap,
-    model::{Reachability, RustFileFacts, SourceIndex, SourceSyntax},
+    model::{RustFileFacts, SourceIndex, SourceSyntax},
     modules::module_declarations,
     visitor::FactVisitor,
 };
