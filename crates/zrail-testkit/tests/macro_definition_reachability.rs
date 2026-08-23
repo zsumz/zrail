@@ -152,11 +152,13 @@ macro_rules! assert { ($($tokens:tt)*) => {}; }
 pub fn run() { assert!(true); }
 ";
 
-const TEST_TARGET_ROOT: &str = r"//! Library.
-#[cfg(test)]
-mod worker_test;
-pub fn run() { assert!(true); }
-";
+const TEST_TARGET_ROOT: &str = concat!(
+    "//! Library.\n",
+    "#[cfg(test)]\n",
+    "mod worker",
+    "_test;\n",
+    "pub fn run() { assert!(true); }\n",
+);
 
 const TEST_TARGET_DEFINITION: &str = r"//! Test support.
 macro_rules! assert { ($($tokens:tt)*) => {}; }
