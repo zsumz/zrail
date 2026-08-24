@@ -43,7 +43,7 @@ impl IncludeBindings {
             .get(&source.file)
             .is_some_and(|scopes| {
                 scopes.iter().any(|(opaque, guard)| {
-                    guard.available_in(context)
+                    guard.availability_in(context).is_available()
                         && if exact_scope {
                             opaque == scope
                         } else {

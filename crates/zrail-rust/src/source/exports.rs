@@ -9,9 +9,9 @@ pub(crate) use super::{
     macro_binding_policy::BindingMacroPolicy,
     macro_model::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin},
     model::{
-        BindingAnchor, BindingKind, BindingVisibility, FactNamespace, ImportBindingFact,
-        IncludeBoundary, IncludeContext, MacroImportFact, ModuleBinding, ModuleDeclaration,
-        ObservedFact, RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
+        BindingAnchor, BindingKind, BindingVisibility, FactNamespace, GuardAvailability,
+        ImportBindingFact, IncludeBoundary, IncludeContext, MacroImportFact, ModuleBinding,
+        ModuleDeclaration, ObservedFact, RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
     },
     module_edge::{CompilationModuleEdge, ResolvedModuleEdge},
     parse::index_rust_source,

@@ -100,7 +100,8 @@ impl IncludeBindings {
             } else {
                 binding.lexical_scope.len() >= floor && scope.starts_with(&binding.lexical_scope)
             };
-            if binding.guard.available_in(context) && visible {
+            let availability = binding.guard.availability_in(context);
+            if availability.is_available() && visible {
                 let mut binding = binding.clone();
                 binding.quality = binding.quality.max(self.visibility_quality(
                     &binding.visibility,
@@ -189,7 +190,8 @@ impl IncludeBindings {
             .flat_map(|bindings| &bindings.globs)
         {
             budget.consume_work()?;
-            if binding.lexical_scope.is_empty() && binding.guard.available_in(context) {
+            let availability = binding.guard.availability_in(context);
+            if binding.lexical_scope.is_empty() && availability.is_available() {
                 let Some(module) = self.effective_module(instance, &[], budget)? else {
                     continue;
                 };

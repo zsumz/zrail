@@ -114,9 +114,11 @@ impl IncludeBindings {
         for id in self.instances.for_file(file) {
             budget.consume_work()?;
             if self.instances.get(*id).is_some_and(|instance| {
-                guard.available_in(SyntaxGuard::for_test_only(
-                    instance.domain.mode.enables_cfg_test(),
-                ))
+                guard
+                    .availability_in(SyntaxGuard::for_test_only(
+                        instance.domain.mode.enables_cfg_test(),
+                    ))
+                    .is_available()
             }) {
                 active.push(*id);
             }

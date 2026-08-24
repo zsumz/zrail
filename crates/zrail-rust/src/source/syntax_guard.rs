@@ -1,6 +1,6 @@
-//! Syntax guards model production and test compilation overlap explicitly.
+//! Syntax guards retain exact and possible production/test-domain availability.
 
-use super::SyntaxGuard;
+use super::{GuardAvailability, SyntaxGuard};
 
 impl SyntaxGuard {
     pub(crate) const fn for_test_only(test_only: bool) -> Self {
@@ -12,7 +12,11 @@ impl SyntaxGuard {
     }
 
     pub(crate) const fn available_in(self, context: Self) -> bool {
-        match self.domain() {
+        self.availability_in(context).is_available()
+    }
+
+    pub(crate) const fn availability_in(self, context: Self) -> GuardAvailability {
+        let available = match self.domain() {
             Self::Ordinary => true,
             Self::TestOnly => matches!(context.domain(), Self::TestOnly),
             Self::ProductionOnly => {
@@ -22,6 +26,13 @@ impl SyntaxGuard {
             | Self::Conditional
             | Self::ConditionalTestOnly
             | Self::ConditionalProductionOnly => false,
+        };
+        if !available {
+            GuardAvailability::Absent
+        } else if self.is_conditional() || context.is_conditional() {
+            GuardAvailability::Possible
+        } else {
+            GuardAvailability::Exact
         }
     }
 
@@ -81,6 +92,12 @@ impl SyntaxGuard {
             Self::ConditionalProductionOnly => Self::ProductionOnly,
             value => value,
         }
+    }
+}
+
+impl GuardAvailability {
+    pub(crate) const fn is_available(self) -> bool {
+        !matches!(self, Self::Absent)
     }
 }
 

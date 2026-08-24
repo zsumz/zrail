@@ -19,6 +19,13 @@ pub(crate) enum SyntaxGuard {
     Never,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum GuardAvailability {
+    Absent,
+    Exact,
+    Possible,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct ObservedFact {
     pub(crate) name: String,

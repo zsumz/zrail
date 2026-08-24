@@ -4,6 +4,8 @@ use zrail_core::{AnalysisQuality, Report};
 
 use super::{assert_no_owner_findings, check, fixture, reset, write, write_executor, write_lock};
 
+#[path = "namespace_deep_audit/conditional_guards.rs"]
+mod conditional_guards;
 #[path = "namespace_deep_audit/editions.rs"]
 mod editions;
 #[path = "namespace_deep_audit/macro_opacity.rs"]

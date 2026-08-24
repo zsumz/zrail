@@ -34,9 +34,10 @@ impl IncludeBindings {
             .flatten()
         {
             budget.consume_work()?;
+            let availability = binding.guard.availability_in(context);
             if binding.name.as_deref() == Some(name)
                 && binding.lexical_scope.is_empty()
-                && binding.guard.available_in(context)
+                && availability.is_available()
             {
                 let Some(module) = self.effective_module(instance, &[], budget)? else {
                     continue;

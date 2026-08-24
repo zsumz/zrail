@@ -67,7 +67,7 @@ impl TraversalContext {
     fn with_guard(&self, guard: crate::source::SyntaxGuard) -> Option<Self> {
         let guard = self.guard.combine(guard);
         let domain = crate::source::SyntaxGuard::for_test_only(self.domain.mode.enables_cfg_test());
-        if !guard.available_in(domain) {
+        if !guard.availability_in(domain).is_available() {
             return None;
         }
         Some(Self {

@@ -54,7 +54,8 @@ impl IncludeBindings {
             } else {
                 binding.lexical_scope.len() >= floor && scope.starts_with(&binding.lexical_scope)
             };
-            if binding.guard.available_in(context) && visible {
+            let availability = binding.guard.availability_in(context);
+            if availability.is_available() && visible {
                 let mut binding = binding.clone();
                 binding.quality = binding.quality.max(self.visibility_quality(
                     &binding.visibility,
