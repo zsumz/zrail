@@ -42,19 +42,7 @@ pub(crate) fn canonicalize(
     let macro_visibility = super::macro_visibility::MacroVisibility::collect(index, module_edges);
     let mut findings = Vec::new();
     for file in &mut index.files {
-        let selected: Vec<&Package> = contexts.get(&file.relative).map_or_else(
-            || {
-                package_for_file(&cargo.packages, &file.relative)
-                    .into_iter()
-                    .collect()
-            },
-            |names| {
-                names
-                    .iter()
-                    .filter_map(|name| packages.get(name.as_str()).copied())
-                    .collect()
-            },
-        );
+        let selected = selected_packages(contexts, &packages, &cargo.packages, &file.relative);
         for expansion in file
             .macro_expansions
             .iter_mut()
@@ -103,19 +91,12 @@ pub(crate) fn canonicalize(
     );
     findings.extend(include_bindings.apply(index));
     for file in &mut index.files {
-        let selected: Vec<&Package> = contexts.get(&file.relative).map_or_else(
-            || {
-                package_for_file(&cargo.packages, &file.relative)
-                    .into_iter()
-                    .collect()
-            },
-            |names| {
-                names
-                    .iter()
-                    .filter_map(|name| packages.get(name.as_str()).copied())
-                    .collect()
-            },
-        );
+        findings.extend(super::calls::resolution_findings(
+            &file.relative,
+            &file.call_resolutions,
+            compilation_domains.get(&file.relative),
+        ));
+        let selected = selected_packages(contexts, &packages, &cargo.packages, &file.relative);
         let observed = super::canonical_observed::roots(file);
         let (roots, overflowed) = dependency_roots(&selected, &observed);
         findings.extend(
@@ -134,6 +115,23 @@ pub(crate) fn canonicalize(
         }
     }
     index.findings.extend(findings);
+}
+
+fn selected_packages<'a>(
+    contexts: &BTreeMap<String, BTreeSet<String>>,
+    packages: &BTreeMap<&'a str, &'a Package>,
+    all: &'a [Package],
+    file: &str,
+) -> Vec<&'a Package> {
+    contexts.get(file).map_or_else(
+        || package_for_file(all, file).into_iter().collect(),
+        |names| {
+            names
+                .iter()
+                .filter_map(|name| packages.get(name.as_str()).copied())
+                .collect()
+        },
+    )
 }
 
 fn dependency_roots(

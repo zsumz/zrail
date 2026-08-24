@@ -7,6 +7,10 @@ use super::{attributes::is_test_attribute, fact::fact, visitor::FactVisitor};
 
 impl FactVisitor<'_> {
     pub(super) fn record_call(&mut self, call: &ExprCall) {
+        if let Some(unresolved) = super::calls::unresolved_projection(call, self.syntax_guard()) {
+            self.call_resolutions.push(unresolved);
+            return;
+        }
         self.calls.extend(super::calls::facts(
             call,
             self.imports,

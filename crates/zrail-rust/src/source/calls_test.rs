@@ -4,7 +4,7 @@ use std::fmt::Write as _;
 
 use zrail_core::AnalysisQuality;
 
-use super::{ImportMap, SyntaxGuard, candidates, facts, macro_candidates};
+use super::{ImportMap, SyntaxGuard, candidates, facts, macro_candidates, unresolved_projection};
 
 #[test]
 fn aliases_resolve_to_the_exact_called_path() {
@@ -85,6 +85,23 @@ fn trait_qualified_calls_retain_the_named_trait_path() {
             fact.name == "Launch::launch" && fact.quality == AnalysisQuality::Exact
         })
     );
+}
+
+#[test]
+fn associated_type_qualified_calls_become_resolution_boundaries() {
+    let file = syn::parse_file(
+        "trait Provider { type Command; } struct Runtime; fn run() { <Runtime as Provider>::Command::new(\"git\"); }",
+    )
+    .expect("parse source");
+    let imports = ImportMap::from_file(&file);
+    let call = call(&file);
+
+    let boundary = unresolved_projection(call, SyntaxGuard::Ordinary)
+        .expect("associated type projection is unresolved");
+    let observed = facts(call, &imports, SyntaxGuard::Ordinary, &[], &[]);
+
+    assert_eq!(boundary.written, "<Runtime as Provider>::Command::new");
+    assert!(observed.is_empty());
 }
 
 #[test]

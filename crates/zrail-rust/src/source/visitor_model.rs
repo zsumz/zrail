@@ -3,7 +3,9 @@
 use super::{
     CompileEffectFact, MacroExpansionFact,
     imports::ImportMap,
-    model::{ImportBindingFact, IncludeBoundary, MacroDefinitionFact, ObservedFact},
+    model::{
+        CallResolutionFact, ImportBindingFact, IncludeBoundary, MacroDefinitionFact, ObservedFact,
+    },
 };
 
 #[derive(Debug)]
@@ -16,6 +18,7 @@ pub(super) struct FactVisitor<'a> {
     pub(super) next_path_namespace: super::FactNamespace,
     pub(super) paths: Vec<ObservedFact>,
     pub(super) calls: Vec<ObservedFact>,
+    pub(super) call_resolutions: Vec<CallResolutionFact>,
     pub(super) methods: Vec<ObservedFact>,
     pub(super) macros: Vec<ObservedFact>,
     pub(super) macro_expansions: Vec<MacroExpansionFact>,

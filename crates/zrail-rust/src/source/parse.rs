@@ -97,6 +97,7 @@ fn analysis_limit(path: &str, message: String) -> Finding {
 pub(super) fn fact_count(file: &RustFileFacts) -> usize {
     file.paths.len()
         + file.calls.len()
+        + file.call_resolutions.len()
         + file.methods.len()
         + file.macros.len()
         + file.macro_imports.len()
@@ -166,6 +167,7 @@ fn index_file_as(
         module_docs: has_module_docs(&syntax.attrs),
         paths: visitor.paths,
         calls: visitor.calls,
+        call_resolutions: visitor.call_resolutions,
         methods: visitor.methods,
         macros: visitor.macros,
         macro_imports: imports.macro_imports(),
@@ -203,6 +205,7 @@ fn index_expression(
         module_docs: false,
         paths: visitor.paths,
         calls: visitor.calls,
+        call_resolutions: visitor.call_resolutions,
         methods: visitor.methods,
         macros: visitor.macros,
         macro_imports: Vec::new(),

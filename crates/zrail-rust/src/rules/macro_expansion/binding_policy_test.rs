@@ -117,6 +117,7 @@ fn source(expansion: MacroExpansionFact) -> SourceIndex {
             module_docs: true,
             paths: Vec::new(),
             calls: Vec::new(),
+            call_resolutions: Vec::new(),
             methods: Vec::new(),
             macros: Vec::new(),
             macro_imports: Vec::new(),

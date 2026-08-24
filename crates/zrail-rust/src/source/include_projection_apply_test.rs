@@ -215,6 +215,7 @@ fn file(
         module_docs: true,
         paths: Vec::new(),
         calls,
+        call_resolutions: Vec::new(),
         methods: Vec::new(),
         macros: Vec::new(),
         macro_imports: Vec::new(),

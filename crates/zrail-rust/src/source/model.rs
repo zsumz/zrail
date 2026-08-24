@@ -38,6 +38,13 @@ pub(crate) struct ObservedFact {
     pub(crate) namespace: FactNamespace,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct CallResolutionFact {
+    pub(crate) written: String,
+    pub(crate) span: SourceSpan,
+    pub(crate) guard: SyntaxGuard,
+}
+
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub(crate) enum FactNamespace {
     #[default]
@@ -190,6 +197,7 @@ pub(crate) struct RustFileFacts {
     pub(crate) module_docs: bool,
     pub(crate) paths: Vec<ObservedFact>,
     pub(crate) calls: Vec<ObservedFact>,
+    pub(crate) call_resolutions: Vec<CallResolutionFact>,
     pub(crate) methods: Vec<ObservedFact>,
     pub(crate) macros: Vec<ObservedFact>,
     pub(crate) macro_imports: Vec<MacroImportFact>,

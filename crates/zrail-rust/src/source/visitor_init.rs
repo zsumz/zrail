@@ -44,6 +44,7 @@ impl<'a> FactVisitor<'a> {
             next_path_namespace: super::FactNamespace::Unknown,
             paths,
             calls: Vec::new(),
+            call_resolutions: Vec::new(),
             methods: Vec::new(),
             macros: Vec::new(),
             macro_expansions: Vec::new(),
