@@ -1,7 +1,11 @@
 //! Validation and deterministic ordering for resolved lock state.
 
+mod analysis;
 mod dependency;
+mod item_macros;
 mod macros;
+mod ratchets;
+mod receipts;
 
 use std::{fmt, path::Path};
 
@@ -12,16 +16,17 @@ impl LockFile {
     ///
     /// Rejects invalid headers, digests, paths, dependency identities, empty
     /// required values, non-positive ratchets, and duplicate canonical entries.
-    /// On success, packages, dependencies, features, generated roots, gates,
-    /// gate inputs, macro implementations, and ratchets are deterministic.
-    /// A failure may leave fields that were visited earlier partially sorted.
+    /// On success every repeated lock field has deterministic ordering.
     pub fn canonicalize(&mut self) -> Result<(), LockError> {
         validate_header(self)?;
+        analysis::canonicalize(self)?;
         canonicalize_packages(self)?;
         canonicalize_generated(self)?;
         canonicalize_gates(self)?;
+        receipts::canonicalize(self)?;
         macros::canonicalize(self)?;
-        canonicalize_ratchets(self)?;
+        item_macros::canonicalize(self)?;
+        ratchets::canonicalize(self)?;
         Ok(())
     }
 }
@@ -160,49 +165,6 @@ fn canonicalize_gates(lock: &mut LockFile) -> Result<(), LockError> {
     )
 }
 
-fn canonicalize_ratchets(lock: &mut LockFile) -> Result<(), LockError> {
-    for ratchet in &mut lock.ratchets {
-        if ratchet.rule.trim().is_empty() || ratchet.target.trim().is_empty() {
-            return Err(LockError(
-                "locked ratchets require non-empty rule and target".into(),
-            ));
-        }
-        if ratchet.value == 0 {
-            return Err(LockError(format!(
-                "locked ratchet {}:{} must be positive",
-                ratchet.rule, ratchet.target
-            )));
-        }
-        if let Some(selector) = &mut ratchet.selector {
-            if selector.trim().is_empty() {
-                return Err(LockError(format!(
-                    "locked ratchet {}:{} has an empty selector",
-                    ratchet.rule, ratchet.target
-                )));
-            }
-            *selector = crate::normalize_ratchet_selector(selector);
-        }
-    }
-    lock.ratchets.sort_by(|left, right| {
-        (&left.rule, &left.selector, &left.target).cmp(&(
-            &right.rule,
-            &right.selector,
-            &right.target,
-        ))
-    });
-    ensure_unique(
-        lock.ratchets.iter().map(|ratchet| {
-            format!(
-                "{}:{}:{}",
-                ratchet.rule,
-                ratchet.selector.as_deref().unwrap_or("<none>"),
-                ratchet.target
-            )
-        }),
-        "locked ratchet",
-    )
-}
-
 pub(super) fn valid_digest(digest: &str) -> bool {
     digest.len() == 64
         && digest
@@ -226,7 +188,10 @@ pub(super) fn valid_root(root: &str) -> bool {
             .is_ok_and(|normalized| !normalized.is_empty() && normalized == root)
 }
 
-fn ensure_unique<T>(values: impl Iterator<Item = T>, label: &str) -> Result<(), LockError>
+pub(super) fn ensure_unique<T>(
+    values: impl Iterator<Item = T>,
+    label: &str,
+) -> Result<(), LockError>
 where
     T: fmt::Display,
 {

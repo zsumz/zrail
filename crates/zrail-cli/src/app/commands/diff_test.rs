@@ -33,7 +33,10 @@ fn deny_grants_rejects_stale_contract_digest() {
 fn deny_grants_rejects_old_semantics() {
     let (before, after) = fixture("engine");
     write_lock(&before, |_| {});
-    write_lock(&after, |lock| lock.semantics = LOCK_SEMANTICS - 1);
+    write_lock(&after, |lock| {
+        lock.semantics = LOCK_SEMANTICS - 1;
+        lock.analysis = None;
+    });
 
     let output = diff(&options(&before, &after)).expect("compare incompatible lock");
 

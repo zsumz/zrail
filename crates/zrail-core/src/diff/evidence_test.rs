@@ -1,8 +1,27 @@
 //! Evidence and gate changes are classified by permission direction.
 
-use crate::{ChangeKind, GateContract, GateKind, InvariantContract, InvariantStatus};
+use crate::{
+    ChangeKind, GateContract, GateKind, InvariantContract, InvariantStatus, TestMirrorContract,
+};
 
-use super::{compare_gates, compare_invariants};
+use super::{compare_gates, compare_invariants, compare_test_mirrors};
+
+#[test]
+fn exact_test_mirror_changes_preserve_permission_direction() {
+    let mirror = test_mirror("tests/state_test.rs", "state_transitions");
+    let mut added = Vec::new();
+    compare_test_mirrors(&[], std::slice::from_ref(&mirror), &mut added);
+    assert_eq!(added[0].kind, ChangeKind::Revoke);
+
+    let mut removed = Vec::new();
+    compare_test_mirrors(std::slice::from_ref(&mirror), &[], &mut removed);
+    assert_eq!(removed[0].kind, ChangeKind::Grant);
+
+    let changed = test_mirror("tests/new_state_test.rs", "state_transitions");
+    let mut replaced = Vec::new();
+    compare_test_mirrors(&[mirror], &[changed], &mut replaced);
+    assert_eq!(replaced[0].kind, ChangeKind::Unknown);
+}
 
 #[test]
 fn adding_graph_nodes_revokes_permission_and_removing_them_grants_it() {
@@ -95,5 +114,15 @@ fn invariant(evidence: Vec<String>) -> InvariantContract {
         status: InvariantStatus::Enforced,
         document: "docs/architecture.md#arch-01".into(),
         evidence,
+    }
+}
+
+fn test_mirror(test: &str, name: &str) -> TestMirrorContract {
+    TestMirrorContract {
+        production: "src/state.rs".into(),
+        test: test.into(),
+        name: name.into(),
+        receipt: "evidence/state.json".into(),
+        reason: "Exact state transition coverage".into(),
     }
 }

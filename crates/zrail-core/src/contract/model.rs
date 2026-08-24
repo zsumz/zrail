@@ -3,24 +3,34 @@ mod analysis;
 mod dependencies;
 mod evidence;
 mod macros;
+mod repository;
 mod source;
 
 use super::modes::{
-    Effect, ExactMode, ExternalDependencyMode, FacadeMode, LintSuppressionMode, ModuleDocsMode,
-    OwnerKind, PolicyMode, SymlinkMode, TestMode,
+    Effect, ExternalDependencyMode, FacadeMode, LintSuppressionMode, ModuleDocsMode, OwnerKind,
+    PolicyMode, TestMode,
 };
 pub use analysis::{AnalysisContract, AnalysisLimits};
-pub use dependencies::{CrateRootContract, CrateRootSource, DependenciesContract};
-pub use evidence::{GateContract, GateKind, InvariantContract, InvariantStatus};
+pub use dependencies::{
+    CrateRootContract, CrateRootSource, DependenciesContract, DependencyEdgeKind,
+    DependencyReachability,
+};
+pub use evidence::{
+    GateContract, GateKind, InvariantContract, InvariantStatus, TestMirrorContract,
+};
 pub use macros::{MacroExpansionAllow, MacroExpansionContract};
+pub use repository::RepositoryContract;
 use serde::{Deserialize, Serialize};
-pub use source::{FileRole, FileRoleContract, ItemMacroContract};
+pub use source::{
+    FileRole, FileRoleContract, ItemMacroBinding, ItemMacroBindingKind, ItemMacroContract,
+    ItemMacroManifest,
+};
 use std::collections::BTreeMap;
 
 #[rustfmt::skip]
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 #[doc = "Fully merged and validated architecture policy loaded from `zrail.toml`."] pub struct Contract {
-    #[doc = "Contract-format version; the current loader accepts schema `1`."] pub schema: u64,
+    #[doc = "Contract-format version; the current loader accepts schemas `1` and `2`."] pub schema: u64,
     #[doc = "Language adapters required to analyze the governed repository."] pub adapters: Vec<String>,
     #[doc = "Repository layout and containment policy."] pub repository: RepositoryContract,
     #[doc = "Package dependency topology policy."] pub dependencies: DependenciesContract,
@@ -30,23 +40,10 @@ use std::collections::BTreeMap;
     #[doc = "Ordered package-layer declarations."] pub layers: Vec<LayerContract>,
     #[doc = "Named cross-package dependency prohibitions."] pub dependency_rules: Vec<DependencyRule>,
     #[doc = "Named source scopes used by symbol restrictions."] pub scopes: Vec<ScopeContract>,
-    #[doc = "Named ownership rules for calls, capabilities, or directories."] pub owners: Vec<OwnerContract>,
+    #[doc = "Named allow-list ownership rules for governed source relationships."] pub owners: Vec<OwnerContract>,
     #[doc = "Tightening-only measured limits."] pub ratchets: Vec<RatchetContract>,
     #[doc = "Executable qualification gates."] pub gates: Vec<GateContract>,
     #[doc = "Documented promises with validated evidence references."] pub invariants: Vec<InvariantContract>,
-}
-
-#[rustfmt::skip]
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-#[doc = "Repository roots, exclusions, and containment policy."] pub struct RepositoryContract {
-    #[doc = "Repository-relative directories included in architecture analysis."] pub roots: Vec<String>,
-    #[serde(default)]
-    #[doc = "Repository-relative patterns excluded from analysis."] pub exclude: Vec<String>,
-    #[doc = "Required relationship between declared and discovered workspace members."] pub workspace_members: ExactMode,
-    #[doc = "Policy for nested Git repositories beneath governed roots."] pub nested_git: PolicyMode,
-    #[doc = "Policy for Git submodules beneath governed roots."] pub submodules: PolicyMode,
-    #[doc = "Policy for symbolic links beneath governed roots."] pub symlinks: SymlinkMode,
 }
 
 #[rustfmt::skip]
@@ -71,6 +68,8 @@ use std::collections::BTreeMap;
     #[doc = "Build-script output included into source with an explicit authority chain."] pub out_dir: Vec<OutDirSourceContract>,
     #[serde(default)]
     #[doc = "Reviewed item-producing macro invocations."] pub item_macros: Vec<ItemMacroContract>,
+    #[serde(default)]
+    #[doc = "Exact production-to-test mirrors backed by versioned execution receipts."] pub test_mirrors: Vec<TestMirrorContract>,
     #[serde(default)]
     #[doc = "Procedural-macro expansion and input-inspection policy."] pub macros: MacroExpansionContract,
     #[doc = "Unsafe-code, lint-suppression, and denied-operation policy."] pub hygiene: HygieneContract,
@@ -185,6 +184,10 @@ impl Default for LayerDependencies { fn default() -> Self { Self { external: Ext
     #[doc = "Package-name pattern selecting dependency origins."] pub from: String,
     #[serde(default)]
     #[doc = "Package-name patterns rejected as dependency destinations."] pub deny: Vec<String>,
+    #[serde(default)]
+    #[doc = "Whether the denial covers immediate edges or every resolved dependency path."] pub reachability: DependencyReachability,
+    #[serde(default)]
+    #[doc = "First-edge Cargo dependency kinds covered by the rule; empty means every kind."] pub kinds: Vec<DependencyEdgeKind>,
     #[doc = "Human explanation of the prohibited dependency direction."] pub reason: String,
 }
 
@@ -212,13 +215,13 @@ impl Default for LayerDependencies { fn default() -> Self { Self { external: Ext
 #[rustfmt::skip]
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-#[doc = "Allow-list boundary for a selected call, capability, or directory owner."] pub struct OwnerContract {
+#[doc = "Allow-list boundary for one governed source relationship."] pub struct OwnerContract {
     #[doc = "Stable owner-rule name used in findings and semantic diffs."] pub name: String,
     #[doc = "Kind of source relationship selected by this rule."] pub kind: OwnerKind,
-    #[serde(default)] #[doc = "Source reachability to which call and capability ownership applies."] pub reachability: super::PolicyReachability,
+    #[serde(default)] #[doc = "Source reachability to which this ownership rule applies."] pub reachability: super::PolicyReachability,
     #[serde(default)] #[doc = "Repository-relative patterns limiting where the rule is evaluated."] pub within: Vec<String>,
     #[serde(rename = "match")]
-    #[doc = "Call, capability, or directory identity governed by this rule."] pub selector: String,
+    #[doc = "Canonical source relationship identity governed by this rule."] pub selector: String,
     #[doc = "Package or source identities permitted to own the selected boundary."] pub allow: Vec<String>,
     #[doc = "Human explanation of the ownership boundary."] pub reason: String,
 }

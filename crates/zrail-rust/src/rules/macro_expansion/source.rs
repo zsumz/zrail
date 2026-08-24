@@ -3,7 +3,7 @@
 use zrail_core::{CrateRootSource, MacroExpansionAllow};
 
 use crate::{
-    cargo::source_matches,
+    cargo::{ResolvedCargoGraph, source_matches},
     source::{MacroCandidate, MacroOrigin},
 };
 
@@ -12,11 +12,12 @@ use super::failure::MacroBindingFailure;
 pub(super) fn failures(
     candidate: &MacroCandidate,
     allowance: &MacroExpansionAllow,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
 ) -> Vec<MacroBindingFailure> {
     let mut failures = candidate
         .origins
         .iter()
-        .filter_map(|origin| mismatch(candidate, allowance, origin))
+        .filter_map(|origin| mismatch(candidate, allowance, origin, resolved_cargo))
         .collect::<Vec<_>>();
     failures.sort();
     failures.dedup();
@@ -27,6 +28,7 @@ fn mismatch(
     candidate: &MacroCandidate,
     allowance: &MacroExpansionAllow,
     origin: &MacroOrigin,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
 ) -> Option<MacroBindingFailure> {
     match origin {
         MacroOrigin::CompilerBuiltin
@@ -46,10 +48,9 @@ fn mismatch(
             })
         }
         MacroOrigin::External { package, source }
-            if allowance
-                .source
-                .as_ref()
-                .is_none_or(|allowed| !source_matches(allowed, source)) =>
+            if allowance.source.as_ref().is_none_or(|allowed| {
+                !matches_external(allowed, package, source, resolved_cargo)
+            }) =>
         {
             Some(source_mismatch(
                 allowance,
@@ -58,6 +59,30 @@ fn mismatch(
         }
         _ => None,
     }
+}
+
+fn matches_external(
+    allowed: &CrateRootSource,
+    package: &str,
+    observed: &crate::cargo::DependencySource,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
+) -> bool {
+    let CrateRootSource::CargoLock {
+        package: selected,
+        version,
+        source,
+    } = allowed
+    else {
+        return source_matches(allowed, observed);
+    };
+    let Some(graph) = resolved_cargo else {
+        return false;
+    };
+    graph
+        .lookup(selected, version.as_deref(), source.as_deref())
+        .ok()
+        .filter(|identity| identity.name == package)
+        .is_some_and(|identity| graph.source_matches(identity, observed).unwrap_or(false))
 }
 
 fn source_mismatch(
@@ -75,3 +100,7 @@ fn source_mismatch(
         observed,
     }
 }
+
+#[cfg(test)]
+#[path = "source_test.rs"]
+mod source_test;

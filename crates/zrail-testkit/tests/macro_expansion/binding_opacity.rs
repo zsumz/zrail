@@ -62,10 +62,12 @@ fn serde_fixture(name: &str, binding_clean: bool) -> PathBuf {
         ),
     )
     .expect("write serde dependency");
-    zrail_rust::build_lock(&root, "zrail.toml".as_ref())
-        .expect("build serde fixture lock")
-        .write(&root.join("zrail.lock"))
-        .expect("write serde fixture lock");
+    if binding_clean {
+        zrail_rust::build_lock(&root, "zrail.toml".as_ref())
+            .expect("build complete serde fixture lock")
+            .write(&root.join("zrail.lock"))
+            .expect("write complete serde fixture lock");
+    }
     root
 }
 
@@ -127,10 +129,6 @@ fn proc_macro_fixture(name: &str, source: &str, allowance: &str) -> PathBuf {
         .expect("write proc-macro manifest");
     fs::write(root.join("emit_import/src/lib.rs"), PROC_MACRO_SOURCE)
         .expect("write proc-macro source");
-    zrail_rust::build_lock(&root, "zrail.toml".as_ref())
-        .expect("build proc-macro fixture lock")
-        .write(&root.join("zrail.lock"))
-        .expect("write proc-macro fixture lock");
     root
 }
 

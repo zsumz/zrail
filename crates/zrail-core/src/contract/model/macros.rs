@@ -26,10 +26,10 @@ pub struct MacroExpansionAllow {
     #[serde(default)]
     /// Whether invocations must expose their token input to analysis.
     pub inputs: MacroInputMode,
-    #[serde(default)]
+    #[serde(default, rename = "resolution", alias = "binding")]
     /// Confidence required to bind invocations to this authority.
     pub binding: MacroBindingMode,
-    #[serde(default)]
+    #[serde(default, rename = "namespace_effect", alias = "bindings")]
     /// Whether exact review proves zero ordinary-namespace delta for this expansion.
     pub bindings: MacroExpansionBindings,
     #[serde(default, skip_serializing_if = "Option::is_none")]

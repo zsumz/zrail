@@ -18,7 +18,90 @@ use super::{
 pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
     let gates = gates::validate(contract, errors);
     graph::validate(&gates, errors);
+    validate_test_mirrors(contract, errors);
     validate_invariants(contract, &gates, errors);
+}
+
+fn validate_test_mirrors(contract: &Contract, errors: &mut ValidationErrors) {
+    let mut productions = BTreeSet::new();
+    let mut tests = BTreeSet::new();
+    let mut receipts = BTreeSet::new();
+    for mirror in &contract.source.rust.test_mirrors {
+        validate_mirror_path(contract, &mirror.production, "production", "rs", errors);
+        validate_mirror_path(contract, &mirror.test, "test", "rs", errors);
+        validate_mirror_path(contract, &mirror.receipt, "receipt", "json", errors);
+        if mirror.production == mirror.test {
+            errors.push(format!(
+                "test mirror production and test paths must differ: {:?}",
+                mirror.production
+            ));
+        }
+        if !super::evidence::valid_identifier(&mirror.name) {
+            errors.push(format!(
+                "test mirror {:?} has an invalid exact test name {:?}",
+                mirror.production, mirror.name
+            ));
+        }
+        super::validate_sets::require_reason(
+            "test mirror",
+            &mirror.production,
+            &mirror.reason,
+            errors,
+        );
+        insert_mirror_identity(&mut productions, &mirror.production, "production", errors);
+        insert_mirror_identity(&mut tests, &mirror.test, "test", errors);
+        insert_mirror_identity(&mut receipts, &mirror.receipt, "receipt", errors);
+        for path in [&mirror.production, &mirror.test] {
+            if !inside_roots(contract, path) {
+                errors.push(format!(
+                    "test mirror source {path:?} must be inside repository.roots"
+                ));
+            }
+        }
+    }
+}
+
+fn validate_mirror_path(
+    contract: &Contract,
+    path: &str,
+    label: &str,
+    extension: &str,
+    errors: &mut ValidationErrors,
+) {
+    validate_repository_literal(path, errors);
+    if path == "." {
+        errors.push(format!("test mirror {label} must name a file"));
+    } else if path == "zrail.lock" {
+        errors.push("zrail.lock cannot serve as test-mirror evidence".into());
+    } else if Path::new(path).extension() != Some(OsStr::new(extension)) {
+        errors.push(format!(
+            "test mirror {label} must name a .{extension} file: {path:?}"
+        ));
+    }
+    if gates::excluded(contract, path) {
+        errors.push(format!(
+            "test mirror {label} is hidden by repository.exclude: {path:?}"
+        ));
+    }
+}
+
+fn insert_mirror_identity<'a>(
+    values: &mut BTreeSet<&'a str>,
+    value: &'a str,
+    label: &str,
+    errors: &mut ValidationErrors,
+) {
+    if !values.insert(value) {
+        errors.push(format!("test mirror reuses {label} path {value:?}"));
+    }
+}
+
+fn inside_roots(contract: &Contract, path: &str) -> bool {
+    contract
+        .repository
+        .roots
+        .iter()
+        .any(|root| root == "." || path == root || path.starts_with(&format!("{root}/")))
 }
 
 fn validate_invariants(

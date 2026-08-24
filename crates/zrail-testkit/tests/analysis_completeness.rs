@@ -32,7 +32,35 @@ fn complete_analysis_returns_an_in_memory_candidate() {
         .expect("check complete analysis");
 
     assert!(checked.analysis.is_complete());
-    assert!(checked.candidate_lock.is_some());
+    let certificate = checked
+        .candidate_lock
+        .as_ref()
+        .and_then(|lock| lock.analysis.as_ref())
+        .expect("complete candidate certificate");
+    assert_eq!(certificate.packages, 1);
+    assert_eq!(certificate.targets, 1);
+    assert_eq!(certificate.physical_rust_files, 1);
+    assert_eq!(certificate.unresolved_bindings, 0);
+    assert_eq!(certificate.contract_sources.len(), 1);
+    assert!(checked.report.analysis.complete);
+    assert_eq!(checked.report.analysis.rust_files, 1);
+    reset(&root);
+}
+
+#[test]
+fn completeness_certificate_binds_exact_cargo_lock_bytes() {
+    let root = fixture("cargo-lock-certificate", "//! Complete source.\n");
+    let lock = "version = 3\n\n[[package]]\nname = \"fixture\"\nversion = \"0.0.0\"\n";
+    fs::write(root.join("Cargo.lock"), lock).expect("write Cargo.lock");
+    let before = build_lock(&root, "zrail.toml".as_ref()).expect("build first lock");
+    fs::write(root.join("Cargo.lock"), format!("{lock}\n")).expect("change Cargo.lock bytes");
+    let after = build_lock(&root, "zrail.toml".as_ref()).expect("build second lock");
+
+    let before = before.analysis.expect("first certificate");
+    let after = after.analysis.expect("second certificate");
+    assert!(before.cargo_lock_sha256.is_some());
+    assert_ne!(before.cargo_lock_sha256, after.cargo_lock_sha256);
+    assert_ne!(before.inventory_sha256, after.inventory_sha256);
     reset(&root);
 }
 

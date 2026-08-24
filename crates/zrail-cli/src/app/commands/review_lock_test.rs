@@ -34,6 +34,7 @@ fn old_proposed_semantics_fail_explicitly() {
     let lock_path = fixture.proposal.join("zrail.lock");
     let mut lock = LockFile::read(&lock_path).expect("read proposed lock");
     lock.semantics = zrail_core::LOCK_SEMANTICS - 1;
+    lock.analysis = None;
     lock.write(&lock_path).expect("write old proposed lock");
 
     let result = review(&options(&fixture)).expect("review old proposed lock");

@@ -1,14 +1,15 @@
 //! Cargo dependency roots canonicalize policy paths without hiding source spelling.
 
+mod packages;
+
 use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::{AnalysisQuality, Finding};
 
-use crate::cargo::{CrateRootAuthority, Package, rust_crate_root};
-
 use super::{
     CanonicalizationContext, ObservedFact, SourceIndex, macro_definitions::MacroDefinitions,
 };
+use packages::{dependency_roots, selected_packages};
 
 const MAX_IDENTITIES_PER_ROOT: usize = 4;
 
@@ -42,6 +43,7 @@ pub(crate) fn canonicalize(
         analysis_limits.derived_source_instances,
     );
     let macro_visibility = super::macro_visibility::MacroVisibility::collect(index, module_edges);
+    super::operation_canonical::apply(index, compilation_roots, compilation_edges);
     let mut findings = Vec::new();
     for file in &mut index.files {
         let selected = selected_packages(contexts, &packages, &cargo.packages, &file.relative);
@@ -111,6 +113,11 @@ pub(crate) fn canonicalize(
             .paths
             .iter_mut()
             .chain(&mut file.calls)
+            .chain(
+                file.operations
+                    .iter_mut()
+                    .map(|operation| &mut operation.identity),
+            )
             .chain(&mut file.macros)
             .chain(&mut file.item_macros)
         {
@@ -118,57 +125,6 @@ pub(crate) fn canonicalize(
         }
     }
     index.findings.extend(findings);
-}
-
-fn selected_packages<'a>(
-    contexts: &BTreeMap<String, BTreeSet<String>>,
-    packages: &BTreeMap<&'a str, &'a Package>,
-    all: &'a [Package],
-    file: &str,
-) -> Vec<&'a Package> {
-    contexts.get(file).map_or_else(
-        || package_for_file(all, file).into_iter().collect(),
-        |names| {
-            names
-                .iter()
-                .filter_map(|name| packages.get(name.as_str()).copied())
-                .collect()
-        },
-    )
-}
-
-fn dependency_roots(
-    packages: &[&Package],
-    observed: &BTreeSet<String>,
-) -> (BTreeMap<String, BTreeSet<String>>, BTreeSet<String>) {
-    let mut roots = BTreeMap::<String, BTreeSet<String>>::new();
-    let mut overflowed = BTreeSet::new();
-    for package in packages {
-        for dependency in &package.dependencies {
-            if dependency.crate_root_authority == CrateRootAuthority::Unresolved {
-                continue;
-            }
-            let crate_root = rust_crate_root(&dependency.crate_root);
-            if !observed.contains(&crate_root) || overflowed.contains(&crate_root) {
-                continue;
-            }
-            let canonical = rust_crate_root(&dependency.name);
-            let identities = roots.entry(crate_root.clone()).or_default();
-            if identities.len() == MAX_IDENTITIES_PER_ROOT && !identities.contains(&canonical) {
-                overflowed.insert(crate_root);
-            } else {
-                identities.insert(canonical);
-            }
-        }
-    }
-    (roots, overflowed)
-}
-
-fn package_for_file<'a>(packages: &'a [Package], file: &str) -> Option<&'a Package> {
-    packages
-        .iter()
-        .filter(|package| package.contains_file(file))
-        .max_by_key(|package| package.directory.len())
 }
 
 fn canonicalize_fact(fact: &mut ObservedFact, roots: &BTreeMap<String, BTreeSet<String>>) {

@@ -1,16 +1,22 @@
 //! Loading the shared repository fact model once per command.
 
-use std::path::{Path, PathBuf};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    path::{Path, PathBuf},
+};
 
 use zrail_core::{ContractBundle, load_contract, repository_file};
 
 use crate::{
-    cargo::{CargoWorkspace, apply_attestations, load_cargo_workspace},
+    cargo::{
+        CargoWorkspace, ResolvedCargoGraph, apply_attestations, load_cargo_workspace,
+        validate_resolved_sources,
+    },
     inventory::{RepositoryInventory, inventory_repository},
     rules::source_graph,
     source::{
-        CanonicalizationContext, ResolvedModuleEdge, SourceIndex, canonicalize_dependency_roots,
-        index_rust_source,
+        CanonicalizationContext, CompilationDomain, ResolvedModuleEdge, SourceIndex,
+        canonicalize_dependency_roots, index_rust_source,
     },
 };
 
@@ -21,7 +27,10 @@ pub(crate) struct RepositoryModel {
     pub(crate) bundle: ContractBundle,
     pub(crate) inventory: RepositoryInventory,
     pub(crate) cargo: CargoWorkspace,
+    pub(crate) resolved_cargo: Option<ResolvedCargoGraph>,
     pub(crate) source: SourceIndex,
+    pub(crate) item_macro_manifests: Vec<zrail_core::LockedItemMacroManifest>,
+    pub(crate) compilation_domains: BTreeMap<String, BTreeSet<CompilationDomain>>,
     pub(crate) module_edges: Vec<ResolvedModuleEdge>,
 }
 
@@ -39,11 +48,17 @@ pub(crate) fn load_model_with_bundle(
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     let mut cargo = load_cargo_workspace(&inventory)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
+    let resolved_cargo = ResolvedCargoGraph::load(&inventory.root, &cargo.packages)
+        .map_err(|error| CheckError::from_message(error.to_string()))?;
+    validate_resolved_sources(resolved_cargo.as_ref(), &bundle.contract)
+        .map_err(|error| CheckError::from_message(error.to_string()))?;
     apply_attestations(&mut cargo, &bundle.contract.dependencies.crate_roots);
     inventory
         .rust_files
         .retain(|file| cargo.source_is_active(&file.relative));
     let mut source = index_rust_source(&inventory, &bundle.contract.source.rust);
+    let item_macro_manifests =
+        super::item_macro_manifests::apply(&inventory, &bundle.contract, &mut source)?;
     let graph = source_graph::analyze(&bundle.contract, &inventory, &cargo, &source);
     for file in &mut source.files {
         file.packages = graph
@@ -69,7 +84,9 @@ pub(crate) fn load_model_with_bundle(
             compilation_includes: &graph.compilation_includes,
             analysis_limits: &bundle.contract.analysis.limits,
         },
-        |source| crate::rules::binding_macro_policy(&bundle.contract, source),
+        |source| {
+            crate::rules::binding_macro_policy(&bundle.contract, source, resolved_cargo.as_ref())
+        },
     );
     source.findings.extend(graph.findings);
     let item_macro_findings = source_graph::review_item_macros(&bundle.contract, &source);
@@ -78,7 +95,10 @@ pub(crate) fn load_model_with_bundle(
         bundle,
         inventory,
         cargo,
+        resolved_cargo,
         source,
+        item_macro_manifests,
+        compilation_domains: graph.compilation_domains,
         module_edges: graph.module_edges,
     })
 }

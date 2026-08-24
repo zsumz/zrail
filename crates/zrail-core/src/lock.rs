@@ -1,17 +1,28 @@
 //! Canonical dependency, generated-provenance, and tightening-ratchet state.
 
+mod analysis;
 mod canonical;
 mod dependency;
+mod error;
 mod file;
+mod item_macro;
+mod macro_source;
+mod receipt;
+mod state;
 use serde::{Deserialize, Serialize};
-use std::{error::Error, fmt};
 
+pub use analysis::{LockedAnalysis, LockedContractSource};
 pub use dependency::LockedDependencySource;
+pub use error::LockError;
+pub use item_macro::LockedItemMacroManifest;
+pub use macro_source::LockedMacroSource;
+pub use receipt::LockedExecutionReceipt;
+pub use state::{LockedGate, LockedGateInput, LockedGeneratedSource, LockedMacroImplementation};
 
 /// Lock TOML format version supported by this crate.
-pub const LOCK_SCHEMA: u64 = 1;
+pub const LOCK_SCHEMA: u64 = 2;
 /// Resolved-architecture interpretation version produced by this crate.
-pub const LOCK_SEMANTICS: u64 = 2;
+pub const LOCK_SEMANTICS: u64 = 3;
 
 /// Canonical, contract-bound architecture state stored in `zrail.lock`.
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
@@ -25,6 +36,9 @@ pub struct LockFile {
     pub producer: String,
     /// Lowercase SHA-256 digest of the governing contract bytes.
     pub contract_sha256: String,
+    /// Complete analyzed-universe certificate; required by current semantics.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub analysis: Option<LockedAnalysis>,
     /// Observed packages and their source-aware dependencies.
     #[serde(default, rename = "package")]
     pub packages: Vec<LockedPackage>,
@@ -34,6 +48,13 @@ pub struct LockFile {
     /// Qualification entry points and content-bound inputs.
     #[serde(default, rename = "gate", skip_serializing_if = "Vec::is_empty")]
     pub gates: Vec<LockedGate>,
+    /// Exact execution receipts whose bytes grant test-mirror authority.
+    #[serde(
+        default,
+        rename = "execution_receipt",
+        skip_serializing_if = "Vec::is_empty"
+    )]
+    pub execution_receipts: Vec<LockedExecutionReceipt>,
     /// Procedural-macro packages bound to their manifests.
     #[serde(
         default,
@@ -41,56 +62,23 @@ pub struct LockFile {
         skip_serializing_if = "Vec::is_empty"
     )]
     pub macro_implementations: Vec<LockedMacroImplementation>,
+    /// Cargo.lock-resolved packages whose exact identity grants macro authority.
+    #[serde(
+        default,
+        rename = "macro_source",
+        skip_serializing_if = "Vec::is_empty"
+    )]
+    pub macro_sources: Vec<LockedMacroSource>,
+    /// Exact item-macro namespace manifests.
+    #[serde(
+        default,
+        rename = "item_macro_manifest",
+        skip_serializing_if = "Vec::is_empty"
+    )]
+    pub item_macro_manifests: Vec<LockedItemMacroManifest>,
     /// Measured tightening-ratchet values.
     #[serde(default, rename = "ratchet")]
     pub ratchets: Vec<LockedRatchet>,
-}
-
-/// A generated-source root bound to a reviewed provenance manifest.
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct LockedGeneratedSource {
-    /// Normalized repository-relative generated-source root.
-    pub root: String,
-    /// Lowercase SHA-256 digest of the provenance manifest.
-    pub manifest_sha256: String,
-}
-
-/// A qualification gate bound to its executable bytes and declared inputs.
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct LockedGate {
-    /// Stable gate name from the contract.
-    pub name: String,
-    /// Normalized repository-relative path to the gate entry point.
-    pub path: String,
-    /// Lowercase SHA-256 digest of the gate entry point.
-    pub sha256: String,
-    /// Additional files whose bytes participate in gate authority.
-    #[serde(default, rename = "input", skip_serializing_if = "Vec::is_empty")]
-    pub inputs: Vec<LockedGateInput>,
-}
-
-/// One additional file whose bytes are part of a qualification gate.
-#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct LockedGateInput {
-    /// Normalized repository-relative input path.
-    pub path: String,
-    /// Lowercase SHA-256 digest of the input file.
-    pub sha256: String,
-}
-
-/// A macro-providing package bound to its declaring manifest.
-#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct LockedMacroImplementation {
-    /// Cargo package name that provides the macro implementation.
-    pub package: String,
-    /// Normalized repository-relative package directory.
-    pub directory: String,
-    /// Lowercase SHA-256 digest of the package manifest.
-    pub manifest_sha256: String,
 }
 
 /// One observed Cargo package and its resolved direct dependencies.
@@ -174,18 +162,6 @@ pub struct LockedRatchet {
     pub value: usize,
 }
 
-/// Human-readable lock parsing, validation, serialization, or I/O failure.
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct LockError(String);
-
-impl fmt::Display for LockError {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        formatter.write_str(&self.0)
-    }
-}
-
-impl Error for LockError {}
-
 impl LockFile {
     /// Creates empty state for `contract_sha256` using current lock versions.
     ///
@@ -197,10 +173,14 @@ impl LockFile {
             semantics: LOCK_SEMANTICS,
             producer: env!("CARGO_PKG_VERSION").into(),
             contract_sha256: contract_sha256.into(),
+            analysis: Some(LockedAnalysis::default()),
             packages: Vec::new(),
             generated: Vec::new(),
             gates: Vec::new(),
+            execution_receipts: Vec::new(),
             macro_implementations: Vec::new(),
+            macro_sources: Vec::new(),
+            item_macro_manifests: Vec::new(),
             ratchets: Vec::new(),
         }
     }
@@ -222,10 +202,18 @@ impl LockFile {
     pub fn same_resolved_state(&self, other: &Self) -> bool {
         self.semantics == other.semantics
             && self.contract_sha256 == other.contract_sha256
+            && match (&self.analysis, &other.analysis) {
+                (Some(left), Some(right)) => left.same_authority(right),
+                (None, None) => true,
+                _ => false,
+            }
             && self.packages == other.packages
             && self.generated == other.generated
             && self.gates == other.gates
+            && self.execution_receipts == other.execution_receipts
             && self.macro_implementations == other.macro_implementations
+            && self.macro_sources == other.macro_sources
+            && self.item_macro_manifests == other.item_macro_manifests
             && self.ratchets == other.ratchets
     }
 }

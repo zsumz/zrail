@@ -73,6 +73,7 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
 fn immutable_source(source: &CrateRootSource) -> bool {
     match source {
         CrateRootSource::Legacy => false,
+        CrateRootSource::CargoLock { .. } => true,
         CrateRootSource::Registry { requirement, .. } => exact_registry_pin(requirement),
         CrateRootSource::Git {
             branch, tag, rev, ..

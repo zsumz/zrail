@@ -199,6 +199,7 @@ pub(crate) struct RustFileFacts {
     pub(crate) calls: Vec<ObservedFact>,
     pub(crate) call_resolutions: Vec<CallResolutionFact>,
     pub(crate) methods: Vec<ObservedFact>,
+    pub(crate) operations: Vec<super::operation_model::SourceOperationFact>,
     pub(crate) macros: Vec<ObservedFact>,
     pub(crate) macro_imports: Vec<MacroImportFact>,
     pub(crate) macro_expansions: Vec<MacroExpansionFact>,

@@ -3,8 +3,8 @@
 use std::collections::BTreeMap;
 
 use crate::contract::{
-    Budget, Contract, CycleMode, DependenciesContract, DependencyMode, ExactMode, FacadeMode,
-    FileSizeContract, GeneratedSourceContract, HygieneContract, LintSuppressionMode,
+    AnalysisContract, Budget, Contract, CycleMode, DependenciesContract, DependencyMode, ExactMode,
+    FacadeMode, FileSizeContract, GeneratedSourceContract, HygieneContract, LintSuppressionMode,
     ModuleDocsMode, PolicyMode, RepositoryContract, RustSourceContract, SourceContract,
     SymlinkMode, TestMode,
 };
@@ -50,7 +50,7 @@ pub(super) fn minimal_contract() -> Contract {
             cycles: CycleMode::Allow,
             crate_roots: Vec::new(),
         },
-        analysis: Default::default(),
+        analysis: AnalysisContract::default(),
         source: SourceContract {
             rust: RustSourceContract {
                 module_docs: ModuleDocsMode::Allow,
@@ -61,6 +61,7 @@ pub(super) fn minimal_contract() -> Contract {
                 generated: Vec::new(),
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),
+                test_mirrors: Vec::new(),
                 macros: crate::MacroExpansionContract::default(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Allow,

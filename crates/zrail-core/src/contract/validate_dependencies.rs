@@ -25,6 +25,14 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
             ));
         }
         validate_source(&attestation.source, &attestation.package, errors);
+        if let CrateRootSource::CargoLock { package, .. } = &attestation.source
+            && package != &attestation.package
+        {
+            errors.push(format!(
+                "dependency crate-root attestation for {:?} selects different Cargo.lock package {package:?}",
+                attestation.package
+            ));
+        }
         if !identities.insert((attestation.package.as_str(), attestation.source.identity())) {
             errors.push(format!(
                 "duplicate dependency crate-root attestation for {:?} at {}",
@@ -42,6 +50,17 @@ pub(super) fn validate_source(
 ) {
     let invalid = match source {
         CrateRootSource::Legacy => false,
+        CrateRootSource::CargoLock {
+            package,
+            version,
+            source,
+        } => {
+            validate_package_name(package, errors);
+            version
+                .as_ref()
+                .is_some_and(|value| value.trim().is_empty())
+                || source.as_ref().is_some_and(|value| value.trim().is_empty())
+        }
         CrateRootSource::Registry {
             registry,
             index,

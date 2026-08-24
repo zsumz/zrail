@@ -64,13 +64,28 @@ fn validate_selector(allowance: &crate::ItemMacroContract, errors: &mut Validati
 }
 
 fn validate_binding(allowance: &crate::ItemMacroContract, errors: &mut ValidationErrors) {
-    let Some(source) = &allowance.source else {
+    if let Some(source) = &allowance.source {
+        validate_dependencies::validate_source(source, &allowance.name, errors);
+    }
+    if allowance.source.is_some() && allowance.binding != Some(MacroBindingMode::Exact) {
+        errors.push(format!(
+            "item macro authority {:?} requires resolution = \"exact\" when source is set",
+            allowance.name
+        ));
+    }
+    let Some(manifest) = &allowance.manifest else {
         return;
     };
-    validate_dependencies::validate_source(source, &allowance.name, errors);
+    validate_repository_literal(manifest, errors);
+    if allowance.path.is_none() || !allowance.within.is_empty() {
+        errors.push(format!(
+            "item macro authority {:?} with an exact manifest requires one exact path",
+            allowance.name
+        ));
+    }
     if allowance.binding != Some(MacroBindingMode::Exact) {
         errors.push(format!(
-            "item macro authority {:?} requires binding = \"exact\" when source is set",
+            "item macro authority {:?} with an exact manifest requires resolution = \"exact\"",
             allowance.name
         ));
     }

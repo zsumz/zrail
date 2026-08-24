@@ -143,7 +143,7 @@ impl FactVisitor<'_> {
         }
     }
 
-    fn resolve_text_scoped(
+    pub(super) fn resolve_text_scoped(
         &self,
         path: &str,
     ) -> (String, AnalysisQuality, bool, bool, super::SyntaxGuard) {

@@ -15,12 +15,17 @@ package_tmp=$(mktemp -d "${TMPDIR:-/tmp}/zrail-package-check.XXXXXX")
 trap 'rm -rf -- "$package_tmp"' EXIT
 
 packages=(zrail-core zrail-rust zrail)
+source_core_patch="patch.crates-io.zrail-core.path = '$repo_root/crates/zrail-core'"
+source_rust_patch="patch.crates-io.zrail-rust.path = '$repo_root/crates/zrail-rust'"
 for package in "${packages[@]}"; do
     package_args=(--package "$package" --allow-dirty --locked --offline)
     if [[ "$package" == "zrail-core" ]]; then
         cargo package "${package_args[@]}"
+    elif [[ "$package" == "zrail-rust" ]]; then
+        cargo package "${package_args[@]}" --no-verify --config "$source_core_patch"
     else
-        cargo package "${package_args[@]}" --no-verify --exclude-lockfile
+        cargo package "${package_args[@]}" --no-verify \
+            --config "$source_core_patch" --config "$source_rust_patch"
     fi
     archive="$package_target/package/$package-$version.crate"
     for required in LICENSE README.md; do

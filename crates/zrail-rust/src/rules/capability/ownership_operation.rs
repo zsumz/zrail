@@ -1,0 +1,122 @@
+//! Operation owners distinguish exact subjects from written method-name authority.
+
+use zrail_core::{AnalysisQuality, Finding, FindingSink, OwnerContract, OwnerKind};
+
+use crate::source::{ObservedFact, RustFileFacts, SourceOperationFact, SourceOperationKind};
+
+use super::{normalized_path, ownership::fact_applies, path_matches};
+
+pub(super) fn check(
+    owner: &OwnerContract,
+    file: &RustFileFacts,
+    findings: &mut FindingSink,
+) -> bool {
+    let facts = matching(owner, file);
+    if owner.kind != OwnerKind::MethodName
+        && let Some(fact) = facts
+            .iter()
+            .find(|fact| fact.quality != AnalysisQuality::Exact)
+    {
+        findings.push(
+            Finding::error(
+                "OWN-006",
+                &owner.name,
+                "ownership",
+                format!(
+                    "owned {} {} cannot be resolved to one exact Rust identity",
+                    operation_label(owner.kind),
+                    owner.selector,
+                ),
+            )
+            .at(&file.relative, fact.span)
+            .because(&owner.reason)
+            .with_analysis(fact.quality)
+            .with_help("use an exact type or receiver identity at the ownership boundary"),
+        );
+    }
+    !facts.is_empty()
+}
+
+pub(crate) fn matching<'a>(
+    owner: &OwnerContract,
+    file: &'a RustFileFacts,
+) -> Vec<&'a ObservedFact> {
+    file.operations
+        .iter()
+        .filter(|operation| operation_applies(owner, file, operation))
+        .map(|operation| &operation.identity)
+        .collect()
+}
+
+pub(crate) fn matching_operations<'a>(
+    owner: &'a OwnerContract,
+    file: &'a RustFileFacts,
+) -> impl Iterator<Item = &'a SourceOperationFact> + 'a {
+    file.operations
+        .iter()
+        .filter(|operation| operation_applies(owner, file, operation))
+}
+
+fn operation_applies(
+    owner: &OwnerContract,
+    file: &RustFileFacts,
+    operation: &SourceOperationFact,
+) -> bool {
+    let fact = &operation.identity;
+    operation_matches(owner.kind, operation.kind)
+        && fact_applies(owner, file, fact)
+        && selector_matches(owner, fact)
+}
+
+fn selector_matches(owner: &OwnerContract, fact: &ObservedFact) -> bool {
+    if owner.kind == OwnerKind::MethodName {
+        return normalized_path(&owner.selector) == normalized_path(&fact.name);
+    }
+    path_matches(&owner.selector, fact)
+        || (fact.quality != AnalysisQuality::Exact
+            && last_segment(&owner.selector) == last_segment(&fact.name))
+}
+
+fn last_segment(path: &str) -> &str {
+    path.rsplit("::")
+        .next()
+        .unwrap_or(path)
+        .strip_prefix("r#")
+        .unwrap_or_else(|| path.rsplit("::").next().unwrap_or(path))
+}
+
+const fn operation_matches(owner: OwnerKind, operation: SourceOperationKind) -> bool {
+    matches!(
+        (owner, operation),
+        (
+            OwnerKind::TypeConstruction,
+            SourceOperationKind::TypeConstruction
+        ) | (OwnerKind::MethodName, SourceOperationKind::MethodCall)
+            | (
+                OwnerKind::FieldRead | OwnerKind::FieldAuthority,
+                SourceOperationKind::FieldRead
+            )
+            | (
+                OwnerKind::FieldWrite | OwnerKind::FieldAuthority,
+                SourceOperationKind::FieldWrite
+            )
+            | (
+                OwnerKind::FieldMutableBorrow | OwnerKind::FieldAuthority,
+                SourceOperationKind::FieldMutableBorrow
+            )
+    )
+}
+
+const fn operation_label(kind: OwnerKind) -> &'static str {
+    match kind {
+        OwnerKind::TypeConstruction => "type construction",
+        OwnerKind::MethodName => "written method call",
+        OwnerKind::FieldRead => "field read",
+        OwnerKind::FieldWrite => "field write",
+        OwnerKind::FieldMutableBorrow => "field mutable borrow",
+        OwnerKind::FieldAuthority => "field access",
+        OwnerKind::Call => "call",
+        OwnerKind::Capability => "capability use",
+        OwnerKind::Directory => "directory use",
+    }
+}

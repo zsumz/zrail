@@ -53,7 +53,7 @@ fn forged_worktree_digest_cannot_hide_a_weaker_contract() {
 }
 
 #[test]
-fn untracked_first_lock_requires_explicit_bootstrap_authority() {
+fn grant_acceptance_cannot_replace_missing_immutable_authority() {
     let root = fixture_root("bootstrap");
     reset(&root);
     write_fixture(&root);
@@ -68,9 +68,10 @@ fn untracked_first_lock_requires_explicit_bootstrap_authority() {
     );
 
     options.accept_grants = true;
-    let accepted = update(&options).expect("accept explicit bootstrap");
-    assert_eq!(accepted.exit_code, 0);
-    assert!(root.join("zrail.lock").is_file());
+    let refused = update(&options).expect("refuse missing immutable base");
+    assert_eq!(refused.exit_code, 1);
+    assert!(refused.text.contains("immutable architecture authority"));
+    assert!(!root.join("zrail.lock").exists());
     reset(&root);
 }
 
@@ -106,6 +107,7 @@ fn options(root: &std::path::Path) -> UpdateOptions {
         },
         base: "HEAD".into(),
         accept_grants: false,
+        accept_migration: None,
     }
 }
 

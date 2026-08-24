@@ -17,13 +17,17 @@ const HELP: &str = concat!(
     "USAGE\n",
     "  zrail init [ROOT] [--preset zsumz|rust] [--exclude PATTERN] [--exclude-from FILE] [--baseline]\n",
     "  zrail check [--root ROOT] [--format human|json] [--max-findings N|all]\n",
+    "  zrail coverage [--root ROOT] [--config PATH] [--format human|json]\n",
     "  zrail baseline [--root ROOT] [--rule RULE] [--dry-run] [--format human|json] [--accept-grants]\n",
-    "  zrail update [--base REVISION] [--root ROOT] [--format human|json] [--accept-grants]\n",
+    "  zrail update [--base REVISION] [--root ROOT] [--format human|json] [--accept-migration sha256:DIGEST] [--accept-grants]\n",
     "  zrail doctor [--root ROOT] [--format human|json]\n",
     "  zrail explain --path PATH [--root ROOT] [--format human|json]\n",
     "  zrail review [--base REVISION] [--authority-root ROOT] --root PROPOSAL [--allow-grants] [--max-findings N|all]\n",
     "  zrail diff --base REVISION [--root ROOT] [--deny-grants]\n",
     "  zrail diff --before ROOT --after ROOT [--deny-grants]\n\n",
+    "  zrail migrate-config [--root ROOT] [--config PATH] [--write]\n",
+    "  zrail migrate-lock [--base REVISION] --output PATH [--root ROOT]\n",
+    "  zrail fmt [--root ROOT] [--config PATH] [--check]\n\n",
     "MODEL\n",
     "  zrail.toml   human architectural intent\n",
     "  zrail.lock   resolved exact state and ratchets\n",
@@ -40,6 +44,7 @@ pub(crate) fn run(arguments: impl IntoIterator<Item = OsString>) -> i32 {
 fn run_command(command: &Command) -> i32 {
     let result = match command {
         Command::Check(options) => commands::check(options),
+        Command::Coverage(options) => commands::coverage(options),
         Command::Doctor(options) => commands::doctor(options),
         Command::Baseline(options) => commands::baseline(options),
         Command::Update(options) => commands::update(options),
@@ -47,6 +52,9 @@ fn run_command(command: &Command) -> i32 {
         Command::Diff(options) => commands::diff(options),
         Command::Review(options) => commands::review(options),
         Command::Init(options) => commands::init(options),
+        Command::MigrateConfig(options) => commands::migrate_config(options),
+        Command::MigrateLock(options) => commands::migrate_lock(options),
+        Command::Fmt(options) => commands::format_config(options),
         Command::Help => return write_stdout(HELP, 0),
         Command::Version => {
             return write_stdout(concat!("zrail ", env!("CARGO_PKG_VERSION"), "\n"), 0);
@@ -61,12 +69,18 @@ fn run_command(command: &Command) -> i32 {
 fn command_format(command: &Command) -> OutputFormat {
     match command {
         Command::Check(options) | Command::Doctor(options) => options.format,
+        Command::Coverage(options) => options.format,
         Command::Update(options) => options.common.format,
         Command::Baseline(options) => options.common.format,
         Command::Explain { common, .. } => common.format,
         Command::Diff(options) => options.format,
         Command::Review(options) => options.common.format,
-        Command::Init(_) | Command::Help | Command::Version => OutputFormat::Human,
+        Command::Init(_)
+        | Command::MigrateConfig(_)
+        | Command::MigrateLock(_)
+        | Command::Fmt(_)
+        | Command::Help
+        | Command::Version => OutputFormat::Human,
     }
 }
 

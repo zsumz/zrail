@@ -18,6 +18,7 @@ const MAX_GIT_TREE_BYTES: usize = 64 * 1024 * 1024;
 #[derive(Debug)]
 pub(super) struct GitSnapshot {
     temporary: git_materialize::TemporaryRoot,
+    commit: String,
 }
 
 impl GitSnapshot {
@@ -37,11 +38,29 @@ impl GitSnapshot {
         let commit = resolve_commit(&repository, revision)?;
         let tree = read_tree(&repository, &commit)?;
         let temporary = git_materialize::materialize(&repository, &tree, config, lock)?;
-        Ok(Self { temporary })
+        Ok(Self { temporary, commit })
+    }
+
+    pub(super) fn create_repository(repository: &Path, revision: &OsStr) -> Result<Self, CliError> {
+        let repository = fs::canonicalize(repository).map_err(|error| {
+            CliError::new(format!(
+                "open Git repository {}: {error}",
+                repository.display()
+            ))
+        })?;
+        require_top_level(&repository)?;
+        let commit = resolve_commit(&repository, revision)?;
+        let tree = read_tree(&repository, &commit)?;
+        let temporary = git_materialize::materialize_repository(&repository, &tree)?;
+        Ok(Self { temporary, commit })
     }
 
     pub(super) fn root(&self) -> &Path {
         self.temporary.path()
+    }
+
+    pub(super) fn commit(&self) -> &str {
+        &self.commit
     }
 }
 
@@ -137,13 +156,29 @@ fn read_tree(repository: &Path, commit: &str) -> Result<BTreeMap<String, TreeEnt
         if fields.len() != 4 {
             return Err(CliError::new("Git returned malformed tree metadata"));
         }
-        if fields[1] != "blob" {
-            continue;
-        }
         if !matches!(fields[2].len(), 40 | 64)
             || !fields[2].bytes().all(|byte| byte.is_ascii_hexdigit())
         {
-            return Err(CliError::new("Git returned an invalid blob identifier"));
+            return Err(CliError::new("Git returned an invalid object identifier"));
+        }
+        if fields[1] == "commit" && fields[0] == "160000" {
+            if tree
+                .insert(
+                    normalized,
+                    TreeEntry {
+                        mode: fields[0].to_owned(),
+                        object: fields[2].to_owned(),
+                        size: 0,
+                    },
+                )
+                .is_some()
+            {
+                return Err(CliError::new("Git returned a duplicate tree path"));
+            }
+            continue;
+        }
+        if fields[1] != "blob" {
+            continue;
         }
         let size = fields[3]
             .parse::<usize>()

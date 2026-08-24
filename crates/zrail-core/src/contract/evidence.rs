@@ -52,7 +52,7 @@ pub(super) fn valid_name(value: &str) -> bool {
             .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_' | b'.'))
 }
 
-fn valid_identifier(value: &str) -> bool {
+pub(super) fn valid_identifier(value: &str) -> bool {
     let mut bytes = value.bytes();
     bytes
         .next()

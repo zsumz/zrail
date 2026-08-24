@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 
 use zrail_core::{AnalysisQuality, MacroBindingMode, MacroExpansionAllow};
 
+use crate::cargo::ResolvedCargoGraph;
 use crate::source::{
     MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin, SourceIndex,
 };
@@ -24,24 +25,29 @@ pub(super) enum MacroBindingResult<'a> {
 
 pub(super) fn review<'a>(
     source: &SourceIndex,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
     expansion: &'a MacroExpansionFact,
     allowed: &BTreeMap<&str, &MacroExpansionAllow>,
 ) -> MacroBindingResult<'a> {
-    review_with(expansion, allowed, |candidate, allowance| {
-        bindings::failure(source, candidate, allowance)
-    })
+    review_with(
+        expansion,
+        allowed,
+        |candidate, allowance| source::failures(candidate, allowance, resolved_cargo),
+        |candidate, allowance| bindings::failure(source, candidate, allowance),
+    )
 }
 
 pub(super) fn review_without_definitions<'a>(
     expansion: &'a MacroExpansionFact,
     allowed: &BTreeMap<&str, &MacroExpansionAllow>,
 ) -> MacroBindingResult<'a> {
-    review_with(expansion, allowed, |_, _| None)
+    review_with(expansion, allowed, |_, _| Vec::new(), |_, _| None)
 }
 
 fn review_with<'a>(
     expansion: &'a MacroExpansionFact,
     allowed: &BTreeMap<&str, &MacroExpansionAllow>,
+    source_failures: impl Fn(&MacroCandidate, &MacroExpansionAllow) -> Vec<MacroBindingFailure>,
     definition_failure: impl Fn(&MacroCandidate, &MacroExpansionAllow) -> Option<MacroBindingFailure>,
 ) -> MacroBindingResult<'a> {
     let mut matched = Vec::new();
@@ -80,7 +86,7 @@ fn review_with<'a>(
         } else {
             for name in &names {
                 let allowance = allowed[name];
-                reasons.extend(source::failures(candidate, allowance));
+                reasons.extend(source_failures(candidate, allowance));
                 reasons.extend(definition_failure(candidate, allowance));
             }
         }

@@ -10,21 +10,31 @@ use zrail_core::DiagnosticLimit;
 use super::{error::CliError, output::OutputFormat};
 
 mod baseline;
+mod common;
+mod coverage;
 mod diff;
+mod fmt;
 mod init;
 mod limit;
+mod migrate_config;
+mod migrate_lock;
 mod review;
 mod update;
 
 use limit::parse as parse_limit;
 
 pub(crate) use baseline::BaselineOptions;
+pub(crate) use coverage::CoverageOptions;
+pub(crate) use fmt::FmtOptions;
 pub(crate) use init::{InitOptions, InitPreset};
+pub(crate) use migrate_config::MigrateConfigOptions;
+pub(crate) use migrate_lock::MigrateLockOptions;
 pub(crate) use update::UpdateOptions;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) enum Command {
     Check(CommonOptions),
+    Coverage(CoverageOptions),
     Doctor(CommonOptions),
     Baseline(BaselineOptions),
     Update(UpdateOptions),
@@ -35,6 +45,9 @@ pub(crate) enum Command {
     Diff(DiffOptions),
     Review(ReviewOptions),
     Init(InitOptions),
+    MigrateConfig(MigrateConfigOptions),
+    MigrateLock(MigrateLockOptions),
+    Fmt(FmtOptions),
     Help,
     Version,
 }
@@ -71,18 +84,6 @@ pub(crate) struct ReviewOptions {
     pub(crate) allow_grants: bool,
 }
 
-impl Default for CommonOptions {
-    fn default() -> Self {
-        Self {
-            root: PathBuf::from("."),
-            config: PathBuf::from("zrail.toml"),
-            lock: PathBuf::from("zrail.lock"),
-            format: OutputFormat::Human,
-            limit: DiagnosticLimit::default(),
-        }
-    }
-}
-
 pub(crate) fn parse(arguments: impl IntoIterator<Item = OsString>) -> Result<Command, CliError> {
     let mut arguments = arguments.into_iter();
     let _program = arguments.next();
@@ -94,60 +95,23 @@ pub(crate) fn parse(arguments: impl IntoIterator<Item = OsString>) -> Result<Com
         .map_err(|_| CliError::new("command is not valid UTF-8"))?;
     let remaining = arguments.collect::<Vec<_>>();
     match command.as_str() {
-        "check" => Ok(Command::Check(parse_common_with_limit(&remaining)?)),
-        "doctor" => Ok(Command::Doctor(parse_common(&remaining)?)),
+        "check" => Ok(Command::Check(common::parse(&remaining, true)?)),
+        "coverage" => coverage::parse(&remaining),
+        "doctor" => Ok(Command::Doctor(common::parse(&remaining, false)?)),
         "baseline" => baseline::parse(&remaining),
         "update" => update::parse(&remaining),
         "explain" | "guide" => parse_explain(&remaining),
         "diff" => diff::parse(&remaining),
         "review" => review::parse(&remaining),
         "init" => init::parse(&remaining),
+        "migrate-config" => migrate_config::parse(&remaining),
+        "migrate-lock" => migrate_lock::parse(&remaining),
+        "fmt" => fmt::parse(&remaining),
         "help" | "--help" | "-h" => Ok(Command::Help),
         "version" | "--version" | "-V" => Ok(Command::Version),
         other => Err(CliError::new(format!("unknown command {other:?}"))
             .with_help("run `zrail help` for the supported command map")),
     }
-}
-
-fn parse_common(arguments: &[OsString]) -> Result<CommonOptions, CliError> {
-    parse_common_options(arguments, false)
-}
-
-fn parse_common_with_limit(arguments: &[OsString]) -> Result<CommonOptions, CliError> {
-    parse_common_options(arguments, true)
-}
-
-fn parse_common_options(
-    arguments: &[OsString],
-    allow_limit: bool,
-) -> Result<CommonOptions, CliError> {
-    let mut options = CommonOptions::default();
-    let mut limit_set = false;
-    let mut index = 0;
-    while index < arguments.len() {
-        let flag = as_string(&arguments[index])?;
-        match flag.as_str() {
-            "--root" => options.root = value(arguments, &mut index, "--root")?,
-            "--config" => options.config = value(arguments, &mut index, "--config")?,
-            "--lock" => options.lock = value(arguments, &mut index, "--lock")?,
-            "--format" => {
-                let value = value(arguments, &mut index, "--format")?;
-                options.format = parse_format(&value)?;
-            }
-            "--max-findings" | "--limit" if allow_limit && !limit_set => {
-                options.limit = parse_limit(&value(arguments, &mut index, &flag)?)?;
-                limit_set = true;
-            }
-            "--max-findings" | "--limit" if allow_limit => {
-                return Err(CliError::new(
-                    "--max-findings may be specified only once (deprecated --limit is an alias)",
-                ));
-            }
-            _ => return Err(CliError::new(format!("unknown option {flag:?}"))),
-        }
-        index += 1;
-    }
-    Ok(options)
 }
 
 fn parse_explain(arguments: &[OsString]) -> Result<Command, CliError> {

@@ -2,10 +2,10 @@
 
 pub(crate) use super::{
     canonical::canonicalize as canonicalize_dependency_roots,
-    canonical_context::CanonicalizationContext,
+    canonical_observed::CanonicalizationContext,
     compilation::{CompilationDomain, CompilationMode},
-    compile_effect_model::CompileEffectFact,
-    include_edge::{CompilationIncludeEdge, IncludeOccurrenceId},
+    compile_effects::CompileEffectFact,
+    includes::{CompilationIncludeEdge, IncludeOccurrenceId},
     macro_binding_policy::BindingMacroPolicy,
     macro_model::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin},
     model::{
@@ -13,7 +13,8 @@ pub(crate) use super::{
         ImportBindingFact, IncludeBoundary, IncludeContext, MacroImportFact, ModuleBinding,
         ModuleDeclaration, ObservedFact, RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
     },
-    module_edge::{CompilationModuleEdge, ResolvedModuleEdge},
+    modules::{CompilationModuleEdge, ResolvedModuleEdge},
+    operation_model::{SourceOperationFact, SourceOperationKind},
     parse::{fact_count, index_rust_source},
     paths::{ModuleTarget, ResolutionError, SubmoduleBase, join_relative, module_target, parent},
     reachability::{Reachability, ReachabilityKind},
@@ -21,3 +22,6 @@ pub(crate) use super::{
         CompilationRoot, SourceEntry, SourceInstanceId, SourceInstanceIssue, SourceInstances,
     },
 };
+
+#[cfg(test)]
+pub(crate) use super::model::SourceAnalysisMetrics;

@@ -73,7 +73,7 @@ fn current_locks_separate_format_semantics_and_producer() {
 
     let rendered = lock.render().expect("render current lock");
 
-    assert!(rendered.contains("schema = 1\nsemantics = 2\nproducer = \""));
+    assert!(rendered.contains("schema = 2\nsemantics = 3\nproducer = \""));
     assert!(!rendered.contains("\nengine = "));
 }
 
@@ -231,6 +231,23 @@ fn optional_read_rejects_a_dangling_lock_alias() {
 
     assert!(error.to_string().contains("symlink"));
     fs::remove_dir_all(root).expect("remove fixture");
+}
+
+#[test]
+fn current_semantics_require_a_complete_analysis_certificate() {
+    let mut missing = LockFile::new("0".repeat(64));
+    missing.analysis = None;
+    let error = missing.render().expect_err("missing certificate must fail");
+    assert!(error.to_string().contains("analysis certificate"));
+
+    let mut unresolved = LockFile::new("0".repeat(64));
+    unresolved
+        .analysis
+        .as_mut()
+        .expect("default certificate")
+        .unresolved_bindings = 1;
+    let error = unresolved.render().expect_err("partial analysis must fail");
+    assert!(error.to_string().contains("unresolved analysis"));
 }
 
 fn dependency(

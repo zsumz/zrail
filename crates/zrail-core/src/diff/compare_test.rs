@@ -138,6 +138,7 @@ fn generated_selector_removal_auxiliary_and_item_macro_trust_are_grants() {
         within: Vec::new(),
         binding: None,
         source: None,
+        manifest: None,
         reason: "local macro emits no source edges".into(),
     });
 

@@ -5,6 +5,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use crate::{CrateRootSource, DependencyEdgeKind, DependencyReachability};
+
 use super::{load_contract, load_contract_with_entry};
 
 #[test]
@@ -113,6 +115,81 @@ fn profile_reachability_accepts_only_closed_policy_values() {
         load_contract(&root, Path::new("zrail.toml")).expect_err("unknown reachability must fail");
 
     assert!(error.to_string().contains("unknown variant `tests`"));
+    reset(&root);
+}
+
+#[test]
+fn dependency_rules_default_to_direct_and_accept_transitive_kinds() {
+    let root = fixture_root("dependency-reachability");
+    reset(&root);
+    fs::create_dir_all(&root).expect("create root");
+    let source = format!(
+        concat!(
+            "{}\n",
+            "[[dependency]]\nname = 'direct'\nfrom = 'app'\n",
+            "deny = ['blocked']\nreason = 'direct boundary'\n\n",
+            "[[dependency]]\nname = 'transitive'\nfrom = 'tool'\n",
+            "deny = ['blocked']\nreachability = 'transitive'\n",
+            "kinds = ['normal', 'build']\nreason = 'resolved boundary'\n",
+        ),
+        base_contract("")
+    );
+    fs::write(root.join("zrail.toml"), source).expect("write contract");
+
+    let contract = load_contract(&root, Path::new("zrail.toml"))
+        .expect("load dependency policy")
+        .contract;
+
+    assert_eq!(
+        contract.dependency_rules[0].reachability,
+        DependencyReachability::Direct
+    );
+    assert!(contract.dependency_rules[0].kinds.is_empty());
+    assert_eq!(
+        contract.dependency_rules[1].reachability,
+        DependencyReachability::Transitive
+    );
+    assert_eq!(
+        contract.dependency_rules[1].kinds,
+        [DependencyEdgeKind::Normal, DependencyEdgeKind::Build]
+    );
+    reset(&root);
+}
+
+#[test]
+fn cargo_lock_source_selector_accepts_exact_discriminators() {
+    let root = fixture_root("cargo-lock-source");
+    reset(&root);
+    fs::create_dir_all(&root).expect("create root");
+    let source = format!(
+        concat!(
+            "{}\n",
+            "[source.rust.macros]\nmode = 'deny-unreviewed'\n",
+            "[[source.rust.macros.allow]]\nname = 'codegen_macro::generate'\n",
+            "resolution = 'exact'\nnamespace_effect = 'none'\n",
+            "reason = 'reviewed locked expansion'\n",
+            "[source.rust.macros.allow.source]\nkind = 'cargo-lock'\n",
+            "package = 'codegen-macro'\nversion = '1.2.3'\n",
+            "source = 'registry+https://example.test/index'\n",
+        ),
+        base_contract("")
+    );
+    fs::write(root.join("zrail.toml"), source).expect("write contract");
+
+    let contract = load_contract(&root, Path::new("zrail.toml"))
+        .expect("load Cargo.lock source selector")
+        .contract;
+
+    assert!(matches!(
+        contract.source.rust.macros.allow[0]
+            .source
+            .as_ref()
+            .expect("source selector"),
+        CrateRootSource::CargoLock { package, version: Some(version), source: Some(source) }
+            if package == "codegen-macro"
+                && version == "1.2.3"
+                && source == "registry+https://example.test/index"
+    ));
     reset(&root);
 }
 

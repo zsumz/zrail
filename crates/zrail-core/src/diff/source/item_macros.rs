@@ -86,6 +86,18 @@ fn compare_existing(
             ),
         );
     }
+    if left.manifest != right.manifest {
+        let kind = match (&left.manifest, &right.manifest) {
+            (None, Some(_)) => ChangeKind::Revoke,
+            (Some(_), None) => ChangeKind::Grant,
+            _ => ChangeKind::Unknown,
+        };
+        changes.push(change(
+            kind,
+            selector,
+            "exact item-macro namespace manifest changed",
+        ));
+    }
 }
 
 const fn binding_change(

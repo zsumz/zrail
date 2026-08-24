@@ -65,7 +65,8 @@ fn contract_items(contract: &Contract) -> usize {
         + contract.source.rust.file_roles.len()
         + contract.source.rust.generated.len()
         + contract.source.rust.out_dir.len()
-        + contract.source.rust.item_macros.len();
+        + contract.source.rust.item_macros.len()
+        + contract.source.rust.test_mirrors.len();
     count += contract.source.rust.macros.allow.len();
     count += contract
         .source

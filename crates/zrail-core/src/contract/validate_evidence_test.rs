@@ -49,6 +49,56 @@ hard = 300
 "#;
 
 #[test]
+fn accepts_one_exact_reasoned_test_mirror_pair() {
+    let extra = r#"
+[[source.rust.test_mirrors]]
+production = "src/state.rs"
+test = "src/state_test.rs"
+name = "state_transitions"
+receipt = "evidence/state.json"
+reason = "State transitions are exercised through the public surface."
+"#;
+
+    assert!(contract(extra).is_ok());
+}
+
+#[test]
+fn rejects_reused_or_invalid_test_mirror_identities() {
+    let extra = r#"
+[[source.rust.test_mirrors]]
+production = "src/state.rs"
+test = "src/state_test.rs"
+name = "not::exact"
+receipt = "evidence/state.json"
+reason = "State behavior."
+
+[[source.rust.test_mirrors]]
+production = "src/other.rs"
+test = "src/state_test.rs"
+name = "other_behavior"
+receipt = "evidence/state.json"
+reason = "Other behavior."
+
+[[source.rust.test_mirrors]]
+production = "src/state.rs"
+test = "src/third.txt"
+name = "third_behavior"
+receipt = "evidence/third.txt"
+reason = "Third behavior."
+"#;
+
+    let message = contract(extra)
+        .expect_err("invalid mirrors must fail")
+        .to_string();
+    assert!(message.contains("reuses production path"));
+    assert!(message.contains("reuses test path"));
+    assert!(message.contains("reuses receipt path"));
+    assert!(message.contains("invalid exact test name"));
+    assert!(message.contains("must name a .rs file"));
+    assert!(message.contains("must name a .json file"));
+}
+
+#[test]
 fn accepts_a_connected_local_and_ci_graph() {
     let extra = r#"
 [[gate]]

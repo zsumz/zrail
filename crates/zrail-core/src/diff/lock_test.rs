@@ -1,6 +1,8 @@
 //! Content-addressed gate diff classification.
 
-use crate::{ChangeKind, LockFile, LockedGate, LockedGateInput, LockedRatchet};
+use crate::{
+    ChangeKind, LockFile, LockedExecutionReceipt, LockedGate, LockedGateInput, LockedRatchet,
+};
 
 use super::compare;
 
@@ -27,6 +29,29 @@ fn removing_gate_attestation_is_a_grant() {
         changes
             .iter()
             .any(|change| change.kind == ChangeKind::Grant)
+    );
+}
+
+#[test]
+fn execution_receipt_lock_changes_preserve_permission_direction() {
+    let mut before = LockFile::new("0".repeat(64));
+    before.execution_receipts.push(receipt("1"));
+    let mut changed = LockFile::new("0".repeat(64));
+    changed.execution_receipts.push(receipt("2"));
+
+    let reviewed = compare(Some(&before), Some(&changed));
+    assert_eq!(reviewed.len(), 1);
+    assert_eq!(reviewed[0].kind, ChangeKind::Unknown);
+    assert_eq!(reviewed[0].rail, "rust.test-mirror-receipt-lock");
+
+    let empty = LockFile::new("0".repeat(64));
+    assert_eq!(
+        compare(Some(&empty), Some(&before))[0].kind,
+        ChangeKind::Revoke
+    );
+    assert_eq!(
+        compare(Some(&before), Some(&empty))[0].kind,
+        ChangeKind::Grant
     );
 }
 
@@ -96,5 +121,17 @@ fn ratchet(selector: &str) -> LockedRatchet {
         selector: Some(selector.into()),
         target: "src/lib.rs".into(),
         value: 2,
+    }
+}
+
+fn receipt(digit: &str) -> LockedExecutionReceipt {
+    LockedExecutionReceipt {
+        production: "src/state.rs".into(),
+        test: "tests/state_test.rs".into(),
+        name: "state_transitions".into(),
+        receipt: "evidence/state.json".into(),
+        sha256: digit.repeat(64),
+        input_sha256: "3".repeat(64),
+        producer: "runner 1.2.3".into(),
     }
 }

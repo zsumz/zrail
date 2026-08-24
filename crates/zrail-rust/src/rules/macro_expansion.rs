@@ -63,7 +63,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             if directly_inspected(expansion) {
                 continue;
             }
-            match review(context.source, expansion, &allowed) {
+            match review(context.source, context.resolved_cargo, expansion, &allowed) {
                 MacroBindingResult::Bound { allowances, .. } => {
                     used.extend(allowances);
                 }
@@ -78,19 +78,20 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             }
         }
         for input in &file.opaque_macro_inputs {
-            let (matched, confidence) = match review(context.source, input, &allowed) {
-                MacroBindingResult::Bound {
-                    allowances,
-                    confidence,
-                } => (allowances, confidence),
-                MacroBindingResult::Rejected {
-                    attempted: matched, ..
-                } => {
-                    opaque_attempted.extend(matched);
-                    continue;
-                }
-                MacroBindingResult::NoNameMatch => continue,
-            };
+            let (matched, confidence) =
+                match review(context.source, context.resolved_cargo, input, &allowed) {
+                    MacroBindingResult::Bound {
+                        allowances,
+                        confidence,
+                    } => (allowances, confidence),
+                    MacroBindingResult::Rejected {
+                        attempted: matched, ..
+                    } => {
+                        opaque_attempted.extend(matched);
+                        continue;
+                    }
+                    MacroBindingResult::NoNameMatch => continue,
+                };
             opaque_attempted.extend(matched.iter().copied());
             if matched
                 .iter()

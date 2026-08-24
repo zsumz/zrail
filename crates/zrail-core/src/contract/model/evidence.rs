@@ -34,6 +34,22 @@ pub struct GateContract {
     pub reason: String,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+/// An exact production source to named Cargo-test mirror backed by an execution receipt.
+pub struct TestMirrorContract {
+    /// Repository-relative Rust source that must be production-reachable.
+    pub production: String,
+    /// Repository-relative Rust test source that must be Cargo-test-reachable.
+    pub test: String,
+    /// Exact Rust test-function identifier declared in `test`.
+    pub name: String,
+    /// Repository-relative schema-1 JSON execution receipt.
+    pub receipt: String,
+    /// Human explanation of why this test mirrors the production source.
+    pub reason: String,
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
 /// Lifecycle status for a declared architecture invariant.

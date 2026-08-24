@@ -4,6 +4,7 @@ mod compile;
 mod effects;
 mod ownership;
 mod ownership_call;
+mod ownership_operation;
 mod profiles;
 
 use zrail_core::{AnalysisQuality, Finding, FindingSink, glob_matches};
@@ -13,6 +14,11 @@ use crate::source::ObservedFact;
 use super::RuleContext;
 
 pub(super) use effects::tokens as effect_tokens;
+pub(crate) use ownership::matching_capability as matching_capability_owner;
+pub(crate) use ownership_call::{
+    CallOwnerEvidenceKind, matching_evidence as matching_call_owner_evidence,
+};
+pub(crate) use ownership_operation::matching_operations as matching_operation_owner_operations;
 
 pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     check_exact_scopes(context, findings);

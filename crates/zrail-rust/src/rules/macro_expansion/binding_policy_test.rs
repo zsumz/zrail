@@ -3,8 +3,8 @@
 use std::collections::BTreeMap;
 
 use zrail_core::{
-    AnalysisQuality, Contract, CrateRootSource, CycleMode, DependenciesContract, DependencyMode,
-    ExactMode, FacadeMode, HygieneContract, LintSuppressionMode, MacroBindingMode,
+    AnalysisContract, AnalysisQuality, Contract, CrateRootSource, CycleMode, DependenciesContract,
+    DependencyMode, ExactMode, FacadeMode, HygieneContract, LintSuppressionMode, MacroBindingMode,
     MacroExpansionAllow, MacroExpansionBindings, MacroExpansionContract, MacroExpansionMode,
     MacroInputMode, ModuleDocsMode, PolicyMode, RepositoryContract, RustSourceContract,
     SourceContract, SymlinkMode, TestMode,
@@ -15,8 +15,8 @@ use crate::{
     inventory::FileClass,
     source::{
         FactNamespace, MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin,
-        ObservedFact, Reachability, ReachabilityKind, RustFileFacts, SourceIndex, SourceSyntax,
-        SyntaxGuard,
+        ObservedFact, Reachability, ReachabilityKind, RustFileFacts, SourceAnalysisMetrics,
+        SourceIndex, SourceSyntax, SyntaxGuard,
     },
 };
 
@@ -33,6 +33,7 @@ fn conservative_review_confidence_never_clears_opacity() {
     let policy = build(
         &contract(vec![clean_allowance("trusted::derive")]),
         &source(conservative.clone()),
+        None,
     );
 
     assert!(policy.retains_opacity("src/lib.rs", &conservative.observation));
@@ -46,6 +47,7 @@ fn conservative_review_confidence_never_clears_opacity() {
     let exact_policy = build(
         &contract(vec![clean_allowance("trusted::derive")]),
         &source(exact.clone()),
+        None,
     );
     assert!(!exact_policy.retains_opacity("src/lib.rs", &exact.observation));
 }
@@ -56,6 +58,7 @@ fn written_alias_cannot_cover_an_unmatched_canonical_candidate() {
     let alias_policy = build(
         &contract(vec![clean_allowance("reviewed")]),
         &source(aliased.clone()),
+        None,
     );
 
     assert!(alias_policy.retains_opacity("src/lib.rs", &aliased.observation));
@@ -63,6 +66,7 @@ fn written_alias_cannot_cover_an_unmatched_canonical_candidate() {
     let canonical_policy = build(
         &contract(vec![clean_allowance("trusted::derive")]),
         &source(aliased.clone()),
+        None,
     );
     assert!(!canonical_policy.retains_opacity("src/lib.rs", &aliased.observation));
 }
@@ -119,6 +123,7 @@ fn source(expansion: MacroExpansionFact) -> SourceIndex {
             calls: Vec::new(),
             call_resolutions: Vec::new(),
             methods: Vec::new(),
+            operations: Vec::new(),
             macros: Vec::new(),
             macro_imports: Vec::new(),
             macro_expansions: vec![expansion],
@@ -137,7 +142,7 @@ fn source(expansion: MacroExpansionFact) -> SourceIndex {
             facade_implementation: Vec::new(),
         }],
         findings: Vec::new(),
-        analysis_metrics: Default::default(),
+        analysis_metrics: SourceAnalysisMetrics::default(),
     }
 }
 
@@ -183,7 +188,7 @@ fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
             cycles: CycleMode::Deny,
             crate_roots: Vec::new(),
         },
-        analysis: Default::default(),
+        analysis: AnalysisContract::default(),
         source: SourceContract {
             rust: RustSourceContract {
                 module_docs: ModuleDocsMode::Allow,
@@ -194,6 +199,7 @@ fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
                 generated: Vec::new(),
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),
+                test_mirrors: Vec::new(),
                 macros: MacroExpansionContract {
                     mode: MacroExpansionMode::DenyUnreviewed,
                     allow,

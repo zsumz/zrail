@@ -1,15 +1,18 @@
 //! Projection is planned in stable file order and committed only after full success.
 
-use zrail_core::{AnalysisQuality, Finding};
+mod findings;
+
+use zrail_core::Finding;
 
 use super::{
-    ObservedFact, SourceIndex, SourceInstanceIssue, SourceSyntax,
+    ObservedFact, SourceIndex, SourceSyntax,
     include_binding_projection::{CallSite, FactKey, FactProjection, ProjectionRequest, project},
     include_bindings::IncludeBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimit, ProjectionLimits},
     include_resolution_state::ResolutionUsage,
     parse::{MAX_FACTS_PER_FILE, fact_count},
 };
+use findings::{budget_exhausted, context_issue, unresolved};
 
 struct FileProjection {
     index: usize,
@@ -28,26 +31,27 @@ impl IncludeBindings {
         index: &mut SourceIndex,
         limits: &zrail_core::AnalysisLimits,
     ) -> Vec<Finding> {
-        let affected_facts = index
+        let include_facts = index
             .files
             .iter()
             .filter(|file| self.instances.requires_projection(&file.relative))
             .map(fact_count)
             .sum();
-        self.apply_with_limits(
-            index,
-            ProjectionLimits::for_contract(
-                affected_facts,
-                self.instances.metrics().derived_contexts,
-                limits,
-            ),
-        )
+        let metrics = self.instances.metrics();
+        let include_limits = ProjectionLimits::for_contract(
+            include_facts,
+            metrics
+                .base_contexts
+                .saturating_add(metrics.derived_contexts),
+            limits,
+        );
+        self.apply_with_limits(index, include_limits)
     }
 
     pub(super) fn apply_with_limits(
         &self,
         index: &mut SourceIndex,
-        limits: ProjectionLimits,
+        include_limits: ProjectionLimits,
     ) -> Vec<Finding> {
         let context_metrics = self.instances.metrics();
         index.analysis_metrics.base_contexts = context_metrics.base_contexts;
@@ -55,7 +59,20 @@ impl IncludeBindings {
         if !self.instances.is_complete() {
             return self.instances.issues().iter().map(context_issue).collect();
         }
-        let mut budget = ProjectionBudget::new(limits);
+        let ordinary_facts = index
+            .files
+            .iter()
+            .filter(|file| {
+                !self.instances.requires_projection(&file.relative)
+                    && self.requires_ordinary_resolution(file)
+            })
+            .map(fact_count)
+            .sum();
+        let mut ordinary_budget = ProjectionBudget::new(ProjectionLimits::for_input(
+            ordinary_facts,
+            context_metrics.base_contexts,
+        ));
+        let mut include_budget = ProjectionBudget::new(include_limits);
         let mut order = (0..index.files.len()).collect::<Vec<_>>();
         order.sort_by(|left, right| {
             index.files[*left]
@@ -66,11 +83,19 @@ impl IncludeBindings {
         let mut findings = Vec::new();
         for file_index in order {
             let file = &index.files[file_index];
-            if !self.instances.requires_projection(&file.relative) {
+            let include_connected = self.instances.requires_projection(&file.relative);
+            if !include_connected && !self.requires_ordinary_resolution(file) {
                 continue;
             }
-            index.analysis_metrics.projection_files =
-                index.analysis_metrics.projection_files.saturating_add(1);
+            if include_connected {
+                index.analysis_metrics.projection_files =
+                    index.analysis_metrics.projection_files.saturating_add(1);
+            }
+            let budget = if include_connected {
+                &mut include_budget
+            } else {
+                &mut ordinary_budget
+            };
             let Some(mut remaining_file_facts) = MAX_FACTS_PER_FILE.checked_sub(fact_count(file))
             else {
                 return vec![budget_exhausted(ProjectionLimit::Facts)];
@@ -98,7 +123,7 @@ impl IncludeBindings {
                     project_expression,
                 },
                 &mut uncertain,
-                &mut budget,
+                &mut *budget,
                 &mut remaining_file_facts,
             ) {
                 Ok(paths) => paths,
@@ -114,7 +139,7 @@ impl IncludeBindings {
                     project_expression,
                 },
                 &mut uncertain,
-                &mut budget,
+                &mut *budget,
                 &mut remaining_file_facts,
             ) {
                 Ok(calls) => calls,
@@ -129,8 +154,8 @@ impl IncludeBindings {
                 calls,
             });
         }
-        index.analysis_metrics.projection_work = budget.used_work();
-        index.analysis_metrics.projected_facts = budget.retained_facts();
+        index.analysis_metrics.projection_work = include_budget.used_work();
+        index.analysis_metrics.projected_facts = include_budget.retained_facts();
         for projection in planned {
             let file = &mut index.files[projection.index];
             apply_projection(&mut file.paths, projection.paths);
@@ -153,67 +178,6 @@ fn apply_projection(facts: &mut Vec<ObservedFact>, projection: FactProjection) {
         }
     }
     facts.extend(projection.additions);
-}
-
-fn unresolved(path: Option<&str>, span: Option<zrail_core::SourceSpan>) -> Finding {
-    let mut finding = Finding::error(
-        "RUST-INCLUDE-002",
-        "rust.source.include-bindings",
-        "source",
-        "ordinary Rust path bindings could not be resolved completely",
-    );
-    if let Some(path) = path {
-        finding = finding.at(path, span);
-    }
-    finding
-        .with_analysis(AnalysisQuality::Unresolved)
-        .with_help("reduce include or import indirection before trusting path and call authority")
-}
-
-fn context_issue(issue: &SourceInstanceIssue) -> Finding {
-    let (id, message, path) = match issue {
-        SourceInstanceIssue::DerivedContextLimit { used, limit, file } => (
-            "RUST-CONTEXT-001",
-            format!(
-                "derived Rust source contexts reached {used}, exceeding the input-derived limit {limit}"
-            ),
-            Some(file.as_str()),
-        ),
-        SourceInstanceIssue::DepthLimit { file, depth, chain } => (
-            "RUST-CONTEXT-002",
-            format!(
-                "Rust source context depth reached {depth} through {}",
-                chain.join(" -> ")
-            ),
-            Some(file.as_str()),
-        ),
-        SourceInstanceIssue::Cycle { chain } => (
-            "RUST-CONTEXT-003",
-            format!("Rust source context cycle: {}", chain.join(" -> ")),
-            chain.last().map(String::as_str),
-        ),
-    };
-    let finding = Finding::error(id, "rust.source.contexts", "source", message)
-        .with_analysis(AnalysisQuality::Unresolved)
-        .with_help("remove the pathological source expansion before constructing lock authority");
-    path.map_or(finding.clone(), |path| finding.at(path, None))
-}
-
-fn budget_exhausted(limit: ProjectionLimit) -> Finding {
-    let (id, exhausted) = match limit {
-        ProjectionLimit::Work => ("RUST-PROJECTION-001", "work"),
-        ProjectionLimit::Facts => ("RUST-PROJECTION-002", "fact"),
-    };
-    Finding::error(
-        id,
-        "rust.source.include-bindings",
-        "source",
-        format!("repository-wide Rust binding projection exhausted its {exhausted} safety budget"),
-    )
-    .with_analysis(AnalysisQuality::Unresolved)
-    .with_help(
-        "reduce namespace occurrences or binding indirection before trusting source authority",
-    )
 }
 
 #[cfg(test)]

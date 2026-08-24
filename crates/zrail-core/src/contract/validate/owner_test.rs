@@ -2,7 +2,10 @@
 
 use crate::{OwnerContract, OwnerKind, PolicyReachability};
 
-use super::{ValidationErrors, validate_call, validate_capability, validate_directory};
+use super::{
+    ValidationErrors, validate_call, validate_capability, validate_directory,
+    validate_exact_operation, validate_method_name,
+};
 
 #[test]
 fn capability_owners_require_rust_paths_and_bounded_allowed_files() {
@@ -62,9 +65,61 @@ fn directory_owners_reject_source_reachability() {
     assert!(errors.finish().join("\n").contains("requires reachability"));
 }
 
+#[test]
+fn exact_operation_owners_require_qualified_identities() {
+    for kind in [
+        OwnerKind::TypeConstruction,
+        OwnerKind::FieldRead,
+        OwnerKind::FieldWrite,
+        OwnerKind::FieldMutableBorrow,
+        OwnerKind::FieldAuthority,
+    ] {
+        let mut invalid = owner();
+        invalid.kind = kind;
+        invalid.selector = "State".into();
+
+        let errors = contract_errors(&invalid).join("\n");
+
+        assert!(errors.contains("qualified Rust path"), "{kind:?}: {errors}");
+    }
+}
+
+#[test]
+fn method_name_owners_reject_resolved_method_claims() {
+    let mut valid = owner();
+    valid.kind = OwnerKind::MethodName;
+    valid.selector = "advance".into();
+    assert!(contract_errors(&valid).is_empty());
+
+    valid.selector = "crate::State::advance".into();
+    let errors = contract_errors(&valid).join("\n");
+
+    assert!(errors.contains("one written method name"), "{errors}");
+}
+
 fn errors(owner: &OwnerContract) -> Vec<String> {
     let mut errors = ValidationErrors::new();
     validate_capability(owner, &mut errors);
+    errors.finish()
+}
+
+fn contract_errors(owner: &OwnerContract) -> Vec<String> {
+    let mut errors = ValidationErrors::new();
+    match owner.kind {
+        OwnerKind::TypeConstruction => {
+            validate_exact_operation(owner, "type-construction", &mut errors);
+        }
+        OwnerKind::FieldRead => validate_exact_operation(owner, "field-read", &mut errors),
+        OwnerKind::FieldWrite => validate_exact_operation(owner, "field-write", &mut errors),
+        OwnerKind::FieldMutableBorrow => {
+            validate_exact_operation(owner, "field-mutable-borrow", &mut errors);
+        }
+        OwnerKind::FieldAuthority => {
+            validate_exact_operation(owner, "field-authority", &mut errors);
+        }
+        OwnerKind::MethodName => validate_method_name(owner, &mut errors),
+        kind => errors.push(format!("unexpected operation owner fixture kind: {kind:?}")),
+    }
     errors.finish()
 }
 

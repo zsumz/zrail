@@ -1,12 +1,13 @@
 //! Deterministic human and machine reports.
 
+mod aggregate;
 mod render;
 
 use serde::{Deserialize, Serialize};
 
-use crate::diagnostic::{
-    DiagnosticLimit, Finding, FindingSink, FindingTotals, Severity, sort_findings,
-};
+use crate::diagnostic::{DiagnosticLimit, Finding, FindingSink, Severity, sort_findings};
+
+use aggregate::{group_order, groups_from_totals, status_from_summary, summary_from_totals};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -214,46 +215,6 @@ impl Report {
     pub fn human(&self) -> String {
         render::human(self)
     }
-}
-
-fn summary_from_totals(totals: &FindingTotals, retained: usize) -> ReportSummary {
-    let total = totals.total();
-    ReportSummary {
-        errors: totals.severity.get(&Severity::Error).copied().unwrap_or(0),
-        warnings: totals
-            .severity
-            .get(&Severity::Warning)
-            .copied()
-            .unwrap_or(0),
-        notes: totals.severity.get(&Severity::Note).copied().unwrap_or(0),
-        retained,
-        omitted: total.saturating_sub(retained),
-    }
-}
-
-fn groups_from_totals(totals: FindingTotals) -> Vec<ReportGroup> {
-    totals
-        .groups
-        .into_iter()
-        .map(|(group, count)| ReportGroup {
-            id: group.id,
-            rule: group.rule,
-            severity: group.severity,
-            count,
-        })
-        .collect()
-}
-
-const fn status_from_summary(summary: ReportSummary) -> ReportStatus {
-    if summary.errors == 0 {
-        ReportStatus::Pass
-    } else {
-        ReportStatus::Fail
-    }
-}
-
-fn group_order(left: &ReportGroup, right: &ReportGroup) -> std::cmp::Ordering {
-    (&left.id, &left.rule, left.severity).cmp(&(&right.id, &right.rule, right.severity))
 }
 
 #[cfg(test)]

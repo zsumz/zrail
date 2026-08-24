@@ -8,7 +8,7 @@ use super::*;
 use crate::source::{
     BindingKind, CompilationDomain, CompilationIncludeEdge, CompilationMode, CompilationRoot,
     ImportBindingFact, IncludeContext, IncludeOccurrenceId, Reachability, RustFileFacts,
-    SourceSyntax, SyntaxGuard, include_bindings::IncludeBindings,
+    SourceAnalysisMetrics, SourceSyntax, SyntaxGuard, include_bindings::IncludeBindings,
     include_projection_budget::ProjectionLimits,
 };
 
@@ -196,7 +196,7 @@ fn fixture_index() -> SourceIndex {
             ),
         ],
         findings: Vec::new(),
-        analysis_metrics: Default::default(),
+        analysis_metrics: SourceAnalysisMetrics::default(),
     }
 }
 
@@ -217,6 +217,7 @@ fn file(
         calls,
         call_resolutions: Vec::new(),
         methods: Vec::new(),
+        operations: Vec::new(),
         macros: Vec::new(),
         macro_imports: Vec::new(),
         macro_expansions: Vec::new(),

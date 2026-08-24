@@ -31,3 +31,30 @@ fn narrowing_owner_evaluation_to_production_is_a_grant() {
         change.kind == ChangeKind::Revoke && change.rail == "owner.reachability"
     }));
 }
+
+#[test]
+fn adding_and_removing_operation_ownership_has_directional_diff() {
+    let before = contract_with_hard_limit(300);
+    let mut after = before.clone();
+    after.owners.push(OwnerContract {
+        name: "transition".into(),
+        kind: OwnerKind::MethodName,
+        reachability: PolicyReachability::All,
+        within: vec!["src/**".into()],
+        selector: "transition".into(),
+        allow: vec!["src/state.rs".into()],
+        reason: "one written method owner".into(),
+    });
+
+    let added = compare_architecture(&before, None, &after, None);
+    let removed = compare_architecture(&after, None, &before, None);
+
+    assert!(added.changes.iter().any(|change| {
+        change.kind == ChangeKind::Revoke
+            && change.rail == "owner"
+            && change.subject == "transition"
+    }));
+    assert!(removed.changes.iter().any(|change| {
+        change.kind == ChangeKind::Grant && change.rail == "owner" && change.subject == "transition"
+    }));
+}

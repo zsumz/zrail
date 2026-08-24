@@ -10,6 +10,20 @@ use super::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin};
 
 const MAX_MACRO_ORIGINS: usize = 4;
 
+impl std::ops::Deref for MacroExpansionFact {
+    type Target = super::ObservedFact;
+
+    fn deref(&self) -> &Self::Target {
+        &self.observation
+    }
+}
+
+impl std::ops::DerefMut for MacroExpansionFact {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.observation
+    }
+}
+
 pub(super) fn resolve(expansion: &mut MacroExpansionFact, packages: &[&Package]) {
     for candidate in &mut expansion.candidates {
         resolve_candidate(candidate, packages);

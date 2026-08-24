@@ -3,8 +3,8 @@
 use std::{collections::BTreeMap, fs, path::PathBuf};
 
 use zrail_core::{
-    Budget, Contract, CycleMode, DependenciesContract, DependencyMode, ExactMode, FacadeMode,
-    FileSizeContract, HygieneContract, LintSuppressionMode, ModuleDocsMode, PolicyMode,
+    AnalysisContract, Budget, Contract, CycleMode, DependenciesContract, DependencyMode, ExactMode,
+    FacadeMode, FileSizeContract, HygieneContract, LintSuppressionMode, ModuleDocsMode, PolicyMode,
     RepositoryContract, RustSourceContract, SourceContract, SymlinkMode, TestMode,
 };
 
@@ -233,7 +233,7 @@ fn contract() -> Contract {
             cycles: CycleMode::Allow,
             crate_roots: Vec::new(),
         },
-        analysis: Default::default(),
+        analysis: AnalysisContract::default(),
         source: SourceContract {
             rust: RustSourceContract {
                 module_docs: ModuleDocsMode::Required,
@@ -244,6 +244,7 @@ fn contract() -> Contract {
                 generated: Vec::new(),
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),
+                test_mirrors: Vec::new(),
                 macros: zrail_core::MacroExpansionContract::default(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,

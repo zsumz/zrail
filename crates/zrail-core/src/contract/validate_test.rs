@@ -2,8 +2,9 @@
 
 use super::validate_contract;
 use crate::contract::{
-    Effect, EffectBoundary, OutDirSourceContract, OwnerContract, OwnerKind, PolicyReachability,
-    ProfileContract, RatchetContract,
+    DependencyEdgeKind, DependencyReachability, DependencyRule, Effect, EffectBoundary,
+    OutDirSourceContract, OwnerContract, OwnerKind, PolicyReachability, ProfileContract,
+    RatchetContract,
     validate_fixture_test::{generated, layer, minimal_contract},
 };
 
@@ -49,6 +50,23 @@ fn duplicate_effects_are_rejected() {
     );
     let error = validate_contract(&contract).expect_err("duplicate effects must fail");
     assert!(error.to_string().contains("duplicate effect Network"));
+}
+
+#[test]
+fn duplicate_dependency_kinds_are_rejected() {
+    let mut contract = minimal_contract();
+    contract.dependency_rules.push(DependencyRule {
+        name: "runtime-boundary".into(),
+        from: "fixture".into(),
+        deny: vec!["blocked".into()],
+        reachability: DependencyReachability::Transitive,
+        kinds: vec![DependencyEdgeKind::Build, DependencyEdgeKind::Build],
+        reason: "one reviewed first-edge kind".into(),
+    });
+
+    let error = validate_contract(&contract).expect_err("duplicate kinds must fail");
+
+    assert!(error.to_string().contains("duplicate dependency kind"));
 }
 
 #[test]
@@ -162,6 +180,7 @@ fn item_macro_names_are_complete_rust_paths() {
             within: Vec::new(),
             binding: None,
             source: None,
+            manifest: None,
             reason: "invalid fixture".into(),
         });
 

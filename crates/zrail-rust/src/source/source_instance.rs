@@ -7,13 +7,13 @@ use super::{
 };
 
 use super::{
+    source_instance_edges::{MIN_DERIVED_SOURCE_CONTEXTS, SourceInstanceMetrics},
     source_instance_edges::{grouped_includes, grouped_modules},
-    source_instance_model::{MIN_DERIVED_SOURCE_CONTEXTS, SourceInstanceMetrics},
 };
 
 const MAX_SOURCE_INSTANCE_DEPTH: usize = 128;
 
-pub(crate) use super::source_instance_model::SourceInstanceIssue;
+pub(crate) use super::source_instance_edges::SourceInstanceIssue;
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct SourceInstanceId(pub(crate) usize);
@@ -137,30 +137,6 @@ impl SourceInstances {
         graph
     }
 
-    pub(crate) fn get(&self, id: SourceInstanceId) -> Option<&SourceInstance> {
-        self.instances.get(id.0)
-    }
-
-    pub(crate) fn for_file(&self, file: &str) -> &[SourceInstanceId] {
-        self.by_file.get(file).map_or(&[], Vec::as_slice)
-    }
-
-    pub(crate) fn includes_from(
-        &self,
-        parent: SourceInstanceId,
-    ) -> &[(CompilationIncludeEdge, SourceInstanceId)] {
-        self.include_children
-            .get(&parent)
-            .map_or(&[], Vec::as_slice)
-    }
-
-    pub(crate) fn modules_from(
-        &self,
-        parent: SourceInstanceId,
-    ) -> &[(CompilationModuleEdge, SourceInstanceId)] {
-        self.module_children.get(&parent).map_or(&[], Vec::as_slice)
-    }
-
     fn add_child(
         &mut self,
         parent: SourceInstanceId,
@@ -244,46 +220,6 @@ impl SourceInstances {
             depth,
         });
         Some(id)
-    }
-
-    fn ancestor_contains(&self, mut parent: SourceInstanceId, file: &str) -> bool {
-        loop {
-            let instance = &self.instances[parent.0];
-            if instance.file == file {
-                return true;
-            }
-            let Some(next) = instance.parent else {
-                return false;
-            };
-            parent = next;
-        }
-    }
-
-    fn ancestor_chain(&self, mut current: SourceInstanceId) -> Vec<String> {
-        let mut chain = Vec::new();
-        loop {
-            let instance = &self.instances[current.0];
-            chain.push(instance.file.clone());
-            let Some(parent) = instance.parent else {
-                break;
-            };
-            current = parent;
-        }
-        chain.reverse();
-        chain
-    }
-
-    fn has_include_ancestor(&self, mut current: SourceInstanceId) -> bool {
-        loop {
-            let instance = &self.instances[current.0];
-            if matches!(instance.entered_from, SourceEntry::Include(_)) {
-                return true;
-            }
-            let Some(parent) = instance.parent else {
-                return false;
-            };
-            current = parent;
-        }
     }
 }
 

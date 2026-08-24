@@ -19,6 +19,7 @@
 
 mod analysis;
 mod cargo;
+mod coverage;
 mod engine;
 mod explain;
 mod inventory;
@@ -28,6 +29,11 @@ mod source;
 mod source_policy;
 
 pub use analysis::{AnalysisIssue, AnalysisIssueKind, AnalysisMetrics, AnalysisOutcome};
+pub use coverage::{
+    GovernedAnalysis, GovernedCompilationDomain, GovernedDependencyPath, GovernedDependencyRule,
+    GovernedOperationOccurrence, GovernedOwnerRule, GovernedPackageIdentity, GovernedSurfaceReport,
+    GovernedTestMirror, governed_surface_report,
+};
 pub use engine::{
     CheckError, CheckResult, DoctorReport, build_lock, check_repository,
     check_repository_with_candidate_contract, check_repository_with_limit,

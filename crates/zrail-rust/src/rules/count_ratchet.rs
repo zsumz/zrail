@@ -1,10 +1,11 @@
 //! Reusable exact per-file count debt that can only tighten.
 
+mod value;
+
 use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::{
-    Finding, FindingSink, LintSuppressionMode, LockedRatchet, ModuleDocsMode, PolicyMode,
-    RatchetContract, RustSourceContract,
+    FindingSink, LintSuppressionMode, ModuleDocsMode, PolicyMode, RustSourceContract,
 };
 
 use crate::{
@@ -55,7 +56,7 @@ pub(super) fn evaluate(
             continue;
         };
         seen.insert(file.relative.as_str());
-        check_value(
+        value::check_value(
             file,
             value,
             ratchets.get(file.relative.as_str()).copied(),
@@ -66,7 +67,7 @@ pub(super) fn evaluate(
         );
     }
     for target in ratchets.keys().filter(|target| !seen.contains(*target)) {
-        findings.push(ratchet_finding(
+        findings.push(value::ratchet_finding(
             spec,
             target,
             format!(
@@ -171,76 +172,4 @@ pub(super) fn lint_suppression_violates(
     suppression: &crate::source::ObservedFact,
 ) -> bool {
     mode == LintSuppressionMode::Deny || suppression.name == "unreasoned lint suppression"
-}
-
-fn check_value(
-    file: &RustFileFacts,
-    value: usize,
-    ratchet: Option<&RatchetContract>,
-    locked: Option<&LockedRatchet>,
-    spec: CountRatchetSpec<'_>,
-    findings: &mut FindingSink,
-    report_unratcheted: &impl Fn(&RustFileFacts, &mut FindingSink),
-) {
-    if value == 0 {
-        if ratchet.is_some() {
-            findings.push(
-                ratchet_finding(
-                    spec,
-                    &file.relative,
-                    format!(
-                        "{} was removed but the source retains a stale ratchet",
-                        spec.debt
-                    ),
-                )
-                .with_help("remove the ratchet from zrail.toml and run `zrail update`"),
-            );
-        }
-        return;
-    }
-    let Some(ratchet) = ratchet else {
-        report_unratcheted(file, findings);
-        return;
-    };
-    let Some(locked) = locked else {
-        findings.push(
-            ratchet_finding(
-                spec,
-                &file.relative,
-                format!("reviewed {} ratchet is absent from zrail.lock", spec.debt),
-            )
-            .because(&ratchet.reason)
-            .with_help("run `zrail update` and review the generated debt"),
-        );
-        return;
-    };
-    if value > locked.value {
-        findings.push(
-            ratchet_finding(
-                spec,
-                &file.relative,
-                format!(
-                    "{} grew from the {}-construct ratchet to {value}",
-                    spec.debt, locked.value
-                ),
-            )
-            .because(&ratchet.reason),
-        );
-    } else if value < locked.value {
-        findings.push(
-            ratchet_finding(
-                spec,
-                &file.relative,
-                format!(
-                    "{} shrank to {value} constructs but the lock still permits {}",
-                    spec.debt, locked.value
-                ),
-            )
-            .with_help("run `zrail update` to tighten the recorded debt"),
-        );
-    }
-}
-
-fn ratchet_finding(spec: CountRatchetSpec<'_>, path: &str, message: String) -> Finding {
-    Finding::error(spec.finding_id, spec.finding_rule, spec.category, message).at(path, None)
 }

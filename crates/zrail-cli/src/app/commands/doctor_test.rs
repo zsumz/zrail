@@ -52,6 +52,7 @@ fn old_lock_semantics_exit_nonzero() {
     let mut lock =
         build_lock(&root, std::path::Path::new("zrail.toml")).expect("build supported lock");
     lock.semantics = LOCK_SEMANTICS - 1;
+    lock.analysis = None;
     lock.write(&root.join("zrail.lock"))
         .expect("write old-semantics lock");
 

@@ -1,6 +1,6 @@
 //! Denied methods and macros carry independent, exact tightening ratchets.
 
-use std::{fs, path::Path};
+use std::{fmt::Write as _, fs, path::Path};
 
 use zrail_core::{LockedRatchet, ReportStatus};
 use zrail_rust::{build_lock, check_repository, discover_baseline};
@@ -128,19 +128,20 @@ deny_macros = ["panic", "todo"]
 }
 
 fn ratchets() -> String {
-    [
+    let mut output = String::new();
+    for (rule, selector) in [
         ("rust.hygiene.denied-method", "unwrap"),
         ("rust.hygiene.denied-method", "expect"),
         ("rust.hygiene.denied-macro", "panic"),
         ("rust.hygiene.denied-macro", "todo"),
-    ]
-    .into_iter()
-    .map(|(rule, selector)| {
-        format!(
+    ] {
+        write!(
+            output,
             "[[ratchet]]\nrule = \"{rule}\"\nselector = \"{selector}\"\ntarget = \"src/lib.rs\"\nreason = \"Legacy use must only shrink.\"\n"
         )
-    })
-    .collect()
+        .expect("write ratchet fixture");
+    }
+    output
 }
 
 fn check(root: &Path) -> zrail_core::Report {

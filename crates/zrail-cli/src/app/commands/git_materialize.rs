@@ -3,10 +3,7 @@
 use std::{
     collections::{BTreeMap, BTreeSet, VecDeque},
     ffi::OsString,
-    fs::{self, OpenOptions},
-    io::Write as _,
-    path::{Path, PathBuf},
-    sync::atomic::{AtomicUsize, Ordering},
+    path::Path,
 };
 
 use zrail_core::{
@@ -18,7 +15,13 @@ use crate::app::error::CliError;
 
 use super::{git_base::TreeEntry, git_process};
 
-static TEMPORARY_SEQUENCE: AtomicUsize = AtomicUsize::new(0);
+#[path = "git_materialize/filesystem.rs"]
+mod filesystem;
+#[path = "git_materialize/repository.rs"]
+mod repository;
+
+pub(super) use filesystem::TemporaryRoot;
+use filesystem::write_new;
 
 pub(super) fn materialize(
     repository: &Path,
@@ -30,6 +33,13 @@ pub(super) fn materialize(
     materialize_contracts(repository, temporary.path(), tree, config)?;
     materialize_optional(repository, temporary.path(), tree, lock)?;
     Ok(temporary)
+}
+
+pub(super) fn materialize_repository(
+    repository: &Path,
+    tree: &BTreeMap<String, TreeEntry>,
+) -> Result<TemporaryRoot, CliError> {
+    repository::materialize(repository, tree)
 }
 
 fn materialize_contracts(
@@ -161,23 +171,6 @@ fn materialize_text(
     Ok(source)
 }
 
-fn write_new(path: &Path, bytes: &[u8]) -> Result<(), CliError> {
-    let parent = path
-        .parent()
-        .ok_or_else(|| CliError::new(format!("snapshot path has no parent: {}", path.display())))?;
-    fs::create_dir_all(parent)
-        .map_err(|error| CliError::new(format!("create {}: {error}", parent.display())))?;
-    let mut file = OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(path)
-        .map_err(|error| CliError::new(format!("create {}: {error}", path.display())))?;
-    file.write_all(bytes)
-        .map_err(|error| CliError::new(format!("write {}: {error}", path.display())))?;
-    file.sync_all()
-        .map_err(|error| CliError::new(format!("sync {}: {error}", path.display())))
-}
-
 fn normalize_required(path: &Path, label: &str) -> Result<String, CliError> {
     let normalized = normalize_relative(path).map_err(CliError::new)?;
     if normalized.is_empty() {
@@ -191,45 +184,4 @@ fn normalize_required(path: &Path, label: &str) -> Result<String, CliError> {
 
 fn has_wildcard(value: &str) -> bool {
     value.bytes().any(|byte| matches!(byte, b'*' | b'?'))
-}
-
-#[derive(Debug)]
-pub(super) struct TemporaryRoot(PathBuf);
-
-impl TemporaryRoot {
-    fn create() -> Result<Self, CliError> {
-        let base = std::env::temp_dir();
-        for _ in 0..100 {
-            let sequence = TEMPORARY_SEQUENCE.fetch_add(1, Ordering::Relaxed);
-            let path = base.join(format!("zrail-git-{}-{sequence}", std::process::id()));
-            match create_private_directory(&path) {
-                Ok(()) => return Ok(Self(path)),
-                Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {}
-                Err(error) => {
-                    return Err(CliError::new(format!("create {}: {error}", path.display())));
-                }
-            }
-        }
-        Err(CliError::new("create Git snapshot: name collision"))
-    }
-
-    pub(super) fn path(&self) -> &Path {
-        &self.0
-    }
-}
-
-impl Drop for TemporaryRoot {
-    fn drop(&mut self) {
-        let _removed = fs::remove_dir_all(&self.0);
-    }
-}
-
-fn create_private_directory(path: &Path) -> std::io::Result<()> {
-    let mut builder = fs::DirBuilder::new();
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::DirBuilderExt as _;
-        builder.mode(0o700);
-    }
-    builder.create(path)
 }

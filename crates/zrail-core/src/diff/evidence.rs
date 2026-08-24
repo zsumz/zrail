@@ -2,13 +2,71 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{Contract, GateContract, InvariantContract};
+use crate::{Contract, GateContract, InvariantContract, TestMirrorContract};
 
 use super::{ArchitectureChange, ChangeKind, support::compare_named_set};
 
 pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<ArchitectureChange>) {
     compare_gates(&before.gates, &after.gates, changes);
     compare_invariants(&before.invariants, &after.invariants, changes);
+    compare_test_mirrors(
+        &before.source.rust.test_mirrors,
+        &after.source.rust.test_mirrors,
+        changes,
+    );
+}
+
+fn compare_test_mirrors(
+    before: &[TestMirrorContract],
+    after: &[TestMirrorContract],
+    changes: &mut Vec<ArchitectureChange>,
+) {
+    let old = mirrors_by_production(before);
+    let new = mirrors_by_production(after);
+    for production in old
+        .keys()
+        .chain(new.keys())
+        .copied()
+        .collect::<BTreeSet<_>>()
+    {
+        match (old.get(production), new.get(production)) {
+            (None, Some(_)) => changes.push(ArchitectureChange::new(
+                ChangeKind::Revoke,
+                "rust.test-mirror",
+                production,
+                "production source gained an exact execution-backed test mirror",
+            )),
+            (Some(_), None) => changes.push(ArchitectureChange::new(
+                ChangeKind::Grant,
+                "rust.test-mirror",
+                production,
+                "production source lost its exact execution-backed test mirror",
+            )),
+            (Some(left), Some(right)) if mirror_identity(left) != mirror_identity(right) => {
+                changes.push(
+                    ArchitectureChange::new(
+                        ChangeKind::Unknown,
+                        "rust.test-mirror",
+                        production,
+                        "test mirror identity or receipt path changed and requires review",
+                    )
+                    .values(mirror_identity(left), mirror_identity(right)),
+                );
+            }
+            _ => {}
+        }
+    }
+}
+
+fn mirrors_by_production(mirrors: &[TestMirrorContract]) -> BTreeMap<&str, &TestMirrorContract> {
+    mirrors
+        .iter()
+        .map(|mirror| (mirror.production.as_str(), mirror))
+        .collect()
+}
+
+fn mirror_identity(mirror: &TestMirrorContract) -> String {
+    format!("{}::{}@{}", mirror.test, mirror.name, mirror.receipt)
 }
 
 fn compare_gates(

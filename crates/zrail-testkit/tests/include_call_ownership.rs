@@ -13,7 +13,6 @@ mod namespace_deep_audit;
 mod ordinary_qualified;
 #[path = "include_call_ownership/qualified.rs"]
 mod qualified;
-
 #[test]
 fn caller_alias_used_by_included_call_cannot_bypass_call_ownership() {
     let root = fixture("caller-alias", "");
@@ -198,10 +197,14 @@ fn check(root: &Path) -> Report {
 }
 
 fn write_lock(root: &Path) {
-    build_lock(root, "zrail.toml".as_ref())
-        .expect("build include call lock")
-        .write(&root.join("zrail.lock"))
-        .expect("write include call lock");
+    match build_lock(root, "zrail.toml".as_ref()) {
+        Ok(lock) => lock
+            .write(&root.join("zrail.lock"))
+            .expect("write include call lock"),
+        // Incomplete negative fixtures cannot enter lock authority.
+        Err(error) if error.to_string().contains("incomplete analysis") => {}
+        Err(error) => panic!("build include call lock: {error}"),
+    }
 }
 
 fn assert_owned_call(report: &Report, rule: &str, path: &str) {
@@ -213,7 +216,6 @@ fn assert_owned_call(report: &Report, rule: &str, path: &str) {
         report.human()
     );
 }
-
 fn assert_no_owned_call(report: &Report, rule: &str, path: &str) {
     assert!(
         !report.findings.iter().any(|finding| {
@@ -223,7 +225,6 @@ fn assert_no_owned_call(report: &Report, rule: &str, path: &str) {
         report.human()
     );
 }
-
 fn assert_no_owner_findings(report: &Report, rule: &str) {
     assert!(
         !report

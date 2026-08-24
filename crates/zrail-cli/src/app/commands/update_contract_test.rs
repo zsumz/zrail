@@ -118,6 +118,7 @@ fn options(root: &std::path::Path) -> UpdateOptions {
         },
         base: "HEAD".into(),
         accept_grants: false,
+        accept_migration: None,
     }
 }
 

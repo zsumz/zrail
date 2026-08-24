@@ -3,7 +3,7 @@
 use zrail_core::{Contract, DiagnosticLimit, FindingSink, LockFile};
 
 use crate::{
-    cargo::CargoWorkspace,
+    cargo::{CargoWorkspace, ResolvedCargoGraph},
     inventory::RepositoryInventory,
     source::{ResolvedModuleEdge, SourceIndex},
 };
@@ -18,6 +18,7 @@ pub(crate) struct RuleContext<'a> {
     pub(crate) lock: Option<&'a LockFile>,
     pub(crate) inventory: &'a RepositoryInventory,
     pub(crate) cargo: &'a CargoWorkspace,
+    pub(crate) resolved_cargo: Option<&'a ResolvedCargoGraph>,
     pub(crate) source: &'a SourceIndex,
     pub(crate) module_edges: &'a [ResolvedModuleEdge],
 }

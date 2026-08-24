@@ -4,6 +4,29 @@ use serde::{Deserialize, Serialize};
 
 use crate::contract::{CycleMode, DependencyMode, PolicyMode};
 
+#[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
+/// Depth considered by one package dependency prohibition.
+pub enum DependencyReachability {
+    #[default]
+    /// Inspect only dependencies declared directly by the selected package.
+    Direct,
+    /// Inspect every package reachable through the resolved Cargo lock graph.
+    Transitive,
+}
+
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
+/// Kind of the first manifest dependency edge entering a resolved package path.
+pub enum DependencyEdgeKind {
+    /// Runtime or ordinary library dependency.
+    Normal,
+    /// Development and test dependency.
+    Development,
+    /// Build-script and compile-time dependency.
+    Build,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 /// Dependency-topology policy for the repository.
@@ -41,6 +64,17 @@ pub enum CrateRootSource {
     #[default]
     /// Legacy name-only authority, retained for older contracts.
     Legacy,
+    /// Resolve one immutable package node from the repository Cargo.lock.
+    CargoLock {
+        /// Exact Cargo package name selected from the lock graph.
+        package: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        /// Optional exact version discriminator for multi-version graphs.
+        version: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        /// Optional exact Cargo.lock source discriminator.
+        source: Option<String>,
+    },
     /// A package resolved from a Cargo registry.
     Registry {
         #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -78,6 +112,15 @@ impl CrateRootSource {
     pub fn identity(&self) -> String {
         match self {
             Self::Legacy => "legacy-name-only".into(),
+            Self::CargoLock {
+                package,
+                version,
+                source,
+            } => format!(
+                "cargo-lock:{package}:version={}:source={}",
+                version.as_deref().unwrap_or(""),
+                source.as_deref().unwrap_or("")
+            ),
             Self::Registry {
                 registry,
                 index,

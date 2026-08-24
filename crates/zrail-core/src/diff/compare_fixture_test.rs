@@ -3,7 +3,7 @@
 use std::collections::BTreeMap;
 
 use crate::{
-    Budget, Contract, CycleMode, DependenciesContract, DependencyMode, ExactMode,
+    AnalysisContract, Budget, Contract, CycleMode, DependenciesContract, DependencyMode, ExactMode,
     ExternalDependencyMode, FacadeMode, FileSizeContract, HygieneContract, LintSuppressionMode,
     ModuleDocsMode, PolicyMode, RepositoryContract, RustSourceContract, SourceContract,
     SymlinkMode, TestMode,
@@ -27,7 +27,7 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
             cycles: CycleMode::Deny,
             crate_roots: Vec::new(),
         },
-        analysis: Default::default(),
+        analysis: AnalysisContract::default(),
         source: SourceContract {
             rust: RustSourceContract {
                 module_docs: ModuleDocsMode::Required,
@@ -38,6 +38,7 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
                 generated: Vec::new(),
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),
+                test_mirrors: Vec::new(),
                 macros: crate::MacroExpansionContract::default(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,

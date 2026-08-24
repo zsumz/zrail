@@ -19,6 +19,18 @@ pub(super) fn validate_contract(contract: &Contract, errors: &mut ValidationErro
             OwnerKind::Call => validate_call(owner, errors),
             OwnerKind::Capability => validate_capability(owner, errors),
             OwnerKind::Directory => validate_directory(owner, errors),
+            OwnerKind::TypeConstruction => {
+                validate_exact_operation(owner, "type-construction", errors);
+            }
+            OwnerKind::MethodName => validate_method_name(owner, errors),
+            OwnerKind::FieldRead => validate_exact_operation(owner, "field-read", errors),
+            OwnerKind::FieldWrite => validate_exact_operation(owner, "field-write", errors),
+            OwnerKind::FieldMutableBorrow => {
+                validate_exact_operation(owner, "field-mutable-borrow", errors);
+            }
+            OwnerKind::FieldAuthority => {
+                validate_exact_operation(owner, "field-authority", errors);
+            }
         }
     }
 }
@@ -35,6 +47,26 @@ fn validate_call(owner: &OwnerContract, errors: &mut ValidationErrors) {
 
 fn validate_capability(owner: &OwnerContract, errors: &mut ValidationErrors) {
     validate_source_owner(owner, "capability", errors);
+}
+
+fn validate_exact_operation(owner: &OwnerContract, kind: &str, errors: &mut ValidationErrors) {
+    validate_source_owner(owner, kind, errors);
+    if !owner.selector.contains("::") {
+        errors.push(format!(
+            "{kind} owner match must be a qualified Rust path: {:?}",
+            owner.selector
+        ));
+    }
+}
+
+fn validate_method_name(owner: &OwnerContract, errors: &mut ValidationErrors) {
+    validate_source_owner(owner, "method-name", errors);
+    if owner.selector.contains("::") {
+        errors.push(format!(
+            "method-name owner match must be one written method name: {:?}",
+            owner.selector
+        ));
+    }
 }
 
 fn validate_source_owner(owner: &OwnerContract, kind: &str, errors: &mut ValidationErrors) {

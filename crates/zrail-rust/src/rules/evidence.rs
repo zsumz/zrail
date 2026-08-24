@@ -1,6 +1,7 @@
 //! Live exact evidence and reviewed qualification-gate inputs.
 
 mod gates;
+mod mirrors;
 
 use std::collections::BTreeMap;
 
@@ -21,6 +22,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
         .map(|entry| (entry.relative.as_str(), entry))
         .collect::<BTreeMap<_, _>>();
     gates::check(context, &entries, findings);
+    mirrors::check(context, &entries, findings);
     for invariant in &context.contract.invariants {
         check_document(&invariant.id, &invariant.document, &entries, findings);
         for evidence in &invariant.evidence {

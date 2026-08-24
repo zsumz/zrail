@@ -2,7 +2,10 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{Contract, DependencyRule, Effect, PolicyReachability};
+use crate::{
+    Contract, DependencyEdgeKind, DependencyReachability, DependencyRule, Effect,
+    PolicyReachability,
+};
 
 use super::{ArchitectureChange, ChangeKind, support::compare_set_values, topology_policy};
 
@@ -134,7 +137,7 @@ fn compare_dependency_rules(
         &dependency_denials(&after.dependency_rules),
         ChangeKind::Revoke,
         ChangeKind::Grant,
-        "denies an exact package edge",
+        "denies resolved package reachability",
         changes,
     );
 }
@@ -175,9 +178,28 @@ fn dependency_denials(rules: &[DependencyRule]) -> BTreeSet<String> {
     rules
         .iter()
         .flat_map(|rule| {
-            rule.deny
-                .iter()
-                .map(move |target| format!("{}->{target}", rule.from))
+            let kinds = if rule.kinds.is_empty() {
+                vec![
+                    DependencyEdgeKind::Normal,
+                    DependencyEdgeKind::Development,
+                    DependencyEdgeKind::Build,
+                ]
+            } else {
+                rule.kinds.clone()
+            };
+            let depths = match rule.reachability {
+                DependencyReachability::Direct => vec!["direct"],
+                DependencyReachability::Transitive => vec!["direct", "transitive"],
+            };
+            rule.deny.iter().flat_map(move |target| {
+                let kinds = kinds.clone();
+                depths.clone().into_iter().flat_map(move |depth| {
+                    kinds
+                        .clone()
+                        .into_iter()
+                        .map(move |kind| format!("{}->{target}:{depth}:{kind:?}", rule.from))
+                })
+            })
         })
         .collect()
 }

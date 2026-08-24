@@ -6,7 +6,7 @@ use zrail_core::{
     AnalysisQuality, Finding, FindingSink, OwnerKind, PolicyMode, SymlinkMode, glob_matches,
 };
 
-use crate::inventory::RepositoryEntryKind;
+use crate::inventory::{RepositoryEntry, RepositoryEntryKind, RepositoryInventory};
 
 use super::RuleContext;
 
@@ -167,10 +167,8 @@ fn check_directory_owners(context: &RuleContext<'_>, findings: &mut FindingSink)
             .iter()
             .map(String::as_str)
             .collect::<BTreeSet<_>>();
-        for path in directories
-            .iter()
-            .filter(|path| glob_matches(&owner.selector, path))
-        {
+        for entry in matching_directory_owner(owner, context.inventory) {
+            let path = entry.relative.as_str();
             if !allowed.contains(path) {
                 findings.push(
                     Finding::error(
@@ -179,7 +177,7 @@ fn check_directory_owners(context: &RuleContext<'_>, findings: &mut FindingSink)
                         "ownership",
                         format!("directory {path:?} is outside its declared owner"),
                     )
-                    .at(*path, None)
+                    .at(path, None)
                     .because(&owner.reason)
                     .with_help(format!("move it under one of: {}", owner.allow.join(", "))),
                 );
@@ -198,4 +196,14 @@ fn check_directory_owners(context: &RuleContext<'_>, findings: &mut FindingSink)
             );
         }
     }
+}
+
+pub(crate) fn matching_directory_owner<'a>(
+    owner: &zrail_core::OwnerContract,
+    inventory: &'a RepositoryInventory,
+) -> impl Iterator<Item = &'a RepositoryEntry> {
+    inventory.entries.iter().filter(|entry| {
+        entry.kind == RepositoryEntryKind::Directory
+            && glob_matches(&owner.selector, &entry.relative)
+    })
 }

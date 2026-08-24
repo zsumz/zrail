@@ -87,6 +87,7 @@ pub(crate) fn fact_count(file: &RustFileFacts) -> usize {
         + file.calls.len()
         + file.call_resolutions.len()
         + file.methods.len()
+        + file.operations.len()
         + file.macros.len()
         + file.macro_imports.len()
         + candidate_count(&file.macro_expansions)
@@ -157,6 +158,7 @@ fn index_file_as(
         calls: visitor.calls,
         call_resolutions: visitor.call_resolutions,
         methods: visitor.methods,
+        operations: visitor.operations,
         macros: visitor.macros,
         macro_imports: imports.macro_imports(),
         macro_expansions: visitor.macro_expansions,
@@ -195,6 +197,7 @@ fn index_expression(
         calls: visitor.calls,
         call_resolutions: visitor.call_resolutions,
         methods: visitor.methods,
+        operations: visitor.operations,
         macros: visitor.macros,
         macro_imports: Vec::new(),
         macro_expansions: visitor.macro_expansions,

@@ -19,10 +19,15 @@ Cargo remains the package resolver; zrail does not duplicate that job.
 The architecture lock records the exact state needed for checks and semantic
 diffs, including:
 
-- normalized direct dependency declarations;
+- normalized direct dependency declarations and exact reviewed `Cargo.lock`
+  identities;
+- the complete analyzed inventory, exclusions, contract fragments, and
+  analyzer semantics;
 - reviewed gate bytes and their declared behavioral inputs;
+- exact test-mirror execution receipt bytes;
 - generated-source provenance;
-- content-bound repository macro implementation packages; and
+- content-bound repository macro implementations, external resolved sources,
+  and exact item-macro manifests; and
 - tightening ratchets.
 
 Once installed, zrail requires no account, daemon, source upload, API key, LLM,
@@ -176,10 +181,54 @@ Policy changes and `zrail update --accept-grants` require explicit human
 authorization. Automation should report the semantic diff instead of accepting
 added power.
 
-A lock semantic-epoch change is deliberately unknown, not a grant. Repository
-governance should require a separately reviewed, signed bootstrap because the
-older protected engine cannot interpret the newer state. The CLI does not
-enforce signing policy.
+A lock semantic-epoch change is deliberately unknown, not a grant. Reanalyze
+the immutable base revision with the new engine and review its scoped report:
+
+```sh
+zrail migrate-lock --base HEAD --output zrail-migration.json
+zrail update --accept-migration sha256:<reviewed-report-digest>
+```
+
+The adapter supports only the immediately previous semantics epoch. Each exact
+old or new authority subject is classified as preserved, retired, newly
+observable, or changed interpretation. Migration acceptance is recomputed for
+the selected immutable base and never accepts current-worktree grants;
+`--accept-grants` remains a separate authority boundary.
+
+### Contract schema and fragments
+
+Schema 2 uses exact fragment paths so large policy registries stay reviewable
+without broad filesystem discovery:
+
+```toml
+schema = 2
+imports = [
+  "zrail/policy/dependencies.toml",
+  "zrail/policy/ownership.toml",
+  "zrail/policy/test-mirrors.toml",
+]
+```
+
+Imports are repository-relative regular files, may not escape or enter an
+excluded path, and fail on cycles, duplicate identities, conflicts, excess
+depth, excess bytes, or excess file count. The completeness certificate binds
+the normalized path and digest of every loaded source. Schema-1 wildcard
+imports remain readable only for migration; schema 2 rejects patterns.
+
+Preview and explicitly apply the deterministic migration, then enforce
+canonical formatting across the complete fragment bundle:
+
+```sh
+zrail migrate-config
+zrail migrate-config --write
+zrail fmt
+zrail fmt --check
+```
+
+Migration rewrites `binding` to `resolution`, `bindings` to
+`namespace_effect`, and expands legacy wildcard imports to exact paths. It
+validates the entire prospective bundle before writing, replaces each source
+atomically, and rolls back the bundle if a later replacement fails.
 
 ## Review
 
@@ -274,6 +323,92 @@ Directory ownership is repository structural policy and therefore accepts only
 the default `all` reachability. `zrail explain` shows each source owner's
 effective reachability.
 
+Source-operation owners use the same `within`, `allow`, `reachability`, and
+staleness rules as call owners. Type construction is an exact identity rail:
+
+```toml
+[[owner]]
+name = "state-construction"
+kind = "type-construction"
+within = ["crates/kernel/src/**"]
+match = "crate::state::State"
+allow = ["crates/kernel/src/state.rs"]
+reason = "State creation stays behind one transition boundary."
+```
+
+It observes struct literals, tuple structs, enum variants, and `Self` forms.
+Imports and aliases are retained when they resolve exactly. A constructor-like
+call that cannot be proven to name a type or variant remains unresolved; an
+exact owner fails closed instead of treating capitalization as type evidence.
+
+Written method-name ownership is deliberately name-level authority:
+
+```toml
+[[owner]]
+name = "transition-method"
+kind = "method-name"
+within = ["crates/kernel/src/**"]
+match = "transition"
+allow = ["crates/kernel/src/state.rs"]
+reason = "Every syntactic .transition() call stays centralized."
+```
+
+The selector must be one method identifier. It matches every syntactic
+`.transition(...)` call regardless of receiver type and does not claim
+type-resolved method identity.
+
+Field owners require a qualified field identity. Narrow owners distinguish
+reads, writes, and mutable borrows:
+
+```toml
+[[owner]]
+name = "state-epoch-reader"
+kind = "field-read"
+within = ["crates/kernel/src/**"]
+match = "crate::state::State::epoch"
+allow = ["crates/kernel/src/state.rs"]
+reason = "Only state queries inspect the epoch."
+
+[[owner]]
+name = "state-epoch-writer"
+kind = "field-write"
+within = ["crates/kernel/src/**"]
+match = "crate::state::State::epoch"
+allow = ["crates/kernel/src/state.rs"]
+reason = "Only state transitions advance the epoch."
+
+[[owner]]
+name = "state-epoch-borrower"
+kind = "field-mutable-borrow"
+within = ["crates/kernel/src/**"]
+match = "crate::state::State::epoch"
+allow = ["crates/kernel/src/state.rs"]
+reason = "Only state transitions borrow the epoch mutably."
+```
+
+Reads include ordinary access, immutable borrows, and right-hand-side use.
+Assignment, compound-assignment, and `&mut` place expressions are not also
+counted as reads. Writes include assignment and compound assignment. Mutable
+borrows include `&mut value.field`, so calls such as
+`mem::replace(&mut value.field, next)` are covered without guessing that an
+arbitrary method call mutates its receiver.
+
+Use one aggregate owner when the same allow-list governs every form of access:
+
+```toml
+[[owner]]
+name = "state-epoch-authority"
+kind = "field-authority"
+within = ["crates/kernel/src/**"]
+match = "crate::state::State::epoch"
+allow = ["crates/kernel/src/state.rs"]
+reason = "All epoch access stays behind the state boundary."
+```
+
+`field-authority` combines the same exact read, write, and mutable-borrow facts;
+it does not broaden identity resolution. Known `self` receiver types are exact,
+while unresolved receiver candidates fail closed for exact field-owner policies.
+
 Rust file roles are inferred from conventional paths. An exceptional source may
 be reclassified only between `facade` and `implementation` with an exact path
 and a durable reason:
@@ -321,7 +456,7 @@ handled directly, and included Rust remains fully analyzed.
 Ordinary macro permission does not make expansion output visible. Attribute,
 derive, and item macros therefore keep the surrounding namespace opaque unless
 an exact allowance with `source` or `definition` provenance separately sets
-`bindings = "none"`. That grant attests zero ordinary-namespace delta: the
+`namespace_effect = "none"`. That grant attests zero ordinary-namespace delta: the
 reviewed expansion preserves the annotated item subtree with the same binding
 kind, target, visibility, cfg domain, and child namespace, and introduces no
 surrounding lexical bindings. External attestations require an exact registry
@@ -336,7 +471,7 @@ includes can introduce definitions into the caller suffix, while expression
 includes cannot leak definitions beyond their expression scope. Cross-file
 `use` aliases are conservatively unresolved when they could change a macro
 invocation across a splice. Until that import projection is exact,
-the invocation requires an explicit name-only `binding = "conservative"`
+the invocation requires an explicit name-only `resolution = "conservative"`
 allowance and cannot borrow compiler or dependency-source authority.
 
 Ordinary paths and direct calls use the same occurrence-specific namespaces.
@@ -355,9 +490,9 @@ work and fact budgets, so exhaustion emits one unresolved diagnostic and
 retains no partial authority result.
 
 An optional `definition` path can narrow a `macro_rules!` allowance, but path
-spelling never establishes origin. The default `binding = "exact"` rejects an
+spelling never establishes origin. The default `resolution = "exact"` rejects an
 allowance when the candidate origin remains unresolved. A name-only allowance
-may opt into `binding = "conservative"` to cover only the exact spelling at the
+may opt into `resolution = "conservative"` to cover only the exact spelling at the
 invocation site; it cannot claim a `source` or `definition` for that unresolved
 candidate. Repository globs are narrowed against the bounded local macro
 namespace, while ambiguous glob candidates must all be allowed. `#[macro_use]`
@@ -388,10 +523,10 @@ contract may use either an exact `path` or `within`, never both. Exact paths go
 stale when their invocation disappears; scoped and repository-wide entries go
 stale only when no reachable invocation remains inside their authority.
 
-Name matching alone makes no provenance claim. Set `binding = "exact"` to
+Name matching alone makes no provenance claim. Set `resolution = "exact"` to
 require the same fail-closed macro-origin resolution used by expansion policy;
 an external `source` is accepted only with that explicit exact binding.
-`binding = "conservative"` can cover an unresolved exact spelling but cannot
+`resolution = "conservative"` can cover an unresolved exact spelling but cannot
 claim external provenance. `zrail explain` identifies the item-macro entry that
 actually authorizes each explained file.
 
@@ -399,12 +534,89 @@ External exact binding also requires the dependency's Rust crate root to be
 known from Cargo or a matching `dependencies.crate_root` attestation.
 
 ```toml
-binding = "exact"
+resolution = "exact"
 
 [source.rust.item_macros.source]
 kind = "registry"
 requirement = "0.5"
 ```
+
+### Exact item-macro namespace manifests
+
+Permitting an item-position macro does not pretend its generated names are
+known. When those names affect ordinary path resolution, bind one exact
+invocation to a checked-in namespace manifest:
+
+```toml
+[[source.rust.item_macros]]
+name = "declare_states"
+path = "src/state.rs"
+resolution = "exact"
+manifest = "zrail/macros/declare-states.toml"
+reason = "Reviewed declarations are part of the static namespace."
+```
+
+```toml
+schema = 1
+macro_name = "declare_states"
+invocation_sha256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+
+[[binding]]
+name = "Ready"
+kind = "constructor"
+public = true
+```
+
+The exact source path must contain one matching invocation. The manifest token
+digest must match its canonical input, and binding names must be unique Rust
+identifiers with an explicit type, constructor, or value namespace kind. Those
+declarations enter normal path resolution only after validation. The lock binds
+the manifest path and bytes, invocation digest, and binding count, so source,
+manifest, or namespace drift requires review.
+
+### Exact test mirrors and execution receipts
+
+An exact test mirror pairs one production Rust file with one named test in one
+Cargo-test-reachable Rust file. This release deliberately uses explicit pairs;
+it does not infer mirrors from file names or expand path templates.
+
+```toml
+[[source.rust.test_mirrors]]
+production = "src/state.rs"
+test = "tests/state_test.rs"
+name = "state_transitions"
+receipt = "evidence/state-transitions.json"
+reason = "The test exercises state transitions through the public surface."
+```
+
+The production path must exist and be reachable from a Cargo production target.
+The test path must exist, be classified as test source, be reachable from a
+Cargo test target, and declare the exact named `#[test]` once. Production paths,
+test paths, and receipt paths are each unique across the mirror set, so a file
+or receipt cannot be reused and a removed path becomes stale policy.
+
+zrail does not execute tests. A test runner records execution in strict schema-1
+JSON after the exact test passes:
+
+```json
+{
+  "schema": 1,
+  "producer": "test-runner 1.2.3",
+  "input_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "toolchain": "1.90.0",
+  "tests": [{ "id": "state_transitions", "status": "passed" }]
+}
+```
+
+`producer` must contain a name and `major.minor.patch` version. The requested
+test must appear exactly once with status `passed`; failed, skipped, missing, or
+duplicate outcomes fail closed. `input_sha256` binds five fields in order:
+production path UTF-8, production bytes, test path UTF-8, test bytes, and test
+name UTF-8. Hash the domain `zrail-test-mirror-input-v1\0`, then each field
+prefixed by its unsigned 64-bit big-endian byte length. The lock additionally
+hashes the exact receipt bytes and retains the mirror identity, declared input
+digest, and versioned producer. Replacing a still-valid receipt therefore
+remains explicit lock drift requiring review.
 
 ## Cargo
 
@@ -417,10 +629,72 @@ nested workspaces remain separate repository boundaries. An active path
 dependency that crosses into a nested workspace fails explicitly because zrail
 does not guess across multiple workspace inheritance roots.
 
+Dependency prohibitions are direct by default. Set `reachability =
+"transitive"` to check every package reachable through the checked-in
+`Cargo.lock`, and optionally select the kind of the first manifest edge:
+
+```toml
+[[dependency]]
+name = "runtime-supply-chain"
+from = "service"
+deny = ["blocked-package"]
+reachability = "transitive"
+kinds = ["normal", "build"]
+reason = "The service may not reach the prohibited package at runtime or build time."
+```
+
+Resolved findings report the shortest path and every node's exact package name,
+version, source, and checksum. Multiple locked versions remain distinct. A
+manifest declaration that maps to zero or multiple outgoing lock nodes fails
+closed instead of guessing. Cargo records dependency kinds in manifests but not
+on downstream `Cargo.lock` edges, so `kinds` honestly selects only the first
+edge leaving `from`; the remainder of the path is resolved without an invented
+kind. Transitive policy requires a checked-in lock file.
+
+An immutable external macro authority may select one resolved lock node. Add
+`version` or `source` whenever the package name alone is not unique:
+
+```toml
+[[source.rust.macros.allow]]
+name = "codegen_macro::generate"
+resolution = "exact"
+namespace_effect = "none"
+reason = "Reviewed expansion preserves the surrounding namespace."
+
+[source.rust.macros.allow.source]
+kind = "cargo-lock"
+package = "codegen-macro"
+version = "1.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+```
+
+The selector is authority only when it identifies exactly one lock node. The
+resolved version, source, and checksum are then available for lock-state
+binding; ambiguous selectors are rejected.
+
 Repository-controlled Cargo source overrides and registry mappings are rejected
 until zrail can attest their effective resolution. Root `.cargo/config` and
 `.cargo/config.toml` are rejected because Cargo can use them to alter dependency
 resolution and qualification execution.
+
+## Coverage audit
+
+`zrail coverage --format json` emits schema-versioned, deterministic evidence
+for the governed surface without consulting the lock state as policy authority
+or modifying the repository. The report includes the complete analysis work
+census and exact repository exclusions; every enabled owner policy with its
+canonical ID, selector, scope, allow list, and matched source-operation
+occurrences; and every dependency prohibition with exact shortest violating
+paths through `Cargo.lock` identities. Occurrences retain source spans,
+resolution quality, syntax guards, applicable Cargo compilation domains, and
+whether the source path is allowed. Unresolved and conservative matches are
+counted explicitly. Exact test-mirror identities are included when declared.
+
+Coverage is an audit artifact, not partial best-effort discovery. It fails when
+source analysis is incomplete, when a governed dependency cannot be mapped to
+one exact outgoing lock node, or when dependency prohibitions exist without a
+checked-in `Cargo.lock`. The human format summarizes the same complete model;
+JSON is the stable input for external coverage tooling.
 
 ## Commands
 
@@ -429,9 +703,13 @@ resolution and qualification execution.
 | `zrail init` | Write explicit policy, optionally with an atomic initial baseline and lock |
 | `zrail baseline` | Add reviewed tightening ratchets to an existing contract |
 | `zrail check` | Check repository architecture without modifying files |
+| `zrail coverage` | Export the complete governed surface for audit tooling |
 | `zrail doctor` | Diagnose setup and compatibility problems |
 | `zrail explain` | Explain the policy and findings for one path |
 | `zrail diff` | Classify architecture changes between trusted states |
+| `zrail fmt` | Canonically format every exact contract source |
+| `zrail migrate-config` | Preview or apply the schema-1 to schema-2 contract migration |
+| `zrail migrate-lock` | Reanalyze an immutable base and emit an epoch-migration report |
 | `zrail update` | Refresh reviewed lock state from committed authority |
 | `zrail review` | Analyze an untrusted proposal from protected authority |
 
@@ -459,11 +737,16 @@ builds all seven targets with the pinned toolchain and lockfile, smoke-checks
 every binary, and exercises Linux archives in clean containers without Rust.
 
 No release is visible until every target and clean-runtime check succeeds. The
-publisher requires the exact archive set, verifies `SHA256SUMS`, creates GitHub
-build-provenance attestations, and publishes a draft only after extracting the
-matching reviewed section from `CHANGELOG.md`. Release actions are pinned to
-full commit identities; the workflow does not accept proposal or manual source
-inputs.
+publisher also packages and verifies `zrail-core`, `zrail-rust`, and `zrail`
+from the same reviewed checkout. It requires the exact binary and crate set,
+records every digest in `SHA256SUMS`, and creates GitHub build-provenance
+attestations before opening a draft from the matching reviewed `CHANGELOG.md`
+section. A temporary crates.io trusted-publishing token publishes the crates in
+dependency order without executing package code; each registry archive is then
+downloaded and compared byte-for-byte with its attested input. Only after all
+three comparisons pass does the workflow make the GitHub draft visible.
+Release actions are pinned to full commit identities; the workflow does not
+accept proposal or manual source inputs.
 
 `QUAL-02` defines the protected-deployment requirement: proposed checker changes
 must not authorize violations or grants in the same pull request. The required

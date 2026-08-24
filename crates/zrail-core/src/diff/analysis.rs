@@ -38,7 +38,6 @@ fn compare_limit(
     }
     let kind = match (before, after) {
         (None, Some(_)) => ChangeKind::Grant,
-        (Some(_), None) => ChangeKind::Revoke,
         (Some(left), Some(right)) if right > left => ChangeKind::Grant,
         _ => ChangeKind::Revoke,
     };

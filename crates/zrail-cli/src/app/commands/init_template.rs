@@ -23,7 +23,7 @@ pub(super) fn render(
         .collect::<Vec<_>>()
         .join(", ");
     let mut contract = format!(
-        r#"schema = 1
+        r#"schema = 2
 adapters = ["rust"]
 
 [repository]

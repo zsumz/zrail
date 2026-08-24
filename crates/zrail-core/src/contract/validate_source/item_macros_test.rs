@@ -31,7 +31,11 @@ fn external_source_requires_explicit_exact_binding() {
     contract.source.rust.item_macros.push(item_macro.clone());
 
     let error = validate_contract(&contract).expect_err("implicit binding must fail");
-    assert!(error.to_string().contains("requires binding = \"exact\""));
+    assert!(
+        error
+            .to_string()
+            .contains("requires resolution = \"exact\"")
+    );
 
     contract.source.rust.item_macros[0].binding = Some(MacroBindingMode::Exact);
     validate_contract(&contract).expect("exact source binding is valid");
@@ -44,6 +48,7 @@ fn allowance() -> ItemMacroContract {
         within: vec!["src/**".into()],
         binding: None,
         source: None,
+        manifest: None,
         reason: "Reviewed item boundary.".into(),
     }
 }

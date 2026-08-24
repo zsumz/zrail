@@ -204,4 +204,16 @@ pub enum OwnerKind {
     Capability,
     /// Govern files beneath directories matching the owner selector.
     Directory,
+    /// Govern exact construction of a Rust type or variant.
+    TypeConstruction,
+    /// Govern calls by their exact written method name.
+    MethodName,
+    /// Govern exact reads of a named Rust field.
+    FieldRead,
+    /// Govern exact writes to a named Rust field.
+    FieldWrite,
+    /// Govern exact mutable borrows of a named Rust field.
+    FieldMutableBorrow,
+    /// Govern reads, writes, and mutable borrows of a named Rust field.
+    FieldAuthority,
 }

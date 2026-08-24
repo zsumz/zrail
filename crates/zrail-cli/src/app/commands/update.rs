@@ -68,7 +68,6 @@ pub(crate) fn update(options: &UpdateOptions) -> Result<CommandResult, CliError>
             ));
         }
         Ok(_) => {}
-        Err(_) if options.accept_grants => {}
         Err(error) => {
             return Ok(CommandResult::status(
                 unavailable_base(

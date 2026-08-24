@@ -17,7 +17,7 @@ use super::{
 pub(super) fn validate_contract(contract: &Contract) -> Result<(), ContractError> {
     enforce_contract_size(contract)?;
     let mut errors = ValidationErrors::new();
-    if contract.schema != 1 {
+    if !matches!(contract.schema, 1 | 2) {
         errors.push(format!(
             "unsupported zrail contract schema {}",
             contract.schema

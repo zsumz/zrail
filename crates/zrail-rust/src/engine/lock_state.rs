@@ -16,12 +16,17 @@ use super::{
 
 pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckError> {
     let mut lock = LockFile::new(&model.bundle.sha256);
+    lock.analysis = Some(super::analysis_certificate::locked(model));
     lock.generated = crate::rules::generated::locked_sources(
         &model.inventory.root,
         &model.bundle.contract.source.rust.generated,
     );
     lock.gates = super::gates::locked(model)?;
+    lock.execution_receipts = super::receipts::locked(model);
     lock.macro_implementations = super::macro_implementations::locked(model)?;
+    lock.macro_sources = locked_macro_sources(model)?;
+    lock.item_macro_manifests
+        .clone_from(&model.item_macro_manifests);
     for package in &model.cargo.packages {
         let dependencies = package
             .dependencies
@@ -83,6 +88,37 @@ pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckE
     lock.canonicalize()
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     Ok(lock)
+}
+
+fn locked_macro_sources(
+    model: &RepositoryModel,
+) -> Result<Vec<zrail_core::LockedMacroSource>, CheckError> {
+    let mut sources = Vec::new();
+    for allowance in &model.bundle.contract.source.rust.macros.allow {
+        let Some(zrail_core::CrateRootSource::CargoLock {
+            package,
+            version,
+            source,
+        }) = allowance.source.as_ref()
+        else {
+            continue;
+        };
+        let graph = model.resolved_cargo.as_ref().ok_or_else(|| {
+            CheckError::from_message("Cargo.lock macro authority requires a resolved Cargo graph")
+        })?;
+        let identity = graph
+            .lookup(package, version.as_deref(), source.as_deref())
+            .map_err(CheckError::from_message)?;
+        sources.push(zrail_core::LockedMacroSource {
+            allowance: allowance.name.clone(),
+            package: identity.name.clone(),
+            version: identity.version.clone(),
+            source: identity.source.clone(),
+            checksum: identity.checksum.clone(),
+        });
+    }
+    sources.sort();
+    Ok(sources)
 }
 
 fn locked_source(source: &DependencySource) -> LockedDependencySource {

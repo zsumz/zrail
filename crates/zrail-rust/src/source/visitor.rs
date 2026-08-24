@@ -1,10 +1,11 @@
 //! Syntax visitor collecting source facts after import resolution.
 
+mod walk;
+
 use syn::{
-    Attribute, Block, ExprCall, ExprMacro, ExprMethodCall, ExprPath, ItemFn, ItemForeignMod,
-    ItemImpl, ItemMacro, ItemMod, ItemStatic, ItemTrait, Macro, Signature, Stmt, StmtMacro,
-    TypePath,
-    spanned::Spanned,
+    Attribute, Block, ExprAssign, ExprBinary, ExprCall, ExprField, ExprMacro, ExprMethodCall,
+    ExprPath, ExprReference, ExprStruct, ItemFn, ItemForeignMod, ItemImpl, ItemMacro, ItemMod,
+    ItemStatic, ItemTrait, Macro, Signature, StmtMacro, TypePath,
     visit::{self, Visit},
 };
 
@@ -23,8 +24,10 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
             self.guard_initial_paths(guard);
         }
         self.with_cfg(&file.attrs, |visitor| {
-            visitor.with_import_scope(file.items.iter(), |visitor| {
-                visit::visit_file(visitor, file);
+            visitor.with_local_type_scope(file.items.iter(), |visitor| {
+                visitor.with_import_scope(file.items.iter(), |visitor| {
+                    visit::visit_file(visitor, file);
+                });
             });
         });
     }
@@ -85,6 +88,7 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     fn visit_visibility(&mut self, _: &'ast syn::Visibility) {}
 
     fn visit_expr_path(&mut self, expression: &'ast ExprPath) {
+        self.record_path_construction(expression);
         self.record_expression_path(expression);
     }
 
@@ -99,32 +103,54 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_expr_call(&mut self, call: &'ast ExprCall) {
+        self.record_call_construction(call);
         self.record_call(call);
         visit::visit_expr_call(self, call);
     }
 
     fn visit_expr_method_call(&mut self, call: &'ast ExprMethodCall) {
+        self.record_method_operation(call);
         self.record_method_call(call);
         visit::visit_expr_method_call(self, call);
     }
 
+    fn visit_expr_struct(&mut self, expression: &'ast ExprStruct) {
+        self.record_struct_construction(expression);
+        visit::visit_expr_struct(self, expression);
+    }
+
+    fn visit_expr_field(&mut self, expression: &'ast ExprField) {
+        self.record_field_read(expression);
+        visit::visit_expr_field(self, expression);
+    }
+
+    fn visit_expr_assign(&mut self, expression: &'ast ExprAssign) {
+        self.record_field_operation(super::SourceOperationKind::FieldWrite, &expression.left);
+        self.without_place_field_reads(&expression.left, |visitor| {
+            visit::visit_expr_assign(visitor, expression);
+        });
+    }
+
+    fn visit_expr_binary(&mut self, expression: &'ast ExprBinary) {
+        walk::visit_binary(self, expression);
+    }
+
+    fn visit_expr_reference(&mut self, expression: &'ast ExprReference) {
+        if expression.mutability.is_some() {
+            self.record_field_operation(
+                super::SourceOperationKind::FieldMutableBorrow,
+                &expression.expr,
+            );
+            self.without_place_field_reads(&expression.expr, |visitor| {
+                visit::visit_expr_reference(visitor, expression);
+            });
+        } else {
+            visit::visit_expr_reference(self, expression);
+        }
+    }
+
     fn visit_macro(&mut self, invocation: &'ast Macro) {
-        if invocation.path.is_ident("macro_rules") {
-            return;
-        }
-        let expansion = self.macro_invocation(&invocation.path);
-        super::compile_effects::record(self, invocation, &expansion);
-        let opaque_input = super::macro_inputs::inspect(self, invocation, &expansion.name);
-        self.macros.extend(
-            expansion
-                .candidates
-                .iter()
-                .map(|fact| fact.observation.clone()),
-        );
-        self.macro_expansions.push(expansion.clone());
-        if opaque_input {
-            self.opaque_macro_inputs.push(expansion);
-        }
+        walk::visit_macro(self, invocation);
     }
 
     fn visit_item_macro(&mut self, item: &'ast ItemMacro) {
@@ -163,8 +189,10 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
 
     fn visit_item_impl(&mut self, implementation: &'ast ItemImpl) {
         self.record_unsafe_impl(implementation);
-        self.with_generics(&implementation.generics, true, |visitor| {
-            visit::visit_item_impl(visitor, implementation);
+        self.with_self_type(&implementation.self_ty, |visitor| {
+            visitor.with_generics(&implementation.generics, true, |visitor| {
+                visit::visit_item_impl(visitor, implementation);
+            });
         });
     }
 
@@ -198,31 +226,10 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_item_mod(&mut self, module: &'ast ItemMod) {
-        self.record_module(module);
-        for attribute in &module.attrs {
-            self.visit_attribute(attribute);
-        }
-        self.visit_visibility(&module.vis);
-        if let Some((_, items)) = &module.content {
-            self.with_lexical_scope(module.ident.span(), |visitor| {
-                visitor.with_import_scope(items.iter(), |visitor| {
-                    for item in items {
-                        visitor.visit_item(item);
-                    }
-                });
-            });
-        }
+        walk::visit_module(self, module);
     }
 
     fn visit_block(&mut self, block: &'ast Block) {
-        self.with_lexical_scope(block.span(), |visitor| {
-            visitor.with_import_scope(
-                block.stmts.iter().filter_map(|statement| match statement {
-                    Stmt::Item(item) => Some(item),
-                    _ => None,
-                }),
-                |visitor| visit::visit_block(visitor, block),
-            );
-        });
+        walk::visit_block(self, block);
     }
 }

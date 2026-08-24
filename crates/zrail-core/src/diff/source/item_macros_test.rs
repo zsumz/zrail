@@ -15,6 +15,7 @@ fn adding_scoped_authority_is_a_grant() {
         within: vec!["benches/**".into()],
         binding: None,
         source: None,
+        manifest: None,
         reason: "Reviewed benchmark harness.".into(),
     });
 
@@ -36,6 +37,7 @@ fn provenance_binding_changes_cannot_disappear_from_the_diff() {
         within: Vec::new(),
         binding: None,
         source: None,
+        manifest: None,
         reason: "Reviewed item generator.".into(),
     });
     let mut after = before.clone();

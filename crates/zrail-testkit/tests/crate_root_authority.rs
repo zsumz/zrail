@@ -8,13 +8,34 @@ use zrail_rust::check_repository;
 fn same_name_registry_and_git_dependencies_use_distinct_attestations() {
     let root = repository();
     let first = check(&root);
-    let candidate = first.candidate_lock.as_ref().expect("complete candidate");
+    let candidate = first
+        .candidate_lock
+        .as_ref()
+        .unwrap_or_else(|| panic!("missing complete candidate: {}", first.report.human()));
     let registry = dependency(candidate, "registry-app");
     let git = dependency(candidate, "git-app");
     assert_eq!(registry.crate_root.as_deref(), Some("registry_runtime"));
     assert_eq!(git.crate_root.as_deref(), Some("git_runtime"));
+    assert!(!first.report.findings.iter().any(|finding| {
+        matches!(
+            finding.id.as_str(),
+            "CARGO-IDENTITY-001" | "CARGO-IDENTITY-002"
+        )
+    }));
+
+    write(
+        &root,
+        "crates/registry-app/src/lib.rs",
+        "//! Registry.\npub fn run() { registry_runtime::danger(); registry_runtime::select! {} }\n",
+    );
+    write(
+        &root,
+        "crates/git-app/src/lib.rs",
+        "//! Git.\npub fn run() { git_runtime::danger(); git_runtime::select! {} }\n",
+    );
+    let governed = check(&root);
     assert_eq!(
-        first
+        governed
             .report
             .findings
             .iter()
@@ -22,13 +43,7 @@ fn same_name_registry_and_git_dependencies_use_distinct_attestations() {
             .count(),
         2
     );
-    assert!(!first.report.findings.iter().any(|finding| {
-        matches!(
-            finding.id.as_str(),
-            "CARGO-IDENTITY-001" | "CARGO-IDENTITY-002"
-        )
-    }));
-    let macro_findings = first
+    let macro_findings = governed
         .report
         .findings
         .iter()
@@ -107,12 +122,12 @@ fn repository() -> PathBuf {
     write(
         &root,
         "crates/registry-app/src/lib.rs",
-        "//! Registry.\npub fn run() { registry_runtime::danger(); registry_runtime::select! {} }\n",
+        "//! Registry.\npub fn run() {}\n",
     );
     write(
         &root,
         "crates/git-app/src/lib.rs",
-        "//! Git.\npub fn run() { git_runtime::danger(); git_runtime::select! {} }\n",
+        "//! Git.\npub fn run() {}\n",
     );
     write(&root, "zrail.toml", CONTRACT);
     root

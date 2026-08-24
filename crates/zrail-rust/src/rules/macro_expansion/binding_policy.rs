@@ -4,22 +4,30 @@ use std::collections::BTreeMap;
 
 use zrail_core::{AnalysisQuality, Contract, MacroExpansionBindings, MacroExpansionMode};
 
-use crate::source::{BindingMacroPolicy, SourceIndex};
+use crate::{
+    cargo::ResolvedCargoGraph,
+    source::{BindingMacroPolicy, SourceIndex},
+};
 
 use super::review::{MacroBindingResult, review};
 
-pub(crate) fn build(contract: &Contract, source: &SourceIndex) -> BindingMacroPolicy {
-    if contract.source.rust.macros.mode == MacroExpansionMode::Allow {
-        return BindingMacroPolicy::default();
-    }
-    let allowed = contract
-        .source
-        .rust
-        .macros
-        .allow
-        .iter()
-        .map(|allowance| (allowance.name.as_str(), allowance))
-        .collect::<BTreeMap<_, _>>();
+pub(crate) fn build(
+    contract: &Contract,
+    source: &SourceIndex,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
+) -> BindingMacroPolicy {
+    let allowed = if contract.source.rust.macros.mode == MacroExpansionMode::Allow {
+        BTreeMap::new()
+    } else {
+        contract
+            .source
+            .rust
+            .macros
+            .allow
+            .iter()
+            .map(|allowance| (allowance.name.as_str(), allowance))
+            .collect::<BTreeMap<_, _>>()
+    };
     let mut policy = BindingMacroPolicy::default();
     for file in source
         .files
@@ -30,11 +38,26 @@ pub(crate) fn build(contract: &Contract, source: &SourceIndex) -> BindingMacroPo
             let MacroBindingResult::Bound {
                 allowances,
                 confidence: AnalysisQuality::Exact,
-            } = review(source, expansion, &allowed)
+            } = review(source, resolved_cargo, expansion, &allowed)
             else {
                 continue;
             };
             if complete_namespace_authority(expansion, &allowances, &allowed) {
+                policy.trust(&file.relative, expansion);
+            }
+        }
+        for invocation in &file.item_macros {
+            let exact = contract.source.rust.item_macros.iter().any(|allowance| {
+                allowance.manifest.is_some()
+                    && allowance.path.as_deref() == Some(file.relative.as_str())
+                    && invocation.policy_names().any(|name| name == allowance.name)
+            });
+            if exact
+                && let Some(expansion) = file
+                    .macro_expansions
+                    .iter()
+                    .find(|expansion| expansion.span == invocation.span)
+            {
                 policy.trust(&file.relative, expansion);
             }
         }

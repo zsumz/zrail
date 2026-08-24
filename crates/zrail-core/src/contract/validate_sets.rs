@@ -64,6 +64,12 @@ pub(super) fn validate_sets(contract: &Contract, errors: &mut ValidationErrors) 
             &rule.deny,
             errors,
         );
+        if rule.kinds.iter().collect::<BTreeSet<_>>().len() != rule.kinds.len() {
+            errors.push(format!(
+                "dependency.{}.kinds contains a duplicate dependency kind",
+                rule.name
+            ));
+        }
     }
     for scope in &contract.scopes {
         strings(

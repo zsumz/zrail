@@ -43,6 +43,7 @@ struct FactCheckpoint {
     paths: usize,
     calls: usize,
     methods: usize,
+    operations: usize,
     macros: usize,
     expansions: usize,
     opaque_inputs: usize,
@@ -61,6 +62,7 @@ impl FactCheckpoint {
             paths: visitor.paths.len(),
             calls: visitor.calls.len(),
             methods: visitor.methods.len(),
+            operations: visitor.operations.len(),
             macros: visitor.macros.len(),
             expansions: visitor.macro_expansions.len(),
             opaque_inputs: visitor.opaque_macro_inputs.len(),
@@ -78,6 +80,9 @@ impl FactCheckpoint {
         apply(&mut visitor.paths[self.paths..], guard);
         apply(&mut visitor.calls[self.calls..], guard);
         apply(&mut visitor.methods[self.methods..], guard);
+        for operation in &mut visitor.operations[self.operations..] {
+            operation.apply_guard(guard);
+        }
         apply(&mut visitor.macros[self.macros..], guard);
         apply(
             &mut visitor.lint_suppressions[self.lint_suppressions..],

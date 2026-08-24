@@ -1,13 +1,33 @@
 //! Canonicalization considers every candidate without multiplying invocation results.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
-use super::RustFileFacts;
+use zrail_core::AnalysisLimits;
+
+use crate::cargo::CargoWorkspace;
+
+use super::{
+    CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot,
+    ResolvedModuleEdge, RustFileFacts,
+};
+
+#[derive(Clone, Copy)]
+pub(crate) struct CanonicalizationContext<'a> {
+    pub(crate) cargo: &'a CargoWorkspace,
+    pub(crate) packages: &'a BTreeMap<String, BTreeSet<String>>,
+    pub(crate) module_edges: &'a [ResolvedModuleEdge],
+    pub(crate) compilation_domains: &'a BTreeMap<String, BTreeSet<CompilationDomain>>,
+    pub(crate) compilation_roots: &'a [CompilationRoot],
+    pub(crate) compilation_edges: &'a [CompilationModuleEdge],
+    pub(crate) compilation_includes: &'a [CompilationIncludeEdge],
+    pub(crate) analysis_limits: &'a AnalysisLimits,
+}
 
 pub(super) fn roots(file: &RustFileFacts) -> BTreeSet<String> {
     file.paths
         .iter()
         .chain(&file.calls)
+        .chain(file.operations.iter().map(|operation| &operation.identity))
         .chain(&file.macros)
         .chain(file.macro_expansions.iter().flat_map(|fact| {
             fact.candidates

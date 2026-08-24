@@ -1,5 +1,7 @@
 //! One macro invocation owns every bounded candidate identity and origin.
 
+mod candidate;
+
 use zrail_core::AnalysisQuality;
 
 use crate::cargo::DependencySource;
@@ -44,47 +46,6 @@ pub(crate) struct MacroCandidate {
     pub(crate) definition: Option<String>,
 }
 
-impl MacroCandidate {
-    pub(crate) fn pending(
-        observation: ObservedFact,
-        local_module: bool,
-        derivation: MacroDerivation,
-    ) -> Self {
-        Self {
-            observation,
-            origins: vec![MacroOrigin::Pending { local_module }],
-            derivation,
-            written_alias: matches!(
-                derivation,
-                MacroDerivation::ExactImport | MacroDerivation::ReExport
-            ),
-            definition: None,
-        }
-    }
-
-    pub(crate) fn unresolved(observation: ObservedFact, derivation: MacroDerivation) -> Self {
-        Self {
-            observation,
-            origins: vec![MacroOrigin::Unresolved],
-            derivation,
-            written_alias: false,
-            definition: None,
-        }
-    }
-
-    pub(crate) fn policy_names(&self) -> impl Iterator<Item = &str> {
-        self.observation.policy_names()
-    }
-
-    pub(crate) fn allowance_names<'a>(&'a self, written: &'a str) -> Vec<&'a str> {
-        let mut names = self.policy_names().collect::<Vec<_>>();
-        if self.written_alias && names.len() == 1 && names[0] != written && valid_path(written) {
-            names.push(written);
-        }
-        names
-    }
-}
-
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct MacroExpansionFact {
     /// The spelling present at the invocation site.
@@ -92,6 +53,8 @@ pub(crate) struct MacroExpansionFact {
     /// Every statically feasible policy identity for this one invocation.
     pub(crate) candidates: Vec<MacroCandidate>,
     pub(crate) lexical_scope: Vec<zrail_core::SourceSpan>,
+    /// Digest of the canonical invocation token stream.
+    pub(crate) input_sha256: String,
     builtin_derive_syntax: bool,
 }
 
@@ -108,6 +71,7 @@ impl MacroExpansionFact {
             observation,
             candidates: vec![candidate],
             lexical_scope: Vec::new(),
+            input_sha256: zrail_core::sha256_hex(b""),
             builtin_derive_syntax: false,
         }
     }
@@ -118,6 +82,7 @@ impl MacroExpansionFact {
             observation,
             candidates: vec![candidate],
             lexical_scope: Vec::new(),
+            input_sha256: zrail_core::sha256_hex(b""),
             builtin_derive_syntax: false,
         }
     }
@@ -134,6 +99,7 @@ impl MacroExpansionFact {
             observation,
             candidates: vec![candidate],
             lexical_scope: Vec::new(),
+            input_sha256: zrail_core::sha256_hex(b""),
             builtin_derive_syntax: true,
         }
     }
@@ -159,6 +125,7 @@ impl MacroExpansionFact {
             observation,
             candidates,
             lexical_scope: Vec::new(),
+            input_sha256: zrail_core::sha256_hex(b""),
             builtin_derive_syntax: false,
         }
     }
@@ -169,6 +136,11 @@ impl MacroExpansionFact {
 
     pub(crate) fn with_lexical_scope(mut self, scope: &[zrail_core::SourceSpan]) -> Self {
         self.lexical_scope = scope.to_vec();
+        self
+    }
+
+    pub(crate) fn with_input_tokens(mut self, tokens: &proc_macro2::TokenStream) -> Self {
+        self.input_sha256 = zrail_core::sha256_hex(tokens.to_string().as_bytes());
         self
     }
 

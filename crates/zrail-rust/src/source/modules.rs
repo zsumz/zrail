@@ -5,6 +5,7 @@ use syn::{
     spanned::Spanned,
     visit::{self, Visit},
 };
+use zrail_core::SourceSpan;
 
 use super::{
     SyntaxGuard,
@@ -13,6 +14,28 @@ use super::{
     model::{InlineModulePath, ModuleDeclaration},
     visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
 };
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) struct ResolvedModuleEdge {
+    pub(crate) parent: String,
+    pub(crate) module_name: String,
+    pub(crate) child: String,
+    pub(crate) child_base: super::SubmoduleBase,
+    pub(crate) reachability: super::Reachability,
+    pub(crate) guard: SyntaxGuard,
+    pub(crate) span: Option<SourceSpan>,
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) struct CompilationModuleEdge {
+    pub(crate) parent: String,
+    pub(crate) module_name: String,
+    pub(crate) child: String,
+    pub(crate) domain: super::CompilationDomain,
+    pub(crate) guard: SyntaxGuard,
+    pub(crate) parent_scope: Vec<SourceSpan>,
+    pub(crate) span: Option<SourceSpan>,
+}
 
 pub(super) fn module_declarations(file: &syn::File) -> Vec<ModuleDeclaration> {
     let mut collector = ModuleCollector::default();

@@ -21,34 +21,16 @@ pub const MAX_IMPORT_DIRECTIVES: usize = 256;
 
 use super::{discover, hash::contract_sha256, merge::MergeState, validate::validate_contract};
 
+mod bundle;
 #[path = "load/entry.rs"]
 mod entry;
 #[path = "load/error.rs"]
 mod error;
 mod file;
+pub use bundle::{ContractBundle, ContractSource};
 pub use entry::load_contract_with_entry;
 pub use error::ContractError;
 pub(super) use file::ContractFile;
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-/// Exact source bytes contributing to a loaded contract digest.
-pub struct ContractSource {
-    /// Normalized repository-relative path to the source file.
-    pub path: String,
-    /// UTF-8 file content exactly as read from disk.
-    pub content: String,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-/// A validated merged contract together with its source authority.
-pub struct ContractBundle {
-    /// Typed policy produced by deterministic import merging and validation.
-    pub contract: super::Contract,
-    /// Contributing source files sorted by repository-relative path.
-    pub sources: Vec<ContractSource>,
-    /// Lowercase SHA-256 digest of every source path and exact source byte string.
-    pub sha256: String,
-}
 
 /// Loads, merges, and validates a repository-bounded architecture contract.
 /// `root` is canonicalized; `config` and every import must be regular, non-symlink files inside it.
@@ -75,6 +57,19 @@ pub(super) fn load_contract_entry(
     loader.load(&config, entry)?;
     let contract = loader.state.finish()?;
     validate_contract(&contract)?;
+    for source in &loader.sources {
+        if contract
+            .repository
+            .exclude
+            .iter()
+            .any(|pattern| glob_matches(pattern, &source.path))
+        {
+            return Err(ContractError::one(format!(
+                "excluded repository file cannot provide architecture policy: {}",
+                source.path
+            )));
+        }
+    }
     loader
         .sources
         .sort_by(|left, right| left.path.cmp(&right.path));
@@ -97,6 +92,7 @@ struct Loader {
     imports: usize,
     toml_files: BTreeMap<String, Vec<PathBuf>>,
     discovered_entries: usize,
+    schema: Option<u64>,
 }
 
 impl Loader {
@@ -111,6 +107,7 @@ impl Loader {
             imports: 0,
             toml_files: BTreeMap::new(),
             discovered_entries: 0,
+            schema: None,
         }
     }
 
@@ -160,6 +157,9 @@ impl Loader {
         let file = toml::from_str::<ContractFile>(&content).map_err(|error| {
             ContractError::one(format!("parse {}: {error}", canonical.display()))
         })?;
+        if self.schema.is_none() {
+            self.schema = file.schema;
+        }
         self.imports = self
             .imports
             .checked_add(file.imports.len())
@@ -186,6 +186,11 @@ impl Loader {
         let mut expanded = Vec::new();
         for import in imports {
             let import = discover::normalize_import(import)?;
+            if self.schema == Some(2) && discover::has_wildcard(&import) {
+                return Err(ContractError::one(format!(
+                    "schema-2 contract imports must be exact paths, not patterns: {import:?}"
+                )));
+            }
             if !discover::has_wildcard(&import) {
                 expanded.push(self.root.join(import));
                 continue;

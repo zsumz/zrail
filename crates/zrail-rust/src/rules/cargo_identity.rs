@@ -88,7 +88,7 @@ fn identity_required(contract: &Contract, package: &Package, dependency: &str) -
         || contract
             .owners
             .iter()
-            .filter(|owner| owner.kind != OwnerKind::Directory)
+            .filter(|owner| !matches!(owner.kind, OwnerKind::Directory | OwnerKind::MethodName))
             .any(|owner| references_root(&owner.selector, &root))
         || (contract.source.rust.macros.mode == MacroExpansionMode::DenyUnreviewed
             && contract

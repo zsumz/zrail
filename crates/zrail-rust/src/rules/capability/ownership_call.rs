@@ -6,44 +6,83 @@ use crate::source::{ObservedFact, RustFileFacts};
 
 use super::{ownership::fact_applies, path_matches};
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum CallOwnerEvidenceKind {
+    DirectCall,
+    Reference,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct CallOwnerEvidence<'a> {
+    pub(crate) kind: CallOwnerEvidenceKind,
+    pub(crate) fact: &'a ObservedFact,
+}
+
 pub(super) fn check(
     owner: &OwnerContract,
     file: &RustFileFacts,
     findings: &mut FindingSink,
 ) -> bool {
-    let calls = matching(owner, file, &file.calls);
-    let reference = matching(owner, file, &file.paths)
+    let evidence = matching_evidence(owner, file);
+    let reference = evidence
         .into_iter()
-        .find(|reference| {
-            reference.span.is_some()
-                && !calls
-                    .iter()
-                    .any(|call| call.span == reference.span && call.name == reference.name)
-        });
+        .find(|evidence| evidence.kind == CallOwnerEvidenceKind::Reference);
     if let Some(reference) = reference {
         reject(
             owner,
             file,
-            reference,
+            reference.fact,
             "is referenced outside a direct invocation",
             findings,
         );
         return true;
     }
-    if let Some(call) = calls
-        .iter()
-        .find(|call| call.quality != AnalysisQuality::Exact)
-    {
+    let calls = matching_evidence(owner, file);
+    if let Some(call) = calls.iter().find(|evidence| {
+        evidence.kind == CallOwnerEvidenceKind::DirectCall
+            && evidence.fact.quality != AnalysisQuality::Exact
+    }) {
         reject(
             owner,
             file,
-            call,
+            call.fact,
             "cannot be resolved to an exact direct invocation",
             findings,
         );
         return true;
     }
-    !calls.is_empty()
+    calls
+        .iter()
+        .any(|evidence| evidence.kind == CallOwnerEvidenceKind::DirectCall)
+}
+
+pub(crate) fn matching_evidence<'a>(
+    owner: &OwnerContract,
+    file: &'a RustFileFacts,
+) -> Vec<CallOwnerEvidence<'a>> {
+    let calls = matching(owner, file, &file.calls);
+    let mut evidence = calls
+        .iter()
+        .map(|fact| CallOwnerEvidence {
+            kind: CallOwnerEvidenceKind::DirectCall,
+            fact,
+        })
+        .collect::<Vec<_>>();
+    evidence.extend(
+        matching(owner, file, &file.paths)
+            .into_iter()
+            .filter(|reference| {
+                reference.span.is_some()
+                    && !calls
+                        .iter()
+                        .any(|call| call.span == reference.span && call.name == reference.name)
+            })
+            .map(|fact| CallOwnerEvidence {
+                kind: CallOwnerEvidenceKind::Reference,
+                fact,
+            }),
+    );
+    evidence
 }
 
 fn matching<'a>(

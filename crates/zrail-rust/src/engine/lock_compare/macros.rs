@@ -2,10 +2,57 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use zrail_core::{Finding, FindingSink, LockFile, LockedMacroImplementation};
+use zrail_core::{Finding, FindingSink, LockFile, LockedMacroImplementation, LockedMacroSource};
 
 pub(super) fn compare(current: &LockFile, candidate: &LockFile, findings: &mut FindingSink) {
     compare_implementations(current, candidate, findings);
+    compare_sources(current, candidate, findings);
+}
+
+fn compare_sources(current: &LockFile, candidate: &LockFile, findings: &mut FindingSink) {
+    let old = sources(&current.macro_sources);
+    let new = sources(&candidate.macro_sources);
+    for allowance in new.keys().filter(|allowance| !old.contains_key(*allowance)) {
+        findings.push(Finding::error(
+            "LOCK-036",
+            "lock.macro-source",
+            "lock",
+            format!("macro allowance {allowance:?} lacks locked Cargo package authority"),
+        ));
+    }
+    for allowance in old.keys().filter(|allowance| !new.contains_key(*allowance)) {
+        findings.push(Finding::error(
+            "LOCK-037",
+            "lock.macro-source",
+            "lock",
+            format!("zrail.lock retains stale macro source {allowance:?}"),
+        ));
+    }
+    for (allowance, before) in &old {
+        if let Some(after) = new.get(allowance).filter(|after| *after != before) {
+            findings.push(Finding::error(
+                "LOCK-038",
+                "lock.macro-source",
+                "lock",
+                format!(
+                    "macro allowance {allowance:?} resolved package changed from {} to {}",
+                    label(before),
+                    label(after)
+                ),
+            ));
+        }
+    }
+}
+
+fn sources(values: &[LockedMacroSource]) -> BTreeMap<&str, &LockedMacroSource> {
+    values
+        .iter()
+        .map(|source| (source.allowance.as_str(), source))
+        .collect()
+}
+
+fn label(source: &LockedMacroSource) -> String {
+    format!("{} {} ({})", source.package, source.version, source.source)
 }
 
 fn compare_implementations(current: &LockFile, candidate: &LockFile, findings: &mut FindingSink) {

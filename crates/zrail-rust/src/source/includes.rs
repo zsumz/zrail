@@ -1,12 +1,40 @@
 //! Include macro facts distinguish literal local source from unresolved generation.
 
 use syn::{Expr, Macro, Token, parse::Parser, punctuated::Punctuated, spanned::Spanned};
+use zrail_core::SourceSpan;
 
 use super::{
-    IncludeOccurrenceId,
     fact::source_span,
     model::{IncludeBoundary, IncludeContext},
 };
+
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) struct IncludeOccurrenceId {
+    span: SourceSpan,
+}
+
+impl IncludeOccurrenceId {
+    pub(crate) const fn new(span: SourceSpan) -> Self {
+        Self { span }
+    }
+
+    pub(crate) const fn span(self) -> SourceSpan {
+        self.span
+    }
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) struct CompilationIncludeEdge {
+    pub(crate) parent: String,
+    pub(crate) child: String,
+    pub(crate) domain: super::CompilationDomain,
+    pub(crate) guard: super::SyntaxGuard,
+    pub(crate) context: IncludeContext,
+    pub(crate) parent_scope: Vec<SourceSpan>,
+    pub(crate) generic_types: Vec<String>,
+    pub(crate) include_span: SourceSpan,
+    pub(crate) occurrence: IncludeOccurrenceId,
+}
 
 pub(super) fn include_boundary(
     invocation: &Macro,

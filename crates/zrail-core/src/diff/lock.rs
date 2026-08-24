@@ -1,11 +1,15 @@
 //! Semantic comparison of generated exact state.
 
+mod analysis;
 mod gates;
+mod item_macros;
 mod macros;
+mod ratchets;
+mod receipts;
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{LockFile, LockedDependency, LockedGeneratedSource, LockedPackage, LockedRatchet};
+use crate::{LockFile, LockedDependency, LockedGeneratedSource, LockedPackage};
 
 use super::{ArchitectureChange, ChangeKind};
 
@@ -33,12 +37,15 @@ pub(super) fn compare(
 
 fn compare_present(before: &LockFile, after: &LockFile) -> Vec<ArchitectureChange> {
     let mut changes = Vec::new();
+    analysis::compare(before, after, &mut changes);
     compare_packages(before, after, &mut changes);
     compare_edges(before, after, &mut changes);
     compare_generated(before, after, &mut changes);
     gates::compare(before, after, &mut changes);
+    receipts::compare(before, after, &mut changes);
     macros::compare(before, after, &mut changes);
-    compare_ratchets(before, after, &mut changes);
+    item_macros::compare(before, after, &mut changes);
+    ratchets::compare(before, after, &mut changes);
     changes
 }
 
@@ -120,58 +127,6 @@ fn compare_edges(before: &LockFile, after: &LockFile, changes: &mut Vec<Architec
     }
 }
 
-fn compare_ratchets(before: &LockFile, after: &LockFile, changes: &mut Vec<ArchitectureChange>) {
-    let old = ratchets_by_identity(&before.ratchets);
-    let new = ratchets_by_identity(&after.ratchets);
-    let identities = old
-        .keys()
-        .chain(new.keys())
-        .cloned()
-        .collect::<BTreeSet<_>>();
-    for identity in identities {
-        let subject = ratchet_label(&identity);
-        match (old.get(&identity), new.get(&identity)) {
-            (Some(left), Some(right)) if left.value < right.value => changes.push(
-                ArchitectureChange::new(
-                    ChangeKind::Debt,
-                    "ratchet",
-                    &subject,
-                    "ratchet ceiling increased",
-                )
-                .values(left.value.to_string(), right.value.to_string()),
-            ),
-            (Some(left), Some(right)) if left.value > right.value => changes.push(
-                ArchitectureChange::new(
-                    ChangeKind::Cleanup,
-                    "ratchet",
-                    &subject,
-                    "ratchet tightened with the repository",
-                )
-                .values(left.value.to_string(), right.value.to_string()),
-            ),
-            (None, Some(right)) => changes.push(
-                ArchitectureChange::new(
-                    ChangeKind::Debt,
-                    "ratchet",
-                    &subject,
-                    "reviewed architecture debt was recorded",
-                )
-                .values("<none>", right.value.to_string()),
-            ),
-            (Some(left), None) => changes.push(
-                ArchitectureChange::new(
-                    ChangeKind::Cleanup,
-                    "ratchet",
-                    &subject,
-                    "reviewed architecture debt was removed",
-                )
-                .values(left.value.to_string(), "<none>"),
-            ),
-            _ => {}
-        }
-    }
-}
-
 fn package_names(packages: &[LockedPackage]) -> BTreeSet<String> {
     packages
         .iter()
@@ -201,34 +156,6 @@ fn dependency_edges(packages: &[LockedPackage]) -> BTreeSet<(String, LockedDepen
 
 fn edge_label((package, dependency): &(String, LockedDependency)) -> String {
     format!("{package}->{}", dependency.label())
-}
-
-type RatchetIdentity = (String, Option<String>, String);
-
-fn ratchets_by_identity(ratchets: &[LockedRatchet]) -> BTreeMap<RatchetIdentity, &LockedRatchet> {
-    ratchets
-        .iter()
-        .map(|ratchet| {
-            (
-                (
-                    ratchet.rule.clone(),
-                    ratchet
-                        .selector
-                        .as_deref()
-                        .map(crate::normalize_ratchet_selector),
-                    ratchet.target.clone(),
-                ),
-                ratchet,
-            )
-        })
-        .collect()
-}
-
-fn ratchet_label((rule, selector, target): &RatchetIdentity) -> String {
-    selector.as_ref().map_or_else(
-        || format!("{rule}:{target}"),
-        |selector| format!("{rule}[{selector}]:{target}"),
-    )
 }
 
 #[cfg(test)]

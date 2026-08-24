@@ -143,6 +143,7 @@ fn rust_contract() -> RustSourceContract {
         generated: Vec::new(),
         out_dir: Vec::new(),
         item_macros: Vec::new(),
+        test_mirrors: Vec::new(),
         macros: crate::MacroExpansionContract::default(),
         hygiene: HygieneContract {
             unsafe_code: PolicyMode::Allow,

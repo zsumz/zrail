@@ -4,7 +4,15 @@ use proc_macro2::TokenStream;
 use syn::Macro;
 use zrail_core::{AnalysisQuality, Effect};
 
-use super::{CompileEffectFact, MacroExpansionFact, visitor::FactVisitor};
+use super::{MacroExpansionFact, visitor::FactVisitor};
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct CompileEffectFact {
+    pub(crate) effect: Effect,
+    pub(crate) invocation: MacroExpansionFact,
+    pub(crate) target: Option<String>,
+    pub(crate) opaque_input: bool,
+}
 
 pub(super) fn record(
     visitor: &mut FactVisitor<'_>,

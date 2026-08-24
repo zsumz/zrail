@@ -1,12 +1,15 @@
 //! Public orchestration for checking, locking, and diagnosing a Rust repository.
 
+mod analysis_certificate;
 mod candidate;
 mod doctor;
 mod gates;
+mod item_macro_manifests;
 mod lock_compare;
 mod lock_state;
 mod macro_implementations;
 mod model;
+mod receipts;
 
 use std::{error::Error, fmt, path::Path};
 
@@ -133,6 +136,7 @@ fn finish_check(
             lock,
             inventory: &model.inventory,
             cargo: &model.cargo,
+            resolved_cargo: model.resolved_cargo.as_ref(),
             source: &model.source,
             module_edges: &model.module_edges,
         },
