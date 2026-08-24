@@ -43,10 +43,10 @@ target matching the machine that will run zrail:
 | Windows x86-64 | `x86_64-pc-windows-msvc` | `.zip` |
 
 For Linux x86-64 with glibc, download and verify one exact release like this
-(replace `0.0.2` with the reviewed version):
+(replace `0.0.3` with the reviewed version):
 
 ```sh
-ZRAIL_VERSION=0.0.2
+ZRAIL_VERSION=0.0.3
 ZRAIL_TARGET=x86_64-unknown-linux-gnu
 ZRAIL_ARCHIVE="zrail-${ZRAIL_VERSION}-${ZRAIL_TARGET}.tar.gz"
 ZRAIL_RELEASE="https://github.com/zsumz/zrail/releases/download/v${ZRAIL_VERSION}"
@@ -71,7 +71,7 @@ CI should use the same checked archive instead of compiling zrail on every run:
 ```yaml
 - name: Download verified zrail binary
   env:
-    ZRAIL_VERSION: 0.0.2
+    ZRAIL_VERSION: 0.0.3
     ZRAIL_TARGET: x86_64-unknown-linux-gnu
   run: |
     archive="zrail-${ZRAIL_VERSION}-${ZRAIL_TARGET}.tar.gz"
@@ -92,6 +92,11 @@ If no prebuilt target fits, install from the locked registry source:
 ```sh
 cargo install zrail --locked
 ```
+
+Protected tags package, verify, checksum, attest, and publish `zrail-core`,
+`zrail-rust`, and `zrail` from the same reviewed checkout. The GitHub release
+remains a draft until those exact registry archives are downloadable and match
+the attested local bytes.
 
 Building from source requires Rust 1.96 or newer.
 
@@ -143,6 +148,10 @@ Cargo.lock   Cargo's selected versions and checksums
 `zrail check` is read-only. `zrail diff` separates grants, revocations, debt,
 cleanup, neutral changes, and unknown comparisons.
 
+`zrail coverage --format json` exports the complete governed owner,
+dependency, and test-mirror surface with source spans and analysis quality for
+mechanical parity audits.
+
 Once installed, analysis runs locally and requires no account, daemon, source
 upload, API key, LLM, or network access.
 
@@ -152,7 +161,7 @@ upload, API key, LLM, or network access.
 workspace membership, dependency identity, and layers
 runtime and compile-time effects, owners, and source boundaries
 facades, test placement, source hygiene, and tightening ratchets
-generated source, macro authority, and qualification evidence
+generated source, macro authority, exact test mirrors, and qualification evidence
 ```
 
 Unknown configuration, stale policy, unresolved source boundaries, missing
@@ -171,6 +180,18 @@ default.
 
 `--accept-grants` and `--allow-grants` require explicit human review. They must
 not appear in automated or proposal-controlled merge checks.
+
+Contract schema and lock-semantics changes use separate review paths:
+
+```sh
+zrail migrate-config
+zrail migrate-config --write
+zrail fmt --check
+zrail migrate-lock --base HEAD --output zrail-migration.json
+zrail update --accept-migration sha256:<reviewed-report-digest>
+```
+
+Migration acceptance never accepts grants in the current worktree.
 
 ## Crates
 

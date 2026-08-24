@@ -57,7 +57,7 @@ fn publishing_waits_for_all_builds_and_clean_linux_runtime_checks() {
     let publish = section(&workflow, "  publish:", "__end_of_workflow__");
 
     assert!(workflow.contains("needs: [qualify, build]"));
-    assert!(publish.contains("needs: [qualify, build, linux-runtime]"));
+    assert!(publish.contains("needs: [qualify, build, package, linux-runtime]"));
     assert!(workflow.contains("ubuntu:24.04"));
     assert!(workflow.contains("alpine:3.22"));
     assert!(workflow.contains("Run without a Rust toolchain in a clean container"));
@@ -69,6 +69,20 @@ fn publishing_waits_for_all_builds_and_clean_linux_runtime_checks() {
     assert!(publish.contains("--verify-tag --draft"));
     assert!(publish.contains("gh release edit \"$GITHUB_REF_NAME\" --draft=false"));
     assert_eq!(workflow.matches("contents: write").count(), 1);
+}
+
+#[test]
+fn crate_publication_is_ordered_exact_and_safe_to_resume() {
+    let workflow = release_workflow();
+    let publish = publish_script();
+
+    assert!(workflow.contains("rust-lang/crates-io-auth-action@"));
+    assert!(workflow.contains("run: scripts/publish-crates"));
+    assert!(publish.contains("packages=(zrail-core zrail-rust zrail)"));
+    assert!(publish.contains("for attempt in {1..30}"));
+    assert!(publish.contains("if [[ \"${published[$index]}\" == yes ]]"));
+    assert!(publish.contains("cmp \"dist/$package-$ZRAIL_VERSION.crate\" \"$generated\""));
+    assert!(publish.contains("download_exact_registry_archive \"$package\""));
 }
 
 #[test]
@@ -111,6 +125,11 @@ fn readme_uses_verified_prebuilt_binaries_for_ci() {
 fn release_workflow() -> String {
     fs::read_to_string(repository_root().join(".github/workflows/release.yml"))
         .expect("read release workflow")
+}
+
+fn publish_script() -> String {
+    fs::read_to_string(repository_root().join("scripts/publish-crates"))
+        .expect("read crate publisher")
 }
 
 fn section<'a>(source: &'a str, start: &str, end: &str) -> &'a str {

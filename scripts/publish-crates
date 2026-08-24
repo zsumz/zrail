@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export LC_ALL=C
+
+repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$repo_root"
+
+: "${CARGO_REGISTRY_TOKEN:?CARGO_REGISTRY_TOKEN is required}"
+: "${ZRAIL_VERSION:?ZRAIL_VERSION is required}"
+
+user_agent="zrail-release/$ZRAIL_VERSION"
+packages=(zrail-core zrail-rust zrail)
+download_tmp=$(mktemp -d "${RUNNER_TEMP:-${TMPDIR:-/tmp}}/zrail-registry.XXXXXX")
+trap 'rm -rf -- "$download_tmp"' EXIT
+
+metadata_url() {
+    printf 'https://crates.io/api/v1/crates/%s/%s' "$1" "$ZRAIL_VERSION"
+}
+
+download_url() {
+    printf 'https://crates.io/api/v1/crates/%s/%s/download' "$1" "$ZRAIL_VERSION"
+}
+
+registry_status() {
+    local package=$1
+    curl --user-agent "$user_agent" --silent --show-error \
+        --output /dev/null --write-out '%{http_code}' "$(metadata_url "$package")"
+}
+
+download_exact_registry_archive() {
+    local package=$1
+    local expected="dist/$package-$ZRAIL_VERSION.crate"
+    local downloaded="$download_tmp/$package-$ZRAIL_VERSION.crate"
+    if ! curl --user-agent "$user_agent" --fail --silent --show-error --location \
+        --output "$downloaded" "$(download_url "$package")"; then
+        return 1
+    fi
+    if ! cmp "$expected" "$downloaded"; then
+        echo "published $package archive differs from the attested archive" >&2
+        return 2
+    fi
+}
+
+published=()
+for package in "${packages[@]}"; do
+    test -f "dist/$package-$ZRAIL_VERSION.crate"
+    status=$(registry_status "$package")
+    case "$status" in
+        404) published+=(no) ;;
+        200)
+            download_exact_registry_archive "$package"
+            published+=(yes)
+            ;;
+        *)
+            echo "crates.io returned HTTP $status while checking $package" >&2
+            exit 1
+            ;;
+    esac
+done
+
+for index in "${!packages[@]}"; do
+    package=${packages[$index]}
+    if [[ "${published[$index]}" == yes ]]; then
+        continue
+    fi
+
+    verified=false
+    publish_status=1
+    for attempt in {1..30}; do
+        set +e
+        cargo publish --package "$package" --locked --no-verify
+        publish_status=$?
+        set -e
+
+        generated="target/package/$package-$ZRAIL_VERSION.crate"
+        if [[ -f "$generated" ]] \
+            && ! cmp "dist/$package-$ZRAIL_VERSION.crate" "$generated"; then
+            echo "cargo generated different bytes for $package" >&2
+            exit 1
+        fi
+
+        set +e
+        download_exact_registry_archive "$package"
+        archive_status=$?
+        set -e
+        case "$archive_status" in
+            0)
+                verified=true
+                break
+                ;;
+            2) exit 1 ;;
+        esac
+        if (( attempt < 30 )); then sleep 10; fi
+    done
+    if [[ "$verified" != true ]]; then
+        echo "$package did not become downloadable; cargo publish status: $publish_status" >&2
+        exit 1
+    fi
+done

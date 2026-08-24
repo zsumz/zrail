@@ -20,7 +20,8 @@ defaults:
     shell: bash
 
 # Repository rules must protect v* tags. The release environment must require
-# review and permit deployments only from those protected tags.
+# review and permit deployments only from those protected tags. Each published
+# crate must trust this workflow and the release environment on crates.io.
 jobs:
   qualify:
     name: qualify protected tag
@@ -167,6 +168,53 @@ jobs:
           if-no-files-found: error
           compression-level: 0
 
+  package:
+    name: package publishable crates
+    needs: qualify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out qualified source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Reject repository-local Cargo configuration
+        run: |
+          for cargo_config in .cargo/config .cargo/config.toml; do
+            if [[ -e "$cargo_config" || -L "$cargo_config" ]]; then
+              echo "repository-local Cargo configuration is not permitted: $cargo_config" >&2
+              exit 1
+            fi
+          done
+
+      - name: Set up pinned Rust
+        uses: ./.github/actions/setup-rust
+
+      - name: Fetch locked dependencies
+        run: cargo fetch --locked
+
+      - name: Package and verify publishable crates offline
+        run: scripts/package-check
+
+      - name: Stage exact crate archives
+        env:
+          ZRAIL_VERSION: ${{ needs.qualify.outputs.version }}
+        run: |
+          mkdir -p dist
+          cp "target/package/zrail-core-$ZRAIL_VERSION.crate" dist/
+          cp "target/package/zrail-rust-$ZRAIL_VERSION.crate" dist/
+          cp "target/package/zrail-$ZRAIL_VERSION.crate" dist/
+
+      - name: Upload immutable crate artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-crates
+          path: dist/*.crate
+          if-no-files-found: error
+          compression-level: 0
+
   linux-runtime:
     name: clean runtime ${{ matrix.target }}
     needs: [qualify, build]
@@ -211,9 +259,9 @@ jobs:
 
   publish:
     name: attest and publish
-    needs: [qualify, build, linux-runtime]
+    needs: [qualify, build, package, linux-runtime]
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
     environment: release
     permissions:
       contents: write
@@ -247,8 +295,11 @@ jobs:
             "zrail-$ZRAIL_VERSION-x86_64-apple-darwin.tar.gz"
             "zrail-$ZRAIL_VERSION-aarch64-apple-darwin.tar.gz"
             "zrail-$ZRAIL_VERSION-x86_64-pc-windows-msvc.zip"
+            "zrail-core-$ZRAIL_VERSION.crate"
+            "zrail-rust-$ZRAIL_VERSION.crate"
+            "zrail-$ZRAIL_VERSION.crate"
           )
-          test "$(find dist -maxdepth 1 -type f -name 'zrail-*' | wc -l | tr -d ' ')" = 7
+          test "$(find dist -maxdepth 1 -type f -name 'zrail-*' | wc -l | tr -d ' ')" = 10
           for archive in "${expected[@]}"; do test -f "dist/$archive"; done
           (cd dist && sha256sum "${expected[@]}" > SHA256SUMS)
           (cd dist && sha256sum --check SHA256SUMS)
@@ -258,17 +309,31 @@ jobs:
           python3 scripts/release-notes.py
           "$ZRAIL_VERSION" CHANGELOG.md "$RUNNER_TEMP/release-notes.md"
 
-      - name: Attest archive provenance
+      - name: Attest release provenance
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
         with:
           subject-path: |
             dist/zrail-*.tar.gz
             dist/zrail-*.zip
+            dist/zrail-*.crate
+            dist/SHA256SUMS
 
-      - name: Create draft, upload complete release, then publish
+      - name: Create draft and upload complete release
         run: |
           gh release create "$GITHUB_REF_NAME" \
             --verify-tag --draft --title "zrail $ZRAIL_VERSION" \
             --notes-file "$RUNNER_TEMP/release-notes.md"
           gh release upload "$GITHUB_REF_NAME" dist/zrail-* dist/SHA256SUMS
+
+      - name: Authenticate with crates.io trusted publishing
+        id: crates_io
+        uses: rust-lang/crates-io-auth-action@c6f97d42243bad5fab37ca0427f495c86d5b1a18 # v1.0.5
+
+      - name: Publish and verify exact registry archives
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.crates_io.outputs.token }}
+        run: scripts/publish-crates
+
+      - name: Publish GitHub release after registry success
+        run: |
           gh release edit "$GITHUB_REF_NAME" --draft=false
