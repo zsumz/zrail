@@ -22,7 +22,7 @@ pub(super) fn facts(
     generic_types: &[String],
     lexical_scope: &[zrail_core::SourceSpan],
 ) -> Vec<ObservedFact> {
-    let Expr::Path(callee) = call.func.as_ref() else {
+    let Some(callee) = callee_path(call.func.as_ref()) else {
         return Vec::new();
     };
     if projection_text(callee).is_some() {
@@ -54,16 +54,13 @@ pub(super) fn facts(
     observed
 }
 
-pub(super) fn unresolved_projection(
-    call: &ExprCall,
+pub(super) fn unresolved_path_projection(
+    path: &ExprPath,
     guard: SyntaxGuard,
 ) -> Option<CallResolutionFact> {
-    let Expr::Path(callee) = call.func.as_ref() else {
-        return None;
-    };
     Some(CallResolutionFact {
-        written: projection_text(callee)?,
-        span: source_span(callee.span()),
+        written: projection_text(path)?,
+        span: source_span(path.span()),
         guard,
     })
 }
@@ -91,17 +88,26 @@ pub(super) fn resolution_findings(
                 "rust.source.call-resolution",
                 "source",
                 format!(
-                    "qualified call crosses an associated-type projection that zrail cannot resolve exactly: {}",
+                    "qualified expression path crosses an associated-type projection that zrail cannot resolve exactly: {}",
                     call.written
                 ),
             )
             .at(path, Some(call.span))
             .with_analysis(AnalysisQuality::Unresolved)
             .with_help(
-                "call one concrete type path before trusting direct-call authority at this site",
+                "name one concrete type before trusting path or direct-call authority at this site",
             )
         })
         .collect()
+}
+
+fn callee_path(expression: &Expr) -> Option<&ExprPath> {
+    match expression {
+        Expr::Path(path) => Some(path),
+        Expr::Paren(paren) => callee_path(&paren.expr),
+        Expr::Group(group) => callee_path(&group.expr),
+        _ => None,
+    }
 }
 
 fn effective_path<'a>(
@@ -227,3 +233,7 @@ pub(super) fn macro_candidates(
 #[cfg(test)]
 #[path = "calls_test.rs"]
 mod calls_test;
+
+#[cfg(test)]
+#[path = "calls/tests/projection.rs"]
+mod calls_projection_test;

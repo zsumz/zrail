@@ -85,10 +85,7 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     fn visit_visibility(&mut self, _: &'ast syn::Visibility) {}
 
     fn visit_expr_path(&mut self, expression: &'ast ExprPath) {
-        let previous =
-            std::mem::replace(&mut self.next_path_namespace, super::FactNamespace::Value);
-        visit::visit_expr_path(self, expression);
-        self.next_path_namespace = previous;
+        self.record_expression_path(expression);
     }
 
     fn visit_type_path(&mut self, path: &'ast TypePath) {
