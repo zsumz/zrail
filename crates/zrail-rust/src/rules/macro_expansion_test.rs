@@ -158,6 +158,8 @@ fn repository(name: &str, derivation: MacroDerivation) -> MacroCandidate {
         derivation,
         written_alias: false,
         definition: None,
+        definition_name: None,
+        definition_sha256: None,
     }
 }
 
@@ -170,6 +172,8 @@ fn compiler(name: &str) -> MacroExpansionFact {
             derivation: MacroDerivation::Written,
             written_alias: false,
             definition: None,
+            definition_name: None,
+            definition_sha256: None,
         }],
     )
 }

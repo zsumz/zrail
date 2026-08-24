@@ -144,6 +144,10 @@ authority; those always use exact totals.
 
 Ordinary repository size is input, not analysis debt. Multiplicative source
 contexts and include projection use deterministic input-derived budgets. A
+zero-include repository performs zero projection work; active instances are
+cached by file and syntax guard, and repeated written-path queries are cached by
+source instance, lexical scope, and usage. The qualification suite constructs
+10,001 physical Rust files and requires deterministic complete lock state. A
 repository may review explicit content-bound overrides when unusual source
 shapes need them:
 
@@ -571,8 +575,12 @@ The exact source path must contain one matching invocation. The manifest token
 digest must match its canonical input, and binding names must be unique Rust
 identifiers with an explicit type, constructor, or value namespace kind. Those
 declarations enter normal path resolution only after validation. The lock binds
-the manifest path and bytes, invocation digest, and binding count, so source,
-manifest, or namespace drift requires review.
+the manifest path and bytes, invocation digest, exact resolved macro definition
+and content digest, effective syntax guard, every applicable Cargo compilation
+domain, and binding count. Repository definitions bind their canonical macro
+token stream; external definitions require an exact Cargo.lock package with an
+archive checksum. Source, manifest, guard, domain, or namespace drift therefore
+requires review, and ambiguous definitions fail closed.
 
 ### Exact test mirrors and execution receipts
 
@@ -688,7 +696,12 @@ occurrences; and every dependency prohibition with exact shortest violating
 paths through `Cargo.lock` identities. Occurrences retain source spans,
 resolution quality, syntax guards, applicable Cargo compilation domains, and
 whether the source path is allowed. Unresolved and conservative matches are
-counted explicitly. Exact test-mirror identities are included when declared.
+counted explicitly. Schema 2 binds the exact resolved contract digest and also
+includes `enabled_rails`, a sorted canonical
+census covering every global policy switch, contract source, analysis limit,
+and named layer, scope, owner, ratchet, gate, invariant, macro, generated-source,
+dependency, and test-mirror rail. Exact test-mirror identities are included
+when declared.
 
 Coverage is an audit artifact, not partial best-effort discovery. It fails when
 source analysis is incomplete, when a governed dependency cannot be mapped to

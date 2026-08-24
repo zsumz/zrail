@@ -6,10 +6,20 @@ use zrail_core::AnalysisQuality;
 
 use super::{
     ObservedFact, SourceInstanceId,
-    include_bindings::IncludeBindings,
+    include_bindings::{IncludeBindings, ResolvedPath},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::ResolutionUsage,
 };
+
+pub(super) type ResolutionCache = BTreeMap<ResolutionCacheKey, Vec<ResolvedPath>>;
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(super) struct ResolutionCacheKey {
+    instance: SourceInstanceId,
+    written: String,
+    scope: Vec<zrail_core::SourceSpan>,
+    usage: ResolutionUsage,
+}
 
 pub(super) struct CandidateAggregate {
     pub(super) instances: usize,
@@ -37,22 +47,36 @@ pub(super) fn aggregate(
     instances: &[SourceInstanceId],
     usage: ResolutionUsage,
     budget: &mut ProjectionBudget,
+    cache: &mut ResolutionCache,
 ) -> Result<(BTreeMap<String, CandidateAggregate>, bool, TestCoverage), ProjectionLimit> {
     let mut aggregate = BTreeMap::<String, CandidateAggregate>::new();
     let mut compatible = true;
     let mut test_coverage = TestCoverage::default();
     let mut common = None;
     for instance in instances {
-        let mut seen = BTreeSet::new();
-        let mut resolved = bindings.resolve_written(
-            *instance,
-            fact.written.as_deref().unwrap_or(&fact.name),
-            &fact.lexical_scope,
-            &mut seen,
-            0,
-            budget,
+        let written = fact.written.as_deref().unwrap_or(&fact.name);
+        let key = ResolutionCacheKey {
+            instance: *instance,
+            written: written.into(),
+            scope: fact.lexical_scope.clone(),
             usage,
-        )?;
+        };
+        let mut resolved = if let Some(resolved) = cache.get(&key) {
+            resolved.clone()
+        } else {
+            let mut seen = BTreeSet::new();
+            let resolved = bindings.resolve_written(
+                *instance,
+                written,
+                &fact.lexical_scope,
+                &mut seen,
+                0,
+                budget,
+                usage,
+            )?;
+            cache.insert(key, resolved.clone());
+            resolved
+        };
         let source = bindings.instances.get(*instance);
         if source.is_some_and(|source| generic_root(fact, &source.generic_types)) {
             for candidate in &mut resolved {

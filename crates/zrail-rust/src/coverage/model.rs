@@ -23,12 +23,16 @@ pub struct GovernedSurfaceReport {
     pub schema: u64,
     /// Schema of the fully merged architecture contract.
     pub contract_schema: u64,
+    /// SHA-256 of the exact fully resolved contract bundle.
+    pub contract_sha256: String,
     /// Complete analysis census and exclusion boundary.
     pub analysis: GovernedAnalysis,
     /// Matched owner occurrences whose identity was unresolved.
     pub unresolved_occurrences: usize,
     /// Matched owner occurrences conservatively mapped to multiple identities.
     pub ambiguous_occurrences: usize,
+    /// Canonical identity of every enabled global or named policy rail.
+    pub enabled_rails: Vec<String>,
     /// Every enabled owner rule, ordered by canonical policy identity.
     pub owners: Vec<GovernedOwnerRule>,
     /// Every dependency prohibition and its shortest resolved violation paths.

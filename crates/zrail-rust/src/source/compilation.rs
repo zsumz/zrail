@@ -14,6 +14,20 @@ pub(crate) enum CompilationMode {
 }
 
 impl CompilationMode {
+    pub(crate) const fn canonical_name(self) -> &'static str {
+        match self {
+            Self::Library => "library",
+            Self::LibraryTest => "library-test",
+            Self::Binary => "binary",
+            Self::BinaryTest => "binary-test",
+            Self::IntegrationTest => "integration-test",
+            Self::Benchmark => "benchmark",
+            Self::Example => "example",
+            Self::ExampleTest => "example-test",
+            Self::BuildScript => "build-script",
+        }
+    }
+
     pub(crate) const fn enables_cfg_test(self) -> bool {
         matches!(
             self,
@@ -32,4 +46,16 @@ pub(crate) struct CompilationDomain {
     pub(crate) edition: String,
     pub(crate) target: String,
     pub(crate) mode: CompilationMode,
+}
+
+impl CompilationDomain {
+    pub(crate) fn canonical_identity(&self) -> String {
+        format!(
+            "package={};edition={};target={};mode={}",
+            self.package,
+            self.edition,
+            self.target,
+            self.mode.canonical_name()
+        )
+    }
 }

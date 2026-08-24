@@ -1,5 +1,7 @@
 //! Textual macro definitions resolve inside exact Cargo and lexical namespaces.
 
+mod domains;
+
 use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::AnalysisQuality;
@@ -12,8 +14,8 @@ use super::macro_definition_candidate::{
 };
 use super::{
     CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot,
-    MacroCandidate, MacroDerivation, MacroExpansionFact, SourceIndex, SourceInstances, SyntaxGuard,
-    model::MacroDefinitionFact,
+    MacroCandidate, MacroDerivation, MacroExpansionFact, SourceIndex, SourceInstanceId,
+    SourceInstances, SyntaxGuard, model::MacroDefinitionFact,
 };
 
 const MAX_DEFINITIONS_PER_DOMAIN: usize = 256;
@@ -43,6 +45,8 @@ pub(super) struct DefinitionSite {
     pub(super) file: String,
     pub(super) package: String,
     pub(super) directory: String,
+    pub(super) name: String,
+    pub(super) sha256: String,
 }
 
 pub(super) struct Resolution {
@@ -172,11 +176,7 @@ impl MacroDefinitions {
         expansion.refresh_quality();
     }
 
-    fn apply_qualified(
-        &self,
-        expansion: &mut MacroExpansionFact,
-        instances: &[super::SourceInstanceId],
-    ) {
+    fn apply_qualified(&self, expansion: &mut MacroExpansionFact, instances: &[SourceInstanceId]) {
         let mut include_scope_uncertain = false;
         for instance in instances {
             let mut seen = BTreeSet::new();

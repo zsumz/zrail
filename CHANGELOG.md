@@ -8,7 +8,8 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 - Input-scaled base and derived source contexts, sparse include projection,
   typed incompleteness diagnostics, reviewed analysis budgets, workload
-  metrics, and a lock-bound completeness certificate.
+  metrics, memoized binding queries, a lock-bound completeness certificate,
+  and a deterministic 10,001-physical-file qualification regression.
 - Exclusion-aware, contract-first initialization; atomic optional baselines;
   exact entrypoint role overrides; and selector-specific hygiene ratchets.
 - Offline `Cargo.lock` identities and graph traversal for exact macro-source
@@ -16,12 +17,14 @@ All notable zrail changes are recorded here for reviewed release notes.
   and revision-bound ambiguity rejection.
 - Schema-2 exact contract fragments, deterministic `zrail fmt`, explicit
   `zrail migrate-config`, exact item-macro namespace manifests, and scoped
-  adjacent-epoch `zrail migrate-lock` reports.
+  adjacent-epoch `zrail migrate-lock` reports. Exact item-macro lock state binds
+  the definition content, syntax guard, and every Cargo compilation domain.
 - Generic type-construction, written-method, field read/write/mutable-borrow,
   and field-authority ownership from one shared source-operation model.
 - Exact production-to-test mirrors, strict versioned execution receipts, and
-  deterministic `zrail coverage` audit output with spans, guards, compilation
-  domains, analysis quality, dependency paths, and exclusions.
+  deterministic schema-2 `zrail coverage` audit output with an enabled-rail
+  census, spans, guards, compilation domains, analysis quality, dependency
+  paths, and exclusions.
 
 ### Changed
 

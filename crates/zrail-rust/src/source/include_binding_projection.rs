@@ -8,7 +8,7 @@ use super::{
     ObservedFact, SyntaxGuard,
     include_bindings::IncludeBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
-    include_projection_candidates::{CandidateAggregate, aggregate},
+    include_projection_candidates::{CandidateAggregate, ResolutionCache, aggregate},
     include_resolution_state::ResolutionUsage,
 };
 
@@ -37,6 +37,7 @@ pub(super) fn project(
     uncertain: &mut Option<zrail_core::SourceSpan>,
     budget: &mut ProjectionBudget,
     remaining_file_facts: &mut usize,
+    cache: &mut ResolutionCache,
 ) -> Result<FactProjection, ProjectionLimit> {
     let existing = request
         .facts
@@ -52,9 +53,8 @@ pub(super) fn project(
         if instances.is_empty() {
             continue;
         }
-        budget.consume_work()?;
         let (aggregate, compatible, test_coverage) =
-            aggregate(request.bindings, fact, &instances, usage, budget)?;
+            aggregate(request.bindings, fact, instances, usage, budget, cache)?;
         if aggregate.len() > MAX_PROJECTED_IDENTITIES {
             *uncertain = uncertain.or(fact.span);
             continue;

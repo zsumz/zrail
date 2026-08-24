@@ -17,6 +17,8 @@ impl MacroCandidate {
                 MacroDerivation::ExactImport | MacroDerivation::ReExport
             ),
             definition: None,
+            definition_name: None,
+            definition_sha256: None,
         }
     }
 
@@ -27,6 +29,8 @@ impl MacroCandidate {
             derivation,
             written_alias: false,
             definition: None,
+            definition_name: None,
+            definition_sha256: None,
         }
     }
 

@@ -6,13 +6,50 @@ const ROOTS: usize = 1_000;
 const CALLS: usize = 80;
 
 #[test]
+fn repeated_resolution_reuses_actual_transition_work() {
+    let mut single = fixture_index();
+    let single_bindings = bindings(&single);
+    assert!(
+        single_bindings
+            .apply_with_limits(
+                &mut single,
+                ProjectionLimits {
+                    work: 1_000,
+                    projected_facts: 10,
+                },
+            )
+            .is_empty()
+    );
+
+    let mut repeated = fixture_index();
+    repeated.files[0].calls = vec![repeated.files[0].calls[0].clone(); 50];
+    let repeated_bindings = bindings(&repeated);
+    assert!(
+        repeated_bindings
+            .apply_with_limits(
+                &mut repeated,
+                ProjectionLimits {
+                    work: 1_000,
+                    projected_facts: 10,
+                },
+            )
+            .is_empty()
+    );
+
+    assert_eq!(
+        repeated.analysis_metrics.projection_work,
+        single.analysis_metrics.projection_work
+    );
+}
+
+#[test]
 fn default_work_budget_covers_many_ordinary_compilation_occurrences() {
     let mut limited = scaled_index();
     let limited_bindings = scaled_bindings(&limited);
     let findings = limited_bindings.apply_with_limits(
         &mut limited,
         ProjectionLimits {
-            work: 1_000_000,
+            work: 1_000,
             projected_facts: 1,
         },
     );
@@ -24,6 +61,7 @@ fn default_work_budget_covers_many_ordinary_compilation_occurrences() {
     let findings = bindings.apply(&mut index);
     assert!(findings.is_empty());
     assert_eq!(projected_call_count(&index), 1);
+    assert!(index.analysis_metrics.projection_work < 1_000_000);
 }
 
 #[test]

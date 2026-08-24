@@ -14,31 +14,35 @@ pub(super) fn item_authorities(
     let Some(file) = model.source.files.iter().find(|file| file.relative == path) else {
         return Vec::new();
     };
-    crate::rules::source_graph::item_macro_authorities(&model.bundle.contract, file)
-        .into_iter()
-        .map(|index| {
-            let allowance = &model.bundle.contract.source.rust.item_macros[index];
-            ItemMacroAuthorityExplanation {
-                name: allowance.name.clone(),
-                selector: crate::rules::source_graph::item_macro_selector(allowance),
-                binding: allowance.binding.map_or_else(
-                    || "name-only".into(),
-                    |binding| {
-                        match binding {
-                            MacroBindingMode::Exact => "exact",
-                            MacroBindingMode::Conservative => "conservative",
-                        }
-                        .into()
-                    },
-                ),
-                source: allowance
-                    .source
-                    .as_ref()
-                    .map(zrail_core::CrateRootSource::identity),
-                reason: allowance.reason.clone(),
-            }
-        })
-        .collect()
+    crate::rules::source_graph::item_macro_authorities(
+        &model.bundle.contract,
+        file,
+        model.resolved_cargo.as_ref(),
+    )
+    .into_iter()
+    .map(|index| {
+        let allowance = &model.bundle.contract.source.rust.item_macros[index];
+        ItemMacroAuthorityExplanation {
+            name: allowance.name.clone(),
+            selector: crate::rules::source_graph::item_macro_selector(allowance),
+            binding: allowance.binding.map_or_else(
+                || "name-only".into(),
+                |binding| {
+                    match binding {
+                        MacroBindingMode::Exact => "exact",
+                        MacroBindingMode::Conservative => "conservative",
+                    }
+                    .into()
+                },
+            ),
+            source: allowance
+                .source
+                .as_ref()
+                .map(zrail_core::CrateRootSource::identity),
+            reason: allowance.reason.clone(),
+        }
+    })
+    .collect()
 }
 
 pub(super) fn implementations(model: &RepositoryModel) -> Vec<String> {

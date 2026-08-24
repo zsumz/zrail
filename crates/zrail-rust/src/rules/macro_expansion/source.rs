@@ -78,11 +78,12 @@ fn matches_external(
     let Some(graph) = resolved_cargo else {
         return false;
     };
+    let Ok(selected) = graph.lookup(selected, version.as_deref(), source.as_deref()) else {
+        return false;
+    };
     graph
-        .lookup(selected, version.as_deref(), source.as_deref())
-        .ok()
-        .filter(|identity| identity.name == package)
-        .is_some_and(|identity| graph.source_matches(identity, observed).unwrap_or(false))
+        .package_for_source(package, observed)
+        .is_ok_and(|observed| observed == selected)
 }
 
 fn source_mismatch(

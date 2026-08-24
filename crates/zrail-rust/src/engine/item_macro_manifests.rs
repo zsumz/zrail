@@ -1,10 +1,12 @@
 //! Reviewed item-macro manifests contribute exact lexical namespace bindings.
 
+mod lock;
+
 use std::collections::BTreeSet;
 
 use zrail_core::{
-    AnalysisQuality, ItemMacroBindingKind, ItemMacroManifest, LockedItemMacroManifest,
-    MAX_INPUT_BYTES, read_text_with_limit, sha256_hex,
+    AnalysisQuality, ItemMacroBindingKind, ItemMacroManifest, MAX_INPUT_BYTES,
+    read_text_with_limit, sha256_hex,
 };
 
 use crate::{
@@ -14,20 +16,33 @@ use crate::{
 
 use super::CheckError;
 
+pub(super) use lock::locked;
+
 const MAX_MANIFEST_BINDINGS: usize = 10_000;
+
+pub(super) struct AppliedItemMacroManifest {
+    allowance: usize,
+    invocation_path: String,
+    manifest_path: String,
+    manifest_sha256: String,
+    invocation_sha256: String,
+    invocation_span: Option<zrail_core::SourceSpan>,
+    bindings: usize,
+}
 
 pub(super) fn apply(
     inventory: &RepositoryInventory,
     contract: &zrail_core::Contract,
     source: &mut SourceIndex,
-) -> Result<Vec<LockedItemMacroManifest>, CheckError> {
-    let mut locked = Vec::new();
-    for allowance in contract
+) -> Result<Vec<AppliedItemMacroManifest>, CheckError> {
+    let mut applied = Vec::new();
+    for (allowance_index, allowance) in contract
         .source
         .rust
         .item_macros
         .iter()
-        .filter(|allowance| allowance.manifest.is_some())
+        .enumerate()
+        .filter(|(_, allowance)| allowance.manifest.is_some())
     {
         let path = allowance.path.as_deref().ok_or_else(|| {
             CheckError::from_message("exact item-macro manifests require one invocation path")
@@ -46,7 +61,7 @@ pub(super) fn apply(
                     "item-macro manifest invocation source is unavailable: {path}"
                 ))
             })?;
-        let (guard, lexical_scope, invocation_sha256) = {
+        let (guard, lexical_scope, invocation_sha256, invocation_span) = {
             let mut matches = file
                 .item_macros
                 .iter()
@@ -78,6 +93,7 @@ pub(super) fn apply(
                 fact.guard,
                 fact.lexical_scope.clone(),
                 expansion.input_sha256.clone(),
+                fact.span,
             )
         };
         for binding in &manifest.bindings {
@@ -98,17 +114,17 @@ pub(super) fn apply(
                 lexical_scope: lexical_scope.clone(),
             });
         }
-        locked.push(LockedItemMacroManifest {
-            name: allowance.name.clone(),
+        applied.push(AppliedItemMacroManifest {
+            allowance: allowance_index,
             invocation_path: path.into(),
             manifest_path: manifest_path.into(),
             manifest_sha256: sha256_hex(text.as_bytes()),
             invocation_sha256,
+            invocation_span,
             bindings: manifest.bindings.len(),
         });
     }
-    locked.sort();
-    Ok(locked)
+    Ok(applied)
 }
 
 fn manifest_text(inventory: &RepositoryInventory, path: &str) -> Result<String, CheckError> {

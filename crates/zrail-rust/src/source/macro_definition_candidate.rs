@@ -32,6 +32,8 @@ pub(super) fn repository_candidate(
         derivation: MacroDerivation::LocalDefinition,
         written_alias: false,
         definition: Some(site.file),
+        definition_name: Some(site.name),
+        definition_sha256: Some(site.sha256),
     }
 }
 
@@ -40,6 +42,8 @@ pub(super) fn candidate_order(left: &MacroCandidate, right: &MacroCandidate) -> 
         .name
         .cmp(&right.observation.name)
         .then(left.definition.cmp(&right.definition))
+        .then(left.definition_name.cmp(&right.definition_name))
+        .then(left.definition_sha256.cmp(&right.definition_sha256))
         .then(left.origins.cmp(&right.origins))
         .then(left.derivation.cmp(&right.derivation))
 }

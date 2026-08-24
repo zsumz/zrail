@@ -29,7 +29,7 @@ pub(super) fn compare(current: &LockFile, candidate: &LockFile, findings: &mut F
             (Some(left), Some(right)) if left != right => finding(
                 "LOCK-035",
                 identity,
-                "exact item-macro namespace manifest bytes or invocation changed",
+                "exact item-macro definition or invocation authority changed",
                 findings,
             ),
             _ => {}

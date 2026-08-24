@@ -145,6 +145,8 @@ fn candidate_order(left: &MacroCandidate, right: &MacroCandidate) -> std::cmp::O
         .then(left.derivation.cmp(&right.derivation))
         .then(left.written_alias.cmp(&right.written_alias))
         .then(left.definition.cmp(&right.definition))
+        .then(left.definition_name.cmp(&right.definition_name))
+        .then(left.definition_sha256.cmp(&right.definition_sha256))
         .then(left.origins.cmp(&right.origins))
 }
 
@@ -155,6 +157,8 @@ fn same_candidate(left: &MacroCandidate, right: &MacroCandidate) -> bool {
         && left.derivation == right.derivation
         && left.written_alias == right.written_alias
         && left.definition == right.definition
+        && left.definition_name == right.definition_name
+        && left.definition_sha256 == right.definition_sha256
         && left.origins == right.origins
 }
 

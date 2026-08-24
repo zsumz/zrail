@@ -92,6 +92,8 @@ fn expansion(
             },
             written_alias,
             definition: None,
+            definition_name: None,
+            definition_sha256: None,
         }],
     )
 }

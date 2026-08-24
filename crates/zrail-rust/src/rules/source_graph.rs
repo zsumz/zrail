@@ -43,16 +43,24 @@ pub(crate) struct SourceGraphAnalysis {
     pub(crate) findings: Vec<Finding>,
 }
 
-pub(crate) fn item_macro_authorities(contract: &Contract, file: &RustFileFacts) -> Vec<usize> {
-    item_macros::authorities_for_file(contract, file)
+pub(crate) fn item_macro_authorities(
+    contract: &Contract,
+    file: &RustFileFacts,
+    resolved_cargo: Option<&crate::cargo::ResolvedCargoGraph>,
+) -> Vec<usize> {
+    item_macros::authorities_for_file(contract, file, resolved_cargo)
 }
 
 pub(crate) fn item_macro_selector(allowance: &zrail_core::ItemMacroContract) -> String {
     item_macros::selector_name(allowance)
 }
 
-pub(crate) fn review_item_macros(contract: &Contract, source: &SourceIndex) -> Vec<Finding> {
-    item_macros::review(contract, source)
+pub(crate) fn review_item_macros(
+    contract: &Contract,
+    source: &SourceIndex,
+    resolved_cargo: Option<&crate::cargo::ResolvedCargoGraph>,
+) -> Vec<Finding> {
+    item_macros::review(contract, source, resolved_cargo)
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]

@@ -44,6 +44,10 @@ pub(crate) struct MacroCandidate {
     pub(crate) written_alias: bool,
     /// Exact repository definition site when textual lookup selected one.
     pub(crate) definition: Option<String>,
+    /// Exact local macro identifier selected at the definition site.
+    pub(crate) definition_name: Option<String>,
+    /// SHA-256 of the selected local macro definition token stream.
+    pub(crate) definition_sha256: Option<String>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -94,6 +98,8 @@ impl MacroExpansionFact {
             derivation: MacroDerivation::Written,
             written_alias: false,
             definition: None,
+            definition_name: None,
+            definition_sha256: None,
         };
         Self {
             observation,

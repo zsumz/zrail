@@ -59,7 +59,7 @@ impl MacroDefinitions {
                     };
                     names.extend(self.inline_names(file, &definition.lexical_scope));
                     names.push(normalize(&definition.name));
-                    let Some(site) = self.site(file, &source.domain).ok() else {
+                    let Some(site) = self.site(file, &source.domain, definition).ok() else {
                         self.qualified_sites_complete = false;
                         return;
                     };
@@ -132,6 +132,8 @@ impl MacroDefinitions {
             }
             if complete && let Some(site) = one(&selected) {
                 candidate.definition = Some(site.file.clone());
+                candidate.definition_name = Some(site.name.clone());
+                candidate.definition_sha256 = Some(site.sha256.clone());
             }
         }
     }

@@ -3,6 +3,18 @@
 use super::{GuardAvailability, SyntaxGuard};
 
 impl SyntaxGuard {
+    pub(crate) const fn canonical_name(self) -> &'static str {
+        match self {
+            Self::Ordinary => "ordinary",
+            Self::TestOnly => "test-only",
+            Self::ProductionOnly => "production-only",
+            Self::Conditional => "conditional",
+            Self::ConditionalTestOnly => "conditional-test-only",
+            Self::ConditionalProductionOnly => "conditional-production-only",
+            Self::Never => "never",
+        }
+    }
+
     pub(crate) const fn for_test_only(test_only: bool) -> Self {
         if test_only {
             Self::TestOnly

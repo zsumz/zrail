@@ -16,6 +16,15 @@ pub struct LockedItemMacroManifest {
     pub manifest_sha256: String,
     /// SHA-256 of the canonical invocation token stream.
     pub invocation_sha256: String,
+    /// Exact repository definition or Cargo.lock package identity.
+    pub definition: String,
+    /// SHA-256 of local definition tokens or the external package archive.
+    pub definition_sha256: String,
+    /// Effective syntax guard at the invocation.
+    pub guard: String,
+    /// Exact Cargo compilation domains where the invocation is available.
+    #[serde(default, rename = "domain")]
+    pub domains: Vec<String>,
     /// Number of exact declarations in the manifest.
     pub bindings: usize,
 }

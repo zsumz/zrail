@@ -8,11 +8,16 @@ use zrail_core::{
 };
 
 use crate::{
+    cargo::{ResolvedCargoGraph, source_matches},
     rules::macro_expansion,
-    source::{MacroExpansionFact, ObservedFact, RustFileFacts, SourceIndex},
+    source::{MacroExpansionFact, MacroOrigin, ObservedFact, RustFileFacts, SourceIndex},
 };
 
-pub(super) fn review(contract: &Contract, source: &SourceIndex) -> Vec<zrail_core::Finding> {
+pub(super) fn review(
+    contract: &Contract,
+    source: &SourceIndex,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
+) -> Vec<zrail_core::Finding> {
     let mut findings = Vec::new();
     let mut used = BTreeSet::new();
     for file in source
@@ -21,7 +26,8 @@ pub(super) fn review(contract: &Contract, source: &SourceIndex) -> Vec<zrail_cor
         .filter(|file| !file.reachability.is_unreachable())
     {
         for invocation in &file.item_macros {
-            let authorities = matching_authorities(contract, &file.relative, file, invocation);
+            let authorities =
+                matching_authorities(contract, &file.relative, file, invocation, resolved_cargo);
             if authorities.is_empty() && !directly_inspected(file, invocation) {
                 findings.push(unresolved(file, invocation));
             } else {
@@ -42,6 +48,7 @@ pub(super) fn matching_authorities(
     path: &str,
     file: &RustFileFacts,
     invocation: &ObservedFact,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
 ) -> Vec<usize> {
     let expansion = expansion_for(file, invocation);
     contract
@@ -52,31 +59,32 @@ pub(super) fn matching_authorities(
         .enumerate()
         .filter(|(_, allowance)| selects(allowance, path))
         .filter(|(_, allowance)| name_matches(allowance, invocation, expansion))
-        .filter(|(_, allowance)| binding_matches(allowance, expansion))
+        .filter(|(_, allowance)| binding_matches(allowance, expansion, resolved_cargo))
         .map(|(index, _)| index)
         .collect()
 }
 
-pub(crate) fn authorities_for_file(contract: &Contract, file: &RustFileFacts) -> Vec<usize> {
+pub(crate) fn authorities_for_file(
+    contract: &Contract,
+    file: &RustFileFacts,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
+) -> Vec<usize> {
     file.item_macros
         .iter()
-        .flat_map(|invocation| matching_authorities(contract, &file.relative, file, invocation))
+        .flat_map(|invocation| {
+            matching_authorities(contract, &file.relative, file, invocation, resolved_cargo)
+        })
         .collect::<BTreeSet<_>>()
         .into_iter()
         .collect()
 }
 
 pub(crate) fn selector_name(allowance: &ItemMacroContract) -> String {
-    allowance.path.as_ref().map_or_else(
-        || {
-            if allowance.within.is_empty() {
-                "repository-wide".into()
-            } else {
-                format!("within [{}]", allowance.within.join(", "))
-            }
-        },
-        |path| format!("at {path}"),
-    )
+    match &allowance.path {
+        Some(path) => format!("at {path}"),
+        None if allowance.within.is_empty() => "repository-wide".into(),
+        None => format!("within [{}]", allowance.within.join(", ")),
+    }
 }
 
 fn selects(allowance: &ItemMacroContract, path: &str) -> bool {
@@ -107,7 +115,11 @@ fn name_matches(
         })
 }
 
-fn binding_matches(allowance: &ItemMacroContract, expansion: Option<&MacroExpansionFact>) -> bool {
+fn binding_matches(
+    allowance: &ItemMacroContract,
+    expansion: Option<&MacroExpansionFact>,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
+) -> bool {
     let Some(binding) = allowance.binding else {
         return true;
     };
@@ -124,6 +136,47 @@ fn binding_matches(allowance: &ItemMacroContract, expansion: Option<&MacroExpans
         reason: allowance.reason.clone(),
     };
     macro_expansion::binds_allowance(expansion, &macro_allowance)
+        && expansion.candidates.iter().all(|candidate| {
+            candidate.origins.iter().all(|origin| match origin {
+                MacroOrigin::CompilerBuiltin => allowance.source.is_none(),
+                MacroOrigin::Repository { .. } => {
+                    allowance.source.is_none()
+                        && candidate.definition.is_some()
+                        && candidate.definition_sha256.is_some()
+                }
+                MacroOrigin::External { package, source } => {
+                    allowance.source.as_ref().is_some_and(|allowed| {
+                        external_source_matches(allowed, package, source, resolved_cargo)
+                    })
+                }
+                MacroOrigin::Pending { .. } | MacroOrigin::Unresolved => false,
+            })
+        })
+}
+
+fn external_source_matches(
+    allowed: &zrail_core::CrateRootSource,
+    package: &str,
+    observed: &crate::cargo::DependencySource,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
+) -> bool {
+    let zrail_core::CrateRootSource::CargoLock {
+        package: selected,
+        version,
+        source,
+    } = allowed
+    else {
+        return source_matches(allowed, observed);
+    };
+    let Some(graph) = resolved_cargo else {
+        return false;
+    };
+    let Ok(selected) = graph.lookup(selected, version.as_deref(), source.as_deref()) else {
+        return false;
+    };
+    graph
+        .package_for_source(package, observed)
+        .is_ok_and(|observed| observed == selected)
 }
 
 fn expansion_for<'a>(

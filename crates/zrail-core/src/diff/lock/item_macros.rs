@@ -33,7 +33,7 @@ pub(super) fn compare(before: &LockFile, after: &LockFile, changes: &mut Vec<Arc
                 ChangeKind::Unknown,
                 "rust.item-macro-manifest",
                 subject,
-                "item-macro manifest or invocation identity changed",
+                "item-macro manifest, definition, invocation, guard, or compilation authority changed",
             )),
             _ => {}
         }

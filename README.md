@@ -148,9 +148,9 @@ Cargo.lock   Cargo's selected versions and checksums
 `zrail check` is read-only. `zrail diff` separates grants, revocations, debt,
 cleanup, neutral changes, and unknown comparisons.
 
-`zrail coverage --format json` exports the complete governed owner,
-dependency, and test-mirror surface with source spans and analysis quality for
-mechanical parity audits.
+`zrail coverage --format json` exports a canonical census of every enabled rail
+plus the complete governed owner, dependency, and test-mirror surface with
+source spans and analysis quality for mechanical parity audits.
 
 Once installed, analysis runs locally and requires no account, daemon, source
 upload, API key, LLM, or network access.

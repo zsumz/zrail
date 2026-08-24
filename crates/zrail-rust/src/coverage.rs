@@ -4,6 +4,7 @@ mod dependencies;
 mod model;
 mod output;
 mod owners;
+mod rails;
 
 use std::path::Path;
 
@@ -20,7 +21,7 @@ pub use model::{
     GovernedTestMirror,
 };
 
-const REPORT_SCHEMA: u64 = 1;
+const REPORT_SCHEMA: u64 = 2;
 
 /// Builds a read-only audit report for every governed source and dependency surface.
 ///
@@ -58,6 +59,7 @@ pub fn governed_surface_report(
         })
         .collect::<Vec<_>>();
     test_mirrors.sort_by(|left, right| left.policy_id.cmp(&right.policy_id));
+    let enabled_rails = rails::report(&model, &owners, &dependencies, &test_mirrors);
     let occurrences = owners.iter().flat_map(|owner| &owner.occurrences);
     let unresolved_occurrences = occurrences
         .clone()
@@ -69,6 +71,7 @@ pub fn governed_surface_report(
     Ok(GovernedSurfaceReport {
         schema: REPORT_SCHEMA,
         contract_schema: model.bundle.contract.schema,
+        contract_sha256: model.bundle.sha256.clone(),
         analysis: GovernedAnalysis {
             complete: true,
             metrics: outcome.metrics(),
@@ -76,6 +79,7 @@ pub fn governed_surface_report(
         },
         unresolved_occurrences,
         ambiguous_occurrences,
+        enabled_rails,
         owners,
         dependencies,
         test_mirrors,

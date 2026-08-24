@@ -89,7 +89,7 @@ impl LookupMode {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(super) enum ResolutionUsage {
     Path,
     Type,

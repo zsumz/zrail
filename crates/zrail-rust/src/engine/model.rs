@@ -57,7 +57,7 @@ pub(crate) fn load_model_with_bundle(
         .rust_files
         .retain(|file| cargo.source_is_active(&file.relative));
     let mut source = index_rust_source(&inventory, &bundle.contract.source.rust);
-    let item_macro_manifests =
+    let applied_item_macro_manifests =
         super::item_macro_manifests::apply(&inventory, &bundle.contract, &mut source)?;
     let graph = source_graph::analyze(&bundle.contract, &inventory, &cargo, &source);
     for file in &mut source.files {
@@ -89,8 +89,16 @@ pub(crate) fn load_model_with_bundle(
         },
     );
     source.findings.extend(graph.findings);
-    let item_macro_findings = source_graph::review_item_macros(&bundle.contract, &source);
+    let item_macro_findings =
+        source_graph::review_item_macros(&bundle.contract, &source, resolved_cargo.as_ref());
     source.findings.extend(item_macro_findings);
+    let item_macro_manifests = super::item_macro_manifests::locked(
+        applied_item_macro_manifests,
+        &bundle.contract,
+        &source,
+        resolved_cargo.as_ref(),
+        &graph.compilation_domains,
+    )?;
     Ok(RepositoryModel {
         bundle,
         inventory,

@@ -9,6 +9,7 @@ use super::{
     include_binding_projection::{CallSite, FactKey, FactProjection, ProjectionRequest, project},
     include_bindings::IncludeBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimit, ProjectionLimits},
+    include_projection_candidates::ResolutionCache,
     include_resolution_state::ResolutionUsage,
     parse::{MAX_FACTS_PER_FILE, fact_count},
 };
@@ -81,6 +82,7 @@ impl IncludeBindings {
         });
         let mut planned = Vec::new();
         let mut findings = Vec::new();
+        let mut resolution_cache = ResolutionCache::new();
         for file_index in order {
             let file = &index.files[file_index];
             let include_connected = self.instances.requires_projection(&file.relative);
@@ -125,6 +127,7 @@ impl IncludeBindings {
                 &mut uncertain,
                 &mut *budget,
                 &mut remaining_file_facts,
+                &mut resolution_cache,
             ) {
                 Ok(paths) => paths,
                 Err(limit) => return vec![budget_exhausted(limit)],
@@ -141,6 +144,7 @@ impl IncludeBindings {
                 &mut uncertain,
                 &mut *budget,
                 &mut remaining_file_facts,
+                &mut resolution_cache,
             ) {
                 Ok(calls) => calls,
                 Err(limit) => return vec![budget_exhausted(limit)],

@@ -17,6 +17,7 @@ pub(super) struct IncludeBindings {
     pub(super) opaque_namespace_scopes:
         BTreeMap<String, BTreeSet<(Vec<zrail_core::SourceSpan>, SyntaxGuard)>>,
     pub(super) instances: SourceInstances,
+    active_instances: BTreeMap<(String, SyntaxGuard), Vec<SourceInstanceId>>,
 }
 
 #[derive(Clone)]
@@ -66,6 +67,8 @@ impl IncludeBindings {
         binding_macros: &BindingMacroPolicy,
         derived_limit: Option<usize>,
     ) -> Self {
+        let instances = SourceInstances::build_with_limit(roots, modules, includes, derived_limit);
+        let active_instances = active_instances(index, &instances);
         Self {
             files: index
                 .files
@@ -110,24 +113,15 @@ impl IncludeBindings {
                     )
                 })
                 .collect(),
-            instances: SourceInstances::build_with_limit(roots, modules, includes, derived_limit),
+            instances,
+            active_instances,
         }
     }
 
-    pub(super) fn active_instances(&self, file: &str, guard: SyntaxGuard) -> Vec<SourceInstanceId> {
-        let mut active = Vec::new();
-        for id in self.instances.for_file(file) {
-            if self.instances.get(*id).is_some_and(|instance| {
-                guard
-                    .availability_in(SyntaxGuard::for_test_only(
-                        instance.domain.mode.enables_cfg_test(),
-                    ))
-                    .is_available()
-            }) {
-                active.push(*id);
-            }
-        }
-        active
+    pub(super) fn active_instances(&self, file: &str, guard: SyntaxGuard) -> &[SourceInstanceId] {
+        self.active_instances
+            .get(&(file.to_owned(), guard))
+            .map_or(&[], Vec::as_slice)
     }
 
     pub(super) fn requires_ordinary_resolution(&self, file: &RustFileFacts) -> bool {
@@ -174,6 +168,40 @@ impl IncludeBindings {
             id = parent;
         }
     }
+}
+
+fn active_instances(
+    index: &SourceIndex,
+    instances: &SourceInstances,
+) -> BTreeMap<(String, SyntaxGuard), Vec<SourceInstanceId>> {
+    index
+        .files
+        .iter()
+        .flat_map(|file| {
+            file.paths
+                .iter()
+                .chain(&file.calls)
+                .filter(|fact| fact.written.is_some())
+                .map(|fact| (file.relative.clone(), fact.guard))
+        })
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .map(|(file, guard)| {
+            let active = instances
+                .for_file(&file)
+                .iter()
+                .copied()
+                .filter(|id| {
+                    instances.get(*id).is_some_and(|instance| {
+                        guard.available_in(SyntaxGuard::for_test_only(
+                            instance.domain.mode.enables_cfg_test(),
+                        ))
+                    })
+                })
+                .collect();
+            ((file, guard), active)
+        })
+        .collect()
 }
 
 fn written_root(path: &str) -> Option<&str> {

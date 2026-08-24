@@ -43,6 +43,21 @@ fn cargo_lock_source_authorizes_only_the_exact_resolved_occurrence() {
     let _ = fs::remove_dir_all(root);
 }
 
+#[test]
+fn cargo_lock_source_rejects_same_source_multiversion_ambiguity() {
+    let root =
+        std::env::temp_dir().join(format!("zrail-macro-lock-ambiguity-{}", std::process::id()));
+    let _ = fs::remove_dir_all(&root);
+    fs::create_dir(&root).expect("create fixture");
+    fs::write(root.join("Cargo.lock"), AMBIGUOUS_LOCK).expect("write Cargo.lock");
+    let graph = ResolvedCargoGraph::load(&root, &[])
+        .expect("parse graph")
+        .expect("present graph");
+
+    assert!(!failures(&candidate("1"), &allowance(), Some(&graph)).is_empty());
+    let _ = fs::remove_dir_all(root);
+}
+
 fn allowance() -> MacroExpansionAllow {
     MacroExpansionAllow {
         name: "derive".into(),
@@ -82,5 +97,22 @@ fn candidate(requirement: &str) -> MacroCandidate {
         derivation: MacroDerivation::DependencyRoot,
         written_alias: false,
         definition: None,
+        definition_name: None,
+        definition_sha256: None,
     }
 }
+
+const AMBIGUOUS_LOCK: &str = r#"version = 3
+
+[[package]]
+name = "derive-impl"
+version = "1.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1111111111111111111111111111111111111111111111111111111111111111"
+
+[[package]]
+name = "derive-impl"
+version = "1.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2222222222222222222222222222222222222222222222222222222222222222"
+"#;

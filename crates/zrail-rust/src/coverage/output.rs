@@ -17,8 +17,8 @@ impl GovernedSurfaceReport {
     pub fn human(&self) -> String {
         let metrics = self.analysis.metrics;
         let mut output = format!(
-            "Governed surface schema {} (contract schema {}, complete)\n",
-            self.schema, self.contract_schema
+            "Governed surface schema {} (contract schema {}, {}, complete)\n",
+            self.schema, self.contract_schema, self.contract_sha256
         );
         let _ = writeln!(
             output,
@@ -34,6 +34,7 @@ impl GovernedSurfaceReport {
             self.analysis.exclusions.join(", ")
         };
         let _ = writeln!(output, "Exclusions: {exclusions}");
+        let _ = writeln!(output, "Enabled rails: {}", self.enabled_rails.len());
         let _ = writeln!(
             output,
             "Owners: {} ({} unresolved, {} ambiguous occurrences)",

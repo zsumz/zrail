@@ -7,6 +7,38 @@ use crate::cargo::{Dependency, DependencySource, Package};
 use super::{ResolvedCargoGraph, ResolvedPackageIdentity};
 
 impl ResolvedCargoGraph {
+    pub(crate) fn package_for_source(
+        &self,
+        package: &str,
+        source: &DependencySource,
+    ) -> Result<&ResolvedPackageIdentity, String> {
+        let candidates = self
+            .packages
+            .keys()
+            .filter(|candidate| candidate.name == package)
+            .filter_map(|candidate| {
+                self.source_matches(candidate, source)
+                    .map(|matches| matches.then_some(candidate))
+                    .transpose()
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        match candidates.as_slice() {
+            [candidate] => Ok(candidate),
+            [] => Err(format!(
+                "Cargo.lock contains no package matching observed source for {package:?}"
+            )),
+            _ => Err(format!(
+                "observed source for package {package:?} maps ambiguously to {} Cargo.lock nodes: {}",
+                candidates.len(),
+                candidates
+                    .iter()
+                    .map(|candidate| candidate.label())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )),
+        }
+    }
+
     pub(crate) fn source_matches(
         &self,
         identity: &ResolvedPackageIdentity,

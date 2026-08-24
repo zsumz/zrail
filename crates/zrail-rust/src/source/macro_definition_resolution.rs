@@ -83,7 +83,7 @@ impl MacroDefinitions {
                 Ok((
                     definition.lexical_scope.len(),
                     definition.span.ok_or(())?,
-                    self.site(&source.file, &source.domain)?,
+                    self.site(&source.file, &source.domain, definition)?,
                     source.guard.is_exact() && definition.guard.is_exact(),
                 ))
             })
@@ -134,7 +134,7 @@ impl MacroDefinitions {
             .map(|definition| {
                 Ok((
                     definition.span.ok_or(())?,
-                    self.site(&source.file, &source.domain)?,
+                    self.site(&source.file, &source.domain, definition)?,
                     source.guard.is_exact() && definition.guard.is_exact(),
                 ))
             })
@@ -180,52 +180,19 @@ impl MacroDefinitions {
             .max_by_key(|definition| (definition.lexical_scope.len(), definition.span))
     }
 
-    pub(super) fn active_instances(
-        &self,
-        file: &str,
-        guard: SyntaxGuard,
-    ) -> Option<Vec<SourceInstanceId>> {
-        if !self.instances.is_complete() {
-            return None;
-        }
-        Some(
-            self.instances
-                .for_file(file)
-                .iter()
-                .copied()
-                .filter(|id| {
-                    self.instances
-                        .get(*id)
-                        .is_some_and(|instance| guard.available_in(domain_guard(&instance.domain)))
-                })
-                .collect(),
-        )
-    }
-
-    pub(super) fn active_domains(
-        &self,
-        file: &str,
-        guard: SyntaxGuard,
-    ) -> Option<Vec<&CompilationDomain>> {
-        Some(
-            self.domains
-                .get(file)?
-                .iter()
-                .filter(|domain| guard.available_in(domain_guard(domain)))
-                .collect(),
-        )
-    }
-
     pub(super) fn site(
         &self,
         file: &str,
         domain: &CompilationDomain,
+        definition: &MacroDefinitionFact,
     ) -> Result<DefinitionSite, ()> {
         let package = self.packages.get(&domain.package).ok_or(())?;
         Ok(DefinitionSite {
             file: file.into(),
             package: package.name.clone(),
             directory: package.directory.clone(),
+            name: definition.name.clone(),
+            sha256: definition.sha256.clone(),
         })
     }
 }

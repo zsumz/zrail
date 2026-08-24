@@ -18,11 +18,33 @@ fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
     let repeated = governed_surface_report(&root, "zrail.toml".as_ref()).expect("repeat coverage");
 
     assert_eq!(report, repeated);
-    assert_eq!(report.schema, 1);
+    assert_eq!(report.schema, 2);
     assert_eq!(report.contract_schema, 2);
+    assert_eq!(report.contract_sha256.len(), 64);
     assert!(report.analysis.complete);
     assert_eq!(report.analysis.metrics.physical_rust_files, 3);
     assert_eq!(report.analysis.exclusions, ["scratch/**", "target/**"]);
+    assert!(
+        report
+            .enabled_rails
+            .windows(2)
+            .all(|pair| pair[0] < pair[1])
+    );
+    for rail in [
+        "adapter:rust",
+        "analysis:limit:derived-source-instances:input-derived",
+        "contract-source:zrail.toml",
+        "dependency:blocked-path",
+        "owner:type-construction:record-construction",
+        "repository:exclude:scratch/**",
+        "rust:hygiene:unsafe",
+        "test-mirror:tests/mirror.rs::mirrors_build",
+    ] {
+        assert!(
+            report.enabled_rails.iter().any(|enabled| enabled == rail),
+            "missing enabled rail {rail:?}"
+        );
+    }
     assert_eq!(report.owners.len(), 5);
     assert_eq!(report.unresolved_occurrences, 1);
     assert_eq!(report.ambiguous_occurrences, 0);
@@ -115,7 +137,9 @@ fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
     );
     assert_eq!(report.test_mirrors[0].test_name, "mirrors_build");
     assert_eq!(report.json().expect("json"), repeated.json().expect("json"));
+    assert!(report.json().expect("json").contains("\"enabled_rails\""));
     assert!(report.human().contains("dependency:blocked-path"));
+    assert!(report.human().contains("Enabled rails:"));
     reset(&root);
 }
 
