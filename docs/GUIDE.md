@@ -600,22 +600,26 @@ inputs = [
   "fixtures/state-cases.json",
   "src/model.rs",
 ]
+reason = "The test exercises state transitions through the public surface."
+
+[source.rust.test_mirrors.execution]
 command = "cargo test --package kernel --test state_test state_transitions --target x86_64-unknown-linux-gnu"
 package = "kernel"
 default_features = false
 features = ["strict"]
 target = "x86_64-unknown-linux-gnu"
 toolchain = "rustc 1.90.0 (example 2026-01-01)"
-reason = "The test exercises state transitions through the public surface."
 ```
 
 The production path must exist and be reachable from a Cargo production target.
 The test path must exist, be classified as test source, be reachable from a
 Cargo test target, and declare the exact named `#[test]` once. Production paths,
 test paths, and receipt paths are each unique across the mirror set, so a file
-or receipt cannot be reused and a removed path becomes stale policy. Inputs are
-unique, sorted repository paths and must include `Cargo.toml`, `Cargo.lock`, and
-the selected package manifest. The selected package must own both source files.
+or receipt cannot be reused and a removed path becomes stale policy. `execution`
+is a required nested table with a closed field set; unknown mirror or execution
+keys, missing fields, and duplicate fields fail closed. Inputs are unique,
+sorted repository paths and must include `Cargo.toml`, `Cargo.lock`, and the
+selected package manifest. The selected package must own both source files.
 
 zrail does not execute tests. A test runner records execution in strict schema-2
 JSON after the exact test passes:
@@ -707,6 +711,12 @@ The selector is authority only when it identifies exactly one lock node. The
 resolved version, source, and checksum are then available for lock-state
 binding; ambiguous selectors are rejected.
 
+Cargo permits `rev` to name either a commit or a remote named reference. Zrail
+intentionally accepts only hexadecimal commit prefixes whose selected precise
+commit is proven by `Cargo.lock`. Named `rev` values such as pull-request refs
+fail closed; use an exact branch, tag, or hexadecimal revision when declaring a
+Git dependency governed by Zrail.
+
 Repository-controlled Cargo source overrides and registry mappings are rejected
 until zrail can attest their effective resolution. Root `.cargo/config` and
 `.cargo/config.toml` are rejected because Cargo can use them to alter dependency
@@ -785,12 +795,18 @@ installs the same pinned Rust toolchain, regenerates all three archives in
 `cargo publish --dry-run` mode, and requires every byte to match its attested
 input. A temporary crates.io trusted-publishing token then publishes the crates
 in dependency order without executing package code; each registry archive is
-downloaded and compared byte-for-byte again. A rerun reuses only an existing
-draft for the exact tag and commit with no unexpected assets, verifies every
-existing asset byte, and uploads only missing expected assets. Only after all
-three registry comparisons pass does the workflow make the GitHub draft visible.
-Release actions are pinned to full commit identities; the workflow does not
-accept proposal or manual source inputs.
+downloaded and compared byte-for-byte again. A repository-owned API client
+recovers drafts through their GraphQL database ID and fetches complete release
+state through REST; it does not use the published-release by-tag endpoint or
+`target_commitish` as authority. The client resolves the remote tag reference,
+peels annotated tags to the qualified commit, and binds draft state,
+prerelease state, title, exact reviewed notes, asset names, and every asset byte.
+A rerun rejects unexpected or altered state and uploads only missing expected
+assets. The mocked release rehearsal injects a partial-upload failure and proves
+that the same draft resumes, revalidates, and publishes only after completion.
+Only after all three registry comparisons pass does the workflow make the
+GitHub draft visible. Release actions are pinned to full commit identities; the
+workflow does not accept proposal or manual source inputs.
 
 `QUAL-02` defines the protected-deployment requirement: proposed checker changes
 must not authorize violations or grants in the same pull request. The required

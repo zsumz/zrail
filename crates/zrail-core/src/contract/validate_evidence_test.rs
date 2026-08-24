@@ -57,13 +57,15 @@ test = "src/state_test.rs"
 name = "state_transitions"
 receipt = "evidence/state.json"
 inputs = ["Cargo.lock", "Cargo.toml"]
+reason = "State transitions are exercised through the public surface."
+
+[source.rust.test_mirrors.execution]
 command = "cargo test --package state state_transitions --target x86_64-unknown-linux-gnu"
 package = "state"
 default_features = true
 features = []
 target = "x86_64-unknown-linux-gnu"
 toolchain = "rustc 1.90.0 (example 2026-01-01)"
-reason = "State transitions are exercised through the public surface."
 "#;
 
     assert!(contract(extra).is_ok());
@@ -78,13 +80,15 @@ test = "src/state_test.rs"
 name = "not::exact"
 receipt = "evidence/state.json"
 inputs = ["Cargo.lock", "Cargo.toml"]
+reason = "State behavior."
+
+[source.rust.test_mirrors.execution]
 command = "cargo test --package state not_exact --target x86_64-unknown-linux-gnu"
 package = "state"
 default_features = true
 features = []
 target = "x86_64-unknown-linux-gnu"
 toolchain = "rustc 1.90.0 (example 2026-01-01)"
-reason = "State behavior."
 
 [[source.rust.test_mirrors]]
 production = "src/other.rs"
@@ -92,13 +96,15 @@ test = "src/state_test.rs"
 name = "other_behavior"
 receipt = "evidence/state.json"
 inputs = ["Cargo.lock", "Cargo.toml"]
+reason = "Other behavior."
+
+[source.rust.test_mirrors.execution]
 command = "cargo test --package state other_behavior --target x86_64-unknown-linux-gnu"
 package = "state"
 default_features = true
 features = []
 target = "x86_64-unknown-linux-gnu"
 toolchain = "rustc 1.90.0 (example 2026-01-01)"
-reason = "Other behavior."
 
 [[source.rust.test_mirrors]]
 production = "src/state.rs"
@@ -106,13 +112,15 @@ test = "src/third.txt"
 name = "third_behavior"
 receipt = "evidence/third.txt"
 inputs = ["Cargo.lock", "Cargo.toml"]
+reason = "Third behavior."
+
+[source.rust.test_mirrors.execution]
 command = "cargo test --package state third_behavior --target x86_64-unknown-linux-gnu"
 package = "state"
 default_features = true
 features = []
 target = "x86_64-unknown-linux-gnu"
 toolchain = "rustc 1.90.0 (example 2026-01-01)"
-reason = "Third behavior."
 "#;
 
     let message = contract(extra)
@@ -135,13 +143,15 @@ test = "src/state_test.rs"
 name = "state_transitions"
 receipt = "evidence/state.json"
 inputs = ["Cargo.toml", "Cargo.toml", "zrail.lock"]
+reason = "State transitions are exercised through the public surface."
+
+[source.rust.test_mirrors.execution]
 command = " cargo test"
 package = "bad package"
 default_features = true
 features = ["z", "a"]
 target = ""
 toolchain = "1.90.0\nchanged"
-reason = "State transitions are exercised through the public surface."
 "#;
 
     let message = contract(extra)

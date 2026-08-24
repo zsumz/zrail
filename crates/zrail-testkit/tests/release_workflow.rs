@@ -65,9 +65,8 @@ fn publishing_waits_for_all_builds_and_clean_linux_runtime_checks() {
     assert!(publish.contains("sha256sum --check SHA256SUMS"));
     assert!(publish.contains("actions/attest@"));
     assert!(publish.contains("release-notes.py"));
-    assert!(publish.contains("gh release create \"$GITHUB_REF_NAME\""));
-    assert!(publish.contains("--verify-tag --draft"));
-    assert!(publish.contains("gh release edit \"$GITHUB_REF_NAME\" --draft=false"));
+    assert!(publish.contains("scripts/release-state.py prepare"));
+    assert!(publish.contains("scripts/release-state.py publish"));
     assert_eq!(workflow.matches("contents: write").count(), 1);
 }
 
@@ -83,7 +82,7 @@ fn crate_publication_is_ordered_exact_and_safe_to_resume() {
         .find("scripts/publish-crates --preflight")
         .expect("publish-mode archive preflight");
     let draft = workflow_publish
-        .find("Create or reuse the exact draft release")
+        .find("Prepare or resume the exact draft release")
         .expect("draft preparation");
     let registry_publish = workflow_publish
         .find("scripts/publish-crates --publish")
@@ -123,21 +122,31 @@ fn partial_publication_reruns_reuse_only_the_exact_draft() {
     let publish_job = section(&workflow, "  publish:", "__end_of_workflow__");
     let draft = section(
         publish_job,
-        "- name: Create or reuse the exact draft release",
+        "- name: Prepare or resume the exact draft release",
         "- name: Authenticate with crates.io trusted publishing",
     );
     let publisher = publish_script();
+    let state = release_state_script();
 
-    assert!(draft.contains("case \"$release_status\" in"));
-    assert!(draft.contains("404)"));
-    assert!(draft.contains("200)"));
-    assert!(draft.contains(".draft == true"));
-    assert!(draft.contains(".target_commitish == $sha"));
-    assert!(draft.contains("existing draft contains unexpected asset"));
-    assert!(draft.contains("gh release download"));
-    assert!(draft.contains("cmp \"dist/$expected\" \"$existing_dir/$expected\""));
-    assert!(draft.contains("gh release upload"));
-    assert!(draft.contains("cmp \"$RUNNER_TEMP/expected-assets\""));
+    assert!(draft.contains("scripts/release-state.py prepare"));
+    assert!(draft.contains("--release-id-file \"$RUNNER_TEMP/release-id\""));
+    assert!(state.contains("release(tagName:$tag){databaseId}"));
+    assert!(state.contains("repository_url(f\"releases/{release_id}\")"));
+    assert!(!state.contains("releases/tags/"));
+    assert!(state.contains("remote tag does not peel to GITHUB_SHA"));
+    assert!(state.contains("\"body\": self.body"));
+    assert!(state.contains("actual != expected_bytes"));
+    assert!(state.contains("{\"draft\": False}"));
+    assert!(!state.contains("target_commitish"));
+    for reviewed_argument in [
+        "--assets-dir dist",
+        "--assets-file \"$RUNNER_TEMP/release-assets.txt\"",
+        "--notes-file \"$RUNNER_TEMP/release-notes.md\"",
+        "--release-id-file \"$RUNNER_TEMP/release-id\"",
+        "--title \"zrail $ZRAIL_VERSION\"",
+    ] {
+        assert_eq!(publish_job.matches(reviewed_argument).count(), 2);
+    }
     assert!(publisher.contains("200)"));
     assert!(publisher.contains("published+=(yes)"));
     assert!(publisher.contains("if [[ \"${published[$index]}\" == yes ]]"));
@@ -188,6 +197,11 @@ fn release_workflow() -> String {
 fn publish_script() -> String {
     fs::read_to_string(repository_root().join("scripts/publish-crates"))
         .expect("read crate publisher")
+}
+
+fn release_state_script() -> String {
+    fs::read_to_string(repository_root().join("scripts/release-state.py"))
+        .expect("read GitHub release-state helper")
 }
 
 fn section<'a>(source: &'a str, start: &str, end: &str) -> &'a str {

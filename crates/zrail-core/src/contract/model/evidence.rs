@@ -52,7 +52,6 @@ pub struct TestMirrorContract {
     /// Additional repository-relative files whose exact bytes formed the test context.
     pub inputs: Vec<String>,
     /// Exact execution identity asserted by the receipt producer.
-    #[serde(flatten)]
     pub execution: TestExecutionIdentity,
     /// Human explanation of why this test mirrors the production source.
     pub reason: String,

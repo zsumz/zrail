@@ -21,6 +21,10 @@ mod validate_source;
 #[path = "validate_fixture_test.rs"]
 mod validate_fixture_test;
 
+#[cfg(test)]
+#[path = "mirror_schema_test.rs"]
+mod mirror_schema_test;
+
 pub use evidence::{EvidenceReference, parse_evidence_reference};
 pub use imports::contract_imports;
 pub use load::{

@@ -227,13 +227,15 @@ test = "{test}"
 name = "{name}"
 receipt = "evidence/state.json"
 inputs = ["Cargo.lock", "Cargo.toml", "src/lib.rs"]
+reason = "The exact test exercises the production behavior through its public surface."
+
+[source.rust.test_mirrors.execution]
 command = "{COMMAND}"
 package = "mirror-fixture"
 default_features = true
 features = []
 target = "{TARGET}"
 toolchain = "{TOOLCHAIN}"
-reason = "The exact test exercises the production behavior through its public surface."
 
 [source.rust.hygiene]
 unsafe = "deny"

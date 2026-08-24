@@ -1,0 +1,369 @@
+#!/usr/bin/env python3
+"""Executable mocked GitHub API rehearsal for the release-state helper."""
+
+from __future__ import annotations
+
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import threading
+from urllib.parse import parse_qs, urlparse
+
+
+COMMIT = "a" * 40
+TAG_OBJECT = "b" * 40
+OTHER_COMMIT = "c" * 40
+RELEASE_ID = 41
+
+
+class State:
+    def __init__(self):
+        self.base_url = ""
+        self.release = None
+        self.assets = {}
+        self.next_asset_id = 100
+        self.fail_second_upload_once = False
+        self.failed_upload = False
+        self.tag_object = TAG_OBJECT
+        self.tag_commit = COMMIT
+        self.graphql_results = []
+        self.created = 0
+        self.release_get_ids = []
+        self.asset_downloads = []
+        self.uploads = []
+        self.patches = 0
+
+    def release_json(self):
+        if self.release is None:
+            return None
+        result = dict(self.release)
+        result["upload_url"] = (
+            f"{self.base_url}/uploads/repos/acme/zrail/releases/{RELEASE_ID}/assets"
+            "{?name,label}"
+        )
+        result["assets"] = [
+            {
+                "id": asset_id,
+                "name": asset["name"],
+                "state": "uploaded",
+                "url": (
+                    f"{self.base_url}/api/repos/acme/zrail/releases/assets/{asset_id}"
+                ),
+            }
+            for asset_id, asset in sorted(self.assets.items())
+        ]
+        return result
+
+
+class Handler(BaseHTTPRequestHandler):
+    server_version = "ReleaseRehearsal/1"
+
+    @property
+    def state(self):
+        return self.server.state
+
+    def log_message(self, _format, *_args):
+        pass
+
+    def read_body(self):
+        length = int(self.headers.get("Content-Length", "0"))
+        return self.rfile.read(length)
+
+    def send_json(self, status, value):
+        body = json.dumps(value).encode()
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def send_bytes(self, status, value):
+        self.send_response(status)
+        self.send_header("Content-Type", "application/octet-stream")
+        self.send_header("Content-Length", str(len(value)))
+        self.end_headers()
+        self.wfile.write(value)
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        if parsed.path == "/graphql":
+            self.graphql(parsed)
+        elif parsed.path == "/api/repos/acme/zrail/releases":
+            self.create_release()
+        elif parsed.path == f"/uploads/repos/acme/zrail/releases/{RELEASE_ID}/assets":
+            self.upload_asset(parsed)
+        else:
+            self.send_error(404)
+
+    def graphql(self, _parsed):
+        payload = json.loads(self.read_body())
+        assert "release(tagName:$tag){databaseId}" in payload["query"]
+        assert payload["variables"] == {
+            "owner": "acme",
+            "name": "zrail",
+            "tag": "v1.2.3",
+        }
+        release = None if self.state.release is None else {"databaseId": RELEASE_ID}
+        self.state.graphql_results.append(None if release is None else RELEASE_ID)
+        self.send_json(200, {"data": {"repository": {"release": release}}})
+
+    def create_release(self):
+        payload = json.loads(self.read_body())
+        assert self.state.release is None
+        assert payload == {
+            "tag_name": "v1.2.3",
+            "name": "zrail 1.2.3",
+            "body": "Reviewed notes.\n",
+            "draft": True,
+            "prerelease": False,
+        }
+        self.state.created += 1
+        self.state.release = {
+            "id": RELEASE_ID,
+            "tag_name": payload["tag_name"],
+            "name": payload["name"],
+            "body": payload["body"],
+            "draft": True,
+            "prerelease": False,
+            "target_commitish": "intentionally-not-authoritative",
+        }
+        self.send_json(201, self.state.release_json())
+
+    def upload_asset(self, parsed):
+        name = parse_qs(parsed.query).get("name", [None])[0]
+        assert name in {"a.bin", "b.bin"}
+        if (
+            self.state.fail_second_upload_once
+            and len(self.state.assets) == 1
+            and not self.state.failed_upload
+        ):
+            self.state.failed_upload = True
+            self.send_json(500, {"message": "injected upload failure"})
+            return
+        content = self.read_body()
+        assert all(asset["name"] != name for asset in self.state.assets.values())
+        asset_id = self.state.next_asset_id
+        self.state.next_asset_id += 1
+        self.state.assets[asset_id] = {"name": name, "content": content}
+        self.state.uploads.append(name)
+        self.send_json(201, {"id": asset_id, "name": name})
+
+    def do_GET(self):
+        path = urlparse(self.path).path
+        if path == "/api/repos/acme/zrail/git/ref/tags/v1.2.3":
+            self.send_json(
+                200,
+                {
+                    "ref": "refs/tags/v1.2.3",
+                    "object": {"type": "tag", "sha": self.state.tag_object},
+                },
+            )
+        elif path == f"/api/repos/acme/zrail/git/tags/{TAG_OBJECT}":
+            self.send_json(
+                200,
+                {
+                    "sha": TAG_OBJECT,
+                    "object": {"type": "commit", "sha": self.state.tag_commit},
+                },
+            )
+        elif path == f"/api/repos/acme/zrail/releases/{RELEASE_ID}":
+            if self.state.release is None:
+                self.send_error(404)
+                return
+            self.state.release_get_ids.append(RELEASE_ID)
+            self.send_json(200, self.state.release_json())
+        elif path.startswith("/api/repos/acme/zrail/releases/assets/"):
+            asset_id = int(path.rsplit("/", 1)[1])
+            asset = self.state.assets.get(asset_id)
+            if asset is None:
+                self.send_error(404)
+                return
+            self.state.asset_downloads.append(asset["name"])
+            self.send_bytes(200, asset["content"])
+        else:
+            self.send_error(404)
+
+    def do_PATCH(self):
+        path = urlparse(self.path).path
+        if path != f"/api/repos/acme/zrail/releases/{RELEASE_ID}":
+            self.send_error(404)
+            return
+        assert json.loads(self.read_body()) == {"draft": False}
+        self.state.patches += 1
+        self.state.release["draft"] = False
+        self.send_json(200, self.state.release_json())
+
+
+class Fixture:
+    def __init__(self, helper):
+        self.helper = helper
+        self.temporary = tempfile.TemporaryDirectory(prefix="zrail-release-rehearsal-")
+        self.root = Path(self.temporary.name)
+        self.assets = self.root / "assets"
+        self.assets.mkdir()
+        (self.assets / "a.bin").write_bytes(b"first\0asset")
+        (self.assets / "b.bin").write_bytes(b"second\0asset")
+        self.asset_list = self.root / "assets.txt"
+        self.asset_list.write_text("a.bin\nb.bin\n", encoding="utf-8")
+        self.notes = self.root / "notes.md"
+        self.notes.write_text("Reviewed notes.\n", encoding="utf-8")
+        self.release_id = self.root / "release-id"
+        self.state = State()
+        self.server = HTTPServer(("127.0.0.1", 0), Handler)
+        self.server.state = self.state
+        self.state.base_url = f"http://127.0.0.1:{self.server.server_port}"
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.thread.start()
+
+    def close(self):
+        self.server.shutdown()
+        self.thread.join(timeout=5)
+        self.server.server_close()
+        self.temporary.cleanup()
+
+    def run(self, mode):
+        environment = os.environ.copy()
+        environment.update(
+            {
+                "GH_TOKEN": "test-token",
+                "GITHUB_API_URL": f"{self.state.base_url}/api",
+                "GITHUB_GRAPHQL_URL": f"{self.state.base_url}/graphql",
+                "GITHUB_REPOSITORY": "acme/zrail",
+                "GITHUB_REF_NAME": "v1.2.3",
+                "GITHUB_SHA": COMMIT,
+            }
+        )
+        return subprocess.run(
+            [
+                sys.executable,
+                "-B",
+                str(self.helper),
+                mode,
+                "--assets-dir",
+                str(self.assets),
+                "--assets-file",
+                str(self.asset_list),
+                "--notes-file",
+                str(self.notes),
+                "--release-id-file",
+                str(self.release_id),
+                "--title",
+                "zrail 1.2.3",
+            ],
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=20,
+        )
+
+
+def require_success(result):
+    assert result.returncode == 0, result.stderr
+
+
+def rehearse_resume(helper):
+    fixture = Fixture(helper)
+    try:
+        fixture.state.fail_second_upload_once = True
+        first = fixture.run("prepare")
+        assert first.returncode != 0
+        assert "injected upload failure" in first.stderr
+        assert fixture.state.created == 1
+        assert fixture.state.release_get_ids == [RELEASE_ID]
+        assert fixture.state.uploads == ["a.bin"]
+        assert fixture.state.graphql_results == [None]
+
+        require_success(fixture.run("prepare"))
+        assert fixture.state.created == 1
+        assert fixture.state.graphql_results == [None, RELEASE_ID]
+        assert fixture.state.uploads == ["a.bin", "b.bin"]
+        assert "a.bin" in fixture.state.asset_downloads
+        assert {asset["name"] for asset in fixture.state.assets.values()} == {
+            "a.bin",
+            "b.bin",
+        }
+        assert fixture.release_id.read_text(encoding="utf-8") == f"{RELEASE_ID}\n"
+
+        require_success(fixture.run("publish"))
+        assert fixture.state.graphql_results[-1] == RELEASE_ID
+        assert fixture.state.patches == 1
+        assert fixture.state.release["draft"] is False
+    finally:
+        fixture.close()
+
+
+def reject_edited_body(helper):
+    fixture = Fixture(helper)
+    try:
+        require_success(fixture.run("prepare"))
+        uploads = list(fixture.state.uploads)
+        fixture.state.release["body"] = "Manually edited notes."
+        result = fixture.run("prepare")
+        assert result.returncode != 0
+        assert "metadata differs" in result.stderr
+        assert fixture.state.uploads == uploads
+        assert fixture.state.release["draft"] is True
+    finally:
+        fixture.close()
+
+
+def reject_edited_asset(helper):
+    fixture = Fixture(helper)
+    try:
+        require_success(fixture.run("prepare"))
+        uploads = list(fixture.state.uploads)
+        first_asset = next(iter(fixture.state.assets.values()))
+        first_asset["content"] = b"different remote bytes"
+        result = fixture.run("prepare")
+        assert result.returncode != 0
+        assert "asset bytes differ" in result.stderr
+        assert fixture.state.uploads == uploads
+        assert fixture.state.release["draft"] is True
+    finally:
+        fixture.close()
+
+
+def reject_wrong_tag_commit(helper):
+    fixture = Fixture(helper)
+    try:
+        fixture.state.tag_commit = OTHER_COMMIT
+        result = fixture.run("prepare")
+        assert result.returncode != 0
+        assert "does not peel to GITHUB_SHA" in result.stderr
+        assert fixture.state.created == 0
+        assert fixture.state.release is None
+    finally:
+        fixture.close()
+
+
+def reject_malformed_tag_object(helper):
+    fixture = Fixture(helper)
+    try:
+        fixture.state.tag_object = "not-a-full-object-id"
+        result = fixture.run("prepare")
+        assert result.returncode != 0
+        assert "invalid Git object" in result.stderr
+        assert fixture.state.created == 0
+        assert fixture.state.release is None
+    finally:
+        fixture.close()
+
+
+def main():
+    if len(sys.argv) != 2:
+        raise SystemExit("usage: rehearsal.py RELEASE_STATE_HELPER")
+    helper = Path(sys.argv[1]).resolve()
+    rehearse_resume(helper)
+    reject_edited_body(helper)
+    reject_edited_asset(helper)
+    reject_wrong_tag_commit(helper)
+    reject_malformed_tag_object(helper)
+    print("release API rehearsal: resume, body, and remote-tag checks passed")
+
+
+if __name__ == "__main__":
+    main()

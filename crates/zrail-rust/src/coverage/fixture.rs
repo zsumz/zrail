@@ -86,13 +86,15 @@ test = "tests/mirror.rs"
 name = "mirrors_build"
 receipt = "evidence/mirror.json"
 inputs = ["Cargo.lock", "Cargo.toml", "src/owner.rs"]
+reason = "The test exercises the governed construction path."
+
+[source.rust.test_mirrors.execution]
 command = "cargo test --package audit-app --test mirror mirrors_build --target x86_64-unknown-linux-gnu"
 package = "audit-app"
 default_features = true
 features = []
 target = "x86_64-unknown-linux-gnu"
 toolchain = "rustc 1.90.0 (example 2026-01-01)"
-reason = "The test exercises the governed construction path."
 
 [[owner]]
 name = "record-construction"
