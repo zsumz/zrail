@@ -84,6 +84,7 @@ fn changed_repository_macro_package_is_stale_lock_state() {
 fn ratchet(value: usize) -> LockedRatchet {
     LockedRatchet {
         rule: "rust.file-size".into(),
+        selector: None,
         target: "src/large.rs".into(),
         value,
     }

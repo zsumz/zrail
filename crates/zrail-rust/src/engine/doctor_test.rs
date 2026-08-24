@@ -58,6 +58,9 @@ fn report(status: &str) -> DoctorReport {
         packages: 1,
         rust_files: 1,
         contract_sources: 1,
+        analysis: crate::AnalysisOutcome::Complete {
+            metrics: crate::AnalysisMetrics::default(),
+        },
         status: status.into(),
     }
 }

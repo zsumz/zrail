@@ -49,7 +49,28 @@ zrail init
 Both presets write explicit policy to `zrail.toml`; the preset is not hidden
 engine behavior.
 
-Add `--baseline` when adopting an existing repository:
+Plain `init` stops after creating that reviewable contract:
+
+```sh
+zrail baseline --dry-run
+zrail baseline --accept-grants
+zrail check
+```
+
+Repository exclusions are applied before Cargo discovery and written exactly
+into the contract:
+
+```sh
+zrail init --exclude 'fixtures/**' --exclude-from .zrailignore
+```
+
+Both flags are repeatable. Exclusion files contain one pattern per line; blank
+lines and lines beginning with `#` are ignored, and `!` negation is rejected.
+Patterns are normalized, sorted, and deduplicated. An exclusion cannot hide an
+active Cargo target.
+
+Add `--baseline` for an atomic contract-and-lock initialization after reviewing
+the intended preset and selection:
 
 ```sh
 zrail init --preset rust --baseline
@@ -93,26 +114,43 @@ zrail doctor
 zrail explain --path src/lib.rs
 ```
 
-Diagnostic reports use schema 2. Status and the `errors`, `warnings`, `notes`,
+Diagnostic reports use schema 3. Status and the `errors`, `warnings`, `notes`,
 and per-rule `groups` counts cover the complete analysis. The `findings` array
 contains only the retained individual diagnostics; `summary.retained`,
-`summary.omitted`, `truncated`, and `limit` describe that payload. Human output
+`summary.omitted`, `truncated`, and `max_findings` describe that payload. The
+`analysis` object reports completeness and deterministic workload. Human output
 uses the same exact totals.
 
-Individual diagnostics default to 10,000. Use `--limit 0` for aggregate-only
-output, a non-negative integer for a different bound, or `--limit all` for the
+Individual diagnostics default to 10,000. Use `--max-findings 0` for aggregate-only
+output, a non-negative integer for a different bound, or `--max-findings all` for the
 complete payload within zrail's existing repository and source safety limits:
 
 ```sh
-zrail check --limit 0 --format json
-zrail check --limit 50000
-zrail check --limit all
+zrail check --max-findings 0 --format json
+zrail check --max-findings 50000
+zrail check --max-findings all
 ```
 
-`--limit` is accepted by `check` and `review`, whose output contains diagnostic
-findings. Doctor and explain reports have no bounded finding payload and reject
-the option. Retention never changes pass/fail decisions or protected review
+`--max-findings` is accepted by `check` and `review`, whose output contains
+diagnostic findings. The former `--limit` spelling remains a deprecated alias.
+Doctor and explain reports have no bounded finding payload and reject the
+option. Retention never changes pass/fail decisions or protected review
 authority; those always use exact totals.
+
+Ordinary repository size is input, not analysis debt. Multiplicative source
+contexts and include projection use deterministic input-derived budgets. A
+repository may review explicit content-bound overrides when unusual source
+shapes need them:
+
+```toml
+[analysis.limits]
+derived_source_instances = 25000
+include_projection_work = 12000000
+projected_facts = 500000
+```
+
+Budget exhaustion makes analysis incomplete and prevents lock construction.
+Display flags never change these analysis budgets.
 
 After committing the initial zrail state, compare later source and policy
 changes with the trusted base:
@@ -388,7 +426,7 @@ resolution and qualification execution.
 
 | Command | Purpose |
 | --- | --- |
-| `zrail init` | Write explicit policy and its initial lock |
+| `zrail init` | Write explicit policy, optionally with an atomic initial baseline and lock |
 | `zrail baseline` | Add reviewed tightening ratchets to an existing contract |
 | `zrail check` | Check repository architecture without modifying files |
 | `zrail doctor` | Diagnose setup and compatibility problems |

@@ -161,7 +161,7 @@ fn canonicalize_gates(lock: &mut LockFile) -> Result<(), LockError> {
 }
 
 fn canonicalize_ratchets(lock: &mut LockFile) -> Result<(), LockError> {
-    for ratchet in &lock.ratchets {
+    for ratchet in &mut lock.ratchets {
         if ratchet.rule.trim().is_empty() || ratchet.target.trim().is_empty() {
             return Err(LockError(
                 "locked ratchets require non-empty rule and target".into(),
@@ -173,13 +173,32 @@ fn canonicalize_ratchets(lock: &mut LockFile) -> Result<(), LockError> {
                 ratchet.rule, ratchet.target
             )));
         }
+        if let Some(selector) = &mut ratchet.selector {
+            if selector.trim().is_empty() {
+                return Err(LockError(format!(
+                    "locked ratchet {}:{} has an empty selector",
+                    ratchet.rule, ratchet.target
+                )));
+            }
+            *selector = crate::normalize_ratchet_selector(selector);
+        }
     }
-    lock.ratchets
-        .sort_by(|left, right| (&left.rule, &left.target).cmp(&(&right.rule, &right.target)));
+    lock.ratchets.sort_by(|left, right| {
+        (&left.rule, &left.selector, &left.target).cmp(&(
+            &right.rule,
+            &right.selector,
+            &right.target,
+        ))
+    });
     ensure_unique(
-        lock.ratchets
-            .iter()
-            .map(|ratchet| format!("{}:{}", ratchet.rule, ratchet.target)),
+        lock.ratchets.iter().map(|ratchet| {
+            format!(
+                "{}:{}:{}",
+                ratchet.rule,
+                ratchet.selector.as_deref().unwrap_or("<none>"),
+                ratchet.target
+            )
+        }),
         "locked ratchet",
     )
 }

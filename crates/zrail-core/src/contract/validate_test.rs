@@ -56,6 +56,7 @@ fn wildcard_ratchet_targets_are_rejected() {
     let mut contract = minimal_contract();
     contract.ratchets.push(RatchetContract {
         rule: "rust.file-size".into(),
+        selector: None,
         target: "crates/**/*.rs".into(),
         reason: "test ratchet".into(),
     });
@@ -77,6 +78,7 @@ fn adoption_ratchets_are_rejected_without_strict_policy() {
         let mut contract = minimal_contract();
         contract.ratchets.push(RatchetContract {
             rule: rule.into(),
+            selector: None,
             target: "crates/legacy.rs".into(),
             reason: "legacy debt".into(),
         });
@@ -233,4 +235,18 @@ fn package_selectors_are_bounded_to_cargo_name_globs() {
     let error = validate_contract(&contract).expect_err("path-like selector must fail");
 
     assert!(error.to_string().contains("invalid package selector"));
+}
+
+#[test]
+fn explicit_analysis_limits_must_be_positive() {
+    let mut contract = minimal_contract();
+    contract.analysis.limits.include_projection_work = Some(0);
+
+    let error = validate_contract(&contract).expect_err("zero work limit must fail");
+
+    assert!(
+        error
+            .to_string()
+            .contains("analysis.limits.include_projection_work must be positive")
+    );
 }

@@ -8,8 +8,9 @@ use zrail_rust::check_repository;
 fn same_name_registry_and_git_dependencies_use_distinct_attestations() {
     let root = repository();
     let first = check(&root);
-    let registry = dependency(&first.candidate_lock, "registry-app");
-    let git = dependency(&first.candidate_lock, "git-app");
+    let candidate = first.candidate_lock.as_ref().expect("complete candidate");
+    let registry = dependency(candidate, "registry-app");
+    let git = dependency(candidate, "git-app");
     assert_eq!(registry.crate_root.as_deref(), Some("registry_runtime"));
     assert_eq!(git.crate_root.as_deref(), Some("git_runtime"));
     assert_eq!(

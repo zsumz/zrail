@@ -15,6 +15,16 @@ pub(crate) fn review(options: &ReviewOptions) -> Result<CommandResult, CliError>
     let checked =
         check_repository_with_limit(&common.root, &common.config, &common.lock, common.limit)
             .map_err(|error| CliError::new(error.to_string()))?;
+    let Some(candidate) = checked.candidate_lock.clone() else {
+        let text = match common.format {
+            OutputFormat::Human => checked.report.human(),
+            OutputFormat::Json => checked
+                .report
+                .json()
+                .map_err(|error| CliError::new(format!("serialize source review: {error}")))?,
+        };
+        return Ok(CommandResult::status(text, 2));
+    };
     let proposed = load_contract(&common.root, &common.config)
         .map_err(|error| CliError::new(format!("load proposed contract: {error}")))?;
     let architecture = update_authority::compare_from_repository(
@@ -23,11 +33,11 @@ pub(crate) fn review(options: &ReviewOptions) -> Result<CommandResult, CliError>
         &common.config,
         &common.lock,
         &proposed,
-        &checked.candidate_lock,
+        &candidate,
     )?;
     let source = checked
         .report
-        .with_findings(lock_attestation(options, &checked.candidate_lock)?);
+        .with_findings(lock_attestation(options, &candidate)?);
     let failed = source.status != ReportStatus::Pass
         || architecture_denied(&architecture, options.allow_grants);
     let text = match common.format {

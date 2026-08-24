@@ -110,6 +110,8 @@ fn initialize(root: &Path) -> Result<CommandResult, CliError> {
         root: root.to_path_buf(),
         preset: InitPreset::Zsumz,
         baseline: true,
+        exclusions: Vec::new(),
+        exclusion_files: Vec::new(),
     })
 }
 

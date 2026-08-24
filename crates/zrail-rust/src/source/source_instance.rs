@@ -1,13 +1,19 @@
 //! Cargo roots, modules, and include occurrences form exact source instances.
 
-use std::collections::{BTreeMap, VecDeque};
+use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
 use super::{
     CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, IncludeContext, SyntaxGuard,
 };
 
-const MAX_SOURCE_INSTANCES: usize = 4096;
+use super::{
+    source_instance_edges::{grouped_includes, grouped_modules},
+    source_instance_model::{MIN_DERIVED_SOURCE_CONTEXTS, SourceInstanceMetrics},
+};
+
 const MAX_SOURCE_INSTANCE_DEPTH: usize = 128;
+
+pub(crate) use super::source_instance_model::SourceInstanceIssue;
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct SourceInstanceId(pub(crate) usize);
@@ -41,23 +47,46 @@ pub(crate) struct SourceInstances {
     by_file: BTreeMap<String, Vec<SourceInstanceId>>,
     module_children: BTreeMap<SourceInstanceId, Vec<(CompilationModuleEdge, SourceInstanceId)>>,
     include_children: BTreeMap<SourceInstanceId, Vec<(CompilationIncludeEdge, SourceInstanceId)>>,
-    pub(crate) complete: bool,
+    identities: BTreeSet<(String, CompilationDomain)>,
+    derived_limit: usize,
+    issues: Vec<SourceInstanceIssue>,
+    metrics: SourceInstanceMetrics,
 }
 
 impl SourceInstances {
+    #[cfg(test)]
     pub(crate) fn build(
         roots: &[CompilationRoot],
         modules: &[CompilationModuleEdge],
         includes: &[CompilationIncludeEdge],
     ) -> Self {
+        Self::build_with_limit(roots, modules, includes, None)
+    }
+
+    pub(crate) fn build_with_limit(
+        roots: &[CompilationRoot],
+        modules: &[CompilationModuleEdge],
+        includes: &[CompilationIncludeEdge],
+        derived_limit: Option<usize>,
+    ) -> Self {
         let module_edges = grouped_modules(modules);
         let include_edges = grouped_includes(includes);
+        let derived_limit = derived_limit.unwrap_or_else(|| {
+            modules
+                .len()
+                .saturating_add(includes.len())
+                .saturating_mul(8)
+                .max(MIN_DERIVED_SOURCE_CONTEXTS)
+        });
         let mut graph = Self {
             instances: Vec::new(),
             by_file: BTreeMap::new(),
             module_children: BTreeMap::new(),
             include_children: BTreeMap::new(),
-            complete: true,
+            identities: BTreeSet::new(),
+            derived_limit,
+            issues: Vec::new(),
+            metrics: SourceInstanceMetrics::default(),
         };
         let mut queue = VecDeque::new();
         for root in roots {
@@ -140,8 +169,16 @@ impl SourceInstances {
     ) -> Option<SourceInstanceId> {
         let parent_instance = &self.instances[parent.0];
         let depth = parent_instance.depth + 1;
-        if depth > MAX_SOURCE_INSTANCE_DEPTH || self.ancestor_contains(parent, &file) {
-            self.complete = false;
+        if depth > MAX_SOURCE_INSTANCE_DEPTH {
+            let mut chain = self.ancestor_chain(parent);
+            chain.push(file.clone());
+            self.record_issue(SourceInstanceIssue::DepthLimit { file, depth, chain });
+            return None;
+        }
+        if self.ancestor_contains(parent, &file) {
+            let mut chain = self.ancestor_chain(parent);
+            chain.push(file);
+            self.record_issue(SourceInstanceIssue::Cycle { chain });
             return None;
         }
         let guard = match &entry {
@@ -180,9 +217,20 @@ impl SourceInstances {
         generic_types: Vec<String>,
         depth: usize,
     ) -> Option<SourceInstanceId> {
-        if self.instances.len() >= MAX_SOURCE_INSTANCES {
-            self.complete = false;
+        let identity = (file.clone(), domain.clone());
+        let base = self.identities.insert(identity);
+        if !base && self.metrics.derived_contexts >= self.derived_limit {
+            self.record_issue(SourceInstanceIssue::DerivedContextLimit {
+                used: self.metrics.derived_contexts.saturating_add(1),
+                limit: self.derived_limit,
+                file,
+            });
             return None;
+        }
+        if base {
+            self.metrics.base_contexts = self.metrics.base_contexts.saturating_add(1);
+        } else {
+            self.metrics.derived_contexts = self.metrics.derived_contexts.saturating_add(1);
         }
         let id = SourceInstanceId(self.instances.len());
         self.by_file.entry(file.clone()).or_default().push(id);
@@ -210,30 +258,38 @@ impl SourceInstances {
             parent = next;
         }
     }
+
+    fn ancestor_chain(&self, mut current: SourceInstanceId) -> Vec<String> {
+        let mut chain = Vec::new();
+        loop {
+            let instance = &self.instances[current.0];
+            chain.push(instance.file.clone());
+            let Some(parent) = instance.parent else {
+                break;
+            };
+            current = parent;
+        }
+        chain.reverse();
+        chain
+    }
+
+    fn has_include_ancestor(&self, mut current: SourceInstanceId) -> bool {
+        loop {
+            let instance = &self.instances[current.0];
+            if matches!(instance.entered_from, SourceEntry::Include(_)) {
+                return true;
+            }
+            let Some(parent) = instance.parent else {
+                return false;
+            };
+            current = parent;
+        }
+    }
 }
 
-fn grouped_modules(
-    edges: &[CompilationModuleEdge],
-) -> BTreeMap<(String, CompilationDomain), Vec<&CompilationModuleEdge>> {
-    let mut grouped = BTreeMap::new();
-    for edge in edges {
-        grouped
-            .entry((edge.parent.clone(), edge.domain.clone()))
-            .or_insert_with(Vec::new)
-            .push(edge);
-    }
-    grouped
-}
+#[path = "source_instance_access.rs"]
+mod access;
 
-fn grouped_includes(
-    edges: &[CompilationIncludeEdge],
-) -> BTreeMap<(String, CompilationDomain), Vec<&CompilationIncludeEdge>> {
-    let mut grouped = BTreeMap::new();
-    for edge in edges {
-        grouped
-            .entry((edge.parent.clone(), edge.domain.clone()))
-            .or_insert_with(Vec::new)
-            .push(edge);
-    }
-    grouped
-}
+#[cfg(test)]
+#[path = "source_instance_test.rs"]
+mod source_instance_test;

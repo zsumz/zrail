@@ -25,19 +25,21 @@ pub(crate) fn canonicalize(
         compilation_roots,
         compilation_edges,
         compilation_includes,
+        analysis_limits,
     } = context;
     let packages = cargo
         .packages
         .iter()
         .map(|package| (package.name.as_str(), package))
         .collect::<BTreeMap<_, _>>();
-    let macro_definitions = MacroDefinitions::collect(
+    let macro_definitions = MacroDefinitions::collect_with_limit(
         index,
         cargo,
         compilation_domains,
         compilation_roots,
         compilation_edges,
         compilation_includes,
+        analysis_limits.derived_source_instances,
     );
     let macro_visibility = super::macro_visibility::MacroVisibility::collect(index, module_edges);
     let mut findings = Vec::new();
@@ -82,14 +84,15 @@ pub(crate) fn canonicalize(
     }
     let binding_macros = review_bindings(index);
     binding_macros.apply(index);
-    let include_bindings = super::include_bindings::IncludeBindings::collect(
+    let include_bindings = super::include_bindings::IncludeBindings::collect_with_limit(
         index,
         compilation_roots,
         compilation_edges,
         compilation_includes,
         &binding_macros,
+        analysis_limits.derived_source_instances,
     );
-    findings.extend(include_bindings.apply(index));
+    findings.extend(include_bindings.apply_with_contract_limits(index, analysis_limits));
     for file in &mut index.files {
         findings.extend(super::calls::resolution_findings(
             &file.relative,

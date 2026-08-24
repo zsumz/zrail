@@ -3,7 +3,7 @@
 use zrail_core::{AnalysisQuality, Finding};
 
 use super::{
-    ObservedFact, RustFileFacts, SourceIndex, SourceSyntax,
+    ObservedFact, SourceIndex, SourceInstanceIssue, SourceSyntax,
     include_binding_projection::{CallSite, FactKey, FactProjection, ProjectionRequest, project},
     include_bindings::IncludeBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimit, ProjectionLimits},
@@ -18,8 +18,30 @@ struct FileProjection {
 }
 
 impl IncludeBindings {
+    #[cfg(test)]
     pub(super) fn apply(&self, index: &mut SourceIndex) -> Vec<Finding> {
-        self.apply_with_limits(index, ProjectionLimits::default())
+        self.apply_with_contract_limits(index, &zrail_core::AnalysisLimits::default())
+    }
+
+    pub(super) fn apply_with_contract_limits(
+        &self,
+        index: &mut SourceIndex,
+        limits: &zrail_core::AnalysisLimits,
+    ) -> Vec<Finding> {
+        let affected_facts = index
+            .files
+            .iter()
+            .filter(|file| self.instances.requires_projection(&file.relative))
+            .map(fact_count)
+            .sum();
+        self.apply_with_limits(
+            index,
+            ProjectionLimits::for_contract(
+                affected_facts,
+                self.instances.metrics().derived_contexts,
+                limits,
+            ),
+        )
     }
 
     pub(super) fn apply_with_limits(
@@ -27,19 +49,13 @@ impl IncludeBindings {
         index: &mut SourceIndex,
         limits: ProjectionLimits,
     ) -> Vec<Finding> {
-        if !self.instances.complete {
-            return index
-                .files
-                .iter()
-                .any(has_written_facts)
-                .then(|| unresolved(None, None))
-                .into_iter()
-                .collect();
+        let context_metrics = self.instances.metrics();
+        index.analysis_metrics.base_contexts = context_metrics.base_contexts;
+        index.analysis_metrics.derived_contexts = context_metrics.derived_contexts;
+        if !self.instances.is_complete() {
+            return self.instances.issues().iter().map(context_issue).collect();
         }
-        let mut budget = match ProjectionBudget::for_files(&index.files, limits) {
-            Ok(budget) => budget,
-            Err(limit) => return vec![budget_exhausted(limit)],
-        };
+        let mut budget = ProjectionBudget::new(limits);
         let mut order = (0..index.files.len()).collect::<Vec<_>>();
         order.sort_by(|left, right| {
             index.files[*left]
@@ -50,6 +66,11 @@ impl IncludeBindings {
         let mut findings = Vec::new();
         for file_index in order {
             let file = &index.files[file_index];
+            if !self.instances.requires_projection(&file.relative) {
+                continue;
+            }
+            index.analysis_metrics.projection_files =
+                index.analysis_metrics.projection_files.saturating_add(1);
             let Some(mut remaining_file_facts) = MAX_FACTS_PER_FILE.checked_sub(fact_count(file))
             else {
                 return vec![budget_exhausted(ProjectionLimit::Facts)];
@@ -108,6 +129,8 @@ impl IncludeBindings {
                 calls,
             });
         }
+        index.analysis_metrics.projection_work = budget.used_work();
+        index.analysis_metrics.projected_facts = budget.retained_facts();
         for projection in planned {
             let file = &mut index.files[projection.index];
             apply_projection(&mut file.paths, projection.paths);
@@ -132,13 +155,6 @@ fn apply_projection(facts: &mut Vec<ObservedFact>, projection: FactProjection) {
     facts.extend(projection.additions);
 }
 
-fn has_written_facts(file: &RustFileFacts) -> bool {
-    file.paths
-        .iter()
-        .chain(&file.calls)
-        .any(|fact| fact.written.is_some())
-}
-
 fn unresolved(path: Option<&str>, span: Option<zrail_core::SourceSpan>) -> Finding {
     let mut finding = Finding::error(
         "RUST-INCLUDE-002",
@@ -154,13 +170,42 @@ fn unresolved(path: Option<&str>, span: Option<zrail_core::SourceSpan>) -> Findi
         .with_help("reduce include or import indirection before trusting path and call authority")
 }
 
+fn context_issue(issue: &SourceInstanceIssue) -> Finding {
+    let (id, message, path) = match issue {
+        SourceInstanceIssue::DerivedContextLimit { used, limit, file } => (
+            "RUST-CONTEXT-001",
+            format!(
+                "derived Rust source contexts reached {used}, exceeding the input-derived limit {limit}"
+            ),
+            Some(file.as_str()),
+        ),
+        SourceInstanceIssue::DepthLimit { file, depth, chain } => (
+            "RUST-CONTEXT-002",
+            format!(
+                "Rust source context depth reached {depth} through {}",
+                chain.join(" -> ")
+            ),
+            Some(file.as_str()),
+        ),
+        SourceInstanceIssue::Cycle { chain } => (
+            "RUST-CONTEXT-003",
+            format!("Rust source context cycle: {}", chain.join(" -> ")),
+            chain.last().map(String::as_str),
+        ),
+    };
+    let finding = Finding::error(id, "rust.source.contexts", "source", message)
+        .with_analysis(AnalysisQuality::Unresolved)
+        .with_help("remove the pathological source expansion before constructing lock authority");
+    path.map_or(finding.clone(), |path| finding.at(path, None))
+}
+
 fn budget_exhausted(limit: ProjectionLimit) -> Finding {
-    let exhausted = match limit {
-        ProjectionLimit::Work => "work",
-        ProjectionLimit::Facts => "fact",
+    let (id, exhausted) = match limit {
+        ProjectionLimit::Work => ("RUST-PROJECTION-001", "work"),
+        ProjectionLimit::Facts => ("RUST-PROJECTION-002", "fact"),
     };
     Finding::error(
-        "RUST-INCLUDE-002",
+        id,
         "rust.source.include-bindings",
         "source",
         format!("repository-wide Rust binding projection exhausted its {exhausted} safety budget"),

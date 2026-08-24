@@ -233,6 +233,7 @@ fn contract() -> Contract {
             cycles: CycleMode::Allow,
             crate_roots: Vec::new(),
         },
+        analysis: Default::default(),
         source: SourceContract {
             rust: RustSourceContract {
                 module_docs: ModuleDocsMode::Required,

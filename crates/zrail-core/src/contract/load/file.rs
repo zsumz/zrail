@@ -5,9 +5,9 @@ use std::collections::BTreeMap;
 use serde::Deserialize;
 
 use super::super::{
-    DependenciesContract, DependencyRule, GateContract, InvariantContract, LayerContract,
-    OwnerContract, ProfileContract, RatchetContract, RepositoryContract, ScopeContract,
-    SourceContract,
+    AnalysisContract, DependenciesContract, DependencyRule, GateContract, InvariantContract,
+    LayerContract, OwnerContract, ProfileContract, RatchetContract, RepositoryContract,
+    ScopeContract, SourceContract,
 };
 
 #[derive(Debug, Deserialize)]
@@ -20,6 +20,7 @@ pub(in crate::contract) struct ContractFile {
     pub(in crate::contract) repository: Option<RepositoryContract>,
     pub(in crate::contract) dependencies: Option<DependenciesContract>,
     pub(in crate::contract) source: Option<SourceContract>,
+    pub(in crate::contract) analysis: Option<AnalysisContract>,
     #[serde(default)]
     pub(in crate::contract) profiles: BTreeMap<String, ProfileContract>,
     #[serde(default, rename = "layer")]

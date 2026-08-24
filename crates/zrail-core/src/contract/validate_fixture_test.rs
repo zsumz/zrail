@@ -50,6 +50,7 @@ pub(super) fn minimal_contract() -> Contract {
             cycles: CycleMode::Allow,
             crate_roots: Vec::new(),
         },
+        analysis: Default::default(),
         source: SourceContract {
             rust: RustSourceContract {
                 module_docs: ModuleDocsMode::Allow,

@@ -27,6 +27,7 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
             cycles: CycleMode::Deny,
             crate_roots: Vec::new(),
         },
+        analysis: Default::default(),
         source: SourceContract {
             rust: RustSourceContract {
                 module_docs: ModuleDocsMode::Required,

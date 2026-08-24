@@ -122,6 +122,7 @@ fn parse_common_options(
     allow_limit: bool,
 ) -> Result<CommonOptions, CliError> {
     let mut options = CommonOptions::default();
+    let mut limit_set = false;
     let mut index = 0;
     while index < arguments.len() {
         let flag = as_string(&arguments[index])?;
@@ -133,8 +134,14 @@ fn parse_common_options(
                 let value = value(arguments, &mut index, "--format")?;
                 options.format = parse_format(&value)?;
             }
-            "--limit" if allow_limit => {
-                options.limit = parse_limit(&value(arguments, &mut index, "--limit")?)?;
+            "--max-findings" | "--limit" if allow_limit && !limit_set => {
+                options.limit = parse_limit(&value(arguments, &mut index, &flag)?)?;
+                limit_set = true;
+            }
+            "--max-findings" | "--limit" if allow_limit => {
+                return Err(CliError::new(
+                    "--max-findings may be specified only once (deprecated --limit is an alias)",
+                ));
             }
             _ => return Err(CliError::new(format!("unknown option {flag:?}"))),
         }

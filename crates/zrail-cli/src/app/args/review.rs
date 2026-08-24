@@ -16,6 +16,7 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
     let mut authority_set = false;
     let mut base_set = false;
     let mut allow_grants = false;
+    let mut limit_set = false;
     let mut index = 0;
     while index < arguments.len() {
         let flag = as_string(&arguments[index])?;
@@ -42,8 +43,14 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
             "--format" => {
                 common.format = parse_format(&value(arguments, &mut index, "--format")?)?;
             }
-            "--limit" => {
-                common.limit = parse_limit(&value(arguments, &mut index, "--limit")?)?;
+            "--max-findings" | "--limit" if !limit_set => {
+                common.limit = parse_limit(&value(arguments, &mut index, &flag)?)?;
+                limit_set = true;
+            }
+            "--max-findings" | "--limit" => {
+                return Err(CliError::new(
+                    "--max-findings may be specified only once (deprecated --limit is an alias)",
+                ));
             }
             "--allow-grants" if !allow_grants => allow_grants = true,
             "--allow-grants" => {

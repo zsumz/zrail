@@ -3,6 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::cargo::CargoWorkspace;
+use zrail_core::AnalysisLimits;
 
 use super::{
     CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot,
@@ -18,4 +19,5 @@ pub(crate) struct CanonicalizationContext<'a> {
     pub(crate) compilation_roots: &'a [CompilationRoot],
     pub(crate) compilation_edges: &'a [CompilationModuleEdge],
     pub(crate) compilation_includes: &'a [CompilationIncludeEdge],
+    pub(crate) analysis_limits: &'a AnalysisLimits,
 }

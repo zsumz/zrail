@@ -6,9 +6,6 @@ use std::{
     sync::atomic::{AtomicUsize, Ordering},
 };
 
-use zrail_core::ReportStatus;
-use zrail_rust::check_repository;
-
 use crate::app::args::{InitOptions, InitPreset};
 
 use super::init;
@@ -27,7 +24,7 @@ fn standalone_package_initializes_at_the_repository_root() {
     assert_eq!(result.exit_code, 0);
     assert!(contract.contains("roots = [\".\"]"));
     assert_strict_defaults(&contract);
-    assert_ready(&root);
+    assert_contract_only(&root);
     reset(&root);
 }
 
@@ -59,7 +56,7 @@ fn root_package_workspace_initializes_as_one_repository_boundary() {
 
     assert_eq!(result.exit_code, 0);
     assert!(contract.contains("roots = [\".\"]"));
-    assert_ready(&root);
+    assert_contract_only(&root);
     reset(&root);
 }
 
@@ -85,7 +82,7 @@ fn virtual_workspace_discovers_custom_package_directories() {
 
     assert_eq!(result.exit_code, 0);
     assert!(contract.contains("roots = [\"components/domain\", \"tools/cli\"]"));
-    assert_ready(&root);
+    assert_contract_only(&root);
     reset(&root);
 }
 
@@ -119,12 +116,12 @@ fn initialization_discovers_only_active_workspace_roots() {
     assert_eq!(result.exit_code, 0);
     assert!(contract.contains("roots = [\"crates/app\"]"));
     assert!(!contract.contains("reference/example"));
-    assert_ready(&root);
+    assert_contract_only(&root);
     reset(&root);
 }
 
 #[test]
-fn strict_test_placement_refuses_inline_test_debt_without_partial_state() {
+fn contract_only_initialization_defers_inline_test_debt() {
     let root = fixture_root("inline-tests");
     reset(&root);
     write_package(&root, "inline-tests");
@@ -134,17 +131,17 @@ fn strict_test_placement_refuses_inline_test_debt_without_partial_state() {
     )
     .expect("write inline test");
 
-    let result = initialize(&root).expect("evaluate starter contract");
+    let result = initialize(&root).expect("create starter contract");
 
-    assert_eq!(result.exit_code, 1);
-    assert!(result.text.contains("RUST-TEST-001"));
-    assert!(!root.join("zrail.toml").exists());
+    assert_eq!(result.exit_code, 0);
+    assert!(result.text.contains("Adoption: contract only"));
+    assert!(root.join("zrail.toml").is_file());
     assert!(!root.join("zrail.lock").exists());
     reset(&root);
 }
 
 #[test]
-fn hard_line_ceiling_refuses_oversized_source_without_partial_state() {
+fn contract_only_initialization_defers_size_debt() {
     let root = fixture_root("oversized");
     reset(&root);
     write_package(&root, "oversized");
@@ -152,11 +149,11 @@ fn hard_line_ceiling_refuses_oversized_source_without_partial_state() {
     fs::write(root.join("src/lib.rs"), format!("//! package\n{source}"))
         .expect("write oversized source");
 
-    let result = initialize(&root).expect("evaluate starter contract");
+    let result = initialize(&root).expect("create starter contract");
 
-    assert_eq!(result.exit_code, 1);
-    assert!(result.text.contains("RUST-SIZE-002"));
-    assert!(!root.join("zrail.toml").exists());
+    assert_eq!(result.exit_code, 0);
+    assert!(result.text.contains("Adoption: contract only"));
+    assert!(root.join("zrail.toml").is_file());
     assert!(!root.join("zrail.lock").exists());
     reset(&root);
 }
@@ -198,6 +195,8 @@ fn initialize(root: &Path) -> Result<super::CommandResult, crate::app::error::Cl
         root: root.to_path_buf(),
         preset: InitPreset::Zsumz,
         baseline: false,
+        exclusions: Vec::new(),
+        exclusion_files: Vec::new(),
     })
 }
 
@@ -207,11 +206,9 @@ fn assert_strict_defaults(contract: &str) {
     assert_eq!(contract.matches("hard = 300").count(), 4);
 }
 
-fn assert_ready(root: &Path) {
-    let report = check_repository(root, Path::new("zrail.toml"), Path::new("zrail.lock"))
-        .expect("check initialized repository")
-        .report;
-    assert_eq!(report.status, ReportStatus::Pass, "{}", report.human());
+fn assert_contract_only(root: &Path) {
+    assert!(root.join("zrail.toml").is_file());
+    assert!(!root.join("zrail.lock").exists());
 }
 
 fn write_package(root: &Path, name: &str) {

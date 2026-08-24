@@ -129,12 +129,13 @@ fn compare_ratchets(before: &LockFile, after: &LockFile, changes: &mut Vec<Archi
         .cloned()
         .collect::<BTreeSet<_>>();
     for identity in identities {
+        let subject = ratchet_label(&identity);
         match (old.get(&identity), new.get(&identity)) {
             (Some(left), Some(right)) if left.value < right.value => changes.push(
                 ArchitectureChange::new(
                     ChangeKind::Debt,
                     "ratchet",
-                    &identity,
+                    &subject,
                     "ratchet ceiling increased",
                 )
                 .values(left.value.to_string(), right.value.to_string()),
@@ -143,7 +144,7 @@ fn compare_ratchets(before: &LockFile, after: &LockFile, changes: &mut Vec<Archi
                 ArchitectureChange::new(
                     ChangeKind::Cleanup,
                     "ratchet",
-                    &identity,
+                    &subject,
                     "ratchet tightened with the repository",
                 )
                 .values(left.value.to_string(), right.value.to_string()),
@@ -152,7 +153,7 @@ fn compare_ratchets(before: &LockFile, after: &LockFile, changes: &mut Vec<Archi
                 ArchitectureChange::new(
                     ChangeKind::Debt,
                     "ratchet",
-                    &identity,
+                    &subject,
                     "reviewed architecture debt was recorded",
                 )
                 .values("<none>", right.value.to_string()),
@@ -161,7 +162,7 @@ fn compare_ratchets(before: &LockFile, after: &LockFile, changes: &mut Vec<Archi
                 ArchitectureChange::new(
                     ChangeKind::Cleanup,
                     "ratchet",
-                    &identity,
+                    &subject,
                     "reviewed architecture debt was removed",
                 )
                 .values(left.value.to_string(), "<none>"),
@@ -202,11 +203,32 @@ fn edge_label((package, dependency): &(String, LockedDependency)) -> String {
     format!("{package}->{}", dependency.label())
 }
 
-fn ratchets_by_identity(ratchets: &[LockedRatchet]) -> BTreeMap<String, &LockedRatchet> {
+type RatchetIdentity = (String, Option<String>, String);
+
+fn ratchets_by_identity(ratchets: &[LockedRatchet]) -> BTreeMap<RatchetIdentity, &LockedRatchet> {
     ratchets
         .iter()
-        .map(|ratchet| (format!("{}:{}", ratchet.rule, ratchet.target), ratchet))
+        .map(|ratchet| {
+            (
+                (
+                    ratchet.rule.clone(),
+                    ratchet
+                        .selector
+                        .as_deref()
+                        .map(crate::normalize_ratchet_selector),
+                    ratchet.target.clone(),
+                ),
+                ratchet,
+            )
+        })
         .collect()
+}
+
+fn ratchet_label((rule, selector, target): &RatchetIdentity) -> String {
+    selector.as_ref().map_or_else(
+        || format!("{rule}:{target}"),
+        |selector| format!("{rule}[{selector}]:{target}"),
+    )
 }
 
 #[cfg(test)]

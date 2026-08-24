@@ -35,6 +35,20 @@ pub(super) fn human(report: &Report) -> String {
     }
     let _ = writeln!(
         output,
+        "Analysis: {}; {} Rust files, {} base contexts, {} derived contexts, {} projection work, {} unresolved.",
+        if report.analysis.complete {
+            "complete"
+        } else {
+            "incomplete"
+        },
+        grouped_number(report.analysis.rust_files),
+        grouped_number(report.analysis.base_source_instances),
+        grouped_number(report.analysis.derived_source_instances),
+        grouped_number(report.analysis.projection_work),
+        grouped_number(report.analysis.unresolved),
+    );
+    let _ = writeln!(
+        output,
         "Diagnostics: {} total; showing {}.",
         grouped_number(report.summary.total()),
         grouped_number(report.summary.retained)

@@ -137,6 +137,7 @@ fn source(expansion: MacroExpansionFact) -> SourceIndex {
             facade_implementation: Vec::new(),
         }],
         findings: Vec::new(),
+        analysis_metrics: Default::default(),
     }
 }
 
@@ -182,6 +183,7 @@ fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
             cycles: CycleMode::Deny,
             crate_roots: Vec::new(),
         },
+        analysis: Default::default(),
         source: SourceContract {
             rust: RustSourceContract {
                 module_docs: ModuleDocsMode::Allow,

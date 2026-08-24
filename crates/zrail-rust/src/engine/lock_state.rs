@@ -62,6 +62,7 @@ pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckE
             .and_then(|file| {
                 crate::rules::count_ratchet::measurement(
                     &ratchet.rule,
+                    ratchet.selector.as_deref(),
                     file,
                     &model.bundle.contract.source.rust,
                 )
@@ -70,6 +71,10 @@ pub(super) fn candidate_lock(model: &RepositoryModel) -> Result<LockFile, CheckE
         {
             lock.ratchets.push(LockedRatchet {
                 rule: ratchet.rule.clone(),
+                selector: ratchet
+                    .selector
+                    .as_deref()
+                    .map(zrail_core::normalize_ratchet_selector),
                 target: ratchet.target.clone(),
                 value,
             });

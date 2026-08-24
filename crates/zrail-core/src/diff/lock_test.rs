@@ -1,6 +1,6 @@
 //! Content-addressed gate diff classification.
 
-use crate::{ChangeKind, LockFile, LockedGate, LockedGateInput};
+use crate::{ChangeKind, LockFile, LockedGate, LockedGateInput, LockedRatchet};
 
 use super::compare;
 
@@ -46,6 +46,30 @@ fn gate_input_changes_preserve_their_permission_direction() {
     assert_eq!(removed[0].kind, ChangeKind::Grant);
 }
 
+#[test]
+fn ratchet_selector_is_normalized_and_part_of_identity() {
+    let mut raw = LockFile::new("0".repeat(64));
+    raw.ratchets.push(ratchet("r#unwrap"));
+    let mut normalized = LockFile::new("0".repeat(64));
+    normalized.ratchets.push(ratchet("unwrap"));
+    assert!(compare(Some(&raw), Some(&normalized)).is_empty());
+
+    let mut changed = LockFile::new("0".repeat(64));
+    changed.ratchets.push(ratchet("expect"));
+    let changes = compare(Some(&normalized), Some(&changed));
+    assert_eq!(changes.len(), 2);
+    assert!(
+        changes
+            .iter()
+            .any(|change| change.subject.contains("[unwrap]"))
+    );
+    assert!(
+        changes
+            .iter()
+            .any(|change| change.subject.contains("[expect]"))
+    );
+}
+
 fn lock(digit: &str) -> LockFile {
     let mut lock = LockFile::new("0".repeat(64));
     lock.gates.push(LockedGate {
@@ -64,4 +88,13 @@ fn lock_with_input(digit: &str) -> LockFile {
         sha256: digit.repeat(64),
     });
     lock
+}
+
+fn ratchet(selector: &str) -> LockedRatchet {
+    LockedRatchet {
+        rule: "rust.hygiene.denied-method".into(),
+        selector: Some(selector.into()),
+        target: "src/lib.rs".into(),
+        value: 2,
+    }
 }

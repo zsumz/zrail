@@ -6,10 +6,20 @@ use zrail_rust::BaselinePlan;
 
 use crate::app::args::InitPreset;
 
-pub(super) fn render(roots: &[String], preset: InitPreset, baseline: &BaselinePlan) -> String {
+pub(super) fn render(
+    roots: &[String],
+    exclusions: &[String],
+    preset: InitPreset,
+    baseline: &BaselinePlan,
+) -> String {
     let roots = roots
         .iter()
         .map(|root| toml_string(root))
+        .collect::<Vec<_>>()
+        .join(", ");
+    let exclusions = exclusions
+        .iter()
+        .map(|exclusion| toml_string(exclusion))
         .collect::<Vec<_>>()
         .join(", ");
     let mut contract = format!(
@@ -18,7 +28,7 @@ adapters = ["rust"]
 
 [repository]
 roots = [{roots}]
-exclude = []
+exclude = [{exclusions}]
 workspace_members = "exact"
 nested_git = "deny"
 submodules = "deny"

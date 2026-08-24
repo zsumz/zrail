@@ -99,13 +99,21 @@ Building from source requires Rust 1.96 or newer.
 
 ```sh
 zrail init --preset rust
+zrail baseline --dry-run
+zrail baseline --accept-grants
 zrail check
 zrail explain --path src/lib.rs
 ```
 
 The `rust` preset fits conventional inline and integration tests. Run
 `zrail init` for the zsumz preset: sibling tests, reviewed macro expansion, and
-300-line source targets. Add `--baseline` when adopting existing code.
+300-line source targets. Plain `init` creates only `zrail.toml` so its authority
+can be reviewed before the first baseline and lock. Add `--baseline` for an
+atomic contract-and-lock initialization when that review is already complete.
+
+Use repeatable `--exclude PATTERN` options or `--exclude-from FILE` to keep
+non-authoritative fixtures out of discovery. The normalized selection is
+written exactly into the contract, and it cannot hide an active Cargo target.
 
 If you already maintain `zrail.toml`, preview measurable legacy debt before
 granting its exact tightening ratchets:

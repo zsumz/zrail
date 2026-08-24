@@ -27,6 +27,7 @@ pub(super) fn validate_contract(contract: &Contract) -> Result<(), ContractError
     validate_repository(contract, &mut errors);
     super::validate_dependencies::validate(contract, &mut errors);
     validate_budgets(contract, &mut errors);
+    validate_analysis_limits(contract, &mut errors);
     super::validate_source::validate_source_contract(contract, &mut errors);
     validate_layers(contract, &mut errors);
     validate_named_rules(contract, &mut errors);
@@ -38,6 +39,24 @@ pub(super) fn validate_contract(contract: &Contract) -> Result<(), ContractError
         Ok(())
     } else {
         Err(ContractError::many(errors.finish()))
+    }
+}
+
+fn validate_analysis_limits(contract: &Contract, errors: &mut ValidationErrors) {
+    for (name, value) in [
+        (
+            "derived_source_instances",
+            contract.analysis.limits.derived_source_instances,
+        ),
+        (
+            "include_projection_work",
+            contract.analysis.limits.include_projection_work,
+        ),
+        ("projected_facts", contract.analysis.limits.projected_facts),
+    ] {
+        if value == Some(0) {
+            errors.push(format!("analysis.limits.{name} must be positive"));
+        }
     }
 }
 

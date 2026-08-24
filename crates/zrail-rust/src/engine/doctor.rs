@@ -5,6 +5,8 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 use zrail_core::LockFile;
 
+use crate::analysis::AnalysisOutcome;
+
 use super::{
     CheckError,
     lock_compare::requires_lock,
@@ -32,6 +34,8 @@ pub struct DoctorReport {
     pub rust_files: usize,
     /// The number of files that contribute to the resolved contract bundle.
     pub contract_sources: usize,
+    /// Explicit repository-wide analysis completeness and work census.
+    pub analysis: AnalysisOutcome,
     /// Lock readiness: `ready`, `lock-missing`, `lock-schema-mismatch`,
     /// `lock-semantics-mismatch`, and `lock-stale`.
     pub status: String,
@@ -63,6 +67,7 @@ impl DoctorReport {
                 "packages: {}\n",
                 "rust files: {}\n",
                 "contract sources: {}\n",
+                "analysis: {}\n",
                 "status: {}\n",
             ),
             self.root,
@@ -72,6 +77,11 @@ impl DoctorReport {
             self.packages,
             self.rust_files,
             self.contract_sources,
+            if self.analysis.is_complete() {
+                "complete"
+            } else {
+                "incomplete"
+            },
             self.status
         )
     }
@@ -87,14 +97,19 @@ pub fn doctor_repository(
     lock: &Path,
 ) -> Result<DoctorReport, CheckError> {
     let model = load_model(root, config)?;
-    let candidate = candidate_lock(&model)?;
+    let analysis = AnalysisOutcome::from_source(&model.source);
     let current = read_optional_lock(&model.inventory.root, lock)?;
     let lock_path = resolve(&model.inventory.root, lock)?;
-    let status = doctor_status(
-        requires_lock(&model.bundle.contract),
-        current.as_ref(),
-        &candidate,
-    );
+    let status = if analysis.is_complete() {
+        let candidate = candidate_lock(&model)?;
+        doctor_status(
+            requires_lock(&model.bundle.contract),
+            current.as_ref(),
+            &candidate,
+        )
+    } else {
+        "analysis-incomplete"
+    };
     Ok(DoctorReport {
         schema: 1,
         root: model.inventory.root.to_string_lossy().into_owned(),
@@ -106,6 +121,7 @@ pub fn doctor_repository(
         packages: model.cargo.packages.len(),
         rust_files: model.source.files.len(),
         contract_sources: model.bundle.sources.len(),
+        analysis,
         status: status.into(),
     })
 }

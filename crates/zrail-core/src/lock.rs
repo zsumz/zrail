@@ -165,6 +165,9 @@ pub enum LockedDependencyScope {
 pub struct LockedRatchet {
     /// Stable rule identity that produced the measurement.
     pub rule: String,
+    /// Optional normalized denied-operation selector measured independently.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub selector: Option<String>,
     /// Stable governed target within the rule.
     pub target: String,
     /// Positive accepted ceiling for the target.

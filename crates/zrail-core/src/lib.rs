@@ -9,18 +9,19 @@ mod digest;
 mod input;
 mod lock;
 mod path;
+mod ratchet;
 mod report;
 
 pub use contract::{
-    Budget, Contract, ContractBundle, ContractError, ContractSource, CrateRootContract,
-    CrateRootSource, CycleMode, DependenciesContract, DependencyMode, DependencyRule, Effect,
-    EffectBoundary, EvidenceReference, ExactMode, ExternalDependencyMode, FacadeMode, FileRole,
-    FileRoleContract, FileSizeContract, GateContract, GateKind, GeneratedSourceContract,
-    HygieneContract, InvariantContract, InvariantStatus, ItemMacroContract, LayerContract,
-    LayerDependencies, LintSuppressionMode, MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES,
-    MAX_IMPORT_DIRECTIVES, MacroBindingMode, MacroExpansionAllow, MacroExpansionBindings,
-    MacroExpansionContract, MacroExpansionMode, MacroInputMode, ModuleDocsMode,
-    OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode, PolicyReachability,
+    AnalysisContract, AnalysisLimits, Budget, Contract, ContractBundle, ContractError,
+    ContractSource, CrateRootContract, CrateRootSource, CycleMode, DependenciesContract,
+    DependencyMode, DependencyRule, Effect, EffectBoundary, EvidenceReference, ExactMode,
+    ExternalDependencyMode, FacadeMode, FileRole, FileRoleContract, FileSizeContract, GateContract,
+    GateKind, GeneratedSourceContract, HygieneContract, InvariantContract, InvariantStatus,
+    ItemMacroContract, LayerContract, LayerDependencies, LintSuppressionMode, MAX_CONTRACT_BYTES,
+    MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES, MacroBindingMode, MacroExpansionAllow,
+    MacroExpansionBindings, MacroExpansionContract, MacroExpansionMode, MacroInputMode,
+    ModuleDocsMode, OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode, PolicyReachability,
     ProfileContract, RatchetContract, RepositoryContract, RustSourceContract, ScopeContract,
     SourceContract, SymbolBoundary, SymlinkMode, TestMode, contract_imports, load_contract,
     load_contract_with_entry, parse_evidence_reference,
@@ -44,4 +45,5 @@ pub use lock::{
     LockedGeneratedSource, LockedMacroImplementation, LockedPackage, LockedRatchet,
 };
 pub use path::{glob_matches, normalize_relative, repository_file, repository_relative};
-pub use report::{Report, ReportGroup, ReportStatus, ReportSummary};
+pub use ratchet::normalize_ratchet_selector;
+pub use report::{Report, ReportAnalysis, ReportGroup, ReportStatus, ReportSummary};

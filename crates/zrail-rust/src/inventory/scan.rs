@@ -13,7 +13,7 @@ use zrail_core::{
 
 use super::{
     classify::{classify_path, is_indexed_source},
-    exclusions::{excluded, excluded_subtree},
+    exclusions::{excluded, excluded_by, excluded_subtree},
     types::{RepositoryEntry, RepositoryEntryKind, RepositoryInventory, RustSourceFile},
 };
 
@@ -39,7 +39,7 @@ pub(crate) fn inventory_repository(
 ) -> Result<RepositoryInventory, RepositoryInventoryError> {
     let (root, entries) = scan_repository(root, &contract.repository.exclude)?;
     let mut rust_files = Vec::new();
-    let manifests = cargo_manifests(&entries, Some(contract))?;
+    let manifests = cargo_manifests(&entries, Some(contract), &contract.repository.exclude)?;
     let mut source_bytes = 0_usize;
     for entry in &entries {
         if entry.kind != RepositoryEntryKind::File || excluded(contract, &entry.relative) {
@@ -85,11 +85,19 @@ fn add_source_bytes(current: usize, observed: usize) -> Result<usize, Repository
     Ok(total)
 }
 
+#[cfg(test)]
 pub(crate) fn inventory_cargo_repository(
     root: &Path,
 ) -> Result<RepositoryInventory, RepositoryInventoryError> {
-    let (root, entries) = scan_repository(root, &[])?;
-    let manifest_paths = cargo_manifests(&entries, None)?;
+    inventory_selected_cargo_repository(root, &[])
+}
+
+pub(crate) fn inventory_selected_cargo_repository(
+    root: &Path,
+    exclusions: &[String],
+) -> Result<RepositoryInventory, RepositoryInventoryError> {
+    let (root, entries) = scan_repository(root, exclusions)?;
+    let manifest_paths = cargo_manifests(&entries, None, exclusions)?;
     Ok(RepositoryInventory {
         root,
         entries,
@@ -114,10 +122,11 @@ fn scan_repository(
 fn cargo_manifests(
     entries: &[RepositoryEntry],
     contract: Option<&Contract>,
+    exclusions: &[String],
 ) -> Result<Vec<PathBuf>, RepositoryInventoryError> {
     let mut manifests = Vec::new();
     for entry in entries {
-        let excluded = contract.is_some_and(|contract| excluded(contract, &entry.relative));
+        let excluded = excluded_by(exclusions, &entry.relative);
         if entry.kind != RepositoryEntryKind::File
             || excluded
             || contract.is_some_and(|contract| !under_roots(contract, &entry.relative))

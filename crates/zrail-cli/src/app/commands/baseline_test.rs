@@ -111,10 +111,12 @@ fn prepared_repository(name: &str) -> PathBuf {
         root: root.clone(),
         preset: InitPreset::Zsumz,
         baseline: false,
+        exclusions: Vec::new(),
+        exclusion_files: Vec::new(),
     })
     .expect("initialize contract");
     assert_eq!(initialized.exit_code, 0, "{}", initialized.text);
-    fs::remove_file(root.join("zrail.lock")).expect("remove initial lock");
+    assert!(!root.join("zrail.lock").exists());
     root
 }
 

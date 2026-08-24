@@ -145,6 +145,7 @@ fn compare_ratchets(current: &LockFile, candidate: &LockFile, findings: &mut Fin
     let old = ratchet_values(current);
     let new = ratchet_values(candidate);
     for identity in new.keys().filter(|identity| !old.contains_key(*identity)) {
+        let identity = ratchet_label(identity);
         findings.push(Finding::error(
             "LOCK-009",
             "lock.ratchet",
@@ -153,6 +154,7 @@ fn compare_ratchets(current: &LockFile, candidate: &LockFile, findings: &mut Fin
         ));
     }
     for identity in old.keys().filter(|identity| !new.contains_key(*identity)) {
+        let identity = ratchet_label(identity);
         findings.push(Finding::error(
             "LOCK-007",
             "lock.ratchet",
@@ -165,6 +167,7 @@ fn compare_ratchets(current: &LockFile, candidate: &LockFile, findings: &mut Fin
             continue;
         };
         if old_value != new_value {
+            let identity = ratchet_label(identity);
             findings.push(Finding::error(
                 "LOCK-010",
                 "lock.ratchet",
@@ -185,16 +188,32 @@ fn package_names(packages: &[LockedPackage]) -> BTreeSet<String> {
         .collect()
 }
 
-fn ratchet_values(lock: &LockFile) -> BTreeMap<String, usize> {
+type RatchetIdentity = (String, Option<String>, String);
+
+fn ratchet_values(lock: &LockFile) -> BTreeMap<RatchetIdentity, usize> {
     lock.ratchets
         .iter()
         .map(|ratchet| {
             (
-                format!("{}:{}", ratchet.rule, ratchet.target),
+                (
+                    ratchet.rule.clone(),
+                    ratchet
+                        .selector
+                        .as_deref()
+                        .map(zrail_core::normalize_ratchet_selector),
+                    ratchet.target.clone(),
+                ),
                 ratchet.value,
             )
         })
         .collect()
+}
+
+fn ratchet_label((rule, selector, target): &RatchetIdentity) -> String {
+    selector.as_ref().map_or_else(
+        || format!("{rule}:{target}"),
+        |selector| format!("{rule}[{selector}]:{target}"),
+    )
 }
 
 fn package_edges(packages: &[LockedPackage]) -> BTreeSet<(String, LockedDependency)> {

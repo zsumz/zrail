@@ -14,8 +14,10 @@ pub(crate) use super::{
         ModuleDeclaration, ObservedFact, RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
     },
     module_edge::{CompilationModuleEdge, ResolvedModuleEdge},
-    parse::index_rust_source,
+    parse::{fact_count, index_rust_source},
     paths::{ModuleTarget, ResolutionError, SubmoduleBase, join_relative, module_target, parent},
     reachability::{Reachability, ReachabilityKind},
-    source_instance::{CompilationRoot, SourceEntry, SourceInstanceId, SourceInstances},
+    source_instance::{
+        CompilationRoot, SourceEntry, SourceInstanceId, SourceInstanceIssue, SourceInstances,
+    },
 };

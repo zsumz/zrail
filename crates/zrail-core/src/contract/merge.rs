@@ -3,9 +3,9 @@
 use std::collections::BTreeMap;
 
 use super::{
-    Contract, DependenciesContract, DependencyRule, GateContract, InvariantContract, LayerContract,
-    OwnerContract, ProfileContract, RatchetContract, RepositoryContract, ScopeContract,
-    SourceContract,
+    AnalysisContract, Contract, DependenciesContract, DependencyRule, GateContract,
+    InvariantContract, LayerContract, OwnerContract, ProfileContract, RatchetContract,
+    RepositoryContract, ScopeContract, SourceContract,
     load::{ContractError, ContractFile},
 };
 
@@ -16,6 +16,7 @@ pub(super) struct MergeState {
     repository: Option<RepositoryContract>,
     dependencies: Option<DependenciesContract>,
     source: Option<SourceContract>,
+    analysis: Option<AnalysisContract>,
     profiles: BTreeMap<String, ProfileContract>,
     layers: Vec<LayerContract>,
     dependency_rules: Vec<DependencyRule>,
@@ -38,6 +39,7 @@ impl MergeState {
             origin,
         )?;
         merge_singleton(&mut self.source, file.source, "source", origin)?;
+        merge_singleton(&mut self.analysis, file.analysis, "analysis", origin)?;
         for (name, profile) in file.profiles {
             if self.profiles.insert(name.clone(), profile).is_some() {
                 return Err(ContractError::one(format!(
@@ -84,6 +86,7 @@ impl MergeState {
             repository: required(self.repository, "repository")?,
             dependencies: required(self.dependencies, "dependencies")?,
             source: required(self.source, "source")?,
+            analysis: self.analysis.unwrap_or_default(),
             profiles: self.profiles,
             layers: self.layers,
             dependency_rules: self.dependency_rules,

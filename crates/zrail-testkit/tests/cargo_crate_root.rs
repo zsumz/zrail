@@ -21,7 +21,7 @@ fn custom_workspace_library_name_is_locked_and_canonicalized() {
 
     let result = check(&root, BASE_CONTRACT);
     assert_effect(&result.report, "runtime::process");
-    let dependency = dependency(&result.candidate_lock, "app", "tokio");
+    let dependency = dependency(candidate(&result), "app", "tokio");
     assert_eq!(dependency.crate_root.as_deref(), Some("runtime"));
     reset(&root);
 }
@@ -41,7 +41,7 @@ fn explicit_package_rename_is_the_source_visible_root() {
 
     let result = check(&root, BASE_CONTRACT);
     assert_effect(&result.report, "async_runtime::process");
-    let dependency = dependency(&result.candidate_lock, "app", "async-runtime");
+    let dependency = dependency(candidate(&result), "app", "async-runtime");
     assert_eq!(dependency.name, "tokio");
     assert_eq!(dependency.crate_root.as_deref(), Some("async_runtime"));
     reset(&root);
@@ -64,7 +64,7 @@ fn irrelevant_external_crate_root_remains_explicitly_unresolved() {
     let root = standalone("unresolved-irrelevant", "serde = \"1\"");
 
     let result = analyze(&root, UNCONSTRAINED_CONTRACT);
-    let dependency = dependency(&result.candidate_lock, "app", "serde");
+    let dependency = dependency(candidate(&result), "app", "serde");
 
     assert_eq!(result.report.status, ReportStatus::Pass);
     assert_eq!(dependency.crate_root, None);
@@ -111,7 +111,7 @@ fn attested_external_crate_root_is_policy_visible_and_must_remain_used() {
     let result = check(&root, &contract);
     assert_effect(&result.report, "runtime::process");
     assert_eq!(
-        dependency(&result.candidate_lock, "app", "tokio")
+        dependency(candidate(&result), "app", "tokio")
             .crate_root
             .as_deref(),
         Some("runtime")
@@ -188,6 +188,13 @@ fn dependency<'a>(
                 .find(|dependency| dependency.alias.as_deref() == Some(alias))
         })
         .unwrap_or_else(|| panic!("missing {package}:{alias}"))
+}
+
+fn candidate(result: &zrail_rust::CheckResult) -> &zrail_core::LockFile {
+    result
+        .candidate_lock
+        .as_ref()
+        .expect("fixture analysis should be complete")
 }
 
 fn check(root: &std::path::Path, contract: &str) -> zrail_rust::CheckResult {

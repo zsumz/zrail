@@ -47,14 +47,12 @@ pub(super) fn project(
     let mut qualities = BTreeMap::<FactKey, AnalysisQuality>::new();
     let mut removals = BTreeSet::new();
     for fact in request.facts.iter().filter(|fact| fact.written.is_some()) {
-        budget.consume_work()?;
         let usage = fact_usage(fact, request.usage, request.call_sites);
-        let instances = request
-            .bindings
-            .active_instances(request.file, fact.guard, budget)?;
+        let instances = request.bindings.active_instances(request.file, fact.guard);
         if instances.is_empty() {
             continue;
         }
+        budget.consume_work()?;
         let (aggregate, compatible, test_coverage) =
             aggregate(request.bindings, fact, &instances, usage, budget)?;
         if aggregate.len() > MAX_PROJECTED_IDENTITIES {

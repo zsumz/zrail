@@ -36,7 +36,7 @@ fn bounded_reports_keep_exact_totals_and_groups() {
         DiagnosticLimit::Bounded(1),
     );
 
-    assert_eq!(report.schema, 2);
+    assert_eq!(report.schema, 3);
     assert_eq!(report.summary.errors, 2);
     assert_eq!(report.summary.notes, 1);
     assert_eq!(report.summary.retained, 1);
@@ -46,12 +46,13 @@ fn bounded_reports_keep_exact_totals_and_groups() {
     assert_eq!(report.status, ReportStatus::Fail);
     let json: serde_json::Value =
         serde_json::from_str(&report.json().expect("render JSON")).expect("parse JSON");
-    assert_eq!(json["schema"], 2);
+    assert_eq!(json["schema"], 3);
     assert_eq!(json["summary"]["errors"], 2);
     assert_eq!(json["summary"]["retained"], 1);
     assert_eq!(json["summary"]["omitted"], 2);
     assert_eq!(json["truncated"], true);
-    assert_eq!(json["limit"], 1);
+    assert_eq!(json["max_findings"], 1);
+    assert_eq!(json["analysis"]["complete"], true);
     assert_eq!(json["groups"][0]["count"], 2);
     let human = report.human();
     assert!(human.contains("Diagnostics: 3 total; showing 1."));

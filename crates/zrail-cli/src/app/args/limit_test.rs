@@ -11,7 +11,7 @@ fn diagnostic_limits_are_available_on_diagnostic_commands() {
     let Command::Check(common) = parse([
         OsString::from("zrail"),
         OsString::from("check"),
-        OsString::from("--limit"),
+        OsString::from("--max-findings"),
         OsString::from("0"),
     ])
     .expect("parse check limit") else {
@@ -24,13 +24,38 @@ fn diagnostic_limits_are_available_on_diagnostic_commands() {
         OsString::from("review"),
         OsString::from("--root"),
         OsString::from("proposal"),
-        OsString::from("--limit"),
+        OsString::from("--max-findings"),
         OsString::from("10000"),
     ])
     .expect("parse review limit") else {
         panic!("expected review command");
     };
     assert_eq!(options.common.limit, DiagnosticLimit::Bounded(10_000));
+}
+
+#[test]
+fn deprecated_limit_alias_remains_compatible_but_cannot_be_combined() {
+    let Command::Check(common) = parse([
+        OsString::from("zrail"),
+        OsString::from("check"),
+        OsString::from("--limit"),
+        OsString::from("7"),
+    ])
+    .expect("parse deprecated alias") else {
+        panic!("expected check command");
+    };
+    assert_eq!(common.limit, DiagnosticLimit::Bounded(7));
+
+    let error = parse([
+        OsString::from("zrail"),
+        OsString::from("check"),
+        OsString::from("--limit"),
+        OsString::from("7"),
+        OsString::from("--max-findings"),
+        OsString::from("8"),
+    ])
+    .expect_err("aliases must not override each other");
+    assert!(error.message.contains("may be specified only once"));
 }
 
 #[test]

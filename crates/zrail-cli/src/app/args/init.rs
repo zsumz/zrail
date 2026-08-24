@@ -1,4 +1,4 @@
-//! Initialization accepts one repository path, one preset, and optional debt adoption.
+//! Initialization accepts one repository path plus explicit selection and adoption options.
 
 use std::{ffi::OsString, path::PathBuf};
 
@@ -11,6 +11,8 @@ pub(crate) struct InitOptions {
     pub(crate) root: PathBuf,
     pub(crate) preset: InitPreset,
     pub(crate) baseline: bool,
+    pub(crate) exclusions: Vec<String>,
+    pub(crate) exclusion_files: Vec<PathBuf>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -32,6 +34,8 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
     let mut root = None;
     let mut preset = None;
     let mut baseline = None;
+    let mut exclusions = Vec::new();
+    let mut exclusion_files = Vec::new();
     let mut index = 0;
     while index < arguments.len() {
         let argument = &arguments[index];
@@ -41,6 +45,14 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
                 set_once(&mut preset, parse_preset(&value)?, "init preset")?;
             }
             Some("--baseline") => set_once(&mut baseline, (), "--baseline")?,
+            Some("--exclude") => {
+                let value = as_string(&os_value(arguments, &mut index, "--exclude")?)?;
+                exclusions.push(value);
+            }
+            Some("--exclude-from") => {
+                let value = os_value(arguments, &mut index, "--exclude-from")?;
+                exclusion_files.push(PathBuf::from(value));
+            }
             Some(flag) if flag.starts_with('-') => {
                 return Err(CliError::new(format!("unknown option {flag:?}")));
             }
@@ -56,6 +68,8 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
         root: root.unwrap_or_else(|| PathBuf::from(".")),
         preset: preset.unwrap_or(InitPreset::Zsumz),
         baseline: baseline.is_some(),
+        exclusions,
+        exclusion_files,
     }))
 }
 

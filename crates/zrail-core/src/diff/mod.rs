@@ -1,5 +1,6 @@
 //! Semantic architecture changes, independent of TOML text layout.
 
+mod analysis;
 mod boundaries;
 mod compare;
 mod contract;

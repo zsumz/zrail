@@ -185,7 +185,7 @@ impl MacroDefinitions {
         file: &str,
         guard: SyntaxGuard,
     ) -> Option<Vec<SourceInstanceId>> {
-        if !self.instances.complete {
+        if !self.instances.is_complete() {
             return None;
         }
         Some(

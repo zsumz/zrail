@@ -10,8 +10,9 @@ mod model;
 
 use std::{error::Error, fmt, path::Path};
 
-use zrail_core::{DiagnosticLimit, LockFile, Report};
+use zrail_core::{DiagnosticLimit, LockFile, Report, ReportAnalysis};
 
+use crate::analysis::AnalysisOutcome;
 use crate::rules::{RuleContext, evaluate};
 
 pub(crate) use self::model::{RepositoryModel, load_model};
@@ -30,7 +31,10 @@ pub struct CheckResult {
     /// The deterministic findings and aggregate report status.
     pub report: Report,
     /// Current contract and repository state, returned without writing it to disk.
-    pub candidate_lock: LockFile,
+    /// `None` means analysis was incomplete and no authoritative candidate exists.
+    pub candidate_lock: Option<LockFile>,
+    /// Explicit repository-wide completeness outcome and deterministic metrics.
+    pub analysis: AnalysisOutcome,
     /// The SHA-256 digest of the complete resolved contract bundle.
     pub contract_sha256: String,
     /// The number of Cargo packages included in the analysis.
@@ -108,14 +112,19 @@ fn check_model(
     lock: Option<&LockFile>,
     limit: DiagnosticLimit,
 ) -> Result<CheckResult, CheckError> {
-    let candidate = candidate_lock(&model)?;
-    Ok(finish_check(model, lock, candidate, limit))
+    let analysis = AnalysisOutcome::from_source(&model.source);
+    let candidate = analysis
+        .is_complete()
+        .then(|| candidate_lock(&model))
+        .transpose()?;
+    Ok(finish_check(model, lock, candidate, analysis, limit))
 }
 
 fn finish_check(
     model: model::RepositoryModel,
     lock: Option<&LockFile>,
-    candidate: LockFile,
+    candidate: Option<LockFile>,
+    analysis: AnalysisOutcome,
     limit: DiagnosticLimit,
 ) -> CheckResult {
     let mut findings = evaluate(
@@ -129,10 +138,31 @@ fn finish_check(
         },
         limit,
     );
-    check_lock(&model, lock, &candidate, &mut findings);
+    if let Some(candidate) = &candidate {
+        check_lock(&model, lock, candidate, &mut findings);
+    }
+    let metrics = analysis.metrics();
+    let report = Report::from_sink(findings).with_analysis(ReportAnalysis {
+        complete: analysis.is_complete(),
+        packages: model.cargo.packages.len(),
+        rust_files: metrics.physical_rust_files,
+        physical_facts: metrics.physical_facts,
+        base_source_instances: metrics.base_contexts,
+        derived_source_instances: metrics.derived_contexts,
+        include_affected_files: metrics.projection_files,
+        projection_work: metrics.projection_work,
+        projected_facts: metrics.projected_facts,
+        unresolved: analysis.issues().len(),
+    });
+    let report = if analysis.is_complete() {
+        report
+    } else {
+        report.invalid()
+    };
     CheckResult {
-        report: Report::from_sink(findings),
+        report,
         candidate_lock: candidate,
+        analysis,
         contract_sha256: model.bundle.sha256,
         packages: model.cargo.packages.len(),
         rust_files: model.source.files.len(),

@@ -7,8 +7,9 @@ use crate::inventory::FileClass;
 use super::*;
 use crate::source::{
     BindingKind, CompilationDomain, CompilationIncludeEdge, CompilationMode, CompilationRoot,
-    ImportBindingFact, IncludeContext, IncludeOccurrenceId, Reachability, SourceSyntax,
-    SyntaxGuard, include_bindings::IncludeBindings, include_projection_budget::ProjectionLimits,
+    ImportBindingFact, IncludeContext, IncludeOccurrenceId, Reachability, RustFileFacts,
+    SourceSyntax, SyntaxGuard, include_bindings::IncludeBindings,
+    include_projection_budget::ProjectionLimits,
 };
 
 #[test]
@@ -20,7 +21,7 @@ fn work_exhaustion_is_transactional_and_independent_of_file_order() {
         &mut forward,
         ProjectionLimits {
             work: 0,
-            total_facts: 100,
+            projected_facts: 100,
         },
     );
 
@@ -32,7 +33,7 @@ fn work_exhaustion_is_transactional_and_independent_of_file_order() {
         &mut reversed,
         ProjectionLimits {
             work: 0,
-            total_facts: 100,
+            projected_facts: 100,
         },
     );
 
@@ -48,13 +49,11 @@ fn fact_exhaustion_retains_no_partial_projection() {
     let mut index = fixture_index();
     let bindings = bindings(&index);
     let before = fact_lengths(&index);
-    let physical_facts = index.files.iter().map(fact_count).sum();
-
     let findings = bindings.apply_with_limits(
         &mut index,
         ProjectionLimits {
             work: 1_000,
-            total_facts: physical_facts,
+            projected_facts: 0,
         },
     );
 
@@ -73,7 +72,7 @@ fn successful_projection_stays_inside_the_total_fact_limit() {
         &mut index,
         ProjectionLimits {
             work: 1_000,
-            total_facts: physical_facts + 1,
+            projected_facts: 1,
         },
     );
 
@@ -98,7 +97,7 @@ fn duplicate_projection_consumes_one_retained_fact_slot() {
         &mut index,
         ProjectionLimits {
             work: 1_000,
-            total_facts: physical_facts + 1,
+            projected_facts: 1,
         },
     );
 
@@ -118,7 +117,7 @@ fn successful_projection_is_independent_of_file_order() {
         &mut forward,
         ProjectionLimits {
             work: 1_000,
-            total_facts: 100,
+            projected_facts: 100,
         },
     );
 
@@ -129,7 +128,7 @@ fn successful_projection_is_independent_of_file_order() {
         &mut reversed,
         ProjectionLimits {
             work: 1_000,
-            total_facts: 100,
+            projected_facts: 100,
         },
     );
 
@@ -197,6 +196,7 @@ fn fixture_index() -> SourceIndex {
             ),
         ],
         findings: Vec::new(),
+        analysis_metrics: Default::default(),
     }
 }
 

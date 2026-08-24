@@ -7,9 +7,7 @@ use zrail_core::AnalysisQuality;
 use super::{
     CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot, ImportBindingFact,
     ModuleBinding, SourceIndex, SourceInstanceId, SourceInstances, SyntaxGuard,
-    include_binding_catalog::FileBindings,
-    include_projection_budget::{ProjectionBudget, ProjectionLimit},
-    include_resolution_state::EffectiveModule,
+    include_binding_catalog::FileBindings, include_resolution_state::EffectiveModule,
     macro_binding_policy::BindingMacroPolicy,
 };
 
@@ -49,12 +47,24 @@ impl Default for ResolvedPath {
 }
 
 impl IncludeBindings {
+    #[cfg(test)]
     pub(super) fn collect(
         index: &SourceIndex,
         roots: &[CompilationRoot],
         modules: &[CompilationModuleEdge],
         includes: &[CompilationIncludeEdge],
         binding_macros: &BindingMacroPolicy,
+    ) -> Self {
+        Self::collect_with_limit(index, roots, modules, includes, binding_macros, None)
+    }
+
+    pub(super) fn collect_with_limit(
+        index: &SourceIndex,
+        roots: &[CompilationRoot],
+        modules: &[CompilationModuleEdge],
+        includes: &[CompilationIncludeEdge],
+        binding_macros: &BindingMacroPolicy,
+        derived_limit: Option<usize>,
     ) -> Self {
         Self {
             files: index
@@ -100,19 +110,13 @@ impl IncludeBindings {
                     )
                 })
                 .collect(),
-            instances: SourceInstances::build(roots, modules, includes),
+            instances: SourceInstances::build_with_limit(roots, modules, includes, derived_limit),
         }
     }
 
-    pub(super) fn active_instances(
-        &self,
-        file: &str,
-        guard: SyntaxGuard,
-        budget: &mut ProjectionBudget,
-    ) -> Result<Vec<SourceInstanceId>, ProjectionLimit> {
+    pub(super) fn active_instances(&self, file: &str, guard: SyntaxGuard) -> Vec<SourceInstanceId> {
         let mut active = Vec::new();
         for id in self.instances.for_file(file) {
-            budget.consume_work()?;
             if self.instances.get(*id).is_some_and(|instance| {
                 guard
                     .availability_in(SyntaxGuard::for_test_only(
@@ -123,6 +127,6 @@ impl IncludeBindings {
                 active.push(*id);
             }
         }
-        Ok(active)
+        active
     }
 }

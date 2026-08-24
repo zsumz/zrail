@@ -16,14 +16,12 @@ use super::{
 };
 
 pub(super) const MAX_FACTS_PER_FILE: usize = 50_000;
-pub(super) const MAX_TOTAL_SOURCE_FACTS: usize = 1_000_000;
 
 pub(crate) fn index_rust_source(
     inventory: &RepositoryInventory,
     rust: &RustSourceContract,
 ) -> SourceIndex {
     let mut index = SourceIndex::default();
-    let mut total_facts = 0_usize;
     for source_file in &inventory.rust_files {
         if let Err(error) = check_syntax_depth(&source_file.source) {
             index
@@ -42,16 +40,6 @@ pub(crate) fn index_rust_source(
                         ),
                     ));
                     continue;
-                }
-                total_facts = total_facts.saturating_add(count);
-                if total_facts > MAX_TOTAL_SOURCE_FACTS {
-                    index.findings.push(analysis_limit(
-                        &source_file.relative,
-                        format!(
-                            "repository exceeds the {MAX_TOTAL_SOURCE_FACTS}-fact Rust analysis safety limit"
-                        ),
-                    ));
-                    break;
                 }
                 index.files.push(facts);
             }
@@ -94,7 +82,7 @@ fn analysis_limit(path: &str, message: String) -> Finding {
         .with_help("reduce the source input before trusting architecture analysis")
 }
 
-pub(super) fn fact_count(file: &RustFileFacts) -> usize {
+pub(crate) fn fact_count(file: &RustFileFacts) -> usize {
     file.paths.len()
         + file.calls.len()
         + file.call_resolutions.len()

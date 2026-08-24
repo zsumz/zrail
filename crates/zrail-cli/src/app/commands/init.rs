@@ -1,12 +1,16 @@
-//! Create a conservative local contract and its first exact lock.
+//! Create a conservative local contract and optionally its first exact lock.
 
 #[path = "init_baseline.rs"]
 mod init_baseline;
+#[path = "init_selection.rs"]
+mod init_selection;
 
 use std::{fs, path::Path};
 
-use zrail_core::{ReportStatus, create_text, repository_file};
-use zrail_rust::{BaselinePlan, build_lock, check_repository_with_lock, discover_source_roots};
+use zrail_core::{ReportStatus, create_text, load_contract, repository_file};
+use zrail_rust::{
+    BaselinePlan, build_lock, check_repository_with_lock, discover_source_roots_with_selection,
+};
 
 use crate::app::{args::InitOptions, error::CliError};
 
@@ -22,16 +26,27 @@ pub(crate) fn init(options: &InitOptions) -> Result<CommandResult, CliError> {
     let config = repository_file(&root, Path::new("zrail.toml")).map_err(CliError::new)?;
     let lock = repository_file(&root, Path::new("zrail.lock")).map_err(CliError::new)?;
     ensure_vacant(&config, &lock)?;
-    let roots = discover_source_roots(&root).map_err(|error| CliError::new(error.to_string()))?;
+    let selection = init_selection::load(&root, options)?;
+    let roots = discover_source_roots_with_selection(&root, &selection)
+        .map_err(|error| CliError::new(error.to_string()))?;
     let mut baseline = BaselinePlan::empty();
-    let template = init_template::render(&roots, options.preset, &baseline);
+    let template = init_template::render(&roots, selection.exclusions(), options.preset, &baseline);
     create_text(&config, &template).map_err(CliError::new)?;
-    if options.baseline {
-        baseline = match init_baseline::apply(&root, &config) {
-            Ok(baseline) => baseline,
-            Err(error) => return Err(rollback_error(&config, &error)),
-        };
+    if let Err(error) = load_contract(&root, Path::new("zrail.toml")) {
+        return Err(rollback_error(&config, &error.to_string()));
     }
+    if !options.baseline {
+        return Ok(contract_only_result(
+            &root,
+            options,
+            &roots,
+            selection.exclusions().len(),
+        ));
+    }
+    baseline = match init_baseline::apply(&root, &config) {
+        Ok(baseline) => baseline,
+        Err(error) => return Err(rollback_error(&config, &error)),
+    };
     let candidate = match build_lock(&root, Path::new("zrail.toml")) {
         Ok(candidate) => candidate,
         Err(error) => {
@@ -80,6 +95,29 @@ pub(crate) fn init(options: &InitOptions) -> Result<CommandResult, CliError> {
         baseline.ratchets.len(),
         roots.join(", ")
     )))
+}
+
+fn contract_only_result(
+    root: &Path,
+    options: &InitOptions,
+    roots: &[String],
+    exclusions: usize,
+) -> CommandResult {
+    CommandResult::success(format!(
+        concat!(
+            "Initialized {}\n",
+            "Created zrail.toml\n",
+            "Preset: {}\n",
+            "Adoption: contract only\n",
+            "Exclusions: {}\n",
+            "Source roots: {}\n",
+            "Next: review zrail.toml, then run `zrail baseline --dry-run`\n",
+        ),
+        root.display(),
+        options.preset.name(),
+        exclusions,
+        roots.join(", ")
+    ))
 }
 
 fn ensure_vacant(config: &Path, lock: &Path) -> Result<(), CliError> {

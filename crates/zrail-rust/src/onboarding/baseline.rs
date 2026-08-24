@@ -36,6 +36,8 @@ pub struct BaselineSize {
 pub struct BaselineRatchet {
     /// The stable zrail rule name that measures the debt.
     pub rule: &'static str,
+    /// Optional normalized denied-operation selector measured independently.
+    pub selector: Option<String>,
     /// The repository-relative source path carrying the debt.
     pub target: String,
     /// The generated explanation included in the initial contract.
@@ -55,16 +57,22 @@ pub enum BaselineRule {
     Unsafe,
     /// Lint-suppression attributes governed by strict hygiene policy.
     LintSuppressions,
+    /// Uses of each configured denied method.
+    DeniedMethod,
+    /// Uses of each configured denied macro.
+    DeniedMacro,
 }
 
 impl BaselineRule {
     /// Complete deterministic registry of baseline-adoptable debt.
-    pub const ALL: [Self; 5] = [
+    pub const ALL: [Self; 7] = [
         Self::FileSize,
         Self::InlineTests,
         Self::ModuleDocs,
         Self::Unsafe,
         Self::LintSuppressions,
+        Self::DeniedMethod,
+        Self::DeniedMacro,
     ];
 
     /// Stable contract rule name.
@@ -75,6 +83,8 @@ impl BaselineRule {
             Self::ModuleDocs => "rust.module-docs",
             Self::Unsafe => "rust.hygiene.unsafe",
             Self::LintSuppressions => "rust.hygiene.lint-suppressions",
+            Self::DeniedMethod => "rust.hygiene.denied-method",
+            Self::DeniedMacro => "rust.hygiene.denied-macro",
         }
     }
 
@@ -96,6 +106,10 @@ impl BaselineRule {
             Self::LintSuppressions => {
                 "Observed by `zrail baseline`; remove or justify lint suppressions."
             }
+            Self::DeniedMethod => {
+                "Observed by `zrail baseline`; remove uses of this denied method."
+            }
+            Self::DeniedMacro => "Observed by `zrail baseline`; remove uses of this denied macro.",
         }
     }
 }
@@ -138,12 +152,15 @@ pub fn discover_baseline_rules(
     };
     for file in &model.source.files {
         for rule in rules {
-            if has_debt(*rule, file, contract) {
-                plan.ratchets.push(BaselineRatchet {
-                    rule: rule.name(),
-                    target: file.relative.clone(),
-                    reason: rule.reason(),
-                });
+            for selector in selectors(*rule, contract) {
+                if has_debt(*rule, selector, file, contract) {
+                    plan.ratchets.push(BaselineRatchet {
+                        rule: rule.name(),
+                        selector: selector.map(zrail_core::normalize_ratchet_selector),
+                        target: file.relative.clone(),
+                        reason: rule.reason(),
+                    });
+                }
             }
         }
     }
@@ -151,7 +168,34 @@ pub fn discover_baseline_rules(
     Ok(plan)
 }
 
-fn has_debt(rule: BaselineRule, file: &RustFileFacts, contract: &Contract) -> bool {
+fn selectors(rule: BaselineRule, contract: &Contract) -> Vec<Option<&str>> {
+    match rule {
+        BaselineRule::DeniedMethod => contract
+            .source
+            .rust
+            .hygiene
+            .deny_methods
+            .iter()
+            .map(|selector| Some(selector.as_str()))
+            .collect(),
+        BaselineRule::DeniedMacro => contract
+            .source
+            .rust
+            .hygiene
+            .deny_macros
+            .iter()
+            .map(|selector| Some(selector.as_str()))
+            .collect(),
+        _ => vec![None],
+    }
+}
+
+fn has_debt(
+    rule: BaselineRule,
+    selector: Option<&str>,
+    file: &RustFileFacts,
+    contract: &Contract,
+) -> bool {
     if rule == BaselineRule::FileSize {
         return crate::source_policy::budget_for(
             &file.relative,
@@ -164,6 +208,6 @@ fn has_debt(rule: BaselineRule, file: &RustFileFacts, contract: &Contract) -> bo
     if rule == BaselineRule::InlineTests && contract.source.rust.tests != TestMode::Sibling {
         return false;
     }
-    crate::rules::count_ratchet::measurement(rule.name(), file, &contract.source.rust)
+    crate::rules::count_ratchet::measurement(rule.name(), selector, file, &contract.source.rust)
         .is_some_and(|value| value > 0)
 }

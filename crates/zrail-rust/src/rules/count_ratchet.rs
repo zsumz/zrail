@@ -15,17 +15,18 @@ use crate::{
 use super::RuleContext;
 
 #[derive(Clone, Copy)]
-pub(super) struct CountRatchetSpec {
+pub(super) struct CountRatchetSpec<'a> {
     pub(super) rule: &'static str,
     pub(super) finding_id: &'static str,
     pub(super) finding_rule: &'static str,
     pub(super) category: &'static str,
-    pub(super) debt: &'static str,
+    pub(super) debt: &'a str,
 }
 
 pub(super) fn evaluate(
     context: &RuleContext<'_>,
-    spec: CountRatchetSpec,
+    spec: CountRatchetSpec<'_>,
+    selector: Option<&str>,
     findings: &mut FindingSink,
     report_unratcheted: impl Fn(&RustFileFacts, &mut FindingSink),
 ) {
@@ -33,19 +34,24 @@ pub(super) fn evaluate(
         .contract
         .ratchets
         .iter()
-        .filter(|ratchet| ratchet.rule == spec.rule)
+        .filter(|ratchet| {
+            ratchet.rule == spec.rule && selector_matches(ratchet.selector.as_deref(), selector)
+        })
         .map(|ratchet| (ratchet.target.as_str(), ratchet))
         .collect::<BTreeMap<_, _>>();
     let locked = context.lock.map_or_else(BTreeMap::new, |lock| {
         lock.ratchets
             .iter()
-            .filter(|ratchet| ratchet.rule == spec.rule)
+            .filter(|ratchet| {
+                ratchet.rule == spec.rule && selector_matches(ratchet.selector.as_deref(), selector)
+            })
             .map(|ratchet| (ratchet.target.as_str(), ratchet))
             .collect()
     });
     let mut seen = BTreeSet::new();
     for file in &context.source.files {
-        let Some(value) = measurement(spec.rule, file, &context.contract.source.rust) else {
+        let Some(value) = measurement(spec.rule, selector, file, &context.contract.source.rust)
+        else {
             continue;
         };
         seen.insert(file.relative.as_str());
@@ -73,6 +79,7 @@ pub(super) fn evaluate(
 
 pub(crate) fn measurement(
     rule: &str,
+    selector: Option<&str>,
     file: &RustFileFacts,
     rust: &RustSourceContract,
 ) -> Option<usize> {
@@ -101,8 +108,62 @@ pub(crate) fn measurement(
                     })
                     .count()
             }),
+        "rust.hygiene.denied-method" => file
+            .reachability
+            .is_non_test_target()
+            .then(|| {
+                let selector = selector?;
+                Some(
+                    file.methods
+                        .iter()
+                        .filter(|method| method_matches(selector, method))
+                        .count(),
+                )
+            })
+            .flatten(),
+        "rust.hygiene.denied-macro" => file
+            .reachability
+            .is_non_test_target()
+            .then(|| {
+                let selector = selector?;
+                Some(
+                    file.macros
+                        .iter()
+                        .filter(|invocation| macro_matches(selector, invocation))
+                        .count(),
+                )
+            })
+            .flatten(),
         _ => None,
     }
+}
+
+fn selector_matches(left: Option<&str>, right: Option<&str>) -> bool {
+    match (left, right) {
+        (None, None) => true,
+        (Some(left), Some(right)) => {
+            zrail_core::normalize_ratchet_selector(left)
+                == zrail_core::normalize_ratchet_selector(right)
+        }
+        _ => false,
+    }
+}
+
+pub(super) fn method_matches(selector: &str, method: &crate::source::ObservedFact) -> bool {
+    zrail_core::normalize_ratchet_selector(selector)
+        == zrail_core::normalize_ratchet_selector(&method.name)
+}
+
+pub(super) fn macro_matches(selector: &str, invocation: &crate::source::ObservedFact) -> bool {
+    let selector = zrail_core::normalize_ratchet_selector(selector);
+    invocation.policy_names().any(|name| {
+        let name = zrail_core::normalize_ratchet_selector(name);
+        name == selector
+            || name
+                .rsplit("::")
+                .next()
+                .is_some_and(|leaf| leaf == selector)
+    })
 }
 
 pub(super) fn lint_suppression_violates(
@@ -117,7 +178,7 @@ fn check_value(
     value: usize,
     ratchet: Option<&RatchetContract>,
     locked: Option<&LockedRatchet>,
-    spec: CountRatchetSpec,
+    spec: CountRatchetSpec<'_>,
     findings: &mut FindingSink,
     report_unratcheted: &impl Fn(&RustFileFacts, &mut FindingSink),
 ) {
@@ -180,6 +241,6 @@ fn check_value(
     }
 }
 
-fn ratchet_finding(spec: CountRatchetSpec, path: &str, message: String) -> Finding {
+fn ratchet_finding(spec: CountRatchetSpec<'_>, path: &str, message: String) -> Finding {
     Finding::error(spec.finding_id, spec.finding_rule, spec.category, message).at(path, None)
 }

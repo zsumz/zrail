@@ -69,7 +69,15 @@ fn human(
 
 fn render_ratchets(output: &mut String, label: &str, ratchets: &[BaselineRatchet]) {
     for ratchet in ratchets {
-        let _ = writeln!(output, "{label}: {} {}", ratchet.rule, ratchet.target);
+        let selector = ratchet
+            .selector
+            .as_ref()
+            .map_or_else(String::new, |selector| format!("[{selector}]"));
+        let _ = writeln!(
+            output,
+            "{label}: {}{selector} {}",
+            ratchet.rule, ratchet.target
+        );
     }
 }
 
@@ -101,9 +109,14 @@ fn ratchets_json(ratchets: &[BaselineRatchet]) -> String {
     let values = ratchets
         .iter()
         .map(|ratchet| {
+            let selector = ratchet.selector.as_deref().map_or_else(
+                || "null".into(),
+                |selector| format!("\"{}\"", json_escape(selector)),
+            );
             format!(
-                "{{\"rule\":\"{}\",\"target\":\"{}\",\"reason\":\"{}\"}}",
+                "{{\"rule\":\"{}\",\"selector\":{},\"target\":\"{}\",\"reason\":\"{}\"}}",
                 json_escape(ratchet.rule),
+                selector,
                 json_escape(&ratchet.target),
                 json_escape(ratchet.reason)
             )

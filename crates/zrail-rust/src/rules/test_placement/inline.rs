@@ -19,6 +19,7 @@ pub(super) fn check(context: &RuleContext<'_>, findings: &mut FindingSink) {
             category: "test-placement",
             debt: "inline tests",
         },
+        None,
         findings,
         report_unratcheted,
     );

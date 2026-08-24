@@ -221,6 +221,33 @@ fn init_accepts_a_rust_preset_with_baseline_in_any_order() {
     assert_eq!(options.root.to_string_lossy(), "repository");
     assert_eq!(options.preset, InitPreset::Rust);
     assert!(options.baseline);
+    assert!(options.exclusions.is_empty());
+    assert!(options.exclusion_files.is_empty());
+}
+
+#[test]
+fn init_accepts_repeated_exclusion_inputs() {
+    let command = parse([
+        OsString::from("zrail"),
+        OsString::from("init"),
+        OsString::from("--exclude"),
+        OsString::from("fixtures/**"),
+        OsString::from("--exclude-from"),
+        OsString::from(".zrailignore"),
+        OsString::from("--exclude"),
+        OsString::from("generated/**"),
+        OsString::from("--exclude-from"),
+        OsString::from("config/extra-exclusions"),
+    ])
+    .expect("parse exclusions");
+    let Command::Init(options) = command else {
+        panic!("expected init command");
+    };
+    assert_eq!(options.exclusions, ["fixtures/**", "generated/**"]);
+    assert_eq!(
+        options.exclusion_files,
+        [".zrailignore", "config/extra-exclusions"].map(std::path::PathBuf::from)
+    );
 }
 
 #[test]

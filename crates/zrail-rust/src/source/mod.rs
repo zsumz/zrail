@@ -66,6 +66,8 @@ mod reachability;
 mod scoped_globs;
 mod scoped_imports;
 mod source_instance;
+mod source_instance_edges;
+mod source_instance_model;
 mod syntax_guard;
 mod visitor;
 mod visitor_attributes;

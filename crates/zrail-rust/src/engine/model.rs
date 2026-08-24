@@ -67,6 +67,7 @@ pub(crate) fn load_model_with_bundle(
             compilation_roots: &graph.compilation_roots,
             compilation_edges: &graph.compilation_edges,
             compilation_includes: &graph.compilation_includes,
+            analysis_limits: &bundle.contract.analysis.limits,
         },
         |source| crate::rules::binding_macro_policy(&bundle.contract, source),
     );

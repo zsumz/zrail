@@ -78,6 +78,22 @@ fn exact_overrides_change_only_facade_and_implementation_roles() {
     assert_eq!(test.effective, FileClass::Test);
 }
 
+#[test]
+fn exact_implementation_override_reclassifies_an_entrypoint() {
+    let mut rust = rust_contract();
+    rust.file_roles = vec![FileRoleContract {
+        path: "src/main.rs".into(),
+        role: FileRole::Implementation,
+        reason: "single-file binary".into(),
+    }];
+
+    let main = effective_file_role("src/main.rs", FileClass::EntryPoint, &rust);
+
+    assert_eq!(main.inferred, FileClass::EntryPoint);
+    assert_eq!(main.effective, FileClass::Implementation);
+    assert_eq!(main.reason, Some("single-file binary"));
+}
+
 fn rust_contract() -> RustSourceContract {
     RustSourceContract {
         module_docs: ModuleDocsMode::Allow,

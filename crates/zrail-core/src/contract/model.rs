@@ -1,4 +1,5 @@
 //! Typed public schema for `zrail.toml`.
+mod analysis;
 mod dependencies;
 mod evidence;
 mod macros;
@@ -8,6 +9,7 @@ use super::modes::{
     Effect, ExactMode, ExternalDependencyMode, FacadeMode, LintSuppressionMode, ModuleDocsMode,
     OwnerKind, PolicyMode, SymlinkMode, TestMode,
 };
+pub use analysis::{AnalysisContract, AnalysisLimits};
 pub use dependencies::{CrateRootContract, CrateRootSource, DependenciesContract};
 pub use evidence::{GateContract, GateKind, InvariantContract, InvariantStatus};
 pub use macros::{MacroExpansionAllow, MacroExpansionContract};
@@ -23,6 +25,7 @@ use std::collections::BTreeMap;
     #[doc = "Repository layout and containment policy."] pub repository: RepositoryContract,
     #[doc = "Package dependency topology policy."] pub dependencies: DependenciesContract,
     #[doc = "Language-specific source policy."] pub source: SourceContract,
+    #[doc = "Reviewed overrides for input-derived analysis expansion limits."] pub analysis: AnalysisContract,
     #[doc = "Named effect profiles available to architecture layers."] pub profiles: BTreeMap<String, ProfileContract>,
     #[doc = "Ordered package-layer declarations."] pub layers: Vec<LayerContract>,
     #[doc = "Named cross-package dependency prohibitions."] pub dependency_rules: Vec<DependencyRule>,
@@ -225,6 +228,8 @@ impl Default for LayerDependencies { fn default() -> Self { Self { external: Ext
 #[serde(deny_unknown_fields)]
 #[doc = "Tightening-only measured limit whose accepted value is stored in lock state."] pub struct RatchetContract {
     #[doc = "Measurement rule identifier understood by the active adapter."] pub rule: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[doc = "Optional normalized denied-operation selector measured independently."] pub selector: Option<String>,
     #[doc = "Repository-relative or package target measured by the rule."] pub target: String,
     #[doc = "Human explanation of why this metric may only tighten."] pub reason: String,
 }

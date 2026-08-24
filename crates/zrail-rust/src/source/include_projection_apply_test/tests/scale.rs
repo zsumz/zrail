@@ -9,12 +9,11 @@ const CALLS: usize = 80;
 fn default_work_budget_covers_many_ordinary_compilation_occurrences() {
     let mut limited = scaled_index();
     let limited_bindings = scaled_bindings(&limited);
-    let physical_facts = limited.files.iter().map(fact_count).sum::<usize>();
     let findings = limited_bindings.apply_with_limits(
         &mut limited,
         ProjectionLimits {
             work: 1_000_000,
-            total_facts: physical_facts + 1,
+            projected_facts: 1,
         },
     );
     assert_eq!(findings.len(), 1);
@@ -25,6 +24,37 @@ fn default_work_budget_covers_many_ordinary_compilation_occurrences() {
     let findings = bindings.apply(&mut index);
     assert!(findings.is_empty());
     assert_eq!(projected_call_count(&index), 1);
+}
+
+#[test]
+fn repositories_without_include_edges_perform_zero_projection_work() {
+    let mut index = scaled_index();
+    let roots = (0..6_001)
+        .map(|unit| CompilationRoot {
+            file: format!("src/unit_{unit}.rs"),
+            domain: domain(),
+        })
+        .collect::<Vec<_>>();
+    let bindings = IncludeBindings::collect(
+        &index,
+        &roots,
+        &[],
+        &[],
+        &crate::source::BindingMacroPolicy::default(),
+    );
+
+    let findings = bindings.apply_with_limits(
+        &mut index,
+        ProjectionLimits {
+            work: 0,
+            projected_facts: 0,
+        },
+    );
+
+    assert!(findings.is_empty());
+    assert_eq!(index.analysis_metrics.projection_files, 0);
+    assert_eq!(index.analysis_metrics.projection_work, 0);
+    assert_eq!(index.analysis_metrics.projected_facts, 0);
 }
 
 fn scaled_index() -> SourceIndex {

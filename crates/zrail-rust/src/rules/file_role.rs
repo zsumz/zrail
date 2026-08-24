@@ -29,15 +29,18 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             );
             continue;
         };
-        if !matches!(file.class, FileClass::Facade | FileClass::Implementation) {
+        let allowed = matches!(file.class, FileClass::Facade | FileClass::Implementation)
+            || file.class == FileClass::EntryPoint && declared.role == FileRole::Implementation;
+        if !allowed {
             findings.push(
                 Finding::error(
                     "RUST-ROLE-002",
                     "rust.file-role",
                     "source-shape",
                     format!(
-                        "inferred {} source may not be reclassified",
-                        crate::source_policy::role_name(file.class)
+                        "inferred {} source may not be reclassified as {}",
+                        crate::source_policy::role_name(file.class),
+                        declared_role_name(declared.role),
                     ),
                 )
                 .at(&file.relative, None)
@@ -65,5 +68,12 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
                 .with_help("remove the stale file-role override"),
             );
         }
+    }
+}
+
+const fn declared_role_name(role: FileRole) -> &'static str {
+    match role {
+        FileRole::Facade => "facade",
+        FileRole::Implementation => "implementation",
     }
 }

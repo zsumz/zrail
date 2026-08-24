@@ -221,4 +221,14 @@ pub(crate) struct RustFileFacts {
 pub(crate) struct SourceIndex {
     pub(crate) files: Vec<RustFileFacts>,
     pub(crate) findings: Vec<Finding>,
+    pub(crate) analysis_metrics: SourceAnalysisMetrics,
+}
+
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub(crate) struct SourceAnalysisMetrics {
+    pub(crate) base_contexts: usize,
+    pub(crate) derived_contexts: usize,
+    pub(crate) projection_files: usize,
+    pub(crate) projection_work: usize,
+    pub(crate) projected_facts: usize,
 }

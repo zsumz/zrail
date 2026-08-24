@@ -8,6 +8,7 @@ use zrail_rust::BaselinePlan;
 fn roots_are_toml_escaped_and_defaults_remain_strict() {
     let contract = render(
         &["components/core".into(), "tools/quoted\"name".into()],
+        &[],
         InitPreset::Zsumz,
         &BaselinePlan::empty(),
     );
@@ -21,7 +22,7 @@ fn roots_are_toml_escaped_and_defaults_remain_strict() {
 
 #[test]
 fn rust_preset_keeps_conventional_tests_without_inventing_a_size_limit() {
-    let contract = render(&[".".into()], InitPreset::Rust, &BaselinePlan::empty());
+    let contract = render(&[".".into()], &[], InitPreset::Rust, &BaselinePlan::empty());
 
     assert!(contract.contains("tests = \"allow\""));
     assert!(contract.contains("[source.rust.macros]\nmode = \"allow\""));
@@ -33,9 +34,22 @@ fn rust_preset_keeps_conventional_tests_without_inventing_a_size_limit() {
 fn zsumz_preset_denies_unreviewed_macro_expansion() {
     let contract = render(
         &["crates".into()],
+        &[],
         InitPreset::Zsumz,
         &BaselinePlan::empty(),
     );
 
     assert!(contract.contains("[source.rust.macros]\nmode = \"deny-unreviewed\""));
+}
+
+#[test]
+fn canonical_exclusions_are_rendered_exactly() {
+    let contract = render(
+        &[".".into()],
+        &["fixtures/**".into(), "generated/quoted\"file.rs".into()],
+        InitPreset::Rust,
+        &BaselinePlan::empty(),
+    );
+
+    assert!(contract.contains("exclude = [\"fixtures/**\", \"generated/quoted\\\"file.rs\"]"));
 }

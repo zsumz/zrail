@@ -225,6 +225,7 @@ fn resolved_packages_and_ratchets_have_opposite_directions() {
     });
     before_lock.ratchets.push(LockedRatchet {
         rule: "rust.file-size".into(),
+        selector: None,
         target: "crates/core/src/model.rs".into(),
         value: 260,
     });

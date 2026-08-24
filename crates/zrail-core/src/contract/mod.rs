@@ -28,12 +28,13 @@ pub use load::{
     MAX_IMPORT_DIRECTIVES, load_contract, load_contract_with_entry,
 };
 pub use model::{
-    Budget, Contract, CrateRootContract, CrateRootSource, DependenciesContract, DependencyRule,
-    EffectBoundary, FileRole, FileRoleContract, FileSizeContract, GateContract, GateKind,
-    GeneratedSourceContract, HygieneContract, InvariantContract, InvariantStatus,
-    ItemMacroContract, LayerContract, LayerDependencies, MacroExpansionAllow,
-    MacroExpansionContract, OutDirSourceContract, OwnerContract, ProfileContract, RatchetContract,
-    RepositoryContract, RustSourceContract, ScopeContract, SourceContract, SymbolBoundary,
+    AnalysisContract, AnalysisLimits, Budget, Contract, CrateRootContract, CrateRootSource,
+    DependenciesContract, DependencyRule, EffectBoundary, FileRole, FileRoleContract,
+    FileSizeContract, GateContract, GateKind, GeneratedSourceContract, HygieneContract,
+    InvariantContract, InvariantStatus, ItemMacroContract, LayerContract, LayerDependencies,
+    MacroExpansionAllow, MacroExpansionContract, OutDirSourceContract, OwnerContract,
+    ProfileContract, RatchetContract, RepositoryContract, RustSourceContract, ScopeContract,
+    SourceContract, SymbolBoundary,
 };
 pub use modes::{
     CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,

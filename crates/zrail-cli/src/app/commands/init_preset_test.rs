@@ -25,10 +25,10 @@ fn rust_preset_accepts_inline_and_integration_tests_without_a_size_policy() {
 
     assert_eq!(result.exit_code, 0, "{}", result.text);
     assert!(result.text.contains("Preset: rust"));
-    assert!(result.text.contains("Adoption: strict"));
+    assert!(result.text.contains("Adoption: contract only"));
     assert!(contract.contains("tests = \"allow\""));
     assert!(!contract.contains("[source.rust.size"));
-    assert_ready(&root);
+    assert!(!root.join("zrail.lock").exists());
     let explanation = explain_path(&root, Path::new("zrail.toml"), Path::new("src/lib.rs"))
         .expect("explain unbounded Rust source");
     assert_eq!(explanation.schema, 1);
@@ -83,7 +83,7 @@ fn rust_preset_accepts_an_external_root_that_no_active_policy_relies_on() {
     )
     .expect("add external dependency");
 
-    let result = initialize(&root, false).expect("initialize dependency-bearing package");
+    let result = initialize(&root, true).expect("initialize dependency-bearing package");
     let lock = LockFile::read(&root.join("zrail.lock")).expect("read initialized lock");
     let dependency = &lock.packages[0].dependencies[0];
 
@@ -99,6 +99,8 @@ fn initialize(root: &Path, baseline: bool) -> Result<CommandResult, crate::app::
         root: root.to_path_buf(),
         preset: InitPreset::Rust,
         baseline,
+        exclusions: Vec::new(),
+        exclusion_files: Vec::new(),
     })
 }
 

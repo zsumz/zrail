@@ -38,6 +38,7 @@ fn render_sorts_packages_dependencies_and_ratchets() {
     ];
     lock.ratchets = vec![LockedRatchet {
         rule: "rust.file-size".into(),
+        selector: None,
         target: "z.rs".into(),
         value: 260,
     }];

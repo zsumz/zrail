@@ -69,19 +69,48 @@ pub struct ReportGroup {
     pub count: usize,
 }
 
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+/// Deterministic completeness and workload census for repository analysis.
+pub struct ReportAnalysis {
+    /// Whether every authoritative input and relationship was analyzed.
+    pub complete: bool,
+    /// Cargo packages included in the analyzed repository.
+    pub packages: usize,
+    /// Physical Rust files parsed into source facts.
+    pub rust_files: usize,
+    /// Physical source facts collected before contextual projection.
+    pub physical_facts: usize,
+    /// Input-sized `(file, compilation-domain)` contexts.
+    pub base_source_instances: usize,
+    /// Additional contexts created by repeated ancestry paths.
+    pub derived_source_instances: usize,
+    /// Physical files requiring include-dependent projection.
+    pub include_affected_files: usize,
+    /// Include-dependent binding resolution transitions performed.
+    pub projection_work: usize,
+    /// Newly retained contextual projection facts.
+    pub projected_facts: usize,
+    /// Non-baselineable unresolved completeness issues.
+    pub unresolved: usize,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 /// Deterministic machine- and human-readable architecture analysis result.
 pub struct Report {
-    /// Report wire-format version; currently `2`.
+    /// Report wire-format version; currently `3`.
     pub schema: u64,
     /// Overall pass, fail, or invalid state.
     pub status: ReportStatus,
+    /// Completeness and deterministic workload metrics.
+    pub analysis: ReportAnalysis,
     /// Exact severity and payload-retention counts.
     pub summary: ReportSummary,
     /// Whether individual findings were omitted from the report payload.
     pub truncated: bool,
     /// Configured individual-finding retention limit.
+    #[serde(rename = "max_findings", alias = "limit")]
     pub limit: DiagnosticLimit,
     /// Exact aggregate counts by diagnostic identity, rule, and severity.
     pub groups: Vec<ReportGroup>,
@@ -90,12 +119,27 @@ pub struct Report {
 }
 
 impl Report {
-    /// Builds a schema-2 report with the default 10,000-finding payload limit.
+    /// Builds a schema-3 report with the default 10,000-finding payload limit.
     pub fn from_findings(findings: impl IntoIterator<Item = Finding>) -> Self {
         Self::from_sink(FindingSink::from_findings(findings))
     }
 
-    /// Builds a schema-2 report with an explicit individual-finding payload limit.
+    /// Marks a report invalid because analysis could not produce authoritative state.
+    #[must_use]
+    pub fn invalid(mut self) -> Self {
+        self.status = ReportStatus::Invalid;
+        self.analysis.complete = false;
+        self
+    }
+
+    /// Attaches the complete repository analysis census.
+    #[must_use]
+    pub fn with_analysis(mut self, analysis: ReportAnalysis) -> Self {
+        self.analysis = analysis;
+        self
+    }
+
+    /// Builds a schema-3 report with an explicit individual-finding payload limit.
     pub fn from_findings_with_limit(
         findings: impl IntoIterator<Item = Finding>,
         limit: DiagnosticLimit,
@@ -103,14 +147,18 @@ impl Report {
         Self::from_sink(FindingSink::from_findings_with_limit(findings, limit))
     }
 
-    /// Builds a schema-2 report from a collector that already holds exact totals.
+    /// Builds a schema-3 report from a collector that already holds exact totals.
     pub fn from_sink(sink: FindingSink) -> Self {
         let (mut findings, totals, limit) = sink.into_parts();
         sort_findings(&mut findings);
         let summary = summary_from_totals(&totals, findings.len());
         Self {
-            schema: 2,
+            schema: 3,
             status: status_from_summary(summary),
+            analysis: ReportAnalysis {
+                complete: true,
+                ..ReportAnalysis::default()
+            },
             summary,
             truncated: summary.omitted > 0,
             limit,

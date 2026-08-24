@@ -53,13 +53,14 @@ pub(super) struct Resolution {
 }
 
 impl MacroDefinitions {
-    pub(super) fn collect(
+    pub(super) fn collect_with_limit(
         index: &SourceIndex,
         cargo: &CargoWorkspace,
         domains: &BTreeMap<String, BTreeSet<CompilationDomain>>,
         roots: &[CompilationRoot],
         edges: &[CompilationModuleEdge],
         includes: &[CompilationIncludeEdge],
+        derived_limit: Option<usize>,
     ) -> Self {
         let mut definitions = Self {
             files: index
@@ -73,7 +74,7 @@ impl MacroDefinitions {
                 .map(|package| (package.name.clone(), package_origin(package)))
                 .collect(),
             domains: domains.clone(),
-            instances: SourceInstances::build(roots, edges, includes),
+            instances: SourceInstances::build_with_limit(roots, edges, includes, derived_limit),
             inline_module_names: super::macro_qualified_definition::inline_module_names(index),
             qualified_sites: BTreeMap::new(),
             qualified_sites_complete: true,

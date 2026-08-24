@@ -45,14 +45,20 @@ pub(crate) fn effective_file_role<'a>(
     inferred: FileClass,
     rust: &'a RustSourceContract,
 ) -> EffectiveFileRole<'a> {
-    if !matches!(inferred, FileClass::Facade | FileClass::Implementation) {
+    if !matches!(
+        inferred,
+        FileClass::Facade | FileClass::Implementation | FileClass::EntryPoint
+    ) {
         return EffectiveFileRole {
             inferred,
             effective: inferred,
             reason: None,
         };
     }
-    let declared = rust.file_roles.iter().find(|role| role.path == path);
+    let declared = rust.file_roles.iter().find(|role| {
+        role.path == path
+            && (inferred != FileClass::EntryPoint || role.role == FileRole::Implementation)
+    });
     let effective = declared.map_or(inferred, |declared| match declared.role {
         FileRole::Facade => FileClass::Facade,
         FileRole::Implementation => FileClass::Implementation,

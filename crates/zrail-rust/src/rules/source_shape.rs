@@ -21,6 +21,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
                 category: "source-shape",
                 debt: "missing module documentation",
             },
+            None,
             findings,
             report_missing_module_docs,
         );

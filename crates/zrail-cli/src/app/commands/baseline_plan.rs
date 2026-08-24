@@ -52,6 +52,18 @@ pub(super) fn prepare(
         .map_err(|error| CliError::new(format!("load baseline proposal: {error}")))?;
     let checked = check_repository_with_candidate_contract(&root, after.clone())
         .map_err(|error| CliError::new(error.to_string()))?;
+    let candidate_lock = checked.candidate_lock.ok_or_else(|| {
+        let causes = checked
+            .analysis
+            .issues()
+            .iter()
+            .map(|issue| format!("{}: {}", issue.id, issue.message))
+            .collect::<Vec<_>>()
+            .join("; ");
+        CliError::new(format!(
+            "baseline cannot adopt incomplete analysis: {causes}"
+        ))
+    })?;
     Ok(PreparedBaseline {
         root,
         config_path,
@@ -59,7 +71,7 @@ pub(super) fn prepare(
         patched_contract: edit.contract,
         before,
         after,
-        candidate_lock: checked.candidate_lock,
+        candidate_lock,
         report: checked.report,
         added: edit.added,
         preserved: edit.preserved,

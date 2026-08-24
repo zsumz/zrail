@@ -7,12 +7,12 @@ use super::{Contract, Effect, validate_limits::ValidationErrors};
 pub(super) fn validate_sets(contract: &Contract, errors: &mut ValidationErrors) {
     strings("repository.roots", &contract.repository.roots, errors);
     strings("repository.exclude", &contract.repository.exclude, errors);
-    strings(
+    rust_selectors(
         "source.rust.hygiene.deny_methods",
         &contract.source.rust.hygiene.deny_methods,
         errors,
     );
-    strings(
+    rust_selectors(
         "source.rust.hygiene.deny_macros",
         &contract.source.rust.hygiene.deny_macros,
         errors,
@@ -92,6 +92,22 @@ pub(super) fn validate_sets(contract: &Contract, errors: &mut ValidationErrors) 
     }
 }
 
+fn rust_selectors(label: &str, values: &[String], errors: &mut ValidationErrors) {
+    let mut seen = BTreeSet::new();
+    for value in values {
+        if value.trim().is_empty() {
+            errors.push(format!("{label} may not contain an empty value"));
+            continue;
+        }
+        let normalized = crate::normalize_ratchet_selector(value);
+        if !seen.insert(normalized) {
+            errors.push(format!(
+                "{label} contains a duplicate normalized selector {value:?}"
+            ));
+        }
+    }
+}
+
 fn strings(label: &str, values: &[String], errors: &mut ValidationErrors) {
     let mut seen = BTreeSet::new();
     for value in values {
@@ -133,3 +149,7 @@ pub(super) fn require_reason(kind: &str, name: &str, reason: &str, errors: &mut 
         errors.push(format!("{kind} {name:?} requires a reason"));
     }
 }
+
+#[cfg(test)]
+#[path = "validate_sets_test.rs"]
+mod validate_sets_test;

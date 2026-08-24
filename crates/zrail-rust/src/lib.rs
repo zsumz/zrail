@@ -6,8 +6,8 @@
 //! its public operations do not write to the analyzed repository.
 //!
 //! [`check_repository`] is the primary integration point. It returns both a
-//! diagnostic report and the independently observed candidate lock. [`build_lock`]
-//! exposes that candidate directly for callers implementing an explicitly
+//! diagnostic report and, when analysis is complete, an independently observed
+//! candidate lock. [`build_lock`] exposes that candidate directly for callers implementing an explicitly
 //! authorized lock update. Relative configuration, lock, and explained paths are
 //! interpreted beneath the supplied repository root.
 //!
@@ -17,6 +17,7 @@
 
 #![deny(missing_docs)]
 
+mod analysis;
 mod cargo;
 mod engine;
 mod explain;
@@ -26,6 +27,7 @@ mod rules;
 mod source;
 mod source_policy;
 
+pub use analysis::{AnalysisIssue, AnalysisIssueKind, AnalysisMetrics, AnalysisOutcome};
 pub use engine::{
     CheckError, CheckResult, DoctorReport, build_lock, check_repository,
     check_repository_with_candidate_contract, check_repository_with_limit,
@@ -36,6 +38,7 @@ pub use explain::{
     MacroInvocationExplanation, PathExplanation, explain_path,
 };
 pub use onboarding::{
-    BaselinePlan, BaselineRatchet, BaselineRule, BaselineSize, discover_baseline,
-    discover_baseline_rules, discover_source_roots,
+    BaselinePlan, BaselineRatchet, BaselineRule, BaselineSize, RepositorySelection,
+    discover_baseline, discover_baseline_rules, discover_source_roots,
+    discover_source_roots_with_selection,
 };

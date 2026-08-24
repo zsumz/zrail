@@ -18,11 +18,24 @@ pub(super) fn merge(
 ) -> BaselineEdit {
     let identities = existing
         .iter()
-        .map(|ratchet| (ratchet.rule.as_str(), ratchet.target.as_str()))
+        .map(|ratchet| {
+            (
+                ratchet.rule.as_str(),
+                ratchet
+                    .selector
+                    .as_deref()
+                    .map(zrail_core::normalize_ratchet_selector),
+                ratchet.target.as_str(),
+            )
+        })
         .collect::<BTreeSet<_>>();
-    let (preserved, added): (Vec<_>, Vec<_>) = candidates
-        .into_iter()
-        .partition(|candidate| identities.contains(&(candidate.rule, candidate.target.as_str())));
+    let (preserved, added): (Vec<_>, Vec<_>) = candidates.into_iter().partition(|candidate| {
+        identities.contains(&(
+            candidate.rule,
+            candidate.selector.clone(),
+            candidate.target.as_str(),
+        ))
+    });
     if added.is_empty() {
         return BaselineEdit {
             contract: source.to_owned(),
@@ -35,10 +48,17 @@ pub(super) fn merge(
         contract.push('\n');
     }
     for ratchet in &added {
+        let selector = ratchet
+            .selector
+            .as_ref()
+            .map_or_else(String::new, |selector| {
+                format!("selector = {}\n", toml_string(selector))
+            });
         let _ = write!(
             contract,
-            "\n[[ratchet]]\nrule = {}\ntarget = {}\nreason = {}\n",
+            "\n[[ratchet]]\nrule = {}\n{}target = {}\nreason = {}\n",
             toml_string(ratchet.rule),
+            selector,
             toml_string(&ratchet.target),
             toml_string(ratchet.reason),
         );

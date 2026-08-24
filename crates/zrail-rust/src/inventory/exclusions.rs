@@ -3,7 +3,11 @@
 use zrail_core::{Contract, glob_matches};
 
 pub(super) fn excluded(contract: &Contract, relative: &str) -> bool {
-    contract.repository.exclude.iter().any(|pattern| {
+    excluded_by(&contract.repository.exclude, relative)
+}
+
+pub(super) fn excluded_by(exclusions: &[String], relative: &str) -> bool {
+    exclusions.iter().any(|pattern| {
         glob_matches(pattern, relative) || relative.starts_with(&format!("{pattern}/"))
     })
 }
