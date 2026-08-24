@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from enum import Enum
 import json
 import os
 from pathlib import Path
@@ -16,6 +17,13 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 class ReleaseError(RuntimeError):
     """A fail-closed release-state error."""
+
+
+class ReleaseKind(Enum):
+    ABSENT = "absent"
+    EXACT_DRAFT = "exact draft"
+    EXACT_PUBLISHED = "exact published"
+    INVALID = "invalid"
 
 
 class SafeRedirects(HTTPRedirectHandler):
@@ -65,6 +73,11 @@ class GitHub:
         return self._request(
             "POST", endpoint, content, "application/vnd.github+json", (201,),
             content_type="application/octet-stream",
+        )
+
+    def delete(self, url: str):
+        return self._request(
+            "DELETE", url, None, "application/vnd.github+json", (204,)
         )
 
     def _request(self, method, url, data, accept, expected, content_type="application/json"):
@@ -201,13 +214,36 @@ class ReleaseState:
             raise ReleaseError("GitHub create release returned an invalid database ID")
         return release_id
 
-    def validate(self, release, release_id: int, draft: bool, complete: bool):
+    def classify(self, release_id: int | None, release=None) -> ReleaseKind:
+        if release_id is None:
+            return ReleaseKind.ABSENT
         expected = {
-            "id": release_id, "tag_name": self.tag, "draft": draft,
-            "prerelease": False, "name": self.title, "body": self.body,
+            "tag_name": self.tag, "name": self.title, "body": self.body,
         }
-        if any(release.get(key) != value for key, value in expected.items()):
+        valid = (
+            isinstance(release, dict)
+            and type(release.get("id")) is int
+            and release["id"] == release_id
+            and type(release.get("draft")) is bool
+            and release.get("prerelease") is False
+            and all(release.get(key) == value for key, value in expected.items())
+        )
+        if not valid:
+            return ReleaseKind.INVALID
+        if release["draft"]:
+            return ReleaseKind.EXACT_DRAFT
+        return ReleaseKind.EXACT_PUBLISHED
+
+    def current_release(self):
+        release_id = self.find_release_id()
+        release = None if release_id is None else self.release(release_id)
+        return self.classify(release_id, release), release_id, release
+
+    def require_kind(self, release, release_id: int, expected: ReleaseKind):
+        if self.classify(release_id, release) is not expected:
             raise ReleaseError("release metadata differs from the reviewed release identity")
+
+    def assets(self, release):
         assets = release.get("assets")
         if not isinstance(assets, list):
             raise ReleaseError("release assets are not an array")
@@ -220,12 +256,33 @@ class ReleaseState:
                 raise ReleaseError(f"release contains duplicate asset: {name}")
             by_name[name] = asset
         unexpected = set(by_name) - set(self.asset_names)
-        missing = set(self.asset_names) - set(by_name)
         if unexpected:
             raise ReleaseError(f"release contains unexpected assets: {sorted(unexpected)}")
+        return by_name
+
+    def inspect_assets(self, release, complete: bool, allow_starter: bool):
+        by_name = self.assets(release)
+        missing = set(self.asset_names) - set(by_name)
         if complete and missing:
             raise ReleaseError(f"release is missing assets: {sorted(missing)}")
+        starters = []
+        starter_ids = set()
         for name, asset in by_name.items():
+            state = asset.get("state")
+            if state == "starter" and allow_starter:
+                asset_id = asset.get("id")
+                if (
+                    isinstance(asset_id, bool)
+                    or not isinstance(asset_id, int)
+                    or asset_id <= 0
+                    or asset_id in starter_ids
+                ):
+                    raise ReleaseError(f"release starter asset has an invalid ID: {name}")
+                starter_ids.add(asset_id)
+                starters.append((name, asset_id))
+                continue
+            if state != "uploaded":
+                raise ReleaseError(f"release asset has an invalid state: {name}")
             url = asset.get("url")
             if not isinstance(url, str) or not url:
                 raise ReleaseError(f"release asset has no API URL: {name}")
@@ -233,23 +290,63 @@ class ReleaseState:
             expected_bytes = (self.assets_dir / name).read_bytes()
             if actual != expected_bytes:
                 raise ReleaseError(f"release asset bytes differ: {name}")
-        self.verify_remote_tag()
-        return missing
+        return by_name, missing, starters
 
-    def prepare(self):
+    def validate(self, release, release_id: int, kind: ReleaseKind, complete: bool,
+                 allow_starter: bool = False):
+        self.require_kind(release, release_id, kind)
+        result = self.inspect_assets(release, complete, allow_starter)
         self.verify_remote_tag()
-        release_id = self.find_release_id()
-        if release_id is None:
-            release_id = self.create_draft()
-        release = self.release(release_id)
-        missing = self.validate(release, release_id, draft=True, complete=False)
+        return result
+
+    def delete_release_asset(self, asset_id: int):
+        self.github.delete(
+            self.github.repository_url(f"releases/assets/{asset_id}")
+        )
+
+    def prepare_draft(self, release_id: int, release):
+        _, missing, starters = self.validate(
+            release, release_id, ReleaseKind.EXACT_DRAFT, False, True
+        )
+        deleted = set()
+        while starters:
+            name, asset_id = starters[0]
+            self.delete_release_asset(asset_id)
+            deleted.add(name)
+            release = self.release(release_id)
+            by_name, missing, starters = self.validate(
+                release, release_id, ReleaseKind.EXACT_DRAFT, False, True
+            )
+            remaining = deleted & set(by_name)
+            if remaining:
+                raise ReleaseError(
+                    f"release starter asset remains after deletion: {sorted(remaining)[0]}"
+                )
         upload_url = release.get("upload_url")
         if not isinstance(upload_url, str) or not upload_url:
             raise ReleaseError("release has no asset upload URL")
         for name in self.asset_names:
             if name in missing:
                 self.github.upload(upload_url, name, (self.assets_dir / name).read_bytes())
-        self.validate(self.release(release_id), release_id, draft=True, complete=True)
+        self.validate(
+            self.release(release_id), release_id, ReleaseKind.EXACT_DRAFT, True
+        )
+
+    def prepare(self):
+        self.verify_remote_tag()
+        kind, release_id, release = self.current_release()
+        if kind is ReleaseKind.ABSENT:
+            release_id = self.create_draft()
+            release = self.release(release_id)
+            kind = self.classify(release_id, release)
+        if kind is ReleaseKind.INVALID:
+            raise ReleaseError("release metadata differs from the reviewed release identity")
+        if kind is ReleaseKind.EXACT_DRAFT:
+            self.prepare_draft(release_id, release)
+        elif kind is ReleaseKind.EXACT_PUBLISHED:
+            self.validate(release, release_id, kind, True)
+        else:
+            raise ReleaseError("release lookup returned an invalid state")
         self.release_id_file.write_text(f"{release_id}\n", encoding="utf-8")
 
     def publish(self):
@@ -257,16 +354,22 @@ class ReleaseState:
             expected_id = int(self.release_id_file.read_text(encoding="utf-8").strip())
         except (OSError, ValueError) as error:
             raise ReleaseError("prepared release database ID is missing or invalid") from error
-        release_id = self.find_release_id()
-        if release_id != expected_id:
+        if expected_id <= 0:
+            raise ReleaseError("prepared release database ID is missing or invalid")
+        kind, release_id, release = self.current_release()
+        if release_id != expected_id or kind is ReleaseKind.ABSENT:
             raise ReleaseError("prepared and remote release database IDs differ")
-        release = self.release(release_id)
-        self.validate(release, release_id, draft=True, complete=True)
+        if kind is ReleaseKind.INVALID:
+            raise ReleaseError("release metadata differs from the reviewed release identity")
+        if kind is ReleaseKind.EXACT_PUBLISHED:
+            self.validate(release, release_id, kind, True)
+            return
+        self.validate(release, release_id, ReleaseKind.EXACT_DRAFT, True)
         published = self.github.request_json(
             "PATCH", self.github.repository_url(f"releases/{release_id}"),
             {"draft": False},
         )
-        self.validate(published, release_id, draft=False, complete=True)
+        self.validate(published, release_id, ReleaseKind.EXACT_PUBLISHED, True)
 
 
 def parse_arguments():

@@ -802,8 +802,14 @@ state through REST; it does not use the published-release by-tag endpoint or
 peels annotated tags to the qualified commit, and binds draft state,
 prerelease state, title, exact reviewed notes, asset names, and every asset byte.
 A rerun rejects unexpected or altered state and uploads only missing expected
-assets. The mocked release rehearsal injects a partial-upload failure and proves
-that the same draft resumes, revalidates, and publishes only after completion.
+assets. An expected asset left in GitHub's documented `starter` state is deleted
+by its numeric asset identity, refetched as missing, and reuploaded; uploaded
+assets with different bytes and all unknown asset states fail closed. An exact
+already-published release is also a successful retry state, but it does not skip
+the intervening registry-archive verification. The mocked release rehearsal
+injects both a `starter` residue and a lost successful publish response, then
+proves that the same release resumes without replacing reviewed bytes or
+publishing twice.
 Only after all three registry comparisons pass does the workflow make the
 GitHub draft visible. Release actions are pinned to full commit identities; the
 workflow does not accept proposal or manual source inputs.
