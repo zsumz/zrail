@@ -19,7 +19,7 @@ pub struct GovernedAnalysis {
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 /// Stable audit report for all configured owner and dependency prohibitions.
 pub struct GovernedSurfaceReport {
-    /// Governed-surface report schema; currently `1`.
+    /// Governed-surface report schema; currently `3`.
     pub schema: u64,
     /// Schema of the fully merged architecture contract.
     pub contract_schema: u64,
@@ -160,6 +160,20 @@ pub struct GovernedTestMirror {
     pub test_name: String,
     /// Repository-relative execution receipt path.
     pub receipt: String,
+    /// Additional exact files bound into the execution receipt.
+    pub inputs: Vec<String>,
+    /// Exact producer-asserted execution command.
+    pub command: String,
+    /// Cargo package selected by the execution command.
+    pub package: String,
+    /// Whether Cargo default features were enabled.
+    pub default_features: bool,
+    /// Exact enabled Cargo feature set.
+    pub features: Vec<String>,
+    /// Exact compilation target triple.
+    pub target: String,
+    /// Normalized Rust toolchain identity.
+    pub toolchain: String,
     /// Contract-authored justification.
     pub reason: String,
 }

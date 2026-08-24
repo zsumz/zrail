@@ -278,6 +278,18 @@ jobs:
           ref: ${{ github.sha }}
           persist-credentials: false
 
+      - name: Reject repository-local Cargo configuration
+        run: |
+          for cargo_config in .cargo/config .cargo/config.toml; do
+            if [[ -e "$cargo_config" || -L "$cargo_config" ]]; then
+              echo "repository-local Cargo configuration is not permitted: $cargo_config" >&2
+              exit 1
+            fi
+          done
+
+      - name: Set up the same pinned publish Rust
+        uses: ./.github/actions/setup-rust
+
       - name: Download every qualified archive
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
@@ -318,12 +330,97 @@ jobs:
             dist/zrail-*.crate
             dist/SHA256SUMS
 
-      - name: Create draft and upload complete release
+      - name: Prove publish mode reproduces every attested crate
+        run: scripts/publish-crates --preflight
+
+      - name: Create or reuse the exact draft release
         run: |
-          gh release create "$GITHUB_REF_NAME" \
-            --verify-tag --draft --title "zrail $ZRAIL_VERSION" \
-            --notes-file "$RUNNER_TEMP/release-notes.md"
-          gh release upload "$GITHUB_REF_NAME" dist/zrail-* dist/SHA256SUMS
+          expected_assets=(
+            "zrail-$ZRAIL_VERSION-x86_64-unknown-linux-gnu.tar.gz"
+            "zrail-$ZRAIL_VERSION-aarch64-unknown-linux-gnu.tar.gz"
+            "zrail-$ZRAIL_VERSION-x86_64-unknown-linux-musl.tar.gz"
+            "zrail-$ZRAIL_VERSION-aarch64-unknown-linux-musl.tar.gz"
+            "zrail-$ZRAIL_VERSION-x86_64-apple-darwin.tar.gz"
+            "zrail-$ZRAIL_VERSION-aarch64-apple-darwin.tar.gz"
+            "zrail-$ZRAIL_VERSION-x86_64-pc-windows-msvc.zip"
+            "zrail-core-$ZRAIL_VERSION.crate"
+            "zrail-rust-$ZRAIL_VERSION.crate"
+            "zrail-$ZRAIL_VERSION.crate"
+            SHA256SUMS
+          )
+          release_json="$RUNNER_TEMP/release.json"
+          release_api="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/tags/$GITHUB_REF_NAME"
+          fetch_release() {
+            release_status="$(curl --silent --show-error \
+              --header "Authorization: Bearer $GH_TOKEN" \
+              --header "Accept: application/vnd.github+json" \
+              --header "X-GitHub-Api-Version: 2022-11-28" \
+              --output "$release_json" --write-out '%{http_code}' "$release_api")"
+          }
+
+          fetch_release
+          case "$release_status" in
+            404)
+              gh release create "$GITHUB_REF_NAME" \
+                --repo "$GITHUB_REPOSITORY" --verify-tag --draft \
+                --target "$GITHUB_SHA" --title "zrail $ZRAIL_VERSION" \
+                --notes-file "$RUNNER_TEMP/release-notes.md"
+              fetch_release
+              test "$release_status" = 200
+              ;;
+            200)
+              echo "Reusing existing release draft for $GITHUB_REF_NAME"
+              ;;
+            *)
+              echo "GitHub returned HTTP $release_status while checking the release" >&2
+              exit 1
+              ;;
+          esac
+
+          if ! jq -e --arg tag "$GITHUB_REF_NAME" --arg sha "$GITHUB_SHA" \
+            --arg title "zrail $ZRAIL_VERSION" '
+            .tag_name == $tag and .draft == true and
+            .prerelease == false and .name == $title and
+            .target_commitish == $sha and (.assets | type == "array")
+          ' "$release_json" >/dev/null; then
+            echo "existing release is not the exact draft for the reviewed commit" >&2
+            exit 1
+          fi
+
+          mapfile -t existing_assets < <(jq -r '.assets[].name' "$release_json")
+          for asset in "${existing_assets[@]}"; do
+            expected=false
+            for candidate in "${expected_assets[@]}"; do
+              if [[ "$asset" == "$candidate" ]]; then expected=true; break; fi
+            done
+            if [[ "$expected" != true ]]; then
+              echo "existing draft contains unexpected asset: $asset" >&2
+              exit 1
+            fi
+          done
+
+          existing_dir="$RUNNER_TEMP/existing-release-assets"
+          mkdir -p "$existing_dir"
+          for expected in "${expected_assets[@]}"; do
+            present=false
+            for asset in "${existing_assets[@]}"; do
+              if [[ "$asset" == "$expected" ]]; then present=true; break; fi
+            done
+            if [[ "$present" == true ]]; then
+              gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
+                --pattern "$expected" --dir "$existing_dir"
+              cmp "dist/$expected" "$existing_dir/$expected"
+            else
+              gh release upload "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
+                "dist/$expected"
+            fi
+          done
+
+          fetch_release
+          test "$release_status" = 200
+          printf '%s\n' "${expected_assets[@]}" | sort > "$RUNNER_TEMP/expected-assets"
+          jq -r '.assets[].name' "$release_json" | sort > "$RUNNER_TEMP/actual-assets"
+          cmp "$RUNNER_TEMP/expected-assets" "$RUNNER_TEMP/actual-assets"
 
       - name: Authenticate with crates.io trusted publishing
         id: crates_io
@@ -332,7 +429,7 @@ jobs:
       - name: Publish and verify exact registry archives
         env:
           CARGO_REGISTRY_TOKEN: ${{ steps.crates_io.outputs.token }}
-        run: scripts/publish-crates
+        run: scripts/publish-crates --publish
 
       - name: Publish GitHub release after registry success
         run: |

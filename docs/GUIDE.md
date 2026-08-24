@@ -24,7 +24,7 @@ diffs, including:
 - the complete analyzed inventory, exclusions, contract fragments, and
   analyzer semantics;
 - reviewed gate bytes and their declared behavioral inputs;
-- exact test-mirror execution receipt bytes;
+- exact test-mirror receipt bytes, reviewed inputs, and execution identity;
 - generated-source provenance;
 - content-bound repository macro implementations, external resolved sources,
   and exact item-macro manifests; and
@@ -594,6 +594,18 @@ production = "src/state.rs"
 test = "tests/state_test.rs"
 name = "state_transitions"
 receipt = "evidence/state-transitions.json"
+inputs = [
+  "Cargo.lock",
+  "Cargo.toml",
+  "fixtures/state-cases.json",
+  "src/model.rs",
+]
+command = "cargo test --package kernel --test state_test state_transitions --target x86_64-unknown-linux-gnu"
+package = "kernel"
+default_features = false
+features = ["strict"]
+target = "x86_64-unknown-linux-gnu"
+toolchain = "rustc 1.90.0 (example 2026-01-01)"
 reason = "The test exercises state transitions through the public surface."
 ```
 
@@ -601,30 +613,45 @@ The production path must exist and be reachable from a Cargo production target.
 The test path must exist, be classified as test source, be reachable from a
 Cargo test target, and declare the exact named `#[test]` once. Production paths,
 test paths, and receipt paths are each unique across the mirror set, so a file
-or receipt cannot be reused and a removed path becomes stale policy.
+or receipt cannot be reused and a removed path becomes stale policy. Inputs are
+unique, sorted repository paths and must include `Cargo.toml`, `Cargo.lock`, and
+the selected package manifest. The selected package must own both source files.
 
-zrail does not execute tests. A test runner records execution in strict schema-1
+zrail does not execute tests. A test runner records execution in strict schema-2
 JSON after the exact test passes:
 
 ```json
 {
-  "schema": 1,
+  "schema": 2,
   "producer": "test-runner 1.2.3",
   "input_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-  "toolchain": "1.90.0",
+  "execution": {
+    "command": "cargo test --package kernel --test state_test state_transitions --target x86_64-unknown-linux-gnu",
+    "package": "kernel",
+    "default_features": false,
+    "features": ["strict"],
+    "target": "x86_64-unknown-linux-gnu",
+    "toolchain": "rustc 1.90.0 (example 2026-01-01)"
+  },
   "tests": [{ "id": "state_transitions", "status": "passed" }]
 }
 ```
 
 `producer` must contain a name and `major.minor.patch` version. The requested
 test must appear exactly once with status `passed`; failed, skipped, missing, or
-duplicate outcomes fail closed. `input_sha256` binds five fields in order:
-production path UTF-8, production bytes, test path UTF-8, test bytes, and test
-name UTF-8. Hash the domain `zrail-test-mirror-input-v1\0`, then each field
-prefixed by its unsigned 64-bit big-endian byte length. The lock additionally
-hashes the exact receipt bytes and retains the mirror identity, declared input
-digest, and versioned producer. Replacing a still-valid receipt therefore
-remains explicit lock drift requiring review.
+duplicate outcomes fail closed. The receipt execution object must exactly equal
+the contract. `input_sha256` hashes the domain
+`zrail-test-mirror-input-v2\0`, followed by length-framed production path and
+bytes, test path and bytes, test name, the count and sorted path/bytes for every
+reviewed input, then command, package, default-feature flag, feature count and
+features, target, and toolchain. Every field uses an unsigned 64-bit big-endian
+byte-length prefix. Missing inputs, package/source mismatches, context drift,
+and digest drift fail closed. The lock additionally hashes the exact receipt
+bytes and retains the mirror identity, declared input digest, and versioned
+producer, so replacing a still-valid receipt remains explicit lock drift.
+The reviewed input list is explicit rather than inferred: shared modules,
+fixtures, build scripts, and generated inputs that affect the test must be
+listed. An omitted dynamic input is not claimed as attested by this receipt.
 
 ## Cargo
 
@@ -696,12 +723,12 @@ occurrences; and every dependency prohibition with exact shortest violating
 paths through `Cargo.lock` identities. Occurrences retain source spans,
 resolution quality, syntax guards, applicable Cargo compilation domains, and
 whether the source path is allowed. Unresolved and conservative matches are
-counted explicitly. Schema 2 binds the exact resolved contract digest and also
+counted explicitly. Schema 3 binds the exact resolved contract digest and also
 includes `enabled_rails`, a sorted canonical
 census covering every global policy switch, contract source, analysis limit,
 and named layer, scope, owner, ratchet, gate, invariant, macro, generated-source,
-dependency, and test-mirror rail. Exact test-mirror identities are included
-when declared.
+dependency, and test-mirror rail. Exact test-mirror identities include their
+reviewed inputs, command, package, feature set, target, and toolchain.
 
 Coverage is an audit artifact, not partial best-effort discovery. It fails when
 source analysis is incomplete, when a governed dependency cannot be mapped to
@@ -753,11 +780,15 @@ No release is visible until every target and clean-runtime check succeeds. The
 publisher also packages and verifies `zrail-core`, `zrail-rust`, and `zrail`
 from the same reviewed checkout. It requires the exact binary and crate set,
 records every digest in `SHA256SUMS`, and creates GitHub build-provenance
-attestations before opening a draft from the matching reviewed `CHANGELOG.md`
-section. A temporary crates.io trusted-publishing token publishes the crates in
-dependency order without executing package code; each registry archive is then
-downloaded and compared byte-for-byte with its attested input. Only after all
-three comparisons pass does the workflow make the GitHub draft visible.
+attestations. Before opening a draft or publishing a crate, the publish job
+installs the same pinned Rust toolchain, regenerates all three archives in
+`cargo publish --dry-run` mode, and requires every byte to match its attested
+input. A temporary crates.io trusted-publishing token then publishes the crates
+in dependency order without executing package code; each registry archive is
+downloaded and compared byte-for-byte again. A rerun reuses only an existing
+draft for the exact tag and commit with no unexpected assets, verifies every
+existing asset byte, and uploads only missing expected assets. Only after all
+three registry comparisons pass does the workflow make the GitHub draft visible.
 Release actions are pinned to full commit identities; the workflow does not
 accept proposal or manual source inputs.
 

@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use syn::{Expr, ExprField, Fields, Item, Path};
+use syn::{Expr, Fields, Item, Path};
 use zrail_core::AnalysisQuality;
 
 use super::{ObservedFact, SyntaxGuard};
@@ -126,13 +126,6 @@ pub(super) fn last_segment_looks_constructor(path: &Path) -> bool {
                 .next()
                 .is_some_and(char::is_uppercase)
     })
-}
-
-pub(super) fn field_expression(expression: &Expr) -> Option<&ExprField> {
-    match unwrapped(expression) {
-        Expr::Field(field) => Some(field),
-        _ => None,
-    }
 }
 
 pub(super) fn unwrapped(mut expression: &Expr) -> &Expr {

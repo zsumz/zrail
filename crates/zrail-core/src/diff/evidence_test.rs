@@ -1,10 +1,11 @@
 //! Evidence and gate changes are classified by permission direction.
 
 use crate::{
-    ChangeKind, GateContract, GateKind, InvariantContract, InvariantStatus, TestMirrorContract,
+    ChangeKind, GateContract, GateKind, InvariantContract, InvariantStatus, TestExecutionIdentity,
+    TestMirrorContract,
 };
 
-use super::{compare_gates, compare_invariants, compare_test_mirrors};
+use super::{compare_gates, compare_invariants, mirrors::compare as compare_test_mirrors};
 
 #[test]
 fn exact_test_mirror_changes_preserve_permission_direction() {
@@ -21,6 +22,31 @@ fn exact_test_mirror_changes_preserve_permission_direction() {
     let mut replaced = Vec::new();
     compare_test_mirrors(&[mirror], &[changed], &mut replaced);
     assert_eq!(replaced[0].kind, ChangeKind::Unknown);
+}
+
+#[test]
+fn mirror_input_changes_are_directional_and_execution_changes_are_unknown() {
+    let before = test_mirror("tests/state_test.rs", "state_transitions");
+    let mut with_input = before.clone();
+    with_input.inputs.push("fixtures/state.json".into());
+    with_input.inputs.sort();
+    let mut changes = Vec::new();
+    compare_test_mirrors(
+        std::slice::from_ref(&before),
+        std::slice::from_ref(&with_input),
+        &mut changes,
+    );
+    assert_eq!(changes[0].kind, ChangeKind::Revoke);
+
+    changes.clear();
+    compare_test_mirrors(&[with_input], std::slice::from_ref(&before), &mut changes);
+    assert_eq!(changes[0].kind, ChangeKind::Grant);
+
+    let mut changed_execution = before.clone();
+    changed_execution.execution.target = "aarch64-unknown-linux-gnu".into();
+    changes.clear();
+    compare_test_mirrors(&[before], &[changed_execution], &mut changes);
+    assert_eq!(changes[0].kind, ChangeKind::Unknown);
 }
 
 #[test]
@@ -123,6 +149,15 @@ fn test_mirror(test: &str, name: &str) -> TestMirrorContract {
         test: test.into(),
         name: name.into(),
         receipt: "evidence/state.json".into(),
+        inputs: vec!["Cargo.lock".into(), "Cargo.toml".into()],
+        execution: TestExecutionIdentity {
+            command: format!("cargo test --package state {name}"),
+            package: "state".into(),
+            default_features: true,
+            features: Vec::new(),
+            target: "x86_64-unknown-linux-gnu".into(),
+            toolchain: "rustc 1.90.0 (example 2026-01-01)".into(),
+        },
         reason: "Exact state transition coverage".into(),
     }
 }

@@ -131,6 +131,66 @@ impl State {
         matching(&facts, SourceOperationKind::FieldRead, "State::values").is_empty(),
         "assignment place was counted as a read: {facts:?}"
     );
+    assert_eq!(
+        matching(&facts, SourceOperationKind::FieldWrite, "State::values").len(),
+        1,
+        "indexed backing storage had no write authority: {facts:?}"
+    );
+}
+
+#[test]
+fn structured_places_retain_backing_authority_and_value_reads() {
+    let facts = operations(
+        r"
+struct Inner { nested: usize, deref: usize }
+struct State {
+    values: [usize; 2],
+    index: usize,
+    outer: Inner,
+    pointer: Box<Inner>,
+    tuple: (usize,),
+}
+impl State {
+    fn mutate(&mut self, next: usize) {
+        self.values[self.index] = next;
+        self.values[self.index] += 1;
+        self.outer.nested = next;
+        (*self.pointer).deref = next;
+        self.tuple.0 = next;
+        let _ = std::mem::replace(&mut self.values[self.index], next);
+    }
+}
+",
+    );
+
+    for (kind, name, count) in [
+        (SourceOperationKind::FieldWrite, "State::values", 2),
+        (SourceOperationKind::FieldWrite, "State::outer", 1),
+        (SourceOperationKind::FieldWrite, "State::pointer", 1),
+        (SourceOperationKind::FieldWrite, "State::tuple", 1),
+        (SourceOperationKind::FieldMutableBorrow, "State::values", 1),
+        (SourceOperationKind::FieldRead, "State::index", 3),
+        (SourceOperationKind::FieldRead, "State::pointer", 1),
+    ] {
+        assert_eq!(
+            matching(&facts, kind, name).len(),
+            count,
+            "{kind:?} {name}: {facts:?}"
+        );
+    }
+    for name in ["State::values", "State::outer", "State::tuple"] {
+        assert!(
+            matching(&facts, SourceOperationKind::FieldRead, name).is_empty(),
+            "place projection was counted as a read for {name}: {facts:?}",
+        );
+    }
+    for name in ["<unresolved>::nested", "<unresolved>::deref"] {
+        assert_eq!(
+            matching(&facts, SourceOperationKind::FieldWrite, name).len(),
+            1,
+            "final projected field did not fail closed: {facts:?}",
+        );
+    }
 }
 
 #[test]

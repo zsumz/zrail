@@ -125,10 +125,13 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_expr_assign(&mut self, expression: &'ast ExprAssign) {
-        self.record_field_operation(super::SourceOperationKind::FieldWrite, &expression.left);
-        self.without_place_field_reads(&expression.left, |visitor| {
-            visit::visit_expr_assign(visitor, expression);
-        });
+        self.with_place_operation(
+            super::SourceOperationKind::FieldWrite,
+            &expression.left,
+            |visitor| {
+                visit::visit_expr_assign(visitor, expression);
+            },
+        );
     }
 
     fn visit_expr_binary(&mut self, expression: &'ast ExprBinary) {
@@ -137,13 +140,13 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
 
     fn visit_expr_reference(&mut self, expression: &'ast ExprReference) {
         if expression.mutability.is_some() {
-            self.record_field_operation(
+            self.with_place_operation(
                 super::SourceOperationKind::FieldMutableBorrow,
                 &expression.expr,
+                |visitor| {
+                    visit::visit_expr_reference(visitor, expression);
+                },
             );
-            self.without_place_field_reads(&expression.expr, |visitor| {
-                visit::visit_expr_reference(visitor, expression);
-            });
         } else {
             visit::visit_expr_reference(self, expression);
         }

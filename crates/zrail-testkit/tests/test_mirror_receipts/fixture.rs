@@ -6,7 +6,7 @@ use std::{
     sync::atomic::{AtomicUsize, Ordering},
 };
 
-use zrail_core::test_mirror_input_sha256;
+use zrail_core::{TestExecutionIdentity, TestMirrorContract, test_mirror_input_sha256};
 use zrail_rust::{CheckResult, build_lock, check_repository};
 
 static NEXT_FIXTURE: AtomicUsize = AtomicUsize::new(0);
@@ -33,6 +33,11 @@ impl MirrorFixture {
             "[package]\nname='mirror-fixture'\nversion='0.0.0'\nedition='2024'\n",
         )
         .expect("write Cargo manifest");
+        fs::write(
+            root.join("Cargo.lock"),
+            "version = 4\n\n[[package]]\nname = \"mirror-fixture\"\nversion = \"0.0.0\"\n",
+        )
+        .expect("write Cargo lock");
         fs::write(
             root.join("src/lib.rs"),
             "//! Mirror fixture.\npub mod state;\n",
@@ -99,11 +104,14 @@ impl MirrorFixture {
             self.path("evidence/state.json"),
             format!(
                 concat!(
-                    "{{\"schema\":1,\"producer\":\"{}\",",
-                    "\"input_sha256\":\"{}\",\"toolchain\":\"1.90.0\",",
+                    "{{\"schema\":2,\"producer\":\"{}\",",
+                    "\"input_sha256\":\"{}\",",
+                    "\"execution\":{{\"command\":\"{}\",\"package\":\"mirror-fixture\",",
+                    "\"default_features\":true,\"features\":[],\"target\":\"{}\",",
+                    "\"toolchain\":\"{}\"}},",
                     "\"tests\":[{{\"id\":\"{}\",\"status\":\"{}\"}}]}}\n",
                 ),
-                producer, input_sha256, test, status
+                producer, input_sha256, COMMAND, TARGET, TOOLCHAIN, test, status
             ),
         )
         .expect("write execution receipt");
@@ -137,13 +145,57 @@ impl Drop for MirrorFixture {
 }
 
 fn input_digest(root: &Path, production: &str, test: &str, name: &str) -> String {
+    let mirror = mirror_contract(production, test, name);
+    let owned = mirror
+        .inputs
+        .iter()
+        .map(|path| {
+            (
+                path.as_str(),
+                fs::read(root.join(path)).expect("read reviewed mirror input"),
+            )
+        })
+        .collect::<Vec<_>>();
+    let reviewed = owned
+        .iter()
+        .map(|(path, bytes)| (*path, bytes.as_slice()))
+        .collect::<Vec<_>>();
     test_mirror_input_sha256(
-        production,
+        &mirror,
         &fs::read(root.join(production)).expect("read production input"),
-        test,
         &fs::read(root.join(test)).expect("read test input"),
-        name,
+        &reviewed,
     )
+}
+
+const COMMAND: &str = concat!(
+    "cargo test --package mirror-fixture --test state_test state_transitions ",
+    "--target x86_64-unknown-linux-gnu",
+);
+const TARGET: &str = "x86_64-unknown-linux-gnu";
+const TOOLCHAIN: &str = "rustc 1.90.0 (example 2026-01-01)";
+
+fn mirror_contract(production: &str, test: &str, name: &str) -> TestMirrorContract {
+    TestMirrorContract {
+        production: production.into(),
+        test: test.into(),
+        name: name.into(),
+        receipt: "evidence/state.json".into(),
+        inputs: vec![
+            "Cargo.lock".into(),
+            "Cargo.toml".into(),
+            "src/lib.rs".into(),
+        ],
+        execution: TestExecutionIdentity {
+            command: COMMAND.into(),
+            package: "mirror-fixture".into(),
+            default_features: true,
+            features: Vec::new(),
+            target: TARGET.into(),
+            toolchain: TOOLCHAIN.into(),
+        },
+        reason: "Exact public-surface behavior".into(),
+    }
 }
 
 fn contract(production: &str, test: &str, name: &str) -> String {
@@ -174,6 +226,13 @@ production = "{production}"
 test = "{test}"
 name = "{name}"
 receipt = "evidence/state.json"
+inputs = ["Cargo.lock", "Cargo.toml", "src/lib.rs"]
+command = "{COMMAND}"
+package = "mirror-fixture"
+default_features = true
+features = []
+target = "{TARGET}"
+toolchain = "{TOOLCHAIN}"
 reason = "The exact test exercises the production behavior through its public surface."
 
 [source.rust.hygiene]

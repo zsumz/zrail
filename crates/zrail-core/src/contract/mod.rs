@@ -33,9 +33,9 @@ pub use model::{
     EffectBoundary, FileRole, FileRoleContract, FileSizeContract, GateContract, GateKind,
     GeneratedSourceContract, HygieneContract, InvariantContract, InvariantStatus, ItemMacroBinding,
     ItemMacroBindingKind, ItemMacroContract, ItemMacroManifest, LayerContract, LayerDependencies,
-    MacroExpansionAllow, MacroExpansionContract, OutDirSourceContract, OwnerContract,
-    ProfileContract, RatchetContract, RepositoryContract, RustSourceContract, ScopeContract,
-    SourceContract, SymbolBoundary, TestMirrorContract,
+    MAX_TEST_MIRROR_INPUTS, MacroExpansionAllow, MacroExpansionContract, OutDirSourceContract,
+    OwnerContract, ProfileContract, RatchetContract, RepositoryContract, RustSourceContract,
+    ScopeContract, SourceContract, SymbolBoundary, TestExecutionIdentity, TestMirrorContract,
 };
 pub use modes::{
     CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,

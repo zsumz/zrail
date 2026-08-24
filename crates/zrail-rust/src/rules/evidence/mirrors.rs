@@ -1,13 +1,14 @@
 //! Exact mirror reachability and execution-receipt verification.
 
+mod context;
 mod findings;
+mod inputs;
 
 use std::collections::BTreeMap;
 
 use zrail_core::{
     ExecutionReceiptStatus, FindingSink, MAX_EXECUTION_RECEIPT_BYTES, MAX_INPUT_BYTES,
-    TestMirrorContract, parse_execution_receipt, read_bytes_with_limit, read_text_with_limit,
-    test_mirror_input_sha256,
+    TestMirrorContract, parse_execution_receipt, read_text_with_limit,
 };
 
 use crate::{
@@ -30,16 +31,19 @@ pub(super) fn check(
         .map(|file| (file.relative.as_str(), file))
         .collect::<BTreeMap<_, _>>();
     let mut receipt_bytes = 0usize;
+    let mut input_bytes = 0usize;
     for mirror in &context.contract.source.rust.test_mirrors {
         let production = production_file(mirror, &sources, findings);
         let test = test_file(mirror, &sources, findings);
         check_declaration(mirror, test, findings);
+        context::check(mirror, production, test, context, findings);
         check_receipt(
             mirror,
             production,
             test,
             entries,
             &mut receipt_bytes,
+            &mut input_bytes,
             findings,
         );
     }
@@ -131,6 +135,7 @@ fn check_receipt(
     test: Option<&RustFileFacts>,
     entries: &BTreeMap<&str, &RepositoryEntry>,
     receipt_bytes: &mut usize,
+    input_bytes: &mut usize,
     findings: &mut FindingSink,
 ) {
     let Some(receipt_entry) = regular_entry(entries, &mirror.receipt) else {
@@ -162,14 +167,23 @@ fn check_receipt(
             return;
         }
     };
-    let Some(input_sha256) = mirror_digest(mirror, production, test, entries, findings) else {
+    if receipt.execution != mirror.execution {
+        findings.push(receipt_finding(
+            "RECEIPT-007",
+            mirror,
+            "execution receipt command, package, features, target, or toolchain differs from policy",
+        ));
+    }
+    let Some(input_sha256) =
+        inputs::digest(mirror, production, test, entries, input_bytes, findings)
+    else {
         return;
     };
     if receipt.input_sha256 != input_sha256 {
         findings.push(receipt_finding(
             "RECEIPT-003",
             mirror,
-            "execution receipt input digest does not match the exact mirror sources",
+            "execution receipt input digest does not match the exact reviewed execution context",
         ));
     }
     match receipt.tests.iter().find(|test| test.id == mirror.name) {
@@ -187,41 +201,6 @@ fn check_receipt(
         }
         Some(_) => {}
     }
-}
-
-fn mirror_digest(
-    mirror: &TestMirrorContract,
-    production: Option<&RustFileFacts>,
-    test: Option<&RustFileFacts>,
-    entries: &BTreeMap<&str, &RepositoryEntry>,
-    findings: &mut FindingSink,
-) -> Option<String> {
-    production?;
-    test?;
-    let result = (|| {
-        let production = read_input(entries, &mirror.production)?;
-        let test = read_input(entries, &mirror.test)?;
-        Ok::<_, String>(test_mirror_input_sha256(
-            &mirror.production,
-            &production,
-            &mirror.test,
-            &test,
-            &mirror.name,
-        ))
-    })();
-    match result {
-        Ok(digest) => Some(digest),
-        Err(message) => {
-            findings.push(receipt_finding("RECEIPT-006", mirror, &message));
-            None
-        }
-    }
-}
-
-fn read_input(entries: &BTreeMap<&str, &RepositoryEntry>, path: &str) -> Result<Vec<u8>, String> {
-    let entry = regular_entry(entries, path)
-        .ok_or_else(|| format!("mirror input {path:?} is missing or not a regular file"))?;
-    read_bytes_with_limit(&entry.absolute, MAX_INPUT_BYTES)
 }
 
 fn regular_entry<'a>(

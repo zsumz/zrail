@@ -134,17 +134,19 @@ fn matches_source(
         }
         DependencySource::Git {
             repository,
+            branch,
+            tag,
+            rev,
             requirement,
-            ..
         } => {
-            let source = candidate.source.strip_prefix("git+");
-            let same_repository = source.is_some_and(|source| {
-                source == repository
-                    || source
-                        .strip_prefix(repository)
-                        .is_some_and(|suffix| suffix.starts_with('?') || suffix.starts_with('#'))
-            });
-            Ok(same_repository && matches_requirement(&candidate.version, requirement.as_deref())?)
+            let same_source = super::git_source::matches_manifest_reference(
+                &candidate.source,
+                repository,
+                branch.as_deref(),
+                tag.as_deref(),
+                rev.as_deref(),
+            )?;
+            Ok(same_source && matches_requirement(&candidate.version, requirement.as_deref())?)
         }
     }
 }

@@ -5,13 +5,61 @@ export LC_ALL=C
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$repo_root"
 
-: "${CARGO_REGISTRY_TOKEN:?CARGO_REGISTRY_TOKEN is required}"
 : "${ZRAIL_VERSION:?ZRAIL_VERSION is required}"
 
 user_agent="zrail-release/$ZRAIL_VERSION"
 packages=(zrail-core zrail-rust zrail)
 download_tmp=$(mktemp -d "${RUNNER_TEMP:-${TMPDIR:-/tmp}}/zrail-registry.XXXXXX")
 trap 'rm -rf -- "$download_tmp"' EXIT
+
+mode=${1:---publish}
+if (( $# > 1 )) || [[ "$mode" != --preflight && "$mode" != --publish ]]; then
+    echo "usage: scripts/publish-crates [--preflight|--publish]" >&2
+    exit 2
+fi
+
+require_attested_archives() {
+    local package
+    for package in "${packages[@]}"; do
+        test -f "dist/$package-$ZRAIL_VERSION.crate"
+    done
+}
+
+compare_regenerated_archives() {
+    local package generated
+    for package in "${packages[@]}"; do
+        generated="target/package/$package-$ZRAIL_VERSION.crate"
+        if [[ ! -f "$generated" ]]; then
+            echo "publish-mode archive was not regenerated for $package" >&2
+            exit 1
+        fi
+        if ! cmp "dist/$package-$ZRAIL_VERSION.crate" "$generated"; then
+            echo "publish mode generated different bytes for $package" >&2
+            exit 1
+        fi
+    done
+}
+
+preflight_attested_archives() {
+    local package generated
+    for package in "${packages[@]}"; do
+        generated="target/package/$package-$ZRAIL_VERSION.crate"
+        rm -f -- "$generated"
+        cargo publish --package "$package" --locked --no-verify --dry-run
+    done
+    compare_regenerated_archives
+}
+
+require_attested_archives
+if [[ "$mode" == --preflight ]]; then
+    preflight_attested_archives
+    exit 0
+fi
+
+: "${CARGO_REGISTRY_TOKEN:?CARGO_REGISTRY_TOKEN is required}"
+# A separate pre-publication step must have regenerated every archive with the
+# pinned publish toolchain. Refuse all registry traffic if that proof is absent.
+compare_regenerated_archives
 
 metadata_url() {
     printf 'https://crates.io/api/v1/crates/%s/%s' "$1" "$ZRAIL_VERSION"
@@ -43,7 +91,6 @@ download_exact_registry_archive() {
 
 published=()
 for package in "${packages[@]}"; do
-    test -f "dist/$package-$ZRAIL_VERSION.crate"
     status=$(registry_status "$package")
     case "$status" in
         404) published+=(no) ;;
@@ -73,8 +120,8 @@ for index in "${!packages[@]}"; do
         set -e
 
         generated="target/package/$package-$ZRAIL_VERSION.crate"
-        if [[ -f "$generated" ]] \
-            && ! cmp "dist/$package-$ZRAIL_VERSION.crate" "$generated"; then
+        if [[ ! -f "$generated" ]] \
+            || ! cmp "dist/$package-$ZRAIL_VERSION.crate" "$generated"; then
             echo "cargo generated different bytes for $package" >&2
             exit 1
         fi

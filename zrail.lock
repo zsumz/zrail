@@ -6,15 +6,15 @@ contract_sha256 = "5f42de3184d00dfb675154776feca50a1b683bde1629044977c2b9f19c5ed
 ratchet = []
 
 [analysis]
-inventory_sha256 = "f6e43f74e1cda4351a26cc6d71425258c62cbe9781959c36be1860659895d32d"
+inventory_sha256 = "a0efdf4b9d1211d56842f79e969498a8f336b0b43d756974fec189dfef205136"
 exclusions_sha256 = "ef568a36a951491c0b26fe6b44546c6ddde12f6decb83add621e64119697e04d"
 cargo_lock_sha256 = "28b3d98ce35de7768efa4594686f8025177a531e26dd5be9207ab5e69914bc17"
 packages = 4
-targets = 53
-physical_rust_files = 520
-base_source_contexts = 850
+targets = 54
+physical_rust_files = 528
+base_source_contexts = 864
 derived_source_contexts = 0
-source_facts = 141958
+source_facts = 145282
 projection_queries = 0
 projected_facts = 0
 unresolved_bindings = 0

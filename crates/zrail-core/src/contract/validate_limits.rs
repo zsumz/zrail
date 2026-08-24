@@ -82,6 +82,7 @@ fn contract_items(contract: &Contract) -> usize {
         .iter()
         .map(|generated| generated.inputs.len() + generated.auxiliary.len())
         .sum::<usize>();
+    count += test_mirror_items(&contract.source.rust.test_mirrors);
     count += contract
         .profiles
         .values()
@@ -109,6 +110,13 @@ fn contract_items(contract: &Contract) -> usize {
         .sum::<usize>();
     count += evidence_items(&contract.gates, &contract.invariants);
     count
+}
+
+fn test_mirror_items(mirrors: &[super::TestMirrorContract]) -> usize {
+    mirrors
+        .iter()
+        .map(|mirror| mirror.inputs.len() + mirror.execution.features.len())
+        .sum()
 }
 
 fn evidence_items(gates: &[super::GateContract], invariants: &[super::InvariantContract]) -> usize {

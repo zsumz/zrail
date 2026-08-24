@@ -22,13 +22,13 @@ pub(super) fn visit_binary(visitor: &mut FactVisitor<'_>, expression: &ExprBinar
             | BinOp::ShlAssign(_)
             | BinOp::ShrAssign(_)
     ) {
-        visitor.record_field_operation(
+        visitor.with_place_operation(
             super::super::SourceOperationKind::FieldWrite,
             &expression.left,
+            |visitor| {
+                visit::visit_expr_binary(visitor, expression);
+            },
         );
-        visitor.without_place_field_reads(&expression.left, |visitor| {
-            visit::visit_expr_binary(visitor, expression);
-        });
     } else {
         visit::visit_expr_binary(visitor, expression);
     }

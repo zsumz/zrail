@@ -59,6 +59,7 @@ mod ordinary_use_bindings;
 mod parse;
 mod parse_facade;
 mod paths;
+mod place_expression;
 mod reachability;
 mod scoped_globs;
 mod scoped_imports;
@@ -76,5 +77,4 @@ mod visitor_init;
 mod visitor_model;
 mod visitor_operations;
 mod visitor_paths;
-
 pub(crate) use exports::*;

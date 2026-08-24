@@ -1,5 +1,6 @@
 //! Exact offline dependency identities are derived from Cargo.lock without running Cargo.
 
+mod git_source;
 mod mapping;
 mod raw;
 

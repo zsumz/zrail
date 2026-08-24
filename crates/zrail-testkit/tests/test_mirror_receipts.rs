@@ -132,3 +132,61 @@ fn receipt_schema_digest_pass_status_and_exact_bytes_fail_closed() {
     let mismatched = fixture.check();
     assert!(MirrorFixture::has(&mismatched, "RECEIPT-003"));
 }
+
+#[test]
+fn receipt_binds_manifests_lock_shared_inputs_and_execution_identity() {
+    let fixture = MirrorFixture::new("context-inputs");
+    fixture.write_valid_receipt("runner 1.2.3", "state_transitions", "passed");
+    fixture.write_candidate_lock();
+    fs::write(
+        fixture.path("src/lib.rs"),
+        "//! Changed shared module.\npub mod state;\n",
+    )
+    .expect("change shared input");
+    assert!(MirrorFixture::has(&fixture.check(), "RECEIPT-003"));
+
+    fixture.write_valid_receipt("runner 1.2.3", "state_transitions", "passed");
+    fixture.write_candidate_lock();
+    let manifest = fs::read_to_string(fixture.path("Cargo.toml")).expect("read manifest");
+    fs::write(
+        fixture.path("Cargo.toml"),
+        format!("{manifest}\n# reviewed input changed\n"),
+    )
+    .expect("change manifest input");
+    assert!(MirrorFixture::has(&fixture.check(), "RECEIPT-003"));
+
+    let context = MirrorFixture::new("execution-context");
+    context.write_valid_receipt("runner 1.2.3", "state_transitions", "passed");
+    let contract = fs::read_to_string(context.path("zrail.toml")).expect("read contract");
+    fs::write(
+        context.path("zrail.toml"),
+        contract.replace(
+            "target = \"x86_64-unknown-linux-gnu\"",
+            "target = \"aarch64-unknown-linux-gnu\"",
+        ),
+    )
+    .expect("change execution target");
+    context.write_candidate_lock();
+    let checked = context.check();
+    assert!(MirrorFixture::has(&checked, "RECEIPT-003"));
+    assert!(MirrorFixture::has(&checked, "RECEIPT-007"));
+}
+
+#[test]
+fn selected_execution_package_must_own_both_mirror_sources() {
+    let fixture = MirrorFixture::new("execution-package");
+    fixture.write_valid_receipt("runner 1.2.3", "state_transitions", "passed");
+    let contract = fs::read_to_string(fixture.path("zrail.toml")).expect("read contract");
+    fs::write(
+        fixture.path("zrail.toml"),
+        contract.replace(
+            "package = \"mirror-fixture\"",
+            "package = \"other-package\"",
+        ),
+    )
+    .expect("change execution package");
+    fixture.write_candidate_lock();
+    let checked = fixture.check();
+    assert!(MirrorFixture::has(&checked, "MIRROR-007"));
+    assert!(MirrorFixture::has(&checked, "RECEIPT-007"));
+}

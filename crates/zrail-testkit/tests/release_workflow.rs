@@ -74,15 +74,73 @@ fn publishing_waits_for_all_builds_and_clean_linux_runtime_checks() {
 #[test]
 fn crate_publication_is_ordered_exact_and_safe_to_resume() {
     let workflow = release_workflow();
+    let workflow_publish = section(&workflow, "  publish:", "__end_of_workflow__");
     let publish = publish_script();
+    let setup = workflow_publish
+        .find("Set up the same pinned publish Rust")
+        .expect("publish toolchain setup");
+    let preflight = workflow_publish
+        .find("scripts/publish-crates --preflight")
+        .expect("publish-mode archive preflight");
+    let draft = workflow_publish
+        .find("Create or reuse the exact draft release")
+        .expect("draft preparation");
+    let registry_publish = workflow_publish
+        .find("scripts/publish-crates --publish")
+        .expect("registry publication");
+    let byte_proof = publish
+        .find("# A separate pre-publication step")
+        .expect("publish-mode byte proof");
+    let registry_probe = publish.find("published=()").expect("registry probe");
+    let cargo_upload = publish
+        .rfind("cargo publish --package \"$package\" --locked --no-verify")
+        .expect("Cargo registry upload");
 
     assert!(workflow.contains("rust-lang/crates-io-auth-action@"));
-    assert!(workflow.contains("run: scripts/publish-crates"));
+    assert!(setup < preflight && preflight < draft && draft < registry_publish);
+    assert_eq!(
+        workflow_publish
+            .matches("uses: ./.github/actions/setup-rust")
+            .count(),
+        1
+    );
     assert!(publish.contains("packages=(zrail-core zrail-rust zrail)"));
+    assert!(
+        publish.contains("cargo publish --package \"$package\" --locked --no-verify --dry-run")
+    );
+    assert!(publish.contains("pinned publish toolchain"));
+    assert!(publish.contains("compare_regenerated_archives"));
+    assert!(byte_proof < registry_probe && registry_probe < cargo_upload);
     assert!(publish.contains("for attempt in {1..30}"));
     assert!(publish.contains("if [[ \"${published[$index]}\" == yes ]]"));
     assert!(publish.contains("cmp \"dist/$package-$ZRAIL_VERSION.crate\" \"$generated\""));
     assert!(publish.contains("download_exact_registry_archive \"$package\""));
+}
+
+#[test]
+fn partial_publication_reruns_reuse_only_the_exact_draft() {
+    let workflow = release_workflow();
+    let publish_job = section(&workflow, "  publish:", "__end_of_workflow__");
+    let draft = section(
+        publish_job,
+        "- name: Create or reuse the exact draft release",
+        "- name: Authenticate with crates.io trusted publishing",
+    );
+    let publisher = publish_script();
+
+    assert!(draft.contains("case \"$release_status\" in"));
+    assert!(draft.contains("404)"));
+    assert!(draft.contains("200)"));
+    assert!(draft.contains(".draft == true"));
+    assert!(draft.contains(".target_commitish == $sha"));
+    assert!(draft.contains("existing draft contains unexpected asset"));
+    assert!(draft.contains("gh release download"));
+    assert!(draft.contains("cmp \"dist/$expected\" \"$existing_dir/$expected\""));
+    assert!(draft.contains("gh release upload"));
+    assert!(draft.contains("cmp \"$RUNNER_TEMP/expected-assets\""));
+    assert!(publisher.contains("200)"));
+    assert!(publisher.contains("published+=(yes)"));
+    assert!(publisher.contains("if [[ \"${published[$index]}\" == yes ]]"));
 }
 
 #[test]

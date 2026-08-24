@@ -18,7 +18,7 @@ fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
     let repeated = governed_surface_report(&root, "zrail.toml".as_ref()).expect("repeat coverage");
 
     assert_eq!(report, repeated);
-    assert_eq!(report.schema, 2);
+    assert_eq!(report.schema, 3);
     assert_eq!(report.contract_schema, 2);
     assert_eq!(report.contract_sha256.len(), 64);
     assert!(report.analysis.complete);
@@ -136,6 +136,12 @@ fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
         "registry+https://github.com/rust-lang/crates.io-index"
     );
     assert_eq!(report.test_mirrors[0].test_name, "mirrors_build");
+    assert_eq!(report.test_mirrors[0].package, "audit-app");
+    assert_eq!(
+        report.test_mirrors[0].inputs,
+        ["Cargo.lock", "Cargo.toml", "src/owner.rs"]
+    );
+    assert_eq!(report.test_mirrors[0].target, "x86_64-unknown-linux-gnu");
     assert_eq!(report.json().expect("json"), repeated.json().expect("json"));
     assert!(report.json().expect("json").contains("\"enabled_rails\""));
     assert!(report.human().contains("dependency:blocked-path"));

@@ -21,7 +21,7 @@ pub use model::{
     GovernedTestMirror,
 };
 
-const REPORT_SCHEMA: u64 = 2;
+const REPORT_SCHEMA: u64 = 3;
 
 /// Builds a read-only audit report for every governed source and dependency surface.
 ///
@@ -55,6 +55,13 @@ pub fn governed_surface_report(
             test: mirror.test.clone(),
             test_name: mirror.name.clone(),
             receipt: mirror.receipt.clone(),
+            inputs: mirror.inputs.clone(),
+            command: mirror.execution.command.clone(),
+            package: mirror.execution.package.clone(),
+            default_features: mirror.execution.default_features,
+            features: mirror.execution.features.clone(),
+            target: mirror.execution.target.clone(),
+            toolchain: mirror.execution.toolchain.clone(),
             reason: mirror.reason.clone(),
         })
         .collect::<Vec<_>>();

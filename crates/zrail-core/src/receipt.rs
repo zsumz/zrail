@@ -5,10 +5,14 @@ use std::collections::BTreeSet;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
 
+use crate::{TestExecutionIdentity, TestMirrorContract};
+
 /// Execution-receipt schema supported by this crate.
-pub const EXECUTION_RECEIPT_SCHEMA: u64 = 1;
+pub const EXECUTION_RECEIPT_SCHEMA: u64 = 2;
 /// Maximum aggregate execution-receipt bytes accepted during one repository check.
 pub const MAX_EXECUTION_RECEIPT_BYTES: usize = 64 * 1024 * 1024;
+/// Maximum aggregate bytes hashed as reviewed test-mirror inputs during one check.
+pub const MAX_TEST_MIRROR_INPUT_BYTES: usize = 256 * 1024 * 1024;
 
 /// A producer-authored statement that exact tests ran against exact inputs.
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
@@ -20,9 +24,8 @@ pub struct ExecutionReceipt {
     pub producer: String,
     /// Deterministic digest returned by [`test_mirror_input_sha256`].
     pub input_sha256: String,
-    /// Optional toolchain identity reported by the producer.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub toolchain: Option<String>,
+    /// Exact command, package, features, target, and toolchain used by the producer.
+    pub execution: TestExecutionIdentity,
     /// Exact test outcomes recorded by the producer.
     pub tests: Vec<ExecutionReceiptTest>,
 }
@@ -49,7 +52,7 @@ pub enum ExecutionReceiptStatus {
     Skipped,
 }
 
-/// Parses and validates one strict schema-1 JSON execution receipt.
+/// Parses and validates one strict schema-2 JSON execution receipt.
 pub fn parse_execution_receipt(source: &str) -> Result<ExecutionReceipt, String> {
     let receipt = serde_json::from_str::<ExecutionReceipt>(source)
         .map_err(|error| format!("invalid execution receipt JSON: {error}"))?;
@@ -57,7 +60,7 @@ pub fn parse_execution_receipt(source: &str) -> Result<ExecutionReceipt, String>
     Ok(receipt)
 }
 
-/// Validates receipt schema, producer version, digest, toolchain, and test identities.
+/// Validates receipt schema, producer version, digest, execution, and test identities.
 pub fn validate_execution_receipt(receipt: &ExecutionReceipt) -> Result<(), String> {
     if receipt.schema != EXECUTION_RECEIPT_SCHEMA {
         return Err(format!(
@@ -75,13 +78,7 @@ pub fn validate_execution_receipt(receipt: &ExecutionReceipt) -> Result<(), Stri
             "execution receipt input_sha256 must be 64 lowercase hexadecimal characters".into(),
         );
     }
-    if receipt
-        .toolchain
-        .as_ref()
-        .is_some_and(|toolchain| toolchain.trim().is_empty())
-    {
-        return Err("execution receipt toolchain may not be empty".into());
-    }
+    validate_execution_identity(&receipt.execution)?;
     if receipt.tests.is_empty() {
         return Err("execution receipt must report at least one test".into());
     }
@@ -111,27 +108,87 @@ pub fn versioned_producer(producer: &str) -> bool {
     !name.trim().is_empty() && valid_version(version)
 }
 
-/// Digests an exact mirror identity and both source byte streams with unambiguous framing.
+/// Digests exact mirror sources, reviewed inputs, and execution identity.
 pub fn test_mirror_input_sha256(
-    production_path: &str,
+    mirror: &TestMirrorContract,
     production: &[u8],
-    test_path: &str,
     test: &[u8],
-    test_name: &str,
+    reviewed_inputs: &[(&str, &[u8])],
 ) -> String {
     let mut hasher = Sha256::new();
-    hasher.update(b"zrail-test-mirror-input-v1\0");
+    hasher.update(b"zrail-test-mirror-input-v2\0");
     for field in [
-        production_path.as_bytes(),
+        mirror.production.as_bytes(),
         production,
-        test_path.as_bytes(),
+        mirror.test.as_bytes(),
         test,
-        test_name.as_bytes(),
+        mirror.name.as_bytes(),
     ] {
-        hasher.update((field.len() as u64).to_be_bytes());
-        hasher.update(field);
+        hash_field(&mut hasher, field);
     }
+    let mut inputs = reviewed_inputs.to_vec();
+    inputs.sort_by_key(|(path, _)| *path);
+    hash_field(&mut hasher, &(inputs.len() as u64).to_be_bytes());
+    for (path, bytes) in inputs {
+        hash_field(&mut hasher, path.as_bytes());
+        hash_field(&mut hasher, bytes);
+    }
+    let execution = &mirror.execution;
+    hash_field(&mut hasher, execution.command.as_bytes());
+    hash_field(&mut hasher, execution.package.as_bytes());
+    hash_field(&mut hasher, &[u8::from(execution.default_features)]);
+    hash_field(
+        &mut hasher,
+        &(execution.features.len() as u64).to_be_bytes(),
+    );
+    for feature in &execution.features {
+        hash_field(&mut hasher, feature.as_bytes());
+    }
+    hash_field(&mut hasher, execution.target.as_bytes());
+    hash_field(&mut hasher, execution.toolchain.as_bytes());
     format!("{:x}", hasher.finalize())
+}
+
+fn validate_execution_identity(identity: &TestExecutionIdentity) -> Result<(), String> {
+    for (label, value) in [
+        ("command", identity.command.as_str()),
+        ("target", identity.target.as_str()),
+        ("toolchain", identity.toolchain.as_str()),
+    ] {
+        if value.is_empty()
+            || value.trim() != value
+            || value
+                .bytes()
+                .any(|byte| matches!(byte, b'\0' | b'\r' | b'\n'))
+        {
+            return Err(format!(
+                "execution receipt {label} must be a non-empty normalized line"
+            ));
+        }
+    }
+    if identity.package.is_empty()
+        || !identity
+            .package
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_'))
+    {
+        return Err("execution receipt package identity is invalid".into());
+    }
+    let valid_features = identity.features.iter().all(|feature| {
+        !feature.is_empty()
+            && feature
+                .bytes()
+                .all(|byte| byte.is_ascii_graphic() && !matches!(byte, b',' | b'[' | b']'))
+    });
+    if !valid_features || !identity.features.windows(2).all(|pair| pair[0] < pair[1]) {
+        return Err("execution receipt features must be valid, unique, and sorted".into());
+    }
+    Ok(())
+}
+
+fn hash_field(hasher: &mut Sha256, field: &[u8]) {
+    hasher.update((field.len() as u64).to_be_bytes());
+    hasher.update(field);
 }
 
 fn valid_version(version: &str) -> bool {

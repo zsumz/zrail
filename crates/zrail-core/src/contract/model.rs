@@ -16,7 +16,8 @@ pub use dependencies::{
     DependencyReachability,
 };
 pub use evidence::{
-    GateContract, GateKind, InvariantContract, InvariantStatus, TestMirrorContract,
+    GateContract, GateKind, InvariantContract, InvariantStatus, MAX_TEST_MIRROR_INPUTS,
+    TestExecutionIdentity, TestMirrorContract,
 };
 pub use macros::{MacroExpansionAllow, MacroExpansionContract};
 pub use repository::RepositoryContract;

@@ -23,12 +23,13 @@ pub use contract::{
     FileRoleContract, FileSizeContract, GateContract, GateKind, GeneratedSourceContract,
     HygieneContract, InvariantContract, InvariantStatus, ItemMacroBinding, ItemMacroBindingKind,
     ItemMacroContract, ItemMacroManifest, LayerContract, LayerDependencies, LintSuppressionMode,
-    MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES, MacroBindingMode,
-    MacroExpansionAllow, MacroExpansionBindings, MacroExpansionContract, MacroExpansionMode,
-    MacroInputMode, ModuleDocsMode, OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode,
-    PolicyReachability, ProfileContract, RatchetContract, RepositoryContract, RustSourceContract,
-    ScopeContract, SourceContract, SymbolBoundary, SymlinkMode, TestMirrorContract, TestMode,
-    contract_imports, load_contract, load_contract_with_entry, parse_evidence_reference,
+    MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES, MAX_TEST_MIRROR_INPUTS,
+    MacroBindingMode, MacroExpansionAllow, MacroExpansionBindings, MacroExpansionContract,
+    MacroExpansionMode, MacroInputMode, ModuleDocsMode, OutDirSourceContract, OwnerContract,
+    OwnerKind, PolicyMode, PolicyReachability, ProfileContract, RatchetContract,
+    RepositoryContract, RustSourceContract, ScopeContract, SourceContract, SymbolBoundary,
+    SymlinkMode, TestExecutionIdentity, TestMirrorContract, TestMode, contract_imports,
+    load_contract, load_contract_with_entry, parse_evidence_reference,
 };
 pub use contract_edit::{ContractEditError, format_contract_source, migrate_contract_source};
 pub use diagnostic::{
@@ -59,7 +60,7 @@ pub use path::{glob_matches, normalize_relative, repository_file, repository_rel
 pub use ratchet::normalize_ratchet_selector;
 pub use receipt::{
     EXECUTION_RECEIPT_SCHEMA, ExecutionReceipt, ExecutionReceiptStatus, ExecutionReceiptTest,
-    MAX_EXECUTION_RECEIPT_BYTES, parse_execution_receipt, test_mirror_input_sha256,
-    validate_execution_receipt, versioned_producer,
+    MAX_EXECUTION_RECEIPT_BYTES, MAX_TEST_MIRROR_INPUT_BYTES, parse_execution_receipt,
+    test_mirror_input_sha256, validate_execution_receipt, versioned_producer,
 };
 pub use report::{Report, ReportAnalysis, ReportGroup, ReportStatus, ReportSummary};

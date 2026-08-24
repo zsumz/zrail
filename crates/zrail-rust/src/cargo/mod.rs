@@ -14,6 +14,10 @@ mod targets;
 mod workspace;
 mod workspace_plan;
 
+#[cfg(test)]
+#[path = "resolved_git_test.rs"]
+mod resolved_git_test;
+
 pub(crate) use crate_roots::{apply_attestations, attestation_matches, source_matches};
 pub(crate) use model::{
     CargoAuthorityKind, CargoTargetKind, CargoWorkspace, CrateRootAuthority, Dependency,

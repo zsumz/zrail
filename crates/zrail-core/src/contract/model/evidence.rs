@@ -2,6 +2,9 @@
 
 use serde::{Deserialize, Serialize};
 
+/// Maximum additional reviewed files accepted for one exact test mirror.
+pub const MAX_TEST_MIRROR_INPUTS: usize = 1_024;
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
 /// Execution context in which a qualification gate is authoritative.
@@ -44,10 +47,33 @@ pub struct TestMirrorContract {
     pub test: String,
     /// Exact Rust test-function identifier declared in `test`.
     pub name: String,
-    /// Repository-relative schema-1 JSON execution receipt.
+    /// Repository-relative schema-2 JSON execution receipt.
     pub receipt: String,
+    /// Additional repository-relative files whose exact bytes formed the test context.
+    pub inputs: Vec<String>,
+    /// Exact execution identity asserted by the receipt producer.
+    #[serde(flatten)]
+    pub execution: TestExecutionIdentity,
     /// Human explanation of why this test mirrors the production source.
     pub reason: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+/// Exact Cargo test invocation context bound into an execution receipt.
+pub struct TestExecutionIdentity {
+    /// Exact command reported as executed by the receipt producer.
+    pub command: String,
+    /// Exact Cargo package selected for the test invocation.
+    pub package: String,
+    /// Whether Cargo default features were enabled.
+    pub default_features: bool,
+    /// Exact enabled feature set in canonical order.
+    pub features: Vec<String>,
+    /// Exact compilation target triple.
+    pub target: String,
+    /// Normalized Rust toolchain identity.
+    pub toolchain: String,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]
