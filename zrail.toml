@@ -40,6 +40,23 @@ inputs = [".github/actions/setup-rust/action.yml"]
 requires = ["check"]
 reason = "Online RustSec advisory checks complement the complete offline qualification gate."
 
+[[gate]]
+name = "release"
+kind = "release"
+path = ".github/workflows/release.yml"
+inputs = [
+  ".github/actions/setup-rust/action.yml",
+  "CHANGELOG.md",
+  "LICENSE",
+  "README.md",
+  "scripts/package-release.py",
+  "scripts/publish-crates",
+  "scripts/release-notes.py",
+  "scripts/release-state.py",
+]
+requires = ["check"]
+reason = "Protected tags publish byte-exact, attested binaries and registry archives."
+
 [[invariant]]
 id = "QUAL-01"
 title = "Reviewed qualification gate changes cannot pass silently"
@@ -74,6 +91,17 @@ evidence = [
   "rust-test:crates/zrail-cli/src/app/commands/review_test.rs::unsupported_proposed_schema_fails_for_lock_optional_contract",
   "rust-test:crates/zrail-testkit/tests/dependency_identity.rs::aliases_sources_targets_and_workspace_inheritance_are_locked",
   "gate:architecture-review",
+]
+
+[[invariant]]
+id = "RELEASE-01"
+title = "Published artifacts are exact, attested, and resumable"
+status = "enforced"
+document = "README.md#install"
+evidence = [
+  "rust-test:crates/zrail-testkit/tests/release_workflow.rs::crate_publication_is_ordered_exact_and_safe_to_resume",
+  "rust-test:crates/zrail-testkit/tests/release_api_rehearsal.rs::mocked_github_release_state_machine_is_fail_closed_and_resumable",
+  "gate:release",
 ]
 
 [[invariant]]

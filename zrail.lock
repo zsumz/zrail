@@ -2,7 +2,7 @@
 schema = 2
 semantics = 3
 producer = "0.0.3"
-contract_sha256 = "5f42de3184d00dfb675154776feca50a1b683bde1629044977c2b9f19c5ed382"
+contract_sha256 = "035952673f28fba65fe762ee910ed7feb28ac4a238e4b0e38fb0373796d278b4"
 ratchet = []
 
 [analysis]
@@ -22,7 +22,7 @@ analyzer_semantics = 3
 
 [[analysis.contract_source]]
 path = "zrail.toml"
-sha256 = "395d786c427892f62f91609f750eccce7845d2dc5d3fbb281b9fe3f1732c9785"
+sha256 = "e0a85f5dbde25c1525e4659bfb39ad115acace2933a2a7be142009586aa4e787"
 
 [[package]]
 name = "zrail"
@@ -309,6 +309,43 @@ sha256 = "6fc107adb9715513a64f423c98b5dee44819c6166e546f8220ff63d079444573"
 [[gate.input]]
 path = ".github/actions/setup-rust/action.yml"
 sha256 = "e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de"
+
+[[gate]]
+name = "release"
+path = ".github/workflows/release.yml"
+sha256 = "223af228d8729bd180e1798d151be4750df6e48e961d640aa66ac70d2ba676f6"
+
+[[gate.input]]
+path = ".github/actions/setup-rust/action.yml"
+sha256 = "e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de"
+
+[[gate.input]]
+path = "CHANGELOG.md"
+sha256 = "671b460c57de7ecd10a1749a8c1982b6f421ff42fb3aa0004865874e195d174a"
+
+[[gate.input]]
+path = "LICENSE"
+sha256 = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+
+[[gate.input]]
+path = "README.md"
+sha256 = "dd7c76d6f7a98244eebc6291c5ca897184244b8cc36dbd2993f29d00abbacf2a"
+
+[[gate.input]]
+path = "scripts/package-release.py"
+sha256 = "7bca6de5113c257fd2dd0bd105be55c3ec0609d4366c396afd1932181f0465f1"
+
+[[gate.input]]
+path = "scripts/publish-crates"
+sha256 = "e7d7d18b9848aa6ff49fac833ba6f2b3afa98b170bee47e028b7769e58381460"
+
+[[gate.input]]
+path = "scripts/release-notes.py"
+sha256 = "374e6805dbf7091676f6768f9b589bc384c49c637f9dced44ca7e50838e569da"
+
+[[gate.input]]
+path = "scripts/release-state.py"
+sha256 = "381bfb783edf16056c5bb922a144e0c288883c00aa20ab6e362db83f12b7c1f0"
 
 [[gate]]
 name = "security"
