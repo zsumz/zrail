@@ -14,11 +14,93 @@ fn aliases_resolve_to_the_exact_called_path() {
     .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[]);
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Exact
     }));
+}
+
+#[test]
+fn inherent_qualified_self_calls_retain_the_self_type() {
+    let file = syn::parse_file("fn run() { <std::process::Command>::new(\"git\"); }")
+        .expect("parse source");
+    let imports = ImportMap::from_file(&file);
+
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+
+    assert!(observed.iter().any(|fact| {
+        fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Exact
+    }));
+}
+
+#[test]
+fn qualified_self_calls_resolve_imported_type_aliases() {
+    let file =
+        syn::parse_file("use std::process::Command as Spawn; fn run() { <Spawn>::new(\"git\"); }")
+            .expect("parse source");
+    let imports = ImportMap::from_file(&file);
+
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+
+    assert!(observed.iter().any(|fact| {
+        fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Exact
+    }));
+}
+
+#[test]
+fn generic_associated_self_paths_are_unresolved() {
+    let file = syn::parse_file(
+        "trait Factory { type Output; } fn run<process: Factory>() { <process::Output>::new(\"git\"); }",
+    )
+    .expect("parse source");
+    let imports = ImportMap::from_file(&file);
+    let generic_types = vec!["process".to_owned()];
+
+    let observed = facts(
+        call(&file),
+        &imports,
+        SyntaxGuard::Ordinary,
+        &generic_types,
+        &[],
+    );
+
+    assert!(observed.iter().any(|fact| {
+        fact.name == "process::Output::new" && fact.quality == AnalysisQuality::Unresolved
+    }));
+}
+
+#[test]
+fn trait_qualified_calls_retain_the_named_trait_path() {
+    let file = syn::parse_file(
+        "trait Launch { fn launch(); } struct Type; fn run() { <Type as Launch>::launch(); }",
+    )
+    .expect("parse source");
+    let imports = ImportMap::from_file(&file);
+
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+
+    assert!(
+        observed.iter().any(|fact| {
+            fact.name == "Launch::launch" && fact.quality == AnalysisQuality::Exact
+        })
+    );
+}
+
+#[test]
+fn non_path_qualified_self_calls_are_never_exact() {
+    let file = syn::parse_file("fn run() { <(std::process::Command)>::new(\"git\"); }")
+        .expect("parse source");
+    let imports = ImportMap::from_file(&file);
+
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+
+    assert!(
+        observed
+            .iter()
+            .any(|fact| { fact.name == "::new" && fact.quality == AnalysisQuality::Unresolved }),
+        "{observed:#?}"
+    );
 }
 
 #[test]
@@ -27,7 +109,7 @@ fn glob_imports_add_a_conservative_called_path() {
         .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[]);
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
@@ -42,7 +124,7 @@ fn function_local_imports_add_a_conservative_called_path() {
     .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[]);
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
@@ -57,7 +139,7 @@ fn type_aliases_add_a_conservative_called_path() {
     .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[]);
+    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative

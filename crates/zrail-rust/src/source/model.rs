@@ -174,6 +174,7 @@ pub(crate) struct IncludeBoundary {
     pub(crate) guard: SyntaxGuard,
     pub(crate) context: IncludeContext,
     pub(crate) lexical_scope: Vec<SourceSpan>,
+    pub(crate) generic_types: Vec<String>,
     pub(crate) occurrence: IncludeOccurrenceId,
     pub(crate) span: Option<SourceSpan>,
 }

@@ -70,6 +70,7 @@ mod syntax_guard;
 mod visitor;
 mod visitor_attributes;
 mod visitor_boundaries;
+mod visitor_calls;
 mod visitor_context;
 mod visitor_imports;
 mod visitor_init;

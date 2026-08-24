@@ -44,7 +44,7 @@ pub(super) fn aggregate(
     let mut common = None;
     for instance in instances {
         let mut seen = BTreeSet::new();
-        let resolved = bindings.resolve_written(
+        let mut resolved = bindings.resolve_written(
             *instance,
             fact.written.as_deref().unwrap_or(&fact.name),
             &fact.lexical_scope,
@@ -53,10 +53,14 @@ pub(super) fn aggregate(
             budget,
             usage,
         )?;
-        let test_instance = bindings
-            .instances
-            .get(*instance)
-            .is_some_and(|source| source.domain.mode.enables_cfg_test());
+        let source = bindings.instances.get(*instance);
+        if source.is_some_and(|source| generic_root(fact, &source.generic_types)) {
+            for candidate in &mut resolved {
+                candidate.quality = AnalysisQuality::Unresolved;
+                candidate.requires_projection = true;
+            }
+        }
+        let test_instance = source.is_some_and(|source| source.domain.mode.enables_cfg_test());
         if test_instance {
             test_coverage.instances += 1;
             test_coverage.compatible &= resolved.len() == 1;
@@ -90,6 +94,14 @@ pub(super) fn aggregate(
         }
     }
     Ok((aggregate, compatible, test_coverage))
+}
+
+fn generic_root(fact: &ObservedFact, generic_types: &[String]) -> bool {
+    let Some(written) = fact.written.as_deref() else {
+        return false;
+    };
+    let root = written.trim_start_matches("::").split("::").next();
+    root.is_some_and(|root| generic_types.iter().any(|generic| generic == root))
 }
 
 #[derive(Clone, Copy)]

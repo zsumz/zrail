@@ -7,12 +7,10 @@ use syn::{
     spanned::Spanned,
     visit::{self, Visit},
 };
-use zrail_core::AnalysisQuality;
 
 use super::{
     SyntaxGuard,
-    attributes::{cfg_guard, is_test_attribute},
-    fact::fact,
+    attributes::cfg_guard,
     visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
 };
 
@@ -32,7 +30,9 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_item(&mut self, item: &'ast syn::Item) {
-        self.with_cfg(item_attrs(item), |visitor| visit::visit_item(visitor, item));
+        self.with_cfg(item_attrs(item), |visitor| {
+            visitor.with_fresh_generics(|visitor| visit::visit_item(visitor, item));
+        });
     }
 
     fn visit_impl_item(&mut self, item: &'ast syn::ImplItem) {
@@ -102,21 +102,12 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_expr_call(&mut self, call: &'ast ExprCall) {
-        self.calls.extend(super::calls::facts(
-            call,
-            self.imports,
-            self.syntax_guard(),
-            &self.lexical_scope,
-        ));
+        self.record_call(call);
         visit::visit_expr_call(self, call);
     }
 
     fn visit_expr_method_call(&mut self, call: &'ast ExprMethodCall) {
-        self.methods.push(fact(
-            call.method.to_string(),
-            call.method.span(),
-            AnalysisQuality::Conservative,
-        ));
+        self.record_method_call(call);
         visit::visit_expr_method_call(self, call);
     }
 
@@ -162,14 +153,10 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_item_fn(&mut self, function: &'ast ItemFn) {
-        if function.attrs.iter().any(is_test_attribute) {
-            self.tests.push(fact(
-                function.sig.ident.to_string(),
-                function.sig.ident.span(),
-                AnalysisQuality::Exact,
-            ));
-        }
-        visit::visit_item_fn(self, function);
+        self.record_test_function(function);
+        self.with_generics(&function.sig.generics, false, |visitor| {
+            visit::visit_item_fn(visitor, function);
+        });
     }
 
     fn visit_signature(&mut self, signature: &'ast Signature) {
@@ -179,12 +166,28 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
 
     fn visit_item_impl(&mut self, implementation: &'ast ItemImpl) {
         self.record_unsafe_impl(implementation);
-        visit::visit_item_impl(self, implementation);
+        self.with_generics(&implementation.generics, true, |visitor| {
+            visit::visit_item_impl(visitor, implementation);
+        });
     }
 
     fn visit_item_trait(&mut self, item: &'ast ItemTrait) {
         self.record_unsafe_trait(item);
-        visit::visit_item_trait(self, item);
+        self.with_generics(&item.generics, true, |visitor| {
+            visit::visit_item_trait(visitor, item);
+        });
+    }
+
+    fn visit_impl_item_fn(&mut self, function: &'ast syn::ImplItemFn) {
+        self.with_generics(&function.sig.generics, false, |visitor| {
+            visit::visit_impl_item_fn(visitor, function);
+        });
+    }
+
+    fn visit_trait_item_fn(&mut self, function: &'ast syn::TraitItemFn) {
+        self.with_generics(&function.sig.generics, false, |visitor| {
+            visit::visit_trait_item_fn(visitor, function);
+        });
     }
 
     fn visit_item_foreign_mod(&mut self, item: &'ast ItemForeignMod) {

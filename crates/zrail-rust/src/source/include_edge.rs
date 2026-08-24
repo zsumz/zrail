@@ -27,6 +27,7 @@ pub(crate) struct CompilationIncludeEdge {
     pub(crate) guard: SyntaxGuard,
     pub(crate) context: IncludeContext,
     pub(crate) parent_scope: Vec<SourceSpan>,
+    pub(crate) generic_types: Vec<String>,
     pub(crate) include_span: SourceSpan,
     pub(crate) occurrence: IncludeOccurrenceId,
 }

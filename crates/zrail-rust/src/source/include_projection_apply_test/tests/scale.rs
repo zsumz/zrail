@@ -48,6 +48,7 @@ fn scaled_bindings(index: &SourceIndex) -> IncludeBindings {
         guard: SyntaxGuard::Ordinary,
         context: IncludeContext::Items,
         parent_scope: Vec::new(),
+        generic_types: Vec::new(),
         include_span: span(),
         occurrence: IncludeOccurrenceId::new(span()),
     }];

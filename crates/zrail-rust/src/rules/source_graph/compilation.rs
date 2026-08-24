@@ -97,6 +97,7 @@ impl Walker<'_> {
                 guard: context.guard,
                 context: include.context,
                 parent_scope: include.lexical_scope.clone(),
+                generic_types: include.generic_types.clone(),
                 include_span: include.occurrence.span(),
                 occurrence: include.occurrence,
             });

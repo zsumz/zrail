@@ -1,6 +1,8 @@
 //! Direct function and associated-function calls with conservative glob candidates.
 
-use syn::{Expr, ExprCall, spanned::Spanned as _};
+use std::borrow::Cow;
+
+use syn::{Expr, ExprCall, ExprPath, Path, Type, spanned::Spanned as _};
 use zrail_core::AnalysisQuality;
 
 use super::{
@@ -15,37 +17,83 @@ pub(super) fn facts(
     call: &ExprCall,
     imports: &ImportMap,
     guard: SyntaxGuard,
+    generic_types: &[String],
     lexical_scope: &[zrail_core::SourceSpan],
 ) -> Vec<ObservedFact> {
     let Expr::Path(callee) = call.func.as_ref() else {
         return Vec::new();
     };
-    let (resolved, quality) = imports.resolve(&callee.path, guard);
+    let Some((path, minimum_quality)) = effective_path(callee, generic_types) else {
+        let written = path_text(&callee.path);
+        return vec![written_fact(
+            written.clone(),
+            written,
+            callee.span(),
+            AnalysisQuality::Unresolved,
+            lexical_scope,
+        )];
+    };
+    let (resolved, quality) = imports.resolve(&path, guard);
     if resolved.is_empty() {
         return Vec::new();
     }
-    let span = callee.path.span();
-    let mut written = callee
-        .path
+    let written = path_text(&path);
+    let mut observed = vec![written_fact(
+        resolved.clone(),
+        written,
+        callee.span(),
+        quality.max(minimum_quality),
+        lexical_scope,
+    )];
+    observed.extend(candidates(&path, imports, &resolved, guard));
+    observed
+}
+
+fn effective_path<'a>(
+    callee: &'a ExprPath,
+    generic_types: &[String],
+) -> Option<(Cow<'a, Path>, AnalysisQuality)> {
+    let Some(qself) = &callee.qself else {
+        return Some((Cow::Borrowed(&callee.path), AnalysisQuality::Exact));
+    };
+    if qself.position > 0 {
+        return Some((Cow::Borrowed(&callee.path), AnalysisQuality::Exact));
+    }
+    let Type::Path(self_type) = qself.ty.as_ref() else {
+        return None;
+    };
+    if self_type.qself.is_some() {
+        return None;
+    }
+    let mut path = self_type.path.clone();
+    let generic = path.segments.first().is_some_and(|segment| {
+        segment.ident == "Self"
+            || generic_types
+                .iter()
+                .any(|generic| segment.ident == generic.as_str())
+    });
+    path.segments.extend(callee.path.segments.iter().cloned());
+    Some((
+        Cow::Owned(path),
+        if generic {
+            AnalysisQuality::Unresolved
+        } else {
+            AnalysisQuality::Exact
+        },
+    ))
+}
+
+fn path_text(path: &Path) -> String {
+    let mut written = path
         .segments
         .iter()
         .map(|segment| segment.ident.to_string())
         .collect::<Vec<_>>()
         .join("::");
-    if callee.path.leading_colon.is_some() {
+    if path.leading_colon.is_some() {
         written.insert_str(0, "::");
     }
-    let mut observed = vec![written_fact(
-        resolved.clone(),
-        written,
-        span,
-        quality,
-        lexical_scope,
-    )];
-    if callee.qself.is_none() {
-        observed.extend(candidates(&callee.path, imports, &resolved, guard));
-    }
-    observed
+    written
 }
 
 pub(super) fn candidates(

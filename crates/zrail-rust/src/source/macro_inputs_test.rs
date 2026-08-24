@@ -25,6 +25,21 @@ fn standard_expression_inputs_use_the_normal_source_visitor() {
 }
 
 #[test]
+fn standard_macro_inputs_retain_generic_qualified_self_uncertainty() {
+    let imports = ImportMap::default();
+    let mut visitor = FactVisitor::new(&imports);
+    visitor.generic_types.push("process".into());
+    let expression = syn::parse_str::<syn::ExprMacro>(r#"vec![<process::Output>::new("sh")]"#)
+        .expect("parse generic qualified-self macro input");
+
+    assert!(!inspect(&mut visitor, &expression.mac, "vec"));
+    assert!(visitor.calls.iter().any(|call| {
+        call.name == "process::Output::new"
+            && call.quality == zrail_core::AnalysisQuality::Unresolved
+    }));
+}
+
+#[test]
 fn compiler_expression_inputs_retain_nested_compile_effects() {
     let imports = ImportMap::default();
     let mut visitor = FactVisitor::new(&imports);

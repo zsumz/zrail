@@ -2,7 +2,9 @@
 
 use std::collections::{BTreeMap, VecDeque};
 
-use super::{CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, SyntaxGuard};
+use super::{
+    CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, IncludeContext, SyntaxGuard,
+};
 
 const MAX_SOURCE_INSTANCES: usize = 4096;
 const MAX_SOURCE_INSTANCE_DEPTH: usize = 128;
@@ -28,6 +30,7 @@ pub(crate) struct SourceInstance {
     pub(crate) file: String,
     pub(crate) domain: CompilationDomain,
     pub(crate) guard: SyntaxGuard,
+    pub(crate) generic_types: Vec<String>,
     pub(crate) parent: Option<SourceInstanceId>,
     pub(crate) entered_from: SourceEntry,
     depth: usize,
@@ -64,6 +67,7 @@ impl SourceInstances {
                 None,
                 SourceEntry::CargoRoot,
                 SyntaxGuard::Ordinary,
+                Vec::new(),
                 0,
             ) {
                 queue.push_back(id);
@@ -145,12 +149,23 @@ impl SourceInstances {
             SourceEntry::Include(edge) => edge.guard,
             SourceEntry::CargoRoot => return None,
         };
+        let generic_types = match &entry {
+            SourceEntry::Include(edge) if edge.context == IncludeContext::Expression => {
+                let mut generic_types = parent_instance.generic_types.clone();
+                generic_types.extend(edge.generic_types.iter().cloned());
+                generic_types.sort();
+                generic_types.dedup();
+                generic_types
+            }
+            _ => Vec::new(),
+        };
         self.push(
             file,
             parent_instance.domain.clone(),
             Some(parent),
             entry,
             guard,
+            generic_types,
             depth,
         )
     }
@@ -162,6 +177,7 @@ impl SourceInstances {
         parent: Option<SourceInstanceId>,
         entered_from: SourceEntry,
         guard: SyntaxGuard,
+        generic_types: Vec<String>,
         depth: usize,
     ) -> Option<SourceInstanceId> {
         if self.instances.len() >= MAX_SOURCE_INSTANCES {
@@ -174,6 +190,7 @@ impl SourceInstances {
             file,
             domain,
             guard,
+            generic_types,
             parent,
             entered_from,
             depth,

@@ -14,6 +14,8 @@ mod macro_opacity;
 mod opaque_members;
 #[path = "namespace_deep_audit/proc_macro_opacity.rs"]
 mod proc_macro_opacity;
+#[path = "namespace_deep_audit/qualified_self_calls.rs"]
+mod qualified_self_calls;
 #[path = "namespace_deep_audit/qualifier_blocks.rs"]
 mod qualifier_blocks;
 #[path = "namespace_deep_audit/type_value_qualifiers.rs"]

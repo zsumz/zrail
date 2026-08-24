@@ -26,6 +26,7 @@ pub(super) fn include_boundary(
         guard: super::SyntaxGuard::Ordinary,
         context,
         lexical_scope: Vec::new(),
+        generic_types: Vec::new(),
         occurrence: IncludeOccurrenceId::new(span),
         span: Some(span),
     })

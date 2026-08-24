@@ -40,6 +40,7 @@ impl<'a> FactVisitor<'a> {
             local_imports: Vec::new(),
             guard_context: super::SyntaxGuard::Ordinary,
             lexical_scope: Vec::new(),
+            generic_types: Vec::new(),
             next_path_namespace: super::FactNamespace::Unknown,
             paths,
             calls: Vec::new(),

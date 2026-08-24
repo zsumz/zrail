@@ -118,6 +118,7 @@ impl FactVisitor<'_> {
         if let Some(mut boundary) = include_boundary(invocation, IncludeContext::Expression) {
             boundary.guard = self.syntax_guard();
             boundary.lexical_scope.clone_from(&self.lexical_scope);
+            boundary.generic_types.clone_from(&self.generic_types);
             self.includes.push(boundary);
         }
     }

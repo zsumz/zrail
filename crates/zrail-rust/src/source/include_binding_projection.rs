@@ -161,7 +161,11 @@ fn retain_candidates(
             } else {
                 AnalysisQuality::Conservative
             })
-        };
+        }
+        .max(fact.quality);
+        if fact.quality == AnalysisQuality::Unresolved {
+            *state.uncertain = (*state.uncertain).or(fact.span);
+        }
         let guard = if candidate.production {
             fact.guard
         } else {
