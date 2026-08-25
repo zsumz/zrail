@@ -21,7 +21,10 @@ RELEASE_ID = 41
 
 
 class State:
-    def __init__(self):
+    def __init__(self, version):
+        self.version = version
+        self.tag = f"v{version}"
+        self.prerelease = "-" in version
         self.base_url = ""
         self.release = None
         self.assets = {}
@@ -112,7 +115,7 @@ class Handler(BaseHTTPRequestHandler):
         assert payload["variables"] == {
             "owner": "acme",
             "name": "zrail",
-            "tag": "v1.2.3",
+            "tag": self.state.tag,
         }
         release = None if self.state.release is None else {"databaseId": RELEASE_ID}
         self.state.graphql_results.append(None if release is None else RELEASE_ID)
@@ -122,11 +125,11 @@ class Handler(BaseHTTPRequestHandler):
         payload = json.loads(self.read_body())
         assert self.state.release is None
         assert payload == {
-            "tag_name": "v1.2.3",
-            "name": "zrail 1.2.3",
+            "tag_name": self.state.tag,
+            "name": f"zrail {self.state.version}",
             "body": "Reviewed notes.\n",
             "draft": True,
-            "prerelease": False,
+            "prerelease": self.state.prerelease,
         }
         self.state.created += 1
         self.state.release = {
@@ -135,7 +138,7 @@ class Handler(BaseHTTPRequestHandler):
             "name": payload["name"],
             "body": payload["body"],
             "draft": True,
-            "prerelease": False,
+            "prerelease": self.state.prerelease,
             "target_commitish": "intentionally-not-authoritative",
         }
         self.send_json(201, self.state.release_json())
@@ -177,11 +180,11 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = urlparse(self.path).path
-        if path == "/api/repos/acme/zrail/git/ref/tags/v1.2.3":
+        if path == f"/api/repos/acme/zrail/git/ref/tags/{self.state.tag}":
             self.send_json(
                 200,
                 {
-                    "ref": "refs/tags/v1.2.3",
+                    "ref": f"refs/tags/{self.state.tag}",
                     "object": {"type": "tag", "sha": self.state.tag_object},
                 },
             )
@@ -260,7 +263,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 class Fixture:
-    def __init__(self, helper):
+    def __init__(self, helper, version="1.2.3-rc.1"):
         self.helper = helper
         self.temporary = tempfile.TemporaryDirectory(prefix="zrail-release-rehearsal-")
         self.root = Path(self.temporary.name)
@@ -273,7 +276,7 @@ class Fixture:
         self.notes = self.root / "notes.md"
         self.notes.write_text("Reviewed notes.\n", encoding="utf-8")
         self.release_id = self.root / "release-id"
-        self.state = State()
+        self.state = State(version)
         self.server = HTTPServer(("127.0.0.1", 0), Handler)
         self.server.state = self.state
         self.state.base_url = f"http://127.0.0.1:{self.server.server_port}"
@@ -286,7 +289,7 @@ class Fixture:
         self.server.server_close()
         self.temporary.cleanup()
 
-    def run(self, mode):
+    def run(self, mode, version=None):
         environment = os.environ.copy()
         environment.update(
             {
@@ -294,7 +297,7 @@ class Fixture:
                 "GITHUB_API_URL": f"{self.state.base_url}/api",
                 "GITHUB_GRAPHQL_URL": f"{self.state.base_url}/graphql",
                 "GITHUB_REPOSITORY": "acme/zrail",
-                "GITHUB_REF_NAME": "v1.2.3",
+                "GITHUB_REF_NAME": self.state.tag,
                 "GITHUB_SHA": COMMIT,
             }
         )
@@ -312,8 +315,10 @@ class Fixture:
                 str(self.notes),
                 "--release-id-file",
                 str(self.release_id),
+                "--version",
+                version or self.state.version,
                 "--title",
-                "zrail 1.2.3",
+                f"zrail {self.state.version}",
             ],
             env=environment,
             capture_output=True,
@@ -324,6 +329,18 @@ class Fixture:
 
 def require_success(result):
     assert result.returncode == 0, result.stderr
+
+
+def rehearse_stable_identity(helper):
+    fixture = Fixture(helper, "1.2.3")
+    try:
+        require_success(fixture.run("prepare"))
+        assert fixture.state.release["prerelease"] is False
+        require_success(fixture.run("publish"))
+        assert fixture.state.release["draft"] is False
+        assert fixture.state.release["prerelease"] is False
+    finally:
+        fixture.close()
 
 
 def rehearse_resume(helper):
@@ -525,10 +542,23 @@ def reject_malformed_tag_object(helper):
         fixture.close()
 
 
+def reject_mismatched_version(helper):
+    fixture = Fixture(helper)
+    try:
+        result = fixture.run("prepare", "1.2.3-rc.2")
+        assert result.returncode != 0
+        assert "tag does not match" in result.stderr
+        assert fixture.state.created == 0
+        assert fixture.state.release is None
+    finally:
+        fixture.close()
+
+
 def main():
     if len(sys.argv) != 2:
         raise SystemExit("usage: rehearsal.py RELEASE_STATE_HELPER")
     helper = Path(sys.argv[1]).resolve()
+    rehearse_stable_identity(helper)
     rehearse_resume(helper)
     reject_edited_body(helper)
     reject_edited_asset(helper)
@@ -536,6 +566,7 @@ def main():
     reject_invalid_starter_id(helper)
     reject_wrong_tag_commit(helper)
     reject_malformed_tag_object(helper)
+    reject_mismatched_version(helper)
     print(
         "release API rehearsal: starter cleanup, publication resume, "
         "body, assets, and remote-tag checks passed"

@@ -52,7 +52,7 @@ fn release_notes_are_extracted_from_one_exact_version_section() {
     let output = temporary.join("notes.md");
     fs::write(
         &changelog,
-        "# Changelog\n\n## [1.2.3] - today\n\nReviewed notes.\n\n## [1.2.2]\n\nOld.\n",
+        "# Changelog\n\n## [1.2.3-rc.1] - today\n\nRC notes.\n\n## [1.2.3]\n\nReviewed notes.\n\n## [1.2.2]\n\nOld.\n",
     )
     .expect("write changelog");
 
@@ -67,6 +67,19 @@ fn release_notes_are_extracted_from_one_exact_version_section() {
     assert_eq!(
         fs::read_to_string(&output).expect("read notes"),
         "Reviewed notes.\n"
+    );
+
+    let candidate = Command::new("python3")
+        .arg(root.join("scripts/release-notes.py"))
+        .args(["1.2.3-rc.1"])
+        .arg(&changelog)
+        .arg(&output)
+        .status()
+        .expect("run candidate release notes helper");
+    assert!(candidate.success());
+    assert_eq!(
+        fs::read_to_string(&output).expect("read candidate notes"),
+        "RC notes.\n"
     );
 
     let missing = Command::new("python3")

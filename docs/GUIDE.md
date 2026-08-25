@@ -785,6 +785,9 @@ tagged commit is reachable from the protected default branch and that the tag
 version matches `Cargo.toml`. It then runs the complete qualification gate,
 builds all seven targets with the pinned toolchain and lockfile, smoke-checks
 every binary, and exercises Linux archives in clean containers without Rust.
+Tags may be stable `vX.Y.Z` releases or SemVer prereleases such as numbered
+`vX.Y.Z-rc.N` candidates. Prerelease tags bind `prerelease = true` into the
+reviewed GitHub identity.
 
 No release is visible until every target and clean-runtime check succeeds. The
 publisher also packages and verifies `zrail-core`, `zrail-rust`, and `zrail`

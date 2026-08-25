@@ -2,7 +2,7 @@
 
 All notable zrail changes are recorded here for reviewed release notes.
 
-## [0.0.3] - 2026-08-24
+## [0.0.3-rc.1] - 2026-08-24
 
 ### Added
 

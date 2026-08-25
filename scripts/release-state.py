@@ -15,6 +15,11 @@ from urllib.parse import quote, urlencode, urlparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 
+VERSION = re.compile(
+    r"[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?"
+)
+
+
 class ReleaseError(RuntimeError):
     """A fail-closed release-state error."""
 
@@ -117,10 +122,16 @@ class ReleaseState:
             os.environ["GITHUB_REPOSITORY"], os.environ["GH_TOKEN"],
         )
         self.tag = os.environ["GITHUB_REF_NAME"]
+        self.version = arguments.version
+        if VERSION.fullmatch(self.version) is None:
+            raise ReleaseError("release version must be stable or a SemVer prerelease")
+        if self.tag != f"v{self.version}":
+            raise ReleaseError("release tag does not match the exact release version")
         self.commit = os.environ["GITHUB_SHA"]
         if re.fullmatch(r"[0-9a-fA-F]{40}|[0-9a-fA-F]{64}", self.commit) is None:
             raise ReleaseError("GITHUB_SHA must be a full hexadecimal commit ID")
         self.title = arguments.title
+        self.prerelease = "-" in self.version
         self.body = arguments.notes_file.read_text(encoding="utf-8")
         self.assets_dir = arguments.assets_dir
         self.asset_names = self._read_asset_names(arguments.assets_file)
@@ -206,7 +217,7 @@ class ReleaseState:
         value = self.github.request_json(
             "POST", self.github.repository_url("releases"),
             {"tag_name": self.tag, "name": self.title, "body": self.body,
-             "draft": True, "prerelease": False},
+             "draft": True, "prerelease": self.prerelease},
             expected=(201,),
         )
         release_id = value.get("id")
@@ -225,7 +236,7 @@ class ReleaseState:
             and type(release.get("id")) is int
             and release["id"] == release_id
             and type(release.get("draft")) is bool
-            and release.get("prerelease") is False
+            and release.get("prerelease") is self.prerelease
             and all(release.get(key) == value for key, value in expected.items())
         )
         if not valid:
@@ -379,6 +390,7 @@ def parse_arguments():
     parser.add_argument("--assets-file", type=Path, required=True)
     parser.add_argument("--notes-file", type=Path, required=True)
     parser.add_argument("--release-id-file", type=Path, required=True)
+    parser.add_argument("--version", required=True)
     parser.add_argument("--title", required=True)
     return parser.parse_args()
 

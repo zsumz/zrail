@@ -8,7 +8,9 @@ import os
 from pathlib import Path
 import re
 
-VERSION = re.compile(r"[0-9]+\.[0-9]+\.[0-9]+")
+VERSION = re.compile(
+    r"[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?"
+)
 
 
 def arguments() -> argparse.Namespace:

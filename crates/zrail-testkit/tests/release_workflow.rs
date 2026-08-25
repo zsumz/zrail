@@ -18,6 +18,7 @@ fn release_requires_protected_tagged_source_before_repository_execution() {
     assert_eq!(workflow.matches("environment: release").count(), 2);
     assert!(ancestry < local_action);
     assert!(workflow.contains("test \"$version\" = \"$manifest_version\""));
+    assert!(workflow.contains("(-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?"));
     assert!(workflow.contains("Run complete qualification gate offline"));
     assert!(workflow.contains("run: scripts/check"));
     assert!(!workflow.contains("--accept-grants"));
@@ -136,6 +137,7 @@ fn partial_publication_reruns_reuse_only_the_exact_draft() {
     assert!(state.contains("remote tag does not peel to GITHUB_SHA"));
     assert!(state.contains("\"body\": self.body"));
     assert!(state.contains("actual != expected_bytes"));
+    assert!(state.contains("\"prerelease\": self.prerelease"));
     assert!(state.contains("{\"draft\": False}"));
     assert!(!state.contains("target_commitish"));
     for reviewed_argument in [
@@ -143,6 +145,7 @@ fn partial_publication_reruns_reuse_only_the_exact_draft() {
         "--assets-file \"$RUNNER_TEMP/release-assets.txt\"",
         "--notes-file \"$RUNNER_TEMP/release-notes.md\"",
         "--release-id-file \"$RUNNER_TEMP/release-id\"",
+        "--version \"$ZRAIL_VERSION\"",
         "--title \"zrail $ZRAIL_VERSION\"",
     ] {
         assert_eq!(publish_job.matches(reviewed_argument).count(), 2);
