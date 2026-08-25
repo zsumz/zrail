@@ -793,11 +793,18 @@ No release is visible until every target and clean-runtime check succeeds. The
 publisher also packages and verifies `zrail-core`, `zrail-rust`, and `zrail`
 from the same reviewed checkout. It requires the exact binary and crate set,
 records every digest in `SHA256SUMS`, and creates GitHub build-provenance
-attestations. Before opening a draft or publishing a crate, the publish job
-installs the same pinned Rust toolchain, regenerates all three archives in
-`cargo publish --dry-run` mode, and requires every byte to match its attested
-input. A temporary crates.io trusted-publishing token then publishes the crates
-in dependency order without executing package code; each registry archive is
+attestations. Packaging safely stages each predecessor archive in an offline,
+versioned Cargo directory source: every member must be a regular file or
+directory beneath the exact package root, and Cargo's checksum manifest binds
+both the archive and every extracted file. Dependent archives must retain the
+canonical crates.io source and the attested predecessor checksum in their
+shipped lockfile; that lockfile is checked directly and is never replaced.
+Before opening a draft or publishing a crate, the publish job installs the same
+pinned Rust toolchain, regenerates all three archives in
+`cargo publish --dry-run` mode against the same kind of offline staged source,
+and requires every byte to match its attested input. A temporary crates.io
+trusted-publishing token then publishes the crates in dependency order without
+source replacement or executing package code; each registry archive is
 downloaded and compared byte-for-byte again. A repository-owned API client
 recovers drafts through their GraphQL database ID and fetches complete release
 state through REST; it does not use the published-release by-tag endpoint or

@@ -2,6 +2,16 @@
 
 All notable zrail changes are recorded here for reviewed release notes.
 
+## [0.0.3-rc.4] - 2026-08-25
+
+### Fixed
+
+- Crate publication preflight now models unpublished workspace dependencies as
+  checksum-bound crates.io sources, preserving canonical registry lockfiles and
+  exact archive bytes before any upload.
+- The mismatched `zrail-rust` RC.3 archive was yanked before any downloads; RC.4
+  is a fresh candidate with registry-equivalent package evidence.
+
 ## [0.0.3-rc.3] - 2026-08-24
 
 ### Fixed

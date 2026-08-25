@@ -9,9 +9,14 @@ cd "$repo_root"
 
 user_agent="zrail-release/$ZRAIL_VERSION"
 packages=(zrail-core zrail-rust zrail)
-package_roots=(crates/zrail-core crates/zrail-rust crates/zrail-cli)
 download_tmp=$(mktemp -d "${RUNNER_TEMP:-${TMPDIR:-/tmp}}/zrail-registry.XXXXXX")
-trap 'rm -rf -- "$download_tmp"' EXIT
+preflight_tmp=$(mktemp -d "${RUNNER_TEMP:-${TMPDIR:-/tmp}}/zrail-preflight.XXXXXX")
+preflight_source="$preflight_tmp/source"
+preflight_source_config=(
+    --config "source.crates-io.replace-with = 'zrail-publish-source'"
+    --config "source.zrail-publish-source.directory = '$preflight_source'"
+)
+trap 'rm -rf -- "$download_tmp" "$preflight_tmp"' EXIT
 
 mode=${1:---publish}
 if (( $# > 1 )) || [[ "$mode" != --preflight && "$mode" != --publish ]]; then
@@ -90,21 +95,42 @@ compare_preflight_archives() {
 
 preflight_attested_archives() {
     local index package
-    local -a preflight_patches=() publish_args
+    local -a dependency_args publish_args stage_args
+    cargo vendor --locked --versioned-dirs "$preflight_source" >/dev/null
     for index in "${!packages[@]}"; do
         package=${packages[$index]}
         remove_generated_archive "$package"
-        publish_args=(publish --package "$package" --locked --no-verify --dry-run)
-        if (( ${#preflight_patches[@]} > 0 )); then
-            publish_args+=("${preflight_patches[@]}")
-        fi
+        publish_args=(
+            publish --package "$package" --locked --no-verify --dry-run
+            --registry crates-io "${preflight_source_config[@]}"
+        )
         cargo "${publish_args[@]}"
         require_matching_generated_archive "$package"
+        dependency_args=()
+        case "$package" in
+            zrail-rust)
+                dependency_args+=(--locked-dependency zrail-core "$ZRAIL_VERSION" \
+                    "dist/zrail-core-$ZRAIL_VERSION.crate")
+                ;;
+            zrail)
+                dependency_args+=(
+                    --locked-dependency zrail-core "$ZRAIL_VERSION"
+                    "dist/zrail-core-$ZRAIL_VERSION.crate"
+                    --locked-dependency zrail-rust "$ZRAIL_VERSION"
+                    "dist/zrail-rust-$ZRAIL_VERSION.crate"
+                )
+                ;;
+        esac
+        stage_args=(python3 scripts/stage-crate-source.py \
+            --archive "dist/$package-$ZRAIL_VERSION.crate" \
+            --directory "$preflight_source" \
+            --name "$package" \
+            --version "$ZRAIL_VERSION")
+        if (( ${#dependency_args[@]} > 0 )); then
+            stage_args+=("${dependency_args[@]}")
+        fi
+        "${stage_args[@]}"
         record_preflight_archive "$package"
-        preflight_patches+=(
-            --config
-            "patch.crates-io.$package.path = '$repo_root/${package_roots[$index]}'"
-        )
     done
     compare_preflight_archives
 }
@@ -112,6 +138,10 @@ preflight_attested_archives() {
 require_attested_archives
 if [[ "$mode" == --preflight ]]; then
     preflight_attested_archives
+    preflight_status=$?
+    if (( preflight_status != 0 )); then
+        exit "$preflight_status"
+    fi
     exit 0
 fi
 
@@ -175,7 +205,7 @@ for index in "${!packages[@]}"; do
     for attempt in {1..30}; do
         remove_generated_archive "$package"
         set +e
-        cargo publish --package "$package" --locked --no-verify
+        cargo publish --package "$package" --locked --no-verify --registry crates-io
         publish_status=$?
         set -e
 

@@ -15,44 +15,52 @@ package_tmp=$(mktemp -d "${TMPDIR:-/tmp}/zrail-package-check.XXXXXX")
 trap 'rm -rf -- "$package_tmp"' EXIT
 
 packages=(zrail-core zrail-rust zrail)
-source_core_patch="patch.crates-io.zrail-core.path = '$repo_root/crates/zrail-core'"
-source_rust_patch="patch.crates-io.zrail-rust.path = '$repo_root/crates/zrail-rust'"
+source_dir="$package_tmp/source"
+expanded_target="$package_tmp/target"
+source_config=(
+    --config "source.crates-io.replace-with = 'zrail-package-source'"
+    --config "source.zrail-package-source.directory = '$source_dir'"
+)
+cargo vendor --locked --offline --versioned-dirs "$source_dir" >/dev/null
+
 for package in "${packages[@]}"; do
-    package_args=(--package "$package" --allow-dirty --locked --offline)
-    if [[ "$package" == "zrail-core" ]]; then
-        cargo package "${package_args[@]}"
-    elif [[ "$package" == "zrail-rust" ]]; then
-        cargo package "${package_args[@]}" --no-verify --config "$source_core_patch"
-    else
-        cargo package "${package_args[@]}" --no-verify \
-            --config "$source_core_patch" --config "$source_rust_patch"
-    fi
+    rm -f -- \
+        "$package_target/package/$package-$version.crate" \
+        "$package_target/package/tmp-crate/$package-$version.crate"
+    cargo package --package "$package" --allow-dirty --locked --offline \
+        --no-verify --registry crates-io "${source_config[@]}"
     archive="$package_target/package/$package-$version.crate"
+    dependency_args=()
+    case "$package" in
+        zrail-rust)
+            dependency_args+=(--locked-dependency zrail-core "$version" \
+                "$package_target/package/zrail-core-$version.crate")
+            ;;
+        zrail)
+            dependency_args+=(
+                --locked-dependency zrail-core "$version"
+                "$package_target/package/zrail-core-$version.crate"
+                --locked-dependency zrail-rust "$version"
+                "$package_target/package/zrail-rust-$version.crate"
+            )
+            ;;
+    esac
+    stage_args=(python3 scripts/stage-crate-source.py \
+        --archive "$archive" \
+        --directory "$source_dir" \
+        --name "$package" \
+        --version "$version")
+    if (( ${#dependency_args[@]} > 0 )); then
+        stage_args+=("${dependency_args[@]}")
+    fi
+    "${stage_args[@]}"
     for required in LICENSE README.md; do
-        if ! tar -tzf "$archive" | grep -Fx "$package-$version/$required" >/dev/null; then
-            echo "$package archive is missing $required" >&2
-            exit 1
-        fi
-    done
-    tar -xzf "$archive" -C "$package_tmp"
-    for required in LICENSE README.md; do
-        cmp "$required" "$package_tmp/$package-$version/$required"
+        cmp "$required" "$source_dir/$package-$version/$required"
     done
 done
 
-core="$package_tmp/zrail-core-$version"
-rust="$package_tmp/zrail-rust-$version"
-cli="$package_tmp/zrail-$version"
-core_patch="patch.crates-io.zrail-core.path = '$core'"
-rust_patch="patch.crates-io.zrail-rust.path = '$rust'"
-archive_target="$package_tmp/target"
-for package_dir in "$rust" "$cli"; do
-    cp Cargo.lock "$package_dir/Cargo.lock"
+for package in "${packages[@]}"; do
+    package_dir="$source_dir/$package-$version"
+    cargo check --manifest-path "$package_dir/Cargo.toml" --locked --offline \
+        --target-dir "$expanded_target" "${source_config[@]}"
 done
-
-cargo check --manifest-path "$core/Cargo.toml" --locked --offline --target-dir "$archive_target"
-cargo check --manifest-path "$rust/Cargo.toml" --locked --offline \
-    --target-dir "$archive_target" --config "$core_patch"
-cargo check --manifest-path "$cli/Cargo.toml" --locked --offline \
-    --target-dir "$archive_target" \
-    --config "$core_patch" --config "$rust_patch"

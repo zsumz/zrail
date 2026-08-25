@@ -13,7 +13,7 @@ symlinks = "inside"
 name = "check"
 kind = "local"
 path = "scripts/check"
-inputs = ["scripts/structure-check", "scripts/package-check", "rust-toolchain.toml", "rustfmt.toml", "clippy.toml", ".gitignore", "Cargo.toml", "crates/zrail-cli/Cargo.toml", "crates/zrail-core/Cargo.toml", "crates/zrail-rust/Cargo.toml", "crates/zrail-testkit/Cargo.toml"]
+inputs = ["scripts/structure-check", "scripts/package-check", "scripts/stage-crate-source.py", "rust-toolchain.toml", "rustfmt.toml", "clippy.toml", ".gitignore", "Cargo.toml", "crates/zrail-cli/Cargo.toml", "crates/zrail-core/Cargo.toml", "crates/zrail-rust/Cargo.toml", "crates/zrail-testkit/Cargo.toml"]
 reason = "The repository's canonical local qualification entrypoint."
 
 [[gate]]
@@ -53,6 +53,7 @@ inputs = [
   "scripts/publish-crates",
   "scripts/release-notes.py",
   "scripts/release-state.py",
+  "scripts/stage-crate-source.py",
 ]
 requires = ["check"]
 reason = "Protected tags publish byte-exact, attested binaries and registry archives."
@@ -101,6 +102,8 @@ document = "README.md#install"
 evidence = [
   "rust-test:crates/zrail-testkit/tests/release_workflow.rs::crate_publication_is_ordered_exact_and_safe_to_resume",
   "rust-test:crates/zrail-testkit/tests/release_api_rehearsal.rs::mocked_github_release_state_machine_is_fail_closed_and_resumable",
+  "rust-test:crates/zrail-testkit/tests/release_crate_source_staging.rs::staging_rejects_traversal_links_duplicates_roots_and_wrong_identity",
+  "rust-test:crates/zrail-testkit/tests/release_publish_preflight.rs::preflight_stages_all_predecessors_before_any_publication_traffic",
   "gate:release",
 ]
 

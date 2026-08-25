@@ -93,18 +93,18 @@ fn crate_publication_is_ordered_exact_and_safe_to_resume() {
     let byte_proof = publish
         .find("# A separate pre-publication step")
         .expect("publish-mode byte proof");
-    let preflight_patches = publish
-        .find("local -a preflight_patches=() publish_args")
-        .expect("preflight patch accumulator");
+    let vendor = publish
+        .find("cargo vendor --locked --versioned-dirs")
+        .expect("versioned directory source");
     let dry_run = publish
-        .find("publish_args=(publish --package \"$package\" --locked --no-verify --dry-run)")
+        .find("publish --package \"$package\" --locked --no-verify --dry-run")
         .expect("publish dry-run");
-    let accumulate_patch = publish
-        .find("preflight_patches+=(")
-        .expect("preceding-package patch accumulation");
+    let stage = publish
+        .find("python3 scripts/stage-crate-source.py")
+        .expect("predecessor archive staging");
     let registry_probe = publish.find("published=()").expect("registry probe");
     let cargo_upload = publish
-        .rfind("cargo publish --package \"$package\" --locked --no-verify")
+        .rfind("cargo publish --package \"$package\" --locked --no-verify --registry crates-io")
         .expect("Cargo registry upload");
 
     assert!(workflow.contains("rust-lang/crates-io-auth-action@"));
@@ -117,11 +117,13 @@ fn crate_publication_is_ordered_exact_and_safe_to_resume() {
     );
     assert!(publish.contains("packages=(zrail-core zrail-rust zrail)"));
     assert!(publish.contains("cargo \"${publish_args[@]}\""));
-    assert!(
-        publish.contains("package_roots=(crates/zrail-core crates/zrail-rust crates/zrail-cli)")
-    );
-    assert!(publish.contains("publish_args+=(\"${preflight_patches[@]}\")"));
-    assert!(preflight_patches < dry_run && dry_run < accumulate_patch);
+    assert!(publish.contains("source.crates-io.replace-with = 'zrail-publish-source'"));
+    assert!(publish.contains("--registry crates-io \"${preflight_source_config[@]}\""));
+    assert!(publish.contains("--locked-dependency zrail-core"));
+    assert!(publish.contains("--locked-dependency zrail-rust"));
+    assert!(!publish.contains("patch.crates-io"));
+    assert!(!publish.contains("package_roots="));
+    assert!(vendor < dry_run && dry_run < stage && stage < registry_probe);
     assert!(publish.contains("pinned publish toolchain"));
     assert!(publish.contains("compare_preflight_archives"));
     assert!(publish.contains("target/package/tmp-crate/$package-$ZRAIL_VERSION.crate"));
@@ -132,12 +134,26 @@ fn crate_publication_is_ordered_exact_and_safe_to_resume() {
             .lines()
             .next()
             .expect("Cargo upload line"),
-        "cargo publish --package \"$package\" --locked --no-verify"
+        "cargo publish --package \"$package\" --locked --no-verify --registry crates-io"
     );
     assert!(publish.contains("for attempt in {1..30}"));
     assert!(publish.contains("if [[ \"${published[$index]}\" == yes ]]"));
     assert!(publish.contains("cmp \"dist/$package-$ZRAIL_VERSION.crate\" \"$generated\""));
     assert!(publish.contains("download_exact_registry_archive \"$package\""));
+}
+
+#[test]
+fn packaged_archives_keep_and_check_their_registry_locks() {
+    let package = package_check_script();
+
+    assert!(package.contains("cargo vendor --locked --offline --versioned-dirs"));
+    assert!(package.contains("source.crates-io.replace-with = 'zrail-package-source'"));
+    assert!(package.contains("python3 scripts/stage-crate-source.py"));
+    assert!(package.contains("--locked-dependency zrail-core"));
+    assert!(package.contains("--locked-dependency zrail-rust"));
+    assert!(package.contains("cargo check --manifest-path \"$package_dir/Cargo.toml\" --locked"));
+    assert!(!package.contains("patch.crates-io"));
+    assert!(!package.contains("cp Cargo.lock"));
 }
 
 #[test]
@@ -223,6 +239,11 @@ fn release_workflow() -> String {
 fn publish_script() -> String {
     fs::read_to_string(repository_root().join("scripts/publish-crates"))
         .expect("read crate publisher")
+}
+
+fn package_check_script() -> String {
+    fs::read_to_string(repository_root().join("scripts/package-check"))
+        .expect("read crate package checker")
 }
 
 fn release_state_script() -> String {
