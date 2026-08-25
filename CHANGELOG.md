@@ -2,6 +2,14 @@
 
 All notable zrail changes are recorded here for reviewed release notes.
 
+## [0.0.3-rc.3] - 2026-08-24
+
+### Fixed
+
+- Crate publication preflight now resolves unpublished workspace dependencies
+  from the reviewed checkout while proving the exact publish-mode archive bytes
+  before any registry probe or upload.
+
 ## [0.0.3-rc.2] - 2026-08-24
 
 ### Fixed

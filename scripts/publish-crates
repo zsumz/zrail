@@ -9,6 +9,7 @@ cd "$repo_root"
 
 user_agent="zrail-release/$ZRAIL_VERSION"
 packages=(zrail-core zrail-rust zrail)
+package_roots=(crates/zrail-core crates/zrail-rust crates/zrail-cli)
 download_tmp=$(mktemp -d "${RUNNER_TEMP:-${TMPDIR:-/tmp}}/zrail-registry.XXXXXX")
 trap 'rm -rf -- "$download_tmp"' EXIT
 
@@ -25,29 +26,87 @@ require_attested_archives() {
     done
 }
 
-compare_regenerated_archives() {
-    local package generated
-    for package in "${packages[@]}"; do
-        generated="target/package/$package-$ZRAIL_VERSION.crate"
+remove_generated_archive() {
+    local package=$1
+    rm -f -- \
+        "target/package/$package-$ZRAIL_VERSION.crate" \
+        "target/package/tmp-crate/$package-$ZRAIL_VERSION.crate"
+}
+
+generated_archive_exists() {
+    local package=$1
+    [[ -f "target/package/$package-$ZRAIL_VERSION.crate" \
+        || -f "target/package/tmp-crate/$package-$ZRAIL_VERSION.crate" ]]
+}
+
+require_matching_generated_archive() {
+    local package=$1 generated found=false
+    for generated in \
+        "target/package/$package-$ZRAIL_VERSION.crate" \
+        "target/package/tmp-crate/$package-$ZRAIL_VERSION.crate"; do
         if [[ ! -f "$generated" ]]; then
-            echo "publish-mode archive was not regenerated for $package" >&2
-            exit 1
+            continue
         fi
+        found=true
         if ! cmp "dist/$package-$ZRAIL_VERSION.crate" "$generated"; then
             echo "publish mode generated different bytes for $package" >&2
-            exit 1
+            return 1
+        fi
+    done
+    if [[ "$found" != true ]]; then
+        echo "publish-mode archive was not regenerated for $package" >&2
+        return 1
+    fi
+}
+
+record_preflight_archive() {
+    local package=$1 generated proof
+    proof="target/publish-preflight/$package-$ZRAIL_VERSION.crate"
+    mkdir -p target/publish-preflight
+    rm -f -- "$proof"
+    for generated in \
+        "target/package/$package-$ZRAIL_VERSION.crate" \
+        "target/package/tmp-crate/$package-$ZRAIL_VERSION.crate"; do
+        if [[ -f "$generated" ]]; then
+            cp "$generated" "$proof"
+            return
+        fi
+    done
+    echo "publish-mode archive was not available to record for $package" >&2
+    return 1
+}
+
+compare_preflight_archives() {
+    local package proof
+    for package in "${packages[@]}"; do
+        proof="target/publish-preflight/$package-$ZRAIL_VERSION.crate"
+        if [[ ! -f "$proof" ]] \
+            || ! cmp "dist/$package-$ZRAIL_VERSION.crate" "$proof"; then
+            echo "publish-mode preflight proof differs for $package" >&2
+            return 1
         fi
     done
 }
 
 preflight_attested_archives() {
-    local package generated
-    for package in "${packages[@]}"; do
-        generated="target/package/$package-$ZRAIL_VERSION.crate"
-        rm -f -- "$generated"
-        cargo publish --package "$package" --locked --no-verify --dry-run
+    local index package
+    local -a preflight_patches=() publish_args
+    for index in "${!packages[@]}"; do
+        package=${packages[$index]}
+        remove_generated_archive "$package"
+        publish_args=(publish --package "$package" --locked --no-verify --dry-run)
+        if (( ${#preflight_patches[@]} > 0 )); then
+            publish_args+=("${preflight_patches[@]}")
+        fi
+        cargo "${publish_args[@]}"
+        require_matching_generated_archive "$package"
+        record_preflight_archive "$package"
+        preflight_patches+=(
+            --config
+            "patch.crates-io.$package.path = '$repo_root/${package_roots[$index]}'"
+        )
     done
-    compare_regenerated_archives
+    compare_preflight_archives
 }
 
 require_attested_archives
@@ -59,7 +118,7 @@ fi
 : "${CARGO_REGISTRY_TOKEN:?CARGO_REGISTRY_TOKEN is required}"
 # A separate pre-publication step must have regenerated every archive with the
 # pinned publish toolchain. Refuse all registry traffic if that proof is absent.
-compare_regenerated_archives
+compare_preflight_archives
 
 metadata_url() {
     printf 'https://crates.io/api/v1/crates/%s/%s' "$1" "$ZRAIL_VERSION"
@@ -114,15 +173,16 @@ for index in "${!packages[@]}"; do
     verified=false
     publish_status=1
     for attempt in {1..30}; do
+        remove_generated_archive "$package"
         set +e
         cargo publish --package "$package" --locked --no-verify
         publish_status=$?
         set -e
 
-        generated="target/package/$package-$ZRAIL_VERSION.crate"
-        if [[ ! -f "$generated" ]] \
-            || ! cmp "dist/$package-$ZRAIL_VERSION.crate" "$generated"; then
-            echo "cargo generated different bytes for $package" >&2
+        if generated_archive_exists "$package"; then
+            require_matching_generated_archive "$package"
+        elif (( publish_status == 0 )); then
+            echo "Cargo reported success without regenerating $package" >&2
             exit 1
         fi
 

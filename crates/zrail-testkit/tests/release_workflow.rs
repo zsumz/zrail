@@ -93,6 +93,15 @@ fn crate_publication_is_ordered_exact_and_safe_to_resume() {
     let byte_proof = publish
         .find("# A separate pre-publication step")
         .expect("publish-mode byte proof");
+    let preflight_patches = publish
+        .find("local -a preflight_patches=() publish_args")
+        .expect("preflight patch accumulator");
+    let dry_run = publish
+        .find("publish_args=(publish --package \"$package\" --locked --no-verify --dry-run)")
+        .expect("publish dry-run");
+    let accumulate_patch = publish
+        .find("preflight_patches+=(")
+        .expect("preceding-package patch accumulation");
     let registry_probe = publish.find("published=()").expect("registry probe");
     let cargo_upload = publish
         .rfind("cargo publish --package \"$package\" --locked --no-verify")
@@ -107,12 +116,24 @@ fn crate_publication_is_ordered_exact_and_safe_to_resume() {
         1
     );
     assert!(publish.contains("packages=(zrail-core zrail-rust zrail)"));
+    assert!(publish.contains("cargo \"${publish_args[@]}\""));
     assert!(
-        publish.contains("cargo publish --package \"$package\" --locked --no-verify --dry-run")
+        publish.contains("package_roots=(crates/zrail-core crates/zrail-rust crates/zrail-cli)")
     );
+    assert!(publish.contains("publish_args+=(\"${preflight_patches[@]}\")"));
+    assert!(preflight_patches < dry_run && dry_run < accumulate_patch);
     assert!(publish.contains("pinned publish toolchain"));
-    assert!(publish.contains("compare_regenerated_archives"));
+    assert!(publish.contains("compare_preflight_archives"));
+    assert!(publish.contains("target/package/tmp-crate/$package-$ZRAIL_VERSION.crate"));
+    assert!(publish.contains("require_matching_generated_archive \"$package\""));
     assert!(byte_proof < registry_probe && registry_probe < cargo_upload);
+    assert_eq!(
+        publish[cargo_upload..]
+            .lines()
+            .next()
+            .expect("Cargo upload line"),
+        "cargo publish --package \"$package\" --locked --no-verify"
+    );
     assert!(publish.contains("for attempt in {1..30}"));
     assert!(publish.contains("if [[ \"${published[$index]}\" == yes ]]"));
     assert!(publish.contains("cmp \"dist/$package-$ZRAIL_VERSION.crate\" \"$generated\""));
