@@ -281,7 +281,7 @@ checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
 
 [[package]]
 name = "zrail"
-version = "0.0.3-rc.1"
+version = "0.0.3-rc.2"
 dependencies = [
  "zrail-core",
  "zrail-rust",
@@ -289,7 +289,7 @@ dependencies = [
 
 [[package]]
 name = "zrail-core"
-version = "0.0.3-rc.1"
+version = "0.0.3-rc.2"
 dependencies = [
  "serde",
  "serde_json",
@@ -299,7 +299,7 @@ dependencies = [
 
 [[package]]
 name = "zrail-rust"
-version = "0.0.3-rc.1"
+version = "0.0.3-rc.2"
 dependencies = [
  "proc-macro2",
  "semver",
@@ -312,7 +312,7 @@ dependencies = [
 
 [[package]]
 name = "zrail-testkit"
-version = "0.0.3-rc.1"
+version = "0.0.3-rc.2"
 dependencies = [
  "zrail-core",
  "zrail-rust",

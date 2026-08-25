@@ -2,6 +2,14 @@
 
 All notable zrail changes are recorded here for reviewed release notes.
 
+## [0.0.3-rc.2] - 2026-08-24
+
+### Fixed
+
+- Clean-container release qualification now creates an atomic onboarding
+  baseline before checking, preserving fail-closed missing-lock enforcement for
+  ordinary contract-only initialization.
+
 ## [0.0.3-rc.1] - 2026-08-24
 
 ### Added

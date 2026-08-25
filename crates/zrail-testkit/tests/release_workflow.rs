@@ -63,6 +63,8 @@ fn publishing_waits_for_all_builds_and_clean_linux_runtime_checks() {
     assert!(workflow.contains("alpine:3.22"));
     assert!(workflow.contains("Run without a Rust toolchain in a clean container"));
     assert!(workflow.contains("docker run --rm"));
+    assert!(workflow.contains("zrail init --preset rust --baseline /work"));
+    assert!(!workflow.contains("zrail init --preset rust /work"));
     assert!(publish.contains("sha256sum --check SHA256SUMS"));
     assert!(publish.contains("actions/attest@"));
     assert!(publish.contains("release-notes.py"));

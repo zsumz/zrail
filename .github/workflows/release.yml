@@ -255,7 +255,7 @@ jobs:
             --volume "$PWD/runtime:/release:ro" \
             --volume "$PWD/smoke:/work" \
             "${{ matrix.image }}" sh -c \
-            '/release/zrail --version && /release/zrail init --preset rust /work && /release/zrail check --root /work'
+            '/release/zrail --version && /release/zrail init --preset rust --baseline /work && /release/zrail check --root /work'
 
   publish:
     name: attest and publish
