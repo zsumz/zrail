@@ -178,11 +178,11 @@ fn field_value_type(
     receiver: &TypeIdentity,
     member: &str,
 ) -> TypeIdentity {
-    let Some(field_type) = local_type(visitor, &receiver.name).and_then(|ty| ty.fields.get(member))
+    let Some(field) = local_type(visitor, &receiver.name).and_then(|ty| ty.fields.get(member))
     else {
         return unresolved("<unresolved>");
     };
-    let mut identity = visitor.resolve_type(field_type);
+    let mut identity = visitor.resolve_type(&field.ty);
     identity.quality = identity.quality.max(receiver.quality);
     identity
 }

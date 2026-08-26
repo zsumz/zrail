@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 use syn::{Expr, Fields, Item, Path, Type};
 use zrail_core::{AnalysisQuality, SourceSpan};
 
-use super::{ObservedFact, SyntaxGuard};
+use super::{CfgPredicate, ObservedFact, SyntaxGuard, attributes::cfg_guard};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SourceOperationKind {
@@ -60,8 +60,14 @@ pub(super) enum ConstructorForm {
 pub(super) struct LocalType {
     pub(super) identity: String,
     pub(super) form: ConstructorForm,
-    pub(super) fields: BTreeMap<String, Type>,
+    pub(super) fields: BTreeMap<String, LocalField>,
     pub(super) variants: BTreeMap<String, ConstructorForm>,
+}
+
+#[derive(Clone, Debug)]
+pub(super) struct LocalField {
+    pub(super) ty: Type,
+    pub(super) guard: SyntaxGuard,
 }
 
 pub(super) type LocalTypes = BTreeMap<String, LocalType>;
@@ -101,20 +107,32 @@ pub(super) fn local_type(item: &Item, prefix: &str) -> Option<(String, LocalType
     ))
 }
 
-fn named_fields(fields: &Fields) -> BTreeMap<String, Type> {
-    match fields {
-        Fields::Named(fields) => fields
-            .named
-            .iter()
-            .filter_map(|field| {
-                field
-                    .ident
-                    .as_ref()
-                    .map(|name| (name.to_string(), field.ty.clone()))
-            })
-            .collect(),
-        Fields::Unnamed(_) | Fields::Unit => BTreeMap::new(),
+fn named_fields(fields: &Fields) -> BTreeMap<String, LocalField> {
+    let Fields::Named(fields) = fields else {
+        return BTreeMap::new();
+    };
+    let mut named: BTreeMap<String, LocalField> = BTreeMap::new();
+    for field in &fields.named {
+        let Some(name) = &field.ident else {
+            continue;
+        };
+        let guard = cfg_guard(&field.attrs);
+        if let Some(existing) = named.get_mut(&name.to_string()) {
+            existing.guard = SyntaxGuard::from_predicate(CfgPredicate::any(vec![
+                existing.guard.predicate(),
+                guard.predicate(),
+            ]));
+        } else {
+            named.insert(
+                name.to_string(),
+                LocalField {
+                    ty: field.ty.clone(),
+                    guard,
+                },
+            );
+        }
     }
+    named
 }
 
 fn fields_form(fields: &Fields) -> ConstructorForm {

@@ -276,3 +276,6 @@ mod visitor_field_truth;
 
 #[path = "tests/visitor_remaining_authority.rs"]
 mod visitor_remaining_authority;
+
+#[path = "tests/visitor_implicit_reads.rs"]
+mod visitor_implicit_reads;

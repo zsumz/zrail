@@ -22,7 +22,7 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
 
     fn visit_item(&mut self, item: &'ast syn::Item) {
         self.with_cfg(visitor_context::item_attrs(item), |visitor| {
-            visitor.with_fresh_generics(|visitor| visit::visit_item(visitor, item));
+            walk::visit_item(visitor, item);
         });
     }
 
@@ -105,6 +105,7 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
 
     fn visit_expr_struct(&mut self, expression: &'ast ExprStruct) {
         self.record_struct_construction(expression);
+        self.record_struct_update_reads(expression);
         visit::visit_expr_struct(self, expression);
     }
 

@@ -21,6 +21,9 @@ pub(super) fn visit(visitor: &mut FactVisitor<'_>, expression: &Expr) {
             visit_attributes(visitor, &paren.attrs);
             visit(visitor, &paren.expr);
         }),
+        Expr::Path(path) => visitor.with_cfg(&path.attrs, |visitor| {
+            visitor.record_expression_path(path);
+        }),
         Expr::Struct(structure) => visit_struct(visitor, structure),
         Expr::Tuple(tuple) => visitor.with_cfg(&tuple.attrs, |visitor| {
             visit_attributes(visitor, &tuple.attrs);
@@ -42,6 +45,9 @@ fn visit_struct(visitor: &mut FactVisitor<'_>, structure: &ExprStruct) {
         for field in &structure.fields {
             visitor.with_cfg(&field.attrs, |visitor| {
                 visit_attributes(visitor, &field.attrs);
+                if !ignored(&field.expr) {
+                    visitor.record_assignee_source_field(&structure.path, &field.member);
+                }
                 visit(visitor, &field.expr);
             });
         }
@@ -72,5 +78,14 @@ fn visit_type_path(visitor: &mut FactVisitor<'_>, qself: Option<&syn::QSelf>, pa
 fn visit_attributes(visitor: &mut FactVisitor<'_>, attributes: &[syn::Attribute]) {
     for attribute in attributes {
         visitor.visit_attribute(attribute);
+    }
+}
+
+fn ignored(expression: &Expr) -> bool {
+    match expression {
+        Expr::Group(group) => ignored(&group.expr),
+        Expr::Infer(_) => true,
+        Expr::Paren(paren) => ignored(&paren.expr),
+        _ => false,
     }
 }

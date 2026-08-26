@@ -2,7 +2,7 @@
 
 use syn::{
     BinOp, Block, ExprAssign, ExprAsync, ExprAwait, ExprBinary, ExprClosure, ExprForLoop,
-    ExprRawAddr, ExprReference, ImplItemFn, ItemFn, ItemImpl, ItemMod, ItemTrait, Macro,
+    ExprRawAddr, ExprReference, ImplItemFn, Item, ItemFn, ItemImpl, ItemMod, ItemTrait, Macro,
     PointerMutability, Signature, Stmt, TraitItemFn,
     spanned::Spanned,
     visit::{self, Visit},
@@ -10,6 +10,16 @@ use syn::{
 
 use super::super::visitor_parts::visitor_patterns::PatternInputMode;
 use super::FactVisitor;
+
+pub(super) fn visit_item(visitor: &mut FactVisitor<'_>, item: &Item) {
+    let local_values = std::mem::take(&mut visitor.local_values);
+    let pattern_inputs = std::mem::take(&mut visitor.pattern_inputs);
+    let self_types = std::mem::take(&mut visitor.self_types);
+    visitor.with_fresh_generics(|visitor| visit::visit_item(visitor, item));
+    visitor.local_values = local_values;
+    visitor.pattern_inputs = pattern_inputs;
+    visitor.self_types = self_types;
+}
 
 pub(super) fn visit_binary(visitor: &mut FactVisitor<'_>, expression: &ExprBinary) {
     if matches!(

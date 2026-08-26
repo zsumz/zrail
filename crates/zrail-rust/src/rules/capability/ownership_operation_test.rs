@@ -6,7 +6,7 @@ use crate::source::{
     FactNamespace, ObservedFact, SourceOperationFact, SourceOperationKind, SyntaxGuard,
 };
 
-use super::operation_matches;
+use super::{operation_matches, selector_matches};
 
 #[test]
 fn field_mutation_matches_only_declared_receiver_methods() {
@@ -32,6 +32,32 @@ fn field_mutation_matches_only_declared_receiver_methods() {
         &owner,
         &operation(SourceOperationKind::FieldRead, None)
     ));
+}
+
+#[test]
+fn opaque_update_fields_match_each_owner_on_the_same_source_type() {
+    let mut owner = owner();
+    owner.kind = OwnerKind::FieldRead;
+    let mut operation = operation(SourceOperationKind::FieldRead, None);
+    operation.identity.name = "crate::State::*".into();
+    operation.identity.quality = AnalysisQuality::Unresolved;
+
+    assert!(selector_matches(&owner, &operation));
+    let mut other = owner;
+    other.selector = "crate::Other::values".into();
+    assert!(!selector_matches(&other, &operation));
+}
+
+#[test]
+fn opaque_field_wildcard_does_not_match_non_field_owner() {
+    let mut owner = owner();
+    owner.kind = OwnerKind::TypeConstruction;
+    owner.selector = "crate::State".into();
+    let mut operation = operation(SourceOperationKind::TypeConstruction, None);
+    operation.identity.name = "crate::*".into();
+    operation.identity.quality = AnalysisQuality::Unresolved;
+
+    assert!(!selector_matches(&owner, &operation));
 }
 
 fn owner() -> OwnerContract {

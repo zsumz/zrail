@@ -65,16 +65,43 @@ fn operation_applies(
     let fact = &operation.identity;
     operation_matches(owner, operation)
         && fact_applies(owner, file, fact)
-        && selector_matches(owner, fact)
+        && selector_matches(owner, operation)
 }
 
-fn selector_matches(owner: &OwnerContract, fact: &ObservedFact) -> bool {
+fn selector_matches(owner: &OwnerContract, operation: &SourceOperationFact) -> bool {
+    let fact = &operation.identity;
     if owner.kind == OwnerKind::MethodName {
         return normalized_path(&owner.selector) == normalized_path(&fact.name);
     }
-    path_matches(&owner.selector, fact)
+    opaque_field_matches(owner, operation)
+        || path_matches(&owner.selector, fact)
         || (fact.quality != AnalysisQuality::Exact
             && last_segment(&owner.selector) == last_segment(&fact.name))
+}
+
+fn opaque_field_matches(owner: &OwnerContract, operation: &SourceOperationFact) -> bool {
+    if !matches!(
+        (owner.kind, operation.kind),
+        (
+            OwnerKind::FieldRead | OwnerKind::FieldAuthority,
+            SourceOperationKind::FieldRead
+        )
+    ) {
+        return false;
+    }
+    let fact = &operation.identity;
+    if fact.quality == AnalysisQuality::Exact {
+        return false;
+    }
+    let Some(base) = fact.name.strip_suffix("::*") else {
+        return false;
+    };
+    let Some((selector_base, _)) = owner.selector.rsplit_once("::") else {
+        return false;
+    };
+    normalized_path(selector_base) == normalized_path(base)
+        || base == "<unresolved>"
+        || last_segment(selector_base) == last_segment(base)
 }
 
 fn last_segment(path: &str) -> &str {

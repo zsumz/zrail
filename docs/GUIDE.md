@@ -363,6 +363,8 @@ It observes struct literals, tuple structs, enum variants, and `Self` forms.
 Imports and aliases are retained when they resolve exactly. A constructor-like
 call that cannot be proven to name a type or variant remains unresolved; an
 exact owner fails closed instead of treating capitalization as type evidence.
+Unit struct and enum-variant paths used only as destructuring-assignment
+assignees are patterns, not constructions.
 
 Written method-name ownership is deliberately name-level authority:
 
@@ -410,9 +412,16 @@ reason = "Only state transitions borrow the epoch mutably."
 ```
 
 Reads include ordinary access, immutable borrows, and right-hand-side use.
-Assignment, compound-assignment, destructuring-assignment leaves, and mutable
-address expressions are not also counted as reads. Writes include ordinary,
-compound, and destructuring assignment. Mutable borrows include
+Assignment, compound-assignment, destructuring-assignment destination leaves,
+and mutable address expressions are not also counted as reads. A non-wildcard
+field extracted from the right-hand source of a destructuring assignment is a
+read, including each projection in a nested assignee; `_` remains ignored.
+Functional struct update reads every omitted field known from the local type
+declaration. When the declaration's field set is not locally provable, Zrail
+retains one unresolved wildcard read that fails closed against every matching
+field owner on that source type. Field and initializer `#[cfg]` predicates keep
+those implicit reads in their exact compilation worlds. Writes include
+ordinary, compound, and destructuring assignment. Mutable borrows include
 `&mut value.field`, explicit `ref mut` field patterns, and implicit
 mutable-reference bindings introduced by match ergonomics. The same
 `field-mutable-borrow` authority category covers `&raw mut value.field`. Calls

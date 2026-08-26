@@ -118,8 +118,8 @@ impl FactVisitor<'_> {
             .flat_map(|scope| scope.values())
             .find(|local| local.identity == identity.name)
             .and_then(|local| local.fields.get(&member.to_string()))
-            .map_or(PatternInputMode::Unresolved, |ty| {
-                self.pattern_input_from_type(ty)
+            .map_or(PatternInputMode::Unresolved, |field| {
+                self.pattern_input_from_type(&field.ty)
             })
     }
 
