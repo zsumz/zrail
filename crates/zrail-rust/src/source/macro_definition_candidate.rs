@@ -21,7 +21,7 @@ pub(super) fn repository_candidate(
             canonical: Vec::new(),
             span: expansion.span,
             quality: AnalysisQuality::Exact,
-            guard: expansion.guard,
+            guard: expansion.guard.clone(),
             lexical_scope: expansion.lexical_scope.clone(),
             namespace: super::FactNamespace::Unknown,
         },

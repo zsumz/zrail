@@ -19,13 +19,19 @@ fn exact_manifest_binds_generated_names_invocation_and_lock_state() {
         authority
             .domains
             .iter()
-            .any(|domain| domain.ends_with("mode=library"))
+            .any(|domain| domain.contains("mode=library;"))
     );
     assert!(
         authority
             .domains
             .iter()
-            .any(|domain| domain.ends_with("mode=library-test"))
+            .any(|domain| domain.contains("mode=library-test;"))
+    );
+    assert!(
+        authority
+            .domains
+            .iter()
+            .all(|domain| domain.contains("feature-world=legacy-conditional;features="))
     );
     lock.write(&root.join("zrail.lock")).expect("write lock");
 

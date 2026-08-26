@@ -69,6 +69,30 @@ fn analysis(lock: &LockFile, values: &mut BTreeMap<(String, String), String>) {
     if let Some(digest) = &analysis.cargo_lock_sha256 {
         insert(values, "analysis.cargo-lock", "Cargo.lock", digest);
     }
+    if !analysis.cargo_features_sha256.is_empty() {
+        insert(
+            values,
+            "analysis.cargo-features",
+            "workspace",
+            &analysis.cargo_features_sha256,
+        );
+    }
+    if !analysis.feature_worlds_sha256.is_empty() {
+        insert(
+            values,
+            "analysis.feature-worlds",
+            "workspace",
+            &analysis.feature_worlds_sha256,
+        );
+        if let Some(count) = analysis.feature_worlds {
+            insert(
+                values,
+                "analysis.feature-world-count",
+                "workspace",
+                &count.to_string(),
+            );
+        }
+    }
     for source in &analysis.contract_sources {
         insert(
             values,

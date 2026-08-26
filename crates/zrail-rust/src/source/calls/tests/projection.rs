@@ -32,11 +32,20 @@ fn grouped_associated_type_projection_is_a_boundary() {
     assert!(matches!(call.func.as_ref(), syn::Expr::Group(_)));
 
     let path = callee_path(call.func.as_ref()).expect("grouped callable path");
-    let boundary = unresolved_path_projection(path, SyntaxGuard::Ordinary)
+    let boundary = unresolved_path_projection(path, SyntaxGuard::Ordinary, &[])
         .expect("grouped associated projection is unresolved");
 
     assert_eq!(boundary.written, "<Runtime as Provider>::Command::new");
-    assert!(facts(call, &ImportMap::default(), SyntaxGuard::Ordinary, &[], &[]).is_empty());
+    assert!(
+        facts(
+            call,
+            &ImportMap::default(),
+            &SyntaxGuard::Ordinary,
+            &[],
+            &[]
+        )
+        .is_empty()
+    );
 
     let imports = ImportMap::default();
     let mut visitor = FactVisitor::new(&imports);
@@ -51,7 +60,7 @@ fn parenthesized_direct_trait_function_remains_exact() {
     let observed = facts(
         call,
         &ImportMap::from_file(&file),
-        SyntaxGuard::Ordinary,
+        &SyntaxGuard::Ordinary,
         &[],
         &[],
     );
@@ -67,7 +76,7 @@ fn assert_projection_boundary(expression: &str, written: &str) {
     let file = parse_file(expression);
     let call = call(&file);
     let path = callee_path(call.func.as_ref()).expect("callable path");
-    let boundary = unresolved_path_projection(path, SyntaxGuard::Ordinary)
+    let boundary = unresolved_path_projection(path, SyntaxGuard::Ordinary, &[])
         .expect("associated projection is unresolved");
 
     assert_eq!(boundary.written, written);
@@ -75,7 +84,7 @@ fn assert_projection_boundary(expression: &str, written: &str) {
         facts(
             call,
             &ImportMap::from_file(&file),
-            SyntaxGuard::Ordinary,
+            &SyntaxGuard::Ordinary,
             &[],
             &[]
         )

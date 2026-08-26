@@ -1,5 +1,7 @@
 //! Cargo compilation domains keep target namespaces distinct from policy reachability.
 
+use std::collections::BTreeSet;
+
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum CompilationMode {
     Library,
@@ -46,16 +48,34 @@ pub(crate) struct CompilationDomain {
     pub(crate) edition: String,
     pub(crate) target: String,
     pub(crate) mode: CompilationMode,
+    pub(crate) feature_world: Option<String>,
+    pub(crate) active_features: BTreeSet<String>,
 }
 
 impl CompilationDomain {
     pub(crate) fn canonical_identity(&self) -> String {
         format!(
-            "package={};edition={};target={};mode={}",
+            "package={};edition={};target={};mode={};feature-world={};features={}",
             self.package,
             self.edition,
             self.target,
-            self.mode.canonical_name()
+            self.mode.canonical_name(),
+            self.feature_world
+                .as_deref()
+                .unwrap_or("legacy-conditional"),
+            canonical_features(&self.active_features),
         )
     }
+
+    pub(crate) const fn has_exact_features(&self) -> bool {
+        self.feature_world.is_some()
+    }
+}
+
+fn canonical_features(features: &BTreeSet<String>) -> String {
+    features
+        .iter()
+        .map(|feature| format!("{}:{feature}", feature.len()))
+        .collect::<Vec<_>>()
+        .join(",")
 }

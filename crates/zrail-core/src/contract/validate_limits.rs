@@ -66,7 +66,8 @@ fn contract_items(contract: &Contract) -> usize {
         + contract.source.rust.generated.len()
         + contract.source.rust.out_dir.len()
         + contract.source.rust.item_macros.len()
-        + contract.source.rust.test_mirrors.len();
+        + contract.source.rust.test_mirrors.len()
+        + contract.source.rust.feature_worlds.len();
     count += contract.source.rust.macros.allow.len();
     count += contract
         .source
@@ -83,6 +84,20 @@ fn contract_items(contract: &Contract) -> usize {
         .map(|generated| generated.inputs.len() + generated.auxiliary.len())
         .sum::<usize>();
     count += test_mirror_items(&contract.source.rust.test_mirrors);
+    count += contract
+        .source
+        .rust
+        .feature_worlds
+        .iter()
+        .map(|world| {
+            world.packages.len()
+                + world
+                    .packages
+                    .iter()
+                    .map(|package| package.features.len())
+                    .sum::<usize>()
+        })
+        .sum::<usize>();
     count += contract
         .profiles
         .values()

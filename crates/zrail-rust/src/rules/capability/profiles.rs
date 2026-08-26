@@ -6,16 +6,15 @@ use zrail_core::{AnalysisQuality, FindingSink, PolicyReachability, glob_matches}
 
 use crate::{
     cargo::Package,
-    source::{ObservedFact, RustFileFacts},
+    source::{ObservedFact, RustFileFacts, SyntaxGuard},
 };
 
-use super::{super::RuleContext, effect_tokens, effects::finding, path_matches};
+use super::{super::RuleContext, effect_tokens, effects::finding, path_matches, syntax};
 
 pub(super) fn check(context: &RuleContext<'_>, findings: &mut FindingSink) {
-    let assignments = package_profiles(context);
     let mut emitted = BTreeSet::new();
     for file in &context.source.files {
-        for profile_name in profiles_for_file(file, &context.cargo.packages, &assignments) {
+        for profile_name in assigned_profiles(context.contract, file, &context.cargo.packages) {
             let Some(profile) = context.contract.profiles.get(profile_name) else {
                 continue;
             };
@@ -52,12 +51,37 @@ pub(super) fn check(context: &RuleContext<'_>, findings: &mut FindingSink) {
                     }
                 }
             }
+            for denied in &profile.syntax.deny {
+                for fact in file.async_syntax.iter().filter(|fact| {
+                    fact.kind == *denied
+                        && syntax_applies(profile.reachability, file, &fact.observation)
+                }) {
+                    findings.push(syntax::finding(file, fact, profile_name));
+                }
+            }
+            if !profile.syntax.deny.is_empty() {
+                for expansion in file.macro_expansions.iter().filter(|expansion| {
+                    syntax_applies(profile.reachability, file, &expansion.observation)
+                        && !super::super::macro_expansion::closes_async_syntax(
+                            context.contract,
+                            context.source,
+                            context.resolved_cargo,
+                            expansion,
+                        )
+                }) {
+                    findings.push(syntax::opaque_macro(file, expansion, profile_name));
+                }
+            }
         }
     }
 }
 
 fn applies(policy: PolicyReachability, file: &RustFileFacts, fact: &ObservedFact) -> bool {
     policy == PolicyReachability::All || fact.is_production_applicable(file.reachability)
+}
+
+fn syntax_applies(policy: PolicyReachability, file: &RustFileFacts, fact: &ObservedFact) -> bool {
+    fact.guard != SyntaxGuard::Never && applies(policy, file, fact)
 }
 
 fn profiles_for_file<'a>(
@@ -82,11 +106,22 @@ fn profiles_for_file<'a>(
     profiles
 }
 
-fn package_profiles<'a>(context: &'a RuleContext<'_>) -> BTreeMap<&'a str, Vec<&'a str>> {
+pub(crate) fn assigned_profiles<'a>(
+    contract: &'a zrail_core::Contract,
+    file: &RustFileFacts,
+    packages: &'a [Package],
+) -> BTreeSet<&'a str> {
+    let assignments = package_profiles(contract, packages);
+    profiles_for_file(file, packages, &assignments)
+}
+
+fn package_profiles<'a>(
+    contract: &'a zrail_core::Contract,
+    packages: &'a [Package],
+) -> BTreeMap<&'a str, Vec<&'a str>> {
     let mut result = BTreeMap::new();
-    for package in &context.cargo.packages {
-        let profiles = context
-            .contract
+    for package in packages {
+        let profiles = contract
             .layers
             .iter()
             .filter(|layer| {

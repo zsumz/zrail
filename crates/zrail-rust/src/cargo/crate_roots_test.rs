@@ -24,6 +24,7 @@ fn attestations_resolve_only_uninspected_external_packages() {
             )],
             targets: Vec::new(),
         }],
+        package_features: std::collections::BTreeMap::default(),
         authority_surfaces: Vec::new(),
         manifest_scopes: [(".".into(), ManifestScope::Active)].into_iter().collect(),
     };

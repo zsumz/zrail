@@ -57,7 +57,7 @@ pub(crate) fn canonicalize(
                     .map(|effect| &mut effect.invocation),
             )
         {
-            let local_macros = macro_definitions.local_names(&file.relative, expansion.guard);
+            let local_macros = macro_definitions.local_names(&file.relative, &expansion.guard);
             macro_visibility.resolve(
                 expansion,
                 &file.relative,
@@ -86,15 +86,17 @@ pub(crate) fn canonicalize(
     }
     let binding_macros = review_bindings(index);
     binding_macros.apply(index);
-    let include_bindings = super::include_bindings::IncludeBindings::collect_with_limit(
+    let include_bindings = super::include_bindings::IncludeBindings::collect_with_extern_roots(
         index,
         compilation_roots,
         compilation_edges,
         compilation_includes,
         &binding_macros,
         analysis_limits.derived_source_instances,
+        external_roots(cargo),
     );
     findings.extend(include_bindings.apply_with_contract_limits(index, analysis_limits));
+    super::operation_place_canonical::apply(index, compilation_domains);
     for file in &mut index.files {
         findings.extend(super::calls::resolution_findings(
             &file.relative,
@@ -125,6 +127,24 @@ pub(crate) fn canonicalize(
         }
     }
     index.findings.extend(findings);
+}
+
+fn external_roots(cargo: &crate::cargo::CargoWorkspace) -> BTreeMap<String, BTreeSet<String>> {
+    cargo
+        .packages
+        .iter()
+        .map(|package| {
+            let roots = package
+                .dependencies
+                .iter()
+                .filter(|dependency| {
+                    dependency.crate_root_authority != crate::cargo::CrateRootAuthority::Unresolved
+                })
+                .map(|dependency| crate::cargo::rust_crate_root(&dependency.crate_root))
+                .collect();
+            (package.name.clone(), roots)
+        })
+        .collect()
 }
 
 fn canonicalize_fact(fact: &mut ObservedFact, roots: &BTreeMap<String, BTreeSet<String>>) {

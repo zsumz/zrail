@@ -1,14 +1,37 @@
 //! Governed-surface reporting stays complete, exact, and deterministic.
 
-use std::{fs, path::PathBuf};
+use std::{collections::BTreeMap, fs, path::PathBuf};
 
 use zrail_core::AnalysisQuality;
 
-use super::governed_surface_report;
+use super::{governed_feature_worlds, governed_surface_report};
+use crate::cargo::{ResolvedFeatureWorld, ResolvedPackageFeatures};
+use crate::test_mirror_plan;
 use fixture::{AMBIGUOUS_LOCK, CHECKSUM, CONTRACT, LIBRARY, LOCK, MANIFEST, MIRROR, OWNER};
 
 #[path = "coverage/fixture.rs"]
 mod fixture;
+
+#[test]
+fn feature_worlds_are_reported_in_canonical_name_order() {
+    let package = ResolvedPackageFeatures {
+        default_features: false,
+        selected: Vec::default(),
+        active: Vec::default(),
+    };
+    let worlds = ["zeta", "alpha"].map(|name| ResolvedFeatureWorld {
+        name: name.into(),
+        packages: BTreeMap::from([("app".into(), package.clone())]),
+    });
+
+    assert_eq!(
+        governed_feature_worlds(&worlds)
+            .into_iter()
+            .map(|world| world.name)
+            .collect::<Vec<_>>(),
+        ["alpha", "zeta"]
+    );
+}
 
 #[test]
 fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
@@ -18,12 +41,12 @@ fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
     let repeated = governed_surface_report(&root, "zrail.toml".as_ref()).expect("repeat coverage");
 
     assert_eq!(report, repeated);
-    assert_eq!(report.schema, 3);
     assert_eq!(report.contract_schema, 2);
     assert_eq!(report.contract_sha256.len(), 64);
     assert!(report.analysis.complete);
     assert_eq!(report.analysis.metrics.physical_rust_files, 3);
     assert_eq!(report.analysis.exclusions, ["scratch/**", "target/**"]);
+    assert!(report.feature_worlds.is_empty());
     assert!(
         report
             .enabled_rails
@@ -35,17 +58,59 @@ fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
         "analysis:limit:derived-source-instances:input-derived",
         "contract-source:zrail.toml",
         "dependency:blocked-path",
+        "owner:field-mutation:record-value-mutation",
         "owner:type-construction:record-construction",
         "repository:exclude:scratch/**",
+        "profile:sync:syntax:async-fn",
+        "rust:feature-world-mode:legacy-conditional",
+        "rust:hygiene:glob-imports",
         "rust:hygiene:unsafe",
-        "test-mirror:tests/mirror.rs::mirrors_build",
+        "rust:duplication:import:clone",
+        "rust:type-policy:record-shape",
     ] {
         assert!(
             report.enabled_rails.iter().any(|enabled| enabled == rail),
             "missing enabled rail {rail:?}"
         );
     }
-    assert_eq!(report.owners.len(), 5);
+    assert_eq!(report.owners.len(), 6);
+    let glob_policy = report
+        .source_policies
+        .iter()
+        .find(|policy| policy.policy_id == "rust:hygiene:glob-imports")
+        .expect("glob policy");
+    assert_eq!(glob_policy.policy, "facade-reexports-only");
+    assert_eq!(glob_policy.occurrences.len(), 1);
+    assert_eq!(glob_policy.occurrences[0].observed, "owner::*");
+    assert_eq!(
+        glob_policy.occurrences[0].visibility.as_deref(),
+        Some("public")
+    );
+    assert!(glob_policy.occurrences[0].allowed);
+    assert!(
+        glob_policy.occurrences[0]
+            .compilation_domains
+            .iter()
+            .any(|domain| domain.package == "audit-app" && domain.mode == "library")
+    );
+    assert!(
+        glob_policy.occurrences[0]
+            .compilation_domains
+            .iter()
+            .all(|domain| domain.feature_world.is_none() && domain.features.is_empty())
+    );
+    let async_policy = report
+        .source_policies
+        .iter()
+        .find(|policy| policy.policy_id == "profile:sync:syntax:async-fn")
+        .expect("async syntax policy");
+    assert_eq!(async_policy.profile.as_deref(), Some("sync"));
+    assert!(async_policy.occurrences.iter().any(|occurrence| {
+        occurrence.path == "src/owner.rs"
+            && occurrence.operation == "async-fn"
+            && !occurrence.allowed
+    }));
+    super::type_policies::assert_type_policy_coverage(&report);
     assert_eq!(report.unresolved_occurrences, 1);
     assert_eq!(report.ambiguous_occurrences, 0);
     let owner = report
@@ -79,6 +144,16 @@ fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
         "owner:field-authority:unknown-token-authority"
     );
     assert_eq!(field_owner.occurrences[0].operation, "field-write");
+    let mutation_owner = report
+        .owners
+        .iter()
+        .find(|owner| owner.name == "record-value-mutation")
+        .expect("field mutation owner");
+    assert_eq!(mutation_owner.mutating_methods, ["saturating_add"]);
+    assert!(mutation_owner.occurrences.iter().any(|occurrence| {
+        occurrence.operation == "field-receiver-call"
+            && occurrence.method.as_deref() == Some("saturating_add")
+    }));
     let call_owner = report
         .owners
         .iter()
@@ -136,6 +211,10 @@ fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
         "registry+https://github.com/rust-lang/crates.io-index"
     );
     assert_eq!(report.test_mirrors[0].test_name, "mirrors_build");
+    let plan = test_mirror_plan(&root, "zrail.toml".as_ref()).expect("build mirror plan");
+    assert_eq!(plan.mirrors[0].policy_id, report.test_mirrors[0].policy_id);
+    let mirror_policy = &report.test_mirrors[0].policy_id;
+    assert!(report.enabled_rails.contains(mirror_policy));
     assert_eq!(report.test_mirrors[0].package, "audit-app");
     assert_eq!(
         report.test_mirrors[0].inputs,

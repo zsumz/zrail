@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 
 use syn::visit::Visit;
 
-use super::super::{imports::ImportMap, visitor::FactVisitor};
+use super::super::{FactVisitor, imports::ImportMap};
 use crate::source::SyntaxGuard;
 
 #[test]
@@ -81,7 +81,10 @@ fn negated_test_include_is_production_only() {
 fn arbitrary_cfg_include_is_conditional() {
     let includes = includes("#[cfg(feature = \"mutating\")]\ninclude!(\"feature.rs\");\n");
 
-    assert_eq!(includes.get("feature.rs"), Some(&SyntaxGuard::Conditional));
+    assert_eq!(
+        includes.get("feature.rs").map(SyntaxGuard::canonical_name),
+        Some("cfg:feature=\"mutating\"".into())
+    );
 }
 
 #[test]
@@ -89,8 +92,8 @@ fn arbitrary_cfg_inside_test_context_preserves_both_constraints() {
     let includes = includes("#[cfg(test)]\nmod tests { #[cfg(unix)] include!(\"unix.rs\"); }\n");
 
     assert_eq!(
-        includes.get("unix.rs"),
-        Some(&SyntaxGuard::ConditionalTestOnly)
+        includes.get("unix.rs").map(SyntaxGuard::canonical_name),
+        Some("cfg:all(test,opaque(unix))".into())
     );
 }
 

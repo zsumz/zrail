@@ -111,7 +111,7 @@ impl IncludeBindings {
                     (
                         fact.span,
                         fact.written.as_deref().unwrap_or(&fact.name).to_owned(),
-                        fact.guard,
+                        fact.guard.clone(),
                     )
                 })
                 .collect::<std::collections::BTreeSet<CallSite>>();
@@ -173,10 +173,10 @@ fn apply_projection(facts: &mut Vec<ObservedFact>, projection: FactProjection) {
     facts.retain(|fact| {
         !projection
             .removals
-            .contains(&(fact.name.clone(), fact.span, fact.guard))
+            .contains(&(fact.name.clone(), fact.span, fact.guard.clone()))
     });
     for fact in facts.iter_mut() {
-        let key: FactKey = (fact.name.clone(), fact.span, fact.guard);
+        let key: FactKey = (fact.name.clone(), fact.span, fact.guard.clone());
         if let Some(quality) = projection.qualities.get(&key) {
             fact.quality = *quality;
         }

@@ -245,12 +245,16 @@ fn contract() -> Contract {
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),
                 test_mirrors: Vec::new(),
+                feature_worlds: Vec::new(),
                 macros: zrail_core::MacroExpansionContract::default(),
+                duplication: zrail_core::RustDuplicationContract::default(),
+                types: Vec::new(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,
                     lint_suppressions: LintSuppressionMode::Deny,
                     deny_methods: Vec::new(),
                     deny_macros: Vec::new(),
+                    glob_imports: zrail_core::GlobImportMode::Allow,
                 },
                 size: Some(FileSizeContract {
                     facade: Budget {

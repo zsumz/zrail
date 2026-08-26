@@ -7,44 +7,41 @@ use super::SyntaxGuard;
 pub(super) fn insert_guard(
     values: &mut BTreeMap<String, SyntaxGuard>,
     path: String,
-    guard: SyntaxGuard,
+    guard: &SyntaxGuard,
 ) {
     values
         .entry(path)
         .and_modify(|existing| {
-            if guard == SyntaxGuard::Ordinary {
-                *existing = guard;
+            if *guard == SyntaxGuard::Ordinary {
+                *existing = guard.clone();
             }
         })
-        .or_insert(guard);
+        .or_insert_with(|| guard.clone());
 }
 
 pub(super) fn insert_primary_alias(
     aliases: &mut BTreeMap<String, String>,
     guards: &mut BTreeMap<String, SyntaxGuard>,
     unresolved: &mut BTreeSet<String>,
-    alias: String,
+    alias: &str,
     target: String,
-    conditional: bool,
-    guard: SyntaxGuard,
+    _conditional: bool,
+    guard: &SyntaxGuard,
 ) {
-    match guards.get(&alias).copied() {
+    match guards.get(alias).cloned() {
         None => {
-            aliases.insert(alias.clone(), target);
-            guards.insert(alias.clone(), guard);
+            aliases.insert(alias.to_owned(), target);
+            guards.insert(alias.to_owned(), guard.clone());
         }
-        Some(SyntaxGuard::TestOnly) if guard == SyntaxGuard::Ordinary => {
-            aliases.insert(alias.clone(), target);
-            guards.insert(alias.clone(), guard);
+        Some(SyntaxGuard::TestOnly) if *guard == SyntaxGuard::Ordinary => {
+            aliases.insert(alias.to_owned(), target);
+            guards.insert(alias.to_owned(), guard.clone());
         }
-        Some(SyntaxGuard::Ordinary) if guard == SyntaxGuard::TestOnly => {}
-        Some(_) if aliases.get(&alias) != Some(&target) => {
-            unresolved.insert(alias.clone());
+        Some(SyntaxGuard::Ordinary) if *guard == SyntaxGuard::TestOnly => {}
+        Some(_) if aliases.get(alias) != Some(&target) => {
+            unresolved.insert(alias.to_owned());
         }
         Some(_) => {}
-    }
-    if conditional && guard.is_conditional() {
-        unresolved.insert(alias);
     }
 }
 

@@ -1,4 +1,4 @@
-//! Scoped review of one lock-semantics epoch against its immediate successor.
+//! Scoped review of a supported prior lock epoch against current semantics.
 
 mod surfaces;
 
@@ -8,6 +8,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{LOCK_SCHEMA, LOCK_SEMANTICS, LockFile};
 use surfaces::surfaces;
+
+const SUPPORTED_PRIOR_EPOCHS: &[(u64, u64)] = &[(1, 1), (1, 2), (2, 3)];
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -57,7 +59,7 @@ pub struct LockMigrationSummary {
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-/// Deterministic immediately-previous-epoch migration report.
+/// Deterministic prior-epoch migration report.
 pub struct LockMigrationReport {
     /// Migration report schema; currently `1`.
     pub schema: u64,
@@ -91,7 +93,7 @@ impl LockMigrationReport {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-/// Unsupported, mismatched, or non-adjacent lock migration state.
+/// Unsupported or mismatched lock migration state.
 pub struct LockMigrationError(String);
 
 impl fmt::Display for LockMigrationError {
@@ -107,17 +109,12 @@ pub fn compare_lock_epochs(
     before: &LockFile,
     after: &LockFile,
 ) -> Result<LockMigrationReport, LockMigrationError> {
-    if before.semantics.checked_add(1) != Some(after.semantics) || after.semantics != LOCK_SEMANTICS
+    if !SUPPORTED_PRIOR_EPOCHS.contains(&(before.schema, before.semantics))
+        || after.schema != LOCK_SCHEMA
+        || after.semantics != LOCK_SEMANTICS
     {
         return Err(LockMigrationError(format!(
-            "lock migration supports only semantics {} to {}",
-            LOCK_SEMANTICS.saturating_sub(1),
-            LOCK_SEMANTICS
-        )));
-    }
-    if before.schema >= LOCK_SCHEMA || after.schema != LOCK_SCHEMA {
-        return Err(LockMigrationError(format!(
-            "lock migration requires a prior schema below {LOCK_SCHEMA} and current schema {LOCK_SCHEMA}"
+            "lock migration supports released epochs schema 1/semantics 1, schema 1/semantics 2, and schema 2/semantics 3 to schema {LOCK_SCHEMA}/semantics {LOCK_SEMANTICS}"
         )));
     }
     if before.contract_sha256 != after.contract_sha256 {

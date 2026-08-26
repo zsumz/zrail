@@ -35,6 +35,26 @@ pub(crate) fn build(
         .filter(|file| !file.reachability.is_unreachable())
     {
         for expansion in &file.macro_expansions {
+            if expansion.is_compiler_builtin() {
+                policy.trust(&file.relative, expansion);
+                continue;
+            }
+            let item_invocation = file
+                .item_macros
+                .iter()
+                .find(|invocation| invocation.span == expansion.span);
+            if contract.source.rust.macros.mode == MacroExpansionMode::Allow
+                && item_invocation.is_none_or(|invocation| {
+                    crate::rules::source_graph::item_macro_is_authorized(
+                        contract,
+                        file,
+                        invocation,
+                        resolved_cargo,
+                    )
+                })
+            {
+                policy.accept_opaque(&file.relative, expansion);
+            }
             let MacroBindingResult::Bound {
                 allowances,
                 confidence: AnalysisQuality::Exact,
@@ -44,21 +64,33 @@ pub(crate) fn build(
             };
             if complete_namespace_authority(expansion, &allowances, &allowed) {
                 policy.trust(&file.relative, expansion);
+            } else {
+                policy.accept_opaque(&file.relative, expansion);
             }
         }
         for invocation in &file.item_macros {
-            let exact = contract.source.rust.item_macros.iter().any(|allowance| {
-                allowance.manifest.is_some()
-                    && allowance.path.as_deref() == Some(file.relative.as_str())
-                    && invocation.policy_names().any(|name| name == allowance.name)
-            });
-            if exact
-                && let Some(expansion) = file
-                    .macro_expansions
-                    .iter()
-                    .find(|expansion| expansion.span == invocation.span)
-            {
-                policy.trust(&file.relative, expansion);
+            let Some(expansion) = file
+                .macro_expansions
+                .iter()
+                .find(|expansion| expansion.span == invocation.span)
+            else {
+                continue;
+            };
+            if crate::rules::source_graph::item_macro_is_authorized(
+                contract,
+                file,
+                invocation,
+                resolved_cargo,
+            ) {
+                policy.accept_opaque(&file.relative, expansion);
+                let has_manifest = contract.source.rust.item_macros.iter().any(|allowance| {
+                    allowance.manifest.is_some()
+                        && allowance.path.as_deref() == Some(file.relative.as_str())
+                        && invocation.policy_names().any(|name| name == allowance.name)
+                });
+                if has_manifest {
+                    policy.trust(&file.relative, expansion);
+                }
             }
         }
     }

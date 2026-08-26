@@ -15,6 +15,7 @@ pub(super) fn normalize(paths: Vec<ResolvedPath>) -> Vec<ResolvedPath> {
         entry.quality = entry.quality.max(path.quality);
         entry.crossed_include |= path.crossed_include;
         entry.requires_projection |= path.requires_projection;
+        entry.blocks_completeness |= path.blocks_completeness;
     }
     normalized.into_values().collect()
 }
@@ -25,6 +26,17 @@ pub(super) fn unresolved(name: &str) -> ResolvedPath {
         quality: AnalysisQuality::Unresolved,
         crossed_include: true,
         requires_projection: true,
+        blocks_completeness: true,
+    }
+}
+
+pub(super) fn opaque(name: &str, blocks_completeness: bool) -> ResolvedPath {
+    ResolvedPath {
+        name: name.into(),
+        quality: AnalysisQuality::Unresolved,
+        crossed_include: false,
+        requires_projection: true,
+        blocks_completeness,
     }
 }
 

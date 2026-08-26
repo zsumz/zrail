@@ -16,7 +16,7 @@ impl<'a> PlaceExpression<'a> {
             authority_fields: Vec::new(),
             excluded_reads: Vec::new(),
         };
-        place.collect(expression, true);
+        place.collect(expression, true, true);
         place
     }
 
@@ -28,37 +28,40 @@ impl<'a> PlaceExpression<'a> {
         self.excluded_reads.iter().copied()
     }
 
-    fn collect(&mut self, expression: &'a Expr, exclude_reads: bool) {
+    fn collect(&mut self, expression: &'a Expr, authority: bool, exclude_reads: bool) {
         match expression {
             Expr::Field(field) => {
-                self.collect_field(field, exclude_reads);
-                self.collect(&field.base, exclude_reads);
+                self.collect_field(field, authority, exclude_reads);
+                self.collect(&field.base, authority, exclude_reads);
             }
-            Expr::Index(index) => self.collect(&index.expr, exclude_reads),
-            Expr::Group(group) => self.collect(&group.expr, exclude_reads),
-            Expr::Paren(paren) => self.collect(&paren.expr, exclude_reads),
+            Expr::Index(index) => self.collect(&index.expr, authority, exclude_reads),
+            Expr::Group(group) => self.collect(&group.expr, authority, exclude_reads),
+            Expr::Paren(paren) => self.collect(&paren.expr, authority, exclude_reads),
             Expr::Unary(unary) if matches!(unary.op, UnOp::Deref(_)) => {
-                self.collect(&unary.expr, false);
+                // A pointee write reads the pointer but does not mutate it.
+                self.collect(&unary.expr, false, false);
             }
             Expr::Tuple(tuple) => {
                 for element in &tuple.elems {
-                    self.collect(element, exclude_reads);
+                    self.collect(element, authority, exclude_reads);
                 }
             }
             Expr::Array(array) => {
                 for element in &array.elems {
-                    self.collect(element, exclude_reads);
+                    self.collect(element, authority, exclude_reads);
                 }
             }
             _ => {}
         }
     }
 
-    fn collect_field(&mut self, field: &'a ExprField, exclude_reads: bool) {
+    fn collect_field(&mut self, field: &'a ExprField, authority: bool, exclude_reads: bool) {
         let Member::Named(member) = &field.member else {
             return;
         };
-        self.authority_fields.push(field);
+        if authority {
+            self.authority_fields.push(field);
+        }
         if exclude_reads {
             self.excluded_reads.push(source_span(member.span()));
         }

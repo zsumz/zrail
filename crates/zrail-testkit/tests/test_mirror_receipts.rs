@@ -7,6 +7,76 @@ use std::fs;
 
 use fixture::MirrorFixture;
 use zrail_core::ReportStatus;
+use zrail_rust::{
+    render_test_mirror_receipts, test_mirror_plan, verify_test_mirror_plan, verify_test_mirrors,
+};
+
+#[test]
+fn mirror_plan_scales_execution_without_weakening_exact_receipts() {
+    let fixture = MirrorFixture::new("plan");
+    fixture.write_valid_receipt("runner 1.2.3", "state_transitions", "passed");
+    let root = fixture.path("");
+    let plan = test_mirror_plan(&root, std::path::Path::new("zrail.toml"))
+        .expect("build exact mirror plan");
+    let source = plan.json().expect("render mirror plan");
+
+    assert_eq!(
+        verify_test_mirror_plan(&root, std::path::Path::new("zrail.toml"), &source)
+            .expect("verify current plan"),
+        plan
+    );
+    let verified = verify_test_mirrors(&root, std::path::Path::new("zrail.toml"), &source)
+        .expect("verify exact receipt set");
+    assert_eq!(verified.report.status, ReportStatus::Pass);
+
+    fs::write(
+        fixture.path("src/state.rs"),
+        "//! Changed state behavior.\npub fn transition(value: usize) -> usize { value + 2 }\n",
+    )
+    .expect("drift production input");
+    assert!(
+        verify_test_mirror_plan(&root, std::path::Path::new("zrail.toml"), &source)
+            .expect_err("stale plan must fail")
+            .to_string()
+            .contains("differs")
+    );
+}
+
+#[test]
+fn trusted_group_results_render_the_complete_receipt_set_without_execution() {
+    let fixture = MirrorFixture::new("bulk-receipts");
+    let root = fixture.path("");
+    let plan = test_mirror_plan(&root, std::path::Path::new("zrail.toml"))
+        .expect("build exact mirror plan");
+    let mirror = &plan.mirrors[0];
+    let source = plan.json().expect("render mirror plan");
+    let results = format!(
+        concat!(
+            "{{\"schema\":1,\"plan_sha256\":\"{}\",",
+            "\"producer\":\"trusted-runner 1.2.3\",\"groups\":[{{",
+            "\"execution_group\":\"{}\",\"tests\":[{{",
+            "\"policy_id\":\"{}\",\"status\":\"passed\"}}]}}]}}"
+        ),
+        plan.plan_sha256, mirror.execution_group, mirror.policy_id
+    );
+
+    let bundle =
+        render_test_mirror_receipts(&root, std::path::Path::new("zrail.toml"), &source, &results)
+            .expect("render current receipts");
+    assert_eq!(bundle.receipts.len(), 1);
+    let artifact = &bundle.receipts[0];
+    fs::create_dir_all(fixture.path("evidence")).expect("create receipt directory");
+    fs::write(fixture.path(&artifact.path), &artifact.source).expect("write rendered receipt");
+    fixture.write_candidate_lock();
+
+    let checked = fixture.check();
+    assert_eq!(
+        checked.report.status,
+        ReportStatus::Pass,
+        "{}",
+        checked.report.human()
+    );
+}
 
 #[test]
 fn exact_cargo_reachable_mirror_with_passed_receipt_is_authoritative() {
@@ -66,7 +136,7 @@ fn mirror_requires_production_and_cargo_test_reachability_plus_exact_declaration
     let checked = fixture.check();
     assert!(MirrorFixture::has(&checked, "MIRROR-002"));
     assert!(MirrorFixture::has(&checked, "MIRROR-004"));
-    assert!(MirrorFixture::has(&checked, "MIRROR-005"));
+    assert!(MirrorFixture::has(&checked, "MIRROR-010"));
 }
 
 #[test]

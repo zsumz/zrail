@@ -13,6 +13,15 @@ pub struct LockedAnalysis {
     /// Exact Cargo.lock bytes when resolved Cargo authority participates.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cargo_lock_sha256: Option<String>,
+    /// Canonical digest of every workspace package's Cargo feature definition.
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub cargo_features_sha256: String,
+    /// Canonical digest of configured selections and resolved exact feature worlds.
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub feature_worlds_sha256: String,
+    /// Number of exact workspace-wide feature worlds; zero means legacy conditional analysis.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub feature_worlds: Option<usize>,
     /// Number of active Cargo packages.
     pub packages: usize,
     /// Number of active Cargo targets.
@@ -54,6 +63,9 @@ impl Default for LockedAnalysis {
             inventory_sha256: crate::sha256_hex(b""),
             exclusions_sha256: crate::sha256_hex(b""),
             cargo_lock_sha256: None,
+            cargo_features_sha256: crate::sha256_hex(b""),
+            feature_worlds_sha256: crate::sha256_hex(b""),
+            feature_worlds: Some(0),
             packages: 0,
             targets: 0,
             physical_rust_files: 0,
@@ -75,6 +87,9 @@ impl LockedAnalysis {
         self.inventory_sha256 == other.inventory_sha256
             && self.exclusions_sha256 == other.exclusions_sha256
             && self.cargo_lock_sha256 == other.cargo_lock_sha256
+            && self.cargo_features_sha256 == other.cargo_features_sha256
+            && self.feature_worlds_sha256 == other.feature_worlds_sha256
+            && self.feature_worlds == other.feature_worlds
             && self.unresolved_bindings == other.unresolved_bindings
             && self.analyzer_semantics == other.analyzer_semantics
             && self.contract_sources == other.contract_sources

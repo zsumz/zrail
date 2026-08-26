@@ -41,18 +41,27 @@ pub struct PathExplanation {
     pub external_dependencies: Option<String>,
     /// Effect names denied by the matched layer's profiles.
     pub denied_effects: Vec<String>,
+    /// Runtime-neutral async syntax denied by the matched layer's profiles.
+    #[serde(default)]
+    pub denied_syntax: Vec<String>,
     /// Symbol paths denied by matching source scopes.
     pub denied_symbols: Vec<String>,
     /// Method names denied throughout Rust source.
     pub denied_methods: Vec<String>,
     /// Macro names denied throughout Rust source.
     pub denied_macros: Vec<String>,
+    /// Written glob-import policy applied throughout Rust source.
+    #[serde(default)]
+    pub glob_imports: String,
     /// The macro-expansion mode: `allow` or `deny-unreviewed`.
     pub macro_expansion: String,
     /// Macro policy names whose expansions the contract permits.
     pub allowed_macro_expansions: Vec<String>,
     /// Allowed macro policy names whose inputs remain opaque.
     pub opaque_macro_inputs: Vec<String>,
+    /// Allowed macro policy names attested to introduce no async syntax.
+    #[serde(default)]
+    pub async_closed_macro_expansions: Vec<String>,
     /// Observed repository macro implementations bound into the lock.
     pub content_bound_macro_implementations: Vec<String>,
     /// Observed macro spellings, preferred policy names, and independent origins.

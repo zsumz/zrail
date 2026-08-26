@@ -30,7 +30,6 @@ fn relaxing_exact_dependencies_is_a_grant() {
     after.dependencies.mode = DependencyMode::Observed;
 
     let report = compare_architecture(&before, None, &after, None);
-
     assert!(
         report
             .changes
@@ -82,6 +81,8 @@ fn macro_expansion_denial_revokes_power_and_allowance_grants_it() {
         inputs: MacroInputMode::Inspect,
         binding: MacroBindingMode::Exact,
         bindings: crate::MacroExpansionBindings::Opaque,
+        async_syntax: crate::MacroAsyncSyntax::Opaque,
+        duplication_effect: crate::MacroDuplicationEffect::Opaque,
         definition: None,
         source: None,
         reason: "Reviewed async control-flow expansion.".into(),
@@ -181,6 +182,7 @@ fn widening_a_capability_owner_is_a_grant() {
         reachability: crate::PolicyReachability::All,
         within: vec!["src/**".into()],
         selector: "std::fs".into(),
+        mutating_methods: Vec::new(),
         allow: vec!["src/io.rs".into()],
         reason: "one filesystem owner".into(),
     });

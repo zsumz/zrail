@@ -2,10 +2,10 @@
 
 use zrail_core::AnalysisQuality;
 
-use super::{imports::ImportMap, model::ObservedFact, visitor::FactVisitor};
+use super::{FactVisitor, imports::ImportMap, model::ObservedFact};
 
 impl<'a> FactVisitor<'a> {
-    pub(super) fn new(imports: &'a ImportMap) -> Self {
+    pub(in crate::source) fn new(imports: &'a ImportMap) -> Self {
         let mut paths = imports
             .declared_paths()
             .into_iter()
@@ -48,6 +48,7 @@ impl<'a> FactVisitor<'a> {
             methods: Vec::new(),
             operations: Vec::new(),
             local_types: Vec::new(),
+            local_values: Vec::new(),
             inline_modules: Vec::new(),
             self_types: Vec::new(),
             field_read_exclusions: Vec::new(),
@@ -56,10 +57,12 @@ impl<'a> FactVisitor<'a> {
             opaque_macro_inputs: Vec::new(),
             macro_definitions: Vec::new(),
             import_bindings: Vec::new(),
+            glob_imports: Vec::new(),
             inline_module_scopes: Vec::new(),
             compile_effects: Vec::new(),
             lint_suppressions: Vec::new(),
             unsafe_constructs: Vec::new(),
+            async_syntax: Vec::new(),
             tests: Vec::new(),
             includes: Vec::new(),
             item_macros: Vec::new(),

@@ -64,7 +64,7 @@ impl Walker<'_> {
                 module_name: edge.module_name.clone(),
                 child: edge.child.clone(),
                 domain: context.domain.clone(),
-                guard: context.guard,
+                guard: context.guard.clone(),
                 parent_scope: parent_scope.to_vec(),
                 span: edge.span,
             });
@@ -94,7 +94,7 @@ impl Walker<'_> {
                 parent: parent.into(),
                 child: target,
                 domain: context.domain.clone(),
-                guard: context.guard,
+                guard: context.guard.clone(),
                 context: include.context,
                 parent_scope: include.lexical_scope.clone(),
                 generic_types: include.generic_types.clone(),

@@ -9,9 +9,20 @@ edition = "2024"
 bridge = "1"
 "#;
 
-pub(super) const LIBRARY: &str =
-    "//! Generic audit fixture.\npub struct Record { pub value: usize }\nmod owner;\n";
-pub(super) const OWNER: &str = "//! Exact construction owner.\nuse crate::Record;\npub fn build() -> Record { Record { value: 1 } }\npub fn inspect() { let _ = std::fs::metadata(\"state\"); let _ = std::fs::metadata; let _ = std::env::var(\"MODE\"); }\npub fn write_unknown(value: &mut Unknown) { value.token = 2; }\n";
+pub(super) const LIBRARY: &str = concat!(
+    "//! Generic audit fixture.\n",
+    "#[cfg_attr(feature = \"copyable\", derive(Clone))]\n",
+    "pub struct Record { pub value: usize }\n",
+    "#[cfg(unix)]\n",
+    "use self::Record as T;\n",
+    "impl Clone for T {\n",
+    "    fn clone(&self) -> Self { unreachable!() }\n",
+    "}\n",
+    "mod ",
+    "owner;\n",
+    "pub use owner::*;\n",
+);
+pub(super) const OWNER: &str = "//! Exact construction owner.\nuse crate::Record;\nuse core::clone::Clone as Clonable;\npub fn build() -> Record { Record { value: 1 } }\npub async fn idle() {}\npub fn inspect() { let _ = std::fs::metadata(\"state\"); let _ = std::fs::metadata; let _ = std::env::var(\"MODE\"); }\npub fn mutate(record: &mut Record) { record.value = 2; let _ = &mut record.value; let _ = record.value.saturating_add(1); }\npub fn write_unknown(value: &mut Unknown) { value.token = 2; }\n";
 pub(super) const MIRROR: &str =
     concat!("//! Test mirror.\n", "#[", "test] fn mirrors_build() {}\n");
 pub(super) const CHECKSUM: &str =
@@ -79,6 +90,37 @@ tests = "allow"
 [source.rust.hygiene]
 unsafe = "deny"
 lint_suppressions = "allow"
+glob_imports = "facade-reexports-only"
+
+[source.rust.duplication]
+deny_imports = ["clone"]
+
+[[source.rust.types]]
+name = "record-shape"
+match = "crate::Record"
+path = "src/lib.rs"
+kind = "type"
+visibility = "pub"
+deny = ["impl-clone"]
+reason = "The public record representation remains explicit."
+
+[[source.rust.types.fields]]
+name = "value"
+type = "usize"
+visibility = "pub"
+
+[profiles.sync.effects]
+deny = []
+
+[profiles.sync.syntax]
+deny = ["async-fn"]
+
+[[layer]]
+name = "core"
+packages = ["audit-app"]
+may_depend_on = []
+profiles = ["sync"]
+reason = "Audit core remains synchronous."
 
 [[source.rust.test_mirrors]]
 production = "src/lib.rs"
@@ -111,6 +153,15 @@ within = ["src/**"]
 match = "crate::External::token"
 allow = ["src/owner.rs"]
 reason = "Unresolved operations remain visible to audit consumers."
+
+[[owner]]
+name = "record-value-mutation"
+kind = "field-mutation"
+within = ["src/**"]
+match = "crate::Record::value"
+mutating_methods = ["saturating_add"]
+allow = ["src/owner.rs"]
+reason = "Record value mutation stays centralized."
 
 [[owner]]
 name = "metadata-call"

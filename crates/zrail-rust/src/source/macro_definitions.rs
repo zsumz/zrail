@@ -93,7 +93,7 @@ impl MacroDefinitions {
     pub(super) fn local_names<'a>(
         &'a self,
         file: &str,
-        guard: SyntaxGuard,
+        guard: &SyntaxGuard,
     ) -> Option<BTreeSet<&'a str>> {
         let mut names = BTreeSet::new();
         for domain in self.active_domains(file, guard)? {
@@ -115,7 +115,7 @@ impl MacroDefinitions {
     }
 
     pub(super) fn apply(&self, file: &str, expansion: &mut MacroExpansionFact) {
-        let Some(instances) = self.active_instances(file, expansion.guard) else {
+        let Some(instances) = self.active_instances(file, &expansion.guard) else {
             Self::add_unknown(expansion);
             return;
         };

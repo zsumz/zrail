@@ -1,4 +1,4 @@
-//! Deterministic contract formatting options.
+//! Preservation-safe contract formatting options.
 
 use std::{ffi::OsString, path::PathBuf};
 

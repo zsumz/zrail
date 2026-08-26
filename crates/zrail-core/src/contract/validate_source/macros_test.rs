@@ -135,12 +135,44 @@ fn no_binding_attestation_rejects_conservative_name_binding() {
     assert!(errors.to_string().contains("requires exact binding"));
 }
 
+#[test]
+fn no_duplication_attestation_requires_exact_provenance() {
+    let mut contract = minimal_contract();
+    contract.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
+    let mut allowance = no_binding_allowance(None);
+    allowance.bindings = MacroExpansionBindings::Opaque;
+    allowance.duplication_effect = crate::MacroDuplicationEffect::None;
+    contract.source.rust.macros.allow.push(allowance);
+
+    let errors = validate_contract(&contract).expect_err("unproven no-duplication claim must fail");
+    assert!(
+        errors
+            .to_string()
+            .contains("duplication_effect = \"none\" requires source or definition provenance")
+    );
+}
+
+#[test]
+fn exact_local_no_duplication_attestation_is_valid() {
+    let mut contract = minimal_contract();
+    contract.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
+    let mut allowance = no_binding_allowance(None);
+    allowance.bindings = MacroExpansionBindings::Opaque;
+    allowance.duplication_effect = crate::MacroDuplicationEffect::None;
+    allowance.definition = Some("src/macros.rs".into());
+    contract.source.rust.macros.allow.push(allowance);
+
+    validate_contract(&contract).expect("exact local no-duplication claim is valid");
+}
+
 fn no_binding_allowance(source: Option<CrateRootSource>) -> MacroExpansionAllow {
     MacroExpansionAllow {
         name: "derive::Model".into(),
         inputs: crate::MacroInputMode::Inspect,
         binding: crate::MacroBindingMode::Exact,
         bindings: MacroExpansionBindings::None,
+        async_syntax: crate::MacroAsyncSyntax::Opaque,
+        duplication_effect: crate::MacroDuplicationEffect::Opaque,
         definition: None,
         source,
         reason: "Reviewed output preserves the ordinary namespace exactly.".into(),

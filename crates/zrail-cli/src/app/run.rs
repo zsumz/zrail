@@ -18,6 +18,9 @@ const HELP: &str = concat!(
     "  zrail init [ROOT] [--preset zsumz|rust] [--exclude PATTERN] [--exclude-from FILE] [--baseline]\n",
     "  zrail check [--root ROOT] [--format human|json] [--max-findings N|all]\n",
     "  zrail coverage [--root ROOT] [--config PATH] [--format human|json]\n",
+    "  zrail mirrors plan [--root ROOT] [--config PATH] [--format human|json]\n",
+    "  zrail mirrors receipts --plan PATH --results PATH [--root ROOT] [--config PATH] [--format human|json]\n",
+    "  zrail mirrors verify --plan PATH [--root ROOT] [--config PATH] [--format human|json]\n",
     "  zrail baseline [--root ROOT] [--rule RULE] [--dry-run] [--format human|json] [--accept-grants]\n",
     "  zrail update [--base REVISION] [--root ROOT] [--format human|json] [--accept-migration sha256:DIGEST] [--accept-grants]\n",
     "  zrail doctor [--root ROOT] [--format human|json]\n",
@@ -54,6 +57,7 @@ fn run_command(command: &Command) -> i32 {
         Command::Init(options) => commands::init(options),
         Command::MigrateConfig(options) => commands::migrate_config(options),
         Command::MigrateLock(options) => commands::migrate_lock(options),
+        Command::Mirrors(options) => commands::mirrors(options),
         Command::Fmt(options) => commands::format_config(options),
         Command::Help => return write_stdout(HELP, 0),
         Command::Version => {
@@ -70,6 +74,7 @@ fn command_format(command: &Command) -> OutputFormat {
     match command {
         Command::Check(options) | Command::Doctor(options) => options.format,
         Command::Coverage(options) => options.format,
+        Command::Mirrors(options) => options.format,
         Command::Update(options) => options.common.format,
         Command::Baseline(options) => options.common.format,
         Command::Explain { common, .. } => common.format,

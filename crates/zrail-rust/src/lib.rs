@@ -23,16 +23,37 @@ mod coverage;
 mod engine;
 mod explain;
 mod inventory;
+mod mirror_execution;
+mod mirror_inputs;
+mod mirrors;
 mod onboarding;
 mod rules;
 mod source;
 mod source_policy;
 
+#[cfg(test)]
+#[path = "async_glob_policy_test.rs"]
+mod async_glob_policy_test;
+
+#[cfg(test)]
+#[path = "type_policy_test.rs"]
+mod type_policy_test;
+
+#[cfg(test)]
+#[path = "place_domain_world_test.rs"]
+mod place_domain_world_test;
+
+#[cfg(test)]
+#[path = "type_policy_cfg_attr_test.rs"]
+mod type_policy_cfg_attr_test;
+
 pub use analysis::{AnalysisIssue, AnalysisIssueKind, AnalysisMetrics, AnalysisOutcome};
 pub use coverage::{
     GovernedAnalysis, GovernedCompilationDomain, GovernedDependencyPath, GovernedDependencyRule,
-    GovernedOperationOccurrence, GovernedOwnerRule, GovernedPackageIdentity, GovernedSurfaceReport,
-    GovernedTestMirror, governed_surface_report,
+    GovernedFeaturePackage, GovernedFeatureWorld, GovernedOperationOccurrence, GovernedOwnerRule,
+    GovernedPackageIdentity, GovernedSourcePolicyOccurrence, GovernedSourcePolicyRail,
+    GovernedSurfaceReport, GovernedTestMirror, GovernedTypeField, GovernedTypeObservation,
+    GovernedTypePolicy, governed_surface_report,
 };
 pub use engine::{
     CheckError, CheckResult, DoctorReport, build_lock, check_repository,
@@ -42,6 +63,11 @@ pub use engine::{
 pub use explain::{
     CallOwnerExplanation, CapabilityOwnerExplanation, ItemMacroAuthorityExplanation,
     MacroInvocationExplanation, PathExplanation, explain_path,
+};
+pub use mirrors::{
+    MirrorExecutionResult, MirrorPlan, MirrorReceiptBundle, MirrorResultSet, MirrorTestResult,
+    MirrorVerification, PlannedTestMirror, RenderedMirrorReceipt, render_test_mirror_receipts,
+    test_mirror_plan, verify_test_mirror_plan, verify_test_mirrors,
 };
 pub use onboarding::{
     BaselinePlan, BaselineRatchet, BaselineRule, BaselineSize, RepositorySelection,

@@ -22,7 +22,8 @@ diffs, including:
 - normalized direct dependency declarations and exact reviewed `Cargo.lock`
   identities;
 - the complete analyzed inventory, exclusions, contract fragments, and
-  analyzer semantics;
+  analyzer semantics, including Cargo feature definitions and exact feature
+  worlds;
 - reviewed gate bytes and their declared behavioral inputs;
 - exact test-mirror receipt bytes, reviewed inputs, and execution identity;
 - generated-source provenance;
@@ -193,11 +194,14 @@ zrail migrate-lock --base HEAD --output zrail-migration.json
 zrail update --accept-migration sha256:<reviewed-report-digest>
 ```
 
-The adapter supports only the immediately previous semantics epoch. Each exact
-old or new authority subject is classified as preserved, retired, newly
-observable, or changed interpretation. Migration acceptance is recomputed for
-the selected immutable base and never accepts current-worktree grants;
-`--accept-grants` remains a separate authority boundary.
+Adapters are explicit and fail closed for unknown epochs. The current engine
+can reanalyze locks from every released prior semantics epoch (`1` through `3`)
+directly into current semantics `4`; adopters do not need to delete an older
+lock or manufacture a lock-free base commit. Each exact old or new authority
+subject is classified as preserved, retired, newly observable, or changed
+interpretation. Migration acceptance is recomputed for the selected immutable
+base and never accepts current-worktree grants; `--accept-grants` remains a
+separate authority boundary.
 
 ### Contract schema and fragments
 
@@ -220,7 +224,7 @@ the normalized path and digest of every loaded source. Schema-1 wildcard
 imports remain readable only for migration; schema 2 rejects patterns.
 
 Preview and explicitly apply the deterministic migration, then enforce
-canonical formatting across the complete fragment bundle:
+preservation-safe TOML validation across the complete fragment bundle:
 
 ```sh
 zrail migrate-config
@@ -232,7 +236,12 @@ zrail fmt --check
 Migration rewrites `binding` to `resolution`, `bindings` to
 `namespace_effect`, and expands legacy wildcard imports to exact paths. It
 validates the entire prospective bundle before writing, replaces each source
-atomically, and rolls back the bundle if a later replacement fails.
+atomically, refuses to overwrite any source whose bytes changed after planning,
+and restores earlier sources if a later replacement fails, reporting any
+restoration failure. This is rollback safety, not a crash-atomic
+multi-file transaction. Both migration and `fmt` preserve authored comments,
+blank lines, ordering, quoting, spacing, and generated markers; `fmt` only
+supplies a missing final newline.
 
 ## Review
 
@@ -301,7 +310,17 @@ reachability = "production"
 
 [profiles.kernel.effects]
 deny = ["filesystem", "network", "process"]
+
+[profiles.kernel.syntax]
+deny = ["async-fn", "async-block", "async-closure", "await"]
 ```
+
+Async syntax is independent from the `async-runtime` effect. A runtime-neutral
+`async fn`, async block, async closure, or `.await` can therefore be prohibited
+without guessing which executor may eventually poll it. Any expansion that the
+analyzer cannot inspect directly fails closed unless an exact, provenance-bound
+macro allowance separately attests `async_syntax = "none"`; that attestation is
+a reviewable grant.
 
 Production reachability excludes integration tests, benchmarks, examples,
 build scripts, and facts beneath `#[cfg(test)]`, including guarded code inside a
@@ -397,6 +416,25 @@ borrows include `&mut value.field`, so calls such as
 `mem::replace(&mut value.field, next)` are covered without guessing that an
 arbitrary method call mutates its receiver.
 
+When a field's type exposes mutation through receiver methods, declare those
+written method names explicitly:
+
+```toml
+[[owner]]
+name = "state-entries-mutation"
+kind = "field-mutation"
+within = ["crates/kernel/src/**"]
+match = "crate::state::State::entries"
+mutating_methods = ["clear", "insert", "remove"]
+allow = ["crates/kernel/src/state.rs"]
+reason = "All entry mutation stays behind the state boundary."
+```
+
+`field-mutation` combines exact writes and mutable borrows with method calls on
+the exact field place only when the written method is in `mutating_methods`.
+The list must be sorted and unique. Zrail does not infer mutability from method
+names or hardcode methods from standard-library container types.
+
 Use one aggregate owner when the same allow-list governs every form of access:
 
 ```toml
@@ -413,6 +451,110 @@ reason = "All epoch access stays behind the state boundary."
 it does not broaden identity resolution. Known `self` receiver types are exact,
 while unresolved receiver candidates fail closed for exact field-owner policies.
 
+### Exact type and authority-token rails
+
+Per-type policy selects one declaration by its exact source path and canonical
+Rust identity. It can prohibit each derive, manual-implementation, or
+macro-output duplication surface independently, or require all of those
+per-type guarantees together with `linearity = "required"`:
+
+```toml
+[[source.rust.types]]
+name = "command-ticket"
+match = "crate::command::Ticket"
+path = "crates/kernel/src/command.rs"
+kind = "type"
+reachability = "production"
+deny = ["derive-clone", "derive-copy", "impl-clone", "impl-copy", "opaque-expansion"]
+reason = "Tickets transfer command authority and must not be duplicated."
+```
+
+Derive and manual-implementation checks cover structs and enums. Manual
+implementations use the ordinary canonical identity layer, so aliases such as
+`use std::clone::Clone as C; impl C for Ticket` and qualified
+`impl core::marker::Copy for Ticket` are not different escape hatches.
+Unresolved trait or type identities fail closed rather than matching by their
+last path segment. A written `Clone` or `Copy` derive also remains a violation
+if its compiler-builtin provenance becomes unresolved.
+
+Required linearity closes macro output across the selected type's whole active
+package and compilation world. An item or attribute macro does not need to
+overlap or mention the declaration to be capable of emitting a duplication
+implementation. The expansion is closed only when the compiler understands it
+directly or an exact, immutable macro allowance separately attests:
+
+```toml
+[[source.rust.macros.allow]]
+name = "ticket_macro::metadata"
+resolution = "exact"
+inputs = "inspect"
+namespace_effect = "opaque"
+async_syntax = "opaque"
+duplication_effect = "none"
+reason = "Reviewed expansion cannot add Clone or Copy implementations."
+
+[source.rust.macros.allow.source]
+kind = "cargo-lock"
+package = "ticket-macro"
+```
+
+`duplication_effect = "none"` is a provenance claim, not a name allowance. It
+requires exact binding plus an immutable external source or exact repository
+definition. A same-spelling, ambiguous, conditionally different, or unbound
+macro remains opaque.
+
+Authority tokens add an exact representation contract:
+
+```toml
+[[source.rust.types]]
+name = "leadership-permit"
+match = "crate::authority::LeadershipPermit"
+path = "crates/kernel/src/authority.rs"
+kind = "authority-token"
+linearity = "required"
+visibility = "private"
+leaf_module = true
+reason = "The permit is private one-use leadership authority."
+
+[[source.rust.types.fields]]
+name = "epoch"
+type = "u64"
+visibility = "private"
+
+[[source.rust.types.fields]]
+name = "owner"
+type = "core::option::Option<crate::node::NodeId>"
+visibility = "private"
+```
+
+An authority-token policy must require linearity, private type visibility, a
+leaf module, an exact ordered field list, and private visibility on every
+field. Field names, order, visibility, and complete semantic types are part of
+the representation authority. Supported exact types include qualified paths
+with recursive generic arguments, tuples, references, slices, arrays, raw
+pointers, unit, and never. Non-primitive paths at every nesting level must be
+qualified; `impl Trait`, `dyn Trait`, inference, type macros, bare function
+types, and associated or constrained generic arguments are rejected rather
+than truncated to an outer path. An authored leading `crate::` is normalized
+against the analyzer's canonical local identity.
+
+Repository-wide written syntax is intentionally separate from per-type
+linearity:
+
+```toml
+[source.rust.duplication]
+reachability = "production"
+deny_imports = ["clone", "copy"]
+deny_macro_tokens = ["clone", "copy"]
+```
+
+These settings reject explicit imports or aliases and matching identifiers in
+opaque macro token streams throughout the selected reachability. They do not
+silently broaden a named type policy. `zrail coverage --format json` reports
+both global syntax occurrences and every type policy's authored shape plus its
+actual declaration, derive, manual-implementation, and opaque-expansion facts,
+including compilation worlds and allowed or closed status.
+
 Rust file roles are inferred from conventional paths. An exceptional source may
 be reclassified only between `facade` and `implementation` with an exact path
 and a durable reason:
@@ -425,9 +567,23 @@ reason = "Reviewed public surface; implementation belongs behind child modules."
 ```
 
 The effective role drives both declarative-shape enforcement and size budgets.
-Overrides for missing, unreachable, generated, already matching, test,
-entrypoint, or auxiliary source fail as stale or invalid policy. `zrail explain`
-shows the inferred role, effective role, and override reason.
+Overrides for missing, unreachable, generated, already matching, test, or
+auxiliary source fail as stale or invalid policy. An entrypoint may be
+reclassified only as `implementation`; treating it as a facade is invalid.
+`zrail explain` shows the inferred role, effective role, and override reason.
+
+Written glob imports have a separate closed hygiene policy; name resolution
+continues to resolve globs regardless of this setting:
+
+```toml
+[source.rust.hygiene]
+glob_imports = "facade-reexports-only"
+```
+
+The middle mode permits only a top-level outward `pub use path::*` in an
+effective facade. Private imports, block-local imports, inline-module imports,
+and globs in implementation, test, auxiliary, entrypoint, or generated source
+are rejected. The other modes are `allow` and `deny`.
 
 Conventional `tests.rs`, `*_test.rs`, and `*_tests.rs` filenames receive test
 tooling defaults and budgets, as does source beneath a `tests/` directory.
@@ -492,6 +648,52 @@ before binding lookup; include edges do not create module boundaries. The
 repository plans all ordinary namespace projections transactionally under shared
 work and fact budgets, so exhaustion emits one unresolved diagnostic and
 retains no partial authority result.
+
+### Exact Cargo feature worlds
+
+By default, zrail preserves its legacy conditional model: feature-gated source
+is retained conservatively, and the analysis is not described as an exact Cargo
+feature compilation. Repositories that need exact feature-specific policy can
+declare named, workspace-wide worlds:
+
+```toml
+[[source.rust.feature_worlds]]
+name = "strict"
+reason = "The supported strict product build."
+
+[[source.rust.feature_worlds.packages]]
+package = "kernel"
+default_features = false
+features = ["strict"]
+
+[[source.rust.feature_worlds.packages]]
+package = "protocol"
+default_features = true
+features = []
+```
+
+Every world must select every active workspace package exactly once. Zrail
+validates declared features, default-feature closure, optional-dependency
+activation, dependency feature forwarding, and workspace dependency
+propagation to a fixed point without invoking Cargo. Build, development, or
+target-conditional edges are included only when they cannot change that fixed
+point; otherwise the world is rejected as inexact instead of choosing a target
+configuration silently.
+
+Each resulting Cargo compilation domain includes the world name and the exact
+active features for its package. `cfg(feature = "...")`, Boolean combinations,
+and nested `cfg_attr(..., cfg(...))` are reduced exactly per world. Other target
+predicates such as `cfg(unix)` remain conservative. A feature-dependent
+`cfg_attr` that changes `path`, `test`, or `bench` identity fails completeness,
+because selecting source or a Cargo test target requires evidence beyond a
+syntax-only feature reduction. Cargo target `required-features` are parsed and
+targets missing those features are not seeded in that world.
+
+The lock certificate binds package feature definitions, target
+`required-features`, configured selections, resolved closures, and world count
+separately from the general inventory. Changing any of them makes the lock
+stale. `zrail coverage` reports every configured world and includes the world
+and active feature set on each compilation-domain occurrence.
 
 An optional `definition` path can narrow a `macro_rules!` allowance, but path
 spelling never establishes origin. The default `resolution = "exact"` rejects an
@@ -621,6 +823,14 @@ keys, missing fields, and duplicate fields fail closed. Inputs are unique,
 sorted repository paths and must include `Cargo.toml`, `Cargo.lock`, and the
 selected package manifest. The selected package must own both source files.
 
+Mirror execution features are checked against source availability. With
+configured feature worlds, the execution package's `default_features` and
+exact selected `features` must identify one and only one world; zero or multiple
+matches fail closed. The named test must be present exactly in that world and
+its Cargo target's `required-features` must be active. Without configured
+worlds, the explicit execution identity supplies the legacy mirror's local
+feature closure. Zrail still validates this statically and does not run Cargo.
+
 zrail does not execute tests. A test runner records execution in strict schema-2
 JSON after the exact test passes:
 
@@ -656,6 +866,41 @@ producer, so replacing a still-valid receipt remains explicit lock drift.
 The reviewed input list is explicit rather than inferred: shared modules,
 fixtures, build scripts, and generated inputs that affect the test must be
 listed. An omitted dynamic input is not claimed as attested by this receipt.
+
+For large mirror sets, `zrail mirrors plan --format json` emits a strict,
+digest-bound execution plan. It hashes each unique reviewed input only once,
+retains every mirror's independent digest, validates exact source reachability
+and test declarations, and groups identical execution identities without
+merging their receipt authority. A separately trusted producer can consume the
+plan and execute each group. It returns one strict result object per policy,
+grouped by the plan's exact execution-group digest and bound to the plan digest.
+Coverage and plan output use the same `test-mirror:sha256:<digest>` policy ID.
+That digest is domain-separated and length-frames the exact production path,
+test path, and test name, so delimiter-bearing paths cannot collide.
+
+```json
+{
+  "schema": 1,
+  "plan_sha256": "<exact plan digest>",
+  "producer": "trusted-runner 1.2.3",
+  "groups": [{
+    "execution_group": "<group digest from the plan>",
+    "tests": [{"policy_id": "<policy id from the plan>", "status": "passed"}]
+  }]
+}
+```
+
+`zrail mirrors receipts --plan evidence/mirror-plan.json --results
+evidence/mirror-results.json --format json` rejects missing, extra, duplicate,
+mis-grouped, stale, or non-canonical results and renders every schema-2 receipt
+in one deterministic bundle. Each artifact contains the exact newline-terminated
+JSON `source`, its SHA-256, and its declared repository path; the trusted
+producer writes those bytes without reserializing them. Then
+`zrail mirrors verify --plan evidence/mirror-plan.json` recomputes the complete
+plan from current repository bytes before checking only the declared mirror
+receipts. Zrail still does not execute repository programs or infer that a
+passing command ran an unreported test. Failed and skipped outcomes can be
+recorded honestly, but they do not satisfy mirror verification.
 
 ## Cargo
 
@@ -732,13 +977,16 @@ canonical ID, selector, scope, allow list, and matched source-operation
 occurrences; and every dependency prohibition with exact shortest violating
 paths through `Cargo.lock` identities. Occurrences retain source spans,
 resolution quality, syntax guards, applicable Cargo compilation domains, and
-whether the source path is allowed. Unresolved and conservative matches are
-counted explicitly. Schema 3 binds the exact resolved contract digest and also
-includes `enabled_rails`, a sorted canonical
+whether the source path is allowed. Runtime-neutral syntax and written glob
+policies additionally retain exact occurrences, visibility, and lexical scope.
+Unresolved and conservative matches are counted explicitly. Schema 5 binds the
+exact resolved contract digest and also includes `enabled_rails`, a sorted canonical
 census covering every global policy switch, contract source, analysis limit,
 and named layer, scope, owner, ratchet, gate, invariant, macro, generated-source,
 dependency, and test-mirror rail. Exact test-mirror identities include their
-reviewed inputs, command, package, feature set, target, and toolchain.
+reviewed inputs, command, package, feature set, target, and toolchain. The report
+also lists each exact feature world and the world plus active feature set on
+every applicable compilation domain.
 
 Coverage is an audit artifact, not partial best-effort discovery. It fails when
 source analysis is incomplete, when a governed dependency cannot be mapped to
@@ -754,10 +1002,13 @@ JSON is the stable input for external coverage tooling.
 | `zrail baseline` | Add reviewed tightening ratchets to an existing contract |
 | `zrail check` | Check repository architecture without modifying files |
 | `zrail coverage` | Export the complete governed surface for audit tooling |
+| `zrail mirrors plan` | Emit an exact grouped plan for a separately trusted receipt producer |
+| `zrail mirrors receipts` | Render all schema-2 receipts from strict plan-bound producer results |
+| `zrail mirrors verify` | Recompute a plan and verify its exact schema-2 receipts |
 | `zrail doctor` | Diagnose setup and compatibility problems |
 | `zrail explain` | Explain the policy and findings for one path |
 | `zrail diff` | Classify architecture changes between trusted states |
-| `zrail fmt` | Canonically format every exact contract source |
+| `zrail fmt` | Validate exact contract TOML without erasing authored layout or comments |
 | `zrail migrate-config` | Preview or apply the schema-1 to schema-2 contract migration |
 | `zrail migrate-lock` | Reanalyze an immutable base and emit an epoch-migration report |
 | `zrail update` | Refresh reviewed lock state from committed authority |

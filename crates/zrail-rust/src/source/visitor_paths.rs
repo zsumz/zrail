@@ -6,15 +6,17 @@ use syn::{
     visit::{self, Visit as _},
 };
 
-use super::{fact::written_fact, visitor::FactVisitor};
+use super::{FactVisitor, fact::written_fact};
 
 impl FactVisitor<'_> {
-    pub(super) fn record_expression_path(&mut self, expression: &ExprPath) {
+    pub(in crate::source) fn record_expression_path(&mut self, expression: &ExprPath) {
         let previous =
             std::mem::replace(&mut self.next_path_namespace, super::FactNamespace::Value);
-        if let Some(boundary) =
-            super::calls::unresolved_path_projection(expression, self.syntax_guard())
-        {
+        if let Some(boundary) = super::calls::unresolved_path_projection(
+            expression,
+            self.syntax_guard(),
+            &self.generic_types,
+        ) {
             self.call_resolutions.push(boundary);
             for attribute in &expression.attrs {
                 self.visit_attribute(attribute);
@@ -31,9 +33,9 @@ impl FactVisitor<'_> {
         self.next_path_namespace = previous;
     }
 
-    pub(super) fn record_path(&mut self, path: &Path) {
+    pub(in crate::source) fn record_path(&mut self, path: &Path) {
         let guard = self.syntax_guard();
-        let (name, quality) = self.imports.resolve(path, guard);
+        let (name, quality) = self.imports.resolve(path, &guard);
         if name.is_empty() {
             return;
         }
@@ -56,7 +58,7 @@ impl FactVisitor<'_> {
         fact.namespace = std::mem::take(&mut self.next_path_namespace);
         self.paths.push(fact);
         self.paths
-            .extend(super::calls::candidates(path, self.imports, &name, guard));
+            .extend(super::calls::candidates(path, self.imports, &name, &guard));
     }
 }
 

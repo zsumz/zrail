@@ -16,20 +16,23 @@ mod receipt;
 mod report;
 
 pub use contract::{
-    AnalysisContract, AnalysisLimits, Budget, Contract, ContractBundle, ContractError,
-    ContractSource, CrateRootContract, CrateRootSource, CycleMode, DependenciesContract,
-    DependencyEdgeKind, DependencyMode, DependencyReachability, DependencyRule, Effect,
+    AnalysisContract, AnalysisLimits, AsyncSyntax, Budget, CargoFeaturePackageContract,
+    CargoFeatureWorldContract, Contract, ContractBundle, ContractError, ContractSource,
+    CrateRootContract, CrateRootSource, CycleMode, DependenciesContract, DependencyEdgeKind,
+    DependencyMode, DependencyReachability, DependencyRule, DuplicationTrait, Effect,
     EffectBoundary, EvidenceReference, ExactMode, ExternalDependencyMode, FacadeMode, FileRole,
     FileRoleContract, FileSizeContract, GateContract, GateKind, GeneratedSourceContract,
-    HygieneContract, InvariantContract, InvariantStatus, ItemMacroBinding, ItemMacroBindingKind,
-    ItemMacroContract, ItemMacroManifest, LayerContract, LayerDependencies, LintSuppressionMode,
-    MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES, MAX_TEST_MIRROR_INPUTS,
-    MacroBindingMode, MacroExpansionAllow, MacroExpansionBindings, MacroExpansionContract,
-    MacroExpansionMode, MacroInputMode, ModuleDocsMode, OutDirSourceContract, OwnerContract,
-    OwnerKind, PolicyMode, PolicyReachability, ProfileContract, RatchetContract,
-    RepositoryContract, RustSourceContract, ScopeContract, SourceContract, SymbolBoundary,
-    SymlinkMode, TestExecutionIdentity, TestMirrorContract, TestMode, contract_imports,
-    load_contract, load_contract_with_entry, parse_evidence_reference,
+    GlobImportMode, HygieneContract, InvariantContract, InvariantStatus, ItemMacroBinding,
+    ItemMacroBindingKind, ItemMacroContract, ItemMacroManifest, LayerContract, LayerDependencies,
+    LintSuppressionMode, MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES,
+    MAX_TEST_MIRROR_INPUTS, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect,
+    MacroExpansionAllow, MacroExpansionBindings, MacroExpansionContract, MacroExpansionMode,
+    MacroInputMode, ModuleDocsMode, OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode,
+    PolicyReachability, ProfileContract, RatchetContract, RepositoryContract,
+    RustDuplicationContract, RustFieldContract, RustSourceContract, RustTypeContract, RustTypeKind,
+    ScopeContract, SourceContract, SymbolBoundary, SymlinkMode, SyntaxBoundary,
+    TestExecutionIdentity, TestMirrorContract, TestMode, TypeLinearity, TypeProhibition,
+    contract_imports, load_contract, load_contract_with_entry, parse_evidence_reference,
 };
 pub use contract_edit::{ContractEditError, format_contract_source, migrate_contract_source};
 pub use diagnostic::{
@@ -64,3 +67,7 @@ pub use receipt::{
     test_mirror_input_sha256, validate_execution_receipt, versioned_producer,
 };
 pub use report::{Report, ReportAnalysis, ReportGroup, ReportStatus, ReportSummary};
+
+#[cfg(test)]
+#[path = "lock_analysis_test.rs"]
+mod lock_analysis_test;

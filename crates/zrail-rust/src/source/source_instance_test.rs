@@ -67,6 +67,46 @@ fn reviewed_derived_context_limit_is_applied_exactly() {
     ));
 }
 
+#[test]
+fn repeated_module_mounts_remain_distinct_inside_each_domain() {
+    let library = domain();
+    let mut test = library.clone();
+    test.mode = CompilationMode::LibraryTest;
+    let roots = [library.clone(), test.clone()].map(|domain| CompilationRoot {
+        file: "src/lib.rs".into(),
+        domain,
+    });
+    let modules = [library, test]
+        .into_iter()
+        .flat_map(|domain| {
+            ["left", "right"].map(move |module_name| CompilationModuleEdge {
+                parent: "src/lib.rs".into(),
+                module_name: module_name.into(),
+                child: "src/shared.rs".into(),
+                domain: domain.clone(),
+                guard: SyntaxGuard::Ordinary,
+                parent_scope: Vec::new(),
+                span: Some(span()),
+            })
+        })
+        .collect::<Vec<_>>();
+
+    let instances = SourceInstances::build(&roots, &modules, &[]);
+    let shared = instances.for_file("src/shared.rs");
+
+    assert_eq!(shared.len(), 4);
+    assert_eq!(instances.metrics().base_contexts, 4);
+    assert_eq!(instances.metrics().derived_contexts, 2);
+    assert_eq!(
+        shared
+            .iter()
+            .filter_map(|id| instances.get(*id))
+            .map(|instance| instance.domain.mode)
+            .collect::<std::collections::BTreeSet<_>>(),
+        std::collections::BTreeSet::from([CompilationMode::Library, CompilationMode::LibraryTest,])
+    );
+}
+
 fn include(parent: &str, child: &str) -> CompilationIncludeEdge {
     CompilationIncludeEdge {
         parent: parent.into(),
@@ -87,6 +127,8 @@ fn domain() -> CompilationDomain {
         edition: "2024".into(),
         target: "fixture".into(),
         mode: CompilationMode::Library,
+        feature_world: None,
+        active_features: std::collections::BTreeSet::default(),
     }
 }
 

@@ -25,31 +25,40 @@ impl MacroVisibility {
         let mut candidates = Vec::new();
         let mut resolved_leaves = BTreeSet::new();
         for candidate in invocation.candidates.drain(..) {
-            if candidate.derivation != MacroDerivation::GlobImport
-                || !self.repository_candidate(file, &candidate.observation.name)
+            // An explicit repository path is already its own namespace proof.
+            // Visibility imports are needed for aliases and globs, but replacing
+            // a written `crate::module::macro` with a module-local re-export can
+            // lose the qualified definition identity that binds its authority.
+            if candidate.derivation == MacroDerivation::Written
+                && repository_path(&candidate.observation.name)
             {
                 candidates.push(candidate);
                 continue;
             }
-            let reachability = match candidate.observation.guard {
-                SyntaxGuard::Ordinary
-                | SyntaxGuard::ProductionOnly
-                | SyntaxGuard::Conditional
-                | SyntaxGuard::ConditionalProductionOnly => file_reachability,
-                SyntaxGuard::TestOnly | SyntaxGuard::ConditionalTestOnly => Reachability::test(),
-                SyntaxGuard::Never => Reachability::UNREACHABLE,
+            if !self.repository_candidate(file, &candidate.observation.name) {
+                candidates.push(candidate);
+                continue;
+            }
+            let reachability = if candidate.observation.guard == SyntaxGuard::Never {
+                Reachability::UNREACHABLE
+            } else if candidate.observation.guard.is_test_only() {
+                Reachability::test()
+            } else {
+                file_reachability
             };
             match self.imports_for(file, &candidate.observation.name, reachability) {
                 VisibilityLookup::Known(imports)
                     if imports
                         .iter()
-                        .any(|import| import.guard.available_in(candidate.observation.guard)) =>
+                        .any(|import| import.guard.available_in(&candidate.observation.guard)) =>
                 {
                     resolved_leaves.insert(leaf(&candidate.observation.name).to_owned());
                     candidates.extend(
                         imports
                             .into_iter()
-                            .filter(|import| import.guard.available_in(candidate.observation.guard))
+                            .filter(|import| {
+                                import.guard.available_in(&candidate.observation.guard)
+                            })
                             .map(|import| {
                                 imported_candidate(&candidate.observation, import, local_macros)
                             }),
@@ -61,7 +70,9 @@ impl MacroVisibility {
                     resolved_leaves.insert(leaf(&candidate.observation.name).to_owned());
                     candidates.push(candidate);
                 }
-                VisibilityLookup::Known(_) => {}
+                VisibilityLookup::Known(_)
+                    if candidate.derivation == MacroDerivation::GlobImport => {}
+                VisibilityLookup::Known(_) => candidates.push(candidate),
                 VisibilityLookup::Unknown => candidates.push(MacroCandidate::unresolved(
                     unresolved(candidate.observation),
                     MacroDerivation::GlobImport,
@@ -106,7 +117,7 @@ fn imported_candidate(
         } else {
             import.quality
         },
-        guard: original.guard,
+        guard: original.guard.clone(),
         lexical_scope: original.lexical_scope.clone(),
         namespace: original.namespace,
     };

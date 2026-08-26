@@ -1,0 +1,111 @@
+//! Shared fixture identities keep the projection tests focused on behavior.
+
+use zrail_core::SourceSpan;
+
+use crate::{
+    inventory::{FileClass, RustSourceFile},
+    source::{
+        CompilationDomain, CompilationMode, Reachability, RustFileFacts, SourceIndex, SourceSyntax,
+        imports::ImportMap, visitor::FactVisitor,
+    },
+};
+use syn::visit::Visit;
+
+pub(super) fn projected_call_count(index: &SourceIndex) -> usize {
+    named_call_count(index, "std::process::Command::new")
+}
+
+pub(super) fn named_call_count(index: &SourceIndex, name: &str) -> usize {
+    index
+        .files
+        .iter()
+        .flat_map(|file| &file.calls)
+        .filter(|fact| fact.name == name)
+        .count()
+}
+
+pub(super) fn observed_names(index: &SourceIndex) -> Vec<(String, Vec<String>)> {
+    let mut observed = index
+        .files
+        .iter()
+        .map(|file| {
+            let mut names = file
+                .calls
+                .iter()
+                .map(|fact| fact.name.clone())
+                .collect::<Vec<_>>();
+            names.sort();
+            (file.relative.clone(), names)
+        })
+        .collect::<Vec<_>>();
+    observed.sort();
+    observed
+}
+
+pub(super) fn domain() -> CompilationDomain {
+    CompilationDomain {
+        package: "fixture".into(),
+        edition: "2024".into(),
+        target: "fixture".into(),
+        mode: CompilationMode::Library,
+        feature_world: None,
+        active_features: std::collections::BTreeSet::default(),
+    }
+}
+
+pub(super) const fn span() -> SourceSpan {
+    SourceSpan {
+        line: 1,
+        column: 0,
+        end_line: 1,
+        end_column: 1,
+    }
+}
+
+pub(super) fn parsed_file(relative: &str, source: &str) -> RustFileFacts {
+    let source_file = RustSourceFile {
+        relative: relative.into(),
+        class: FileClass::Implementation,
+        source: source.into(),
+        lines: source.lines().count(),
+    };
+    let syntax = syn::parse_file(source).expect("parse source fixture");
+    let imports = ImportMap::from_file(&syntax);
+    let mut visitor = FactVisitor::new(&imports);
+    visitor.visit_file(&syntax);
+    let (type_policy, synthetic_paths) = crate::source::type_policy_index::collect(&syntax);
+    visitor.paths.extend(synthetic_paths);
+    RustFileFacts {
+        relative: source_file.relative,
+        packages: Vec::new(),
+        class: source_file.class,
+        reachability: Reachability::UNREACHABLE,
+        syntax: SourceSyntax::Items,
+        lines: source_file.lines,
+        module_docs: false,
+        paths: visitor.paths,
+        calls: visitor.calls,
+        call_resolutions: visitor.call_resolutions,
+        methods: visitor.methods,
+        operations: visitor.operations,
+        macros: visitor.macros,
+        macro_imports: imports.macro_imports(),
+        macro_expansions: visitor.macro_expansions,
+        opaque_macro_inputs: visitor.opaque_macro_inputs,
+        macro_definitions: visitor.macro_definitions,
+        import_bindings: visitor.import_bindings,
+        glob_imports: visitor.glob_imports,
+        inline_module_scopes: visitor.inline_module_scopes,
+        compile_effects: visitor.compile_effects,
+        lint_suppressions: visitor.lint_suppressions,
+        unsafe_constructs: visitor.unsafe_constructs,
+        async_syntax: visitor.async_syntax,
+        type_policy,
+        tests: visitor.tests,
+        modules: crate::source::modules::module_declarations(&syntax),
+        includes: visitor.includes,
+        item_macros: visitor.item_macros,
+        opaque_binding_macros: visitor.opaque_binding_macros,
+        facade_implementation: Vec::new(),
+    }
+}

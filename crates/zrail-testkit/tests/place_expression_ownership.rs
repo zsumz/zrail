@@ -15,7 +15,7 @@ fn field_authority_covers_projected_writes_and_mutable_borrows() {
     for (rule, count) in [
         ("values-authority", 3),
         ("outer-authority", 1),
-        ("pointer-authority", 2),
+        ("pointer-authority", 1),
         ("tuple-authority", 1),
         ("index-read", 3),
     ] {

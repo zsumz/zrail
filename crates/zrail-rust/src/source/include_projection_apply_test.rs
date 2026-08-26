@@ -1,16 +1,19 @@
 //! Small injected budgets prove repository-wide projection failure semantics.
 
-use zrail_core::{AnalysisQuality, SourceSpan};
+use zrail_core::AnalysisQuality;
 
 use crate::inventory::FileClass;
 
 use super::*;
 use crate::source::{
-    BindingKind, CompilationDomain, CompilationIncludeEdge, CompilationMode, CompilationRoot,
-    ImportBindingFact, IncludeContext, IncludeOccurrenceId, Reachability, RustFileFacts,
-    SourceAnalysisMetrics, SourceSyntax, SyntaxGuard, include_bindings::IncludeBindings,
-    include_projection_budget::ProjectionLimits,
+    BindingKind, CompilationIncludeEdge, CompilationRoot, ImportBindingFact, IncludeContext,
+    IncludeOccurrenceId, Reachability, RustFileFacts, SourceAnalysisMetrics, SourceSyntax,
+    SyntaxGuard, include_bindings::IncludeBindings, include_projection_budget::ProjectionLimits,
 };
+
+#[path = "include_projection_apply_test/support.rs"]
+mod support;
+use support::*;
 
 #[test]
 fn work_exhaustion_is_transactional_and_independent_of_file_order() {
@@ -83,6 +86,26 @@ fn successful_projection_stays_inside_the_total_fact_limit() {
     );
     assert_eq!(projected_call_count(&index), 1);
     assert_eq!(named_call_count(&index, "Spawn::new"), 0);
+}
+
+#[test]
+fn complete_exact_projection_repairs_stale_physical_uncertainty() {
+    let mut index = fixture_index();
+    index.files[0].calls[0].quality = AnalysisQuality::Unresolved;
+    let bindings = bindings(&index);
+
+    let findings = bindings.apply_with_limits(
+        &mut index,
+        ProjectionLimits {
+            work: 1_000,
+            projected_facts: 1,
+        },
+    );
+
+    assert!(findings.is_empty());
+    let repaired = &index.files[0].calls[0];
+    assert_eq!(repaired.name, "std::process::Command::new");
+    assert_eq!(repaired.quality, AnalysisQuality::Exact);
 }
 
 #[test]
@@ -224,10 +247,13 @@ fn file(
         opaque_macro_inputs: Vec::new(),
         macro_definitions: Vec::new(),
         import_bindings,
+        glob_imports: Vec::new(),
         inline_module_scopes: Vec::new(),
         compile_effects: Vec::new(),
         lint_suppressions: Vec::new(),
         unsafe_constructs: Vec::new(),
+        async_syntax: Vec::new(),
+        type_policy: crate::source::TypePolicyFacts::default(),
         tests: Vec::new(),
         modules: Vec::new(),
         includes: Vec::new(),
@@ -247,54 +273,11 @@ fn fact_lengths(index: &SourceIndex) -> Vec<(String, usize, usize)> {
     lengths
 }
 
-fn observed_names(index: &SourceIndex) -> Vec<(String, Vec<String>)> {
-    let mut observed = index
-        .files
-        .iter()
-        .map(|file| {
-            let mut names = file
-                .calls
-                .iter()
-                .map(|fact| fact.name.clone())
-                .collect::<Vec<_>>();
-            names.sort();
-            (file.relative.clone(), names)
-        })
-        .collect::<Vec<_>>();
-    observed.sort();
-    observed
-}
-
-fn projected_call_count(index: &SourceIndex) -> usize {
-    named_call_count(index, "std::process::Command::new")
-}
-
-fn named_call_count(index: &SourceIndex, name: &str) -> usize {
-    index
-        .files
-        .iter()
-        .flat_map(|file| &file.calls)
-        .filter(|fact| fact.name == name)
-        .count()
-}
-
-fn domain() -> CompilationDomain {
-    CompilationDomain {
-        package: "fixture".into(),
-        edition: "2024".into(),
-        target: "fixture".into(),
-        mode: CompilationMode::Library,
-    }
-}
-
-const fn span() -> SourceSpan {
-    SourceSpan {
-        line: 1,
-        column: 0,
-        end_line: 1,
-        end_column: 1,
-    }
-}
-
 #[path = "include_projection_apply_test/tests/scale.rs"]
 mod scale;
+
+#[path = "include_projection_apply_test/tests/hub.rs"]
+mod hub;
+
+#[path = "include_projection_apply_test/tests/opacity.rs"]
+mod opacity;

@@ -128,6 +128,16 @@ pub(super) fn compare_owners(
                         .values(&left.selector, &right.selector),
                     );
                 }
+                compare_named_set(
+                    "owner.mutating-method",
+                    name,
+                    &left.mutating_methods,
+                    &right.mutating_methods,
+                    ChangeKind::Revoke,
+                    ChangeKind::Grant,
+                    "treats this written receiver method as field mutation",
+                    changes,
+                );
                 owner::compare_reachability(left, right, changes);
                 compare_named_set(
                     "owner.within",

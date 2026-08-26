@@ -47,6 +47,14 @@ fn raw_identifiers_cannot_change_policy_identity() {
     ));
 }
 
+#[test]
+fn explicit_crate_prefix_matches_canonical_local_identity() {
+    assert!(path_matches(
+        "crate::state::Record::value",
+        &fact("state::Record::value", AnalysisQuality::Exact)
+    ));
+}
+
 fn fact(name: &str, quality: AnalysisQuality) -> ObservedFact {
     ObservedFact {
         name: name.into(),

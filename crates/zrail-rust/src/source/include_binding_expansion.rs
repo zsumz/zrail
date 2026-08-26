@@ -36,6 +36,7 @@ impl IncludeBindings {
                     name,
                     quality: site.binding.quality,
                     crossed_include: site.crossed_include,
+                    blocks_completeness: false,
                 }]
             }
             BindingKind::OpaqueAlias
@@ -48,6 +49,7 @@ impl IncludeBindings {
                     name,
                     quality: site.binding.quality,
                     crossed_include: site.crossed_include,
+                    blocks_completeness: false,
                 }]
             }
             BindingKind::OpaqueAlias => {
@@ -62,21 +64,35 @@ impl IncludeBindings {
                 let Some(target) = self.anchor_target(site, target) else {
                     return Ok(vec![unresolved(request.written)]);
                 };
-                self.resolve_in(
-                    ResolveRequest {
-                        instance: site.instance,
-                        written: &target,
-                        scope: &site.binding.lexical_scope,
-                        depth: request.depth,
-                        mode: LookupMode::binding_target(
-                            site.module.clone(),
-                            !suffix.is_empty() || site.binding.kind == BindingKind::Import,
-                        ),
-                        usage: request.usage,
-                    },
-                    trail,
-                    budget,
-                )?
+                let root = split_root(target.trim_start_matches("::")).0;
+                if site.binding.kind == BindingKind::Import
+                    && self.is_extern_root(site.instance, root)
+                {
+                    vec![ResolvedPath {
+                        name: target,
+                        quality: zrail_core::AnalysisQuality::Exact,
+                        crossed_include: false,
+                        requires_projection: true,
+                        blocks_completeness: false,
+                    }]
+                } else {
+                    self.resolve_in(
+                        ResolveRequest {
+                            instance: site.instance,
+                            written: &target,
+                            scope: &site.binding.lexical_scope,
+                            depth: request.depth,
+                            mode: LookupMode::binding_target(
+                                site.module.clone(),
+                                !suffix.is_empty() || site.binding.kind == BindingKind::Import,
+                            ),
+                            usage: request.usage,
+                            guard: request.guard.clone(),
+                        },
+                        trail,
+                        budget,
+                    )?
+                }
             }
             BindingKind::Glob => vec![unresolved(request.written)],
         };
@@ -110,6 +126,7 @@ impl IncludeBindings {
                 quality: site.binding.quality,
                 crossed_include: site.crossed_include,
                 requires_projection: true,
+                blocks_completeness: false,
             }]);
         };
         let locations = self.module_locations(site, module, budget)?;
@@ -124,6 +141,7 @@ impl IncludeBindings {
                 depth: request.depth,
                 mode: request.mode.module(),
                 usage: request.usage,
+                guard: request.guard.clone(),
             },
             trail,
             budget,

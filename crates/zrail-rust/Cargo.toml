@@ -17,6 +17,7 @@ proc-macro2.workspace = true
 semver.workspace = true
 syn.workspace = true
 toml.workspace = true
+unicode-ident.workspace = true
 zrail-core.workspace = true
 
 [lints]

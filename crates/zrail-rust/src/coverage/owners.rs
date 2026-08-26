@@ -10,7 +10,6 @@ use crate::{
     },
     source::{
         CompilationMode, ObservedFact, RustFileFacts, SourceOperationFact, SourceOperationKind,
-        SyntaxGuard,
     },
 };
 
@@ -31,6 +30,7 @@ pub(super) fn report(model: &RepositoryModel) -> Vec<GovernedOwnerRule> {
                 name: owner.name.clone(),
                 kind,
                 target: owner.selector.clone(),
+                mutating_methods: sorted(&owner.mutating_methods),
                 reachability: reachability(owner.reachability).into(),
                 within: sorted(&owner.within),
                 allow: sorted(&owner.allow),
@@ -56,6 +56,7 @@ fn occurrences(model: &RepositoryModel, owner: &OwnerContract) -> Vec<GovernedOp
                             &file.relative,
                             call_operation(evidence.kind),
                             evidence.fact,
+                            None,
                         )
                     })
             })
@@ -65,7 +66,7 @@ fn occurrences(model: &RepositoryModel, owner: &OwnerContract) -> Vec<GovernedOp
                 matching_capability_owner(owner, file)
                     .into_iter()
                     .map(|fact| {
-                        fact_occurrence(model, owner, &file.relative, "capability-use", fact)
+                        fact_occurrence(model, owner, &file.relative, "capability-use", fact, None)
                     })
             })
             .collect(),
@@ -77,6 +78,7 @@ fn occurrences(model: &RepositoryModel, owner: &OwnerContract) -> Vec<GovernedOp
         | OwnerKind::FieldRead
         | OwnerKind::FieldWrite
         | OwnerKind::FieldMutableBorrow
+        | OwnerKind::FieldMutation
         | OwnerKind::FieldAuthority => source_files(model, owner)
             .flat_map(|file| {
                 matching_operation_owner_operations(owner, file)
@@ -110,6 +112,7 @@ fn operation_occurrence(
         path,
         operation_kind(operation.kind),
         &operation.identity,
+        operation.method.clone(),
     )
 }
 
@@ -119,21 +122,21 @@ fn fact_occurrence(
     path: &str,
     operation: &str,
     fact: &ObservedFact,
+    method: Option<String>,
 ) -> GovernedOperationOccurrence {
     let domains = model
         .compilation_domains
         .get(path)
         .into_iter()
         .flatten()
-        .filter(|domain| {
-            fact.guard
-                .available_in(SyntaxGuard::for_test_only(domain.mode.enables_cfg_test()))
-        })
+        .filter(|domain| fact.guard.availability_in_domain(domain).is_available())
         .map(|domain| GovernedCompilationDomain {
             package: domain.package.clone(),
             edition: domain.edition.clone(),
             target: domain.target.clone(),
             mode: compilation_mode(domain.mode).into(),
+            feature_world: domain.feature_world.clone(),
+            features: domain.active_features.iter().cloned().collect(),
         })
         .collect();
     GovernedOperationOccurrence {
@@ -141,10 +144,11 @@ fn fact_occurrence(
         operation: operation.into(),
         observed: fact.name.clone(),
         written: fact.written.clone(),
+        method,
         canonical: sorted(&fact.canonical),
         span: fact.span,
         quality: fact.quality,
-        guard: syntax_guard(fact.guard).into(),
+        guard: fact.guard.canonical_name(),
         compilation_domains: domains,
         allowed: owner.allow.iter().any(|allowed| allowed == path),
     }
@@ -156,6 +160,7 @@ fn directory_occurrence(owner: &OwnerContract, path: &str) -> GovernedOperationO
         operation: "directory".into(),
         observed: path.into(),
         written: None,
+        method: None,
         canonical: Vec::new(),
         span: None,
         quality: AnalysisQuality::Exact,
@@ -189,6 +194,7 @@ const fn owner_kind(kind: OwnerKind) -> &'static str {
         OwnerKind::FieldRead => "field-read",
         OwnerKind::FieldWrite => "field-write",
         OwnerKind::FieldMutableBorrow => "field-mutable-borrow",
+        OwnerKind::FieldMutation => "field-mutation",
         OwnerKind::FieldAuthority => "field-authority",
     }
 }
@@ -197,6 +203,7 @@ const fn operation_kind(kind: SourceOperationKind) -> &'static str {
     match kind {
         SourceOperationKind::TypeConstruction => "type-construction",
         SourceOperationKind::MethodCall => "method-call",
+        SourceOperationKind::FieldReceiverCall => "field-receiver-call",
         SourceOperationKind::FieldRead => "field-read",
         SourceOperationKind::FieldWrite => "field-write",
         SourceOperationKind::FieldMutableBorrow => "field-mutable-borrow",
@@ -207,18 +214,6 @@ const fn reachability(value: PolicyReachability) -> &'static str {
     match value {
         PolicyReachability::All => "all",
         PolicyReachability::Production => "production",
-    }
-}
-
-const fn syntax_guard(value: SyntaxGuard) -> &'static str {
-    match value {
-        SyntaxGuard::Ordinary => "ordinary",
-        SyntaxGuard::TestOnly => "test-only",
-        SyntaxGuard::ProductionOnly => "production-only",
-        SyntaxGuard::Conditional => "conditional",
-        SyntaxGuard::ConditionalTestOnly => "conditional-test-only",
-        SyntaxGuard::ConditionalProductionOnly => "conditional-production-only",
-        SyntaxGuard::Never => "never",
     }
 }
 

@@ -15,7 +15,7 @@ impl IncludeBindings {
     pub(super) fn resolve_aliases(
         &self,
         request: &ResolveRequest<'_>,
-        context: SyntaxGuard,
+        context: &SyntaxGuard,
         module: &EffectiveModule,
         trail: &mut ResolutionTrail,
         budget: &mut ProjectionBudget,
@@ -46,7 +46,26 @@ impl IncludeBindings {
                 return Ok(None);
             }
         }
-        let mut expanded_sites = 0;
+        let site_guards = sites
+            .iter()
+            .map(|site| (site.instance, site.binding.guard.clone()))
+            .collect::<Vec<_>>();
+        if guards_cover(self, context, &site_guards) && !guards_overlap(self, context, &site_guards)
+        {
+            for site in &mut sites {
+                let base = if site.binding.replacement_macros.is_empty() {
+                    site.binding.quality_without_macros
+                } else {
+                    AnalysisQuality::Unresolved
+                };
+                site.binding.quality = base.max(self.visibility_quality(
+                    &site.binding.visibility,
+                    &site.module,
+                    &request.mode.consumer,
+                ));
+            }
+        }
+        let mut expanded_guards = Vec::new();
         let mut resolved = Vec::new();
         for site in sites {
             let expansion = ResolveRequest {
@@ -56,12 +75,13 @@ impl IncludeBindings {
                 depth: request.depth + 1,
                 mode: request.mode.clone(),
                 usage: request.usage,
+                guard: request.guard.clone(),
             };
             let expanded = self.expand_binding(&site, &expansion, suffix, trail, budget)?;
             if expanded.is_empty() {
                 continue;
             }
-            expanded_sites += 1;
+            expanded_guards.push((site.instance, site.binding.guard.clone()));
             resolved.extend(expanded);
             if resolved.len() > MAX_BINDING_CANDIDATES {
                 if owns_key {
@@ -70,10 +90,11 @@ impl IncludeBindings {
                 return Ok(Some(vec![unresolved(request.written)]));
             }
         }
-        if expanded_sites > 1 {
+        if guards_overlap(self, context, &expanded_guards) {
             for candidate in &mut resolved {
                 candidate.quality = AnalysisQuality::Unresolved;
                 candidate.requires_projection = true;
+                candidate.blocks_completeness = true;
             }
         }
         if owns_key {
@@ -81,4 +102,54 @@ impl IncludeBindings {
         }
         Ok(Some(normalize(resolved)))
     }
+}
+
+fn guards_overlap(
+    bindings: &IncludeBindings,
+    context: &SyntaxGuard,
+    sites: &[(super::SourceInstanceId, SyntaxGuard)],
+) -> bool {
+    sites.iter().enumerate().any(|(index, (left_id, left))| {
+        sites[index + 1..].iter().any(|(right_id, right)| {
+            let (Some(left_source), Some(right_source)) = (
+                bindings.instances.get(*left_id),
+                bindings.instances.get(*right_id),
+            ) else {
+                return true;
+            };
+            if left_source.domain != right_source.domain {
+                return true;
+            }
+            let combined = left.combine(right).combine(context);
+            combined.predicate().is_satisfiable() != Some(false)
+                && combined
+                    .availability_in_domain(&left_source.domain)
+                    .is_available()
+        })
+    })
+}
+
+fn guards_cover(
+    bindings: &IncludeBindings,
+    context: &SyntaxGuard,
+    sites: &[(super::SourceInstanceId, SyntaxGuard)],
+) -> bool {
+    let Some((first, _)) = sites.first() else {
+        return false;
+    };
+    let Some(source) = bindings.instances.get(*first) else {
+        return false;
+    };
+    if sites.iter().any(|(id, _)| {
+        bindings
+            .instances
+            .get(*id)
+            .is_none_or(|candidate| candidate.domain != source.domain)
+    }) {
+        return false;
+    }
+    let union = SyntaxGuard::from_predicate(super::CfgPredicate::any(
+        sites.iter().map(|(_, guard)| guard.predicate()).collect(),
+    ));
+    union.availability_for_domain(context, &source.domain) == super::GuardAvailability::Exact
 }

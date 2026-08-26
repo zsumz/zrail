@@ -1,4 +1,4 @@
-//! Arbitrary cfg predicates retain possible binding identities and fail closed.
+//! Conditional bindings retain every possible identity and enforce conservatively.
 
 use zrail_core::{AnalysisQuality, Report};
 
@@ -21,7 +21,12 @@ fn conditional_included_alias_cannot_bypass_call_ownership() {
     write_lock(&root);
 
     let report = check(&root);
-    assert_unresolved_owned_call(&report, "conditional-process", "src/lib.rs");
+    assert_owned_call_quality(
+        &report,
+        "conditional-process",
+        "src/lib.rs",
+        AnalysisQuality::Conservative,
+    );
     assert!(
         !report.findings.iter().any(|finding| {
             matches!(finding.id.as_str(), "OWN-004" | "OWN-005")
@@ -74,7 +79,12 @@ fn conditional_type_alias_cannot_hide_an_owned_call() {
     write_executor(&root);
     write_lock(&root);
 
-    assert_unresolved_owned_call(&check(&root), "process-spawn", "src/lib.rs");
+    assert_owned_call_quality(
+        &check(&root),
+        "process-spawn",
+        "src/lib.rs",
+        AnalysisQuality::Conservative,
+    );
     reset(&root);
 }
 
@@ -89,7 +99,12 @@ fn cfg_attr_binding_fails_closed() {
     write_executor(&root);
     write_lock(&root);
 
-    assert_unresolved_owned_call(&check(&root), "process-spawn", "src/lib.rs");
+    assert_owned_call_quality(
+        &check(&root),
+        "process-spawn",
+        "src/lib.rs",
+        AnalysisQuality::Exact,
+    );
     reset(&root);
 }
 
@@ -149,6 +164,19 @@ fn assert_unresolved_owned_call(report: &Report, rule: &str, path: &str) {
                 && finding.rule == rule
                 && finding.path.as_deref() == Some(path)
                 && finding.analysis == AnalysisQuality::Unresolved
+        }),
+        "{}",
+        report.human()
+    );
+}
+
+fn assert_owned_call_quality(report: &Report, rule: &str, path: &str, quality: AnalysisQuality) {
+    assert!(
+        report.findings.iter().any(|finding| {
+            finding.id == "OWN-003"
+                && finding.rule == rule
+                && finding.path.as_deref() == Some(path)
+                && finding.analysis == quality
         }),
         "{}",
         report.human()

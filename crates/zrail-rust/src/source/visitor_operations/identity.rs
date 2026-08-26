@@ -1,15 +1,16 @@
 //! Operation identities resolve self, local types, and imported qualified paths.
 
-use syn::{Path, Type};
+use syn::{Path, Type, spanned::Spanned};
 use zrail_core::AnalysisQuality;
 
+use super::super::fact::source_span;
 use super::{
     ConstructorForm, FactVisitor, TypeIdentity, append, last_segment_looks_constructor, path_text,
     unresolved,
 };
 
 impl FactVisitor<'_> {
-    pub(super) fn resolve_type(&self, ty: &Type) -> TypeIdentity {
+    pub(in crate::source) fn resolve_type(&self, ty: &Type) -> TypeIdentity {
         match ty {
             Type::Path(path) if path.qself.is_none() => self.resolve_identity(&path.path),
             Type::Reference(reference) => self.resolve_type(&reference.elem),
@@ -17,7 +18,7 @@ impl FactVisitor<'_> {
         }
     }
 
-    pub(super) fn resolve_identity(&self, path: &Path) -> TypeIdentity {
+    pub(in crate::source) fn resolve_identity(&self, path: &Path) -> TypeIdentity {
         let written = path_text(path);
         if path
             .segments
@@ -40,6 +41,7 @@ impl FactVisitor<'_> {
                 AnalysisQuality::Unresolved
             },
             file_local: false,
+            span: Some(source_span(path.span())),
         }
     }
 
@@ -68,6 +70,7 @@ impl FactVisitor<'_> {
                 name: local.identity.clone(),
                 quality: AnalysisQuality::Exact,
                 file_local: true,
+                span: Some(source_span(path.span())),
             },
             segments.map(|segment| segment.ident.to_string()),
         ))

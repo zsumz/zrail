@@ -1,5 +1,8 @@
 //! Normalized facts extracted from one Rust source file.
 
+#[path = "source_metrics.rs"]
+mod source_metrics;
+
 use zrail_core::{AnalysisQuality, Finding, SourceSpan};
 
 use crate::inventory::FileClass;
@@ -7,16 +10,22 @@ use crate::inventory::FileClass;
 use super::Reachability;
 use super::{CompileEffectFact, IncludeOccurrenceId, macro_model::MacroExpansionFact};
 
-#[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) use source_metrics::SourceAnalysisMetrics;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct AsyncSyntaxFact {
+    pub(crate) kind: zrail_core::AsyncSyntax,
+    pub(crate) observation: ObservedFact,
+}
+
+#[derive(Clone, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum SyntaxGuard {
     #[default]
     Ordinary,
     TestOnly,
     ProductionOnly,
-    Conditional,
-    ConditionalTestOnly,
-    ConditionalProductionOnly,
     Never,
+    Predicate(super::CfgPredicate),
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -120,7 +129,7 @@ pub(crate) struct MacroDefinitionFact {
 }
 
 impl MacroDefinitionFact {
-    pub(super) fn apply_guard(&mut self, guard: SyntaxGuard) {
+    pub(super) fn apply_guard(&mut self, guard: &SyntaxGuard) {
         self.guard = self.guard.combine(guard);
     }
 }
@@ -133,11 +142,11 @@ impl ObservedFact {
             .chain(self.canonical.is_empty().then_some(self.name.as_str()))
     }
 
-    pub(crate) const fn is_production_applicable(&self, reachability: Reachability) -> bool {
+    pub(crate) fn is_production_applicable(&self, reachability: Reachability) -> bool {
         reachability.is_production() && self.guard.is_production_applicable()
     }
 
-    pub(super) fn apply_guard(&mut self, guard: SyntaxGuard) {
+    pub(super) fn apply_guard(&mut self, guard: &SyntaxGuard) {
         self.guard = self.guard.combine(guard);
     }
 }
@@ -206,10 +215,13 @@ pub(crate) struct RustFileFacts {
     pub(crate) opaque_macro_inputs: Vec<MacroExpansionFact>,
     pub(crate) macro_definitions: Vec<MacroDefinitionFact>,
     pub(crate) import_bindings: Vec<ImportBindingFact>,
+    pub(crate) glob_imports: Vec<super::glob_imports::GlobImportFact>,
     pub(crate) inline_module_scopes: Vec<SourceSpan>,
     pub(crate) compile_effects: Vec<CompileEffectFact>,
     pub(crate) lint_suppressions: Vec<ObservedFact>,
     pub(crate) unsafe_constructs: Vec<ObservedFact>,
+    pub(crate) async_syntax: Vec<AsyncSyntaxFact>,
+    pub(crate) type_policy: super::type_policy_model::TypePolicyFacts,
     pub(crate) tests: Vec<ObservedFact>,
     pub(crate) modules: Vec<ModuleDeclaration>,
     pub(crate) includes: Vec<IncludeBoundary>,
@@ -223,13 +235,4 @@ pub(crate) struct SourceIndex {
     pub(crate) files: Vec<RustFileFacts>,
     pub(crate) findings: Vec<Finding>,
     pub(crate) analysis_metrics: SourceAnalysisMetrics,
-}
-
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub(crate) struct SourceAnalysisMetrics {
-    pub(crate) base_contexts: usize,
-    pub(crate) derived_contexts: usize,
-    pub(crate) projection_files: usize,
-    pub(crate) projection_work: usize,
-    pub(crate) projected_facts: usize,
 }

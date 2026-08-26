@@ -116,3 +116,7 @@ fn reject(
         .with_help("invoke the owned call directly so zrail can verify its authority boundary"),
     );
 }
+
+#[cfg(test)]
+#[path = "ownership_call_test.rs"]
+mod ownership_call_test;

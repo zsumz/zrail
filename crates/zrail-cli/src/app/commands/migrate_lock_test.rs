@@ -2,7 +2,7 @@
 
 use std::fs;
 
-use zrail_core::{LOCK_SCHEMA, LOCK_SEMANTICS};
+use zrail_core::LOCK_SEMANTICS;
 
 use crate::app::{
     args::{CommonOptions, MigrateLockOptions, UpdateOptions},
@@ -37,8 +37,8 @@ fn immutable_base_migration_writes_a_digest_bound_scoped_report() {
     )
     .expect("write contract");
     let mut old = zrail_rust::build_lock(&root, "zrail.toml".as_ref()).expect("build old lock");
-    old.schema = LOCK_SCHEMA - 1;
-    old.semantics = LOCK_SEMANTICS - 1;
+    old.schema = 1;
+    old.semantics = 1;
     old.analysis = None;
     old.write(&root.join("zrail.lock")).expect("write old lock");
     commit_all(&root);
@@ -53,8 +53,8 @@ fn immutable_base_migration_writes_a_digest_bound_scoped_report() {
     .expect("migrate immutable base");
 
     let artifact = fs::read_to_string(root.join("migration.json")).expect("read report");
-    assert!(artifact.contains("\"from_semantics\": 2"));
-    assert!(artifact.contains("\"to_semantics\": 3"));
+    assert!(artifact.contains("\"from_semantics\": 1"));
+    assert!(artifact.contains("\"to_semantics\": 4"));
     assert!(artifact.contains("\"newly-observable\""));
     assert!(output.text.contains("--accept-migration sha256:"));
     let acceptance = output
@@ -80,6 +80,17 @@ fn immutable_base_migration_writes_a_digest_bound_scoped_report() {
     assert!(refused.text.contains("--accept-migration sha256:"));
 
     update_options.accept_migration = Some(acceptance);
+    let contract = fs::read_to_string(root.join("zrail.toml")).expect("read contract");
+    fs::write(
+        root.join("zrail.toml"),
+        contract.replace("roots = [\".\"]", "roots = [\"src\"]"),
+    )
+    .expect("weaken repository root coverage");
+    let grant_refused = update(&update_options).expect("migration must not accept grants");
+    assert_eq!(grant_refused.exit_code, 1);
+    assert!(grant_refused.text.contains("GRANT repository.root"));
+    fs::write(root.join("zrail.toml"), contract).expect("restore contract");
+
     let accepted = update(&update_options).expect("accept reviewed migration");
     assert_eq!(accepted.exit_code, 0);
     let lock = zrail_core::LockFile::read(&root.join("zrail.lock")).expect("read migrated lock");

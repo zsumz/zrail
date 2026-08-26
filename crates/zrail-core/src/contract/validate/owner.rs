@@ -1,6 +1,10 @@
 //! Source-owner contracts bind exact Rust paths to bounded source owners.
 
+mod mutation;
+
 use crate::{Contract, OwnerContract, OwnerKind, PolicyReachability, path::glob_matches};
+
+use mutation::{validate_field_mutation, validate_mutating_method_scope};
 
 use super::{
     super::{
@@ -15,6 +19,7 @@ pub(super) fn validate_contract(contract: &Contract, errors: &mut ValidationErro
         if owner.selector.trim().is_empty() || owner.allow.is_empty() {
             errors.push(format!("owner {:?} requires match and allow", owner.name));
         }
+        validate_mutating_method_scope(owner, errors);
         match owner.kind {
             OwnerKind::Call => validate_call(owner, errors),
             OwnerKind::Capability => validate_capability(owner, errors),
@@ -28,6 +33,7 @@ pub(super) fn validate_contract(contract: &Contract, errors: &mut ValidationErro
             OwnerKind::FieldMutableBorrow => {
                 validate_exact_operation(owner, "field-mutable-borrow", errors);
             }
+            OwnerKind::FieldMutation => validate_field_mutation(owner, errors),
             OwnerKind::FieldAuthority => {
                 validate_exact_operation(owner, "field-authority", errors);
             }

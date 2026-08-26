@@ -32,12 +32,16 @@ fn generated_budget_remains_enforced_without_a_handwritten_size_policy() {
         out_dir: Vec::new(),
         item_macros: Vec::new(),
         test_mirrors: Vec::new(),
+        feature_worlds: Vec::new(),
         macros: zrail_core::MacroExpansionContract::default(),
+        duplication: zrail_core::RustDuplicationContract::default(),
+        types: Vec::new(),
         hygiene: HygieneContract {
             unsafe_code: PolicyMode::Allow,
             lint_suppressions: LintSuppressionMode::Allow,
             deny_methods: Vec::new(),
             deny_macros: Vec::new(),
+            glob_imports: zrail_core::GlobImportMode::Allow,
         },
         size: None,
     };
@@ -106,12 +110,16 @@ fn rust_contract() -> RustSourceContract {
         out_dir: Vec::new(),
         item_macros: Vec::new(),
         test_mirrors: Vec::new(),
+        feature_worlds: Vec::new(),
         macros: zrail_core::MacroExpansionContract::default(),
+        duplication: zrail_core::RustDuplicationContract::default(),
+        types: Vec::new(),
         hygiene: HygieneContract {
             unsafe_code: PolicyMode::Allow,
             lint_suppressions: LintSuppressionMode::Allow,
             deny_methods: Vec::new(),
             deny_macros: Vec::new(),
+            glob_imports: zrail_core::GlobImportMode::Allow,
         },
         size: None,
     }

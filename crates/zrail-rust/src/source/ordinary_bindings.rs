@@ -14,7 +14,7 @@ use super::{
 
 pub(super) fn collect<'a>(
     items: impl Iterator<Item = &'a Item>,
-    enclosing_guard: SyntaxGuard,
+    enclosing_guard: &SyntaxGuard,
     lexical_scope: &[SourceSpan],
 ) -> Vec<ImportBindingFact> {
     let mut bindings = Vec::new();
@@ -30,7 +30,7 @@ pub(super) fn collect<'a>(
                     },
                     visibility: visibility(&item.vis),
                     quality: quality(&item.attrs),
-                    replacement_macros: replacement_macros(&item.attrs, guard, lexical_scope),
+                    replacement_macros: replacement_macros(&item.attrs, &guard, lexical_scope),
                     guard,
                     scope: lexical_scope,
                 };
@@ -55,7 +55,7 @@ pub(super) fn collect<'a>(
                         },
                         visibility: visibility(&item.vis),
                         quality: quality(&item.attrs),
-                        replacement_macros: replacement_macros(&item.attrs, guard, lexical_scope),
+                        replacement_macros: replacement_macros(&item.attrs, &guard, lexical_scope),
                         guard,
                         scope: lexical_scope,
                     },
@@ -88,7 +88,7 @@ pub(super) fn collect<'a>(
                         anchor,
                         visibility: visibility(&item.vis),
                         quality: quality(&item.attrs),
-                        replacement_macros: replacement_macros(&item.attrs, guard, lexical_scope),
+                        replacement_macros: replacement_macros(&item.attrs, &guard, lexical_scope),
                         guard,
                         scope: lexical_scope,
                     },
@@ -98,7 +98,7 @@ pub(super) fn collect<'a>(
                 &mut bindings,
                 item.ident.to_string(),
                 BindingKind::LocalType,
-                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+                &context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
             ),
             Item::Mod(item) => module(&mut bindings, item, enclosing_guard, lexical_scope),
             Item::Struct(item) => {
@@ -111,44 +111,44 @@ pub(super) fn collect<'a>(
                     &mut bindings,
                     item.ident.to_string(),
                     kind,
-                    context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+                    &context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
                 );
             }
             Item::Trait(item) => local(
                 &mut bindings,
                 item.ident.to_string(),
                 BindingKind::LocalType,
-                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+                &context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
             ),
             Item::TraitAlias(item) => local(
                 &mut bindings,
                 item.ident.to_string(),
                 BindingKind::LocalType,
-                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+                &context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
             ),
             Item::Union(item) => local(
                 &mut bindings,
                 item.ident.to_string(),
                 BindingKind::LocalType,
-                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+                &context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
             ),
             Item::Const(item) => local(
                 &mut bindings,
                 item.ident.to_string(),
                 BindingKind::LocalValue,
-                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+                &context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
             ),
             Item::Fn(item) => local(
                 &mut bindings,
                 item.sig.ident.to_string(),
                 BindingKind::LocalValue,
-                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+                &context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
             ),
             Item::Static(item) => local(
                 &mut bindings,
                 item.ident.to_string(),
                 BindingKind::LocalValue,
-                context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+                &context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
             ),
             Item::ForeignMod(item) => {
                 foreign(&mut bindings, item, enclosing_guard, lexical_scope);
@@ -162,13 +162,13 @@ pub(super) fn collect<'a>(
 fn context<'a>(
     attributes: &'a [syn::Attribute],
     visibility: &'a syn::Visibility,
-    enclosing_guard: SyntaxGuard,
+    enclosing_guard: &SyntaxGuard,
     scope: &'a [SourceSpan],
 ) -> BindingContext<'a> {
     BindingContext {
         attributes,
         visibility,
-        enclosing_guard,
+        enclosing_guard: enclosing_guard.clone(),
         scope,
     }
 }

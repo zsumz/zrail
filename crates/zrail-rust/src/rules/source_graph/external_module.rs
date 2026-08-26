@@ -15,7 +15,7 @@ impl Walker<'_> {
         declaration: &ModuleDeclaration,
     ) {
         let label = format!("module {:?}", declaration.name);
-        let Some(target_context) = context.with_guard(declaration.guard) else {
+        let Some(target_context) = context.with_guard(&declaration.guard) else {
             return;
         };
         match module_target(source, submodule_base, declaration) {
@@ -26,7 +26,7 @@ impl Walker<'_> {
                     child: path,
                     child_base: SubmoduleBase::SourceParent,
                     reachability: target_context.reachability,
-                    guard: target_context.guard,
+                    guard: target_context.guard.clone(),
                     span: declaration.span,
                 },
                 &declaration.lexical_scope,
@@ -51,7 +51,7 @@ impl Walker<'_> {
                             child: path.clone(),
                             child_base: *submodule_base,
                             reachability: target_context.reachability,
-                            guard: target_context.guard,
+                            guard: target_context.guard.clone(),
                             span: declaration.span,
                         },
                         &declaration.lexical_scope,

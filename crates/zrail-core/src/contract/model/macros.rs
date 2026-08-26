@@ -3,7 +3,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::contract::{
-    CrateRootSource, MacroBindingMode, MacroExpansionBindings, MacroExpansionMode, MacroInputMode,
+    CrateRootSource, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect,
+    MacroExpansionBindings, MacroExpansionMode, MacroInputMode,
 };
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
@@ -32,6 +33,12 @@ pub struct MacroExpansionAllow {
     #[serde(default, rename = "namespace_effect", alias = "bindings")]
     /// Whether exact review proves zero ordinary-namespace delta for this expansion.
     pub bindings: MacroExpansionBindings,
+    #[serde(default)]
+    /// Whether exact review proves that expansion output introduces no async syntax.
+    pub async_syntax: MacroAsyncSyntax,
+    #[serde(default)]
+    /// Whether exact review proves that expansion output adds no Clone/Copy implementation.
+    pub duplication_effect: MacroDuplicationEffect,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     /// Optional package-qualified macro definition identity.
     pub definition: Option<String>,

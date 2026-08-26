@@ -91,6 +91,24 @@ fn compare_profiles(before: &Contract, after: &Contract, changes: &mut Vec<Archi
                 "profile no longer denies this architectural effect",
             ));
         }
+        let old = denied_syntax(before, &name);
+        let new = denied_syntax(after, &name);
+        for syntax in new.difference(&old) {
+            changes.push(ArchitectureChange::new(
+                ChangeKind::Revoke,
+                "syntax.boundary",
+                format!("{name}:{syntax:?}"),
+                "profile now denies this runtime-neutral syntax",
+            ));
+        }
+        for syntax in old.difference(&new) {
+            changes.push(ArchitectureChange::new(
+                ChangeKind::Grant,
+                "syntax.boundary",
+                format!("{name}:{syntax:?}"),
+                "profile no longer denies this runtime-neutral syntax",
+            ));
+        }
     }
 }
 
@@ -171,6 +189,15 @@ fn denied_effects(contract: &Contract, profile: &str) -> BTreeSet<Effect> {
         .get(profile)
         .map_or_else(BTreeSet::new, |value| {
             value.effects.deny.iter().copied().collect()
+        })
+}
+
+fn denied_syntax(contract: &Contract, profile: &str) -> BTreeSet<crate::AsyncSyntax> {
+    contract
+        .profiles
+        .get(profile)
+        .map_or_else(BTreeSet::new, |value| {
+            value.syntax.deny.iter().copied().collect()
         })
 }
 

@@ -4,7 +4,7 @@ use syn::visit::Visit;
 
 use zrail_core::AnalysisQuality;
 
-use super::super::{imports::ImportMap, visitor::FactVisitor};
+use super::super::{FactVisitor, imports::ImportMap};
 
 #[test]
 fn restricted_visibility_paths_are_not_observed_authority() {

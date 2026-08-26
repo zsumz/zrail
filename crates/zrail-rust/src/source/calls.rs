@@ -7,25 +7,29 @@ use syn::{Expr, ExprCall, ExprPath, Path, Type, spanned::Spanned as _};
 use zrail_core::{AnalysisQuality, Finding};
 
 use super::{
-    CompilationDomain, MacroDerivation, ObservedFact, SyntaxGuard,
-    fact::{fact, source_span, written_fact},
-    imports::{ImportCandidateKind, ImportMap},
+    CompilationDomain, ObservedFact, SyntaxGuard,
+    fact::{source_span, written_fact},
+    imports::ImportMap,
     model::CallResolutionFact,
 };
 
-const MAX_MACRO_CANDIDATES: usize = 64;
+mod candidates;
+
+#[cfg(test)]
+pub(crate) use candidates::MAX_MACRO_CANDIDATES;
+pub(super) use candidates::{candidates, macro_candidates};
 
 pub(super) fn facts(
     call: &ExprCall,
     imports: &ImportMap,
-    guard: SyntaxGuard,
+    guard: &SyntaxGuard,
     generic_types: &[String],
     lexical_scope: &[zrail_core::SourceSpan],
 ) -> Vec<ObservedFact> {
     let Some(callee) = callee_path(call.func.as_ref()) else {
         return Vec::new();
     };
-    if projection_text(callee).is_some() {
+    if unresolved_call_text(callee, generic_types).is_some() {
         return Vec::new();
     }
     let Some((path, minimum_quality)) = effective_path(callee, generic_types) else {
@@ -57,9 +61,10 @@ pub(super) fn facts(
 pub(super) fn unresolved_path_projection(
     path: &ExprPath,
     guard: SyntaxGuard,
+    generic_types: &[String],
 ) -> Option<CallResolutionFact> {
     Some(CallResolutionFact {
-        written: projection_text(path)?,
+        written: unresolved_call_text(path, generic_types)?,
         span: source_span(path.span()),
         guard,
     })
@@ -153,10 +158,40 @@ fn projection_text(callee: &ExprPath) -> Option<String> {
     if associated == Some(1) {
         return None;
     }
+    Some(qualified_self_text(callee, qself))
+}
+
+fn unresolved_call_text(callee: &ExprPath, generic_types: &[String]) -> Option<String> {
+    if let Some(projection) = projection_text(callee) {
+        return Some(projection);
+    }
+    let qself = callee.qself.as_ref()?;
+    if qself.position > 0 {
+        return None;
+    }
+    let Type::Path(self_type) = qself.ty.as_ref() else {
+        return Some(qualified_self_text(callee, qself));
+    };
+    let generic = self_type.qself.is_some()
+        || self_type.path.segments.first().is_some_and(|segment| {
+            generic_types
+                .iter()
+                .any(|generic| segment.ident == generic.as_str())
+        });
+    generic.then(|| qualified_self_text(callee, qself))
+}
+
+fn qualified_self_text(callee: &ExprPath, qself: &syn::QSelf) -> String {
     let self_type = match qself.ty.as_ref() {
         Type::Path(path) if path.qself.is_none() => path_text(&path.path),
         _ => "unresolved self type".into(),
     };
+    if qself.position == 0 {
+        return format!(
+            "<{self_type}>::{}",
+            segment_text(callee.path.segments.iter())
+        );
+    }
     let mut trait_path = segment_text(callee.path.segments.iter().take(qself.position));
     if callee.path.leading_colon.is_some() {
         trait_path.insert_str(0, "::");
@@ -167,7 +202,7 @@ fn projection_text(callee: &ExprPath) -> Option<String> {
     } else {
         &associated_path
     };
-    Some(format!("<{self_type} as {trait_path}>::{associated_path}"))
+    format!("<{self_type} as {trait_path}>::{associated_path}")
 }
 
 fn segment_text<'a>(segments: impl Iterator<Item = &'a syn::PathSegment>) -> String {
@@ -188,46 +223,6 @@ fn path_text(path: &Path) -> String {
         written.insert_str(0, "::");
     }
     written
-}
-
-pub(super) fn candidates(
-    path: &syn::Path,
-    imports: &ImportMap,
-    resolved: &str,
-    guard: SyntaxGuard,
-) -> Vec<ObservedFact> {
-    imports
-        .call_candidates(path, guard)
-        .into_iter()
-        .filter(|candidate| candidate.path != resolved)
-        .map(|candidate| fact(candidate.path, path.span(), AnalysisQuality::Conservative))
-        .collect()
-}
-
-pub(super) fn macro_candidates(
-    path: &syn::Path,
-    imports: &ImportMap,
-    resolved: &str,
-    guard: SyntaxGuard,
-) -> (Vec<(ObservedFact, MacroDerivation)>, bool) {
-    let (candidates, overflowed) =
-        imports.bounded_macro_candidates(path, MAX_MACRO_CANDIDATES - 1, guard);
-    let candidates = candidates
-        .into_iter()
-        .filter(|candidate| candidate.path != resolved)
-        .map(|candidate| {
-            let derivation = match candidate.kind {
-                ImportCandidateKind::Exact => MacroDerivation::ExactImport,
-                ImportCandidateKind::Glob => MacroDerivation::GlobImport,
-                ImportCandidateKind::ReExport => MacroDerivation::ReExport,
-            };
-            (
-                fact(candidate.path, path.span(), AnalysisQuality::Conservative),
-                derivation,
-            )
-        })
-        .collect();
-    (candidates, overflowed)
 }
 
 #[cfg(test)]

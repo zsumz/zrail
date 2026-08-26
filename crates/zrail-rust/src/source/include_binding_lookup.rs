@@ -16,7 +16,7 @@ impl IncludeBindings {
         request: &ResolveRequest<'_>,
         name: &str,
         suffix: &str,
-        context: SyntaxGuard,
+        context: &SyntaxGuard,
         module: &EffectiveModule,
         budget: &mut ProjectionBudget,
     ) -> Result<Vec<BindingSite>, ProjectionLimit> {
@@ -54,9 +54,14 @@ impl IncludeBindings {
             } else {
                 binding.lexical_scope.len() >= floor && scope.starts_with(&binding.lexical_scope)
             };
-            let availability = binding.guard.availability_in(context);
+            let availability = binding
+                .guard
+                .availability_for_domain(context, &source.domain);
             if availability.is_available() && visible {
                 let mut binding = binding.clone();
+                if availability == super::GuardAvailability::Possible {
+                    binding.quality = zrail_core::AnalysisQuality::Unresolved;
+                }
                 binding.quality = binding.quality.max(self.visibility_quality(
                     &binding.visibility,
                     module,
@@ -116,6 +121,7 @@ impl IncludeBindings {
                 depth: request.depth,
                 mode: request.mode.clone(),
                 usage: request.usage,
+                guard: request.guard.clone(),
             };
             let mut inherited = self.alias_sites(
                 &parent_request,

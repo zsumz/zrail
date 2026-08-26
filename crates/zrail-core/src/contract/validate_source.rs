@@ -1,8 +1,11 @@
 //! Validation for Rust source-provenance and expansion boundaries.
 
+mod feature_worlds;
 mod file_roles;
 mod item_macros;
 mod macros;
+mod type_identity;
+mod types;
 
 use std::collections::BTreeSet;
 
@@ -15,10 +18,12 @@ const MAX_GENERATED_INPUT_SELECTORS: usize = 64;
 
 pub(super) fn validate_source_contract(contract: &Contract, errors: &mut ValidationErrors) {
     file_roles::validate(contract, errors);
+    feature_worlds::validate(contract, errors);
     validate_generated(contract, errors);
     validate_out_dir(contract, errors);
     item_macros::validate(contract, errors);
     macros::validate(contract, errors);
+    types::validate(contract, errors);
 }
 
 fn validate_out_dir(contract: &Contract, errors: &mut ValidationErrors) {

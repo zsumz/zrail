@@ -18,6 +18,7 @@ mod init;
 mod limit;
 mod migrate_config;
 mod migrate_lock;
+mod mirrors;
 mod review;
 mod update;
 
@@ -29,6 +30,7 @@ pub(crate) use fmt::FmtOptions;
 pub(crate) use init::{InitOptions, InitPreset};
 pub(crate) use migrate_config::MigrateConfigOptions;
 pub(crate) use migrate_lock::MigrateLockOptions;
+pub(crate) use mirrors::{MirrorsAction, MirrorsOptions};
 pub(crate) use update::UpdateOptions;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -47,6 +49,7 @@ pub(crate) enum Command {
     Init(InitOptions),
     MigrateConfig(MigrateConfigOptions),
     MigrateLock(MigrateLockOptions),
+    Mirrors(MirrorsOptions),
     Fmt(FmtOptions),
     Help,
     Version,
@@ -106,6 +109,7 @@ pub(crate) fn parse(arguments: impl IntoIterator<Item = OsString>) -> Result<Com
         "init" => init::parse(&remaining),
         "migrate-config" => migrate_config::parse(&remaining),
         "migrate-lock" => migrate_lock::parse(&remaining),
+        "mirrors" => mirrors::parse(&remaining),
         "fmt" => fmt::parse(&remaining),
         "help" | "--help" | "-h" => Ok(Command::Help),
         "version" | "--version" | "-V" => Ok(Command::Version),

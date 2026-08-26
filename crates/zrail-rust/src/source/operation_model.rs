@@ -2,8 +2,8 @@
 
 use std::collections::BTreeMap;
 
-use syn::{Expr, Fields, Item, Path};
-use zrail_core::AnalysisQuality;
+use syn::{Expr, Fields, Item, Path, Type};
+use zrail_core::{AnalysisQuality, SourceSpan};
 
 use super::{ObservedFact, SyntaxGuard};
 
@@ -11,6 +11,7 @@ use super::{ObservedFact, SyntaxGuard};
 pub(crate) enum SourceOperationKind {
     TypeConstruction,
     MethodCall,
+    FieldReceiverCall,
     FieldRead,
     FieldWrite,
     FieldMutableBorrow,
@@ -21,19 +22,31 @@ pub(crate) struct SourceOperationFact {
     pub(crate) kind: SourceOperationKind,
     pub(crate) identity: ObservedFact,
     pub(crate) file_local: bool,
+    pub(crate) method: Option<String>,
+    pub(crate) place: Option<FieldPlaceFact>,
 }
 
 impl SourceOperationFact {
-    pub(super) fn apply_guard(&mut self, guard: SyntaxGuard) {
+    pub(super) fn apply_guard(&mut self, guard: &SyntaxGuard) {
         self.identity.apply_guard(guard);
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub(super) struct TypeIdentity {
     pub(super) name: String,
     pub(super) quality: AnalysisQuality,
     pub(super) file_local: bool,
+    pub(super) span: Option<SourceSpan>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct FieldPlaceFact {
+    pub(crate) base_name: String,
+    pub(crate) base_quality: AnalysisQuality,
+    pub(crate) base_file_local: bool,
+    pub(crate) base_span: Option<SourceSpan>,
+    pub(crate) fields: Vec<String>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -47,21 +60,24 @@ pub(super) enum ConstructorForm {
 pub(super) struct LocalType {
     pub(super) identity: String,
     pub(super) form: ConstructorForm,
+    pub(super) fields: BTreeMap<String, Type>,
     pub(super) variants: BTreeMap<String, ConstructorForm>,
 }
 
 pub(super) type LocalTypes = BTreeMap<String, LocalType>;
 
 pub(super) fn local_type(item: &Item, prefix: &str) -> Option<(String, LocalType)> {
-    let (name, form, variants) = match item {
+    let (name, form, fields, variants) = match item {
         Item::Struct(item) => (
             item.ident.to_string(),
             fields_form(&item.fields),
+            named_fields(&item.fields),
             BTreeMap::new(),
         ),
         Item::Enum(item) => (
             item.ident.to_string(),
             ConstructorForm::Named,
+            BTreeMap::new(),
             item.variants
                 .iter()
                 .map(|variant| (variant.ident.to_string(), fields_form(&variant.fields)))
@@ -79,9 +95,26 @@ pub(super) fn local_type(item: &Item, prefix: &str) -> Option<(String, LocalType
         LocalType {
             identity,
             form,
+            fields,
             variants,
         },
     ))
+}
+
+fn named_fields(fields: &Fields) -> BTreeMap<String, Type> {
+    match fields {
+        Fields::Named(fields) => fields
+            .named
+            .iter()
+            .filter_map(|field| {
+                field
+                    .ident
+                    .as_ref()
+                    .map(|name| (name.to_string(), field.ty.clone()))
+            })
+            .collect(),
+        Fields::Unnamed(_) | Fields::Unit => BTreeMap::new(),
+    }
 }
 
 fn fields_form(fields: &Fields) -> ConstructorForm {
@@ -105,6 +138,7 @@ pub(super) fn unresolved(name: &str) -> TypeIdentity {
         name: name.into(),
         quality: AnalysisQuality::Unresolved,
         file_local: false,
+        span: None,
     }
 }
 

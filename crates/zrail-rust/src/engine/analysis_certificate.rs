@@ -11,6 +11,13 @@ pub(super) fn locked(model: &RepositoryModel) -> LockedAnalysis {
     for package in &packages {
         record(&mut inventory, "package", &package.name);
         record(&mut inventory, "manifest", &package.manifest_path());
+        for definition in model.cargo.package_features[&package.name].canonical_definition() {
+            record(
+                &mut inventory,
+                &format!("package-feature-definition:{}", package.name),
+                &definition,
+            );
+        }
         let mut targets = package.targets.iter().collect::<Vec<_>>();
         targets.sort();
         for target in targets {
@@ -22,6 +29,32 @@ pub(super) fn locked(model: &RepositoryModel) -> LockedAnalysis {
                 &package_path(&package.directory, &target.path),
             );
             record(&mut inventory, "target-kind", target_kind(target.kind));
+            for required in &target.required_features {
+                record(&mut inventory, "target-required-feature", required);
+            }
+        }
+    }
+    let mut feature_worlds = model.feature_worlds.iter().collect::<Vec<_>>();
+    feature_worlds.sort_by(|left, right| left.name.cmp(&right.name));
+    for world in feature_worlds {
+        record(&mut inventory, "feature-world", &world.name);
+        for (package, selection) in &world.packages {
+            let prefix = format!("feature-world:{}:{package}", world.name);
+            record(
+                &mut inventory,
+                &format!("{prefix}:default-features"),
+                if selection.default_features {
+                    "true"
+                } else {
+                    "false"
+                },
+            );
+            for feature in &selection.selected {
+                record(&mut inventory, &format!("{prefix}:selected"), feature);
+            }
+            for feature in &selection.active {
+                record(&mut inventory, &format!("{prefix}:active"), feature);
+            }
         }
     }
     for file in &model.source.files {
@@ -51,6 +84,9 @@ pub(super) fn locked(model: &RepositoryModel) -> LockedAnalysis {
         inventory_sha256: sha256_hex(&inventory),
         exclusions_sha256: sha256_hex(&exclusion_bytes),
         cargo_lock_sha256,
+        cargo_features_sha256: cargo_features_sha256(model),
+        feature_worlds_sha256: feature_worlds_sha256(model),
+        feature_worlds: Some(model.feature_worlds.len()),
         packages: packages.len(),
         targets: packages.iter().map(|package| package.targets.len()).sum(),
         physical_rust_files: model.source.files.len(),
@@ -76,6 +112,61 @@ pub(super) fn locked(model: &RepositoryModel) -> LockedAnalysis {
             })
             .collect(),
     }
+}
+
+fn cargo_features_sha256(model: &RepositoryModel) -> String {
+    let mut authority = Vec::new();
+    for (package, features) in &model.cargo.package_features {
+        record(&mut authority, "package", package);
+        for definition in features.canonical_definition() {
+            record(&mut authority, "definition", &definition);
+        }
+        if let Some(package) = model
+            .cargo
+            .packages
+            .iter()
+            .find(|candidate| candidate.name == *package)
+        {
+            for target in &package.targets {
+                for required in &target.required_features {
+                    record(
+                        &mut authority,
+                        &format!("target-required-feature:{}", target.name),
+                        required,
+                    );
+                }
+            }
+        }
+    }
+    sha256_hex(&authority)
+}
+
+fn feature_worlds_sha256(model: &RepositoryModel) -> String {
+    let mut authority = Vec::new();
+    let mut worlds = model.feature_worlds.iter().collect::<Vec<_>>();
+    worlds.sort_by(|left, right| left.name.cmp(&right.name));
+    for world in worlds {
+        record(&mut authority, "world", &world.name);
+        for (package, selection) in &world.packages {
+            record(&mut authority, "package", package);
+            record(
+                &mut authority,
+                "default-features",
+                if selection.default_features {
+                    "true"
+                } else {
+                    "false"
+                },
+            );
+            for feature in &selection.selected {
+                record(&mut authority, "selected", feature);
+            }
+            for feature in &selection.active {
+                record(&mut authority, "active", feature);
+            }
+        }
+    }
+    sha256_hex(&authority)
 }
 
 fn record(output: &mut Vec<u8>, label: &str, value: &str) {

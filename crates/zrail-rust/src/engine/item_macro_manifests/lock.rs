@@ -34,7 +34,7 @@ pub(crate) fn locked(
         let (definition, definition_sha256) =
             resolved_definition(allowance, expansion, resolved_cargo)
                 .map_err(|message| manifest_error(&applied, &message))?;
-        let guard = expansion.observation.guard;
+        let guard = &expansion.observation.guard;
         let domains = active_domains(&applied.invocation_path, guard, compilation_domains);
         if domains.is_empty() {
             return Err(manifest_error(
@@ -50,7 +50,7 @@ pub(crate) fn locked(
             invocation_sha256: applied.invocation_sha256,
             definition,
             definition_sha256,
-            guard: guard.canonical_name().into(),
+            guard: guard.canonical_name(),
             domains,
             bindings: applied.bindings,
         });
@@ -179,16 +179,14 @@ fn external_identity(identity: &ResolvedPackageIdentity) -> String {
 
 fn active_domains(
     path: &str,
-    guard: SyntaxGuard,
+    guard: &SyntaxGuard,
     compilation_domains: &BTreeMap<String, BTreeSet<CompilationDomain>>,
 ) -> Vec<String> {
     compilation_domains
         .get(path)
         .into_iter()
         .flatten()
-        .filter(|domain| {
-            guard.available_in(SyntaxGuard::for_test_only(domain.mode.enables_cfg_test()))
-        })
+        .filter(|domain| guard.availability_in_domain(domain).is_available())
         .map(CompilationDomain::canonical_identity)
         .collect()
 }

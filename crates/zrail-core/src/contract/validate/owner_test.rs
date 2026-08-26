@@ -4,7 +4,8 @@ use crate::{OwnerContract, OwnerKind, PolicyReachability};
 
 use super::{
     ValidationErrors, validate_call, validate_capability, validate_directory,
-    validate_exact_operation, validate_method_name,
+    validate_exact_operation, validate_field_mutation, validate_method_name,
+    validate_mutating_method_scope,
 };
 
 #[test]
@@ -72,6 +73,7 @@ fn exact_operation_owners_require_qualified_identities() {
         OwnerKind::FieldRead,
         OwnerKind::FieldWrite,
         OwnerKind::FieldMutableBorrow,
+        OwnerKind::FieldMutation,
         OwnerKind::FieldAuthority,
     ] {
         let mut invalid = owner();
@@ -97,6 +99,55 @@ fn method_name_owners_reject_resolved_method_claims() {
     assert!(errors.contains("one written method name"), "{errors}");
 }
 
+#[test]
+fn field_mutation_owners_require_canonical_written_methods() {
+    let mut valid = owner();
+    valid.kind = OwnerKind::FieldMutation;
+    valid.selector = "crate::State::values".into();
+    valid.mutating_methods = vec!["clear".into(), "push".into()];
+    assert!(contract_errors(&valid).is_empty());
+
+    valid.mutating_methods = vec!["push".into(), "clear".into(), "clear".into()];
+    let errors = contract_errors(&valid).join("\n");
+    assert!(errors.contains("sorted and unique"), "{errors}");
+
+    valid.mutating_methods = vec!["Vec::push".into()];
+    let errors = contract_errors(&valid).join("\n");
+    assert!(errors.contains("simple Rust identifiers"), "{errors}");
+
+    for invalid in [
+        "_", "self", "crate", "fn", "await", "r#self", "r#_", "r#r#push",
+    ] {
+        valid.mutating_methods = vec![invalid.into()];
+        let errors = contract_errors(&valid).join("\n");
+        assert!(
+            errors.contains("simple Rust identifiers"),
+            "{invalid}: {errors}"
+        );
+    }
+
+    for raw in ["r#type", "r#async", "r#gen", "r#ordinary"] {
+        valid.mutating_methods = vec![raw.into()];
+        assert!(contract_errors(&valid).is_empty(), "{raw}");
+    }
+}
+
+#[test]
+fn other_owner_kinds_reject_mutating_methods() {
+    let mut invalid = owner();
+    invalid.mutating_methods = vec!["push".into()];
+    let mut errors = ValidationErrors::new();
+
+    validate_mutating_method_scope(&invalid, &mut errors);
+
+    assert!(
+        errors
+            .finish()
+            .join("\n")
+            .contains("may not declare mutating_methods")
+    );
+}
+
 fn errors(owner: &OwnerContract) -> Vec<String> {
     let mut errors = ValidationErrors::new();
     validate_capability(owner, &mut errors);
@@ -114,6 +165,7 @@ fn contract_errors(owner: &OwnerContract) -> Vec<String> {
         OwnerKind::FieldMutableBorrow => {
             validate_exact_operation(owner, "field-mutable-borrow", &mut errors);
         }
+        OwnerKind::FieldMutation => validate_field_mutation(owner, &mut errors),
         OwnerKind::FieldAuthority => {
             validate_exact_operation(owner, "field-authority", &mut errors);
         }
@@ -130,6 +182,7 @@ fn owner() -> OwnerContract {
         reachability: PolicyReachability::All,
         within: vec!["crates/store/src/**".into()],
         selector: "std::fs".into(),
+        mutating_methods: Vec::new(),
         allow: vec!["crates/store/src/io.rs".into()],
         reason: "one filesystem owner".into(),
     }

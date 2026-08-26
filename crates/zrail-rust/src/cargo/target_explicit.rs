@@ -54,5 +54,6 @@ fn insert_build_script(roots: &mut BTreeSet<CargoTarget>, path: &str) {
         name: "build-script-build".into(),
         path: path.into(),
         kind: CargoTargetKind::BuildScript,
+        required_features: Vec::new(),
     });
 }

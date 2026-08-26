@@ -1,4 +1,4 @@
-//! Canonical TOML layout for every exact contract fragment.
+//! Lossless TOML validation for every exact contract fragment.
 
 use crate::app::{args::FmtOptions, error::CliError};
 

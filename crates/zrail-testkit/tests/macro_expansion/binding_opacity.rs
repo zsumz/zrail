@@ -24,8 +24,9 @@ fn ordinary_source_bound_serde_review_keeps_the_namespace_opaque() {
 
     let report = check(&root);
 
+    assert_eq!(report.status, ReportStatus::Pass, "{}", report.human());
     assert_no_macro_rejection(&report);
-    assert_include_failure(&report);
+    assert_no_include_failure(&report);
     reset(&root);
 }
 
@@ -51,7 +52,7 @@ fn serde_fixture(name: &str, binding_clean: bool) -> PathBuf {
     let bindings = if binding_clean {
         "bindings = \"none\"\n"
     } else {
-        ""
+        "bindings = \"opaque\"\n"
     };
     let allowances = serde_allowances(bindings);
     let root = repository(name, SERDE_SOURCE, &allowances);
@@ -62,12 +63,10 @@ fn serde_fixture(name: &str, binding_clean: bool) -> PathBuf {
         ),
     )
     .expect("write serde dependency");
-    if binding_clean {
-        zrail_rust::build_lock(&root, "zrail.toml".as_ref())
-            .expect("build complete serde fixture lock")
-            .write(&root.join("zrail.lock"))
-            .expect("write complete serde fixture lock");
-    }
+    zrail_rust::build_lock(&root, "zrail.toml".as_ref())
+        .expect("build serde fixture lock")
+        .write(&root.join("zrail.lock"))
+        .expect("write serde fixture lock");
     root
 }
 

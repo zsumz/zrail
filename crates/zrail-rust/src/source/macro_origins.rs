@@ -25,11 +25,35 @@ impl std::ops::DerefMut for MacroExpansionFact {
 }
 
 pub(super) fn resolve(expansion: &mut MacroExpansionFact, packages: &[&Package]) {
+    discard_non_macro_builtin_aliases(expansion);
     for candidate in &mut expansion.candidates {
         resolve_candidate(candidate, packages);
     }
     expansion.refresh_quality();
     super::macro_builtin::normalize_derive(expansion);
+}
+
+fn discard_non_macro_builtin_aliases(expansion: &mut MacroExpansionFact) {
+    if !compiler_builtin(&expansion.observation.name) {
+        return;
+    }
+    let mut discarded = false;
+    expansion.candidates.retain(|candidate| {
+        let non_macro_alias = candidate.definition.is_none()
+            && candidate.observation.quality == AnalysisQuality::Exact
+            && matches!(
+                candidate.derivation,
+                MacroDerivation::ExactImport | MacroDerivation::ReExport
+            )
+            && super::macro_visibility::repository_path(&candidate.observation.name);
+        discarded |= non_macro_alias;
+        !non_macro_alias
+    });
+    if discarded && expansion.candidates.is_empty() {
+        expansion
+            .candidates
+            .extend(MacroExpansionFact::compiler_builtin(expansion.observation.clone()).candidates);
+    }
 }
 
 fn resolve_candidate(candidate: &mut MacroCandidate, packages: &[&Package]) {

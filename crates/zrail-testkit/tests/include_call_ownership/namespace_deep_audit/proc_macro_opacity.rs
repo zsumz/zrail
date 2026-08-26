@@ -15,7 +15,7 @@ fn attribute_macro_generated_import_fails_closed() {
     write_executor(&root);
     write_lock(&root);
 
-    assert_fail_closed(&check(&root));
+    assert_unresolved_direct_owner(&check(&root), "attribute-macro-import");
     reset(&root);
 }
 
@@ -30,7 +30,7 @@ fn derive_macro_generated_import_fails_closed() {
     write_executor(&root);
     write_lock(&root);
 
-    assert_fail_closed(&check(&root));
+    assert_unresolved_direct_owner(&check(&root), "derive-macro-import");
     reset(&root);
 }
 
@@ -49,7 +49,7 @@ fn attribute_replaced_benign_import_fails_closed() {
     write_executor(&root);
     write_lock(&root);
 
-    assert_fail_closed(&check(&root));
+    assert_missing_direct_owner(&check(&root), "attribute-replaced-import");
     reset(&root);
 }
 
@@ -68,7 +68,7 @@ fn attribute_replaced_benign_module_fails_closed() {
     write_executor(&root);
     write_lock(&root);
 
-    assert_fail_closed(&check(&root));
+    assert_unresolved_direct_owner(&check(&root), "attribute-replaced-module");
     reset(&root);
 }
 
@@ -81,12 +81,33 @@ fn proc_macro_fixture(name: &str, contract: &str) -> std::path::PathBuf {
     root
 }
 
-fn assert_fail_closed(report: &Report) {
+fn assert_unresolved_direct_owner(report: &Report, rule: &str) {
     assert!(
         report.findings.iter().any(|finding| {
             finding.path.as_deref() == Some("src/lib.rs")
-                && finding.id == "RUST-INCLUDE-002"
+                && finding.id == "OWN-005"
+                && finding.rule == rule
                 && finding.analysis == AnalysisQuality::Unresolved
+        }),
+        "{}",
+        report.human()
+    );
+    assert!(
+        !report
+            .findings
+            .iter()
+            .any(|finding| finding.id.starts_with("RUST-MACRO-")),
+        "{}",
+        report.human()
+    );
+}
+
+fn assert_missing_direct_owner(report: &Report, rule: &str) {
+    assert!(
+        report.findings.iter().any(|finding| {
+            finding.path.as_deref() == Some("src/lib.rs")
+                && finding.id == "OWN-004"
+                && finding.rule == rule
         }),
         "{}",
         report.human()

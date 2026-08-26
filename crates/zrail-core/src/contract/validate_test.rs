@@ -46,6 +46,7 @@ fn duplicate_effects_are_rejected() {
             effects: EffectBoundary {
                 deny: vec![Effect::Network, Effect::Network],
             },
+            syntax: crate::SyntaxBoundary::default(),
         },
     );
     let error = validate_contract(&contract).expect_err("duplicate effects must fail");
@@ -118,6 +119,7 @@ fn owner_allow_paths_must_be_inside_the_selector() {
         reachability: PolicyReachability::All,
         within: Vec::new(),
         selector: "**/migrations".into(),
+        mutating_methods: Vec::new(),
         allow: vec!["crates/store/schema".into()],
         reason: "one migration owner".into(),
     });
@@ -199,6 +201,7 @@ fn unused_profiles_are_rejected_as_stale_policy() {
             effects: EffectBoundary {
                 deny: vec![Effect::Network],
             },
+            syntax: crate::SyntaxBoundary::default(),
         },
     );
 
@@ -215,6 +218,7 @@ fn empty_profiles_and_scopes_are_rejected() {
         ProfileContract {
             reachability: PolicyReachability::default(),
             effects: EffectBoundary { deny: Vec::new() },
+            syntax: crate::SyntaxBoundary::default(),
         },
     );
     contract.scopes.push(crate::ScopeContract {

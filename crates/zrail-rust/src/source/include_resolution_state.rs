@@ -4,7 +4,7 @@ use std::collections::BTreeSet;
 
 use zrail_core::SourceSpan;
 
-use super::SourceInstanceId;
+use super::{SourceInstanceId, SyntaxGuard};
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(super) enum ModuleBoundary {
@@ -103,6 +103,16 @@ pub(super) struct ResolveRequest<'a> {
     pub(super) depth: usize,
     pub(super) mode: LookupMode,
     pub(super) usage: ResolutionUsage,
+    pub(super) guard: SyntaxGuard,
+}
+
+pub(super) struct WrittenResolveRequest<'a> {
+    pub(super) instance: SourceInstanceId,
+    pub(super) written: &'a str,
+    pub(super) scope: &'a [SourceSpan],
+    pub(super) depth: usize,
+    pub(super) usage: ResolutionUsage,
+    pub(super) guard: &'a SyntaxGuard,
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]

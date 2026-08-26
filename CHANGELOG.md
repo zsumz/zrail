@@ -2,6 +2,29 @@
 
 All notable zrail changes are recorded here for reviewed release notes.
 
+## [Unreleased]
+
+### Added
+
+- Exact workspace-wide Cargo feature worlds, runtime-neutral async-syntax
+  policy, facade-aware glob-import policy, exact Rust type/authority shape and
+  non-duplication rails, and policy-declared field-mutation ownership.
+- Non-executing bulk test-mirror planning, strict plan-bound result ingestion,
+  deterministic receipt rendering, and bulk receipt verification.
+
+### Changed
+
+- Lock state now uses schema 3 and semantics epoch 4, with direct reviewed
+  migration from every released prior epoch.
+- Contract formatting and schema migration preserve authored comments, blank
+  lines, key order, spacing, and generated-section markers.
+
+### Fixed
+
+- Ordinary Rust binding and typed-place resolution now retain prelude,
+  re-export, conditional-compilation, typed-variable, and nested-field
+  identities without silently accepting unresolved authority.
+
 ## [0.0.3-rc.4] - 2026-08-25
 
 ### Fixed

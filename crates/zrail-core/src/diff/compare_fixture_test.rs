@@ -39,12 +39,16 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),
                 test_mirrors: Vec::new(),
+                feature_worlds: Vec::new(),
                 macros: crate::MacroExpansionContract::default(),
+                duplication: crate::RustDuplicationContract::default(),
+                types: Vec::new(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,
                     lint_suppressions: LintSuppressionMode::Deny,
                     deny_methods: Vec::new(),
                     deny_macros: Vec::new(),
+                    glob_imports: crate::GlobImportMode::Allow,
                 },
                 size: Some(FileSizeContract {
                     facade: Budget {

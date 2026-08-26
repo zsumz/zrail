@@ -71,6 +71,14 @@ fn written_alias_cannot_cover_an_unmatched_canonical_candidate() {
     assert!(!canonical_policy.retains_opacity("src/lib.rs", &aliased.observation));
 }
 
+#[test]
+fn compiler_builtins_preserve_bindings_without_contract_allowances() {
+    let builtin = MacroExpansionFact::compiler_builtin(fact("Debug", AnalysisQuality::Exact));
+    let policy = build(&contract(Vec::new()), &source(builtin.clone()), None);
+
+    assert!(!policy.retains_opacity("src/lib.rs", &builtin.observation));
+}
+
 fn expansion(
     written: &str,
     canonical: &str,
@@ -132,10 +140,13 @@ fn source(expansion: MacroExpansionFact) -> SourceIndex {
             opaque_macro_inputs: Vec::new(),
             macro_definitions: Vec::new(),
             import_bindings: Vec::new(),
+            glob_imports: Vec::new(),
             inline_module_scopes: Vec::new(),
             compile_effects: Vec::new(),
             lint_suppressions: Vec::new(),
             unsafe_constructs: Vec::new(),
+            async_syntax: Vec::new(),
+            type_policy: crate::source::TypePolicyFacts::default(),
             tests: Vec::new(),
             modules: Vec::new(),
             includes: Vec::new(),
@@ -154,6 +165,8 @@ fn clean_allowance(name: &str) -> MacroExpansionAllow {
         inputs: MacroInputMode::Inspect,
         binding: MacroBindingMode::Exact,
         bindings: MacroExpansionBindings::None,
+        async_syntax: zrail_core::MacroAsyncSyntax::Opaque,
+        duplication_effect: zrail_core::MacroDuplicationEffect::Opaque,
         definition: None,
         source: Some(CrateRootSource::Registry {
             registry: None,
@@ -202,15 +215,19 @@ fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
                 out_dir: Vec::new(),
                 item_macros: Vec::new(),
                 test_mirrors: Vec::new(),
+                feature_worlds: Vec::new(),
                 macros: MacroExpansionContract {
                     mode: MacroExpansionMode::DenyUnreviewed,
                     allow,
                 },
+                duplication: zrail_core::RustDuplicationContract::default(),
+                types: Vec::new(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,
                     lint_suppressions: LintSuppressionMode::Allow,
                     deny_methods: Vec::new(),
                     deny_macros: Vec::new(),
+                    glob_imports: zrail_core::GlobImportMode::Allow,
                 },
                 size: None,
             },

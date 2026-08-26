@@ -32,18 +32,21 @@ pub use load::{
     MAX_IMPORT_DIRECTIVES, load_contract, load_contract_with_entry,
 };
 pub use model::{
-    AnalysisContract, AnalysisLimits, Budget, Contract, CrateRootContract, CrateRootSource,
-    DependenciesContract, DependencyEdgeKind, DependencyReachability, DependencyRule,
-    EffectBoundary, FileRole, FileRoleContract, FileSizeContract, GateContract, GateKind,
-    GeneratedSourceContract, HygieneContract, InvariantContract, InvariantStatus, ItemMacroBinding,
-    ItemMacroBindingKind, ItemMacroContract, ItemMacroManifest, LayerContract, LayerDependencies,
-    MAX_TEST_MIRROR_INPUTS, MacroExpansionAllow, MacroExpansionContract, OutDirSourceContract,
-    OwnerContract, ProfileContract, RatchetContract, RepositoryContract, RustSourceContract,
-    ScopeContract, SourceContract, SymbolBoundary, TestExecutionIdentity, TestMirrorContract,
+    AnalysisContract, AnalysisLimits, Budget, CargoFeaturePackageContract,
+    CargoFeatureWorldContract, Contract, CrateRootContract, CrateRootSource, DependenciesContract,
+    DependencyEdgeKind, DependencyReachability, DependencyRule, DuplicationTrait, EffectBoundary,
+    FileRole, FileRoleContract, FileSizeContract, GateContract, GateKind, GeneratedSourceContract,
+    HygieneContract, InvariantContract, InvariantStatus, ItemMacroBinding, ItemMacroBindingKind,
+    ItemMacroContract, ItemMacroManifest, LayerContract, LayerDependencies, MAX_TEST_MIRROR_INPUTS,
+    MacroExpansionAllow, MacroExpansionContract, OutDirSourceContract, OwnerContract,
+    ProfileContract, RatchetContract, RepositoryContract, RustDuplicationContract,
+    RustFieldContract, RustSourceContract, RustTypeContract, RustTypeKind, ScopeContract,
+    SourceContract, SymbolBoundary, SyntaxBoundary, TestExecutionIdentity, TestMirrorContract,
+    TypeLinearity, TypeProhibition,
 };
 pub use modes::{
-    CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,
-    LintSuppressionMode, MacroBindingMode, MacroExpansionBindings, MacroExpansionMode,
-    MacroInputMode, ModuleDocsMode, OwnerKind, PolicyMode, PolicyReachability, SymlinkMode,
-    TestMode,
+    AsyncSyntax, CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,
+    GlobImportMode, LintSuppressionMode, MacroAsyncSyntax, MacroBindingMode,
+    MacroDuplicationEffect, MacroExpansionBindings, MacroExpansionMode, MacroInputMode,
+    ModuleDocsMode, OwnerKind, PolicyMode, PolicyReachability, SymlinkMode, TestMode,
 };

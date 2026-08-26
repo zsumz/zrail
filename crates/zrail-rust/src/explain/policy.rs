@@ -3,8 +3,8 @@
 use std::{collections::BTreeSet, path::Path};
 
 use zrail_core::{
-    Contract, Effect, ExternalDependencyMode, FacadeMode, LayerContract, LintSuppressionMode,
-    MacroExpansionMode, ModuleDocsMode, PolicyMode, ScopeContract,
+    Contract, Effect, ExternalDependencyMode, FacadeMode, GlobImportMode, LayerContract,
+    LintSuppressionMode, MacroExpansionMode, ModuleDocsMode, PolicyMode, ScopeContract,
 };
 
 use crate::inventory::FileClass;
@@ -39,6 +39,22 @@ pub(super) fn denied_effects(contract: &Contract, layer: Option<&LayerContract>)
         .filter_map(|name| contract.profiles.get(name))
         .flat_map(|profile| profile.effects.deny.iter().copied())
         .map(effect_name)
+        .map(str::to_owned)
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
+pub(super) fn denied_syntax(contract: &Contract, layer: Option<&LayerContract>) -> Vec<String> {
+    let Some(layer) = layer else {
+        return Vec::new();
+    };
+    layer
+        .profiles
+        .iter()
+        .filter_map(|name| contract.profiles.get(name))
+        .flat_map(|profile| profile.syntax.deny.iter().copied())
+        .map(crate::rules::async_syntax_name)
         .map(str::to_owned)
         .collect::<BTreeSet<_>>()
         .into_iter()
@@ -90,6 +106,14 @@ pub(super) const fn lint_mode(mode: LintSuppressionMode) -> &'static str {
         LintSuppressionMode::Allow => "allow",
         LintSuppressionMode::Reasoned => "reasoned",
         LintSuppressionMode::Deny => "deny",
+    }
+}
+
+pub(super) const fn glob_import_mode(mode: GlobImportMode) -> &'static str {
+    match mode {
+        GlobImportMode::Allow => "allow",
+        GlobImportMode::FacadeReexportsOnly => "facade-reexports-only",
+        GlobImportMode::Deny => "deny",
     }
 }
 

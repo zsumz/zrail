@@ -30,6 +30,29 @@ fn derives_custom_attributes_and_nested_cfg_attributes_are_boundaries() {
 }
 
 #[test]
+fn nested_cfg_attribute_expansions_retain_every_predicate() {
+    let item: syn::ItemStruct = syn::parse_quote! {
+        #[cfg_attr(
+            feature = "outer",
+            cfg_attr(feature = "inner", derive(Clone)),
+            reviewed::attribute
+        )]
+        struct Message;
+    };
+
+    let expansions = attribute_paths(&item.attrs[0]).expect("parse guarded expansions");
+    assert_eq!(expansions.len(), 2);
+    assert_eq!(
+        expansions[0].guard.canonical_name(),
+        "cfg:all(feature=\"inner\",feature=\"outer\")"
+    );
+    assert_eq!(
+        expansions[1].guard.canonical_name(),
+        "cfg:feature=\"outer\""
+    );
+}
+
+#[test]
 fn only_unqualified_standard_derives_are_compiler_builtins() {
     let item: syn::ItemStruct = syn::parse_quote! {
         #[derive(Debug, dependency::Debug)]
@@ -71,6 +94,7 @@ fn malformed_derive_and_cfg_attr_syntax_is_unresolved() {
         "#![derive(name = value)]",
         "#![derive()]",
         "#![cfg_attr(test)]",
+        "#![cfg_attr(test, cfg_attr(feature = \"nested\"))]",
     ] {
         let file = syn::parse_file(source).expect("parse permissive attribute tokens");
         assert!(attribute_paths(&file.attrs[0]).is_err(), "{source}");

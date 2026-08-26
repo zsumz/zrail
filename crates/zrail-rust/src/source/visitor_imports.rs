@@ -6,14 +6,14 @@ use syn::{Item, Path, spanned::Spanned};
 use zrail_core::AnalysisQuality;
 
 use super::{
-    MacroCandidate, MacroDerivation, MacroExpansionFact, SyntaxGuard, fact::fact,
-    ordinary_bindings, scoped_globs, scoped_imports, visitor::FactVisitor,
+    FactVisitor, MacroCandidate, MacroDerivation, MacroExpansionFact, SyntaxGuard, fact::fact,
+    ordinary_bindings, scoped_globs, scoped_imports,
 };
 
 const MAX_MACRO_CANDIDATES: usize = 64;
 
 impl FactVisitor<'_> {
-    pub(super) fn with_import_scope<'a>(
+    pub(in crate::source) fn with_import_scope<'a>(
         &mut self,
         items: impl Iterator<Item = &'a Item>,
         visit: impl FnOnce(&mut Self),
@@ -34,9 +34,14 @@ impl FactVisitor<'_> {
                     .as_ref()
                     .map(|_| super::fact::source_span(module.ident.span()))
             }));
+        self.glob_imports.extend(super::glob_imports::collect(
+            items.iter().copied(),
+            &enclosing_guard,
+            &lexical_scope,
+        ));
         self.import_bindings.extend(ordinary_bindings::collect(
             items.iter().copied(),
-            enclosing_guard,
+            &enclosing_guard,
             &lexical_scope,
         ));
         self.local_imports.push(LocalImportScope { aliases, globs });
@@ -44,7 +49,10 @@ impl FactVisitor<'_> {
         self.local_imports.pop();
     }
 
-    pub(super) fn resolve_macro_path(&self, path: &Path) -> (String, AnalysisQuality, bool, bool) {
+    pub(in crate::source) fn resolve_macro_path(
+        &self,
+        path: &Path,
+    ) -> (String, AnalysisQuality, bool, bool) {
         let text = path
             .segments
             .iter()
@@ -55,14 +63,14 @@ impl FactVisitor<'_> {
         (target, quality, scoped, local_module)
     }
 
-    pub(super) fn macro_invocation(&self, path: &Path) -> MacroExpansionFact {
+    pub(in crate::source) fn macro_invocation(&self, path: &Path) -> MacroExpansionFact {
         let written_name = path_text(path);
         let (resolved, quality, scoped, local_module) = self.resolve_macro_path(path);
         let mut observed = fact(resolved.clone(), path.span(), quality);
         if local_module {
             observed.canonical.push(resolved.clone());
         }
-        let derivation = if self.imports.re_exports(path, self.syntax_guard()) {
+        let derivation = if self.imports.re_exports(path, &self.syntax_guard()) {
             MacroDerivation::ReExport
         } else if resolved != written_name {
             MacroDerivation::ExactImport
@@ -74,7 +82,7 @@ impl FactVisitor<'_> {
         let mut candidates = vec![MacroCandidate::pending(observed, local_module, derivation)];
         if !scoped {
             let (imported, overflowed) =
-                super::calls::macro_candidates(path, self.imports, &resolved, self.syntax_guard());
+                super::calls::macro_candidates(path, self.imports, &resolved, &self.syntax_guard());
             if overflowed {
                 let unresolved = fact(&written_name, path.span(), AnalysisQuality::Unresolved);
                 return MacroExpansionFact::with_candidates(
@@ -119,7 +127,7 @@ impl FactVisitor<'_> {
                 let (resolved_glob, _, _, _, _) = self.resolve_text_scoped(glob);
                 let name = format!("{resolved_glob}::{written}");
                 if name != resolved {
-                    super::import_helpers::insert_guard(&mut candidates, name, *guard);
+                    super::import_helpers::insert_guard(&mut candidates, name, guard);
                 }
             }
         }
@@ -143,28 +151,37 @@ impl FactVisitor<'_> {
         }
     }
 
-    pub(super) fn resolve_text_scoped(
+    pub(in crate::source) fn resolve_text_scoped(
         &self,
         path: &str,
     ) -> (String, AnalysisQuality, bool, bool, super::SyntaxGuard) {
         let (root, suffix) = split_root(path);
         for scope in self.local_imports.iter().rev() {
             if let Some(alias) = scope.aliases.get(root) {
-                if !alias.guard.available_in(self.syntax_guard()) {
+                let availability = alias.guard.availability_in(self.syntax_guard());
+                if !availability.is_available() {
                     continue;
                 }
+                let quality =
+                    alias
+                        .quality
+                        .max(if availability == super::GuardAvailability::Possible {
+                            AnalysisQuality::Unresolved
+                        } else {
+                            AnalysisQuality::Exact
+                        });
                 if !suffix.is_empty() && visible_root(&alias.target) == visible_root(root) {
                     if alias.local_module {
-                        return (path.into(), alias.quality, true, true, alias.guard);
+                        return (path.into(), quality, true, true, alias.guard.clone());
                     }
                     continue;
                 }
                 return (
                     format!("{}{suffix}", alias.target),
-                    alias.quality,
+                    quality,
                     true,
                     alias.local_module,
-                    alias.guard,
+                    alias.guard.clone(),
                 );
             }
         }
@@ -179,7 +196,7 @@ impl FactVisitor<'_> {
         };
         let (resolved, quality, guard) = self
             .imports
-            .resolve_with_guard(&parsed, self.syntax_guard());
+            .resolve_with_guard(&parsed, &self.syntax_guard());
         (resolved, quality, false, false, guard)
     }
 }
@@ -190,12 +207,12 @@ fn visible_root(path: &str) -> &str {
 }
 
 #[derive(Debug)]
-pub(super) struct LocalImportScope {
+pub(in crate::source) struct LocalImportScope {
     aliases: BTreeMap<String, scoped_imports::ScopedAlias>,
     globs: BTreeMap<String, SyntaxGuard>,
 }
 
-pub(super) type LocalImportScopes = Vec<LocalImportScope>;
+pub(in crate::source) type LocalImportScopes = Vec<LocalImportScope>;
 
 fn split_root(path: &str) -> (&str, &str) {
     path.find("::").map_or((path, ""), |separator| {

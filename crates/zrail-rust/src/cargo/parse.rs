@@ -9,6 +9,7 @@ use crate::inventory::RepositoryInventory;
 
 use super::{
     dependencies::{collect_dependencies, workspace_dependencies},
+    features::PackageFeatureSet,
     model::{CargoWorkspace, ManifestScope, Package},
     overrides,
     target_discovery::package_edition,
@@ -56,6 +57,7 @@ pub(crate) fn load_cargo_workspace(
         &mut manifest_bytes,
     )?;
     let mut packages = Vec::new();
+    let mut package_features = std::collections::BTreeMap::new();
     let mut authority_surfaces = Vec::new();
     for manifest in &plan.selected_manifests {
         let value = plan.value(manifest)?;
@@ -69,6 +71,27 @@ pub(crate) fn load_cargo_workspace(
         let Some(name) = package_name(value)? else {
             continue;
         };
+        let dependencies = collect_dependencies(value, &workspace_dependencies, &directory)
+            .map_err(CargoModelError)?;
+        let features = PackageFeatureSet::parse(value, &dependencies).map_err(CargoModelError)?;
+        features.resolve(true, &[]).map_err(CargoModelError)?;
+        let targets = collect_target_roots(
+            value,
+            manifest.parent().unwrap_or(&inventory.root),
+            workspace_edition.as_deref(),
+        )
+        .map_err(CargoModelError)?;
+        for target in &targets {
+            for required in &target.required_features {
+                if !features.declared().contains(required) {
+                    return Err(CargoModelError(format!(
+                        "Cargo target {:?} requires undeclared feature {required:?}",
+                        target.name
+                    )));
+                }
+            }
+        }
+        package_features.insert(name.clone(), features);
         packages.push(Package {
             name,
             edition: package_edition(
@@ -79,15 +102,9 @@ pub(crate) fn load_cargo_workspace(
                 workspace_edition.as_deref(),
             )
             .map_err(CargoModelError)?,
-            dependencies: collect_dependencies(value, &workspace_dependencies, &directory)
-                .map_err(CargoModelError)?,
+            dependencies,
             directory,
-            targets: collect_target_roots(
-                value,
-                manifest.parent().unwrap_or(&inventory.root),
-                workspace_edition.as_deref(),
-            )
-            .map_err(CargoModelError)?,
+            targets,
         });
     }
     packages.sort_by(|left, right| left.name.cmp(&right.name));
@@ -114,6 +131,7 @@ pub(crate) fn load_cargo_workspace(
         declared_members,
         observed_members,
         packages,
+        package_features,
         authority_surfaces,
         manifest_scopes: plan
             .selected_manifests

@@ -3,9 +3,10 @@
 use std::collections::BTreeSet;
 
 use crate::contract::{
-    Contract, CrateRootSource, MacroBindingMode, MacroExpansionBindings, MacroExpansionMode,
-    validate_dependencies, validate_limits::ValidationErrors,
-    validate_paths::validate_repository_literal, validate_sets::require_reason,
+    Contract, CrateRootSource, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect,
+    MacroExpansionBindings, MacroExpansionMode, validate_dependencies,
+    validate_limits::ValidationErrors, validate_paths::validate_repository_literal,
+    validate_sets::require_reason,
 };
 
 use super::valid_rust_path;
@@ -44,29 +45,43 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
             }
         }
         if allowed.bindings == MacroExpansionBindings::None {
-            if allowed.binding != MacroBindingMode::Exact {
-                errors.push(format!(
-                    "macro expansion allowance {:?} with bindings = \"none\" requires exact binding",
-                    allowed.name
-                ));
-            }
-            if allowed.source.is_none() && allowed.definition.is_none() {
-                errors.push(format!(
-                    "macro expansion allowance {:?} with bindings = \"none\" requires source or definition provenance",
-                    allowed.name
-                ));
-            }
-            if allowed
-                .source
-                .as_ref()
-                .is_some_and(|source| !immutable_source(source))
-            {
-                errors.push(format!(
-                    "macro expansion allowance {:?} with bindings = \"none\" requires immutable source provenance: registry sources must use an exact =major.minor.patch version and Git sources must use a full 40- or 64-hex rev",
-                    allowed.name
-                ));
-            }
+            validate_closed_claim(allowed, "namespace_effect = \"none\"", errors);
         }
+        if allowed.async_syntax == MacroAsyncSyntax::None {
+            validate_closed_claim(allowed, "async_syntax = \"none\"", errors);
+        }
+        if allowed.duplication_effect == MacroDuplicationEffect::None {
+            validate_closed_claim(allowed, "duplication_effect = \"none\"", errors);
+        }
+    }
+}
+
+fn validate_closed_claim(
+    allowed: &crate::MacroExpansionAllow,
+    claim: &str,
+    errors: &mut ValidationErrors,
+) {
+    if allowed.binding != MacroBindingMode::Exact {
+        errors.push(format!(
+            "macro expansion allowance {:?} with {claim} requires exact binding",
+            allowed.name
+        ));
+    }
+    if allowed.source.is_none() && allowed.definition.is_none() {
+        errors.push(format!(
+            "macro expansion allowance {:?} with {claim} requires source or definition provenance",
+            allowed.name
+        ));
+    }
+    if allowed
+        .source
+        .as_ref()
+        .is_some_and(|source| !immutable_source(source))
+    {
+        errors.push(format!(
+            "macro expansion allowance {:?} with {claim} requires immutable source provenance: registry sources must use an exact =major.minor.patch version and Git sources must use a full 40- or 64-hex rev",
+            allowed.name
+        ));
     }
 }
 

@@ -1,6 +1,8 @@
 //! Configurable production-source hygiene rails.
 
-use zrail_core::{Finding, FindingSink, LintSuppressionMode, PolicyMode};
+use zrail_core::{
+    AnalysisQuality, Finding, FindingSink, GlobImportMode, LintSuppressionMode, PolicyMode,
+};
 
 use crate::inventory::FileClass;
 
@@ -72,6 +74,67 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             findings,
             report_unsafe_constructs,
         );
+    }
+    check_glob_imports(context, findings);
+}
+
+fn check_glob_imports(context: &RuleContext<'_>, findings: &mut FindingSink) {
+    let mode = context.contract.source.rust.hygiene.glob_imports;
+    if mode == GlobImportMode::Allow {
+        return;
+    }
+    for file in &context.source.files {
+        let effective = crate::source_policy::effective_file_role(
+            &file.relative,
+            file.class,
+            &context.contract.source.rust,
+        )
+        .effective;
+        for import in &file.glob_imports {
+            if glob_import_is_allowed(mode, effective, import) {
+                continue;
+            }
+            findings.push(
+                Finding::error(
+                    "RUST-HYG-009",
+                    "rust.hygiene.glob-import",
+                    "source-hygiene",
+                    format!(
+                        "{} source uses glob import {}::*",
+                        crate::source_policy::role_name(effective),
+                        import.target
+                    ),
+                )
+                .at(&file.relative, Some(import.span))
+                .with_analysis(AnalysisQuality::Exact)
+                .with_help(
+                    "name imported items explicitly; facade-only mode permits top-level outward re-exports only",
+                ),
+            );
+        }
+    }
+}
+
+pub(crate) fn glob_import_is_allowed(
+    mode: GlobImportMode,
+    effective: FileClass,
+    import: &crate::source::GlobImportFact,
+) -> bool {
+    import.guard == crate::source::SyntaxGuard::Never
+        || mode == GlobImportMode::Allow
+        || mode == GlobImportMode::FacadeReexportsOnly
+            && effective == FileClass::Facade
+            && import.lexical_scope.is_empty()
+            && outward(&import.visibility)
+}
+
+fn outward(visibility: &crate::source::BindingVisibility) -> bool {
+    match visibility {
+        crate::source::BindingVisibility::Public => true,
+        crate::source::BindingVisibility::Restricted(path) => {
+            path.first().is_some_and(|segment| segment != "self")
+        }
+        crate::source::BindingVisibility::Private => false,
     }
 }
 
@@ -165,3 +228,7 @@ fn report_unsafe_constructs(file: &crate::source::RustFileFacts, findings: &mut 
         );
     }
 }
+
+#[cfg(test)]
+#[path = "hygiene_test.rs"]
+mod hygiene_test;

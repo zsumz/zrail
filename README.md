@@ -148,9 +148,21 @@ Cargo.lock   Cargo's selected versions and checksums
 `zrail check` is read-only. `zrail diff` separates grants, revocations, debt,
 cleanup, neutral changes, and unknown comparisons.
 
+Optional workspace-wide `source.rust.feature_worlds` make Cargo feature closure,
+`cfg(feature)`, and target `required-features` exact without invoking Cargo;
+non-feature target cfgs remain conservative.
+
 `zrail coverage --format json` exports a canonical census of every enabled rail
-plus the complete governed owner, dependency, and test-mirror surface with
-source spans and analysis quality for mechanical parity audits.
+plus the complete governed owner, dependency, source-syntax, type-policy,
+feature-world, and test-mirror surfaces with source spans and analysis quality
+for mechanical parity audits.
+
+`zrail mirrors plan --format json` turns large explicit mirror sets into a
+digest-bound, execution-grouped plan for a separately trusted test runner;
+`zrail mirrors receipts --plan PATH --results PATH --format json` validates a
+strict plan-bound result set and renders every schema-2 receipt in one bundle;
+`zrail mirrors verify --plan PATH` rejects stale plans and invalid receipts
+without executing repository code itself.
 
 Once installed, analysis runs locally and requires no account, daemon, source
 upload, API key, LLM, or network access.

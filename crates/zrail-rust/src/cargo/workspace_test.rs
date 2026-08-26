@@ -198,5 +198,6 @@ fn library_target(name: &str) -> CargoTarget {
         name: name.into(),
         path: "src/lib.rs".into(),
         kind: CargoTargetKind::Library,
+        required_features: Vec::new(),
     }
 }

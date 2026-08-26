@@ -81,6 +81,23 @@ fn changed_repository_macro_package_is_stale_lock_state() {
     assert!(findings.iter().any(|finding| finding.id == "LOCK-023"));
 }
 
+#[test]
+fn changed_feature_certificate_fields_are_stale_lock_state() {
+    let current = LockFile::new("0".repeat(64));
+    let mut candidate = current.clone();
+    let analysis = candidate.analysis.as_mut().expect("analysis");
+    analysis.cargo_features_sha256 = "1".repeat(64);
+    analysis.feature_worlds_sha256 = "2".repeat(64);
+    analysis.feature_worlds = Some(1);
+    let mut findings = FindingSink::default();
+
+    compare_locks(&current, &candidate, &mut findings);
+
+    for id in ["LOCK-043", "LOCK-044", "LOCK-045"] {
+        assert!(findings.iter().any(|finding| finding.id == id));
+    }
+}
+
 fn ratchet(value: usize) -> LockedRatchet {
     LockedRatchet {
         rule: "rust.file-size".into(),

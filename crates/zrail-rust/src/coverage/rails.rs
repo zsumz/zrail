@@ -77,6 +77,14 @@ pub(super) fn report(
             .keys()
             .map(|name| format!("profile:{name}")),
     );
+    rails.extend(contract.profiles.iter().flat_map(|(name, profile)| {
+        profile.syntax.deny.iter().map(move |syntax| {
+            format!(
+                "profile:{name}:syntax:{}",
+                crate::rules::async_syntax_name(*syntax)
+            )
+        })
+    }));
     rails.extend(
         contract
             .layers
@@ -147,6 +155,16 @@ fn rust_rails(
         )
     }));
     rails.extend(mirrors.iter().map(|mirror| mirror.policy_id.clone()));
+    rails.push(if rust.feature_worlds.is_empty() {
+        "rust:feature-world-mode:legacy-conditional".into()
+    } else {
+        "rust:feature-world-mode:exact".into()
+    });
+    rails.extend(
+        rust.feature_worlds
+            .iter()
+            .map(|world| format!("rust:feature-world:{}", world.name)),
+    );
     rails.extend(
         rust.macros
             .allow
@@ -154,11 +172,29 @@ fn rust_rails(
             .map(|allowance| format!("rust:macro:{}", allowance.name)),
     );
     rails.extend(
+        rust.duplication
+            .deny_imports
+            .iter()
+            .map(|value| format!("rust:duplication:import:{}", duplication_trait_name(*value))),
+    );
+    rails.extend(rust.duplication.deny_macro_tokens.iter().map(|value| {
+        format!(
+            "rust:duplication:macro-token:{}",
+            duplication_trait_name(*value)
+        )
+    }));
+    rails.extend(
+        rust.types
+            .iter()
+            .map(|policy| format!("rust:type-policy:{}", policy.name)),
+    );
+    rails.extend(
         rust.hygiene
             .deny_methods
             .iter()
             .map(|method| format!("rust:hygiene:denied-method:{method}")),
     );
+    rails.push("rust:hygiene:glob-imports".into());
     rails.extend(
         rust.hygiene
             .deny_macros
@@ -170,6 +206,13 @@ fn rust_rails(
             ["facade", "implementation", "test", "auxiliary"]
                 .map(|role| format!("rust:size:{role}")),
         );
+    }
+}
+
+const fn duplication_trait_name(value: zrail_core::DuplicationTrait) -> &'static str {
+    match value {
+        zrail_core::DuplicationTrait::Clone => "clone",
+        zrail_core::DuplicationTrait::Copy => "copy",
     }
 }
 

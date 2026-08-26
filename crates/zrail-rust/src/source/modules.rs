@@ -12,7 +12,9 @@ use super::{
     attributes::{cfg_guard, has_conditional_path_attribute, has_path_attribute, path_attribute},
     fact::source_span,
     model::{InlineModulePath, ModuleDeclaration},
-    visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
+    visitor_parts::visitor_context::{
+        expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs,
+    },
 };
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -96,7 +98,7 @@ impl<'ast> Visit<'ast> for ModuleCollector {
         let path = path_attribute(&module.attrs);
         let unresolved_path = has_conditional_path_attribute(&module.attrs)
             || (has_path_attribute(&module.attrs) && path.is_none());
-        let guard = self.guard_context;
+        let guard = self.guard_context.clone();
         let Some((_, items)) = &module.content else {
             self.declarations.push(ModuleDeclaration {
                 name: module.ident.to_string(),
@@ -131,7 +133,7 @@ impl<'ast> Visit<'ast> for ModuleCollector {
 
 impl ModuleCollector {
     fn with_cfg(&mut self, attributes: &[syn::Attribute], visit: impl FnOnce(&mut Self)) {
-        let previous = self.guard_context;
+        let previous = self.guard_context.clone();
         self.guard_context = previous.combine(cfg_guard(attributes));
         visit(self);
         self.guard_context = previous;

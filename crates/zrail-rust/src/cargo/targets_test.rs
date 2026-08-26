@@ -158,6 +158,29 @@ fn explicit_target_names_override_auto_discovery() {
 }
 
 #[test]
+fn explicit_targets_retain_exact_required_features() {
+    let root = fixture_root("required-features");
+    reset(&root);
+    let manifest = r#"
+        [package]
+        name = "fixture"
+        version = "0.0.0"
+
+        [[bin]]
+        name = "tool"
+        path = "tool.rs"
+        required-features = ["cli", "strict"]
+    "#
+    .parse::<Value>()
+    .expect("parse manifest");
+
+    let roots = collect_target_roots(&manifest, &root, None).expect("collect roots");
+
+    assert_eq!(roots[0].required_features, ["cli", "strict"]);
+    reset(&root);
+}
+
+#[test]
 fn ambiguous_auto_discovered_target_names_are_rejected() {
     let root = fixture_root("ambiguous-auto");
     reset(&root);

@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use zrail_core::AnalysisQuality;
 
 use super::{
-    MacroCandidate, MacroOrigin, SourceEntry, SourceInstanceId, SyntaxGuard,
+    MacroCandidate, MacroOrigin, SourceEntry, SourceInstanceId,
     macro_definitions::{DefinitionSite, MacroDefinitions},
 };
 
@@ -43,14 +43,17 @@ impl MacroDefinitions {
                     self.qualified_sites_complete = false;
                     return;
                 };
-                if !source.guard.is_exact() {
+                if source.guard.availability_in_domain(&source.domain)
+                    != super::GuardAvailability::Exact
+                {
                     continue;
                 }
-                let context = SyntaxGuard::for_test_only(source.domain.mode.enables_cfg_test());
                 for definition in definitions
                     .iter()
-                    .filter(|definition| definition.guard.available_in(context))
-                    .filter(|definition| definition.guard.is_exact())
+                    .filter(|definition| {
+                        definition.guard.availability_in_domain(&source.domain)
+                            == super::GuardAvailability::Exact
+                    })
                     .filter(|definition| self.definition_is_module_scoped(file, definition))
                 {
                     let Some((root, mut names)) = self.module_location(*instance, &[]) else {

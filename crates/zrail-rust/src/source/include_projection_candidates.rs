@@ -5,10 +5,10 @@ use std::collections::{BTreeMap, BTreeSet};
 use zrail_core::AnalysisQuality;
 
 use super::{
-    ObservedFact, SourceInstanceId,
+    ObservedFact, SourceInstanceId, SyntaxGuard,
     include_bindings::{IncludeBindings, ResolvedPath},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
-    include_resolution_state::ResolutionUsage,
+    include_resolution_state::{ResolutionUsage, WrittenResolveRequest},
 };
 
 pub(super) type ResolutionCache = BTreeMap<ResolutionCacheKey, Vec<ResolvedPath>>;
@@ -19,6 +19,7 @@ pub(super) struct ResolutionCacheKey {
     written: String,
     scope: Vec<zrail_core::SourceSpan>,
     usage: ResolutionUsage,
+    guard: SyntaxGuard,
 }
 
 pub(super) struct CandidateAggregate {
@@ -27,6 +28,7 @@ pub(super) struct CandidateAggregate {
     pub(super) quality: AnalysisQuality,
     pub(super) production: bool,
     pub(super) requires_projection: bool,
+    pub(super) blocks_completeness: bool,
 }
 
 impl Default for CandidateAggregate {
@@ -37,6 +39,7 @@ impl Default for CandidateAggregate {
             quality: AnalysisQuality::Exact,
             production: false,
             requires_projection: false,
+            blocks_completeness: false,
         }
     }
 }
@@ -60,19 +63,23 @@ pub(super) fn aggregate(
             written: written.into(),
             scope: fact.lexical_scope.clone(),
             usage,
+            guard: fact.guard.clone(),
         };
         let mut resolved = if let Some(resolved) = cache.get(&key) {
             resolved.clone()
         } else {
             let mut seen = BTreeSet::new();
             let resolved = bindings.resolve_written(
-                *instance,
-                written,
-                &fact.lexical_scope,
+                &WrittenResolveRequest {
+                    instance: *instance,
+                    written,
+                    scope: &fact.lexical_scope,
+                    depth: 0,
+                    usage,
+                    guard: &fact.guard,
+                },
                 &mut seen,
-                0,
                 budget,
-                usage,
             )?;
             cache.insert(key, resolved.clone());
             resolved
@@ -82,6 +89,7 @@ pub(super) fn aggregate(
             for candidate in &mut resolved {
                 candidate.quality = AnalysisQuality::Unresolved;
                 candidate.requires_projection = true;
+                candidate.blocks_completeness = true;
             }
         }
         let test_instance = source.is_some_and(|source| source.domain.mode.enables_cfg_test());
@@ -111,6 +119,7 @@ pub(super) fn aggregate(
             entry.test_instances += usize::from(test_instance);
             entry.quality = entry.quality.max(candidate.quality);
             entry.requires_projection |= candidate.requires_projection;
+            entry.blocks_completeness |= candidate.blocks_completeness;
             entry.production |= bindings
                 .instances
                 .get(*instance)

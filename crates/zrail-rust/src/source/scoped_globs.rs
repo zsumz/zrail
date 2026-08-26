@@ -10,7 +10,7 @@ pub(super) fn collect<'a>(items: impl Iterator<Item = &'a Item>) -> BTreeMap<Str
     let mut globs = BTreeMap::new();
     for item in items {
         if let Item::Use(item) = item {
-            collect_use(&mut globs, Vec::new(), &item.tree, cfg_guard(&item.attrs));
+            collect_use(&mut globs, Vec::new(), &item.tree, &cfg_guard(&item.attrs));
         }
     }
     globs
@@ -20,7 +20,7 @@ fn collect_use(
     globs: &mut BTreeMap<String, SyntaxGuard>,
     prefix: Vec<String>,
     tree: &UseTree,
-    guard: SyntaxGuard,
+    guard: &SyntaxGuard,
 ) {
     match tree {
         UseTree::Path(path) => {

@@ -110,6 +110,7 @@ pub(crate) struct CargoTarget {
     pub(crate) name: String,
     pub(crate) path: String,
     pub(crate) kind: CargoTargetKind,
+    pub(crate) required_features: Vec<String>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -168,6 +169,7 @@ pub(crate) struct CargoWorkspace {
     pub(crate) declared_members: Vec<String>,
     pub(crate) observed_members: Vec<String>,
     pub(crate) packages: Vec<Package>,
+    pub(crate) package_features: BTreeMap<String, super::PackageFeatureSet>,
     pub(crate) authority_surfaces: Vec<CargoAuthoritySurface>,
     pub(crate) manifest_scopes: BTreeMap<String, ManifestScope>,
 }

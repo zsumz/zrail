@@ -295,6 +295,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "toml",
+ "toml_edit",
 ]
 
 [[package]]
@@ -307,6 +308,7 @@ dependencies = [
  "serde_json",
  "syn 2.0.119",
  "toml",
+ "unicode-ident",
  "zrail-core",
 ]
 

@@ -56,6 +56,38 @@ fn compare_present(
             ),
         );
     }
+    changed(
+        &before.cargo_features_sha256,
+        &after.cargo_features_sha256,
+        "cargo-features",
+        "Cargo feature definitions changed",
+        changes,
+    );
+    changed(
+        &before.feature_worlds_sha256,
+        &after.feature_worlds_sha256,
+        "feature-worlds",
+        "configured or resolved Cargo feature worlds changed",
+        changes,
+    );
+    if before.feature_worlds != after.feature_worlds {
+        changes.push(
+            ArchitectureChange::new(
+                ChangeKind::Unknown,
+                "lock.analysis",
+                "feature-world-count",
+                "the number of exact Cargo feature worlds changed",
+            )
+            .values(
+                before
+                    .feature_worlds
+                    .map_or_else(|| "<absent>".into(), |value| value.to_string()),
+                after
+                    .feature_worlds
+                    .map_or_else(|| "<absent>".into(), |value| value.to_string()),
+            ),
+        );
+    }
     if before.analyzer_semantics != after.analyzer_semantics {
         changes.push(
             ArchitectureChange::new(

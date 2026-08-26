@@ -15,6 +15,7 @@ pub(super) fn violation(owner: &zrail_core::OwnerContract, observed: &str) -> St
         OwnerKind::FieldRead => "field-read authority",
         OwnerKind::FieldWrite => "field-write authority",
         OwnerKind::FieldMutableBorrow => "field mutable-borrow authority",
+        OwnerKind::FieldMutation => "field-mutation authority",
         OwnerKind::FieldAuthority => "field authority",
         OwnerKind::Directory => "directory authority",
     };
@@ -35,7 +36,7 @@ pub(super) fn owner_help(owner: &zrail_core::OwnerContract) -> &'static str {
         }
         OwnerKind::MethodName => "move calls with this written method name into a declared owner",
         OwnerKind::FieldRead => "move field reads into a declared owner and expose a narrow query",
-        OwnerKind::FieldWrite | OwnerKind::FieldMutableBorrow => {
+        OwnerKind::FieldWrite | OwnerKind::FieldMutableBorrow | OwnerKind::FieldMutation => {
             "move field mutation into a declared owner and expose a narrow operation"
         }
         OwnerKind::FieldAuthority => {
@@ -89,6 +90,7 @@ fn unused_owner_message(owner: &zrail_core::OwnerContract, path: &str) -> String
             OwnerKind::FieldRead => "field read",
             OwnerKind::FieldWrite => "field write",
             OwnerKind::FieldMutableBorrow => "field mutable borrow",
+            OwnerKind::FieldMutation => "field mutation",
             OwnerKind::FieldAuthority => "field access",
             OwnerKind::Directory => "directory use",
         },

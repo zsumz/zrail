@@ -1,10 +1,12 @@
 //! Source-convention and budget permission changes.
 
+mod feature_worlds;
 mod file_roles;
 mod item_macros;
 mod macros;
 mod out_dir;
 mod size;
+mod types;
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -13,7 +15,7 @@ use crate::{Contract, GeneratedSourceContract};
 use super::{
     ArchitectureChange, ChangeKind,
     support::{
-        compare_named_set, compare_number, compare_ordered_mode, rank_facades,
+        compare_named_set, compare_number, compare_ordered_mode, rank_facades, rank_glob_imports,
         rank_lint_suppressions, rank_module_docs, rank_policy, rank_tests,
     },
 };
@@ -21,10 +23,12 @@ use super::{
 pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<ArchitectureChange>) {
     size::compare(before, after, changes);
     file_roles::compare(before, after, changes);
+    feature_worlds::compare(before, after, changes);
     compare_generated(before, after, changes);
     out_dir::compare(before, after, changes);
     item_macros::compare(before, after, changes);
     macros::compare(before, after, changes);
+    types::compare(before, after, changes);
     compare_modes(before, after, changes);
     compare_hygiene(before, after, changes);
 }
@@ -153,6 +157,13 @@ fn compare_modes(before: &Contract, after: &Contract, changes: &mut Vec<Architec
         "source.rust.hygiene.lint_suppressions",
         rank_lint_suppressions(before.source.rust.hygiene.lint_suppressions),
         rank_lint_suppressions(after.source.rust.hygiene.lint_suppressions),
+        changes,
+    );
+    compare_ordered_mode(
+        "rust.glob-imports",
+        "source.rust.hygiene.glob_imports",
+        rank_glob_imports(before.source.rust.hygiene.glob_imports),
+        rank_glob_imports(after.source.rust.hygiene.glob_imports),
         changes,
     );
 }

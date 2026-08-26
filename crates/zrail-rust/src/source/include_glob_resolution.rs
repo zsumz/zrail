@@ -25,6 +25,7 @@ impl IncludeBindings {
         depth: usize,
         budget: &mut ProjectionBudget,
         usage: ResolutionUsage,
+        guard: &SyntaxGuard,
     ) -> Result<Vec<ResolvedPath>, ProjectionLimit> {
         budget.consume_work()?;
         let key = ResolutionKey::Glob {
@@ -51,6 +52,7 @@ impl IncludeBindings {
                 depth,
                 mode: LookupMode::glob_target(site.module.clone()),
                 usage,
+                guard: guard.clone(),
             },
             trail,
             budget,
@@ -66,6 +68,7 @@ impl IncludeBindings {
                     .max(AnalysisQuality::Conservative),
                 crossed_include: candidate.crossed_include || site.crossed_include,
                 requires_projection: true,
+                blocks_completeness: candidate.blocks_completeness,
             })
             .collect())
     }
@@ -74,7 +77,7 @@ impl IncludeBindings {
         &self,
         instance: SourceInstanceId,
         scope: &[SourceSpan],
-        context: SyntaxGuard,
+        context: &SyntaxGuard,
         budget: &mut ProjectionBudget,
         mode: &LookupMode,
         module: &EffectiveModule,
@@ -100,9 +103,14 @@ impl IncludeBindings {
             } else {
                 binding.lexical_scope.len() >= floor && scope.starts_with(&binding.lexical_scope)
             };
-            let availability = binding.guard.availability_in(context);
+            let availability = binding
+                .guard
+                .availability_for_domain(context, &source.domain);
             if availability.is_available() && visible {
                 let mut binding = binding.clone();
+                if availability == super::GuardAvailability::Possible {
+                    binding.quality = AnalysisQuality::Unresolved;
+                }
                 binding.quality = binding.quality.max(self.visibility_quality(
                     &binding.visibility,
                     module,
@@ -171,7 +179,7 @@ impl IncludeBindings {
     fn exported_glob_sites(
         &self,
         instance: SourceInstanceId,
-        context: SyntaxGuard,
+        context: &SyntaxGuard,
         seen: &mut BTreeSet<SourceInstanceId>,
         budget: &mut ProjectionBudget,
     ) -> Result<Vec<BindingSite>, ProjectionLimit> {
@@ -190,13 +198,19 @@ impl IncludeBindings {
             .flat_map(|bindings| &bindings.globs)
         {
             budget.consume_work()?;
-            let availability = binding.guard.availability_in(context);
+            let availability = binding
+                .guard
+                .availability_for_domain(context, &source.domain);
             if binding.lexical_scope.is_empty() && availability.is_available() {
                 let Some(module) = self.effective_module(instance, &[], budget)? else {
                     continue;
                 };
+                let mut binding = binding.clone();
+                if availability == super::GuardAvailability::Possible {
+                    binding.quality = AnalysisQuality::Unresolved;
+                }
                 sites.push(BindingSite {
-                    binding: binding.clone(),
+                    binding,
                     instance,
                     module,
                     crossed_include: true,

@@ -99,7 +99,7 @@ pub fn explain_path(
     let macro_invocations = macro_authority::invocations(&model, &relative);
     let item_macro_authorities = macro_authority::item_authorities(&model, &relative);
     Ok(PathExplanation {
-        schema: 1,
+        schema: 2,
         path: relative,
         file_class: crate::source_policy::role_name(class).into(),
         inferred_file_role: crate::source_policy::role_name(file_role.inferred).into(),
@@ -115,6 +115,7 @@ pub fn explain_path(
         external_dependencies: layer
             .map(|layer| policy::external_mode(layer.dependencies.external).into()),
         denied_effects: policy::denied_effects(&model.bundle.contract, layer),
+        denied_syntax: policy::denied_syntax(&model.bundle.contract, layer),
         denied_symbols: policy::denied_symbols(&matching_scopes),
         denied_methods: model
             .bundle
@@ -132,6 +133,10 @@ pub fn explain_path(
             .hygiene
             .deny_macros
             .clone(),
+        glob_imports: policy::glob_import_mode(
+            model.bundle.contract.source.rust.hygiene.glob_imports,
+        )
+        .into(),
         macro_expansion: policy::macro_mode(model.bundle.contract.source.rust.macros.mode).into(),
         allowed_macro_expansions: model
             .bundle
@@ -152,6 +157,17 @@ pub fn explain_path(
             .allow
             .iter()
             .filter(|allowed| allowed.inputs == zrail_core::MacroInputMode::Opaque)
+            .map(|allowed| allowed.name.clone())
+            .collect(),
+        async_closed_macro_expansions: model
+            .bundle
+            .contract
+            .source
+            .rust
+            .macros
+            .allow
+            .iter()
+            .filter(|allowed| allowed.async_syntax == zrail_core::MacroAsyncSyntax::None)
             .map(|allowed| allowed.name.clone())
             .collect(),
         content_bound_macro_implementations: macro_authority::implementations(&model),

@@ -8,9 +8,12 @@ use super::{
     ObservedFact, SyntaxGuard,
     include_bindings::IncludeBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
-    include_projection_candidates::{CandidateAggregate, ResolutionCache, aggregate},
+    include_projection_candidates::{ResolutionCache, aggregate},
     include_resolution_state::ResolutionUsage,
 };
+
+#[path = "include_binding_projection_retention.rs"]
+mod retention;
 
 const MAX_PROJECTED_IDENTITIES: usize = 64;
 
@@ -42,14 +45,19 @@ pub(super) fn project(
     let existing = request
         .facts
         .iter()
-        .map(|fact| ((fact.name.clone(), fact.span, fact.guard), fact.quality))
+        .map(|fact| {
+            (
+                (fact.name.clone(), fact.span, fact.guard.clone()),
+                fact.quality,
+            )
+        })
         .collect::<BTreeMap<_, _>>();
     let mut additions = BTreeMap::<FactKey, ObservedFact>::new();
     let mut qualities = BTreeMap::<FactKey, AnalysisQuality>::new();
     let mut removals = BTreeSet::new();
     for fact in request.facts.iter().filter(|fact| fact.written.is_some()) {
-        let usage = fact_usage(fact, request.usage, request.call_sites);
-        let instances = request.bindings.active_instances(request.file, fact.guard);
+        let usage = retention::fact_usage(fact, request.usage, request.call_sites);
+        let instances = request.bindings.active_instances(request.file, &fact.guard);
         if instances.is_empty() {
             continue;
         }
@@ -75,10 +83,10 @@ pub(super) fn project(
                             && stale.guard == fact.guard
                             && !aggregate.contains_key(&stale.name)
                     })
-                    .map(|stale| (stale.name.clone(), stale.span, stale.guard)),
+                    .map(|stale| (stale.name.clone(), stale.span, stale.guard.clone())),
             );
         }
-        let mut retention = RetentionState {
+        let mut state = retention::RetentionState {
             project_expression: request.project_expression,
             existing: &existing,
             additions: &mut additions,
@@ -87,13 +95,13 @@ pub(super) fn project(
             budget,
             remaining_file_facts,
         };
-        retain_candidates(
+        retention::retain_candidates(
             fact,
             aggregate,
             compatible,
             instances.len(),
             test_coverage,
-            &mut retention,
+            &mut state,
         )?;
     }
     Ok(FactProjection {
@@ -101,110 +109,4 @@ pub(super) fn project(
         qualities,
         removals,
     })
-}
-
-fn fact_usage(
-    fact: &ObservedFact,
-    usage: ResolutionUsage,
-    call_sites: &BTreeSet<CallSite>,
-) -> ResolutionUsage {
-    if fact.namespace == super::FactNamespace::Type {
-        ResolutionUsage::Type
-    } else if usage == ResolutionUsage::Path
-        && (fact.namespace == super::FactNamespace::Value
-            || call_sites.contains(&(
-                fact.span,
-                fact.written.as_deref().unwrap_or(&fact.name).to_owned(),
-                fact.guard,
-            )))
-    {
-        ResolutionUsage::Call
-    } else {
-        usage
-    }
-}
-
-struct RetentionState<'a> {
-    project_expression: bool,
-    existing: &'a BTreeMap<FactKey, AnalysisQuality>,
-    additions: &'a mut BTreeMap<FactKey, ObservedFact>,
-    qualities: &'a mut BTreeMap<FactKey, AnalysisQuality>,
-    uncertain: &'a mut Option<zrail_core::SourceSpan>,
-    budget: &'a mut ProjectionBudget,
-    remaining_file_facts: &'a mut usize,
-}
-
-fn retain_candidates(
-    fact: &ObservedFact,
-    aggregate: BTreeMap<String, CandidateAggregate>,
-    compatible: bool,
-    instance_count: usize,
-    test_coverage: super::include_projection_candidates::TestCoverage,
-    state: &mut RetentionState<'_>,
-) -> Result<(), ProjectionLimit> {
-    for (name, candidate) in aggregate {
-        let complete = (compatible && candidate.instances == instance_count)
-            || (!candidate.production
-                && test_coverage.instances > 0
-                && test_coverage.compatible
-                && candidate.test_instances == test_coverage.instances);
-        let quality = if candidate.quality == AnalysisQuality::Unresolved {
-            if candidate.requires_projection {
-                *state.uncertain = (*state.uncertain).or(fact.span);
-            }
-            AnalysisQuality::Unresolved
-        } else {
-            candidate.quality.max(if complete {
-                AnalysisQuality::Exact
-            } else {
-                AnalysisQuality::Conservative
-            })
-        }
-        .max(fact.quality);
-        if fact.quality == AnalysisQuality::Unresolved {
-            *state.uncertain = (*state.uncertain).or(fact.span);
-        }
-        let guard = if candidate.production {
-            fact.guard
-        } else {
-            fact.guard.combine(SyntaxGuard::TestOnly)
-        };
-        if name == fact.name
-            && guard == fact.guard
-            && quality == fact.quality
-            && !candidate.requires_projection
-            && complete
-            && !state.project_expression
-        {
-            continue;
-        }
-        let key = (name.clone(), fact.span, guard);
-        if state.existing.contains_key(&key) {
-            state
-                .qualities
-                .entry(key)
-                .and_modify(|existing| *existing = (*existing).max(quality))
-                .or_insert(quality);
-            continue;
-        }
-        if let Some(existing) = state.additions.get_mut(&key) {
-            existing.quality = existing.quality.max(quality);
-            continue;
-        }
-        state.budget.retain_fact(state.remaining_file_facts)?;
-        state.additions.insert(
-            key,
-            ObservedFact {
-                name,
-                written: None,
-                canonical: Vec::new(),
-                span: fact.span,
-                quality,
-                guard,
-                lexical_scope: fact.lexical_scope.clone(),
-                namespace: fact.namespace,
-            },
-        );
-    }
-    Ok(())
 }

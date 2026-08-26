@@ -163,7 +163,7 @@ impl MacroExpansionFact {
             .unwrap_or(AnalysisQuality::Unresolved);
     }
 
-    pub(super) fn apply_guard(&mut self, guard: super::SyntaxGuard) {
+    pub(super) fn apply_guard(&mut self, guard: &super::SyntaxGuard) {
         self.observation.apply_guard(guard);
         for candidate in &mut self.candidates {
             candidate.observation.apply_guard(guard);

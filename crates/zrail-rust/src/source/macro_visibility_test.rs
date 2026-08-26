@@ -100,6 +100,44 @@ fn external_imports_do_not_borrow_same_leaf_local_definitions() {
     );
 }
 
+#[test]
+fn exact_repository_aliases_follow_parent_macro_imports() {
+    let reachability = Reachability::from_kind(ReachabilityKind::Production);
+    let mut visibility = MacroVisibility::default();
+    visibility.parents.insert(
+        "src/child.rs".into(),
+        std::collections::BTreeMap::from([("src/hub.rs".into(), reachability)]),
+    );
+    visibility.imports.insert(
+        ("src/hub.rs".into(), "Debug".into()),
+        vec![super::super::MacroImportFact {
+            name: "Debug".into(),
+            target: "std::fmt::Debug".into(),
+            quality: AnalysisQuality::Exact,
+            guard: crate::source::SyntaxGuard::Ordinary,
+            re_export: false,
+        }],
+    );
+    let mut invocation = MacroExpansionFact::with_candidates(
+        fact("Debug", AnalysisQuality::Exact),
+        vec![MacroCandidate::pending(
+            fact("super::Debug", AnalysisQuality::Exact),
+            false,
+            MacroDerivation::ExactImport,
+        )],
+    );
+
+    visibility.resolve(
+        &mut invocation,
+        "src/child.rs",
+        reachability,
+        Some(&BTreeSet::new()),
+    );
+
+    assert_eq!(invocation.candidates.len(), 1);
+    assert_eq!(invocation.candidates[0].observation.name, "std::fmt::Debug");
+}
+
 fn fact(name: &str, quality: AnalysisQuality) -> ObservedFact {
     ObservedFact {
         name: name.into(),

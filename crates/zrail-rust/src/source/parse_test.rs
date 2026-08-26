@@ -180,3 +180,80 @@ fn item_macro_invocations_are_expansion_boundaries() {
     assert_eq!(facts.item_macros.len(), 1);
     assert_eq!(facts.item_macros[0].name, "declare");
 }
+
+#[test]
+fn opaque_derives_preserve_the_ordinary_namespace_boundary() {
+    let source = concat!(
+        "//! opaque derive boundary\n",
+        "use serde::Deserialize;\n",
+        "#[derive(Deserialize)]\n",
+        "pub struct Model;\n",
+        "mod consumer { use super::Model; pub fn use_model(_: Model) {} }\n",
+    );
+    let file = RustSourceFile {
+        relative: "crates/a/src/lib.rs".into(),
+        class: FileClass::Facade,
+        source: source.into(),
+        lines: source.lines().count(),
+    };
+    let syntax = syn::parse_file(source).expect("parse opaque derive source");
+
+    let facts = index_file(&file, &syntax);
+
+    assert!(
+        facts
+            .opaque_binding_macros
+            .iter()
+            .any(|fact| fact.name == "Deserialize")
+    );
+    assert!(
+        facts
+            .paths
+            .iter()
+            .any(|fact| fact.written.as_deref() == Some("Model"))
+    );
+}
+
+#[test]
+fn async_syntax_is_distinct_from_runtime_paths() {
+    let source = r"
+        //! runtime-neutral async syntax
+        async fn free() {
+            let future = async { 1 };
+            let closure = async || 2;
+            let _ = future.await;
+            let _ = closure;
+        }
+        trait Service { async fn call(); }
+        struct Worker;
+        impl Service for Worker { async fn call() {} }
+    ";
+    let file = RustSourceFile {
+        relative: "crates/a/src/async_shapes.rs".into(),
+        class: FileClass::Implementation,
+        source: source.into(),
+        lines: source.lines().count(),
+    };
+    let syntax = syn::parse_file(source).expect("parse async syntax");
+
+    let facts = index_file(&file, &syntax);
+
+    let count = |kind| {
+        facts
+            .async_syntax
+            .iter()
+            .filter(|fact| fact.kind == kind)
+            .count()
+    };
+    assert_eq!(count(zrail_core::AsyncSyntax::AsyncFn), 3);
+    assert_eq!(count(zrail_core::AsyncSyntax::AsyncBlock), 1);
+    assert_eq!(count(zrail_core::AsyncSyntax::AsyncClosure), 1);
+    assert_eq!(count(zrail_core::AsyncSyntax::Await), 1);
+    assert!(
+        facts
+            .async_syntax
+            .iter()
+            .all(|fact| fact.observation.span.is_some())
+    );
+    assert!(facts.paths.iter().all(|path| path.name != "tokio"));
+}

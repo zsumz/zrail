@@ -13,7 +13,7 @@ use zrail_core::{
 
 use crate::{
     inventory::{FileClass, RepositoryEntry, RepositoryEntryKind},
-    source::{ReachabilityKind, RustFileFacts, SyntaxGuard},
+    source::{ReachabilityKind, RustFileFacts},
 };
 
 use super::super::RuleContext;
@@ -31,11 +31,11 @@ pub(super) fn check(
         .map(|file| (file.relative.as_str(), file))
         .collect::<BTreeMap<_, _>>();
     let mut receipt_bytes = 0usize;
-    let mut input_bytes = 0usize;
+    let mut input_cache = crate::mirror_inputs::MirrorInputCache::new(entries);
     for mirror in &context.contract.source.rust.test_mirrors {
         let production = production_file(mirror, &sources, findings);
         let test = test_file(mirror, &sources, findings);
-        check_declaration(mirror, test, findings);
+        check_declaration(mirror, test, context, findings);
         context::check(mirror, production, test, context, findings);
         check_receipt(
             mirror,
@@ -43,7 +43,7 @@ pub(super) fn check(
             test,
             entries,
             &mut receipt_bytes,
-            &mut input_bytes,
+            &mut input_cache,
             findings,
         );
     }
@@ -102,30 +102,20 @@ fn test_file<'a>(
 fn check_declaration(
     mirror: &TestMirrorContract,
     test: Option<&RustFileFacts>,
+    context: &RuleContext<'_>,
     findings: &mut FindingSink,
 ) {
     let Some(test) = test else {
         return;
     };
-    let matches = test
-        .tests
-        .iter()
-        .filter(|fact| fact.name == mirror.name && fact.guard.available_in(SyntaxGuard::TestOnly))
-        .count();
-    if matches == 0 {
-        findings.push(mirror_finding(
-            "MIRROR-005",
-            mirror,
-            &mirror.test,
-            "exact named test is not declared in the mirror file",
-        ));
-    } else if matches > 1 {
-        findings.push(mirror_finding(
-            "MIRROR-006",
-            mirror,
-            &mirror.test,
-            "exact named test declaration is ambiguous",
-        ));
+    if let Err(message) = crate::mirror_execution::validate(
+        mirror,
+        context.cargo,
+        context.feature_worlds,
+        context.compilation_domains,
+        test,
+    ) {
+        findings.push(mirror_finding("MIRROR-010", mirror, &mirror.test, &message));
     }
 }
 
@@ -135,7 +125,7 @@ fn check_receipt(
     test: Option<&RustFileFacts>,
     entries: &BTreeMap<&str, &RepositoryEntry>,
     receipt_bytes: &mut usize,
-    input_bytes: &mut usize,
+    input_cache: &mut crate::mirror_inputs::MirrorInputCache<'_>,
     findings: &mut FindingSink,
 ) {
     let Some(receipt_entry) = regular_entry(entries, &mirror.receipt) else {
@@ -174,9 +164,7 @@ fn check_receipt(
             "execution receipt command, package, features, target, or toolchain differs from policy",
         ));
     }
-    let Some(input_sha256) =
-        inputs::digest(mirror, production, test, entries, input_bytes, findings)
-    else {
+    let Some(input_sha256) = inputs::digest(mirror, production, test, input_cache, findings) else {
         return;
     };
     if receipt.input_sha256 != input_sha256 {

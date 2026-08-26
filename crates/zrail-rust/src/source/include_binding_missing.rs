@@ -4,7 +4,7 @@ use zrail_core::{AnalysisQuality, SourceSpan};
 
 use super::{
     SourceInstanceId,
-    include_binding_helpers::{canonical_name, split_root, unresolved},
+    include_binding_helpers::{canonical_name, opaque, split_root, unresolved},
     include_bindings::{IncludeBindings, ResolvedPath},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::{EffectiveModule, LookupMode},
@@ -21,13 +21,14 @@ impl IncludeBindings {
         module: &EffectiveModule,
         budget: &mut ProjectionBudget,
     ) -> Result<Vec<ResolvedPath>, ProjectionLimit> {
-        if self.namespace_is_opaque(instance, scope, mode.exact_scope(), budget)? {
+        let opacity = self.namespace_opacity(instance, scope, mode.exact_scope(), budget)?;
+        if opacity.is_opaque() {
             let name = if mode.exact_scope() {
                 canonical_name(&module.names, written).unwrap_or_else(|| written.into())
             } else {
                 written.into()
             };
-            return Ok(vec![unresolved(&name)]);
+            return Ok(vec![opaque(&name, opacity.blocks_completeness())]);
         }
         if mode.exact_scope() {
             return Ok(self.missing_module(instance, written, crossed_include, mode, module));
@@ -37,6 +38,7 @@ impl IncludeBindings {
             quality: AnalysisQuality::Exact,
             crossed_include,
             requires_projection: crossed_include,
+            blocks_completeness: false,
         }])
     }
 
@@ -61,6 +63,7 @@ impl IncludeBindings {
                 quality: AnalysisQuality::Exact,
                 crossed_include,
                 requires_projection: true,
+                blocks_completeness: false,
             }];
         }
         if mode.speculative {

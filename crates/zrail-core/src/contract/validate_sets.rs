@@ -2,7 +2,7 @@
 
 use std::collections::BTreeSet;
 
-use super::{Contract, Effect, validate_limits::ValidationErrors};
+use super::{AsyncSyntax, Contract, Effect, validate_limits::ValidationErrors};
 
 pub(super) fn validate_sets(contract: &Contract, errors: &mut ValidationErrors) {
     strings("repository.roots", &contract.repository.roots, errors);
@@ -32,12 +32,17 @@ pub(super) fn validate_sets(contract: &Contract, errors: &mut ValidationErrors) 
         if name.trim().is_empty() {
             errors.push("profile names may not be empty".into());
         }
-        if profile.effects.deny.is_empty() {
-            errors.push(format!("profile {name:?} denies no effects"));
+        if profile.effects.deny.is_empty() && profile.syntax.deny.is_empty() {
+            errors.push(format!("profile {name:?} denies no effects or syntax"));
         }
         effects(
             &format!("profiles.{name}.effects.deny"),
             &profile.effects.deny,
+            errors,
+        );
+        async_syntax(
+            &format!("profiles.{name}.syntax.deny"),
+            &profile.syntax.deny,
             errors,
         );
     }
@@ -130,6 +135,15 @@ fn effects(label: &str, values: &[Effect], errors: &mut ValidationErrors) {
     for value in values {
         if !seen.insert(value) {
             errors.push(format!("{label} contains duplicate effect {value:?}"));
+        }
+    }
+}
+
+fn async_syntax(label: &str, values: &[AsyncSyntax], errors: &mut ValidationErrors) {
+    let mut seen = BTreeSet::new();
+    for value in values {
+        if !seen.insert(value) {
+            errors.push(format!("{label} contains duplicate syntax {value:?}"));
         }
     }
 }

@@ -47,6 +47,48 @@ fn resolved_compiler_derive_uses_its_written_builtin_identity() {
 }
 
 #[test]
+fn repository_function_alias_does_not_shadow_a_builtin_macro() {
+    let mut expansion = MacroExpansionFact::with_candidates(
+        observed("format"),
+        vec![MacroCandidate::pending(
+            observed("super::format"),
+            false,
+            MacroDerivation::ExactImport,
+        )],
+    );
+
+    resolve(&mut expansion, &[&package(Vec::new())]);
+
+    assert_eq!(expansion.candidates.len(), 1);
+    assert_eq!(expansion.candidates[0].observation.name, "format");
+    assert_eq!(
+        expansion.candidates[0].origins,
+        [MacroOrigin::CompilerBuiltin]
+    );
+}
+
+#[test]
+fn definition_bound_builtin_name_remains_repository_owned() {
+    let mut candidate = MacroCandidate::pending(
+        observed("super::format"),
+        false,
+        MacroDerivation::ExactImport,
+    );
+    candidate.definition = Some("src/macros.rs".into());
+    candidate.definition_name = Some("format".into());
+    candidate.definition_sha256 = Some("a".repeat(64));
+    let mut expansion = MacroExpansionFact::with_candidates(observed("format"), vec![candidate]);
+
+    resolve(&mut expansion, &[&package(Vec::new())]);
+
+    assert!(matches!(
+        expansion.candidates[0].origins.as_slice(),
+        [MacroOrigin::Repository { package, directory }]
+            if package == "app" && directory == "."
+    ));
+}
+
+#[test]
 fn workspace_dependency_macro_is_repository_owned() {
     let package = package(vec![dependency(
         "workspace_macros",

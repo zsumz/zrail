@@ -13,6 +13,10 @@ mod topology;
 mod topology_policy;
 
 #[cfg(test)]
+#[path = "async_glob_test.rs"]
+mod async_glob_test;
+
+#[cfg(test)]
 #[path = "authority_test.rs"]
 mod authority_test;
 
@@ -30,3 +34,7 @@ mod compare_checked_test;
 #[cfg(test)]
 #[path = "size_policy_test.rs"]
 mod size_policy_test;
+
+#[cfg(test)]
+#[path = "type_policy_test.rs"]
+mod type_policy_test;

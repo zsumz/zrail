@@ -39,6 +39,43 @@ fn imported_standard_trait_does_not_replace_builtin_derive() {
 }
 
 #[test]
+fn repository_function_alias_does_not_replace_builtin_invocation() {
+    let root = std::env::temp_dir().join(format!(
+        "zrail-macro-builtin-invocation-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    reset(&root);
+    fs::create_dir_all(root.join("src")).expect("create fixture");
+    write(
+        &root,
+        "Cargo.toml",
+        "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\n",
+    );
+    write(
+        &root,
+        "src/lib.rs",
+        "//! Fixture.\npub fn format() {}\nmod child { use super::format; pub fn run() { let _ = format!(\"ok\"); } }\n",
+    );
+    write(
+        &root,
+        "zrail.toml",
+        &CONTRACT.replace("name = \"Debug\"", "name = \"format\""),
+    );
+    build_lock(&root, "zrail.toml".as_ref())
+        .expect("build lock")
+        .write(&root.join("zrail.lock"))
+        .expect("write lock");
+
+    let report = check_repository(&root, "zrail.toml".as_ref(), "zrail.lock".as_ref())
+        .expect("check builtin invocation")
+        .report;
+
+    assert_eq!(report.status, ReportStatus::Pass, "{}", report.human());
+    reset(&root);
+}
+
+#[test]
 fn dependency_alias_cannot_borrow_builtin_derive_authority() {
     let root = std::env::temp_dir().join(format!(
         "zrail-macro-shadowed-derive-{}-{:?}",

@@ -90,7 +90,7 @@ pub(super) fn apply(
                 )));
             }
             (
-                fact.guard,
+                fact.guard.clone(),
                 fact.lexical_scope.clone(),
                 expansion.input_sha256.clone(),
                 fact.span,
@@ -110,7 +110,7 @@ pub(super) fn apply(
                 quality: AnalysisQuality::Exact,
                 quality_without_macros: AnalysisQuality::Exact,
                 replacement_macros: Vec::new(),
-                guard,
+                guard: guard.clone(),
                 lexical_scope: lexical_scope.clone(),
             });
         }

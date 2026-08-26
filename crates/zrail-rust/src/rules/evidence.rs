@@ -35,6 +35,16 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     }
 }
 
+pub(crate) fn check_mirrors(context: &RuleContext<'_>, findings: &mut FindingSink) {
+    let entries = context
+        .inventory
+        .entries
+        .iter()
+        .map(|entry| (entry.relative.as_str(), entry))
+        .collect::<BTreeMap<_, _>>();
+    mirrors::check(context, &entries, findings);
+}
+
 fn check_document(
     invariant: &str,
     document: &str,

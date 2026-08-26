@@ -28,3 +28,29 @@ pub(super) fn optional_string(
             .ok_or_else(|| format!("Cargo target {key} must be a string"))
     })
 }
+
+pub(super) fn string_array(
+    table: &toml::map::Map<String, Value>,
+    key: &str,
+) -> Result<Vec<String>, String> {
+    let Some(value) = table.get(key) else {
+        return Ok(Vec::new());
+    };
+    let values = value
+        .as_array()
+        .ok_or_else(|| format!("Cargo target {key} must be an array of strings"))?;
+    let mut result = values
+        .iter()
+        .map(|value| {
+            value
+                .as_str()
+                .map(str::to_owned)
+                .ok_or_else(|| format!("Cargo target {key} must contain only strings"))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    result.sort();
+    if result.windows(2).any(|pair| pair[0] == pair[1]) {
+        return Err(format!("Cargo target {key} contains a duplicate feature"));
+    }
+    Ok(result)
+}

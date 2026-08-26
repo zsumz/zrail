@@ -11,7 +11,7 @@ use super::{
     model::{CargoTarget, CargoTargetKind},
     target_discovery::{auto_discovery_default, auto_enabled, discover_directory},
     target_explicit::{collect_build_script, explicit_target_path},
-    target_fields::{optional_string, required_string, target_path},
+    target_fields::{optional_string, required_string, string_array, target_path},
 };
 
 pub(super) fn collect_target_roots(
@@ -97,6 +97,7 @@ fn collect_library(
             name,
             path: target_path(table, "src/lib.rs")?,
             kind: CargoTargetKind::Library,
+            required_features: Vec::new(),
         });
     } else if auto_enabled(package, "autolib", auto_default)?
         && directory.join("src/lib.rs").is_file()
@@ -107,6 +108,7 @@ fn collect_library(
             name,
             path: "src/lib.rs".into(),
             kind: CargoTargetKind::Library,
+            required_features: Vec::new(),
         });
     }
     Ok(())
@@ -154,7 +156,11 @@ fn collect_kind(
                 .ok_or_else(|| format!("Cargo [[{kind}]] target must be a table"))?;
             let name = required_string(table, "name", &format!("Cargo [[{kind}]] target"))?;
             let path = explicit_target_path(table, kind, auto_directory, directory)?;
-            if named.insert(name.clone(), path).is_some() {
+            let required_features = string_array(table, "required-features")?;
+            if named
+                .insert(name.clone(), (path, required_features))
+                .is_some()
+            {
                 return Err(format!(
                     "Cargo [[{kind}]] target name {name:?} is duplicated"
                 ));
@@ -172,16 +178,21 @@ fn collect_kind(
             add_auto_target(&mut named, &explicit, kind, name, path)?;
         }
     }
-    roots.extend(named.into_iter().map(|(name, path)| CargoTarget {
-        name,
-        path,
-        kind: target_kind,
-    }));
+    roots.extend(
+        named
+            .into_iter()
+            .map(|(name, (path, required_features))| CargoTarget {
+                name,
+                path,
+                kind: target_kind,
+                required_features,
+            }),
+    );
     Ok(())
 }
 
 fn add_auto_target(
-    targets: &mut BTreeMap<String, String>,
+    targets: &mut BTreeMap<String, (String, Vec<String>)>,
     explicit: &BTreeSet<String>,
     kind: &str,
     name: String,
@@ -192,13 +203,13 @@ fn add_auto_target(
     }
     match targets.entry(name) {
         Entry::Vacant(entry) => {
-            entry.insert(path);
+            entry.insert((path, Vec::new()));
         }
         Entry::Occupied(entry) => {
             return Err(format!(
                 "Cargo auto-discovered {kind} target {:?} is ambiguous between {:?} and {path:?}",
                 entry.key(),
-                entry.get()
+                entry.get().0
             ));
         }
     }

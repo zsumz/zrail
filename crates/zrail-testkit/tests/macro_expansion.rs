@@ -9,6 +9,8 @@ use zrail_rust::{build_lock, check_repository};
 mod binding_opacity;
 #[path = "macro_expansion/definition_binding.rs"]
 mod definition_binding;
+#[path = "macro_expansion/intrinsic_shadow.rs"]
+mod intrinsic_shadow;
 
 #[test]
 fn local_macro_cannot_hide_unsafe_code_or_process_effects() {
@@ -134,6 +136,10 @@ requirement = "1"
         format!("{MANIFEST}\n[dependencies]\ntokio = {{ package = \"tokio\", version = \"1\" }}\n"),
     )
     .expect("add aliased dependency");
+    build_lock(&root, "zrail.toml".as_ref())
+        .expect("build lexical macro lock")
+        .write(&root.join("zrail.lock"))
+        .expect("write lexical macro lock");
 
     let report = check(&root);
     let boundaries = report
@@ -170,37 +176,29 @@ requirement = "1"
         format!("{MANIFEST}\n[dependencies]\ntokio = {{ package = \"tokio\", version = \"1\" }}\n"),
     )
     .expect("add aliased dependency");
+    build_lock(&root, "zrail.toml".as_ref())
+        .expect("build conditional macro lock")
+        .write(&root.join("zrail.lock"))
+        .expect("write conditional macro lock");
 
     let report = check(&root);
-    assert_eq!(
-        report
-            .findings
-            .iter()
-            .filter(|finding| {
-                finding.id == "RUST-MACRO-006"
-                    && finding.analysis == zrail_core::AnalysisQuality::Unresolved
-            })
-            .count(),
-        2,
-        "{:#?}",
-        report.findings
-    );
-    reset(&root);
-}
-
-#[test]
-fn qualified_intrinsic_spelling_is_not_assumed_to_be_the_standard_macro() {
-    let root = repository(
-        "qualified-shadow",
-        r#"//! Qualified macro shadow.
-mod std { macro_rules! include { ($path:literal) => { unsafe { core::ptr::read_volatile(&0) } }; } }
-pub fn run() { std::include!("support.rs"); }
-"#,
-        "",
-    );
-
-    let report = check(&root);
-    assert_finding(&report.findings, "RUST-MACRO-001", "std::include");
+    let boundaries = report
+        .findings
+        .iter()
+        .filter(|finding| finding.id == "RUST-MACRO-001")
+        .collect::<Vec<_>>();
+    assert_eq!(boundaries.len(), 2, "{:#?}", report.findings);
+    assert!(boundaries.iter().any(|finding| {
+        finding.message.contains("top::select")
+            && finding.analysis == zrail_core::AnalysisQuality::Unresolved
+    }));
+    assert!(boundaries.iter().any(|finding| {
+        finding.message.contains("local::select")
+            && finding.analysis == zrail_core::AnalysisQuality::Exact
+    }));
+    assert!(report.findings.iter().any(|finding| {
+        finding.id == "RUST-MACRO-002" && finding.message.contains("tokio::select")
+    }));
     reset(&root);
 }
 

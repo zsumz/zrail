@@ -17,6 +17,7 @@ fn narrowing_effect_evaluation_to_production_is_a_grant() {
             effects: EffectBoundary {
                 deny: vec![Effect::Process],
             },
+            syntax: crate::SyntaxBoundary::default(),
         },
     );
     let mut production = all.clone();

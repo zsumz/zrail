@@ -2,7 +2,10 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{Contract, MacroBindingMode, MacroExpansionBindings, MacroInputMode};
+use crate::{
+    Contract, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect, MacroExpansionBindings,
+    MacroInputMode,
+};
 
 use super::super::{
     ArchitectureChange, ChangeKind,
@@ -98,6 +101,32 @@ fn compare_existing(
             "rust.macro-bindings",
             name,
             "changes whether reviewed expansion may replace items or introduce lexical bindings",
+        ));
+    }
+    if left.async_syntax != right.async_syntax {
+        let kind = if right.async_syntax == MacroAsyncSyntax::None {
+            ChangeKind::Grant
+        } else {
+            ChangeKind::Revoke
+        };
+        changes.push(ArchitectureChange::new(
+            kind,
+            "rust.macro-async-syntax",
+            name,
+            "changes whether reviewed expansion is trusted to introduce no async syntax",
+        ));
+    }
+    if left.duplication_effect != right.duplication_effect {
+        let kind = if right.duplication_effect == MacroDuplicationEffect::None {
+            ChangeKind::Grant
+        } else {
+            ChangeKind::Revoke
+        };
+        changes.push(ArchitectureChange::new(
+            kind,
+            "rust.macro-duplication-effect",
+            name,
+            "changes whether reviewed expansion is trusted to add no Clone/Copy implementation",
         ));
     }
     if left.definition != right.definition {

@@ -9,7 +9,8 @@ use zrail_core::{ContractBundle, load_contract, repository_file};
 
 use crate::{
     cargo::{
-        CargoWorkspace, ResolvedCargoGraph, apply_attestations, load_cargo_workspace,
+        CargoWorkspace, FeatureWorldSpec, ResolvedCargoGraph, ResolvedFeatureWorld,
+        apply_attestations, load_cargo_workspace, resolve_feature_worlds,
         validate_resolved_sources,
     },
     inventory::{RepositoryInventory, inventory_repository},
@@ -27,6 +28,7 @@ pub(crate) struct RepositoryModel {
     pub(crate) bundle: ContractBundle,
     pub(crate) inventory: RepositoryInventory,
     pub(crate) cargo: CargoWorkspace,
+    pub(crate) feature_worlds: Vec<ResolvedFeatureWorld>,
     pub(crate) resolved_cargo: Option<ResolvedCargoGraph>,
     pub(crate) source: SourceIndex,
     pub(crate) item_macro_manifests: Vec<zrail_core::LockedItemMacroManifest>,
@@ -53,13 +55,29 @@ pub(crate) fn load_model_with_bundle(
     validate_resolved_sources(resolved_cargo.as_ref(), &bundle.contract)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     apply_attestations(&mut cargo, &bundle.contract.dependencies.crate_roots);
+    let feature_world_specs = bundle
+        .contract
+        .source
+        .rust
+        .feature_worlds
+        .iter()
+        .map(FeatureWorldSpec::from)
+        .collect::<Vec<_>>();
+    let feature_worlds =
+        resolve_feature_worlds(&cargo, &feature_world_specs).map_err(CheckError::from_message)?;
     inventory
         .rust_files
         .retain(|file| cargo.source_is_active(&file.relative));
     let mut source = index_rust_source(&inventory, &bundle.contract.source.rust);
     let applied_item_macro_manifests =
         super::item_macro_manifests::apply(&inventory, &bundle.contract, &mut source)?;
-    let graph = source_graph::analyze(&bundle.contract, &inventory, &cargo, &source);
+    let graph = source_graph::analyze(
+        &bundle.contract,
+        &inventory,
+        &cargo,
+        &feature_worlds,
+        &source,
+    );
     for file in &mut source.files {
         file.packages = graph
             .packages
@@ -88,6 +106,11 @@ pub(crate) fn load_model_with_bundle(
             crate::rules::binding_macro_policy(&bundle.contract, source, resolved_cargo.as_ref())
         },
     );
+    crate::source::retain_active_facts(
+        &mut source,
+        &graph.compilation_domains,
+        !feature_worlds.is_empty(),
+    );
     source.findings.extend(graph.findings);
     let item_macro_findings =
         source_graph::review_item_macros(&bundle.contract, &source, resolved_cargo.as_ref());
@@ -103,6 +126,7 @@ pub(crate) fn load_model_with_bundle(
         bundle,
         inventory,
         cargo,
+        feature_worlds,
         resolved_cargo,
         source,
         item_macro_manifests,

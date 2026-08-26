@@ -54,6 +54,7 @@ fn check_owner(
                 | OwnerKind::FieldRead
                 | OwnerKind::FieldWrite
                 | OwnerKind::FieldMutableBorrow
+                | OwnerKind::FieldMutation
                 | OwnerKind::FieldAuthority => {
                     super::ownership_operation::check(owner, file, findings)
                 }
@@ -92,6 +93,7 @@ fn owned_evidence<'a>(
         | OwnerKind::FieldRead
         | OwnerKind::FieldWrite
         | OwnerKind::FieldMutableBorrow
+        | OwnerKind::FieldMutation
         | OwnerKind::FieldAuthority => {
             return super::ownership_operation::matching(owner, file);
         }

@@ -6,10 +6,7 @@ use syn::Item;
 use zrail_core::AnalysisQuality;
 
 use super::import_helpers::{insert_guard, insert_primary_alias, visible_root};
-use super::{
-    SyntaxGuard,
-    attributes::{cfg_conditions_are_exact, cfg_guard},
-};
+use super::{SyntaxGuard, attributes::cfg_guard};
 
 #[derive(Clone, Debug, Default)]
 pub(super) struct ImportMap {
@@ -47,9 +44,8 @@ impl ImportMap {
                         &mut imports,
                         Vec::new(),
                         &item.tree,
-                        super::scoped_imports::conditional(&item.attrs)
-                            && !cfg_conditions_are_exact(&item.attrs),
-                        guard,
+                        super::scoped_imports::conditional(&item.attrs),
+                        &guard,
                         !matches!(item.vis, syn::Visibility::Inherited),
                     );
                 }
@@ -63,14 +59,13 @@ impl ImportMap {
                         &mut imports.aliases,
                         &mut imports.alias_guards,
                         &mut imports.unresolved,
-                        alias.clone(),
+                        &alias,
                         item.ident.to_string(),
-                        super::scoped_imports::conditional(&item.attrs)
-                            && !cfg_conditions_are_exact(&item.attrs),
-                        guard,
+                        super::scoped_imports::conditional(&item.attrs),
+                        &guard,
                     );
                     if !matches!(item.vis, syn::Visibility::Inherited) {
-                        insert_guard(&mut imports.re_exports, alias, guard);
+                        insert_guard(&mut imports.re_exports, alias, &guard);
                     }
                 }
                 _ => {}
@@ -80,7 +75,7 @@ impl ImportMap {
         let candidates = super::import_candidates::collect(file);
         imports.call_aliases = candidates.aliases;
         for (path, guard) in candidates.globs {
-            insert_guard(&mut imports.globs, path, guard);
+            insert_guard(&mut imports.globs, path, &guard);
         }
         imports.normalize_aliases();
         super::import_candidates::normalize(
@@ -94,7 +89,7 @@ impl ImportMap {
     pub(super) fn resolve(
         &self,
         path: &syn::Path,
-        context: SyntaxGuard,
+        context: &SyntaxGuard,
     ) -> (String, AnalysisQuality) {
         let (path, quality, _) = self.resolve_with_guard(path, context);
         (path, quality)
@@ -103,7 +98,7 @@ impl ImportMap {
     pub(super) fn resolve_with_guard(
         &self,
         path: &syn::Path,
-        context: SyntaxGuard,
+        context: &SyntaxGuard,
     ) -> (String, AnalysisQuality, SyntaxGuard) {
         let segments = path
             .segments
@@ -118,8 +113,9 @@ impl ImportMap {
             );
         };
         if let Some(prefix) = self.aliases.get(first) {
-            let guard = self.alias_guards.get(first).copied().unwrap_or_default();
-            if !guard.available_in(context) {
+            let guard = self.alias_guards.get(first).cloned().unwrap_or_default();
+            let availability = guard.availability_in(context);
+            if !availability.is_available() {
                 return (segments.join("::"), AnalysisQuality::Unresolved, guard);
             }
             if segments.len() > 1 && visible_root(prefix) == visible_root(first) {
@@ -130,7 +126,9 @@ impl ImportMap {
                 resolved.push_str("::");
                 resolved.push_str(&segments[1..].join("::"));
             }
-            let quality = if self.unresolved.contains(first) {
+            let quality = if availability == super::GuardAvailability::Possible
+                || self.unresolved.contains(first)
+            {
                 AnalysisQuality::Unresolved
             } else {
                 AnalysisQuality::Exact

@@ -3,25 +3,26 @@
 mod walk;
 
 use syn::{
-    Attribute, Block, ExprAssign, ExprBinary, ExprCall, ExprField, ExprMacro, ExprMethodCall,
-    ExprPath, ExprReference, ExprStruct, ItemFn, ItemForeignMod, ItemImpl, ItemMacro, ItemMod,
-    ItemStatic, ItemTrait, Macro, Signature, StmtMacro, TypePath,
+    Attribute, Block, ExprBinary, ExprCall, ExprField, ExprMacro, ExprMethodCall, ExprPath,
+    ExprStruct, ItemForeignMod, ItemMacro, ItemMod, ItemStatic, Macro, StmtMacro, TypePath,
     visit::{self, Visit},
 };
 
 use super::{
     SyntaxGuard,
     attributes::cfg_guard,
-    visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
+    visitor_parts::visitor_context::{
+        expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs,
+    },
 };
 
-pub(super) use super::visitor_model::FactVisitor;
+pub(super) use super::visitor_parts::FactVisitor;
 
 impl<'ast> Visit<'ast> for FactVisitor<'_> {
     fn visit_file(&mut self, file: &'ast syn::File) {
         let guard = cfg_guard(&file.attrs);
         if guard != SyntaxGuard::Ordinary {
-            self.guard_initial_paths(guard);
+            self.guard_initial_paths(&guard);
         }
         self.with_cfg(&file.attrs, |visitor| {
             visitor.with_local_type_scope(file.items.iter(), |visitor| {
@@ -63,7 +64,10 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_local(&mut self, local: &'ast syn::Local) {
-        self.with_cfg(&local.attrs, |visitor| visit::visit_local(visitor, local));
+        self.with_cfg(&local.attrs, |visitor| {
+            visit::visit_local(visitor, local);
+            visitor.record_typed_local(local);
+        });
     }
 
     fn visit_arm(&mut self, arm: &'ast syn::Arm) {
@@ -109,6 +113,7 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_expr_method_call(&mut self, call: &'ast ExprMethodCall) {
+        self.record_field_receiver_call(call);
         self.record_method_operation(call);
         self.record_method_call(call);
         visit::visit_expr_method_call(self, call);
@@ -124,32 +129,28 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
         visit::visit_expr_field(self, expression);
     }
 
-    fn visit_expr_assign(&mut self, expression: &'ast ExprAssign) {
-        self.with_place_operation(
-            super::SourceOperationKind::FieldWrite,
-            &expression.left,
-            |visitor| {
-                visit::visit_expr_assign(visitor, expression);
-            },
-        );
+    fn visit_expr_assign(&mut self, expression: &'ast syn::ExprAssign) {
+        walk::visit_assign(self, expression);
     }
 
     fn visit_expr_binary(&mut self, expression: &'ast ExprBinary) {
         walk::visit_binary(self, expression);
     }
 
-    fn visit_expr_reference(&mut self, expression: &'ast ExprReference) {
-        if expression.mutability.is_some() {
-            self.with_place_operation(
-                super::SourceOperationKind::FieldMutableBorrow,
-                &expression.expr,
-                |visitor| {
-                    visit::visit_expr_reference(visitor, expression);
-                },
-            );
-        } else {
-            visit::visit_expr_reference(self, expression);
-        }
+    fn visit_expr_reference(&mut self, expression: &'ast syn::ExprReference) {
+        walk::visit_reference(self, expression);
+    }
+
+    fn visit_expr_async(&mut self, expression: &'ast syn::ExprAsync) {
+        walk::visit_async(self, expression);
+    }
+
+    fn visit_expr_closure(&mut self, expression: &'ast syn::ExprClosure) {
+        walk::visit_closure(self, expression);
+    }
+
+    fn visit_expr_await(&mut self, expression: &'ast syn::ExprAwait) {
+        walk::visit_await(self, expression);
     }
 
     fn visit_macro(&mut self, invocation: &'ast Macro) {
@@ -178,44 +179,28 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
         visit::visit_expr_unsafe(self, expression);
     }
 
-    fn visit_item_fn(&mut self, function: &'ast ItemFn) {
-        self.record_test_function(function);
-        self.with_generics(&function.sig.generics, false, |visitor| {
-            visit::visit_item_fn(visitor, function);
-        });
+    fn visit_item_fn(&mut self, function: &'ast syn::ItemFn) {
+        walk::visit_item_fn(self, function);
     }
 
-    fn visit_signature(&mut self, signature: &'ast Signature) {
-        self.record_unsafe_signature(signature);
-        visit::visit_signature(self, signature);
+    fn visit_signature(&mut self, signature: &'ast syn::Signature) {
+        walk::visit_signature(self, signature);
     }
 
-    fn visit_item_impl(&mut self, implementation: &'ast ItemImpl) {
-        self.record_unsafe_impl(implementation);
-        self.with_self_type(&implementation.self_ty, |visitor| {
-            visitor.with_generics(&implementation.generics, true, |visitor| {
-                visit::visit_item_impl(visitor, implementation);
-            });
-        });
+    fn visit_item_impl(&mut self, implementation: &'ast syn::ItemImpl) {
+        walk::visit_item_impl(self, implementation);
     }
 
-    fn visit_item_trait(&mut self, item: &'ast ItemTrait) {
-        self.record_unsafe_trait(item);
-        self.with_generics(&item.generics, true, |visitor| {
-            visit::visit_item_trait(visitor, item);
-        });
+    fn visit_item_trait(&mut self, item: &'ast syn::ItemTrait) {
+        walk::visit_item_trait(self, item);
     }
 
     fn visit_impl_item_fn(&mut self, function: &'ast syn::ImplItemFn) {
-        self.with_generics(&function.sig.generics, false, |visitor| {
-            visit::visit_impl_item_fn(visitor, function);
-        });
+        walk::visit_impl_item_fn(self, function);
     }
 
     fn visit_trait_item_fn(&mut self, function: &'ast syn::TraitItemFn) {
-        self.with_generics(&function.sig.generics, false, |visitor| {
-            visit::visit_trait_item_fn(visitor, function);
-        });
+        walk::visit_trait_item_fn(self, function);
     }
 
     fn visit_item_foreign_mod(&mut self, item: &'ast ItemForeignMod) {

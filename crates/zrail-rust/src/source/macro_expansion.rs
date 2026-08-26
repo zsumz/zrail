@@ -2,6 +2,8 @@
 
 use syn::{Attribute, Meta, Path, Token, punctuated::Punctuated};
 
+use super::SyntaxGuard;
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(super) enum ExpansionKind {
     Attribute,
@@ -11,11 +13,14 @@ pub(super) enum ExpansionKind {
 pub(super) struct ExpansionPath {
     pub(super) path: Path,
     pub(super) kind: ExpansionKind,
+    pub(super) guard: SyntaxGuard,
 }
 
 pub(super) fn attribute_paths(attribute: &Attribute) -> Result<Vec<ExpansionPath>, ()> {
     let mut paths = Vec::new();
-    collect_meta(&attribute.meta, &mut paths)?;
+    for effect in super::cfg::cfg_guards::guarded_attribute_effects(attribute)? {
+        collect_meta(&effect.meta, &effect.guard, &mut paths)?;
+    }
     Ok(paths)
 }
 
@@ -27,7 +32,11 @@ pub(super) fn can_replace_item(attribute: &Attribute) -> bool {
     })
 }
 
-fn collect_meta(meta: &Meta, paths: &mut Vec<ExpansionPath>) -> Result<(), ()> {
+fn collect_meta(
+    meta: &Meta,
+    guard: &SyntaxGuard,
+    paths: &mut Vec<ExpansionPath>,
+) -> Result<(), ()> {
     if meta.path().is_ident("derive") {
         let Meta::List(list) = meta else {
             return Err(());
@@ -41,28 +50,15 @@ fn collect_meta(meta: &Meta, paths: &mut Vec<ExpansionPath>) -> Result<(), ()> {
         paths.extend(derives.into_iter().map(|path| ExpansionPath {
             path,
             kind: ExpansionKind::Derive,
+            guard: guard.clone(),
         }));
-        return Ok(());
-    }
-    if meta.path().is_ident("cfg_attr") {
-        let Meta::List(list) = meta else {
-            return Err(());
-        };
-        let arguments = list
-            .parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)
-            .map_err(|_| ())?;
-        if arguments.len() < 2 {
-            return Err(());
-        }
-        for nested in arguments.iter().skip(1) {
-            collect_meta(nested, paths)?;
-        }
         return Ok(());
     }
     if !is_inert(meta.path()) {
         paths.push(ExpansionPath {
             path: meta.path().clone(),
             kind: ExpansionKind::Attribute,
+            guard: guard.clone(),
         });
     }
     Ok(())

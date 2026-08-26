@@ -101,7 +101,7 @@ fn push_binding(
             visibility: context.visibility.clone(),
             quality,
             replacement_macros: context.replacement_macros.clone(),
-            guard: context.guard,
+            guard: context.guard.clone(),
             scope: context.scope,
         },
     );

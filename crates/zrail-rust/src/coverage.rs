@@ -5,6 +5,9 @@ mod model;
 mod output;
 mod owners;
 mod rails;
+mod source_policies;
+mod type_policies;
+mod type_policy_model;
 
 use std::path::Path;
 
@@ -12,16 +15,19 @@ use zrail_core::AnalysisQuality;
 
 use crate::{
     analysis::AnalysisOutcome,
+    cargo::ResolvedFeatureWorld,
     engine::{CheckError, load_model},
 };
 
 pub use model::{
     GovernedAnalysis, GovernedCompilationDomain, GovernedDependencyPath, GovernedDependencyRule,
-    GovernedOperationOccurrence, GovernedOwnerRule, GovernedPackageIdentity, GovernedSurfaceReport,
-    GovernedTestMirror,
+    GovernedFeaturePackage, GovernedFeatureWorld, GovernedOperationOccurrence, GovernedOwnerRule,
+    GovernedPackageIdentity, GovernedSourcePolicyOccurrence, GovernedSourcePolicyRail,
+    GovernedSurfaceReport, GovernedTestMirror,
 };
+pub use type_policy_model::{GovernedTypeField, GovernedTypeObservation, GovernedTypePolicy};
 
-const REPORT_SCHEMA: u64 = 3;
+const REPORT_SCHEMA: u64 = 5;
 
 /// Builds a read-only audit report for every governed source and dependency surface.
 ///
@@ -38,6 +44,8 @@ pub fn governed_surface_report(
         return Err(incomplete_error(&outcome));
     }
     let owners = owners::report(&model);
+    let source_policies = source_policies::report(&model);
+    let type_policies = type_policies::report(&model);
     let dependencies = dependencies::report(&model).map_err(CheckError::from_message)?;
     let mut exclusions = model.bundle.contract.repository.exclude.clone();
     exclusions.sort();
@@ -50,7 +58,7 @@ pub fn governed_surface_report(
         .test_mirrors
         .iter()
         .map(|mirror| GovernedTestMirror {
-            policy_id: format!("test-mirror:{}::{}", mirror.test, mirror.name),
+            policy_id: crate::mirrors::test_mirror_policy_id(mirror),
             production: mirror.production.clone(),
             test: mirror.test.clone(),
             test_name: mirror.name.clone(),
@@ -67,6 +75,7 @@ pub fn governed_surface_report(
         .collect::<Vec<_>>();
     test_mirrors.sort_by(|left, right| left.policy_id.cmp(&right.policy_id));
     let enabled_rails = rails::report(&model, &owners, &dependencies, &test_mirrors);
+    let feature_worlds = governed_feature_worlds(&model.feature_worlds);
     let occurrences = owners.iter().flat_map(|owner| &owner.occurrences);
     let unresolved_occurrences = occurrences
         .clone()
@@ -87,10 +96,34 @@ pub fn governed_surface_report(
         unresolved_occurrences,
         ambiguous_occurrences,
         enabled_rails,
+        feature_worlds,
+        source_policies,
+        type_policies,
         owners,
         dependencies,
         test_mirrors,
     })
+}
+
+fn governed_feature_worlds(worlds: &[ResolvedFeatureWorld]) -> Vec<GovernedFeatureWorld> {
+    let mut feature_worlds = worlds
+        .iter()
+        .map(|world| GovernedFeatureWorld {
+            name: world.name.clone(),
+            packages: world
+                .packages
+                .iter()
+                .map(|(package, features)| GovernedFeaturePackage {
+                    package: package.clone(),
+                    default_features: features.default_features,
+                    selected: features.selected.clone(),
+                    active: features.active.clone(),
+                })
+                .collect(),
+        })
+        .collect::<Vec<_>>();
+    feature_worlds.sort_by(|left, right| left.name.cmp(&right.name));
+    feature_worlds
 }
 
 fn incomplete_error(outcome: &AnalysisOutcome) -> CheckError {

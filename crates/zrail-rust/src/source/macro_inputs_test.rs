@@ -33,10 +33,12 @@ fn standard_macro_inputs_retain_generic_qualified_self_uncertainty() {
         .expect("parse generic qualified-self macro input");
 
     assert!(!inspect(&mut visitor, &expression.mac, "vec"));
-    assert!(visitor.calls.iter().any(|call| {
-        call.name == "process::Output::new"
-            && call.quality == zrail_core::AnalysisQuality::Unresolved
-    }));
+    assert!(
+        visitor
+            .call_resolutions
+            .iter()
+            .any(|call| call.written == "<process::Output>::new")
+    );
 }
 
 #[test]

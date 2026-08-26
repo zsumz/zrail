@@ -166,7 +166,7 @@ impl State {
     for (kind, name, count) in [
         (SourceOperationKind::FieldWrite, "State::values", 2),
         (SourceOperationKind::FieldWrite, "State::outer", 1),
-        (SourceOperationKind::FieldWrite, "State::pointer", 1),
+        (SourceOperationKind::FieldWrite, "State::pointer", 0),
         (SourceOperationKind::FieldWrite, "State::tuple", 1),
         (SourceOperationKind::FieldMutableBorrow, "State::values", 1),
         (SourceOperationKind::FieldRead, "State::index", 3),
@@ -184,13 +184,16 @@ impl State {
             "place projection was counted as a read for {name}: {facts:?}",
         );
     }
-    for name in ["<unresolved>::nested", "<unresolved>::deref"] {
-        assert_eq!(
-            matching(&facts, SourceOperationKind::FieldWrite, name).len(),
-            1,
-            "final projected field did not fail closed: {facts:?}",
-        );
-    }
+    assert_eq!(
+        matching(&facts, SourceOperationKind::FieldWrite, "Inner::nested").len(),
+        1,
+        "nested local field type was not retained: {facts:?}",
+    );
+    assert_eq!(
+        matching(&facts, SourceOperationKind::FieldWrite, "Box::deref").len(),
+        1,
+        "opaque generic dereference did not retain its unresolved candidate: {facts:?}",
+    );
 }
 
 #[test]
@@ -225,7 +228,7 @@ fn work(value: Unknown) {
     }));
     assert!(facts.iter().any(|fact| {
         fact.kind == SourceOperationKind::FieldWrite
-            && fact.identity.name == "<unresolved>::epoch"
+            && fact.identity.name == "Unknown::epoch"
             && fact.identity.quality == AnalysisQuality::Unresolved
     }));
 }
@@ -264,3 +267,6 @@ fn matching<'a>(
         .filter(|fact| fact.kind == kind && fact.identity.name == name)
         .collect()
 }
+
+#[path = "tests/visitor_typed_places.rs"]
+mod visitor_typed_places;

@@ -1,5 +1,6 @@
 //! Shared syntax operations retain only identities the source can prove.
 
+#[path = "visitor_operations/identity.rs"]
 mod identity;
 
 use std::collections::BTreeMap;
@@ -8,17 +9,16 @@ use syn::{Expr, ExprCall, ExprPath, ExprStruct, Item, Type};
 use zrail_core::AnalysisQuality;
 
 use super::{
-    SourceOperationFact, SourceOperationKind,
+    FactVisitor, SourceOperationFact, SourceOperationKind,
     fact::{fact, written_fact},
     operation_model::{
         ConstructorForm, TypeIdentity, append, last_segment_looks_constructor, local_type,
         path_text, unresolved,
     },
-    visitor::FactVisitor,
 };
 
 impl FactVisitor<'_> {
-    pub(super) fn with_local_type_scope<'a>(
+    pub(in crate::source) fn with_local_type_scope<'a>(
         &mut self,
         items: impl Iterator<Item = &'a Item>,
         visit: impl FnOnce(&mut Self),
@@ -32,20 +32,24 @@ impl FactVisitor<'_> {
         self.local_types.pop();
     }
 
-    pub(super) fn with_inline_module(&mut self, name: String, visit: impl FnOnce(&mut Self)) {
+    pub(in crate::source) fn with_inline_module(
+        &mut self,
+        name: String,
+        visit: impl FnOnce(&mut Self),
+    ) {
         self.inline_modules.push(name);
         visit(self);
         self.inline_modules.pop();
     }
 
-    pub(super) fn with_self_type(&mut self, ty: &Type, visit: impl FnOnce(&mut Self)) {
+    pub(in crate::source) fn with_self_type(&mut self, ty: &Type, visit: impl FnOnce(&mut Self)) {
         let identity = self.resolve_type(ty);
         self.self_types.push(identity);
         visit(self);
         self.self_types.pop();
     }
 
-    pub(super) fn record_struct_construction(&mut self, expression: &ExprStruct) {
+    pub(in crate::source) fn record_struct_construction(&mut self, expression: &ExprStruct) {
         let identity = self.resolve_identity(&expression.path);
         self.push_operation(
             SourceOperationKind::TypeConstruction,
@@ -59,7 +63,7 @@ impl FactVisitor<'_> {
         );
     }
 
-    pub(super) fn record_call_construction(&mut self, call: &ExprCall) {
+    pub(in crate::source) fn record_call_construction(&mut self, call: &ExprCall) {
         let Expr::Path(callee) = call.func.as_ref() else {
             return;
         };
@@ -85,7 +89,7 @@ impl FactVisitor<'_> {
         );
     }
 
-    pub(super) fn record_path_construction(&mut self, expression: &ExprPath) {
+    pub(in crate::source) fn record_path_construction(&mut self, expression: &ExprPath) {
         let exact = self.constructor_form(&expression.path) == Some((ConstructorForm::Unit, true));
         if !exact && !last_segment_looks_constructor(&expression.path) {
             return;
@@ -106,11 +110,12 @@ impl FactVisitor<'_> {
         );
     }
 
-    pub(super) fn record_method_operation(&mut self, call: &syn::ExprMethodCall) {
+    pub(in crate::source) fn record_method_operation(&mut self, call: &syn::ExprMethodCall) {
         let identity = TypeIdentity {
             name: call.method.to_string(),
             quality: AnalysisQuality::Exact,
             file_local: false,
+            span: Some(super::fact::source_span(call.method.span())),
         };
         self.push_operation(
             SourceOperationKind::MethodCall,
@@ -120,12 +125,53 @@ impl FactVisitor<'_> {
         );
     }
 
-    pub(super) fn push_operation(
+    pub(in crate::source) fn push_operation(
         &mut self,
         kind: SourceOperationKind,
         identity: &TypeIdentity,
         written: String,
         span: Option<proc_macro2::Span>,
+    ) {
+        self.push_operation_with_method(kind, identity, written, span, None, None);
+    }
+
+    pub(in crate::source) fn push_field_receiver_operation(
+        &mut self,
+        identity: &TypeIdentity,
+        written: String,
+        span: Option<proc_macro2::Span>,
+        method: String,
+        place: super::operation_model::FieldPlaceFact,
+    ) {
+        self.push_operation_with_method(
+            SourceOperationKind::FieldReceiverCall,
+            identity,
+            written,
+            span,
+            Some(method),
+            Some(place),
+        );
+    }
+
+    pub(in crate::source) fn push_field_operation(
+        &mut self,
+        kind: SourceOperationKind,
+        identity: &TypeIdentity,
+        written: String,
+        span: Option<proc_macro2::Span>,
+        place: super::operation_model::FieldPlaceFact,
+    ) {
+        self.push_operation_with_method(kind, identity, written, span, None, Some(place));
+    }
+
+    fn push_operation_with_method(
+        &mut self,
+        kind: SourceOperationKind,
+        identity: &TypeIdentity,
+        written: String,
+        span: Option<proc_macro2::Span>,
+        method: Option<String>,
+        place: Option<super::operation_model::FieldPlaceFact>,
     ) {
         let mut observed = span.map_or_else(
             || {
@@ -150,6 +196,7 @@ impl FactVisitor<'_> {
             operation.kind == kind
                 && operation.identity.name == observed.name
                 && operation.identity.span == observed.span
+                && operation.method == method
         }) {
             return;
         }
@@ -157,6 +204,8 @@ impl FactVisitor<'_> {
             kind,
             identity: observed,
             file_local: identity.file_local,
+            method,
+            place,
         });
     }
 }

@@ -122,15 +122,7 @@ fn non_path_qualified_self_type_fails_closed() {
     write_lock(&root);
 
     let report = check(&root);
-    assert!(
-        report.findings.iter().any(|finding| {
-            finding.id == "RUST-INCLUDE-002"
-                && finding.path.as_deref() == Some("src/lib.rs")
-                && finding.analysis == AnalysisQuality::Unresolved
-        }),
-        "{}",
-        report.human()
-    );
+    assert_unresolved_call_resolution(&report);
     reset(&root);
 }
 
@@ -146,15 +138,7 @@ fn generic_associated_self_type_fails_closed() {
     write_lock(&root);
 
     let report = check(&root);
-    assert!(
-        report.findings.iter().any(|finding| {
-            finding.id == "RUST-INCLUDE-002"
-                && finding.path.as_deref() == Some("src/lib.rs")
-                && finding.analysis == AnalysisQuality::Unresolved
-        }),
-        "{}",
-        report.human()
-    );
+    assert_unresolved_call_resolution(&report);
     reset(&root);
 }
 
@@ -199,15 +183,7 @@ fn impl_self_qualified_type_fails_closed() {
     write_lock(&root);
 
     let report = check(&root);
-    assert!(
-        report.findings.iter().any(|finding| {
-            finding.id == "RUST-INCLUDE-002"
-                && finding.path.as_deref() == Some("src/lib.rs")
-                && finding.analysis == AnalysisQuality::Unresolved
-        }),
-        "{}",
-        report.human()
-    );
+    assert_unresolved_call_resolution(&report);
     reset(&root);
 }
 
@@ -218,6 +194,18 @@ fn assert_exact_owned_call(report: &Report, path: &str) {
                 && finding.rule == "process-spawn"
                 && finding.path.as_deref() == Some(path)
                 && finding.analysis == AnalysisQuality::Exact
+        }),
+        "{}",
+        report.human()
+    );
+}
+
+fn assert_unresolved_call_resolution(report: &Report) {
+    assert!(
+        report.findings.iter().any(|finding| {
+            finding.id == "RUST-CALL-001"
+                && finding.path.as_deref() == Some("src/lib.rs")
+                && finding.analysis == AnalysisQuality::Unresolved
         }),
         "{}",
         report.human()

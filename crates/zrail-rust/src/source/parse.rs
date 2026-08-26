@@ -1,5 +1,8 @@
 //! Parse each Rust file once and retain reusable architecture facts.
 
+#[path = "parse_fact_count.rs"]
+mod parse_fact_count;
+
 use syn::visit::Visit;
 use zrail_core::{AnalysisQuality, Finding, RustSourceContract};
 
@@ -14,6 +17,8 @@ use super::{
     modules::module_declarations,
     visitor::FactVisitor,
 };
+
+pub(crate) use parse_fact_count::fact_count;
 
 pub(super) const MAX_FACTS_PER_FILE: usize = 50_000;
 
@@ -30,7 +35,22 @@ pub(crate) fn index_rust_source(
             continue;
         }
         match parse_source(source_file, rust) {
-            Ok(facts) => {
+            Ok((facts, incomplete_cfg)) => {
+                if !rust.feature_worlds.is_empty() {
+                    index.findings.extend(incomplete_cfg.into_iter().map(|span| {
+                        Finding::error(
+                            "RUST-CFG-001",
+                            "rust.source.feature-world",
+                            "source",
+                            "feature-dependent cfg_attr changes path or test target identity",
+                        )
+                        .at(&source_file.relative, Some(span))
+                        .with_analysis(AnalysisQuality::Unresolved)
+                        .with_help(
+                            "use direct cfg(feature = ...) items or make the attribute identity unconditional",
+                        )
+                    }));
+                }
                 let count = fact_count(&facts);
                 if count > MAX_FACTS_PER_FILE {
                     index.findings.push(analysis_limit(
@@ -65,11 +85,17 @@ pub(crate) fn index_rust_source(
 fn parse_source(
     source_file: &crate::inventory::RustSourceFile,
     rust: &RustSourceContract,
-) -> Result<RustFileFacts, syn::Error> {
+) -> Result<(RustFileFacts, Vec<zrail_core::SourceSpan>), syn::Error> {
     match syn::parse_file(&source_file.source) {
-        Ok(syntax) => Ok(index_file_with_policy(source_file, rust, &syntax)),
+        Ok(syntax) => Ok((
+            index_file_with_policy(source_file, rust, &syntax),
+            super::cfg::cfg_completeness::file(&syntax),
+        )),
         Err(file_error) => match syn::parse_str::<syn::Expr>(&source_file.source) {
-            Ok(expression) => Ok(index_expression(source_file, &expression)),
+            Ok(expression) => Ok((
+                index_expression(source_file, &expression),
+                super::cfg::cfg_completeness::expression(&expression),
+            )),
             Err(_) => Err(file_error),
         },
     }
@@ -80,41 +106,6 @@ fn analysis_limit(path: &str, message: String) -> Finding {
         .at(path, None)
         .with_analysis(AnalysisQuality::Unresolved)
         .with_help("reduce the source input before trusting architecture analysis")
-}
-
-pub(crate) fn fact_count(file: &RustFileFacts) -> usize {
-    file.paths.len()
-        + file.calls.len()
-        + file.call_resolutions.len()
-        + file.methods.len()
-        + file.operations.len()
-        + file.macros.len()
-        + file.macro_imports.len()
-        + candidate_count(&file.macro_expansions)
-        + candidate_count(&file.opaque_macro_inputs)
-        + file.macro_definitions.len()
-        + file.import_bindings.len()
-        + file.inline_module_scopes.len()
-        + file
-            .compile_effects
-            .iter()
-            .map(|effect| effect.invocation.candidates.len())
-            .sum::<usize>()
-        + file.lint_suppressions.len()
-        + file.unsafe_constructs.len()
-        + file.tests.len()
-        + file.modules.len()
-        + file.includes.len()
-        + file.item_macros.len()
-        + file.opaque_binding_macros.len()
-        + file.facade_implementation.len()
-}
-
-fn candidate_count(expansions: &[super::MacroExpansionFact]) -> usize {
-    expansions
-        .iter()
-        .map(|expansion| expansion.candidates.len())
-        .sum()
 }
 
 #[cfg(test)]
@@ -141,6 +132,8 @@ fn index_file_as(
     let imports = ImportMap::from_file(syntax);
     let mut visitor = FactVisitor::new(&imports);
     visitor.visit_file(syntax);
+    let (type_policy, synthetic_paths) = super::type_policy_index::collect(syntax);
+    visitor.paths.extend(synthetic_paths);
     let facade_implementation = if matches!(effective, FileClass::Facade | FileClass::EntryPoint) {
         super::parse_facade::items(&source_file.relative, syntax)
     } else {
@@ -165,10 +158,13 @@ fn index_file_as(
         opaque_macro_inputs: visitor.opaque_macro_inputs,
         macro_definitions: visitor.macro_definitions,
         import_bindings: visitor.import_bindings,
+        glob_imports: visitor.glob_imports,
         inline_module_scopes: visitor.inline_module_scopes,
         compile_effects: visitor.compile_effects,
         lint_suppressions: visitor.lint_suppressions,
         unsafe_constructs: visitor.unsafe_constructs,
+        async_syntax: visitor.async_syntax,
+        type_policy,
         tests: visitor.tests,
         modules: module_declarations(syntax),
         includes: visitor.includes,
@@ -204,10 +200,13 @@ fn index_expression(
         opaque_macro_inputs: visitor.opaque_macro_inputs,
         macro_definitions: visitor.macro_definitions,
         import_bindings: visitor.import_bindings,
+        glob_imports: visitor.glob_imports,
         inline_module_scopes: visitor.inline_module_scopes,
         compile_effects: visitor.compile_effects,
         lint_suppressions: visitor.lint_suppressions,
         unsafe_constructs: visitor.unsafe_constructs,
+        async_syntax: visitor.async_syntax,
+        type_policy: super::type_policy_model::TypePolicyFacts::default(),
         tests: visitor.tests,
         modules: Vec::new(),
         includes: visitor.includes,

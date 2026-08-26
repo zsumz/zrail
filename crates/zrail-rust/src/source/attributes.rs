@@ -2,11 +2,23 @@
 
 use syn::{AttrStyle, Attribute, Expr, ExprLit, Lit, Meta, Token, punctuated::Punctuated};
 
+use super::SyntaxGuard;
+
 #[cfg(test)]
-pub(super) use super::cfg_guards::is_cfg_test;
-pub(super) use super::cfg_guards::{cfg_conditions_are_exact, cfg_guard};
+pub(super) use super::cfg::cfg_guards::is_cfg_test;
+pub(super) use super::cfg::cfg_guards::{cfg_guard, feature_cfg_attr_requires_completeness};
 
 const UNSAFE_ATTRIBUTES: [&str; 4] = ["export_name", "link_section", "naked", "no_mangle"];
+
+pub(super) struct GuardedLintSuppression {
+    pub(super) reasoned: bool,
+    pub(super) guard: SyntaxGuard,
+}
+
+pub(super) struct GuardedUnsafeAttribute {
+    pub(super) name: &'static str,
+    pub(super) guard: SyntaxGuard,
+}
 
 pub(super) fn has_module_docs(attributes: &[Attribute]) -> bool {
     attributes.iter().any(|attribute| {
@@ -56,16 +68,26 @@ pub(super) fn is_test_attribute(attribute: &Attribute) -> bool {
             .is_some_and(|segment| segment.ident == "test")
 }
 
+#[cfg(test)]
 pub(super) fn is_lint_suppression(attribute: &Attribute) -> bool {
-    lint_suppression_reason(&attribute.meta).is_some()
+    !lint_suppression_effects(attribute).is_empty()
 }
 
-pub(super) fn unsafe_attribute_names(attribute: &Attribute) -> Vec<&'static str> {
-    let mut names = Vec::new();
-    collect_unsafe_attributes(&attribute.meta, &mut names);
-    names.sort_unstable();
-    names.dedup();
-    names
+pub(super) fn unsafe_attribute_effects(attribute: &Attribute) -> Vec<GuardedUnsafeAttribute> {
+    let Ok(effects) = super::cfg::cfg_guards::guarded_attribute_effects(attribute) else {
+        return Vec::new();
+    };
+    effects
+        .into_iter()
+        .flat_map(|effect| {
+            let mut names = Vec::new();
+            collect_unsafe_attributes(&effect.meta, &mut names);
+            names.into_iter().map(move |name| GuardedUnsafeAttribute {
+                name,
+                guard: effect.guard.clone(),
+            })
+        })
+        .collect()
 }
 
 fn collect_unsafe_attributes(meta: &Meta, names: &mut Vec<&'static str>) {
@@ -79,21 +101,32 @@ fn collect_unsafe_attributes(meta: &Meta, names: &mut Vec<&'static str>) {
     let Meta::List(list) = meta else {
         return;
     };
-    if list.path.is_ident("unsafe") {
-        if let Ok(nested) = syn::parse2::<Meta>(list.tokens.clone()) {
-            collect_unsafe_attributes(&nested, names);
-        }
-    } else if list.path.is_ident("cfg_attr")
-        && let Some(arguments) = cfg_arguments(list)
+    if list.path.is_ident("unsafe")
+        && let Ok(nested) = syn::parse2::<Meta>(list.tokens.clone())
     {
-        for nested in arguments.iter().skip(1) {
-            collect_unsafe_attributes(nested, names);
-        }
+        collect_unsafe_attributes(&nested, names);
     }
 }
 
+#[cfg(test)]
 pub(super) fn lint_suppression_is_reasoned(attribute: &Attribute) -> bool {
-    lint_suppression_reason(&attribute.meta).is_some_and(|reasoned| reasoned)
+    let effects = lint_suppression_effects(attribute);
+    !effects.is_empty() && effects.iter().all(|effect| effect.reasoned)
+}
+
+pub(super) fn lint_suppression_effects(attribute: &Attribute) -> Vec<GuardedLintSuppression> {
+    let Ok(effects) = super::cfg::cfg_guards::guarded_attribute_effects(attribute) else {
+        return Vec::new();
+    };
+    effects
+        .into_iter()
+        .filter_map(|effect| {
+            lint_suppression_reason(&effect.meta).map(|reasoned| GuardedLintSuppression {
+                reasoned,
+                guard: effect.guard,
+            })
+        })
+        .collect()
 }
 
 fn lint_suppression_reason(meta: &Meta) -> Option<bool> {
@@ -106,19 +139,7 @@ fn lint_suppression_reason(meta: &Meta) -> Option<bool> {
         };
         return Some(arguments.iter().any(nonempty_reason));
     }
-    let Meta::List(list) = meta else {
-        return None;
-    };
-    if !list.path.is_ident("cfg_attr") {
-        return None;
-    }
-    let arguments = cfg_arguments(list)?;
-    let suppressions = arguments
-        .iter()
-        .skip(1)
-        .filter_map(lint_suppression_reason)
-        .collect::<Vec<_>>();
-    (!suppressions.is_empty()).then(|| suppressions.into_iter().all(|reasoned| reasoned))
+    None
 }
 
 fn nonempty_reason(meta: &Meta) -> bool {

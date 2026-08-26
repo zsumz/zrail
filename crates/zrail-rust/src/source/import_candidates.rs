@@ -8,7 +8,9 @@ use super::{
     SyntaxGuard,
     attributes::cfg_guard,
     import_helpers::insert_guard,
-    visitor_context::{expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs},
+    visitor_parts::visitor_context::{
+        expr_attrs, foreign_attrs, impl_attrs, item_attrs, trait_attrs,
+    },
 };
 
 #[derive(Default)]
@@ -33,7 +35,7 @@ pub(super) fn normalize(
         let mut normalized = BTreeMap::new();
         for (target, guard) in &*targets {
             let (target, alias_guard) = expand_exact_prefix(target, aliases, alias_guards);
-            insert_guard(&mut normalized, target, guard.combine(alias_guard));
+            insert_guard(&mut normalized, target, &guard.combine(alias_guard));
         }
         *targets = normalized;
     }
@@ -106,12 +108,13 @@ impl<'ast> syn::visit::Visit<'ast> for CallCandidates {
         self.aliases
             .entry(alias)
             .or_default()
-            .insert(item.ident.to_string(), self.guard);
+            .insert(item.ident.to_string(), self.guard.clone());
         syn::visit::visit_item_extern_crate(self, item);
     }
 
     fn visit_item_use(&mut self, item: &'ast syn::ItemUse) {
-        collect_use(self, Vec::new(), &item.tree, self.guard);
+        let guard = self.guard.clone();
+        collect_use(self, Vec::new(), &item.tree, &guard);
         syn::visit::visit_item_use(self, item);
     }
 
@@ -122,7 +125,7 @@ impl<'ast> syn::visit::Visit<'ast> for CallCandidates {
             self.aliases
                 .entry(item.ident.to_string())
                 .or_default()
-                .insert(path_text(&target.path), self.guard);
+                .insert(path_text(&target.path), self.guard.clone());
         }
         syn::visit::visit_item_type(self, item);
     }
@@ -130,7 +133,7 @@ impl<'ast> syn::visit::Visit<'ast> for CallCandidates {
 
 impl CallCandidates {
     fn with_cfg(&mut self, attributes: &[Attribute], visit: impl FnOnce(&mut Self)) {
-        let previous = self.guard;
+        let previous = self.guard.clone();
         self.guard = self.guard.combine(cfg_guard(attributes));
         visit(self);
         self.guard = previous;
@@ -141,7 +144,7 @@ fn collect_use(
     candidates: &mut CallCandidates,
     prefix: Vec<String>,
     tree: &UseTree,
-    guard: SyntaxGuard,
+    guard: &SyntaxGuard,
 ) {
     match tree {
         UseTree::Path(path) => {
@@ -179,14 +182,14 @@ fn insert_alias(
     candidates: &mut CallCandidates,
     alias: &str,
     target: &[String],
-    guard: SyntaxGuard,
+    guard: &SyntaxGuard,
 ) {
     if !target.is_empty() {
         candidates
             .aliases
             .entry(alias.to_owned())
             .or_default()
-            .insert(target.join("::"), guard);
+            .insert(target.join("::"), guard.clone());
     }
 }
 
@@ -206,7 +209,7 @@ fn expand_exact_prefix(
             } else {
                 format!("{prefix}::{}", remainder.join("::"))
             };
-            (path, alias_guards.get(first).copied().unwrap_or_default())
+            (path, alias_guards.get(first).cloned().unwrap_or_default())
         },
     )
 }

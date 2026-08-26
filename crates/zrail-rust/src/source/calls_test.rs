@@ -17,7 +17,7 @@ fn aliases_resolve_to_the_exact_called_path() {
     .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+    let observed = facts(call(&file), &imports, &SyntaxGuard::Ordinary, &[], &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Exact
@@ -30,7 +30,7 @@ fn inherent_qualified_self_calls_retain_the_self_type() {
         .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+    let observed = facts(call(&file), &imports, &SyntaxGuard::Ordinary, &[], &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Exact
@@ -44,7 +44,7 @@ fn qualified_self_calls_resolve_imported_type_aliases() {
             .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+    let observed = facts(call(&file), &imports, &SyntaxGuard::Ordinary, &[], &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Exact
@@ -60,17 +60,16 @@ fn generic_associated_self_paths_are_unresolved() {
     let imports = ImportMap::from_file(&file);
     let generic_types = vec!["process".to_owned()];
 
-    let observed = facts(
-        call(&file),
-        &imports,
+    let call = call(&file);
+    let boundary = unresolved_path_projection(
+        callee_path(call.func.as_ref()).expect("callable path"),
         SyntaxGuard::Ordinary,
         &generic_types,
-        &[],
-    );
+    )
+    .expect("generic self type is unresolved");
 
-    assert!(observed.iter().any(|fact| {
-        fact.name == "process::Output::new" && fact.quality == AnalysisQuality::Unresolved
-    }));
+    assert_eq!(boundary.written, "<process::Output>::new");
+    assert!(facts(call, &imports, &SyntaxGuard::Ordinary, &generic_types, &[]).is_empty());
 }
 
 #[test]
@@ -81,7 +80,7 @@ fn trait_qualified_calls_retain_the_named_trait_path() {
     .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+    let observed = facts(call(&file), &imports, &SyntaxGuard::Ordinary, &[], &[]);
 
     assert!(
         observed.iter().any(|fact| {
@@ -102,9 +101,10 @@ fn associated_type_qualified_calls_become_resolution_boundaries() {
     let boundary = unresolved_path_projection(
         callee_path(call.func.as_ref()).expect("callable path"),
         SyntaxGuard::Ordinary,
+        &[],
     )
     .expect("associated type projection is unresolved");
-    let observed = facts(call, &imports, SyntaxGuard::Ordinary, &[], &[]);
+    let observed = facts(call, &imports, &SyntaxGuard::Ordinary, &[], &[]);
 
     assert_eq!(boundary.written, "<Runtime as Provider>::Command::new");
     assert!(observed.is_empty());
@@ -116,14 +116,16 @@ fn non_path_qualified_self_calls_are_never_exact() {
         .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+    let call = call(&file);
+    let boundary = unresolved_path_projection(
+        callee_path(call.func.as_ref()).expect("callable path"),
+        SyntaxGuard::Ordinary,
+        &[],
+    )
+    .expect("non-path self type is unresolved");
 
-    assert!(
-        observed
-            .iter()
-            .any(|fact| { fact.name == "::new" && fact.quality == AnalysisQuality::Unresolved }),
-        "{observed:#?}"
-    );
+    assert_eq!(boundary.written, "<unresolved self type>::new");
+    assert!(facts(call, &imports, &SyntaxGuard::Ordinary, &[], &[]).is_empty());
 }
 
 #[test]
@@ -132,7 +134,7 @@ fn glob_imports_add_a_conservative_called_path() {
         .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+    let observed = facts(call(&file), &imports, &SyntaxGuard::Ordinary, &[], &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
@@ -147,7 +149,7 @@ fn function_local_imports_add_a_conservative_called_path() {
     .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+    let observed = facts(call(&file), &imports, &SyntaxGuard::Ordinary, &[], &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
@@ -162,7 +164,7 @@ fn type_aliases_add_a_conservative_called_path() {
     .expect("parse source");
     let imports = ImportMap::from_file(&file);
 
-    let observed = facts(call(&file), &imports, SyntaxGuard::Ordinary, &[], &[]);
+    let observed = facts(call(&file), &imports, &SyntaxGuard::Ordinary, &[], &[]);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
@@ -178,7 +180,7 @@ fn type_aliases_add_a_conservative_reference_path() {
     let imports = ImportMap::from_file(&file);
     let path = syn::parse_str::<syn::Path>("Process::new").expect("parse path");
 
-    let observed = candidates(&path, &imports, "Process::new", SyntaxGuard::Ordinary);
+    let observed = candidates(&path, &imports, "Process::new", &SyntaxGuard::Ordinary);
 
     assert!(observed.iter().any(|fact| {
         fact.name == "std::process::Command::new" && fact.quality == AnalysisQuality::Conservative
@@ -196,7 +198,7 @@ fn macro_candidate_sets_fail_closed_at_the_fixed_limit() {
     let path = syn::parse_str::<syn::Path>("reviewed").expect("parse macro path");
 
     let (candidates, overflowed) =
-        macro_candidates(&path, &imports, "reviewed", SyntaxGuard::Ordinary);
+        macro_candidates(&path, &imports, "reviewed", &SyntaxGuard::Ordinary);
 
     assert!(overflowed);
     assert!(candidates.is_empty());
@@ -212,7 +214,7 @@ fn inline_module_globs_do_not_become_file_wide_macro_candidates() {
     let path = syn::parse_str::<syn::Path>("assert").expect("parse macro path");
 
     let (candidates, overflowed) =
-        macro_candidates(&path, &imports, "assert", SyntaxGuard::Ordinary);
+        macro_candidates(&path, &imports, "assert", &SyntaxGuard::Ordinary);
 
     assert!(!overflowed);
     assert_eq!(candidates.len(), 1);
@@ -227,7 +229,7 @@ fn ordinary_macro_occurrences_include_test_only_alias_candidates() {
     let path = syn::parse_str::<syn::Path>("Model").expect("parse macro path");
 
     let (candidates, overflowed) =
-        macro_candidates(&path, &imports, "serde::Serialize", SyntaxGuard::Ordinary);
+        macro_candidates(&path, &imports, "serde::Serialize", &SyntaxGuard::Ordinary);
 
     assert!(!overflowed);
     assert!(

@@ -131,6 +131,8 @@ fn binding_matches(
         inputs: MacroInputMode::Inspect,
         binding,
         bindings: MacroExpansionBindings::Opaque,
+        async_syntax: zrail_core::MacroAsyncSyntax::Opaque,
+        duplication_effect: zrail_core::MacroDuplicationEffect::Opaque,
         definition: None,
         source: allowance.source.clone(),
         reason: allowance.reason.clone(),

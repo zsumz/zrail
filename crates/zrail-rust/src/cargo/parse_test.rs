@@ -175,6 +175,31 @@ fn active_path_dependency_cannot_cross_a_nested_workspace() {
     reset(&root);
 }
 
+#[test]
+fn workspace_retains_exact_package_feature_closure() {
+    let root = fixture_root("package-features");
+    reset(&root);
+    write(
+        &root.join("Cargo.toml"),
+        concat!(
+            "[package]\nname = 'feature-app'\nversion = '0.0.0'\n",
+            "[features]\ndefault = ['network']\nnetwork = ['metrics']\nmetrics = []\n",
+        ),
+    );
+    write(&root.join("src/lib.rs"), "//! feature app\n");
+
+    let workspace = load(&root).expect("load feature package");
+    let active = workspace.package_features["feature-app"]
+        .resolve(true, &[])
+        .expect("resolve default world");
+
+    assert_eq!(
+        active.into_iter().collect::<Vec<_>>(),
+        ["default", "metrics", "network"]
+    );
+    reset(&root);
+}
+
 fn load(root: &std::path::Path) -> Result<super::CargoWorkspace, super::CargoModelError> {
     let inventory = inventory_cargo_repository(root).expect("inventory Cargo repository");
     load_cargo_workspace(&inventory)

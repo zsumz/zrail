@@ -14,7 +14,7 @@ impl IncludeBindings {
         &self,
         instance: SourceInstanceId,
         name: &str,
-        context: SyntaxGuard,
+        context: &SyntaxGuard,
         seen: &mut BTreeSet<SourceInstanceId>,
         budget: &mut ProjectionBudget,
     ) -> Result<Vec<BindingSite>, ProjectionLimit> {
@@ -34,7 +34,9 @@ impl IncludeBindings {
             .flatten()
         {
             budget.consume_work()?;
-            let availability = binding.guard.availability_in(context);
+            let availability = binding
+                .guard
+                .availability_for_domain(context, &source.domain);
             if binding.name.as_deref() == Some(name)
                 && binding.lexical_scope.is_empty()
                 && availability.is_available()
@@ -42,8 +44,12 @@ impl IncludeBindings {
                 let Some(module) = self.effective_module(instance, &[], budget)? else {
                     continue;
                 };
+                let mut binding = binding.clone();
+                if availability == super::GuardAvailability::Possible {
+                    binding.quality = zrail_core::AnalysisQuality::Unresolved;
+                }
                 sites.push(BindingSite {
-                    binding: binding.clone(),
+                    binding,
                     instance,
                     module,
                     crossed_include: true,

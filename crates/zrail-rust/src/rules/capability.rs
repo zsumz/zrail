@@ -6,6 +6,7 @@ mod ownership;
 mod ownership_call;
 mod ownership_operation;
 mod profiles;
+mod syntax;
 
 use zrail_core::{AnalysisQuality, Finding, FindingSink, glob_matches};
 
@@ -19,6 +20,8 @@ pub(crate) use ownership_call::{
     CallOwnerEvidenceKind, matching_evidence as matching_call_owner_evidence,
 };
 pub(crate) use ownership_operation::matching_operations as matching_operation_owner_operations;
+pub(crate) use profiles::assigned_profiles;
+pub(crate) use syntax::syntax_name as async_syntax_name;
 
 pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     check_exact_scopes(context, findings);
@@ -136,6 +139,8 @@ pub(super) fn path_matches(denied: &str, observed: &ObservedFact) -> bool {
 }
 
 pub(super) fn normalized_path(path: &str) -> String {
+    let path = path.strip_prefix("::").unwrap_or(path);
+    let path = path.strip_prefix("crate::").unwrap_or(path);
     path.split("::")
         .map(|segment| segment.strip_prefix("r#").unwrap_or(segment))
         .collect::<Vec<_>>()

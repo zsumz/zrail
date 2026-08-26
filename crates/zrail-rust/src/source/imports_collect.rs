@@ -13,7 +13,7 @@ pub(super) fn collect_use(
     prefix: Vec<String>,
     tree: &UseTree,
     conditional: bool,
-    guard: SyntaxGuard,
+    guard: &SyntaxGuard,
     re_export: bool,
 ) {
     match tree {
@@ -28,7 +28,7 @@ pub(super) fn collect_use(
                     &mut imports.aliases,
                     &mut imports.alias_guards,
                     &mut imports.unresolved,
-                    alias.clone(),
+                    alias,
                     prefix.join("::"),
                     conditional,
                     guard,
@@ -94,14 +94,14 @@ fn insert_alias(
     alias: String,
     target: &[String],
     conditional: bool,
-    guard: SyntaxGuard,
+    guard: &SyntaxGuard,
     re_export: bool,
 ) {
     insert_primary_alias(
         &mut imports.aliases,
         &mut imports.alias_guards,
         &mut imports.unresolved,
-        alias.clone(),
+        &alias,
         target.join("::"),
         conditional,
         guard,

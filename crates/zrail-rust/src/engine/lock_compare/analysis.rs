@@ -14,7 +14,7 @@ pub(super) fn compare(current: &LockFile, candidate: &LockFile, findings: &mut F
                 "lock",
                 "zrail.lock has no reviewed analysis completeness certificate",
             )
-            .with_help("run `zrail migrate-lock` before updating epoch-3 lock authority"),
+            .with_help("run `zrail migrate-lock` before updating prior-epoch lock authority"),
         );
         return;
     };
@@ -34,6 +34,24 @@ pub(super) fn compare(current: &LockFile, candidate: &LockFile, findings: &mut F
         reviewed.cargo_lock_sha256 != expected.cargo_lock_sha256,
         "LOCK-039",
         "the exact Cargo.lock bytes differ from zrail.lock",
+        findings,
+    );
+    changed(
+        reviewed.cargo_features_sha256 != expected.cargo_features_sha256,
+        "LOCK-043",
+        "Cargo feature definitions differ from zrail.lock",
+        findings,
+    );
+    changed(
+        reviewed.feature_worlds_sha256 != expected.feature_worlds_sha256,
+        "LOCK-044",
+        "configured or resolved Cargo feature worlds differ from zrail.lock",
+        findings,
+    );
+    changed(
+        reviewed.feature_worlds != expected.feature_worlds,
+        "LOCK-045",
+        "the exact Cargo feature-world count differs from zrail.lock",
         findings,
     );
     changed(

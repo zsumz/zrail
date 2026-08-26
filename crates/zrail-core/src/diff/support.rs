@@ -3,8 +3,8 @@
 use std::collections::BTreeSet;
 
 use crate::{
-    CycleMode, DependencyMode, ExternalDependencyMode, FacadeMode, LintSuppressionMode,
-    MacroExpansionMode, ModuleDocsMode, PolicyMode, SymlinkMode, TestMode,
+    CycleMode, DependencyMode, ExternalDependencyMode, FacadeMode, GlobImportMode,
+    LintSuppressionMode, MacroExpansionMode, ModuleDocsMode, PolicyMode, SymlinkMode, TestMode,
 };
 
 use super::{ArchitectureChange, ChangeKind};
@@ -143,6 +143,14 @@ pub(super) const fn rank_lint_suppressions(mode: LintSuppressionMode) -> u8 {
         LintSuppressionMode::Allow => 0,
         LintSuppressionMode::Reasoned => 1,
         LintSuppressionMode::Deny => 2,
+    }
+}
+
+pub(super) const fn rank_glob_imports(mode: GlobImportMode) -> u8 {
+    match mode {
+        GlobImportMode::Allow => 0,
+        GlobImportMode::FacadeReexportsOnly => 1,
+        GlobImportMode::Deny => 2,
     }
 }
 

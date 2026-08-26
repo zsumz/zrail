@@ -4,14 +4,13 @@ use syn::{Attribute, spanned::Spanned};
 use zrail_core::AnalysisQuality;
 
 use super::{
-    MacroExpansionFact,
-    attributes::{is_lint_suppression, lint_suppression_is_reasoned, unsafe_attribute_names},
+    FactVisitor, MacroExpansionFact,
+    attributes::{lint_suppression_effects, unsafe_attribute_effects},
     fact::fact,
-    visitor::FactVisitor,
 };
 
 impl FactVisitor<'_> {
-    pub(super) fn record_attribute(&mut self, attribute: &Attribute) {
+    pub(in crate::source) fn record_attribute(&mut self, attribute: &Attribute) {
         self.record_lint_suppression(attribute);
         self.record_unsafe_attributes(attribute);
         if attribute.path().is_ident("macro_use") {
@@ -27,33 +26,43 @@ impl FactVisitor<'_> {
     }
 
     fn record_lint_suppression(&mut self, attribute: &Attribute) {
-        if is_lint_suppression(attribute) {
-            self.lint_suppressions.push(fact(
-                if lint_suppression_is_reasoned(attribute) {
-                    "reasoned lint suppression"
-                } else {
-                    "unreasoned lint suppression"
-                },
-                attribute.span(),
-                AnalysisQuality::Exact,
-            ));
-        }
+        let enclosing = self.syntax_guard();
+        self.lint_suppressions
+            .extend(
+                lint_suppression_effects(attribute)
+                    .into_iter()
+                    .map(|effect| {
+                        let mut observed = fact(
+                            if effect.reasoned {
+                                "reasoned lint suppression"
+                            } else {
+                                "unreasoned lint suppression"
+                            },
+                            attribute.span(),
+                            AnalysisQuality::Exact,
+                        );
+                        observed.guard = enclosing.combine(effect.guard);
+                        observed
+                    }),
+            );
     }
 
     fn record_unsafe_attributes(&mut self, attribute: &Attribute) {
-        let quality = if attribute.path().is_ident("cfg_attr") {
-            AnalysisQuality::Conservative
-        } else {
-            AnalysisQuality::Exact
-        };
+        let enclosing = self.syntax_guard();
         self.unsafe_constructs
-            .extend(unsafe_attribute_names(attribute).into_iter().map(|name| {
-                fact(
-                    format!("unsafe attribute {name}"),
-                    attribute.span(),
-                    quality,
-                )
-            }));
+            .extend(
+                unsafe_attribute_effects(attribute)
+                    .into_iter()
+                    .map(|effect| {
+                        let mut observed = fact(
+                            format!("unsafe attribute {}", effect.name),
+                            attribute.span(),
+                            AnalysisQuality::Exact,
+                        );
+                        observed.guard = enclosing.combine(effect.guard);
+                        observed
+                    }),
+            );
     }
 
     fn record_attribute_expansions(&mut self, attribute: &Attribute) {
@@ -72,7 +81,11 @@ impl FactVisitor<'_> {
                     attribute.span(),
                     AnalysisQuality::Unresolved,
                 )));
-            self.record_opaque_attribute(attribute.path(), attribute.span());
+            self.record_opaque_attribute(
+                attribute.path(),
+                attribute.span(),
+                &super::SyntaxGuard::Ordinary,
+            );
             return;
         };
         for expansion in expansions {
@@ -92,7 +105,11 @@ impl FactVisitor<'_> {
                 && quality == AnalysisQuality::Exact
                 && super::macro_expansion::is_compiler_derive(&expansion.path, &resolved);
             if !compiler_derive {
-                self.record_opaque_attribute(&expansion.path, expansion.path.span());
+                self.record_opaque_attribute(
+                    &expansion.path,
+                    expansion.path.span(),
+                    &expansion.guard,
+                );
             }
             let mut invocation = self.macro_invocation(&expansion.path);
             if expansion.kind == super::macro_expansion::ExpansionKind::Derive
@@ -104,11 +121,17 @@ impl FactVisitor<'_> {
                 invocation.observation = observed;
                 invocation.bind_compiler_candidate(&resolved);
             }
+            invocation.apply_guard(&expansion.guard);
             self.macro_expansions.push(invocation);
         }
     }
 
-    fn record_opaque_attribute(&mut self, path: &syn::Path, span: proc_macro2::Span) {
+    fn record_opaque_attribute(
+        &mut self,
+        path: &syn::Path,
+        span: proc_macro2::Span,
+        effect_guard: &super::SyntaxGuard,
+    ) {
         let mut opaque = fact(
             path.segments
                 .iter()
@@ -118,7 +141,7 @@ impl FactVisitor<'_> {
             span,
             AnalysisQuality::Unresolved,
         );
-        opaque.guard = self.syntax_guard();
+        opaque.guard = self.syntax_guard().combine(effect_guard);
         opaque.lexical_scope.clone_from(&self.lexical_scope);
         self.opaque_binding_macros.push(opaque);
     }

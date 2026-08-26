@@ -14,11 +14,13 @@ fn explanation_contains_actionable_source_policy() {
     )
     .expect("explain fixture path");
 
-    assert_eq!(explanation.schema, 1);
+    assert_eq!(explanation.schema, 2);
     assert_eq!(explanation.reachability, "production");
     assert_eq!(explanation.unsafe_code, "deny");
     assert_eq!(explanation.lint_suppressions, "deny");
     assert_eq!(explanation.denied_methods, ["unwrap", "expect"]);
+    assert!(explanation.denied_syntax.is_empty());
+    assert_eq!(explanation.glob_imports, "allow");
     assert_eq!(explanation.macro_expansion, "allow");
     assert_eq!(
         explanation.expected_sibling_test.as_deref(),

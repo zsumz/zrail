@@ -34,7 +34,7 @@ pub(super) fn collect<'a>(
                     Vec::new(),
                     &item.tree,
                     conditional(&item.attrs),
-                    guard,
+                    &guard,
                 );
             }
             Item::ExternCrate(item) => {
@@ -117,10 +117,8 @@ fn expand(
         } else {
             resolution.target.push_str(suffix);
         }
-        resolution.guard = resolution.guard.combine(*guard);
-        if *conditional && (*guard == SyntaxGuard::Ordinary || guard.is_conditional()) {
-            resolution.quality = AnalysisQuality::Unresolved;
-        }
+        resolution.guard = resolution.guard.combine(guard);
+        let _ = conditional;
         resolution.local_module |= *local_module;
         Some(resolution)
     })();
@@ -143,7 +141,7 @@ fn collect_use(
     prefix: Vec<String>,
     tree: &UseTree,
     conditional: bool,
-    guard: SyntaxGuard,
+    guard: &SyntaxGuard,
 ) {
     match tree {
         UseTree::Path(path) => {
@@ -156,7 +154,7 @@ fn collect_use(
                 insert_raw(
                     raw,
                     alias.clone(),
-                    (prefix.join("::"), conditional, false, guard),
+                    (prefix.join("::"), conditional, false, guard.clone()),
                 );
             }
         }
@@ -166,7 +164,7 @@ fn collect_use(
             insert_raw(
                 raw,
                 name.ident.to_string(),
-                (target.join("::"), conditional, false, guard),
+                (target.join("::"), conditional, false, guard.clone()),
             );
         }
         UseTree::Rename(rename) => {
@@ -178,7 +176,7 @@ fn collect_use(
                 insert_raw(
                     raw,
                     rename.rename.to_string(),
-                    (target.join("::"), conditional, false, guard),
+                    (target.join("::"), conditional, false, guard.clone()),
                 );
             }
         }
@@ -196,7 +194,7 @@ fn insert_raw(raw: &mut BTreeMap<String, RawAlias>, alias: String, value: RawAli
         raw.insert(alias, value);
         return;
     };
-    match (existing.3, value.3) {
+    match (&existing.3, &value.3) {
         (SyntaxGuard::TestOnly, SyntaxGuard::Ordinary) => *existing = value,
         (SyntaxGuard::Ordinary, SyntaxGuard::TestOnly) => {}
         _ if existing.0 != value.0 => existing.1 = true,

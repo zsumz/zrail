@@ -24,7 +24,7 @@ impl ImportMap {
                 (
                     path.as_str(),
                     quality,
-                    self.alias_guards.get(alias).copied().unwrap_or_default(),
+                    self.alias_guards.get(alias).cloned().unwrap_or_default(),
                 )
             })
             .collect::<Vec<_>>();
@@ -44,7 +44,7 @@ impl ImportMap {
                 } else {
                     AnalysisQuality::Exact
                 },
-                guard: self.alias_guards.get(name).copied().unwrap_or_default(),
+                guard: self.alias_guards.get(name).cloned().unwrap_or_default(),
                 re_export: self.re_exports.contains_key(name),
             })
             .collect()
@@ -53,14 +53,14 @@ impl ImportMap {
     pub(super) fn declared_globs(&self) -> Vec<(&str, SyntaxGuard)> {
         self.globs
             .iter()
-            .map(|(path, guard)| (path.as_str(), *guard))
+            .map(|(path, guard)| (path.as_str(), guard.clone()))
             .collect()
     }
 
     pub(super) fn call_candidates(
         &self,
         path: &syn::Path,
-        context: SyntaxGuard,
+        context: &SyntaxGuard,
     ) -> Vec<ImportCandidate> {
         self.collect_candidates(path, usize::MAX, context).0
     }
@@ -69,7 +69,7 @@ impl ImportMap {
         &self,
         path: &syn::Path,
         limit: usize,
-        context: SyntaxGuard,
+        context: &SyntaxGuard,
     ) -> (Vec<ImportCandidate>, bool) {
         self.collect_candidates_with_globs(path, limit, context, &self.macro_globs, true)
     }
@@ -78,7 +78,7 @@ impl ImportMap {
         &self,
         path: &syn::Path,
         limit: usize,
-        context: SyntaxGuard,
+        context: &SyntaxGuard,
     ) -> (Vec<ImportCandidate>, bool) {
         self.collect_candidates_with_globs(path, limit, context, &self.globs, false)
     }
@@ -87,7 +87,7 @@ impl ImportMap {
         &self,
         path: &syn::Path,
         limit: usize,
-        context: SyntaxGuard,
+        context: &SyntaxGuard,
         globs: &BTreeMap<String, SyntaxGuard>,
         overlap_domains: bool,
     ) -> (Vec<ImportCandidate>, bool) {
@@ -102,13 +102,13 @@ impl ImportMap {
         let remainder = &segments[1..];
         let mut candidates = BTreeMap::new();
         for (prefix, guard) in self.call_aliases.get(first).into_iter().flatten() {
-            if !available(*guard, context, overlap_domains) {
+            if !available(guard, context, overlap_domains) {
                 continue;
             }
             let kind = if self
                 .re_exports
                 .get(first)
-                .is_some_and(|guard| available(*guard, context, overlap_domains))
+                .is_some_and(|guard| available(guard, context, overlap_domains))
             {
                 ImportCandidateKind::ReExport
             } else {
@@ -121,13 +121,13 @@ impl ImportMap {
         }
         let syntactic = segments.join("::");
         for (glob, guard) in globs {
-            if !available(*guard, context, overlap_domains) {
+            if !available(guard, context, overlap_domains) {
                 continue;
             }
             let kind = if self
                 .re_export_globs
                 .get(glob)
-                .is_some_and(|guard| available(*guard, context, overlap_domains))
+                .is_some_and(|guard| available(guard, context, overlap_domains))
             {
                 ImportCandidateKind::ReExport
             } else {
@@ -149,7 +149,7 @@ impl ImportMap {
         )
     }
 
-    pub(super) fn re_exports(&self, path: &syn::Path, context: SyntaxGuard) -> bool {
+    pub(super) fn re_exports(&self, path: &syn::Path, context: &SyntaxGuard) -> bool {
         path.segments
             .first()
             .and_then(|segment| self.re_exports.get(&segment.ident.to_string()))
@@ -157,7 +157,7 @@ impl ImportMap {
     }
 }
 
-fn available(candidate: SyntaxGuard, context: SyntaxGuard, overlap_domains: bool) -> bool {
+fn available(candidate: &SyntaxGuard, context: &SyntaxGuard, overlap_domains: bool) -> bool {
     if overlap_domains {
         candidate.overlaps(context)
     } else {

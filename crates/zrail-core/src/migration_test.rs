@@ -1,16 +1,16 @@
-//! Adjacent-epoch migration classifies every old and new authority subject.
+//! Supported prior epochs classify every old and new authority subject.
 
 use crate::{
-    LOCK_SCHEMA, LOCK_SEMANTICS, LockFile, LockMigrationClassification, LockedExecutionReceipt,
+    LOCK_SEMANTICS, LockFile, LockMigrationClassification, LockedExecutionReceipt,
     LockedGeneratedSource, compare_lock_epochs,
 };
 
 #[test]
-fn adjacent_epoch_migration_is_scoped_per_authority_subject() {
+fn epoch_one_migration_is_scoped_per_authority_subject() {
     let digest = "0".repeat(64);
     let mut old = LockFile::new(&digest);
-    old.schema = LOCK_SCHEMA - 1;
-    old.semantics = LOCK_SEMANTICS - 1;
+    old.schema = 1;
+    old.semantics = 1;
     old.analysis = None;
     old.generated.push(LockedGeneratedSource {
         root: "generated".into(),
@@ -31,7 +31,7 @@ fn adjacent_epoch_migration_is_scoped_per_authority_subject() {
         producer: "test-runner 1.2.3".into(),
     });
 
-    let report = compare_lock_epochs(&old, &new).expect("compare adjacent epoch");
+    let report = compare_lock_epochs(&old, &new).expect("compare epoch one");
 
     assert!(report.entries.iter().any(|entry| {
         entry.rail == "rust.generated-provenance"
@@ -41,23 +41,89 @@ fn adjacent_epoch_migration_is_scoped_per_authority_subject() {
         entry.rail == "analysis.inventory"
             && entry.classification == LockMigrationClassification::NewlyObservable
     }));
+    for rail in [
+        "analysis.cargo-features",
+        "analysis.feature-worlds",
+        "analysis.feature-world-count",
+    ] {
+        assert!(report.entries.iter().any(|entry| {
+            entry.rail == rail
+                && entry.classification == LockMigrationClassification::NewlyObservable
+        }));
+    }
     assert!(report.entries.iter().any(|entry| {
         entry.rail == "rust.test-mirror-receipt-lock"
             && entry.classification == LockMigrationClassification::NewlyObservable
     }));
     assert!(report.summary.preserved > 0);
     assert_eq!(report.summary.changed_interpretation, 1);
+    assert_eq!(report.from_semantics, 1);
+    assert_eq!(report.to_semantics, LOCK_SEMANTICS);
 }
 
 #[test]
-fn migration_rejects_nonadjacent_or_different_contract_authority() {
+fn migration_accepts_each_released_prior_epoch() {
+    for (schema, semantics) in [(1, 1), (1, 2), (2, 3)] {
+        let mut old = LockFile::new("0".repeat(64));
+        old.schema = schema;
+        old.semantics = semantics;
+        old.analysis = None;
+        let report = compare_lock_epochs(&old, &LockFile::new("0".repeat(64)))
+            .expect("compare supported prior epoch");
+        assert_eq!(report.from_semantics, semantics);
+    }
+}
+
+#[test]
+fn schema_two_analysis_without_feature_fields_remains_migratable() {
+    let digest = "0".repeat(64);
+    let source = format!(
+        r#"schema = 2
+semantics = 3
+producer = "0.0.3-rc.4"
+contract_sha256 = "{digest}"
+
+[analysis]
+inventory_sha256 = "{digest}"
+exclusions_sha256 = "{digest}"
+packages = 1
+targets = 1
+physical_rust_files = 1
+base_source_contexts = 1
+derived_source_contexts = 0
+source_facts = 1
+projection_queries = 0
+projected_facts = 0
+unresolved_bindings = 0
+analyzer_semantics = 3
+"#
+    );
+    let old: LockFile = toml::from_str(&source).expect("parse schema two lock");
+    let analysis = old.analysis.as_ref().expect("legacy analysis");
+    assert!(analysis.cargo_features_sha256.is_empty());
+    assert!(analysis.feature_worlds_sha256.is_empty());
+    assert_eq!(analysis.feature_worlds, None);
+
+    let report = compare_lock_epochs(&old, &LockFile::new(digest)).expect("migrate schema two");
+    assert!(report.entries.iter().any(|entry| {
+        entry.rail == "analysis.feature-worlds"
+            && entry.classification == LockMigrationClassification::NewlyObservable
+    }));
+}
+
+#[test]
+fn migration_rejects_unsupported_or_different_contract_authority() {
     let mut old = LockFile::new("0".repeat(64));
-    old.schema = LOCK_SCHEMA - 1;
-    old.semantics = LOCK_SEMANTICS - 2;
+    old.schema = 1;
+    old.semantics = 0;
     let new = LockFile::new("0".repeat(64));
     assert!(compare_lock_epochs(&old, &new).is_err());
 
-    old.semantics = LOCK_SEMANTICS - 1;
+    old.semantics = 1;
+    old.schema = 2;
+    assert!(compare_lock_epochs(&old, &new).is_err());
+
+    old.schema = 1;
     let changed = LockFile::new("1".repeat(64));
     assert!(compare_lock_epochs(&old, &changed).is_err());
 }

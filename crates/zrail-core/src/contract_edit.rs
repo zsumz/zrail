@@ -1,8 +1,10 @@
-//! Canonical formatting and schema-key migration for one contract source.
+//! Syntax-preserving formatting and schema-key migration for one contract source.
 
-use std::{error::Error, fmt};
+mod macro_keys;
 
-use toml::{Table, Value};
+use std::{error::Error, fmt, ops::Range};
+
+use toml_edit::{ImDocument, Item, Value};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 /// A contract source could not be parsed, transformed, or rendered.
@@ -16,102 +18,148 @@ impl fmt::Display for ContractEditError {
 
 impl Error for ContractEditError {}
 
-/// Canonically formats one TOML contract source with a trailing newline.
-pub fn format_contract_source(source: &str) -> Result<String, ContractEditError> {
-    render(&parse(source)?)
+#[derive(Debug)]
+pub(super) struct Replacement {
+    span: Range<usize>,
+    text: String,
 }
 
-/// Migrates one contract source to schema-2 keys and canonical formatting.
+/// Validates one TOML contract source without rewriting authored layout.
+///
+/// Comments, blank lines, key order, indentation, quoting, and markers remain
+/// byte-for-byte identical. A missing final newline is the only formatting
+/// change.
+pub fn format_contract_source(source: &str) -> Result<String, ContractEditError> {
+    parse(source)?;
+    Ok(with_trailing_newline(source.to_owned()))
+}
+
+/// Migrates one contract source to schema-2 keys without reserializing it.
 ///
 /// `entry` identifies the root source that owns the schema declaration.
-/// `exact_imports` replaces an existing imports array after the caller resolves
-/// legacy patterns against the complete, repository-bounded contract bundle.
+/// `exact_imports` contains the repository-bounded paths resolved by the
+/// caller. Legacy patterns are expanded in place and every other authored byte
+/// is preserved.
 pub fn migrate_contract_source(
     source: &str,
     entry: bool,
     exact_imports: &[String],
 ) -> Result<String, ContractEditError> {
-    let mut value = parse(source)?;
-    let table = value
-        .as_table_mut()
-        .ok_or_else(|| ContractEditError("contract source root must be a TOML table".into()))?;
+    let document = parse(source)?;
+    let mut replacements = Vec::new();
     if entry {
-        table.insert("schema".into(), Value::Integer(2));
+        migrate_schema(&document, &mut replacements)?;
     }
-    replace_imports(table, exact_imports)?;
-    migrate_macro_keys(table)?;
-    render(&value)
+    migrate_imports(&document, exact_imports, &mut replacements)?;
+    macro_keys::migrate_macro_keys(&document, source, &mut replacements)?;
+    let rendered = apply(source, replacements)?;
+    parse(&rendered)?;
+    Ok(with_trailing_newline(rendered))
 }
 
-fn parse(source: &str) -> Result<Value, ContractEditError> {
-    source
-        .parse::<Value>()
+fn parse(source: &str) -> Result<ImDocument<String>, ContractEditError> {
+    ImDocument::parse(source.to_owned())
         .map_err(|error| ContractEditError(format!("parse contract source: {error}")))
 }
 
-fn render(value: &Value) -> Result<String, ContractEditError> {
-    let mut text = toml::to_string_pretty(&value)
-        .map_err(|error| ContractEditError(format!("render contract source: {error}")))?;
-    if !text.ends_with('\n') {
-        text.push('\n');
+fn migrate_schema(
+    document: &ImDocument<String>,
+    replacements: &mut Vec<Replacement>,
+) -> Result<(), ContractEditError> {
+    let schema = document
+        .get("schema")
+        .and_then(Item::as_value)
+        .ok_or_else(|| ContractEditError("contract entry must declare schema".into()))?;
+    let value = schema
+        .as_integer()
+        .ok_or_else(|| ContractEditError("contract schema must be an integer".into()))?;
+    if value != 2 {
+        replace_value(schema, "2", replacements)?;
     }
-    Ok(text)
+    Ok(())
 }
 
-fn replace_imports(table: &mut Table, exact_imports: &[String]) -> Result<(), ContractEditError> {
-    let Some(imports) = table.get_mut("imports") else {
+fn migrate_imports(
+    document: &ImDocument<String>,
+    exact_imports: &[String],
+    replacements: &mut Vec<Replacement>,
+) -> Result<(), ContractEditError> {
+    let Some(imports) = document.get("imports") else {
         return Ok(());
     };
-    if !imports.is_array() {
+    let imports = imports
+        .as_array()
+        .ok_or_else(|| ContractEditError("contract imports must contain an array".into()))?;
+    for import in imports {
+        let pattern = import
+            .as_str()
+            .ok_or_else(|| ContractEditError("contract imports must contain strings".into()))?;
+        if !has_wildcard(pattern) {
+            continue;
+        }
+        let mut matches = exact_imports
+            .iter()
+            .filter(|path| crate::glob_matches(pattern, path))
+            .cloned()
+            .collect::<Vec<_>>();
+        matches.sort();
+        matches.dedup();
+        if matches.is_empty() {
+            return Err(ContractEditError(format!(
+                "contract import {pattern:?} matched no exact paths"
+            )));
+        }
+        let text = matches
+            .iter()
+            .map(|path| Value::from(path.as_str()).to_string())
+            .collect::<Vec<_>>()
+            .join(", ");
+        replace_value(import, &text, replacements)?;
+    }
+    Ok(())
+}
+
+fn replace_value(
+    value: &Value,
+    text: &str,
+    replacements: &mut Vec<Replacement>,
+) -> Result<(), ContractEditError> {
+    let span = value
+        .span()
+        .ok_or_else(|| ContractEditError("contract value has no source span".into()))?;
+    replacements.push(Replacement {
+        span,
+        text: text.into(),
+    });
+    Ok(())
+}
+
+fn apply(source: &str, mut replacements: Vec<Replacement>) -> Result<String, ContractEditError> {
+    replacements.sort_by_key(|replacement| replacement.span.start);
+    if replacements
+        .windows(2)
+        .any(|pair| pair[0].span.end > pair[1].span.start)
+    {
         return Err(ContractEditError(
-            "contract imports must contain an array".into(),
+            "contract migration produced overlapping edits".into(),
         ));
     }
-    let mut exact = exact_imports.to_vec();
-    exact.sort();
-    exact.dedup();
-    *imports = Value::Array(exact.into_iter().map(Value::String).collect());
-    Ok(())
+    let mut rendered = source.to_owned();
+    for replacement in replacements.into_iter().rev() {
+        rendered.replace_range(replacement.span, &replacement.text);
+    }
+    Ok(rendered)
 }
 
-fn migrate_macro_keys(table: &mut Table) -> Result<(), ContractEditError> {
-    let Some(rust) = table
-        .get_mut("source")
-        .and_then(Value::as_table_mut)
-        .and_then(|source| source.get_mut("rust"))
-        .and_then(Value::as_table_mut)
-    else {
-        return Ok(());
-    };
-    if let Some(allowances) = rust
-        .get_mut("macros")
-        .and_then(Value::as_table_mut)
-        .and_then(|macros| macros.get_mut("allow"))
-        .and_then(Value::as_array_mut)
-    {
-        for allowance in allowances.iter_mut().filter_map(Value::as_table_mut) {
-            rename(allowance, "binding", "resolution")?;
-            rename(allowance, "bindings", "namespace_effect")?;
-        }
-    }
-    if let Some(allowances) = rust.get_mut("item_macros").and_then(Value::as_array_mut) {
-        for allowance in allowances.iter_mut().filter_map(Value::as_table_mut) {
-            rename(allowance, "binding", "resolution")?;
-        }
-    }
-    Ok(())
+fn has_wildcard(value: &str) -> bool {
+    value.bytes().any(|byte| matches!(byte, b'*' | b'?'))
 }
 
-fn rename(table: &mut Table, old: &str, new: &str) -> Result<(), ContractEditError> {
-    if table.contains_key(old) && table.contains_key(new) {
-        return Err(ContractEditError(format!(
-            "contract may not combine legacy {old:?} with schema-2 {new:?}"
-        )));
+fn with_trailing_newline(mut source: String) -> String {
+    if !source.ends_with('\n') {
+        source.push('\n');
     }
-    if let Some(value) = table.remove(old) {
-        table.insert(new.into(), value);
-    }
-    Ok(())
+    source
 }
 
 #[cfg(test)]

@@ -26,6 +26,15 @@ pub(super) fn canonicalize(lock: &mut LockFile) -> Result<(), LockError> {
             "locked analysis Cargo.lock digest must be an exact SHA-256 value",
         ));
     }
+    if lock.schema == crate::LOCK_SCHEMA
+        && (!valid_digest(&analysis.cargo_features_sha256)
+            || !valid_digest(&analysis.feature_worlds_sha256)
+            || analysis.feature_worlds.is_none())
+    {
+        return Err(LockError::new(
+            "current locked analysis requires exact Cargo feature and feature-world digests",
+        ));
+    }
     if analysis.unresolved_bindings != 0 {
         return Err(LockError::new(
             "zrail.lock cannot certify unresolved analysis bindings",

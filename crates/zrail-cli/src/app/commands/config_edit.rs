@@ -116,19 +116,62 @@ impl EditPlan {
     }
 
     pub(super) fn write(&self) -> Result<(), CliError> {
+        self.write_with(require_text, replace_text)
+    }
+
+    fn write_with(
+        &self,
+        mut verify: impl FnMut(&Path, &str) -> Result<(), String>,
+        mut replace: impl FnMut(&Path, &str) -> Result<(), String>,
+    ) -> Result<(), CliError> {
         let mut written = Vec::new();
         for path in self.changed_paths() {
             let destination = self.root.join(path);
-            if let Err(error) = replace_text(&destination, &self.rendered[path]) {
+            let write = verify(&destination, &self.originals[path])
+                .map_err(|error| format!("verify {path}: {error}"))
+                .and_then(|()| {
+                    replace(&destination, &self.rendered[path])
+                        .map_err(|error| format!("write {path}: {error}"))
+                });
+            if let Err(error) = write {
+                let mut rollback_errors = Vec::new();
                 for restored in written.into_iter().rev() {
-                    let _ = replace_text(&self.root.join(restored), &self.originals[restored]);
+                    let destination = self.root.join(restored);
+                    match verify(&destination, &self.rendered[restored]) {
+                        Err(rollback) => rollback_errors.push(format!(
+                            "refuse to restore changed source {restored}: {rollback}"
+                        )),
+                        Ok(()) => {
+                            if let Err(rollback) = replace(&destination, &self.originals[restored])
+                            {
+                                rollback_errors.push(format!("restore {restored}: {rollback}"));
+                            }
+                        }
+                    }
                 }
-                return Err(CliError::new(format!("write {path}: {error}")));
+                let rollback = if rollback_errors.is_empty() {
+                    String::new()
+                } else {
+                    format!("; rollback also failed: {}", rollback_errors.join("; "))
+                };
+                return Err(CliError::new(format!("{error}{rollback}")));
             }
             written.push(path);
         }
         Ok(())
     }
+}
+
+fn require_text(path: &Path, expected: &str) -> Result<(), String> {
+    let current = fs::read_to_string(path)
+        .map_err(|error| format!("read current source {}: {error}", path.display()))?;
+    if current != expected {
+        return Err(format!(
+            "source {} changed after the edit was planned",
+            path.display()
+        ));
+    }
+    Ok(())
 }
 
 struct TemporaryOverlay(PathBuf);

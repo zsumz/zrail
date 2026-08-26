@@ -2,26 +2,30 @@
 
 use syn::{Attribute, Expr, ForeignItem, ImplItem, Item, TraitItem};
 
-use super::{SyntaxGuard, attributes::cfg_guard, visitor::FactVisitor};
+use super::{FactVisitor, SyntaxGuard, attributes::cfg_guard};
 
 impl FactVisitor<'_> {
-    pub(super) const fn syntax_guard(&self) -> SyntaxGuard {
-        self.guard_context
+    pub(in crate::source) fn syntax_guard(&self) -> SyntaxGuard {
+        self.guard_context.clone()
     }
 
-    pub(super) fn with_cfg(&mut self, attributes: &[Attribute], visit: impl FnOnce(&mut Self)) {
-        let previous = self.guard_context;
+    pub(in crate::source) fn with_cfg(
+        &mut self,
+        attributes: &[Attribute],
+        visit: impl FnOnce(&mut Self),
+    ) {
+        let previous = self.guard_context.clone();
         let effective = previous.combine(cfg_guard(attributes));
         let checkpoint = (effective != previous).then(|| FactCheckpoint::capture(self));
-        self.guard_context = effective;
+        self.guard_context = effective.clone();
         visit(self);
         if let Some(checkpoint) = checkpoint {
-            checkpoint.apply_guard(self, effective);
+            checkpoint.apply_guard(self, &effective);
         }
         self.guard_context = previous;
     }
 
-    pub(super) fn with_lexical_scope(
+    pub(in crate::source) fn with_lexical_scope(
         &mut self,
         span: proc_macro2::Span,
         visit: impl FnOnce(&mut Self),
@@ -31,7 +35,7 @@ impl FactVisitor<'_> {
         self.lexical_scope.pop();
     }
 
-    pub(super) fn guard_initial_paths(&mut self, guard: SyntaxGuard) {
+    pub(in crate::source) fn guard_initial_paths(&mut self, guard: &SyntaxGuard) {
         for path in &mut self.paths {
             path.apply_guard(guard);
         }
@@ -50,6 +54,7 @@ struct FactCheckpoint {
     compile_effects: usize,
     lint_suppressions: usize,
     unsafe_constructs: usize,
+    async_syntax: usize,
     tests: usize,
     item_macros: usize,
     opaque_binding_macros: usize,
@@ -69,6 +74,7 @@ impl FactCheckpoint {
             compile_effects: visitor.compile_effects.len(),
             lint_suppressions: visitor.lint_suppressions.len(),
             unsafe_constructs: visitor.unsafe_constructs.len(),
+            async_syntax: visitor.async_syntax.len(),
             tests: visitor.tests.len(),
             item_macros: visitor.item_macros.len(),
             opaque_binding_macros: visitor.opaque_binding_macros.len(),
@@ -76,7 +82,7 @@ impl FactCheckpoint {
         }
     }
 
-    fn apply_guard(self, visitor: &mut FactVisitor<'_>, guard: SyntaxGuard) {
+    fn apply_guard(self, visitor: &mut FactVisitor<'_>, guard: &SyntaxGuard) {
         apply(&mut visitor.paths[self.paths..], guard);
         apply(&mut visitor.calls[self.calls..], guard);
         apply(&mut visitor.methods[self.methods..], guard);
@@ -92,6 +98,9 @@ impl FactCheckpoint {
             &mut visitor.unsafe_constructs[self.unsafe_constructs..],
             guard,
         );
+        for syntax in &mut visitor.async_syntax[self.async_syntax..] {
+            syntax.observation.apply_guard(guard);
+        }
         apply(&mut visitor.tests[self.tests..], guard);
         apply(&mut visitor.item_macros[self.item_macros..], guard);
         apply(
@@ -113,13 +122,13 @@ impl FactCheckpoint {
     }
 }
 
-fn apply(facts: &mut [super::ObservedFact], guard: SyntaxGuard) {
+fn apply(facts: &mut [super::ObservedFact], guard: &SyntaxGuard) {
     for fact in facts {
         fact.apply_guard(guard);
     }
 }
 
-pub(super) fn item_attrs(item: &Item) -> &[Attribute] {
+pub(in crate::source) fn item_attrs(item: &Item) -> &[Attribute] {
     match item {
         Item::Const(value) => &value.attrs,
         Item::Enum(value) => &value.attrs,
@@ -140,7 +149,7 @@ pub(super) fn item_attrs(item: &Item) -> &[Attribute] {
     }
 }
 
-pub(super) fn impl_attrs(item: &ImplItem) -> &[Attribute] {
+pub(in crate::source) fn impl_attrs(item: &ImplItem) -> &[Attribute] {
     match item {
         ImplItem::Const(value) => &value.attrs,
         ImplItem::Fn(value) => &value.attrs,
@@ -150,7 +159,7 @@ pub(super) fn impl_attrs(item: &ImplItem) -> &[Attribute] {
     }
 }
 
-pub(super) fn trait_attrs(item: &TraitItem) -> &[Attribute] {
+pub(in crate::source) fn trait_attrs(item: &TraitItem) -> &[Attribute] {
     match item {
         TraitItem::Const(value) => &value.attrs,
         TraitItem::Fn(value) => &value.attrs,
@@ -160,7 +169,7 @@ pub(super) fn trait_attrs(item: &TraitItem) -> &[Attribute] {
     }
 }
 
-pub(super) fn foreign_attrs(item: &ForeignItem) -> &[Attribute] {
+pub(in crate::source) fn foreign_attrs(item: &ForeignItem) -> &[Attribute] {
     match item {
         ForeignItem::Fn(value) => &value.attrs,
         ForeignItem::Static(value) => &value.attrs,
@@ -170,7 +179,7 @@ pub(super) fn foreign_attrs(item: &ForeignItem) -> &[Attribute] {
     }
 }
 
-pub(super) fn expr_attrs(expression: &Expr) -> &[Attribute] {
+pub(in crate::source) fn expr_attrs(expression: &Expr) -> &[Attribute] {
     match expression {
         Expr::Array(value) => &value.attrs,
         Expr::Assign(value) => &value.attrs,

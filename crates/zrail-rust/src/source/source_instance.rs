@@ -158,8 +158,8 @@ impl SourceInstances {
             return None;
         }
         let guard = match &entry {
-            SourceEntry::Module(edge) => edge.guard,
-            SourceEntry::Include(edge) => edge.guard,
+            SourceEntry::Module(edge) => edge.guard.clone(),
+            SourceEntry::Include(edge) => edge.guard.clone(),
             SourceEntry::CargoRoot => return None,
         };
         let generic_types = match &entry {

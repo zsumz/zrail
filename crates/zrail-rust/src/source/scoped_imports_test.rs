@@ -40,12 +40,13 @@ fn alias_cycles_are_unresolved() {
 }
 
 #[test]
-fn conditional_aliases_never_create_exact_macro_authority() {
-    let file = syn::parse_file("#[cfg(any())] use tokio as rt;").expect("parse conditional import");
+fn conditional_aliases_retain_exact_identity_and_separate_applicability() {
+    let file = syn::parse_file("#[cfg(unix)] use tokio as rt;").expect("parse conditional import");
     let aliases = collect(file.items.iter(), external);
 
     assert_eq!(aliases["rt"].target, "tokio");
-    assert_eq!(aliases["rt"].quality, AnalysisQuality::Unresolved);
+    assert_eq!(aliases["rt"].quality, AnalysisQuality::Exact);
+    assert_eq!(aliases["rt"].guard.canonical_name(), "cfg:opaque(unix)");
 }
 
 #[test]
@@ -79,7 +80,11 @@ fn local_modules_shadow_dependency_roots_in_their_lexical_scope() {
 
     let conditional = syn::parse_file("#[cfg(unix)] mod runtime {}").expect("parse conditional");
     let conditional = collect(conditional.items.iter(), external);
-    assert_eq!(conditional["runtime"].quality, AnalysisQuality::Unresolved);
+    assert_eq!(conditional["runtime"].quality, AnalysisQuality::Exact);
+    assert_eq!(
+        conditional["runtime"].guard.canonical_name(),
+        "cfg:opaque(unix)"
+    );
 }
 
 #[test]
@@ -88,7 +93,7 @@ fn bare_local_macro_definitions_retain_repository_ownership_in_their_scope() {
     let aliases = collect(file.items.iter(), external);
 
     assert_eq!(aliases["panic"].target, "panic");
-    assert_eq!(aliases["panic"].quality, AnalysisQuality::Unresolved);
+    assert_eq!(aliases["panic"].quality, AnalysisQuality::Exact);
     assert!(aliases["panic"].local_module);
 }
 

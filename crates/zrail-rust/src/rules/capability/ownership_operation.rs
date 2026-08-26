@@ -63,7 +63,7 @@ fn operation_applies(
     operation: &SourceOperationFact,
 ) -> bool {
     let fact = &operation.identity;
-    operation_matches(owner.kind, operation.kind)
+    operation_matches(owner, operation)
         && fact_applies(owner, file, fact)
         && selector_matches(owner, fact)
 }
@@ -85,26 +85,25 @@ fn last_segment(path: &str) -> &str {
         .unwrap_or_else(|| path.rsplit("::").next().unwrap_or(path))
 }
 
-const fn operation_matches(owner: OwnerKind, operation: SourceOperationKind) -> bool {
-    matches!(
-        (owner, operation),
-        (
-            OwnerKind::TypeConstruction,
-            SourceOperationKind::TypeConstruction
-        ) | (OwnerKind::MethodName, SourceOperationKind::MethodCall)
-            | (
-                OwnerKind::FieldRead | OwnerKind::FieldAuthority,
-                SourceOperationKind::FieldRead
-            )
-            | (
-                OwnerKind::FieldWrite | OwnerKind::FieldAuthority,
-                SourceOperationKind::FieldWrite
-            )
-            | (
-                OwnerKind::FieldMutableBorrow | OwnerKind::FieldAuthority,
-                SourceOperationKind::FieldMutableBorrow
-            )
-    )
+fn operation_matches(owner: &OwnerContract, operation: &SourceOperationFact) -> bool {
+    match (owner.kind, operation.kind) {
+        (OwnerKind::TypeConstruction, SourceOperationKind::TypeConstruction)
+        | (OwnerKind::MethodName, SourceOperationKind::MethodCall)
+        | (OwnerKind::FieldRead | OwnerKind::FieldAuthority, SourceOperationKind::FieldRead)
+        | (
+            OwnerKind::FieldWrite | OwnerKind::FieldAuthority | OwnerKind::FieldMutation,
+            SourceOperationKind::FieldWrite,
+        )
+        | (
+            OwnerKind::FieldMutableBorrow | OwnerKind::FieldAuthority | OwnerKind::FieldMutation,
+            SourceOperationKind::FieldMutableBorrow,
+        ) => true,
+        (OwnerKind::FieldMutation, SourceOperationKind::FieldReceiverCall) => operation
+            .method
+            .as_ref()
+            .is_some_and(|method| owner.mutating_methods.binary_search(method).is_ok()),
+        _ => false,
+    }
 }
 
 const fn operation_label(kind: OwnerKind) -> &'static str {
@@ -114,9 +113,14 @@ const fn operation_label(kind: OwnerKind) -> &'static str {
         OwnerKind::FieldRead => "field read",
         OwnerKind::FieldWrite => "field write",
         OwnerKind::FieldMutableBorrow => "field mutable borrow",
+        OwnerKind::FieldMutation => "field mutation",
         OwnerKind::FieldAuthority => "field access",
         OwnerKind::Call => "call",
         OwnerKind::Capability => "capability use",
         OwnerKind::Directory => "directory use",
     }
 }
+
+#[cfg(test)]
+#[path = "ownership_operation_test.rs"]
+mod ownership_operation_test;
