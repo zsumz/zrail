@@ -5,6 +5,7 @@ mod effects;
 mod ownership;
 mod ownership_call;
 mod ownership_operation;
+mod ownership_operation_macros;
 mod profiles;
 mod syntax;
 

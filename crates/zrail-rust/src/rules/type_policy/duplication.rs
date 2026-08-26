@@ -1,7 +1,7 @@
 //! Clone/Copy syntax and whole-world macro opacity fail closed independently.
 
 use zrail_core::{
-    AnalysisQuality, DuplicationTrait, Finding, FindingSink, RustTypeContract, TypeLinearity,
+    AnalysisQuality, CloneCopyPolicy, DuplicationTrait, Finding, FindingSink, RustTypeContract,
     TypeProhibition,
 };
 
@@ -103,7 +103,7 @@ fn check_derives(
                 &policy.name,
                 "type-policy",
                 format!(
-                    "linear type {} derives {}",
+                    "Clone/Copy-closed type {} derives {}",
                     policy.identity,
                     trait_name(trait_kind)
                 ),
@@ -137,7 +137,7 @@ fn derive_quality(
 }
 
 pub(crate) fn denies(policy: &RustTypeContract, prohibition: TypeProhibition) -> bool {
-    policy.linearity == TypeLinearity::Required || policy.deny.contains(&prohibition)
+    policy.clone_copy == CloneCopyPolicy::Forbidden || policy.deny.contains(&prohibition)
 }
 
 pub(crate) fn standard_trait(name: &str) -> Option<DuplicationTrait> {

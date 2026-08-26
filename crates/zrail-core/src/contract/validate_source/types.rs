@@ -3,7 +3,7 @@
 use std::collections::BTreeSet;
 
 use crate::contract::{
-    Contract, RustFieldContract, RustTypeKind, TypeLinearity, validate_limits::ValidationErrors,
+    CloneCopyPolicy, Contract, RustFieldContract, RustTypeKind, validate_limits::ValidationErrors,
     validate_paths::validate_repository_literal, validate_sets::require_reason,
 };
 
@@ -66,7 +66,7 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
         validate_authority(policy, errors);
         if policy.kind == RustTypeKind::Type
             && policy.deny.is_empty()
-            && policy.linearity == TypeLinearity::Allow
+            && policy.clone_copy == CloneCopyPolicy::Allow
             && policy.visibility.is_none()
             && policy.leaf_module.is_none()
             && policy.fields.is_none()
@@ -113,9 +113,9 @@ fn validate_authority(policy: &crate::RustTypeContract, errors: &mut ValidationE
     if policy.kind != RustTypeKind::AuthorityToken {
         return;
     }
-    if policy.linearity != TypeLinearity::Required {
+    if policy.clone_copy != CloneCopyPolicy::Forbidden {
         errors.push(format!(
-            "authority-token policy {:?} requires linearity = \"required\"",
+            "authority-token policy {:?} requires clone_copy = \"forbidden\"",
             policy.name
         ));
     }

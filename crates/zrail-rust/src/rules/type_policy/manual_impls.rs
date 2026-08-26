@@ -194,7 +194,7 @@ fn finding(
 ) -> Finding {
     let description = match (quality, trait_kind) {
         (AnalysisQuality::Exact, Some(trait_kind)) => format!(
-            "linear type {} manually implements {}",
+            "Clone/Copy-closed type {} manually implements {}",
             policy.identity,
             trait_name(trait_kind)
         ),

@@ -35,8 +35,8 @@ pub use source::{
 };
 use std::collections::BTreeMap;
 pub use types::{
-    DuplicationTrait, RustDuplicationContract, RustFieldContract, RustTypeContract, RustTypeKind,
-    TypeLinearity, TypeProhibition,
+    CloneCopyPolicy, DuplicationTrait, RustDuplicationContract, RustFieldContract,
+    RustTypeContract, RustTypeKind, TypeProhibition,
 };
 
 #[rustfmt::skip]

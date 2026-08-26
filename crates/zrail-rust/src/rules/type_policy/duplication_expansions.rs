@@ -1,4 +1,4 @@
-//! A linear type closes every impl-producing macro in its compilation world.
+//! A Clone/Copy-closed type closes every impl-producing macro in its compilation world.
 
 use std::collections::BTreeSet;
 
@@ -60,7 +60,7 @@ pub(super) fn check(
                         &policy.name,
                         "type-policy",
                         format!(
-                            "macro expansion {} may add Clone/Copy implementations for linear type {}",
+                            "macro expansion {} may add Clone/Copy implementations for closed type {}",
                             fact.name, policy.identity
                         ),
                     )

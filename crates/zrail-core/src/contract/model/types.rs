@@ -37,19 +37,19 @@ pub enum RustTypeKind {
     #[default]
     /// An exact type without authority-token shape requirements.
     Type,
-    /// A private, leaf-module, exactly shaped linear authority token.
+    /// A private, leaf-module, exactly shaped authority token.
     AuthorityToken,
 }
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
-/// Whether a governed type must remain non-duplicable.
-pub enum TypeLinearity {
+/// Whether the modeled Clone/Copy surfaces for a governed type must remain closed.
+pub enum CloneCopyPolicy {
     #[default]
-    /// No implicit duplication guarantees beyond explicit prohibitions.
+    /// No bundled Clone/Copy guarantee beyond explicit prohibitions.
     Allow,
     /// Reject Clone/Copy derives, impls, and opaque same-package active-world expansions.
-    Required,
+    Forbidden,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
@@ -98,8 +98,8 @@ pub struct RustTypeContract {
     /// Independently selected duplication prohibitions.
     pub deny: Vec<TypeProhibition>,
     #[serde(default)]
-    /// Whether all non-duplication guarantees are required together.
-    pub linearity: TypeLinearity,
+    /// Whether every modeled Clone/Copy surface is forbidden together.
+    pub clone_copy: CloneCopyPolicy,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     /// Exact semantic visibility expected on the type declaration.
     pub visibility: Option<String>,

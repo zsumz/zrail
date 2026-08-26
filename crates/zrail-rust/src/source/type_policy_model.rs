@@ -34,6 +34,7 @@ pub(crate) struct TypeFieldFact {
     pub(crate) name: String,
     pub(crate) type_shape: super::type_shape::TypeShapeFact,
     pub(crate) visibility: String,
+    pub(crate) guard: SyntaxGuard,
 }
 
 #[derive(Clone, Debug)]

@@ -5,7 +5,7 @@ mod duplication;
 mod support;
 
 use zrail_core::{
-    PolicyReachability, RustFieldContract, RustTypeContract, RustTypeKind, TypeLinearity,
+    CloneCopyPolicy, PolicyReachability, RustFieldContract, RustTypeContract, RustTypeKind,
     TypeProhibition,
 };
 
@@ -63,7 +63,7 @@ fn policy_report(
         path: policy.path.clone(),
         kind: kind_name(policy.kind).into(),
         reachability: reachability_name(policy.reachability).into(),
-        linearity: linearity_name(policy.linearity).into(),
+        clone_copy: clone_copy_name(policy.clone_copy).into(),
         deny,
         visibility: policy.visibility.clone(),
         leaf_module: policy.leaf_module,
@@ -112,10 +112,10 @@ const fn reachability_name(value: PolicyReachability) -> &'static str {
     }
 }
 
-const fn linearity_name(value: TypeLinearity) -> &'static str {
+const fn clone_copy_name(value: CloneCopyPolicy) -> &'static str {
     match value {
-        TypeLinearity::Allow => "allow",
-        TypeLinearity::Required => "required",
+        CloneCopyPolicy::Allow => "allow",
+        CloneCopyPolicy::Forbidden => "forbidden",
     }
 }
 

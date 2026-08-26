@@ -1,4 +1,4 @@
-schema = 1
+schema = 2
 adapters = ["rust"]
 
 [repository]
@@ -314,6 +314,30 @@ facades = "declarative"
 entrypoints = "declarative"
 tests = "sibling"
 
+[[source.rust.feature_worlds]]
+name = "default"
+reason = "The repository qualifies the exact default workspace build."
+
+[[source.rust.feature_worlds.packages]]
+package = "zrail"
+default_features = true
+features = []
+
+[[source.rust.feature_worlds.packages]]
+package = "zrail-core"
+default_features = true
+features = []
+
+[[source.rust.feature_worlds.packages]]
+package = "zrail-rust"
+default_features = true
+features = []
+
+[[source.rust.feature_worlds.packages]]
+package = "zrail-testkit"
+default_features = true
+features = []
+
 [source.rust.macros]
 mode = "deny-unreviewed"
 
@@ -375,7 +399,7 @@ reason = "Test-only failure branches use Rust's standard panic expansion."
 
 [[source.rust.macros.allow]]
 name = "serde"
-bindings = "none"
+namespace_effect = "none"
 reason = "Reviewed serde helper attributes preserve the ordinary namespace exactly."
 [source.rust.macros.allow.source]
 kind = "registry"
@@ -383,7 +407,7 @@ requirement = "=1.0.229"
 
 [[source.rust.macros.allow]]
 name = "serde::Deserialize"
-bindings = "none"
+namespace_effect = "none"
 reason = "Reviewed serde Deserialize expansions preserve the ordinary namespace exactly."
 [source.rust.macros.allow.source]
 kind = "registry"
@@ -391,7 +415,7 @@ requirement = "=1.0.229"
 
 [[source.rust.macros.allow]]
 name = "serde::Serialize"
-bindings = "none"
+namespace_effect = "none"
 reason = "Reviewed serde Serialize expansions preserve the ordinary namespace exactly."
 [source.rust.macros.allow.source]
 kind = "registry"

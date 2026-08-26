@@ -133,6 +133,7 @@ fn binding_matches(
         bindings: MacroExpansionBindings::Opaque,
         async_syntax: zrail_core::MacroAsyncSyntax::Opaque,
         duplication_effect: zrail_core::MacroDuplicationEffect::Opaque,
+        source_operations: zrail_core::MacroSourceOperations::Opaque,
         definition: None,
         source: allowance.source.clone(),
         reason: allowance.reason.clone(),

@@ -61,6 +61,7 @@ fn trusting_macro_output_to_be_async_free_is_a_grant() {
         bindings: MacroExpansionBindings::Opaque,
         async_syntax: MacroAsyncSyntax::Opaque,
         duplication_effect: crate::MacroDuplicationEffect::Opaque,
+        source_operations: crate::MacroSourceOperations::Opaque,
         definition: Some("src/lib.rs".into()),
         source: None,
         reason: "Reviewed local macro output.".into(),
@@ -89,6 +90,7 @@ fn trusting_macro_output_to_be_duplication_free_is_a_grant() {
         bindings: MacroExpansionBindings::Opaque,
         async_syntax: MacroAsyncSyntax::Opaque,
         duplication_effect: crate::MacroDuplicationEffect::Opaque,
+        source_operations: crate::MacroSourceOperations::Opaque,
         definition: Some("src/lib.rs".into()),
         source: None,
         reason: "Reviewed local macro output.".into(),
@@ -103,6 +105,35 @@ fn trusting_macro_output_to_be_duplication_free_is_a_grant() {
     }));
     assert!(revoke.changes.iter().any(|change| {
         change.kind == ChangeKind::Revoke && change.rail == "rust.macro-duplication-effect"
+    }));
+}
+
+#[test]
+fn trusting_macro_output_to_be_source_operation_free_is_a_grant() {
+    let mut opaque = contract_with_hard_limit(300);
+    opaque.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
+    opaque.source.rust.macros.allow.push(MacroExpansionAllow {
+        name: "local::make".into(),
+        inputs: MacroInputMode::Inspect,
+        binding: MacroBindingMode::Exact,
+        bindings: MacroExpansionBindings::Opaque,
+        async_syntax: MacroAsyncSyntax::Opaque,
+        duplication_effect: crate::MacroDuplicationEffect::Opaque,
+        source_operations: crate::MacroSourceOperations::Opaque,
+        definition: Some("src/lib.rs".into()),
+        source: None,
+        reason: "Reviewed local macro output.".into(),
+    });
+    let mut trusted = opaque.clone();
+    trusted.source.rust.macros.allow[0].source_operations = crate::MacroSourceOperations::None;
+
+    let grant = compare_architecture(&opaque, None, &trusted, None);
+    let revoke = compare_architecture(&trusted, None, &opaque, None);
+    assert!(grant.changes.iter().any(|change| {
+        change.kind == ChangeKind::Grant && change.rail == "rust.macro-source-operations"
+    }));
+    assert!(revoke.changes.iter().any(|change| {
+        change.kind == ChangeKind::Revoke && change.rail == "rust.macro-source-operations"
     }));
 }
 

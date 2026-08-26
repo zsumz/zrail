@@ -79,6 +79,33 @@ fn compiler_builtins_preserve_bindings_without_contract_allowances() {
     assert!(!policy.retains_opacity("src/lib.rs", &builtin.observation));
 }
 
+#[test]
+fn source_operation_closure_requires_an_exact_bound_attestation() {
+    let exact = expansion(
+        "trusted::derive",
+        "trusted::derive",
+        AnalysisQuality::Exact,
+        false,
+    );
+    let source = source(exact.clone());
+    let mut attested = clean_allowance("trusted::derive");
+    attested.bindings = MacroExpansionBindings::Opaque;
+    attested.source_operations = zrail_core::MacroSourceOperations::None;
+
+    assert!(crate::rules::closes_source_operations(
+        &contract(vec![attested]),
+        &source,
+        None,
+        &exact,
+    ));
+    assert!(!crate::rules::closes_source_operations(
+        &contract(vec![clean_allowance("trusted::derive")]),
+        &source,
+        None,
+        &exact,
+    ));
+}
+
 fn expansion(
     written: &str,
     canonical: &str,
@@ -167,11 +194,12 @@ fn clean_allowance(name: &str) -> MacroExpansionAllow {
         bindings: MacroExpansionBindings::None,
         async_syntax: zrail_core::MacroAsyncSyntax::Opaque,
         duplication_effect: zrail_core::MacroDuplicationEffect::Opaque,
+        source_operations: zrail_core::MacroSourceOperations::Opaque,
         definition: None,
         source: Some(CrateRootSource::Registry {
             registry: None,
             index: None,
-            requirement: "1".into(),
+            requirement: "=1.0.0".into(),
         }),
         reason: "Reviewed expansion preserves the ordinary namespace exactly.".into(),
     }
@@ -181,7 +209,7 @@ fn registry_source() -> DependencySource {
     DependencySource::Registry {
         registry: None,
         index: None,
-        requirement: "1".into(),
+        requirement: "=1.0.0".into(),
     }
 }
 

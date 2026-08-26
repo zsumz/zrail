@@ -86,7 +86,7 @@ impl<'ast> Visit<'ast> for Collector {
                 TypeDeclarationKind::Other
             },
             visibility: visibility(&item.vis),
-            fields: named_fields(&item.fields),
+            fields: named_fields(&item.fields, &self.guard),
             derives: derives(&item.attrs, &self.guard),
             guard: self.guard.clone(),
             lexical_scope: self.lexical_scope.clone(),

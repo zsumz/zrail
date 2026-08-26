@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::{
     Contract, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect, MacroExpansionBindings,
-    MacroInputMode,
+    MacroInputMode, MacroSourceOperations,
 };
 
 use super::super::{
@@ -127,6 +127,19 @@ fn compare_existing(
             "rust.macro-duplication-effect",
             name,
             "changes whether reviewed expansion is trusted to add no Clone/Copy implementation",
+        ));
+    }
+    if left.source_operations != right.source_operations {
+        let kind = if right.source_operations == MacroSourceOperations::None {
+            ChangeKind::Grant
+        } else {
+            ChangeKind::Revoke
+        };
+        changes.push(ArchitectureChange::new(
+            kind,
+            "rust.macro-source-operations",
+            name,
+            "changes whether reviewed expansion is trusted to introduce no source operations",
         ));
     }
     if left.definition != right.definition {

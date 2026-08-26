@@ -1,14 +1,14 @@
-//! Authority-token contracts require complete private linear shape.
+//! Authority-token contracts require complete private Clone/Copy-closed shape.
 
 use crate::{
-    RustFieldContract, RustTypeContract, RustTypeKind, TypeLinearity, TypeProhibition,
+    CloneCopyPolicy, RustFieldContract, RustTypeContract, RustTypeKind, TypeProhibition,
     contract::validate_fixture_test::minimal_contract,
 };
 
 use super::{ValidationErrors, validate};
 
 #[test]
-fn authority_token_requires_private_leaf_linear_exact_shape() {
+fn authority_token_requires_private_leaf_clone_copy_closed_exact_shape() {
     let mut contract = minimal_contract();
     contract.source.rust.types.push(RustTypeContract {
         name: "permit".into(),
@@ -17,16 +17,16 @@ fn authority_token_requires_private_leaf_linear_exact_shape() {
         kind: RustTypeKind::AuthorityToken,
         reachability: crate::PolicyReachability::Production,
         deny: vec![TypeProhibition::ImplClone],
-        linearity: TypeLinearity::Allow,
+        clone_copy: CloneCopyPolicy::Allow,
         visibility: Some("pub(crate)".into()),
         leaf_module: Some(false),
         fields: None,
-        reason: "Carries one-use authority.".into(),
+        reason: "Carries bounded authority.".into(),
     });
 
     let errors = errors(&contract);
     for expected in [
-        "requires linearity = \"required\"",
+        "requires clone_copy = \"forbidden\"",
         "requires visibility = \"private\"",
         "requires leaf_module = true",
         "requires an exact fields array",
@@ -92,7 +92,7 @@ fn authority_contract(type_identity: &str) -> crate::Contract {
         kind: RustTypeKind::AuthorityToken,
         reachability: crate::PolicyReachability::Production,
         deny: Vec::new(),
-        linearity: TypeLinearity::Required,
+        clone_copy: CloneCopyPolicy::Forbidden,
         visibility: Some("private".into()),
         leaf_module: Some(true),
         fields: Some(vec![RustFieldContract {
@@ -100,7 +100,7 @@ fn authority_contract(type_identity: &str) -> crate::Contract {
             type_identity: type_identity.into(),
             visibility: "private".into(),
         }]),
-        reason: "Carries one-use authority.".into(),
+        reason: "Carries bounded authority.".into(),
     });
     contract
 }

@@ -1,0 +1,113 @@
+schema = 1
+adapters = ["rust"]
+
+[repository]
+roots = ["."]
+exclude = []
+workspace_members = "exact"
+nested_git = "deny"
+submodules = "deny"
+symlinks = "inside"
+
+[dependencies]
+mode = "observed"
+unassigned_packages = "allow"
+cycles = "deny"
+
+[source.rust]
+module_docs = "required"
+facades = "allow"
+tests = "allow"
+
+[source.rust.macros]
+mode = "deny-unreviewed"
+
+[[source.rust.macros.allow]]
+name = "emit"
+resolution = "exact"
+definition = "src/lib.rs"
+reason = "Fixture expansion remains opaque to operation analysis."
+
+[[source.rust.macros.allow]]
+name = "clean"
+resolution = "exact"
+definition = "src/lib.rs"
+source_operations = "none"
+reason = "Exact fixture expansion emits no source operations."
+
+[[source.rust.macros.allow]]
+name = "OpaqueDerive"
+resolution = "conservative"
+reason = "Fixture derive output intentionally remains opaque."
+
+[[source.rust.macros.allow]]
+name = "opaque_attr"
+resolution = "conservative"
+reason = "Fixture attribute output intentionally remains opaque."
+
+[[source.rust.item_macros]]
+name = "emit"
+within = ["src/**"]
+resolution = "exact"
+reason = "The exact local empty fixture macro emits no source-graph edges."
+
+[source.rust.hygiene]
+unsafe = "deny"
+lint_suppressions = "allow"
+
+[[owner]]
+name = "construction"
+kind = "type-construction"
+within = ["src/**"]
+match = "crate::State"
+allow = ["src/owner.rs"]
+reason = "Construction stays centralized."
+
+[[owner]]
+name = "method-name"
+kind = "method-name"
+within = ["src/**"]
+match = "advance"
+allow = ["src/owner.rs"]
+reason = "Written method calls stay centralized."
+
+[[owner]]
+name = "field-read"
+kind = "field-read"
+within = ["src/**"]
+match = "crate::State::epoch"
+allow = ["src/owner.rs"]
+reason = "Field reads stay centralized."
+
+[[owner]]
+name = "field-write"
+kind = "field-write"
+within = ["src/**"]
+match = "crate::State::epoch"
+allow = ["src/owner.rs"]
+reason = "Field writes stay centralized."
+
+[[owner]]
+name = "field-borrow"
+kind = "field-mutable-borrow"
+within = ["src/**"]
+match = "crate::State::epoch"
+allow = ["src/owner.rs"]
+reason = "Field borrows stay centralized."
+
+[[owner]]
+name = "field-mutation"
+kind = "field-mutation"
+within = ["src/**"]
+match = "crate::State::epoch"
+mutating_methods = ["clear"]
+allow = ["src/owner.rs"]
+reason = "Field mutation stays centralized."
+
+[[owner]]
+name = "field-authority"
+kind = "field-authority"
+within = ["src/**"]
+match = "crate::State::epoch"
+allow = ["src/owner.rs"]
+reason = "Field access stays centralized."

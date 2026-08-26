@@ -2,7 +2,10 @@
 
 use std::collections::BTreeMap;
 
-use zrail_core::{AnalysisQuality, MacroAsyncSyntax, MacroDuplicationEffect, MacroExpansionAllow};
+use zrail_core::{
+    AnalysisQuality, MacroAsyncSyntax, MacroDuplicationEffect, MacroExpansionAllow,
+    MacroSourceOperations,
+};
 
 use crate::source::MacroExpansionFact;
 
@@ -59,6 +62,33 @@ pub(crate) fn closes_type_duplication(
         .allow
         .iter()
         .filter(|allowed| allowed.duplication_effect == MacroDuplicationEffect::None)
+        .map(|allowed| (allowed.name.as_str(), allowed))
+        .collect::<BTreeMap<_, _>>();
+    matches!(
+        review(source, resolved_cargo, expansion, &allowed),
+        MacroBindingResult::Bound {
+            confidence: AnalysisQuality::Exact,
+            ..
+        }
+    )
+}
+
+pub(crate) fn closes_source_operations(
+    contract: &zrail_core::Contract,
+    source: &crate::source::SourceIndex,
+    resolved_cargo: Option<&crate::cargo::ResolvedCargoGraph>,
+    expansion: &MacroExpansionFact,
+) -> bool {
+    if directly_inspected(expansion) {
+        return true;
+    }
+    let allowed = contract
+        .source
+        .rust
+        .macros
+        .allow
+        .iter()
+        .filter(|allowed| allowed.source_operations == MacroSourceOperations::None)
         .map(|allowed| (allowed.name.as_str(), allowed))
         .collect::<BTreeMap<_, _>>();
     matches!(

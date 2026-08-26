@@ -20,8 +20,8 @@ pub struct GovernedTypePolicy {
     pub kind: String,
     /// Source reachability selected by the policy.
     pub reachability: String,
-    /// Required linearity mode.
-    pub linearity: String,
+    /// Bundled Clone/Copy surface policy.
+    pub clone_copy: String,
     /// Independent per-type duplication prohibitions.
     pub deny: Vec<String>,
     /// Expected declaration visibility, when governed.

@@ -12,7 +12,10 @@ use super::{
     },
 };
 
-pub(super) fn named_fields(fields: &syn::Fields) -> Option<Vec<TypeFieldFact>> {
+pub(super) fn named_fields(
+    fields: &syn::Fields,
+    enclosing: &SyntaxGuard,
+) -> Option<Vec<TypeFieldFact>> {
     let syn::Fields::Named(fields) = fields else {
         return None;
     };
@@ -25,6 +28,7 @@ pub(super) fn named_fields(fields: &syn::Fields) -> Option<Vec<TypeFieldFact>> {
                     name: field.ident.as_ref()?.to_string(),
                     type_shape: super::type_shape::type_shape(&field.ty),
                     visibility: visibility(&field.vis),
+                    guard: enclosing.combine(super::attributes::cfg_guard(&field.attrs)),
                 })
             })
             .collect(),

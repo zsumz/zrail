@@ -1,5 +1,4 @@
 //! Architecture changes are classified by effective permission.
-
 use crate::{
     ChangeKind, CrateRootContract, CrateRootSource, DependencyMode, FacadeMode,
     GeneratedSourceContract, ItemMacroContract, LintSuppressionMode, LockFile, LockedDependency,
@@ -83,6 +82,7 @@ fn macro_expansion_denial_revokes_power_and_allowance_grants_it() {
         bindings: crate::MacroExpansionBindings::Opaque,
         async_syntax: crate::MacroAsyncSyntax::Opaque,
         duplication_effect: crate::MacroDuplicationEffect::Opaque,
+        source_operations: crate::MacroSourceOperations::Opaque,
         definition: None,
         source: None,
         reason: "Reviewed async control-flow expansion.".into(),

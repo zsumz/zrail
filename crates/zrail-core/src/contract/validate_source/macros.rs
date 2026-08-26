@@ -4,7 +4,7 @@ use std::collections::BTreeSet;
 
 use crate::contract::{
     Contract, CrateRootSource, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect,
-    MacroExpansionBindings, MacroExpansionMode, validate_dependencies,
+    MacroExpansionBindings, MacroExpansionMode, MacroSourceOperations, validate_dependencies,
     validate_limits::ValidationErrors, validate_paths::validate_repository_literal,
     validate_sets::require_reason,
 };
@@ -52,6 +52,9 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
         }
         if allowed.duplication_effect == MacroDuplicationEffect::None {
             validate_closed_claim(allowed, "duplication_effect = \"none\"", errors);
+        }
+        if allowed.source_operations == MacroSourceOperations::None {
+            validate_closed_claim(allowed, "source_operations = \"none\"", errors);
         }
     }
 }

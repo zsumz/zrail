@@ -1,8 +1,8 @@
 //! Exact type policy permission changes remain review-visible.
 
 use crate::{
-    ChangeKind, DuplicationTrait, PolicyReachability, RustFieldContract, RustTypeContract,
-    RustTypeKind, TypeLinearity, TypeProhibition, compare_architecture,
+    ChangeKind, CloneCopyPolicy, DuplicationTrait, PolicyReachability, RustFieldContract,
+    RustTypeContract, RustTypeKind, TypeProhibition, compare_architecture,
 };
 
 use super::compare_fixture_test::contract_with_hard_limit;
@@ -21,19 +21,23 @@ fn adding_and_removing_exact_type_policy_are_directed() {
 }
 
 #[test]
-fn linearity_and_written_syntax_changes_are_directed() {
+fn clone_copy_closure_and_written_syntax_changes_are_directed() {
     let mut open = contract_with_hard_limit(300);
     open.source.rust.types.push(type_policy());
     let mut strict = open.clone();
-    strict.source.rust.types[0].linearity = TypeLinearity::Required;
+    strict.source.rust.types[0].clone_copy = CloneCopyPolicy::Forbidden;
     strict.source.rust.duplication.deny_imports = vec![DuplicationTrait::Clone];
 
     let tightened = compare_architecture(&open, None, &strict, None);
     let relaxed = compare_architecture(&strict, None, &open, None);
 
-    assert_change(&tightened, ChangeKind::Revoke, "rust.type-policy.linearity");
+    assert_change(
+        &tightened,
+        ChangeKind::Revoke,
+        "rust.type-policy.clone-copy",
+    );
     assert_change(&tightened, ChangeKind::Revoke, "rust.duplication.import");
-    assert_change(&relaxed, ChangeKind::Grant, "rust.type-policy.linearity");
+    assert_change(&relaxed, ChangeKind::Grant, "rust.type-policy.clone-copy");
     assert_change(&relaxed, ChangeKind::Grant, "rust.duplication.import");
 }
 
@@ -50,10 +54,10 @@ fn exact_representation_changes_are_unknown() {
 }
 
 #[test]
-fn removing_redundant_deny_from_required_linearity_is_not_a_grant() {
+fn removing_redundant_deny_from_clone_copy_closure_is_not_a_grant() {
     let mut before = contract_with_hard_limit(300);
     let mut policy = type_policy();
-    policy.linearity = TypeLinearity::Required;
+    policy.clone_copy = CloneCopyPolicy::Forbidden;
     policy.deny = vec![TypeProhibition::ImplClone];
     before.source.rust.types.push(policy);
     let mut after = before.clone();
@@ -79,7 +83,7 @@ fn type_policy() -> RustTypeContract {
         kind: RustTypeKind::Type,
         reachability: PolicyReachability::Production,
         deny: vec![TypeProhibition::ImplClone],
-        linearity: TypeLinearity::Allow,
+        clone_copy: CloneCopyPolicy::Allow,
         visibility: None,
         leaf_module: None,
         fields: None,
@@ -90,7 +94,7 @@ fn type_policy() -> RustTypeContract {
 fn authority() -> RustTypeContract {
     let mut policy = type_policy();
     policy.kind = RustTypeKind::AuthorityToken;
-    policy.linearity = TypeLinearity::Required;
+    policy.clone_copy = CloneCopyPolicy::Forbidden;
     policy.visibility = Some("private".into());
     policy.leaf_module = Some(true);
     policy.fields = Some(vec![RustFieldContract {

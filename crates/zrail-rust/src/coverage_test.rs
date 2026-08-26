@@ -1,13 +1,13 @@
 //! Governed-surface reporting stays complete, exact, and deterministic.
 
-use std::{collections::BTreeMap, fs, path::PathBuf};
+use std::collections::BTreeMap;
 
 use zrail_core::AnalysisQuality;
 
 use super::{governed_feature_worlds, governed_surface_report};
 use crate::cargo::{ResolvedFeatureWorld, ResolvedPackageFeatures};
 use crate::test_mirror_plan;
-use fixture::{AMBIGUOUS_LOCK, CHECKSUM, CONTRACT, LIBRARY, LOCK, MANIFEST, MIRROR, OWNER};
+use fixture::{AMBIGUOUS_LOCK, CHECKSUM, MANIFEST, repository, reset, write};
 
 #[path = "coverage/fixture.rs"]
 mod fixture;
@@ -111,7 +111,22 @@ fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
             && !occurrence.allowed
     }));
     super::type_policies::assert_type_policy_coverage(&report);
-    assert_eq!(report.unresolved_occurrences, 1);
+    let opaque_macro_operations = report
+        .owners
+        .iter()
+        .flat_map(|owner| &owner.occurrences)
+        .filter(|occurrence| occurrence.operation == "opaque-macro-source-operation")
+        .collect::<Vec<_>>();
+    assert_eq!(opaque_macro_operations.len(), 6);
+    assert!(
+        opaque_macro_operations
+            .iter()
+            .all(|occurrence| occurrence.quality == AnalysisQuality::Unresolved)
+    );
+    assert_eq!(
+        report.unresolved_occurrences,
+        1 + opaque_macro_operations.len()
+    );
     assert_eq!(report.ambiguous_occurrences, 0);
     let owner = report
         .owners
@@ -122,7 +137,11 @@ fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
         owner.policy_id,
         "owner:type-construction:record-construction"
     );
-    let occurrence = &owner.occurrences[0];
+    let occurrence = owner
+        .occurrences
+        .iter()
+        .find(|occurrence| occurrence.operation == "type-construction")
+        .expect("type construction occurrence");
     assert_eq!(occurrence.path, "src/owner.rs");
     assert_eq!(occurrence.quality, AnalysisQuality::Exact);
     assert_eq!(occurrence.guard, "ordinary");
@@ -143,7 +162,12 @@ fn report_covers_operations_dependencies_exclusions_and_test_mirrors() {
         field_owner.policy_id,
         "owner:field-authority:unknown-token-authority"
     );
-    assert_eq!(field_owner.occurrences[0].operation, "field-write");
+    assert!(
+        field_owner
+            .occurrences
+            .iter()
+            .any(|occurrence| occurrence.operation == "field-write")
+    );
     let mutation_owner = report
         .owners
         .iter()
@@ -262,36 +286,4 @@ fn report_rejects_ambiguous_manifest_to_lock_mapping() {
     assert!(error.to_string().contains("bridge 1.2.3"));
     assert!(error.to_string().contains("bridge 2.0.0"));
     reset(&root);
-}
-
-fn repository(label: &str) -> PathBuf {
-    let root = std::env::temp_dir().join(format!(
-        "zrail-coverage-{label}-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ));
-    reset(&root);
-    fs::create_dir_all(root.join("src")).expect("create source");
-    fs::create_dir_all(root.join("tests")).expect("create tests");
-    fs::create_dir_all(root.join("evidence")).expect("create evidence");
-    fs::create_dir_all(root.join("artifacts/owned")).expect("create owned directory");
-    fs::create_dir_all(root.join("artifacts/trespass")).expect("create trespass directory");
-    write(&root, "Cargo.toml", MANIFEST);
-    write(&root, "Cargo.lock", LOCK);
-    write(&root, "zrail.toml", CONTRACT);
-    write(&root, "src/lib.rs", LIBRARY);
-    write(&root, "src/owner.rs", OWNER);
-    write(&root, "tests/mirror.rs", MIRROR);
-    write(&root, "evidence/mirror.json", "{}\n");
-    root
-}
-
-fn write(root: &std::path::Path, path: &str, contents: &str) {
-    fs::write(root.join(path), contents).expect("write fixture");
-}
-
-fn reset(root: &std::path::Path) {
-    if root.exists() {
-        fs::remove_dir_all(root).expect("reset fixture");
-    }
 }

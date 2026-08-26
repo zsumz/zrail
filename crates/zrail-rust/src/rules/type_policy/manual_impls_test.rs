@@ -3,7 +3,7 @@
 use std::{collections::BTreeSet, fs};
 
 use zrail_core::{
-    PolicyReachability, RustTypeContract, RustTypeKind, TypeLinearity, TypeProhibition,
+    CloneCopyPolicy, PolicyReachability, RustTypeContract, RustTypeKind, TypeProhibition,
 };
 
 use super::{ManualImplMatch, classify};
@@ -80,7 +80,7 @@ fn policy() -> RustTypeContract {
         kind: RustTypeKind::Type,
         reachability: PolicyReachability::Production,
         deny: vec![TypeProhibition::ImplClone],
-        linearity: TypeLinearity::Allow,
+        clone_copy: CloneCopyPolicy::Allow,
         visibility: None,
         leaf_module: None,
         fields: None,

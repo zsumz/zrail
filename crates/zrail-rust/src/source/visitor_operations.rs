@@ -132,7 +132,7 @@ impl FactVisitor<'_> {
         written: String,
         span: Option<proc_macro2::Span>,
     ) {
-        self.push_operation_with_method(kind, identity, written, span, None, None);
+        self.push_operation_with_method(kind, identity, written, span, None, None, None);
     }
 
     pub(in crate::source) fn push_field_receiver_operation(
@@ -141,7 +141,8 @@ impl FactVisitor<'_> {
         written: String,
         span: Option<proc_macro2::Span>,
         method: String,
-        place: super::operation_model::FieldPlaceFact,
+        place: Option<super::operation_model::FieldPlaceFact>,
+        guard: &super::SyntaxGuard,
     ) {
         self.push_operation_with_method(
             SourceOperationKind::FieldReceiverCall,
@@ -149,7 +150,8 @@ impl FactVisitor<'_> {
             written,
             span,
             Some(method),
-            Some(place),
+            place,
+            Some(guard),
         );
     }
 
@@ -159,9 +161,10 @@ impl FactVisitor<'_> {
         identity: &TypeIdentity,
         written: String,
         span: Option<proc_macro2::Span>,
-        place: super::operation_model::FieldPlaceFact,
+        place: Option<super::operation_model::FieldPlaceFact>,
+        guard: &super::SyntaxGuard,
     ) {
-        self.push_operation_with_method(kind, identity, written, span, None, Some(place));
+        self.push_operation_with_method(kind, identity, written, span, None, place, Some(guard));
     }
 
     fn push_operation_with_method(
@@ -172,6 +175,7 @@ impl FactVisitor<'_> {
         span: Option<proc_macro2::Span>,
         method: Option<String>,
         place: Option<super::operation_model::FieldPlaceFact>,
+        guard: Option<&super::SyntaxGuard>,
     ) {
         let mut observed = span.map_or_else(
             || {
@@ -191,12 +195,16 @@ impl FactVisitor<'_> {
                 )
             },
         );
+        if let Some(guard) = guard {
+            observed.apply_guard(guard);
+        }
         observed.namespace = super::FactNamespace::Type;
         if self.operations.iter().any(|operation| {
             operation.kind == kind
                 && operation.identity.name == observed.name
                 && operation.identity.span == observed.span
                 && operation.method == method
+                && operation.identity.guard == observed.guard
         }) {
             return;
         }

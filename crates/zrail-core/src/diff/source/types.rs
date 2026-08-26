@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{Contract, DuplicationTrait, RustTypeContract, TypeLinearity, TypeProhibition};
+use crate::{CloneCopyPolicy, Contract, DuplicationTrait, RustTypeContract, TypeProhibition};
 
 use super::super::{ArchitectureChange, ChangeKind};
 
@@ -114,16 +114,16 @@ fn compare_existing(
         ));
     }
     compare_prohibitions(name, left, right, changes);
-    if left.linearity != right.linearity {
+    if left.clone_copy != right.clone_copy {
         changes.push(ArchitectureChange::new(
-            if right.linearity == TypeLinearity::Required {
+            if right.clone_copy == CloneCopyPolicy::Forbidden {
                 ChangeKind::Revoke
             } else {
                 ChangeKind::Grant
             },
-            "rust.type-policy.linearity",
+            "rust.type-policy.clone-copy",
             name,
-            "changes required non-duplication guarantees",
+            "changes bundled Clone/Copy surface closure",
         ));
     }
     if left.reachability != right.reachability {
@@ -178,7 +178,7 @@ fn compare_prohibitions(
 }
 
 fn effective_prohibitions(policy: &RustTypeContract) -> BTreeSet<TypeProhibition> {
-    if policy.linearity == TypeLinearity::Required {
+    if policy.clone_copy == CloneCopyPolicy::Forbidden {
         return [
             TypeProhibition::DeriveClone,
             TypeProhibition::DeriveCopy,

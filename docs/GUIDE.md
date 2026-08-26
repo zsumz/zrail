@@ -455,8 +455,8 @@ while unresolved receiver candidates fail closed for exact field-owner policies.
 
 Per-type policy selects one declaration by its exact source path and canonical
 Rust identity. It can prohibit each derive, manual-implementation, or
-macro-output duplication surface independently, or require all of those
-per-type guarantees together with `linearity = "required"`:
+macro-output duplication surface independently, or close all modeled Clone/Copy
+surfaces together with `clone_copy = "forbidden"`:
 
 ```toml
 [[source.rust.types]]
@@ -477,7 +477,7 @@ Unresolved trait or type identities fail closed rather than matching by their
 last path segment. A written `Clone` or `Copy` derive also remains a violation
 if its compiler-builtin provenance becomes unresolved.
 
-Required linearity closes macro output across the selected type's whole active
+Forbidden Clone/Copy closes macro output across the selected type's whole active
 package and compilation world. An item or attribute macro does not need to
 overlap or mention the declaration to be capable of emitting a duplication
 implementation. The expansion is closed only when the compiler understands it
@@ -511,10 +511,10 @@ name = "leadership-permit"
 match = "crate::authority::LeadershipPermit"
 path = "crates/kernel/src/authority.rs"
 kind = "authority-token"
-linearity = "required"
+clone_copy = "forbidden"
 visibility = "private"
 leaf_module = true
-reason = "The permit is private one-use leadership authority."
+reason = "The permit is private, shape-bound leadership authority."
 
 [[source.rust.types.fields]]
 name = "epoch"
@@ -527,10 +527,14 @@ type = "core::option::Option<crate::node::NodeId>"
 visibility = "private"
 ```
 
-An authority-token policy must require linearity, private type visibility, a
-leaf module, an exact ordered field list, and private visibility on every
-field. Field names, order, visibility, and complete semantic types are part of
-the representation authority. Supported exact types include qualified paths
+An authority-token policy must forbid Clone/Copy, require private type
+visibility, a leaf module, an exact ordered field list, and private visibility
+on every field. Field names, order, visibility, and complete semantic types are
+part of the representation authority. This is a Clone/Copy-closed shape
+contract, not a claim that Rust enforces linear or one-use values: ordinary
+construction, manual reconstruction from fields, and dropping remain separate
+properties. Use type-construction ownership when minting must also be confined.
+Supported exact types include qualified paths
 with recursive generic arguments, tuples, references, slices, arrays, raw
 pointers, unit, and never. Non-primitive paths at every nesting level must be
 qualified; `impl Trait`, `dyn Trait`, inference, type macros, bare function
@@ -539,7 +543,7 @@ than truncated to an outer path. An authored leading `crate::` is normalized
 against the analyzer's canonical local identity.
 
 Repository-wide written syntax is intentionally separate from per-type
-linearity:
+Clone/Copy closure:
 
 ```toml
 [source.rust.duplication]
@@ -623,6 +627,32 @@ surrounding lexical bindings. External attestations require an exact registry
 version or full Git object ID. The attestation is applied only to occurrences
 whose complete resolved origin matches it; a same-spelling macro from another
 source or conditional definition remains opaque and fails binding review.
+
+Source-operation owners fail closed across the same expansion boundary. Every
+opaque function-like, statement, item, derive, or attribute macro invocation
+inside a `type-construction`, `method-name`, or field-operation owner's `within`
+scope is an unresolved candidate for that owner. It produces `OWN-003` outside
+the allowed owner files and `OWN-006` inside them; ordinary macro permission
+alone cannot make the unknown operation exact. Exact review may close only this
+boundary with the separate provenance-bound claim:
+
+```toml
+[[source.rust.macros.allow]]
+name = "model_macro::metadata"
+resolution = "exact"
+source_operations = "none"
+reason = "Reviewed expansion constructs no types and performs no field or method operations."
+
+[source.rust.macros.allow.source]
+kind = "cargo-lock"
+package = "model-macro"
+```
+
+`source_operations = "none"` defaults to `"opaque"` and is a grant in semantic
+diffs. It requires the same exact binding and immutable external source or exact
+repository definition as other closed expansion claims. Compiler expansions
+whose output Zrail directly inspects are already closed; other compiler derives
+and macros remain opaque when their generated operations are not inspected.
 
 Literal and verified generated `include!` sources retain occurrence-specific
 lexical splices. Textual `macro_rules!` lookup follows caller prefixes, nested

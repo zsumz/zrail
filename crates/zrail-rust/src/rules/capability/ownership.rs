@@ -56,7 +56,11 @@ fn check_owner(
                 | OwnerKind::FieldMutableBorrow
                 | OwnerKind::FieldMutation
                 | OwnerKind::FieldAuthority => {
-                    super::ownership_operation::check(owner, file, findings)
+                    let operations = super::ownership_operation::check(owner, file, findings);
+                    let opaque_expansions = super::ownership_operation_macros::check_allowed(
+                        context, owner, file, findings,
+                    );
+                    operations || opaque_expansions
                 }
             };
             if used {
@@ -77,6 +81,7 @@ fn check_owner(
                     .with_help(scope::owner_help(owner)),
                 );
             }
+            super::ownership_operation_macros::reject_outside(context, owner, file, findings);
         }
     }
     scope::reject_unused_owners(owner, &allowed, &used_allowed, context, findings);

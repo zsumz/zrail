@@ -82,6 +82,18 @@ pub enum MacroDuplicationEffect {
 
 #[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
+/// Reviewed claim about source operations emitted by a macro expansion.
+pub enum MacroSourceOperations {
+    #[default]
+    /// Expansion output remains opaque to source-operation ownership analysis.
+    Opaque,
+    #[serde(rename = "none")]
+    /// Exact review attests that expansion output introduces no source operations.
+    None,
+}
+
+#[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
 /// Source reachability considered by an effect profile.
 pub enum PolicyReachability {
     /// Evaluate effects in every Cargo target and syntax guard.

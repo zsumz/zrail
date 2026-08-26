@@ -165,6 +165,37 @@ fn exact_local_no_duplication_attestation_is_valid() {
     validate_contract(&contract).expect("exact local no-duplication claim is valid");
 }
 
+#[test]
+fn no_source_operations_attestation_requires_exact_provenance() {
+    let mut contract = minimal_contract();
+    contract.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
+    let mut allowance = no_binding_allowance(None);
+    allowance.bindings = MacroExpansionBindings::Opaque;
+    allowance.source_operations = crate::MacroSourceOperations::None;
+    contract.source.rust.macros.allow.push(allowance);
+
+    let errors =
+        validate_contract(&contract).expect_err("unproven no-source-operations claim must fail");
+    assert!(
+        errors
+            .to_string()
+            .contains("source_operations = \"none\" requires source or definition provenance")
+    );
+}
+
+#[test]
+fn exact_local_no_source_operations_attestation_is_valid() {
+    let mut contract = minimal_contract();
+    contract.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
+    let mut allowance = no_binding_allowance(None);
+    allowance.bindings = MacroExpansionBindings::Opaque;
+    allowance.source_operations = crate::MacroSourceOperations::None;
+    allowance.definition = Some("src/macros.rs".into());
+    contract.source.rust.macros.allow.push(allowance);
+
+    validate_contract(&contract).expect("exact local no-source-operations claim is valid");
+}
+
 fn no_binding_allowance(source: Option<CrateRootSource>) -> MacroExpansionAllow {
     MacroExpansionAllow {
         name: "derive::Model".into(),
@@ -173,6 +204,7 @@ fn no_binding_allowance(source: Option<CrateRootSource>) -> MacroExpansionAllow 
         bindings: MacroExpansionBindings::None,
         async_syntax: crate::MacroAsyncSyntax::Opaque,
         duplication_effect: crate::MacroDuplicationEffect::Opaque,
+        source_operations: crate::MacroSourceOperations::Opaque,
         definition: None,
         source,
         reason: "Reviewed output preserves the ordinary namespace exactly.".into(),

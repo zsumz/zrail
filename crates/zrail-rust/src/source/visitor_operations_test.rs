@@ -270,3 +270,6 @@ fn matching<'a>(
 
 #[path = "tests/visitor_typed_places.rs"]
 mod visitor_typed_places;
+
+#[path = "tests/visitor_field_truth.rs"]
+mod visitor_field_truth;

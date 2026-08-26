@@ -2,22 +2,22 @@
 schema = 3
 semantics = 4
 producer = "0.0.3-rc.4"
-contract_sha256 = "f8dc943be903d27dbd97ade16884866b2b98bdbedc9f0eb5b11c25fa61f491e6"
+contract_sha256 = "72f6206269c1b0d78dbc66fe3c427303d68a01cdf601b31245eeca43df8d245a"
 ratchet = []
 
 [analysis]
-inventory_sha256 = "c60439f48a293db66794d6b64e156e10620d376a8205a8c52cada77ffc254f5e"
+inventory_sha256 = "bf41327eef63097472548929ae8b0ea56dad8d3cf6414d7694fe114a6c86ac33"
 exclusions_sha256 = "ef568a36a951491c0b26fe6b44546c6ddde12f6decb83add621e64119697e04d"
 cargo_lock_sha256 = "222f3ec72309e09aa8f4dd2d2523999c81c6c6d335e66ca598d4882da2f59fba"
 cargo_features_sha256 = "0bb9192effdb5af624afe6f0b82b528f75ad768f379ff30a87268c42d7578558"
-feature_worlds_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-feature_worlds = 0
+feature_worlds_sha256 = "86fb12da86416b128876dd9acd57ead96deea36d3b3f51de50a2f7ef16b752d9"
+feature_worlds = 1
 packages = 4
-targets = 57
-physical_rust_files = 640
-base_source_contexts = 1048
+targets = 59
+physical_rust_files = 652
+base_source_contexts = 1067
 derived_source_contexts = 0
-source_facts = 177423
+source_facts = 189806
 projection_queries = 0
 projected_facts = 0
 unresolved_bindings = 0
@@ -25,7 +25,7 @@ analyzer_semantics = 4
 
 [[analysis.contract_source]]
 path = "zrail.toml"
-sha256 = "ea75e6f4c5fde55342c00178fbed6be727aef212692b3ec80bf6a178b38d9ccb"
+sha256 = "29ea0e8d641256ad2aea66517253ac356af8397791661fe0689e763788bf963d"
 
 [[package]]
 name = "zrail"

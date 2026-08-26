@@ -11,7 +11,7 @@ use super::check_repository;
 static FIXTURE_ID: AtomicU64 = AtomicU64::new(0);
 
 #[test]
-fn linear_enum_rejects_alias_impl_qualified_impl_derives_and_item_macro() {
+fn clone_copy_closed_enum_rejects_alias_impl_qualified_impl_derives_and_item_macro() {
     let root = repository(TYPE_POLICY);
     write(
         &root,
@@ -101,7 +101,7 @@ fn global_macro_token_policy_is_independent_of_per_type_policy() {
 }
 
 #[test]
-fn disabled_feature_world_impls_and_macros_do_not_affect_linearity() {
+fn disabled_feature_world_impls_and_macros_do_not_affect_clone_copy_closure() {
     let root = repository(FEATURE_WORLD_POLICY);
     write(
         &root,
@@ -224,11 +224,11 @@ pub(crate) const TYPE_POLICY: &str = r#"[source.rust.duplication]
 deny_imports = ["clone"]
 
 [[source.rust.types]]
-name = "ticket-linearity"
+name = "ticket-clone-copy"
 match = "crate::Ticket"
 path = "src/lib.rs"
 kind = "type"
-linearity = "required"
+clone_copy = "forbidden"
 reason = "Tickets must transfer rather than duplicate."
 "#;
 
@@ -237,10 +237,10 @@ name = "permit-authority"
 match = "crate::authority::Permit"
 path = "src/authority.rs"
 kind = "authority-token"
-linearity = "required"
+clone_copy = "forbidden"
 visibility = "private"
 leaf_module = true
-reason = "Permits carry one-use authority."
+reason = "Permits carry bounded authority."
 
 [[source.rust.types.fields]]
 name = "epoch"
@@ -267,10 +267,10 @@ default_features = false
 features = []
 
 [[source.rust.types]]
-name = "ticket-linearity"
+name = "ticket-clone-copy"
 match = "crate::Ticket"
 path = "src/lib.rs"
 kind = "type"
-linearity = "required"
-reason = "Tickets remain linear in every configured world."
+clone_copy = "forbidden"
+reason = "Tickets remain Clone/Copy-closed in every configured world."
 "#;

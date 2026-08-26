@@ -1,8 +1,9 @@
 //! Complex visitor walks preserve mutation, macro, module, and block semantics.
 
 use syn::{
-    BinOp, Block, ExprAssign, ExprAsync, ExprAwait, ExprBinary, ExprClosure, ExprReference,
-    ImplItemFn, ItemFn, ItemImpl, ItemMod, ItemTrait, Macro, Signature, Stmt, TraitItemFn,
+    Arm, BinOp, Block, Expr, ExprAssign, ExprAsync, ExprAwait, ExprBinary, ExprClosure,
+    ExprForLoop, ExprIf, ExprReference, ExprWhile, ImplItemFn, ItemFn, ItemImpl, ItemMod,
+    ItemTrait, Macro, Signature, Stmt, TraitItemFn,
     spanned::Spanned,
     visit::{self, Visit},
 };
@@ -69,6 +70,49 @@ pub(super) fn visit_closure(visitor: &mut FactVisitor<'_>, expression: &ExprClos
     }
     visitor.with_closure_values(&expression.inputs, |visitor| {
         visit::visit_expr_closure(visitor, expression);
+    });
+}
+
+pub(super) fn visit_arm(visitor: &mut FactVisitor<'_>, arm: &Arm) {
+    visitor.visit_pat(&arm.pat);
+    visitor.with_pattern_values(&arm.pat, |visitor| {
+        if let Some((_, guard)) = &arm.guard {
+            visitor.visit_expr(guard);
+        }
+        visitor.visit_expr(&arm.body);
+    });
+}
+
+pub(super) fn visit_if(visitor: &mut FactVisitor<'_>, expression: &ExprIf) {
+    visitor.visit_expr(&expression.cond);
+    if let Expr::Let(binding) = expression.cond.as_ref() {
+        visitor.with_pattern_values(&binding.pat, |visitor| {
+            visitor.visit_block(&expression.then_branch);
+        });
+    } else {
+        visitor.visit_block(&expression.then_branch);
+    }
+    if let Some((_, otherwise)) = &expression.else_branch {
+        visitor.visit_expr(otherwise);
+    }
+}
+
+pub(super) fn visit_while(visitor: &mut FactVisitor<'_>, expression: &ExprWhile) {
+    visitor.visit_expr(&expression.cond);
+    if let Expr::Let(binding) = expression.cond.as_ref() {
+        visitor.with_pattern_values(&binding.pat, |visitor| {
+            visitor.visit_block(&expression.body);
+        });
+    } else {
+        visitor.visit_block(&expression.body);
+    }
+}
+
+pub(super) fn visit_for(visitor: &mut FactVisitor<'_>, expression: &ExprForLoop) {
+    visitor.visit_expr(&expression.expr);
+    visitor.visit_pat(&expression.pat);
+    visitor.with_pattern_values(&expression.pat, |visitor| {
+        visitor.visit_block(&expression.body);
     });
 }
 

@@ -30,6 +30,8 @@ pub(in crate::source) mod visitor_model;
 pub(in crate::source) mod visitor_operations;
 #[path = "visitor_paths.rs"]
 pub(in crate::source) mod visitor_paths;
+#[path = "visitor_patterns.rs"]
+pub(in crate::source) mod visitor_patterns;
 #[path = "visitor_values.rs"]
 pub(in crate::source) mod visitor_values;
 

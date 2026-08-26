@@ -12,7 +12,7 @@ mod source;
 pub(crate) use binding_policy::build as binding_policy;
 pub(super) use evaluation::evaluate;
 pub(super) use policy::binds_allowance;
-pub(crate) use policy::{closes_async_syntax, closes_type_duplication};
+pub(crate) use policy::{closes_async_syntax, closes_source_operations, closes_type_duplication};
 
 #[cfg(test)]
 use policy::directly_inspected;

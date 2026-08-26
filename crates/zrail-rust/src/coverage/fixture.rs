@@ -1,5 +1,12 @@
 //! Generic repository fixture for governed-surface report tests.
 
+#[cfg(test)]
+#[path = "fixture_test.rs"]
+mod fixture_test;
+
+#[cfg(test)]
+pub(super) use fixture_test::{repository, reset, write};
+
 pub(super) const MANIFEST: &str = r#"[package]
 name = "audit-app"
 version = "0.1.0"
