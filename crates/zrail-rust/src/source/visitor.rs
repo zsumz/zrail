@@ -1,31 +1,23 @@
 //! Syntax visitor collecting source facts after import resolution.
 
+mod conditions;
+mod scopes;
 mod walk;
 
 use syn::{
-    Attribute, Block, ExprBinary, ExprCall, ExprField, ExprForLoop, ExprIf, ExprMacro,
-    ExprMethodCall, ExprPath, ExprStruct, ExprWhile, ItemForeignMod, ItemMacro, ItemMod,
-    ItemStatic, Macro, PatStruct, StmtMacro, TypePath,
+    Attribute, Block, ExprBinary, ExprCall, ExprField, ExprForLoop, ExprIf, ExprMacro, ExprMatch,
+    ExprMethodCall, ExprPath, ExprRawAddr, ExprStruct, ExprWhile, ItemForeignMod, ItemMacro,
+    ItemMod, ItemStatic, Macro, PatReference, PatStruct, PatType, StmtMacro, TypePath,
     visit::{self, Visit},
 };
 
-use super::{SyntaxGuard, attributes::cfg_guard, visitor_parts::visitor_context};
+use super::visitor_parts::visitor_context;
 
 pub(super) use super::visitor_parts::FactVisitor;
 
 impl<'ast> Visit<'ast> for FactVisitor<'_> {
     fn visit_file(&mut self, file: &'ast syn::File) {
-        let guard = cfg_guard(&file.attrs);
-        if guard != SyntaxGuard::Ordinary {
-            self.guard_initial_paths(&guard);
-        }
-        self.with_cfg(&file.attrs, |visitor| {
-            visitor.with_local_type_scope(file.items.iter(), |visitor| {
-                visitor.with_import_scope(file.items.iter(), |visitor| {
-                    visit::visit_file(visitor, file);
-                });
-            });
-        });
+        scopes::visit_file(self, file);
     }
 
     fn visit_item(&mut self, item: &'ast syn::Item) {
@@ -59,14 +51,11 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_local(&mut self, local: &'ast syn::Local) {
-        self.with_cfg(&local.attrs, |visitor| {
-            visit::visit_local(visitor, local);
-            visitor.record_local_bindings(local);
-        });
+        scopes::visit_local(self, local);
     }
 
     fn visit_arm(&mut self, arm: &'ast syn::Arm) {
-        self.with_cfg(&arm.attrs, |visitor| walk::visit_arm(visitor, arm));
+        self.with_cfg(&arm.attrs, |visitor| conditions::visit_arm(visitor, arm));
     }
 
     fn visit_field(&mut self, field: &'ast syn::Field) {
@@ -136,6 +125,10 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
         walk::visit_reference(self, expression);
     }
 
+    fn visit_expr_raw_addr(&mut self, expression: &'ast ExprRawAddr) {
+        walk::visit_raw_address(self, expression);
+    }
+
     fn visit_expr_async(&mut self, expression: &'ast syn::ExprAsync) {
         walk::visit_async(self, expression);
     }
@@ -145,11 +138,15 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_expr_if(&mut self, expression: &'ast ExprIf) {
-        walk::visit_if(self, expression);
+        conditions::visit_if(self, expression);
     }
 
     fn visit_expr_while(&mut self, expression: &'ast ExprWhile) {
-        walk::visit_while(self, expression);
+        conditions::visit_while(self, expression);
+    }
+
+    fn visit_expr_match(&mut self, expression: &'ast ExprMatch) {
+        conditions::visit_match(self, expression);
     }
 
     fn visit_expr_for_loop(&mut self, expression: &'ast ExprForLoop) {
@@ -225,8 +222,15 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     }
 
     fn visit_pat_struct(&mut self, pattern: &'ast PatStruct) {
-        self.record_struct_pattern(pattern);
-        self.with_pattern_type_paths(|visitor| visit::visit_pat_struct(visitor, pattern));
+        scopes::visit_struct_pattern(self, pattern);
+    }
+
+    fn visit_pat_reference(&mut self, pattern: &'ast PatReference) {
+        scopes::visit_reference_pattern(self, pattern);
+    }
+
+    fn visit_pat_type(&mut self, pattern: &'ast PatType) {
+        scopes::visit_typed_pattern(self, pattern);
     }
 
     fn visit_block(&mut self, block: &'ast Block) {

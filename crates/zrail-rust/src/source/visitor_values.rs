@@ -1,8 +1,8 @@
 //! Guarded lexical bindings prevent stale receiver identities across shadows and feature worlds.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 
-use syn::{FnArg, Local, Pat, Signature, visit::Visit};
+use syn::{FnArg, Local, Pat, Signature};
 use zrail_core::AnalysisQuality;
 
 use crate::source::CfgPredicate;
@@ -11,7 +11,13 @@ use super::{
     FactVisitor, SyntaxGuard,
     attributes::cfg_guard,
     operation_model::{TypeIdentity, unresolved},
+    visitor_patterns::{PatternInputMode, binding_input_modes},
 };
+
+#[path = "visitor_value_patterns.rs"]
+mod patterns;
+
+use patterns::{binding_names, simple_binding_name, typed_pattern};
 
 pub(in crate::source) type LocalValueScopes = Vec<BTreeMap<String, Vec<GuardedValueBinding>>>;
 
@@ -19,12 +25,14 @@ pub(in crate::source) type LocalValueScopes = Vec<BTreeMap<String, Vec<GuardedVa
 pub(in crate::source) struct ValueCandidate {
     pub(in crate::source) identity: TypeIdentity,
     pub(in crate::source) guard: SyntaxGuard,
+    pub(in crate::source) input: PatternInputMode,
 }
 
 #[derive(Clone, Debug)]
 pub(in crate::source) struct GuardedValueBinding {
     value: ValueBinding,
     guard: SyntaxGuard,
+    input: PatternInputMode,
 }
 
 #[derive(Clone, Debug)]
@@ -50,7 +58,8 @@ impl FactVisitor<'_> {
         for argument in &signature.inputs {
             if let FnArg::Typed(argument) = argument {
                 let guard = self.syntax_guard().combine(cfg_guard(&argument.attrs));
-                self.install_pattern(&argument.pat, Some(&argument.ty), &guard);
+                let input = self.pattern_input_from_type(&argument.ty);
+                self.install_pattern(&argument.pat, Some(&argument.ty), input, &guard);
             }
         }
         visit(self);
@@ -66,7 +75,10 @@ impl FactVisitor<'_> {
         for pattern in inputs {
             let (pattern, ty) = typed_pattern(pattern);
             let guard = self.syntax_guard();
-            self.install_pattern(pattern, ty, &guard);
+            let input = ty.map_or(PatternInputMode::Unresolved, |ty| {
+                self.pattern_input_from_type(ty)
+            });
+            self.install_pattern(pattern, ty, input, &guard);
         }
         visit(self);
         self.local_values.pop();
@@ -75,20 +87,44 @@ impl FactVisitor<'_> {
     pub(in crate::source) fn with_pattern_values(
         &mut self,
         pattern: &Pat,
+        input: PatternInputMode,
         visit: impl FnOnce(&mut Self),
+    ) {
+        let checkpoint = self.value_scope_checkpoint();
+        self.push_pattern_values(pattern, input);
+        visit(self);
+        self.restore_value_scopes(checkpoint);
+    }
+
+    pub(in crate::source) fn record_local_bindings(
+        &mut self,
+        local: &Local,
+        input: PatternInputMode,
+    ) {
+        let (pattern, ty) = typed_pattern(&local.pat);
+        let guard = self.syntax_guard();
+        let input = ty.map_or(input, |ty| self.pattern_input_from_type(ty));
+        self.install_pattern(pattern, ty, input, &guard);
+    }
+
+    pub(in crate::source) fn value_scope_checkpoint(&self) -> usize {
+        self.local_values.len()
+    }
+
+    pub(in crate::source) fn push_pattern_values(
+        &mut self,
+        pattern: &Pat,
+        input: PatternInputMode,
     ) {
         self.local_values.push(BTreeMap::new());
         let (pattern, ty) = typed_pattern(pattern);
         let guard = self.syntax_guard();
-        self.install_pattern(pattern, ty, &guard);
-        visit(self);
-        self.local_values.pop();
+        let input = ty.map_or(input, |ty| self.pattern_input_from_type(ty));
+        self.install_pattern(pattern, ty, input, &guard);
     }
 
-    pub(in crate::source) fn record_local_bindings(&mut self, local: &Local) {
-        let (pattern, ty) = typed_pattern(&local.pat);
-        let guard = self.syntax_guard();
-        self.install_pattern(pattern, ty, &guard);
+    pub(in crate::source) fn restore_value_scopes(&mut self, checkpoint: usize) {
+        self.local_values.truncate(checkpoint);
     }
 
     pub(in crate::source) fn local_value_candidates(&self, name: &str) -> Vec<ValueCandidate> {
@@ -118,19 +154,31 @@ impl FactVisitor<'_> {
             candidates.push(ValueCandidate {
                 identity: unresolved("<unresolved>"),
                 guard: SyntaxGuard::from_predicate(uncovered),
+                input: PatternInputMode::Unresolved,
             });
         }
         candidates
     }
 
-    fn install_pattern(&mut self, pattern: &Pat, ty: Option<&syn::Type>, guard: &SyntaxGuard) {
+    fn install_pattern(
+        &mut self,
+        pattern: &Pat,
+        ty: Option<&syn::Type>,
+        input: PatternInputMode,
+        guard: &SyntaxGuard,
+    ) {
         let names = binding_names(pattern);
+        let inputs = binding_input_modes(pattern, input);
         let exact_name = ty.and_then(|_| simple_binding_name(pattern));
         let exact = ty.map(|ty| binding_from_identity(self.resolve_type(ty)));
         let Some(scope) = self.local_values.last_mut() else {
             return;
         };
         for name in names {
+            let input = inputs
+                .get(&name)
+                .copied()
+                .unwrap_or(PatternInputMode::Unresolved);
             let value = if exact_name.as_deref() == Some(name.as_str()) {
                 exact
                     .clone()
@@ -141,6 +189,7 @@ impl FactVisitor<'_> {
             scope.entry(name).or_default().push(GuardedValueBinding {
                 value,
                 guard: guard.clone(),
+                input,
             });
         }
     }
@@ -164,6 +213,7 @@ fn expand_binding(
             candidates.push(ValueCandidate {
                 identity: identity.clone(),
                 guard,
+                input: binding.input,
             });
         }
         ValueBinding::Candidates(identities) => {
@@ -173,43 +223,9 @@ fn expand_binding(
                 ValueCandidate {
                     identity,
                     guard: guard.clone(),
+                    input: binding.input,
                 }
             }));
         }
-    }
-}
-
-fn typed_pattern(pattern: &Pat) -> (&Pat, Option<&syn::Type>) {
-    match pattern {
-        Pat::Type(typed) => (&typed.pat, Some(&typed.ty)),
-        _ => (pattern, None),
-    }
-}
-
-fn simple_binding_name(pattern: &Pat) -> Option<String> {
-    match pattern {
-        Pat::Ident(binding) if binding.subpat.is_none() => Some(binding.ident.to_string()),
-        Pat::Reference(reference) => simple_binding_name(&reference.pat),
-        Pat::Paren(paren) => simple_binding_name(&paren.pat),
-        Pat::Type(typed) => simple_binding_name(&typed.pat),
-        _ => None,
-    }
-}
-
-fn binding_names(pattern: &Pat) -> BTreeSet<String> {
-    let mut collector = BindingNameCollector::default();
-    collector.visit_pat(pattern);
-    collector.names
-}
-
-#[derive(Default)]
-struct BindingNameCollector {
-    names: BTreeSet<String>,
-}
-
-impl<'ast> Visit<'ast> for BindingNameCollector {
-    fn visit_pat_ident(&mut self, pattern: &'ast syn::PatIdent) {
-        self.names.insert(pattern.ident.to_string());
-        syn::visit::visit_pat_ident(self, pattern);
     }
 }

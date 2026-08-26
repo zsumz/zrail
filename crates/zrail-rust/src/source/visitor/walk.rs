@@ -1,13 +1,14 @@
 //! Complex visitor walks preserve mutation, macro, module, and block semantics.
 
 use syn::{
-    Arm, BinOp, Block, Expr, ExprAssign, ExprAsync, ExprAwait, ExprBinary, ExprClosure,
-    ExprForLoop, ExprIf, ExprReference, ExprWhile, ImplItemFn, ItemFn, ItemImpl, ItemMod,
-    ItemTrait, Macro, Signature, Stmt, TraitItemFn,
+    BinOp, Block, ExprAssign, ExprAsync, ExprAwait, ExprBinary, ExprClosure, ExprForLoop,
+    ExprRawAddr, ExprReference, ImplItemFn, ItemFn, ItemImpl, ItemMod, ItemTrait, Macro,
+    PointerMutability, Signature, Stmt, TraitItemFn,
     spanned::Spanned,
     visit::{self, Visit},
 };
 
+use super::super::visitor_parts::visitor_patterns::PatternInputMode;
 use super::FactVisitor;
 
 pub(super) fn visit_binary(visitor: &mut FactVisitor<'_>, expression: &ExprBinary) {
@@ -37,11 +38,11 @@ pub(super) fn visit_binary(visitor: &mut FactVisitor<'_>, expression: &ExprBinar
 }
 
 pub(super) fn visit_assign(visitor: &mut FactVisitor<'_>, expression: &ExprAssign) {
-    visitor.with_place_operation(
-        super::super::SourceOperationKind::FieldWrite,
-        &expression.left,
-        |visitor| visit::visit_expr_assign(visitor, expression),
-    );
+    for attribute in &expression.attrs {
+        visitor.visit_attribute(attribute);
+    }
+    super::super::assignee_expression::visit(visitor, &expression.left);
+    visitor.visit_expr(&expression.right);
 }
 
 pub(super) fn visit_reference(visitor: &mut FactVisitor<'_>, expression: &ExprReference) {
@@ -53,6 +54,18 @@ pub(super) fn visit_reference(visitor: &mut FactVisitor<'_>, expression: &ExprRe
         );
     } else {
         visit::visit_expr_reference(visitor, expression);
+    }
+}
+
+pub(super) fn visit_raw_address(visitor: &mut FactVisitor<'_>, expression: &ExprRawAddr) {
+    if matches!(expression.mutability, PointerMutability::Mut(_)) {
+        visitor.with_place_operation(
+            super::super::SourceOperationKind::FieldMutableBorrow,
+            &expression.expr,
+            |visitor| visit::visit_expr_raw_addr(visitor, expression),
+        );
+    } else {
+        visit::visit_expr_raw_addr(visitor, expression);
     }
 }
 
@@ -73,45 +86,11 @@ pub(super) fn visit_closure(visitor: &mut FactVisitor<'_>, expression: &ExprClos
     });
 }
 
-pub(super) fn visit_arm(visitor: &mut FactVisitor<'_>, arm: &Arm) {
-    visitor.visit_pat(&arm.pat);
-    visitor.with_pattern_values(&arm.pat, |visitor| {
-        if let Some((_, guard)) = &arm.guard {
-            visitor.visit_expr(guard);
-        }
-        visitor.visit_expr(&arm.body);
-    });
-}
-
-pub(super) fn visit_if(visitor: &mut FactVisitor<'_>, expression: &ExprIf) {
-    visitor.visit_expr(&expression.cond);
-    if let Expr::Let(binding) = expression.cond.as_ref() {
-        visitor.with_pattern_values(&binding.pat, |visitor| {
-            visitor.visit_block(&expression.then_branch);
-        });
-    } else {
-        visitor.visit_block(&expression.then_branch);
-    }
-    if let Some((_, otherwise)) = &expression.else_branch {
-        visitor.visit_expr(otherwise);
-    }
-}
-
-pub(super) fn visit_while(visitor: &mut FactVisitor<'_>, expression: &ExprWhile) {
-    visitor.visit_expr(&expression.cond);
-    if let Expr::Let(binding) = expression.cond.as_ref() {
-        visitor.with_pattern_values(&binding.pat, |visitor| {
-            visitor.visit_block(&expression.body);
-        });
-    } else {
-        visitor.visit_block(&expression.body);
-    }
-}
-
 pub(super) fn visit_for(visitor: &mut FactVisitor<'_>, expression: &ExprForLoop) {
     visitor.visit_expr(&expression.expr);
-    visitor.visit_pat(&expression.pat);
-    visitor.with_pattern_values(&expression.pat, |visitor| {
+    let input = PatternInputMode::Unresolved;
+    visitor.with_pattern_input(input, |visitor| visitor.visit_pat(&expression.pat));
+    visitor.with_pattern_values(&expression.pat, input, |visitor| {
         visitor.visit_block(&expression.body);
     });
 }

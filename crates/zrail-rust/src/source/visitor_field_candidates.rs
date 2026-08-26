@@ -5,6 +5,7 @@ use zrail_core::AnalysisQuality;
 
 use super::super::{
     operation_model::{LocalType, TypeIdentity, unresolved, unwrapped},
+    visitor_patterns::PatternInputMode,
     visitor_values::ValueCandidate,
 };
 use super::{FactVisitor, FieldPlaceFact, SyntaxGuard};
@@ -120,6 +121,7 @@ fn field_receiver_candidates(visitor: &FactVisitor<'_>, expression: &Expr) -> Ve
                     vec![ValueCandidate {
                         identity,
                         guard: SyntaxGuard::Ordinary,
+                        input: PatternInputMode::Unresolved,
                     }]
                 },
             )
@@ -140,6 +142,7 @@ fn field_receiver_candidates(visitor: &FactVisitor<'_>, expression: &Expr) -> Ve
         Expr::Cast(cast) => vec![ValueCandidate {
             identity: visitor.resolve_type(&cast.ty),
             guard: SyntaxGuard::Ordinary,
+            input: visitor.pattern_input_from_type(&cast.ty),
         }],
         _ => vec![unknown_candidate()],
     }
@@ -154,6 +157,7 @@ fn field_value_candidates(visitor: &FactVisitor<'_>, field: &ExprField) -> Vec<V
         .map(|candidate| ValueCandidate {
             identity: field_value_type(visitor, &candidate.identity, &member.to_string()),
             guard: candidate.guard,
+            input: PatternInputMode::Unresolved,
         })
         .collect()
 }
@@ -204,5 +208,6 @@ fn unknown_candidate() -> ValueCandidate {
     ValueCandidate {
         identity: unresolved("<unresolved>"),
         guard: SyntaxGuard::Ordinary,
+        input: PatternInputMode::Unresolved,
     }
 }

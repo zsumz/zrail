@@ -23,6 +23,7 @@ pub(in crate::source) struct FactVisitor<'a> {
     pub(in crate::source) operations: Vec<super::SourceOperationFact>,
     pub(in crate::source) local_types: Vec<super::operation_model::LocalTypes>,
     pub(in crate::source) local_values: super::visitor_values::LocalValueScopes,
+    pub(in crate::source) pattern_inputs: Vec<super::visitor_patterns::PatternInputMode>,
     pub(in crate::source) inline_modules: Vec<String>,
     pub(in crate::source) self_types: Vec<super::operation_model::TypeIdentity>,
     pub(in crate::source) field_read_exclusions: Vec<zrail_core::SourceSpan>,

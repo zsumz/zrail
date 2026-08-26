@@ -49,6 +49,7 @@ impl<'a> FactVisitor<'a> {
             operations: Vec::new(),
             local_types: Vec::new(),
             local_values: Vec::new(),
+            pattern_inputs: Vec::new(),
             inline_modules: Vec::new(),
             self_types: Vec::new(),
             field_read_exclusions: Vec::new(),

@@ -410,11 +410,16 @@ reason = "Only state transitions borrow the epoch mutably."
 ```
 
 Reads include ordinary access, immutable borrows, and right-hand-side use.
-Assignment, compound-assignment, and `&mut` place expressions are not also
-counted as reads. Writes include assignment and compound assignment. Mutable
-borrows include `&mut value.field`, so calls such as
-`mem::replace(&mut value.field, next)` are covered without guessing that an
-arbitrary method call mutates its receiver.
+Assignment, compound-assignment, destructuring-assignment leaves, and mutable
+address expressions are not also counted as reads. Writes include ordinary,
+compound, and destructuring assignment. Mutable borrows include
+`&mut value.field`, explicit `ref mut` field patterns, and implicit
+mutable-reference bindings introduced by match ergonomics. The same
+`field-mutable-borrow` authority category covers `&raw mut value.field`. Calls
+such as `mem::replace(&mut value.field, next)` are therefore covered without
+guessing that an arbitrary method call mutates its receiver. If a pattern's
+effective binding mode cannot be proven, Zrail retains an unresolved mutable
+authority candidate instead of describing the access as read-only.
 
 When a field's type exposes mutation through receiver methods, declare those
 written method names explicitly:

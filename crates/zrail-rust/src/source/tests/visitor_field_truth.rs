@@ -171,9 +171,15 @@ fn inspect(state: State, states: Vec<State>, outer: Other) {
 ",
     );
 
-    for line in [3, 6, 7, 8, 9, 10, 11, 12, 13] {
+    for line in [3, 6, 7, 8, 9, 11, 12, 13] {
         assert_exact(&facts, line, "State::epoch");
     }
+    assert!(facts.iter().any(|fact| {
+        fact.kind == SourceOperationKind::FieldMutableBorrow
+            && fact.identity.span.is_some_and(|span| span.line == 10)
+            && fact.identity.name == "State::epoch"
+            && fact.identity.quality == AnalysisQuality::Exact
+    }));
     assert!(
         facts.iter().any(|fact| {
             fact.kind == SourceOperationKind::FieldRead

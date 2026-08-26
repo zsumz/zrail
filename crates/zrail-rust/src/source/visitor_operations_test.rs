@@ -273,3 +273,6 @@ mod visitor_typed_places;
 
 #[path = "tests/visitor_field_truth.rs"]
 mod visitor_field_truth;
+
+#[path = "tests/visitor_remaining_authority.rs"]
+mod visitor_remaining_authority;

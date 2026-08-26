@@ -1,12 +1,14 @@
 //! Named field syntax always emits an operation; exact identity requires a proven declaration.
 
 use syn::{Expr, ExprField, ExprMethodCall, Member, Path};
+use zrail_core::AnalysisQuality;
 
 use super::{
     FactVisitor, SourceOperationKind, SyntaxGuard,
     fact::source_span,
     operation_model::{FieldPlaceFact, unwrapped},
     place_expression::PlaceExpression,
+    visitor_patterns::PatternFieldAccess,
 };
 
 #[path = "visitor_field_candidates.rs"]
@@ -65,6 +67,7 @@ impl FactVisitor<'_> {
         &mut self,
         path: &Path,
         member: &Member,
+        access: PatternFieldAccess,
         guard: &SyntaxGuard,
     ) {
         let Member::Named(member) = member else {
@@ -79,14 +82,44 @@ impl FactVisitor<'_> {
             base_span: base.span,
             fields: vec![member.to_string()],
         };
-        self.push_field_operation(
-            SourceOperationKind::FieldRead,
-            &identity,
-            member.to_string(),
-            Some(member.span()),
-            Some(place),
-            guard,
-        );
+        match access {
+            PatternFieldAccess::Read => self.push_field_operation(
+                SourceOperationKind::FieldRead,
+                &identity,
+                member.to_string(),
+                Some(member.span()),
+                Some(place),
+                guard,
+            ),
+            PatternFieldAccess::MutableBorrow => self.push_field_operation(
+                SourceOperationKind::FieldMutableBorrow,
+                &identity,
+                member.to_string(),
+                Some(member.span()),
+                Some(place),
+                guard,
+            ),
+            PatternFieldAccess::PossiblyMutableBorrow => {
+                self.push_field_operation(
+                    SourceOperationKind::FieldRead,
+                    &identity,
+                    member.to_string(),
+                    Some(member.span()),
+                    Some(place),
+                    guard,
+                );
+                let mut unresolved = identity;
+                unresolved.quality = AnalysisQuality::Unresolved;
+                self.push_field_operation(
+                    SourceOperationKind::FieldMutableBorrow,
+                    &unresolved,
+                    member.to_string(),
+                    Some(member.span()),
+                    None,
+                    guard,
+                );
+            }
+        }
     }
 
     fn record_field(&mut self, kind: SourceOperationKind, field: &ExprField) {

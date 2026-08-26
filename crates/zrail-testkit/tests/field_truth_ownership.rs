@@ -18,9 +18,11 @@ fn unresolved_field_bases_are_reported_instead_of_disappearing_or_misidentifying
         "{}",
         report.human()
     );
+    // The imported pattern contributes an exact read plus a fail-closed mutable
+    // candidate; the factory receiver remains the third unresolved access.
     assert_eq!(
         findings(&report, "OWN-003", "src/trespasser.rs"),
-        2,
+        3,
         "{}",
         report.human()
     );
