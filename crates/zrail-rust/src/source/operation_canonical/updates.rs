@@ -181,6 +181,7 @@ fn field_operation(
         method: None,
         place: None,
         struct_update: None,
+        qualified_subject: None,
     }
 }
 

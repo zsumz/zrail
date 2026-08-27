@@ -64,7 +64,7 @@ fn same_named_item_on_another_type_does_not_suppress_candidate() {
 }
 
 #[test]
-fn local_trait_impl_for_external_self_is_proven_value() {
+fn unqualified_local_trait_impl_for_external_self_remains_unresolved() {
     let mut index = trait_fixture(
         "pub trait Versioned { fn version() -> u64; }",
         "impl crate::traits::Versioned for external::State { fn version() -> u64 { 1 } }",
@@ -76,11 +76,9 @@ fn local_trait_impl_for_external_self_is_proven_value() {
         canonicalize_operations_with_external(&mut index, &compilation, &modules, "external");
 
     assert!(findings.is_empty(), "unexpected findings: {findings:#?}");
-    assert!(
-        owned_for(&index, "external::State").is_empty(),
-        "operations: {:#?}",
-        owned_for(&index, "external::State")
-    );
+    let operations = owned_for(&index, "external::State");
+    assert_eq!(operations.len(), 1, "operations: {operations:#?}");
+    assert_eq!(operations[0].identity.quality, AnalysisQuality::Unresolved);
 }
 
 #[test]
@@ -227,3 +225,6 @@ fn modules_for_domain(
     })
     .collect()
 }
+
+#[path = "associated_external.rs"]
+mod external;

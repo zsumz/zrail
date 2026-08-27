@@ -1,23 +1,24 @@
 //! Associated values are cataloged by canonical self type, not impl location.
 
+#[path = "associated/classification.rs"]
+mod classification;
 #[path = "associated/routes.rs"]
 mod routes;
 
-use std::collections::BTreeMap;
-
-use zrail_core::AnalysisQuality;
+use std::collections::{BTreeMap, BTreeSet};
 
 use super::resolution::Route;
 use crate::source::{
-    AssociatedItemFact, CfgPredicate, CompilationDomain, SourceIndex, SyntaxGuard,
+    AssociatedItemFact, CompilationDomain, SourceIndex, SyntaxGuard,
     associated_items::AssociatedItemKind,
-    include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedTerminal},
+    include_bindings::{IncludeBindings, ResolvedOrigin},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
 };
 
 #[derive(Default)]
 pub(super) struct Catalog {
     entries: BTreeMap<Key, BTreeMap<TraitIdentity, Vec<SyntaxGuard>>>,
+    external_self: BTreeSet<Key>,
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -45,6 +46,7 @@ struct DefaultImpl {
     self_type: String,
     trait_name: String,
     guard: SyntaxGuard,
+    external_self: bool,
 }
 
 impl Catalog {
@@ -84,6 +86,7 @@ impl Catalog {
                         item.clone(),
                         TraitIdentity::Canonical(implementation.trait_name.clone()),
                         implementation.guard.combine(guard.clone()),
+                        implementation.external_self,
                     );
                 }
             }
@@ -91,33 +94,13 @@ impl Catalog {
         Ok(catalog)
     }
 
-    pub(super) fn classify_value(&self, route: &mut Route, context: &SyntaxGuard) {
-        if route.terminal != ResolvedTerminal::Unknown {
-            return;
-        }
-        let Some((self_type, item)) = route.name.rsplit_once("::") else {
-            return;
-        };
-        let Some(traits) = self.entries.get(&Key {
-            domain: route.domain.clone(),
-            self_type: self_type.into(),
-            item: item.into(),
-        }) else {
-            return;
-        };
-        let union = SyntaxGuard::from_predicate(CfgPredicate::any(
-            traits
-                .values()
-                .flatten()
-                .map(SyntaxGuard::predicate)
-                .collect(),
-        ));
-        if union.availability_for_domain(context, &route.domain)
-            == crate::source::GuardAvailability::Exact
-        {
-            route.terminal = ResolvedTerminal::Value;
-            route.quality = AnalysisQuality::Exact;
-        }
+    pub(super) fn classify_value(
+        &self,
+        route: &mut Route,
+        context: &SyntaxGuard,
+        selection: super::qualification::TraitSelection<'_>,
+    ) {
+        classification::classify(self, route, context, selection);
     }
 
     fn collect_fact(
@@ -158,12 +141,14 @@ impl Catalog {
                         continue;
                     }
                     if let Some(item) = item {
+                        let external_self = route.origin == ResolvedOrigin::External;
                         self.insert(
                             route.domain,
                             route.name,
                             item.clone(),
                             identity,
                             fact.guard.clone(),
+                            external_self,
                         );
                     } else if let TraitIdentity::Canonical(trait_name) = identity
                         && origin == Some(ResolvedOrigin::CrateLocal)
@@ -173,6 +158,7 @@ impl Catalog {
                             self_type: route.name,
                             trait_name,
                             guard: fact.guard.clone(),
+                            external_self: route.origin == ResolvedOrigin::External,
                         });
                     }
                 }
@@ -188,13 +174,18 @@ impl Catalog {
         item: String,
         trait_identity: TraitIdentity,
         guard: SyntaxGuard,
+        external_self: bool,
     ) {
+        let key = Key {
+            domain,
+            self_type,
+            item,
+        };
+        if external_self {
+            self.external_self.insert(key.clone());
+        }
         self.entries
-            .entry(Key {
-                domain,
-                self_type,
-                item,
-            })
+            .entry(key)
             .or_default()
             .entry(trait_identity)
             .or_default()

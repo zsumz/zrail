@@ -108,5 +108,6 @@ fn operation(kind: SourceOperationKind, method: Option<&str>) -> SourceOperation
         method: method.map(str::to_owned),
         place: None,
         struct_update: None,
+        qualified_subject: None,
     }
 }

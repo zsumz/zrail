@@ -366,6 +366,11 @@ value is governed at that acquisition site as constructor capability; the same
 Imports and aliases are retained when they resolve exactly. A constructor-like
 call that cannot be proven to name a type or variant remains unresolved; an
 exact owner fails closed instead of treating capitalization as type evidence.
+Type-relative paths such as `<State>::Ready` retain the qualified self type.
+For dependency types whose declaration shape is unavailable, ordinary
+`Type::item` syntax stays unresolved even when a local extension trait defines
+the same item; only an exact `<Type as LocalTrait>::item` occurrence can prove
+that trait-associated value.
 Unit struct and enum-variant paths used only as destructuring-assignment
 assignees are patterns, not constructions.
 

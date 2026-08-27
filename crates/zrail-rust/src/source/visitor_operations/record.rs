@@ -3,8 +3,9 @@
 use super::super::{
     FactVisitor, SourceOperationFact, SourceOperationKind,
     fact::{fact, written_fact},
-    operation_model::{FieldPlaceFact, StructUpdateFact, TypeIdentity},
+    operation_model::{FieldPlaceFact, QualifiedOperationSubject, StructUpdateFact, TypeIdentity},
 };
+use super::ConstructorCandidate;
 use super::ConstructorForm;
 
 #[derive(Default)]
@@ -14,6 +15,7 @@ struct OperationDetails<'a> {
     method: Option<String>,
     place: Option<FieldPlaceFact>,
     struct_update: Option<StructUpdateFact>,
+    qualified_subject: Option<QualifiedOperationSubject>,
     guard: Option<&'a super::super::SyntaxGuard>,
 }
 
@@ -41,23 +43,22 @@ impl FactVisitor<'_> {
 
     pub(in crate::source) fn push_guarded_constructor_candidate(
         &mut self,
-        kind: SourceOperationKind,
         identity: &TypeIdentity,
         written: String,
         span: Option<proc_macro2::Span>,
-        construction: ConstructorForm,
-        proven: bool,
         guard: &super::super::SyntaxGuard,
+        candidate: ConstructorCandidate,
     ) {
         self.push_operation_with_method(
-            kind,
+            candidate.kind,
             identity,
             written,
             span,
             OperationDetails {
-                construction: Some(construction),
-                construction_proven: proven,
+                construction: Some(candidate.form),
+                construction_proven: candidate.proven,
                 guard: Some(guard),
+                qualified_subject: candidate.qualified_subject,
                 ..OperationDetails::default()
             },
         );
@@ -144,6 +145,7 @@ impl FactVisitor<'_> {
             method,
             place,
             struct_update,
+            qualified_subject,
             guard,
         } = details;
         let mut observed = span.map_or_else(
@@ -187,6 +189,7 @@ impl FactVisitor<'_> {
             method,
             place,
             struct_update,
+            qualified_subject,
         });
     }
 }

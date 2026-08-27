@@ -19,6 +19,14 @@ use super::{
     },
 };
 
+pub(in crate::source) struct ConstructorCandidate {
+    pub(in crate::source) kind: SourceOperationKind,
+    pub(in crate::source) form: ConstructorForm,
+    pub(in crate::source) proven: bool,
+    pub(in crate::source) qualified_subject:
+        Option<super::operation_model::QualifiedOperationSubject>,
+}
+
 impl FactVisitor<'_> {
     pub(in crate::source) fn with_local_type_scope<'a>(
         &mut self,

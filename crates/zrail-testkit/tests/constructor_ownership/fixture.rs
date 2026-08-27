@@ -44,7 +44,7 @@ const FILES: &[(&str, &str)] = &[
     ("zrail.toml", CONTRACT),
     (
         "src/lib.rs",
-        "//! Constructor fixture.\npub mod model;\nmod capabilities;\nmod extensions;\nmod owner;\nmod self_trespass;\nmod trespasser;\nmod values;\n",
+        "//! Constructor fixture.\npub mod model;\nmod capabilities;\nmod extensions;\nmod owner;\nmod qualified;\nmod self_trespass;\nmod trespasser;\nmod values;\n",
     ),
     (
         "src/capabilities.rs",
@@ -96,6 +96,22 @@ fn own() {
     let _ = State { epoch: 0, secret: 0 };
 }
 fn inspect(state: &State) { let _ = state.secret; }
+",
+    ),
+    (
+        "src/qualified.rs",
+        r"//! Type-relative constructor trespassers.
+use crate::model::choice;
+#[allow(non_snake_case)]
+fn ready(_: u64) {}
+#[allow(non_upper_case_globals)]
+const idle: u64 = 0;
+fn trespass() {
+    let _ = <choice>::ready(1);
+    let make = <choice>::ready;
+    let _ = make(2);
+    let _ = <choice>::idle;
+}
 ",
     ),
     (

@@ -11,6 +11,7 @@ use super::{
     fact::{source_span, written_fact, written_path},
     imports::ImportMap,
     model::CallResolutionFact,
+    operation_model::subject::WrittenOperationSubject,
 };
 
 mod candidates;
@@ -119,11 +120,12 @@ fn effective_path<'a>(
     callee: &'a ExprPath,
     generic_types: &[String],
 ) -> Option<(Cow<'a, Path>, AnalysisQuality)> {
+    let subject = WrittenOperationSubject::from_expression(callee);
     let Some(qself) = &callee.qself else {
-        return Some((Cow::Borrowed(&callee.path), AnalysisQuality::Exact));
+        return Some((subject.call_path()?, AnalysisQuality::Exact));
     };
     if qself.position > 0 {
-        return Some((Cow::Borrowed(&callee.path), AnalysisQuality::Exact));
+        return Some((subject.call_path()?, AnalysisQuality::Exact));
     }
     let Type::Path(self_type) = qself.ty.as_ref() else {
         return None;
@@ -131,16 +133,14 @@ fn effective_path<'a>(
     if self_type.qself.is_some() {
         return None;
     }
-    let mut path = self_type.path.clone();
-    let generic = path.segments.first().is_some_and(|segment| {
+    let generic = self_type.path.segments.first().is_some_and(|segment| {
         segment.ident == "Self"
             || generic_types
                 .iter()
                 .any(|generic| segment.ident == generic.as_str())
     });
-    path.segments.extend(callee.path.segments.iter().cloned());
     Some((
-        Cow::Owned(path),
+        subject.call_path()?,
         if generic {
             AnalysisQuality::Unresolved
         } else {
@@ -158,7 +158,7 @@ fn projection_text(callee: &ExprPath) -> Option<String> {
     if associated == Some(1) {
         return None;
     }
-    Some(qualified_self_text(callee, qself))
+    Some(WrittenOperationSubject::from_expression(callee).written())
 }
 
 fn unresolved_call_text(callee: &ExprPath, generic_types: &[String]) -> Option<String> {
@@ -170,7 +170,7 @@ fn unresolved_call_text(callee: &ExprPath, generic_types: &[String]) -> Option<S
         return None;
     }
     let Type::Path(self_type) = qself.ty.as_ref() else {
-        return Some(qualified_self_text(callee, qself));
+        return Some(WrittenOperationSubject::from_expression(callee).written());
     };
     let generic = self_type.qself.is_some()
         || self_type.path.segments.first().is_some_and(|segment| {
@@ -178,38 +178,7 @@ fn unresolved_call_text(callee: &ExprPath, generic_types: &[String]) -> Option<S
                 .iter()
                 .any(|generic| segment.ident == generic.as_str())
         });
-    generic.then(|| qualified_self_text(callee, qself))
-}
-
-fn qualified_self_text(callee: &ExprPath, qself: &syn::QSelf) -> String {
-    let self_type = match qself.ty.as_ref() {
-        Type::Path(path) if path.qself.is_none() => written_path(&path.path),
-        _ => "unresolved self type".into(),
-    };
-    if qself.position == 0 {
-        return format!(
-            "<{self_type}>::{}",
-            segment_text(callee.path.segments.iter())
-        );
-    }
-    let mut trait_path = segment_text(callee.path.segments.iter().take(qself.position));
-    if callee.path.leading_colon.is_some() {
-        trait_path.insert_str(0, "::");
-    }
-    let associated_path = segment_text(callee.path.segments.iter().skip(qself.position));
-    let associated_path = if associated_path.is_empty() {
-        "unresolved associated call"
-    } else {
-        &associated_path
-    };
-    format!("<{self_type} as {trait_path}>::{associated_path}")
-}
-
-fn segment_text<'a>(segments: impl Iterator<Item = &'a syn::PathSegment>) -> String {
-    segments
-        .map(|segment| segment.ident.to_string())
-        .collect::<Vec<_>>()
-        .join("::")
+    generic.then(|| WrittenOperationSubject::from_expression(callee).written())
 }
 
 #[cfg(test)]

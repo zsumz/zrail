@@ -175,3 +175,6 @@ mod updates;
 
 #[path = "operations_constructor/self_shadows.rs"]
 mod self_shadows;
+
+#[path = "operations_constructor/qualified.rs"]
+mod qualified;

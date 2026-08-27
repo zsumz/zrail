@@ -1,5 +1,8 @@
 //! Small operation-identity values shared by extraction helpers.
 
+#[path = "operation_model/subject.rs"]
+pub(super) mod subject;
+
 use std::collections::BTreeMap;
 
 use syn::{Expr, Fields, Item, Type};
@@ -32,6 +35,7 @@ pub(crate) struct SourceOperationFact {
     pub(crate) method: Option<String>,
     pub(crate) place: Option<FieldPlaceFact>,
     pub(crate) struct_update: Option<StructUpdateFact>,
+    pub(crate) qualified_subject: Option<QualifiedOperationSubject>,
 }
 
 impl SourceOperationFact {
@@ -77,6 +81,14 @@ pub(crate) enum OperationSubjectOrigin {
     WrittenPath,
     CurrentSelf,
     LocalDeclaration,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct QualifiedOperationSubject {
+    pub(crate) lookup: String,
+    pub(crate) explicit_trait: bool,
+    pub(crate) trait_identity: Option<ObservedFact>,
+    pub(crate) force_unresolved: bool,
 }
 
 #[derive(Clone, Debug)]

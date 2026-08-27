@@ -2,6 +2,7 @@
 
 mod associated;
 mod identity;
+mod qualification;
 mod resolution;
 mod updates;
 

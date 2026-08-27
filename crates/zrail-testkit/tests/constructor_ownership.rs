@@ -29,6 +29,9 @@ fn lowercase_self_and_alias_constructors_raise_real_owner_findings() {
     ] {
         assert_finding(&report, rule, "src/capabilities.rs");
     }
+    for rule in ["ready-construction", "idle-construction"] {
+        assert_finding(&report, rule, "src/qualified.rs");
+    }
     for rule in [
         "ticket-construction",
         "marker-construction",

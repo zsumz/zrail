@@ -1,5 +1,8 @@
 //! Construction identities retain canonical candidates from every source instance.
 
+#[path = "identity/candidates.rs"]
+mod candidates;
+
 use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::{AnalysisQuality, SourceSpan};
@@ -9,7 +12,7 @@ use super::{
     resolution,
 };
 use crate::source::{
-    include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedTerminal},
+    include_bindings::{IncludeBindings, ResolvedTerminal},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::ResolutionUsage,
 };
@@ -35,11 +38,16 @@ pub(super) fn canonicalize(
             canonical.push(operation);
             continue;
         };
-        let written = operation
-            .identity
-            .written
-            .as_deref()
-            .unwrap_or(&operation.identity.name);
+        let written = operation.qualified_subject.as_ref().map_or_else(
+            || {
+                operation
+                    .identity
+                    .written
+                    .as_deref()
+                    .unwrap_or(&operation.identity.name)
+            },
+            |subject| subject.lookup.as_str(),
+        );
         let usage = if construction == ConstructorForm::Named {
             ResolutionUsage::OperationType
         } else {
@@ -61,27 +69,48 @@ pub(super) fn canonicalize(
             },
             budget,
         )?;
-        for route in &mut result.routes {
-            associated.classify_value(route, &operation.identity.guard);
-        }
+        super::qualification::classify(
+            operation.qualified_subject.as_ref(),
+            &mut result,
+            associated,
+            &operation.identity.guard,
+            operation
+                .identity
+                .written
+                .as_deref()
+                .unwrap_or(&operation.identity.name),
+            bindings,
+            file,
+            budget,
+        )?;
         if result.expected == 0 {
             canonical.push(operation);
             continue;
         }
-        let mut candidates = BTreeMap::<String, Candidate>::new();
+        let mut candidates = BTreeMap::<String, candidates::Candidate>::new();
         let mut removed = false;
+        let mut discarded_exact = true;
         let mut unknown = false;
+        let route_count = result.routes.len();
         for route in result.routes {
             match disposition(operation.kind, construction, route.terminal) {
-                Disposition::Discard => removed = true,
-                Disposition::Keep(form) => insert(&mut candidates, route, form),
+                Disposition::Discard => {
+                    removed = true;
+                    discarded_exact &= route.quality == AnalysisQuality::Exact;
+                }
+                Disposition::Keep(form) => candidates::insert(&mut candidates, route, form),
                 Disposition::Unknown => {
                     unknown = true;
-                    insert(&mut candidates, route, ConstructorForm::Unknown);
+                    candidates::insert(&mut candidates, route, ConstructorForm::Unknown);
                 }
             }
         }
         if candidates.is_empty() {
+            if !discarded_exact || route_count < result.expected {
+                operation.identity.quality = AnalysisQuality::Unresolved;
+                operation.identity.canonical.clear();
+                canonical.push(operation);
+            }
             continue;
         }
         let mut quality = candidates
@@ -94,7 +123,8 @@ pub(super) fn canonicalize(
         } else if candidates.len() > 1 || removed {
             quality = quality.max(AnalysisQuality::Conservative);
         }
-        let retained_form = retained_form(candidates.values().map(|candidate| candidate.form));
+        let retained_form =
+            candidates::retained_form(candidates.values().map(|candidate| candidate.form));
         if operation.kind == SourceOperationKind::ConstructorCapability {
             operation.kind = if retained_form == ConstructorForm::Unit {
                 SourceOperationKind::TypeConstruction
@@ -104,7 +134,7 @@ pub(super) fn canonicalize(
             operation.construction = Some(retained_form);
             operation.construction_proven = !unknown && retained_form != ConstructorForm::Unknown;
         }
-        apply_candidates(&mut operation, candidates, quality);
+        candidates::apply(&mut operation, candidates, quality);
         operation.file_local = false;
         if construction == ConstructorForm::Named && result.blocks_completeness {
             unresolved.insert((file.into(), operation.identity.span));
@@ -113,76 +143,6 @@ pub(super) fn canonicalize(
     }
     *operations = canonical;
     Ok(())
-}
-
-#[derive(Clone)]
-struct Candidate {
-    quality: AnalysisQuality,
-    origin: ResolvedOrigin,
-    form: ConstructorForm,
-}
-
-fn insert(
-    candidates: &mut BTreeMap<String, Candidate>,
-    route: resolution::Route,
-    form: ConstructorForm,
-) {
-    candidates
-        .entry(route.name)
-        .and_modify(|candidate| {
-            candidate.quality = candidate.quality.max(route.quality);
-            if candidate.origin != route.origin {
-                candidate.origin = ResolvedOrigin::Unknown;
-                candidate.quality = AnalysisQuality::Unresolved;
-            }
-            if candidate.form != form {
-                candidate.form = ConstructorForm::Unknown;
-                candidate.quality = candidate.quality.max(AnalysisQuality::Conservative);
-            }
-        })
-        .or_insert(Candidate {
-            quality: route.quality,
-            origin: route.origin,
-            form,
-        });
-}
-
-fn retained_form(forms: impl Iterator<Item = ConstructorForm>) -> ConstructorForm {
-    forms
-        .reduce(|left, right| {
-            if left == right {
-                left
-            } else {
-                ConstructorForm::Unknown
-            }
-        })
-        .unwrap_or(ConstructorForm::Unknown)
-}
-
-fn apply_candidates(
-    operation: &mut SourceOperationFact,
-    candidates: BTreeMap<String, Candidate>,
-    quality: AnalysisQuality,
-) {
-    if candidates.len() == 1 {
-        let Some((name, candidate)) = candidates.into_iter().next() else {
-            return;
-        };
-        operation.identity.name.clone_from(&name);
-        operation.identity.canonical = if candidate.origin == ResolvedOrigin::CrateLocal {
-            vec![name]
-        } else {
-            Vec::new()
-        };
-        operation.identity.quality = quality.max(if candidate.origin == ResolvedOrigin::Unknown {
-            AnalysisQuality::Unresolved
-        } else {
-            AnalysisQuality::Exact
-        });
-    } else {
-        operation.identity.canonical = candidates.into_keys().collect();
-        operation.identity.quality = quality.max(AnalysisQuality::Conservative);
-    }
 }
 
 enum Disposition {
