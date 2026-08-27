@@ -106,6 +106,7 @@ pub(super) struct ResolveRequest<'a> {
     pub(super) mode: LookupMode,
     pub(super) usage: ResolutionUsage,
     pub(super) guard: SyntaxGuard,
+    pub(super) allow_implicit_prelude: bool,
 }
 
 pub(super) struct WrittenResolveRequest<'a> {
@@ -115,6 +116,7 @@ pub(super) struct WrittenResolveRequest<'a> {
     pub(super) depth: usize,
     pub(super) usage: ResolutionUsage,
     pub(super) guard: &'a SyntaxGuard,
+    pub(super) allow_implicit_prelude: bool,
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]

@@ -98,6 +98,7 @@ pub(super) fn parsed_file(relative: &str, source: &str) -> RustFileFacts {
         associated_items: visitor.associated_items,
         glob_imports: visitor.glob_imports,
         inline_module_scopes: visitor.inline_module_scopes,
+        prelude_directives: crate::source::include_bindings::implicit_prelude::directives(&syntax),
         compile_effects: visitor.compile_effects,
         lint_suppressions: visitor.lint_suppressions,
         unsafe_constructs: visitor.unsafe_constructs,

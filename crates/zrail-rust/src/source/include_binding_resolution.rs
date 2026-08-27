@@ -33,6 +33,7 @@ impl IncludeBindings {
                 mode: LookupMode::lexical(module),
                 usage: request.usage,
                 guard: request.guard.clone(),
+                allow_implicit_prelude: request.allow_implicit_prelude,
             },
             trail,
             budget,
@@ -53,6 +54,7 @@ impl IncludeBindings {
             mode,
             usage,
             guard,
+            allow_implicit_prelude,
         } = request;
         budget.consume_work()?;
         if depth >= MAX_BINDING_STEPS
@@ -89,6 +91,7 @@ impl IncludeBindings {
                         mode,
                         usage,
                         guard: guard.clone(),
+                        allow_implicit_prelude,
                     },
                     trail,
                     budget,
@@ -115,6 +118,7 @@ impl IncludeBindings {
                     mode: LookupMode::explicit_extern(mode.consumer.clone()),
                     usage,
                     guard: guard.clone(),
+                    allow_implicit_prelude,
                 },
                 trail,
                 budget,
@@ -155,6 +159,7 @@ impl IncludeBindings {
             mode: mode.clone(),
             usage,
             guard: guard.clone(),
+            allow_implicit_prelude,
         };
         let aliases = self.resolve_aliases(&request, &guard, &module, trail, budget)?;
         let speculative_alias_miss =
@@ -192,15 +197,7 @@ impl IncludeBindings {
             if speculative_alias_miss {
                 return Ok(Vec::new());
             }
-            return self.missing(
-                instance,
-                written,
-                scope,
-                crossed_include,
-                &mode,
-                &module,
-                budget,
-            );
+            return self.missing(&request, crossed_include, &module, budget);
         }
         let opacity = self.namespace_opacity(instance, scope, mode.exact_scope(), budget)?;
         if opacity.is_opaque() {

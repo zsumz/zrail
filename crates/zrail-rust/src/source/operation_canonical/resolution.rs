@@ -126,6 +126,7 @@ pub(super) fn resolve(
                 depth: 0,
                 usage,
                 guard: &fact.guard,
+                allow_implicit_prelude: true,
             },
             &mut trail,
             budget,

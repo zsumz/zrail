@@ -97,6 +97,7 @@ impl IncludeBindings {
                 mode: request.mode.clone(),
                 usage: request.usage,
                 guard: request.guard.clone(),
+                allow_implicit_prelude: request.allow_implicit_prelude,
             };
             let expanded = self.expand_binding(&site, &expansion, suffix, trail, budget)?;
             if expanded.is_empty() {

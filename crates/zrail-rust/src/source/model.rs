@@ -12,6 +12,7 @@ use crate::inventory::FileClass;
 use super::Reachability;
 use super::{CompileEffectFact, IncludeOccurrenceId, macro_model::MacroExpansionFact};
 
+pub(crate) use super::include_bindings::implicit_prelude::PreludeDirective;
 pub(crate) use bindings::{
     BindingAnchor, BindingKind, BindingVisibility, ConstructorForm, ImportBindingFact,
     MacroImportFact, ModuleBinding,
@@ -175,6 +176,7 @@ pub(crate) struct RustFileFacts {
     pub(crate) associated_items: Vec<super::associated_items::AssociatedItemFact>,
     pub(crate) glob_imports: Vec<super::glob_imports::GlobImportFact>,
     pub(crate) inline_module_scopes: Vec<SourceSpan>,
+    pub(crate) prelude_directives: Vec<PreludeDirective>,
     pub(crate) compile_effects: Vec<CompileEffectFact>,
     pub(crate) lint_suppressions: Vec<ObservedFact>,
     pub(crate) unsafe_constructs: Vec<ObservedFact>,

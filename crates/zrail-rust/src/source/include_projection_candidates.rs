@@ -77,6 +77,7 @@ pub(super) fn aggregate(
                     depth: 0,
                     usage,
                     guard: &fact.guard,
+                    allow_implicit_prelude: false,
                 },
                 &mut seen,
                 budget,

@@ -54,6 +54,7 @@ impl IncludeBindings {
                 mode: LookupMode::glob_target(site.module.clone()),
                 usage,
                 guard: guard.clone(),
+                allow_implicit_prelude: false,
             },
             trail,
             budget,

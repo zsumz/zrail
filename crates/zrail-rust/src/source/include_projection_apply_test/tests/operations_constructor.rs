@@ -178,3 +178,6 @@ mod self_shadows;
 
 #[path = "operations_constructor/qualified.rs"]
 mod qualified;
+
+#[path = "operations_constructor/prelude.rs"]
+mod prelude;

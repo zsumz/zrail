@@ -122,6 +122,7 @@ impl IncludeBindings {
                 mode: request.mode.clone(),
                 usage: request.usage,
                 guard: request.guard.clone(),
+                allow_implicit_prelude: request.allow_implicit_prelude,
             };
             let mut inherited = self.alias_sites(
                 &parent_request,

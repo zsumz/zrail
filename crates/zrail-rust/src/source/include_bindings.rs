@@ -1,9 +1,15 @@
 //! Ordinary paths retain every namespace identity introduced by include splices.
 
+#[path = "implicit_prelude.rs"]
+pub(super) mod implicit_prelude;
+#[path = "implicit_prelude_catalog.rs"]
+mod implicit_prelude_catalog;
 #[path = "include_binding_activity.rs"]
 mod include_binding_activity;
 #[path = "include_binding_requirement.rs"]
 mod include_binding_requirement;
+#[path = "include_prelude.rs"]
+mod include_prelude;
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -21,6 +27,7 @@ pub(super) struct IncludeBindings {
     pub(super) inline_module_names: BTreeMap<String, BTreeMap<zrail_core::SourceSpan, String>>,
     pub(super) opaque_namespace_scopes:
         BTreeMap<String, BTreeSet<(Vec<zrail_core::SourceSpan>, SyntaxGuard, bool)>>,
+    pub(super) prelude_directives: BTreeMap<String, Vec<super::model::PreludeDirective>>,
     pub(super) instances: SourceInstances,
     active_instances: BTreeMap<(String, SyntaxGuard), Vec<SourceInstanceId>>,
     extern_roots: BTreeMap<String, BTreeSet<String>>,
@@ -167,6 +174,11 @@ impl IncludeBindings {
                             .collect(),
                     )
                 })
+                .collect(),
+            prelude_directives: index
+                .files
+                .iter()
+                .map(|file| (file.relative.clone(), file.prelude_directives.clone()))
                 .collect(),
             instances,
             active_instances,

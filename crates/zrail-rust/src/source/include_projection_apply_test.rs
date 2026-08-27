@@ -250,6 +250,7 @@ fn file(
         associated_items: Vec::new(),
         glob_imports: Vec::new(),
         inline_module_scopes: Vec::new(),
+        prelude_directives: Vec::new(),
         compile_effects: Vec::new(),
         lint_suppressions: Vec::new(),
         unsafe_constructs: Vec::new(),

@@ -1,40 +1,62 @@
 //! Missing names fall back only when the active Rust namespace is complete.
 
-use zrail_core::{AnalysisQuality, SourceSpan};
+use zrail_core::AnalysisQuality;
 
 use super::{
     SourceInstanceId,
     include_binding_helpers::{canonical_name, opaque, split_root, unresolved},
     include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedPath, ResolvedTerminal},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
-    include_resolution_state::{EffectiveModule, LookupMode},
+    include_resolution_state::{EffectiveModule, LookupMode, ResolveRequest},
 };
 
 impl IncludeBindings {
     pub(super) fn missing(
         &self,
-        instance: SourceInstanceId,
-        written: &str,
-        scope: &[SourceSpan],
+        request: &ResolveRequest<'_>,
         crossed_include: bool,
-        mode: &LookupMode,
         module: &EffectiveModule,
         budget: &mut ProjectionBudget,
     ) -> Result<Vec<ResolvedPath>, ProjectionLimit> {
-        let opacity = self.namespace_opacity(instance, scope, mode.exact_scope(), budget)?;
+        let opacity = self.namespace_opacity(
+            request.instance,
+            request.scope,
+            request.mode.exact_scope(),
+            budget,
+        )?;
         if opacity.is_opaque() {
-            let name = if mode.exact_scope() {
-                canonical_name(&module.names, written).unwrap_or_else(|| written.into())
+            let name = if request.mode.exact_scope() {
+                canonical_name(&module.names, request.written)
+                    .unwrap_or_else(|| request.written.into())
             } else {
-                written.into()
+                request.written.into()
             };
             return Ok(vec![opaque(&name, opacity.blocks_completeness())]);
         }
-        if mode.exact_scope() {
-            return Ok(self.missing_module(instance, written, crossed_include, mode, module));
+        if request.mode.exact_scope() {
+            return Ok(self.missing_module(
+                request.instance,
+                request.written,
+                crossed_include,
+                &request.mode,
+                module,
+            ));
+        }
+        if request.allow_implicit_prelude
+            && let Some(prelude) = self.implicit_prelude_candidate(
+                request.instance,
+                request.written,
+                request.scope,
+                crossed_include,
+                &request.mode,
+                request.usage,
+                &request.guard,
+            )
+        {
+            return Ok(vec![prelude]);
         }
         Ok(vec![ResolvedPath {
-            name: written.into(),
+            name: request.written.into(),
             quality: AnalysisQuality::Exact,
             crossed_include,
             requires_projection: crossed_include,
