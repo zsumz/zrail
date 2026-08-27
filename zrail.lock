@@ -2,7 +2,7 @@
 schema = 3
 semantics = 4
 producer = "0.0.3-rc.4"
-contract_sha256 = "72f6206269c1b0d78dbc66fe3c427303d68a01cdf601b31245eeca43df8d245a"
+contract_sha256 = "5d5f3b205064fef95fb482bb0c336f762f124663e0422bba65f223481f8e6e6b"
 ratchet = []
 
 [analysis]
@@ -17,15 +17,15 @@ targets = 63
 physical_rust_files = 697
 base_source_contexts = 1137
 derived_source_contexts = 0
-source_facts = 210117
-projection_queries = 1335691
+source_facts = 210019
+projection_queries = 1335614
 projected_facts = 59
 unresolved_bindings = 0
 analyzer_semantics = 4
 
 [[analysis.contract_source]]
 path = "zrail.toml"
-sha256 = "29ea0e8d641256ad2aea66517253ac356af8397791661fe0689e763788bf963d"
+sha256 = "10bbcb950e31377d47d010efa60c3564a374b1f6caa5921ff4f0d9cf78805b65"
 
 [[package]]
 name = "zrail"
@@ -269,15 +269,6 @@ default_features = true
 kind = "workspace-member"
 directory = "crates/zrail-rust"
 requirement = "=0.0.3-rc.4"
-
-[[gate]]
-name = "architecture-review"
-path = ".github/workflows/authority.yml"
-sha256 = "ba696487ef1d5c82e4a9812bfaf59b036609d1d4405f8808f7f055d425160d2a"
-
-[[gate.input]]
-path = ".github/actions/setup-rust/action.yml"
-sha256 = "e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de"
 
 [[gate]]
 name = "check"

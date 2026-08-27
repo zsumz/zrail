@@ -260,10 +260,6 @@ debt, unknown comparisons, and stale or forged locks by default.
 unknown comparisons still fail. It must never appear in automated or
 proposal-controlled merge checks.
 
-The included repository workflow demonstrates protected-base analysis. It is
-useful preview feedback, but it is not production merge authority: a proposal
-can add another workflow under the same GitHub Actions identity.
-
 A production deployment needs an organization ruleset workflow stored in a
 separately protected repository or a dedicated GitHub App. Require the status
 from that exact App and require branches to be current with their base.
@@ -1127,10 +1123,9 @@ Only after all three registry comparisons pass does the workflow make the
 GitHub draft visible. Release actions are pinned to full commit identities; the
 workflow does not accept proposal or manual source inputs.
 
-`QUAL-02` defines the protected-deployment requirement: proposed checker changes
-must not authorize violations or grants in the same pull request. The required
-result must come from a ruleset workflow or App outside the proposal's write
-domain; the included repository workflow alone does not provide merge authority.
+For a protected deployment, proposed checker changes must not authorize
+violations or grants in the same pull request. The required result must come
+from a ruleset workflow or App outside the proposal's write domain.
 
 Run the complete offline repository gate with:
 
