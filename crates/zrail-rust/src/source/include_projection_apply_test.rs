@@ -287,3 +287,12 @@ mod operations_relative;
 
 #[path = "include_projection_apply_test/tests/operations_alias.rs"]
 mod operations_alias;
+
+#[path = "include_projection_apply_test/tests/operations_constructor.rs"]
+mod operations_constructor;
+
+#[path = "include_projection_apply_test/tests/operations_self.rs"]
+mod operations_self;
+
+#[path = "include_projection_apply_test/tests/operations_global.rs"]
+mod operations_global;

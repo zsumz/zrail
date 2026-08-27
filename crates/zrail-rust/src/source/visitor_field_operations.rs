@@ -81,6 +81,7 @@ impl FactVisitor<'_> {
             base_name: base.name,
             base_quality: base.quality,
             base_file_local: base.file_local,
+            base_origin: base.origin,
             base_span: base.span,
             fields: vec![member.to_string()],
         };

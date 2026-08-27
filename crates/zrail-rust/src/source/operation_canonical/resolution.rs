@@ -3,11 +3,12 @@
 use zrail_core::AnalysisQuality;
 
 use super::super::{
-    CompilationDomain, GuardAvailability, ObservedFact,
-    include_binding_helpers::canonical_name,
-    include_bindings::IncludeBindings,
+    CompilationDomain, ConstructorForm, GuardAvailability, ObservedFact,
+    include_binding_helpers::canonical_local_name,
+    include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedTerminal},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::{ResolutionTrail, ResolutionUsage, WrittenResolveRequest},
+    operation_model::OperationSubjectOrigin,
 };
 
 #[derive(Clone)]
@@ -15,6 +16,8 @@ pub(super) struct Route {
     pub(super) domain: CompilationDomain,
     pub(super) name: String,
     pub(super) quality: AnalysisQuality,
+    pub(super) origin: ResolvedOrigin,
+    pub(super) terminal: ResolvedTerminal,
 }
 
 pub(super) struct Resolution {
@@ -24,14 +27,32 @@ pub(super) struct Resolution {
     pub(super) blocks_completeness: bool,
 }
 
+#[derive(Clone, Copy)]
+pub(super) struct Request<'a> {
+    pub(super) bindings: &'a IncludeBindings,
+    pub(super) file: &'a str,
+    pub(super) fact: &'a ObservedFact,
+    pub(super) file_local: bool,
+    pub(super) subject_origin: OperationSubjectOrigin,
+    pub(super) written: &'a str,
+    pub(super) usage: ResolutionUsage,
+    pub(super) construction: Option<ConstructorForm>,
+}
+
 pub(super) fn resolve(
-    bindings: &IncludeBindings,
-    file: &str,
-    fact: &ObservedFact,
-    file_local: bool,
-    written: &str,
+    request: Request<'_>,
     budget: &mut ProjectionBudget,
 ) -> Result<Resolution, ProjectionLimit> {
+    let Request {
+        bindings,
+        file,
+        fact,
+        file_local,
+        subject_origin,
+        written,
+        usage,
+        construction,
+    } = request;
     let instances = bindings
         .instances
         .for_file(file)
@@ -74,7 +95,7 @@ pub(super) fn resolve(
                 resolution.blocks_completeness = true;
                 continue;
             };
-            let Some(name) = canonical_name(&module.names, &fact.name) else {
+            let Some(name) = canonical_local_name(&module.names, &fact.name) else {
                 resolution.unresolved = true;
                 resolution.blocks_completeness = true;
                 continue;
@@ -83,17 +104,26 @@ pub(super) fn resolve(
                 domain: source.domain.clone(),
                 name,
                 quality: fact.quality.max(guard_quality),
+                origin: ResolvedOrigin::CrateLocal,
+                terminal: construction.map_or(ResolvedTerminal::Type, |form| {
+                    ResolvedTerminal::Constructor(form)
+                }),
             });
             continue;
         }
+        let lookup = if subject_origin == OperationSubjectOrigin::CurrentSelf {
+            &fact.name
+        } else {
+            written
+        };
         let mut trail = ResolutionTrail::new();
         let resolved = bindings.resolve_written(
             &WrittenResolveRequest {
                 instance,
-                written,
+                written: lookup,
                 scope: &fact.lexical_scope,
                 depth: 0,
-                usage: ResolutionUsage::OperationType,
+                usage,
                 guard: &fact.guard,
             },
             &mut trail,
@@ -113,6 +143,8 @@ pub(super) fn resolve(
                 domain: source.domain.clone(),
                 name: candidate.name,
                 quality,
+                origin: candidate.origin,
+                terminal: candidate.terminal,
             });
         }
     }

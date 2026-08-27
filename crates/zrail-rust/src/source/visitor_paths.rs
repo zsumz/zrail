@@ -6,7 +6,10 @@ use syn::{
     visit::{self, Visit as _},
 };
 
-use super::{FactVisitor, fact::written_fact};
+use super::{
+    FactVisitor,
+    fact::{written_fact, written_path},
+};
 
 impl FactVisitor<'_> {
     pub(in crate::source) fn record_expression_path(&mut self, expression: &ExprPath) {
@@ -39,15 +42,7 @@ impl FactVisitor<'_> {
         if name.is_empty() {
             return;
         }
-        let mut written = path
-            .segments
-            .iter()
-            .map(|segment| segment.ident.to_string())
-            .collect::<Vec<_>>()
-            .join("::");
-        if path.leading_colon.is_some() {
-            written.insert_str(0, "::");
-        }
+        let written = written_path(path);
         let mut fact = written_fact(
             name.as_str(),
             written,

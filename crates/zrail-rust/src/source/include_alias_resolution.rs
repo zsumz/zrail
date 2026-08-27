@@ -21,8 +21,29 @@ impl IncludeBindings {
         budget: &mut ProjectionBudget,
     ) -> Result<Option<Vec<ResolvedPath>>, ProjectionLimit> {
         budget.consume_work()?;
-        let (root, suffix) = split_root(request.written);
-        let mut sites = self.alias_sites(request, root, suffix, context, module, budget)?;
+        let (default_root, default_suffix) = split_root(request.written);
+        let mut root = default_root;
+        let mut suffix = default_suffix;
+        let mut sites = if request.usage
+            == super::include_resolution_state::ResolutionUsage::ConstructorValue
+            && !default_suffix.is_empty()
+        {
+            let exact = self.alias_sites(request, request.written, "", context, module, budget)?;
+            if exact.is_empty() {
+                Vec::new()
+            } else {
+                root = request.written;
+                suffix = "";
+                exact
+            }
+        } else {
+            Vec::new()
+        };
+        if sites.is_empty() {
+            root = default_root;
+            suffix = default_suffix;
+            sites = self.alias_sites(request, root, suffix, context, module, budget)?;
+        }
         if sites.is_empty() {
             return Ok(None);
         }

@@ -5,7 +5,7 @@ use zrail_core::{AnalysisQuality, SourceSpan};
 use super::{
     SourceInstanceId,
     include_binding_helpers::{canonical_name, opaque, split_root, unresolved},
-    include_bindings::{IncludeBindings, ResolvedPath},
+    include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedPath, ResolvedTerminal},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::{EffectiveModule, LookupMode},
 };
@@ -39,6 +39,8 @@ impl IncludeBindings {
             crossed_include,
             requires_projection: crossed_include,
             blocks_completeness: false,
+            origin: ResolvedOrigin::External,
+            terminal: ResolvedTerminal::Unknown,
         }])
     }
 
@@ -64,6 +66,8 @@ impl IncludeBindings {
                 crossed_include,
                 requires_projection: true,
                 blocks_completeness: false,
+                origin: ResolvedOrigin::External,
+                terminal: ResolvedTerminal::Unknown,
             }];
         }
         if mode.speculative {

@@ -5,6 +5,19 @@ use zrail_core::{AnalysisQuality, SourceSpan};
 
 use super::{ObservedFact, SyntaxGuard};
 
+pub(super) fn written_path(path: &syn::Path) -> String {
+    let mut written = path
+        .segments
+        .iter()
+        .map(|segment| segment.ident.to_string())
+        .collect::<Vec<_>>()
+        .join("::");
+    if path.leading_colon.is_some() {
+        written.insert_str(0, "::");
+    }
+    written
+}
+
 pub(super) fn fact(name: impl Into<String>, span: Span, quality: AnalysisQuality) -> ObservedFact {
     ObservedFact {
         name: name.into(),

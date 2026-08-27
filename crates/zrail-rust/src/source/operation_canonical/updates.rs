@@ -1,22 +1,27 @@
 //! Deferred functional updates enumerate fields only after alias identity is exact.
 
+mod fields;
+
 use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::{AnalysisQuality, SourceSpan};
 
 use super::{
     super::{
-        CfgPredicate, FactNamespace, ObservedFact, SourceOperationFact, SourceOperationKind,
-        operation_place_canonical::catalog::{Catalog, NamedField},
+        FactNamespace, ObservedFact, SourceOperationFact, SourceOperationKind,
+        operation_model::OperationSubjectOrigin, operation_place_canonical::catalog::Catalog,
     },
     resolution,
 };
 use crate::source::{
     SyntaxGuard,
     include_binding_helpers::join,
-    include_bindings::IncludeBindings,
+    include_bindings::{IncludeBindings, ResolvedOrigin},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
+    include_resolution_state::ResolutionUsage,
 };
+
+use fields::{FieldGroup, omitted_guard};
 
 pub(super) fn expand(
     operations: &mut Vec<SourceOperationFact>,
@@ -54,11 +59,16 @@ pub(super) fn expand(
             namespace: FactNamespace::Type,
         };
         let result = resolution::resolve(
-            bindings,
-            file,
-            &subject,
-            place.base_file_local,
-            &update.written,
+            resolution::Request {
+                bindings,
+                file,
+                fact: &subject,
+                file_local: place.base_file_local,
+                subject_origin: place.base_origin,
+                written: &update.written,
+                usage: ResolutionUsage::OperationType,
+                construction: None,
+            },
             budget,
         )?;
         if result.expected == 0 {
@@ -69,6 +79,10 @@ pub(super) fn expand(
         let mut groups = BTreeMap::<String, FieldGroup>::new();
         let mut missing = result.unresolved;
         for route in &result.routes {
+            if route.origin != ResolvedOrigin::CrateLocal {
+                missing = true;
+                continue;
+            }
             let Some(fields) = catalog.named_fields(&route.name, &route.domain) else {
                 missing = true;
                 continue;
@@ -140,54 +154,6 @@ pub(super) fn expand(
     Ok(())
 }
 
-struct FieldGroup {
-    quality: AnalysisQuality,
-    fields: BTreeMap<String, NamedField>,
-}
-
-impl Default for FieldGroup {
-    fn default() -> Self {
-        Self {
-            quality: AnalysisQuality::Exact,
-            fields: BTreeMap::new(),
-        }
-    }
-}
-
-impl FieldGroup {
-    fn add(&mut self, field: NamedField) {
-        self.fields
-            .entry(field.name.clone())
-            .and_modify(|current| {
-                current.guard = SyntaxGuard::from_predicate(CfgPredicate::any(vec![
-                    current.guard.predicate(),
-                    field.guard.predicate(),
-                ]));
-                current.quality = current.quality.max(field.quality);
-            })
-            .or_insert(field);
-    }
-}
-
-fn omitted_guard(
-    update_guard: &SyntaxGuard,
-    field_guard: &SyntaxGuard,
-    name: &str,
-    update: &crate::source::operation_model::StructUpdateFact,
-) -> SyntaxGuard {
-    let explicit = update
-        .explicit_fields
-        .iter()
-        .filter(|field| field.name == name)
-        .map(|field| field.guard.predicate())
-        .collect();
-    update_guard
-        .combine(field_guard)
-        .combine(SyntaxGuard::from_predicate(CfgPredicate::not(
-            CfgPredicate::any(explicit),
-        )))
-}
-
 fn field_operation(
     source: &SourceOperationFact,
     name: String,
@@ -207,7 +173,9 @@ fn field_operation(
             namespace: FactNamespace::Type,
         },
         file_local: false,
-        exact_construction_syntax: false,
+        subject_origin: OperationSubjectOrigin::WrittenPath,
+        construction: None,
+        construction_proven: false,
         method: None,
         place: None,
         struct_update: None,

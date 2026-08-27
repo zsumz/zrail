@@ -93,15 +93,17 @@ fn opaque_field_matches(owner: &OwnerContract, operation: &SourceOperationFact) 
     if fact.quality == AnalysisQuality::Exact {
         return false;
     }
-    let Some(base) = fact.name.strip_suffix("::*") else {
-        return false;
-    };
     let Some((selector_base, _)) = owner.selector.rsplit_once("::") else {
         return false;
     };
-    normalized_path(selector_base) == normalized_path(base)
-        || base == "<unresolved>"
-        || last_segment(selector_base) == last_segment(base)
+    fact.policy_names().any(|name| {
+        let Some(base) = name.strip_suffix("::*") else {
+            return false;
+        };
+        normalized_path(selector_base) == normalized_path(base)
+            || base == "<unresolved>"
+            || (fact.canonical.is_empty() && last_segment(selector_base) == last_segment(base))
+    })
 }
 
 fn last_segment(path: &str) -> &str {

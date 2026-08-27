@@ -157,14 +157,26 @@ fn select(
 
 fn filter_namespace(sites: &mut Vec<BindingSite>, suffix: &str, usage: ResolutionUsage) {
     if !suffix.is_empty() {
-        sites.retain(|site| site.binding.kind != BindingKind::LocalValue);
+        if usage == ResolutionUsage::ConstructorValue {
+            sites.retain(|site| {
+                matches!(
+                    site.binding.kind,
+                    BindingKind::Import | BindingKind::TypeAlias | BindingKind::Module(_)
+                )
+            });
+        } else {
+            sites.retain(|site| site.binding.kind != BindingKind::LocalValue);
+        }
         return;
     }
-    if usage == ResolutionUsage::Call {
+    if matches!(
+        usage,
+        ResolutionUsage::Call | ResolutionUsage::ConstructorValue
+    ) {
         sites.retain(|site| {
             matches!(
                 site.binding.kind,
-                BindingKind::Import | BindingKind::LocalConstructor | BindingKind::LocalValue
+                BindingKind::Import | BindingKind::LocalConstructor(_) | BindingKind::LocalValue
             )
         });
     } else if matches!(
@@ -179,7 +191,7 @@ fn filter_namespace(sites: &mut Vec<BindingSite>, suffix: &str, usage: Resolutio
                     | BindingKind::OpaqueAlias
                     | BindingKind::Module(_)
                     | BindingKind::LocalType
-                    | BindingKind::LocalConstructor
+                    | BindingKind::LocalConstructor(_)
             )
         });
     }

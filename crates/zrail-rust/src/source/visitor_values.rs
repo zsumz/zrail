@@ -3,7 +3,6 @@
 use std::collections::BTreeMap;
 
 use syn::{FnArg, Local, Pat, Signature};
-use zrail_core::AnalysisQuality;
 
 use crate::source::CfgPredicate;
 
@@ -14,9 +13,12 @@ use super::{
     visitor_patterns::{PatternInputMode, binding_input_modes},
 };
 
+#[path = "visitor_value_candidates.rs"]
+mod candidates;
 #[path = "visitor_value_patterns.rs"]
 mod patterns;
 
+use candidates::{binding_from_identity, expand_binding};
 use patterns::{binding_names, simple_binding_name, typed_pattern};
 
 pub(in crate::source) type LocalValueScopes = Vec<BTreeMap<String, Vec<GuardedValueBinding>>>;
@@ -160,6 +162,17 @@ impl FactVisitor<'_> {
         candidates
     }
 
+    pub(in crate::source) fn local_value_shadow_guard(&self, name: &str) -> SyntaxGuard {
+        SyntaxGuard::from_predicate(CfgPredicate::any(
+            self.local_values
+                .iter()
+                .filter_map(|scope| scope.get(name))
+                .flatten()
+                .map(|binding| binding.guard.predicate())
+                .collect(),
+        ))
+    }
+
     fn install_pattern(
         &mut self,
         pattern: &Pat,
@@ -191,41 +204,6 @@ impl FactVisitor<'_> {
                 guard: guard.clone(),
                 input,
             });
-        }
-    }
-}
-
-fn binding_from_identity(identity: TypeIdentity) -> ValueBinding {
-    match identity.quality {
-        AnalysisQuality::Exact => ValueBinding::Exact(identity),
-        AnalysisQuality::Conservative => ValueBinding::Candidates(vec![identity]),
-        AnalysisQuality::Unresolved => ValueBinding::Unresolved(identity),
-    }
-}
-
-fn expand_binding(
-    binding: &GuardedValueBinding,
-    guard: SyntaxGuard,
-    candidates: &mut Vec<ValueCandidate>,
-) {
-    match &binding.value {
-        ValueBinding::Exact(identity) | ValueBinding::Unresolved(identity) => {
-            candidates.push(ValueCandidate {
-                identity: identity.clone(),
-                guard,
-                input: binding.input,
-            });
-        }
-        ValueBinding::Candidates(identities) => {
-            candidates.extend(identities.iter().map(|identity| {
-                let mut identity = identity.clone();
-                identity.quality = identity.quality.max(AnalysisQuality::Conservative);
-                ValueCandidate {
-                    identity,
-                    guard: guard.clone(),
-                    input: binding.input,
-                }
-            }));
         }
     }
 }

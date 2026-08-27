@@ -3,7 +3,9 @@
 use super::{
     BindingAnchor, BindingKind, ModuleBinding,
     include_binding_helpers::{canonical_name, join, split_root, unresolved},
-    include_bindings::{BindingSite, IncludeBindings, ResolvedPath},
+    include_bindings::{
+        BindingSite, IncludeBindings, ResolvedOrigin, ResolvedPath, ResolvedTerminal,
+    },
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::{LookupMode, ResolutionTrail, ResolutionUsage, ResolveRequest},
 };
@@ -27,7 +29,7 @@ impl IncludeBindings {
             {
                 Vec::new()
             }
-            BindingKind::LocalType | BindingKind::LocalConstructor | BindingKind::LocalValue => {
+            BindingKind::LocalType => {
                 let Some(name) = canonical_name(&site.module.names, request.written) else {
                     return Ok(vec![unresolved(request.written)]);
                 };
@@ -37,8 +39,14 @@ impl IncludeBindings {
                     quality: site.binding.quality,
                     crossed_include: site.crossed_include,
                     blocks_completeness: false,
+                    origin: ResolvedOrigin::CrateLocal,
+                    terminal: ResolvedTerminal::Type,
                 }]
             }
+            BindingKind::LocalConstructor(form) => {
+                local_terminal(site, request, ResolvedTerminal::Constructor(form))
+            }
+            BindingKind::LocalValue => local_terminal(site, request, ResolvedTerminal::Value),
             BindingKind::OpaqueAlias
                 if request.usage == ResolutionUsage::Type && suffix.is_empty() =>
             {
@@ -50,6 +58,8 @@ impl IncludeBindings {
                     quality: site.binding.quality,
                     crossed_include: site.crossed_include,
                     blocks_completeness: false,
+                    origin: ResolvedOrigin::Unknown,
+                    terminal: ResolvedTerminal::Unknown,
                 }]
             }
             BindingKind::OpaqueAlias => {
@@ -74,6 +84,8 @@ impl IncludeBindings {
                         crossed_include: false,
                         requires_projection: true,
                         blocks_completeness: false,
+                        origin: ResolvedOrigin::External,
+                        terminal: ResolvedTerminal::Unknown,
                     }]
                 } else {
                     self.resolve_in(
@@ -127,6 +139,8 @@ impl IncludeBindings {
                 crossed_include: site.crossed_include,
                 requires_projection: true,
                 blocks_completeness: false,
+                origin: ResolvedOrigin::CrateLocal,
+                terminal: ResolvedTerminal::Module,
             }]);
         };
         let locations = self.module_locations(site, module, budget)?;
@@ -201,4 +215,23 @@ impl IncludeBindings {
             }
         }
     }
+}
+
+fn local_terminal(
+    site: &BindingSite,
+    request: &ResolveRequest<'_>,
+    terminal: ResolvedTerminal,
+) -> Vec<ResolvedPath> {
+    let Some(name) = canonical_name(&site.module.names, request.written) else {
+        return vec![unresolved(request.written)];
+    };
+    vec![ResolvedPath {
+        requires_projection: name != request.written || site.crossed_include,
+        name,
+        quality: site.binding.quality,
+        crossed_include: site.crossed_include,
+        blocks_completeness: false,
+        origin: ResolvedOrigin::CrateLocal,
+        terminal,
+    }]
 }

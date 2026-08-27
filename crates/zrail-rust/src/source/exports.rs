@@ -12,10 +12,10 @@ pub(crate) use super::{
     macro_binding_policy::BindingMacroPolicy,
     macro_model::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin},
     model::{
-        AsyncSyntaxFact, BindingAnchor, BindingKind, BindingVisibility, FactNamespace,
-        GuardAvailability, ImportBindingFact, IncludeBoundary, IncludeContext, MacroImportFact,
-        ModuleBinding, ModuleDeclaration, ObservedFact, RustFileFacts, SourceIndex, SourceSyntax,
-        SyntaxGuard,
+        AsyncSyntaxFact, BindingAnchor, BindingKind, BindingVisibility, ConstructorForm,
+        FactNamespace, GuardAvailability, ImportBindingFact, IncludeBoundary, IncludeContext,
+        MacroImportFact, ModuleBinding, ModuleDeclaration, ObservedFact, RustFileFacts,
+        SourceIndex, SourceSyntax, SyntaxGuard,
     },
     modules::{CompilationModuleEdge, ResolvedModuleEdge},
     operation_model::{SourceOperationFact, SourceOperationKind},
@@ -33,6 +33,9 @@ pub(crate) use super::{
 
 #[cfg(test)]
 pub(crate) use super::model::SourceAnalysisMetrics;
+
+#[cfg(test)]
+pub(crate) use super::operation_model::OperationSubjectOrigin;
 
 #[cfg(test)]
 pub(crate) use super::type_policy_model::TypePolicyFacts;

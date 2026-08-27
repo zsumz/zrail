@@ -1,13 +1,14 @@
 //! Syntax visitor collecting source facts after import resolution.
 
 mod conditions;
+mod operations;
 mod scopes;
 mod walk;
 
 use syn::{
-    Attribute, Block, ExprBinary, ExprCall, ExprField, ExprForLoop, ExprIf, ExprMacro, ExprMatch,
-    ExprMethodCall, ExprPath, ExprRawAddr, ExprStruct, ExprWhile, ItemForeignMod, ItemMacro,
-    ItemMod, ItemStatic, Macro, PatReference, PatStruct, PatType, StmtMacro, TypePath,
+    Attribute, Block, ExprBinary, ExprForLoop, ExprIf, ExprMacro, ExprMatch, ExprMethodCall,
+    ExprPath, ExprRawAddr, ExprStruct, ExprWhile, ItemForeignMod, ItemMacro, ItemMod, ItemStatic,
+    Macro, PatReference, PatStruct, PatType, StmtMacro, TypePath,
     visit::{self, Visit},
 };
 
@@ -90,28 +91,20 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
         self.record_attribute(attribute);
     }
 
-    fn visit_expr_call(&mut self, call: &'ast ExprCall) {
-        self.record_call_construction(call);
-        self.record_call(call);
-        visit::visit_expr_call(self, call);
+    fn visit_expr_call(&mut self, call: &'ast syn::ExprCall) {
+        operations::visit_call(self, call);
     }
 
     fn visit_expr_method_call(&mut self, call: &'ast ExprMethodCall) {
-        self.record_field_receiver_call(call);
-        self.record_method_operation(call);
-        self.record_method_call(call);
-        visit::visit_expr_method_call(self, call);
+        operations::visit_method_call(self, call);
     }
 
     fn visit_expr_struct(&mut self, expression: &'ast ExprStruct) {
-        self.record_struct_construction(expression);
-        self.record_struct_update_reads(expression);
-        visit::visit_expr_struct(self, expression);
+        operations::visit_struct(self, expression);
     }
 
-    fn visit_expr_field(&mut self, expression: &'ast ExprField) {
-        self.record_field_read(expression);
-        visit::visit_expr_field(self, expression);
+    fn visit_expr_field(&mut self, expression: &'ast syn::ExprField) {
+        operations::visit_field(self, expression);
     }
 
     fn visit_expr_assign(&mut self, expression: &'ast syn::ExprAssign) {

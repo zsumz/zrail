@@ -1,6 +1,6 @@
 //! Shared fixture identities keep the projection tests focused on behavior.
 
-use zrail_core::SourceSpan;
+use zrail_core::{OwnerContract, OwnerKind, PolicyReachability, SourceSpan};
 
 use crate::{
     inventory::{FileClass, RustSourceFile},
@@ -176,4 +176,30 @@ pub(super) fn canonicalize_operation_worlds(
     ));
     crate::source::operation_place_canonical::apply(index, &domains);
     findings
+}
+
+pub(super) fn matching_operations(
+    index: &SourceIndex,
+    file: &str,
+    kind: OwnerKind,
+    selector: &str,
+) -> Vec<crate::source::SourceOperationFact> {
+    let owner = OwnerContract {
+        name: "operation-owner".into(),
+        kind,
+        reachability: PolicyReachability::All,
+        within: vec!["src/**".into()],
+        selector: selector.into(),
+        mutating_methods: Vec::new(),
+        allow: vec!["src/owner.rs".into()],
+        reason: "operation stays centralized".into(),
+    };
+    let file = index
+        .files
+        .iter()
+        .find(|candidate| candidate.relative == file)
+        .expect("operation file");
+    crate::rules::matching_operation_owner_operations(&owner, file)
+        .cloned()
+        .collect()
 }

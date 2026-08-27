@@ -279,3 +279,6 @@ mod visitor_remaining_authority;
 
 #[path = "tests/visitor_implicit_reads.rs"]
 mod visitor_implicit_reads;
+
+#[path = "tests/visitor_constructor_calls.rs"]
+mod visitor_constructor_calls;

@@ -1,5 +1,7 @@
 //! Normalized facts extracted from one Rust source file.
 
+#[path = "model_bindings.rs"]
+mod bindings;
 #[path = "source_metrics.rs"]
 mod source_metrics;
 
@@ -9,6 +11,11 @@ use crate::inventory::FileClass;
 
 use super::Reachability;
 use super::{CompileEffectFact, IncludeOccurrenceId, macro_model::MacroExpansionFact};
+
+pub(crate) use bindings::{
+    BindingAnchor, BindingKind, BindingVisibility, ConstructorForm, ImportBindingFact,
+    MacroImportFact, ModuleBinding,
+};
 
 pub(crate) use source_metrics::SourceAnalysisMetrics;
 
@@ -60,63 +67,6 @@ pub(crate) enum FactNamespace {
     Unknown,
     Type,
     Value,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct ImportBindingFact {
-    pub(crate) name: Option<String>,
-    pub(crate) target: String,
-    pub(crate) kind: BindingKind,
-    pub(crate) anchor: BindingAnchor,
-    pub(crate) visibility: BindingVisibility,
-    pub(crate) quality: AnalysisQuality,
-    pub(crate) quality_without_macros: AnalysisQuality,
-    pub(crate) replacement_macros: Vec<super::macro_binding_policy::MacroOccurrence>,
-    pub(crate) guard: SyntaxGuard,
-    pub(crate) lexical_scope: Vec<SourceSpan>,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum BindingKind {
-    Import,
-    Glob,
-    TypeAlias,
-    OpaqueAlias,
-    Module(ModuleBinding),
-    LocalType,
-    LocalConstructor,
-    LocalValue,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum BindingAnchor {
-    Lexical,
-    UsePath,
-    Absolute,
-    ExternRoot,
-    CrateRoot,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(crate) enum ModuleBinding {
-    Inline(SourceSpan),
-    External(SourceSpan),
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) enum BindingVisibility {
-    Public,
-    Private,
-    Restricted(Vec<String>),
-}
-
-#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
-pub(crate) struct MacroImportFact {
-    pub(crate) name: String,
-    pub(crate) target: String,
-    pub(crate) quality: AnalysisQuality,
-    pub(crate) guard: SyntaxGuard,
-    pub(crate) re_export: bool,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]

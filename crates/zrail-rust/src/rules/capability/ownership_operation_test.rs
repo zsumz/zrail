@@ -60,6 +60,21 @@ fn opaque_field_wildcard_does_not_match_non_field_owner() {
     assert!(!selector_matches(&owner, &operation));
 }
 
+#[test]
+fn canonical_opaque_field_does_not_fall_back_to_written_root() {
+    let mut owner = owner();
+    owner.kind = OwnerKind::FieldRead;
+    owner.selector = "crate::wire::Ticket::local_secret".into();
+    let mut operation = operation(SourceOperationKind::FieldRead, None);
+    operation.identity.name = "wire::Ticket::*".into();
+    operation.identity.canonical = vec!["wire_model::Ticket::*".into()];
+    operation.identity.quality = AnalysisQuality::Unresolved;
+
+    assert!(!selector_matches(&owner, &operation));
+    owner.selector = "wire_model::Ticket::external_secret".into();
+    assert!(selector_matches(&owner, &operation));
+}
+
 fn owner() -> OwnerContract {
     OwnerContract {
         name: "values-mutation".into(),
@@ -87,7 +102,9 @@ fn operation(kind: SourceOperationKind, method: Option<&str>) -> SourceOperation
             namespace: FactNamespace::Type,
         },
         file_local: false,
-        exact_construction_syntax: false,
+        subject_origin: crate::source::OperationSubjectOrigin::WrittenPath,
+        construction: None,
+        construction_proven: false,
         method: method.map(str::to_owned),
         place: None,
         struct_update: None,

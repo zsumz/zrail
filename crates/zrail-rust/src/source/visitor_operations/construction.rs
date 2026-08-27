@@ -1,11 +1,10 @@
 //! Type-construction syntax records exact forms and conservative candidates.
 
-use syn::{Expr, ExprCall, ExprPath, ExprStruct};
+use syn::{Expr, ExprCall, ExprPath, ExprStruct, spanned::Spanned};
 use zrail_core::AnalysisQuality;
 
-use super::{
-    ConstructorForm, FactVisitor, SourceOperationKind, last_segment_looks_constructor, path_text,
-};
+use super::{ConstructorForm, FactVisitor, SourceOperationKind, path_text};
+use crate::source::{CfgPredicate, SyntaxGuard, operation_model::unwrapped};
 
 impl FactVisitor<'_> {
     pub(in crate::source) fn record_struct_construction(&mut self, expression: &ExprStruct) {
@@ -19,26 +18,27 @@ impl FactVisitor<'_> {
                 .segments
                 .last()
                 .map(|segment| segment.ident.span()),
-            true,
+            Some(ConstructorForm::Named),
         );
     }
 
     pub(in crate::source) fn record_call_construction(&mut self, call: &ExprCall) {
-        let Expr::Path(callee) = call.func.as_ref() else {
+        let Expr::Path(callee) = unwrapped(call.func.as_ref()) else {
             return;
         };
-        let Some((form, proven)) = self.constructor_form(&callee.path) else {
-            return;
-        };
-        if form != ConstructorForm::Tuple {
+        let local = self.constructor_form(&callee.path);
+        if local.is_some_and(|(form, proven)| proven && form != ConstructorForm::Tuple) {
             return;
         }
         let mut identity = self.resolve_identity(&callee.path);
-        if !proven {
+        if local.is_none_or(|(_, proven)| !proven) {
             identity.quality = AnalysisQuality::Unresolved;
         }
-        self.push_operation(
-            SourceOperationKind::TypeConstruction,
+        let guard = self.constructor_candidate_guard(&callee.path);
+        if guard.predicate().is_satisfiable() == Some(false) {
+            return;
+        }
+        self.push_guarded_construction(
             &identity,
             path_text(&callee.path),
             callee
@@ -46,21 +46,32 @@ impl FactVisitor<'_> {
                 .segments
                 .last()
                 .map(|segment| segment.ident.span()),
-            proven,
+            ConstructorForm::Tuple,
+            local.is_some_and(|(_, proven)| proven),
+            &guard,
         );
     }
 
     pub(in crate::source) fn record_path_construction(&mut self, expression: &ExprPath) {
-        let exact = self.constructor_form(&expression.path) == Some((ConstructorForm::Unit, true));
-        if !exact && !last_segment_looks_constructor(&expression.path) {
+        if self
+            .constructor_path_exclusions
+            .contains(&crate::source::fact::source_span(expression.path.span()))
+        {
+            return;
+        }
+        let local = self.constructor_form(&expression.path);
+        if local.is_some_and(|(form, proven)| proven && form != ConstructorForm::Unit) {
             return;
         }
         let mut identity = self.resolve_identity(&expression.path);
-        if !exact {
+        if local.is_none_or(|(_, proven)| !proven) {
             identity.quality = AnalysisQuality::Unresolved;
         }
-        self.push_operation(
-            SourceOperationKind::TypeConstruction,
+        let guard = self.constructor_candidate_guard(&expression.path);
+        if guard.predicate().is_satisfiable() == Some(false) {
+            return;
+        }
+        self.push_guarded_construction(
             &identity,
             path_text(&expression.path),
             expression
@@ -68,7 +79,20 @@ impl FactVisitor<'_> {
                 .segments
                 .last()
                 .map(|segment| segment.ident.span()),
-            exact,
+            ConstructorForm::Unit,
+            local.is_some_and(|(_, proven)| proven),
+            &guard,
         );
+    }
+
+    fn constructor_candidate_guard(&self, path: &syn::Path) -> SyntaxGuard {
+        let guard = self.syntax_guard();
+        if path.leading_colon.is_some() || path.segments.len() != 1 {
+            return guard;
+        }
+        let name = path.segments[0].ident.to_string();
+        guard.combine(SyntaxGuard::from_predicate(CfgPredicate::not(
+            self.local_value_shadow_guard(&name).predicate(),
+        )))
     }
 }

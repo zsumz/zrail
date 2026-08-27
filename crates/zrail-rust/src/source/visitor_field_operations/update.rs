@@ -5,12 +5,10 @@ use zrail_core::AnalysisQuality;
 
 use super::{FactVisitor, candidates};
 use crate::source::{
-    CfgPredicate, SourceOperationKind, SyntaxGuard,
+    CfgPredicate, ConstructorForm, SourceOperationKind, SyntaxGuard,
     attributes::cfg_guard,
     fact::source_span,
-    operation_model::{
-        ConstructorForm, FieldPlaceFact, StructUpdateFact, StructUpdateField, path_text,
-    },
+    operation_model::{FieldPlaceFact, StructUpdateFact, StructUpdateField, path_text},
 };
 
 impl FactVisitor<'_> {
@@ -74,6 +72,7 @@ impl FactVisitor<'_> {
                 base_name: identity.name.trim_end_matches("::*").into(),
                 base_quality: AnalysisQuality::Unresolved,
                 base_file_local: identity.file_local,
+                base_origin: identity.origin,
                 base_span: identity.span,
                 fields: Vec::new(),
             };
@@ -104,6 +103,7 @@ impl FactVisitor<'_> {
             base_name: base.name,
             base_quality: base.quality,
             base_file_local: base.file_local,
+            base_origin: base.origin,
             base_span: base.span,
             fields: vec![member.into()],
         };

@@ -2,7 +2,7 @@
 
 use zrail_core::AnalysisQuality;
 
-use super::include_bindings::ResolvedPath;
+use super::include_bindings::{ResolvedOrigin, ResolvedPath, ResolvedTerminal};
 
 pub(super) const MAX_RESOLVED_PATH_BYTES: usize = 1_024;
 
@@ -16,6 +16,14 @@ pub(super) fn normalize(paths: Vec<ResolvedPath>) -> Vec<ResolvedPath> {
         entry.crossed_include |= path.crossed_include;
         entry.requires_projection |= path.requires_projection;
         entry.blocks_completeness |= path.blocks_completeness;
+        if entry.origin != path.origin {
+            entry.origin = ResolvedOrigin::Unknown;
+            entry.quality = AnalysisQuality::Unresolved;
+        }
+        if entry.terminal != path.terminal {
+            entry.terminal = ResolvedTerminal::Unknown;
+            entry.quality = AnalysisQuality::Unresolved;
+        }
     }
     normalized.into_values().collect()
 }
@@ -27,6 +35,8 @@ pub(super) fn unresolved(name: &str) -> ResolvedPath {
         crossed_include: true,
         requires_projection: true,
         blocks_completeness: true,
+        origin: ResolvedOrigin::Unknown,
+        terminal: ResolvedTerminal::Unknown,
     }
 }
 
@@ -37,6 +47,8 @@ pub(super) fn opaque(name: &str, blocks_completeness: bool) -> ResolvedPath {
         crossed_include: false,
         requires_projection: true,
         blocks_completeness,
+        origin: ResolvedOrigin::Unknown,
+        terminal: ResolvedTerminal::Unknown,
     }
 }
 
@@ -65,4 +77,20 @@ pub(super) fn canonical_name(prefix: &[String], written: &str) -> Option<String>
                 format!("{}::{written}", prefix.join("::"))
             }
         })
+}
+
+pub(super) fn canonical_local_name(prefix: &[String], written: &str) -> Option<String> {
+    let segments = written.split("::").collect::<Vec<_>>();
+    let overlap = (0..=prefix.len().min(segments.len()))
+        .rev()
+        .find(|count| {
+            prefix[prefix.len() - count..]
+                .iter()
+                .map(String::as_str)
+                .eq(segments[..*count].iter().copied())
+        })
+        .unwrap_or(0);
+    let mut names = prefix[..prefix.len() - overlap].to_vec();
+    names.extend(segments.into_iter().map(str::to_owned));
+    canonical_name(&[], &names.join("::"))
 }

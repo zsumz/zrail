@@ -1,0 +1,191 @@
+//! Operation facts share one guarded, duplicate-aware emission path.
+
+use super::super::{
+    FactVisitor, SourceOperationFact, SourceOperationKind,
+    fact::{fact, written_fact},
+    operation_model::{FieldPlaceFact, StructUpdateFact, TypeIdentity},
+};
+use super::ConstructorForm;
+
+#[derive(Default)]
+struct OperationDetails<'a> {
+    construction: Option<ConstructorForm>,
+    construction_proven: bool,
+    method: Option<String>,
+    place: Option<FieldPlaceFact>,
+    struct_update: Option<StructUpdateFact>,
+    guard: Option<&'a super::super::SyntaxGuard>,
+}
+
+impl FactVisitor<'_> {
+    pub(in crate::source) fn push_operation(
+        &mut self,
+        kind: SourceOperationKind,
+        identity: &TypeIdentity,
+        written: String,
+        span: Option<proc_macro2::Span>,
+        construction: Option<ConstructorForm>,
+    ) {
+        self.push_operation_with_method(
+            kind,
+            identity,
+            written,
+            span,
+            OperationDetails {
+                construction,
+                construction_proven: construction == Some(ConstructorForm::Named),
+                ..OperationDetails::default()
+            },
+        );
+    }
+
+    pub(in crate::source) fn push_guarded_construction(
+        &mut self,
+        identity: &TypeIdentity,
+        written: String,
+        span: Option<proc_macro2::Span>,
+        construction: ConstructorForm,
+        proven: bool,
+        guard: &super::super::SyntaxGuard,
+    ) {
+        self.push_operation_with_method(
+            SourceOperationKind::TypeConstruction,
+            identity,
+            written,
+            span,
+            OperationDetails {
+                construction: Some(construction),
+                construction_proven: proven,
+                guard: Some(guard),
+                ..OperationDetails::default()
+            },
+        );
+    }
+
+    pub(in crate::source) fn push_field_receiver_operation(
+        &mut self,
+        identity: &TypeIdentity,
+        written: String,
+        span: Option<proc_macro2::Span>,
+        method: String,
+        place: Option<FieldPlaceFact>,
+        guard: &super::super::SyntaxGuard,
+    ) {
+        self.push_operation_with_method(
+            SourceOperationKind::FieldReceiverCall,
+            identity,
+            written,
+            span,
+            OperationDetails {
+                method: Some(method),
+                place,
+                guard: Some(guard),
+                ..OperationDetails::default()
+            },
+        );
+    }
+
+    pub(in crate::source) fn push_field_operation(
+        &mut self,
+        kind: SourceOperationKind,
+        identity: &TypeIdentity,
+        written: String,
+        span: Option<proc_macro2::Span>,
+        place: Option<FieldPlaceFact>,
+        guard: &super::super::SyntaxGuard,
+    ) {
+        self.push_operation_with_method(
+            kind,
+            identity,
+            written,
+            span,
+            OperationDetails {
+                place,
+                guard: Some(guard),
+                ..OperationDetails::default()
+            },
+        );
+    }
+
+    pub(in crate::source) fn push_deferred_struct_update(
+        &mut self,
+        identity: &TypeIdentity,
+        place: FieldPlaceFact,
+        update: StructUpdateFact,
+        rest_span: proc_macro2::Span,
+        guard: &super::super::SyntaxGuard,
+    ) {
+        self.push_operation_with_method(
+            SourceOperationKind::FieldRead,
+            identity,
+            "*".into(),
+            Some(rest_span),
+            OperationDetails {
+                place: Some(place),
+                struct_update: Some(update),
+                guard: Some(guard),
+                ..OperationDetails::default()
+            },
+        );
+    }
+
+    fn push_operation_with_method(
+        &mut self,
+        kind: SourceOperationKind,
+        identity: &TypeIdentity,
+        written: String,
+        span: Option<proc_macro2::Span>,
+        details: OperationDetails<'_>,
+    ) {
+        let OperationDetails {
+            construction,
+            construction_proven,
+            method,
+            place,
+            struct_update,
+            guard,
+        } = details;
+        let mut observed = span.map_or_else(
+            || {
+                fact(
+                    &identity.name,
+                    proc_macro2::Span::call_site(),
+                    identity.quality,
+                )
+            },
+            |span| {
+                written_fact(
+                    &identity.name,
+                    written,
+                    span,
+                    identity.quality,
+                    &self.lexical_scope,
+                )
+            },
+        );
+        if let Some(guard) = guard {
+            observed.apply_guard(guard);
+        }
+        observed.namespace = super::super::FactNamespace::Type;
+        if self.operations.iter().any(|operation| {
+            operation.kind == kind
+                && operation.identity.name == observed.name
+                && operation.identity.span == observed.span
+                && operation.method == method
+                && operation.identity.guard == observed.guard
+        }) {
+            return;
+        }
+        self.operations.push(SourceOperationFact {
+            kind,
+            identity: observed,
+            file_local: identity.file_local,
+            subject_origin: identity.origin,
+            construction,
+            construction_proven,
+            method,
+            place,
+            struct_update,
+        });
+    }
+}

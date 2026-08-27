@@ -8,7 +8,7 @@ use zrail_core::{AnalysisQuality, Finding};
 
 use super::{
     CompilationDomain, ObservedFact, SyntaxGuard,
-    fact::{source_span, written_fact},
+    fact::{source_span, written_fact, written_path},
     imports::ImportMap,
     model::CallResolutionFact,
 };
@@ -33,7 +33,7 @@ pub(super) fn facts(
         return Vec::new();
     }
     let Some((path, minimum_quality)) = effective_path(callee, generic_types) else {
-        let written = path_text(&callee.path);
+        let written = written_path(&callee.path);
         return vec![written_fact(
             written.clone(),
             written,
@@ -46,7 +46,7 @@ pub(super) fn facts(
     if resolved.is_empty() {
         return Vec::new();
     }
-    let written = path_text(&path);
+    let written = written_path(&path);
     let mut observed = vec![written_fact(
         resolved.clone(),
         written,
@@ -183,7 +183,7 @@ fn unresolved_call_text(callee: &ExprPath, generic_types: &[String]) -> Option<S
 
 fn qualified_self_text(callee: &ExprPath, qself: &syn::QSelf) -> String {
     let self_type = match qself.ty.as_ref() {
-        Type::Path(path) if path.qself.is_none() => path_text(&path.path),
+        Type::Path(path) if path.qself.is_none() => written_path(&path.path),
         _ => "unresolved self type".into(),
     };
     if qself.position == 0 {
@@ -210,19 +210,6 @@ fn segment_text<'a>(segments: impl Iterator<Item = &'a syn::PathSegment>) -> Str
         .map(|segment| segment.ident.to_string())
         .collect::<Vec<_>>()
         .join("::")
-}
-
-fn path_text(path: &Path) -> String {
-    let mut written = path
-        .segments
-        .iter()
-        .map(|segment| segment.ident.to_string())
-        .collect::<Vec<_>>()
-        .join("::");
-    if path.leading_colon.is_some() {
-        written.insert_str(0, "::");
-    }
-    written
 }
 
 #[cfg(test)]

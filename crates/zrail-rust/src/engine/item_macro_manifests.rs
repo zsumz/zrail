@@ -175,7 +175,9 @@ fn parse_manifest(text: &str, name: &str) -> Result<ItemMacroManifest, CheckErro
 const fn binding_kind(kind: ItemMacroBindingKind) -> BindingKind {
     match kind {
         ItemMacroBindingKind::Type => BindingKind::LocalType,
-        ItemMacroBindingKind::Constructor => BindingKind::LocalConstructor,
+        ItemMacroBindingKind::Constructor => {
+            BindingKind::LocalConstructor(crate::source::ConstructorForm::Unknown)
+        }
         ItemMacroBindingKind::Value => BindingKind::LocalValue,
     }
 }

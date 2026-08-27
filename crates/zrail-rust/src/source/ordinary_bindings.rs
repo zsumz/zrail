@@ -1,16 +1,21 @@
 //! Ordinary type-path bindings retain every guarded declaration in one lexical scope.
 
+#[path = "ordinary_binding_members.rs"]
+mod members;
+
 use syn::{Item, Type};
 use zrail_core::SourceSpan;
 
 use super::{
-    BindingAnchor, BindingKind, ImportBindingFact, SyntaxGuard,
+    BindingAnchor, BindingKind, ConstructorForm, ImportBindingFact, SyntaxGuard,
     ordinary_binding_facts::{
         BindingContext, BindingDraft, foreign, item_guard, local, module, path_text, push, quality,
         replacement_macros, visibility,
     },
     ordinary_use_bindings::{UseBindingContext, collect_use},
 };
+
+use members::{enum_variants, impl_values};
 
 pub(super) fn collect<'a>(
     items: impl Iterator<Item = &'a Item>,
@@ -94,18 +99,23 @@ pub(super) fn collect<'a>(
                     },
                 );
             }
-            Item::Enum(item) => local(
-                &mut bindings,
-                item.ident.to_string(),
-                BindingKind::LocalType,
-                &context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
-            ),
+            Item::Enum(item) => {
+                local(
+                    &mut bindings,
+                    item.ident.to_string(),
+                    BindingKind::LocalType,
+                    &context(&item.attrs, &item.vis, enclosing_guard, lexical_scope),
+                );
+                enum_variants(&mut bindings, item, enclosing_guard, lexical_scope);
+            }
             Item::Mod(item) => module(&mut bindings, item, enclosing_guard, lexical_scope),
             Item::Struct(item) => {
-                let kind = if matches!(item.fields, syn::Fields::Unnamed(_) | syn::Fields::Unit) {
-                    BindingKind::LocalConstructor
-                } else {
-                    BindingKind::LocalType
+                let kind = match item.fields {
+                    syn::Fields::Named(_) => BindingKind::LocalType,
+                    syn::Fields::Unnamed(_) => {
+                        BindingKind::LocalConstructor(ConstructorForm::Tuple)
+                    }
+                    syn::Fields::Unit => BindingKind::LocalConstructor(ConstructorForm::Unit),
                 };
                 local(
                     &mut bindings,
@@ -152,6 +162,9 @@ pub(super) fn collect<'a>(
             ),
             Item::ForeignMod(item) => {
                 foreign(&mut bindings, item, enclosing_guard, lexical_scope);
+            }
+            Item::Impl(item) => {
+                impl_values(&mut bindings, item, enclosing_guard, lexical_scope);
             }
             _ => {}
         }

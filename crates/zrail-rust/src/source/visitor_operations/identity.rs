@@ -5,7 +5,7 @@ use zrail_core::AnalysisQuality;
 
 use super::super::fact::source_span;
 use super::{
-    ConstructorForm, FactVisitor, TypeIdentity, append, last_segment_looks_constructor, path_text,
+    ConstructorForm, FactVisitor, OperationSubjectOrigin, TypeIdentity, append, path_text,
     unresolved,
 };
 
@@ -41,6 +41,7 @@ impl FactVisitor<'_> {
                 AnalysisQuality::Unresolved
             },
             file_local: false,
+            origin: OperationSubjectOrigin::WrittenPath,
             span: Some(source_span(path.span())),
         }
     }
@@ -54,7 +55,9 @@ impl FactVisitor<'_> {
             .iter()
             .skip(1)
             .map(|segment| segment.ident.to_string());
-        append(base.clone(), suffix)
+        let mut identity = append(base.clone(), suffix);
+        identity.origin = OperationSubjectOrigin::CurrentSelf;
+        identity
     }
 
     fn local_identity(&self, path: &Path) -> Option<TypeIdentity> {
@@ -70,6 +73,7 @@ impl FactVisitor<'_> {
                 name: local.identity.clone(),
                 quality: AnalysisQuality::Exact,
                 file_local: true,
+                origin: OperationSubjectOrigin::LocalDeclaration,
                 span: Some(source_span(path.span())),
             },
             segments.map(|segment| segment.ident.to_string()),
@@ -94,10 +98,7 @@ impl FactVisitor<'_> {
                         _ => None,
                     })
             });
-            return form.map_or_else(
-                || last_segment_looks_constructor(path).then_some((ConstructorForm::Tuple, false)),
-                |form| Some((form, true)),
-            );
+            return form.map(|form| (form, true));
         }
         let local = self
             .local_types
@@ -114,7 +115,7 @@ impl FactVisitor<'_> {
                 .get(variant)
                 .copied()
                 .map(|form| (form, true)),
-            _ => last_segment_looks_constructor(path).then_some((ConstructorForm::Tuple, false)),
+            _ => None,
         }
     }
 }

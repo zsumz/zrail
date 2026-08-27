@@ -27,6 +27,7 @@ pub(in crate::source) struct FactVisitor<'a> {
     pub(in crate::source) inline_modules: Vec<String>,
     pub(in crate::source) self_types: Vec<super::operation_model::TypeIdentity>,
     pub(in crate::source) field_read_exclusions: Vec<zrail_core::SourceSpan>,
+    pub(in crate::source) constructor_path_exclusions: Vec<zrail_core::SourceSpan>,
     pub(in crate::source) macros: Vec<ObservedFact>,
     pub(in crate::source) macro_expansions: Vec<MacroExpansionFact>,
     pub(in crate::source) opaque_macro_inputs: Vec<MacroExpansionFact>,

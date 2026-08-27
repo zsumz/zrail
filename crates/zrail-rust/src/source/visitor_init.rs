@@ -53,6 +53,7 @@ impl<'a> FactVisitor<'a> {
             inline_modules: Vec::new(),
             self_types: Vec::new(),
             field_read_exclusions: Vec::new(),
+            constructor_path_exclusions: Vec::new(),
             macros: Vec::new(),
             macro_expansions: Vec::new(),
             opaque_macro_inputs: Vec::new(),

@@ -2,10 +2,13 @@
 
 use std::collections::BTreeMap;
 
-use syn::{Expr, Fields, Item, Path, Type};
+use syn::{Expr, Fields, Item, Type};
 use zrail_core::{AnalysisQuality, SourceSpan};
 
-use super::{CfgPredicate, ObservedFact, SyntaxGuard, attributes::cfg_guard};
+use super::{
+    CfgPredicate, ConstructorForm, ObservedFact, SyntaxGuard, attributes::cfg_guard,
+    fact::written_path,
+};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SourceOperationKind {
@@ -22,7 +25,9 @@ pub(crate) struct SourceOperationFact {
     pub(crate) kind: SourceOperationKind,
     pub(crate) identity: ObservedFact,
     pub(crate) file_local: bool,
-    pub(crate) exact_construction_syntax: bool,
+    pub(crate) subject_origin: OperationSubjectOrigin,
+    pub(crate) construction: Option<ConstructorForm>,
+    pub(crate) construction_proven: bool,
     pub(crate) method: Option<String>,
     pub(crate) place: Option<FieldPlaceFact>,
     pub(crate) struct_update: Option<StructUpdateFact>,
@@ -39,6 +44,7 @@ pub(super) struct TypeIdentity {
     pub(super) name: String,
     pub(super) quality: AnalysisQuality,
     pub(super) file_local: bool,
+    pub(super) origin: OperationSubjectOrigin,
     pub(super) span: Option<SourceSpan>,
 }
 
@@ -47,6 +53,7 @@ pub(crate) struct FieldPlaceFact {
     pub(crate) base_name: String,
     pub(crate) base_quality: AnalysisQuality,
     pub(crate) base_file_local: bool,
+    pub(crate) base_origin: OperationSubjectOrigin,
     pub(crate) base_span: Option<SourceSpan>,
     pub(crate) fields: Vec<String>,
 }
@@ -65,10 +72,10 @@ pub(crate) struct StructUpdateField {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(super) enum ConstructorForm {
-    Named,
-    Tuple,
-    Unit,
+pub(crate) enum OperationSubjectOrigin {
+    WrittenPath,
+    CurrentSelf,
+    LocalDeclaration,
 }
 
 #[derive(Clone, Debug)]
@@ -171,28 +178,13 @@ pub(super) fn unresolved(name: &str) -> TypeIdentity {
         name: name.into(),
         quality: AnalysisQuality::Unresolved,
         file_local: false,
+        origin: OperationSubjectOrigin::WrittenPath,
         span: None,
     }
 }
 
-pub(super) fn path_text(path: &Path) -> String {
-    path.segments
-        .iter()
-        .map(|segment| segment.ident.to_string())
-        .collect::<Vec<_>>()
-        .join("::")
-}
-
-pub(super) fn last_segment_looks_constructor(path: &Path) -> bool {
-    path.segments.last().is_some_and(|segment| {
-        segment.ident == "Self"
-            || segment
-                .ident
-                .to_string()
-                .chars()
-                .next()
-                .is_some_and(char::is_uppercase)
-    })
+pub(super) fn path_text(path: &syn::Path) -> String {
+    written_path(path)
 }
 
 pub(super) fn unwrapped(mut expression: &Expr) -> &Expr {

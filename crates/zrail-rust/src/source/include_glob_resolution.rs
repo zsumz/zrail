@@ -1,13 +1,14 @@
 //! Glob imports reach a bounded Rust fixed point without escaping module floors.
 
-use std::collections::BTreeSet;
+#[path = "include_glob_exports.rs"]
+mod exports;
 
 use zrail_core::{AnalysisQuality, SourceSpan};
 
 use super::{
     IncludeContext, SourceEntry, SourceInstanceId, SyntaxGuard,
     include_binding_helpers::{join, unresolved},
-    include_binding_resolution::{MAX_BINDING_CANDIDATES, MAX_BINDING_STEPS},
+    include_binding_resolution::MAX_BINDING_CANDIDATES,
     include_bindings::{BindingSite, IncludeBindings, ResolvedPath},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::{
@@ -69,6 +70,8 @@ impl IncludeBindings {
                 crossed_include: candidate.crossed_include || site.crossed_include,
                 requires_projection: true,
                 blocks_completeness: candidate.blocks_completeness,
+                origin: candidate.origin,
+                terminal: candidate.terminal,
             })
             .collect())
     }
@@ -135,9 +138,7 @@ impl IncludeBindings {
                 edge.parent_scope.len() >= floor && scope.starts_with(&edge.parent_scope)
             };
             if edge.context == IncludeContext::Items && visible {
-                for mut site in
-                    self.exported_glob_sites(*child, context, &mut BTreeSet::new(), budget)?
-                {
+                for mut site in exports::collect(self, *child, context, budget)? {
                     site.binding.quality = site.binding.quality.max(self.visibility_quality(
                         &site.binding.visibility,
                         &site.module,
@@ -173,68 +174,6 @@ impl IncludeBindings {
                 }
             }
         }
-        Ok(sites)
-    }
-
-    fn exported_glob_sites(
-        &self,
-        instance: SourceInstanceId,
-        context: &SyntaxGuard,
-        seen: &mut BTreeSet<SourceInstanceId>,
-        budget: &mut ProjectionBudget,
-    ) -> Result<Vec<BindingSite>, ProjectionLimit> {
-        budget.consume_work()?;
-        if !seen.insert(instance) || seen.len() > MAX_BINDING_STEPS {
-            return Ok(Vec::new());
-        }
-        let Some(source) = self.instances.get(instance) else {
-            return Ok(Vec::new());
-        };
-        let mut sites = Vec::new();
-        for binding in self
-            .files
-            .get(&source.file)
-            .into_iter()
-            .flat_map(|bindings| &bindings.globs)
-        {
-            budget.consume_work()?;
-            let availability = binding
-                .guard
-                .availability_for_domain(context, &source.domain);
-            if binding.lexical_scope.is_empty() && availability.is_available() {
-                let Some(module) = self.effective_module(instance, &[], budget)? else {
-                    continue;
-                };
-                let mut binding = binding.clone();
-                if availability == super::GuardAvailability::Possible {
-                    binding.quality = AnalysisQuality::Unresolved;
-                }
-                sites.push(BindingSite {
-                    binding,
-                    instance,
-                    module,
-                    crossed_include: true,
-                });
-                if sites.len() > MAX_BINDING_CANDIDATES {
-                    break;
-                }
-            }
-        }
-        for (edge, child) in self.instances.includes_from(instance) {
-            budget.consume_work()?;
-            if edge.context == IncludeContext::Items && edge.parent_scope.is_empty() {
-                for site in self.exported_glob_sites(*child, context, seen, budget)? {
-                    sites.push(site);
-                    if sites.len() > MAX_BINDING_CANDIDATES {
-                        break;
-                    }
-                }
-            }
-            if sites.len() > MAX_BINDING_CANDIDATES {
-                break;
-            }
-        }
-        seen.remove(&instance);
         Ok(sites)
     }
 }

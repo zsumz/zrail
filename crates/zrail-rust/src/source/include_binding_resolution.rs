@@ -4,7 +4,7 @@ use zrail_core::AnalysisQuality;
 
 use super::{
     include_binding_helpers::{normalize, unresolved},
-    include_bindings::{IncludeBindings, ResolvedPath},
+    include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedPath, ResolvedTerminal},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::{
         LookupMode, ResolutionTrail, ResolutionUsage, ResolveRequest, WrittenResolveRequest,
@@ -70,6 +70,8 @@ impl IncludeBindings {
                 crossed_include: false,
                 requires_projection: false,
                 blocks_completeness: false,
+                origin: ResolvedOrigin::CrateLocal,
+                terminal: ResolvedTerminal::Value,
             }]);
         }
         if let Some(external) = written.strip_prefix("::") {

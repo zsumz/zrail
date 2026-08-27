@@ -42,6 +42,7 @@ pub(super) fn field_contexts(visitor: &FactVisitor<'_>, field: &ExprField) -> Ve
                         base_name: candidate.base.name,
                         base_quality: candidate.base.quality,
                         base_file_local: candidate.base.file_local,
+                        base_origin: candidate.base.origin,
                         base_span: candidate.base.span,
                         fields,
                     }),
@@ -75,6 +76,7 @@ pub(super) fn declared_field_identity(
             AnalysisQuality::Unresolved
         },
         file_local: receiver.file_local,
+        origin: receiver.origin,
         span: receiver.span,
     }
 }

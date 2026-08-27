@@ -94,6 +94,7 @@ pub(super) enum ResolutionUsage {
     Path,
     Type,
     OperationType,
+    ConstructorValue,
     Call,
 }
 
