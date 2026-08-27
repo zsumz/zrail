@@ -10,7 +10,7 @@ use super::{
     CompilationDomain, ObservedFact, SyntaxGuard,
     fact::{source_span, written_fact, written_path},
     imports::ImportMap,
-    model::CallResolutionFact,
+    model::{CallResolutionFact, CallResolutionKind},
     operation_model::subject::WrittenOperationSubject,
 };
 
@@ -68,6 +68,7 @@ pub(super) fn unresolved_path_projection(
         written: unresolved_call_text(path, generic_types)?,
         span: source_span(path.span()),
         guard,
+        kind: CallResolutionKind::AssociatedTypeProjection,
     })
 }
 
@@ -89,20 +90,31 @@ pub(super) fn resolution_findings(
             })
         })
         .map(|call| {
+            let (message, help) = match call.kind {
+                CallResolutionKind::AssociatedTypeProjection => (
+                    format!(
+                        "qualified expression path crosses an associated-type projection that zrail cannot resolve exactly: {}",
+                        call.written
+                    ),
+                    "name one concrete type before trusting path or direct-call authority at this site",
+                ),
+                CallResolutionKind::ExplicitTrait => (
+                    format!(
+                        "explicit trait in qualified associated-item path cannot be resolved exactly: {}",
+                        call.written
+                    ),
+                    "import or qualify the exact trait before trusting associated-item or direct-call authority at this site",
+                ),
+            };
             Finding::error(
                 "RUST-CALL-001",
                 "rust.source.call-resolution",
                 "source",
-                format!(
-                    "qualified expression path crosses an associated-type projection that zrail cannot resolve exactly: {}",
-                    call.written
-                ),
+                message,
             )
             .at(path, Some(call.span))
             .with_analysis(AnalysisQuality::Unresolved)
-            .with_help(
-                "name one concrete type before trusting path or direct-call authority at this site",
-            )
+            .with_help(help)
         })
         .collect()
 }

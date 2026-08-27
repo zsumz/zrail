@@ -12,6 +12,7 @@ use super::{
     resolution,
 };
 use crate::source::{
+    CallResolutionFact, CallResolutionKind,
     include_bindings::{IncludeBindings, ResolvedTerminal},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::ResolutionUsage,
@@ -24,6 +25,7 @@ pub(super) fn canonicalize(
     associated: &super::associated::Catalog,
     budget: &mut ProjectionBudget,
     unresolved: &mut BTreeSet<(String, Option<SourceSpan>)>,
+    call_resolutions: &mut Vec<CallResolutionFact>,
 ) -> Result<(), ProjectionLimit> {
     let mut canonical = Vec::with_capacity(operations.len());
     for mut operation in operations.drain(..) {
@@ -69,7 +71,7 @@ pub(super) fn canonicalize(
             },
             budget,
         )?;
-        super::qualification::classify(
+        let qualification = super::qualification::classify(
             operation.qualified_subject.as_ref(),
             &mut result,
             associated,
@@ -83,6 +85,26 @@ pub(super) fn canonicalize(
             file,
             budget,
         )?;
+        if let super::qualification::Disposition::AssociatedItem(quality) = qualification {
+            if quality != AnalysisQuality::Exact
+                && let Some(span) = operation.identity.span
+            {
+                let boundary = CallResolutionFact {
+                    written: operation
+                        .identity
+                        .written
+                        .clone()
+                        .unwrap_or_else(|| operation.identity.name.clone()),
+                    span,
+                    guard: operation.identity.guard.clone(),
+                    kind: CallResolutionKind::ExplicitTrait,
+                };
+                if !call_resolutions.contains(&boundary) {
+                    call_resolutions.push(boundary);
+                }
+            }
+            continue;
+        }
         if result.expected == 0 {
             canonical.push(operation);
             continue;

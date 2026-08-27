@@ -87,6 +87,7 @@ pub(crate) enum OperationSubjectOrigin {
 pub(crate) struct QualifiedOperationSubject {
     pub(crate) lookup: String,
     pub(crate) explicit_trait: bool,
+    pub(crate) direct_trait_item: bool,
     pub(crate) trait_identity: Option<ObservedFact>,
     pub(crate) force_unresolved: bool,
 }

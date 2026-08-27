@@ -59,6 +59,13 @@ pub(crate) struct CallResolutionFact {
     pub(crate) written: String,
     pub(crate) span: SourceSpan,
     pub(crate) guard: SyntaxGuard,
+    pub(crate) kind: CallResolutionKind,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum CallResolutionKind {
+    AssociatedTypeProjection,
+    ExplicitTrait,
 }
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]

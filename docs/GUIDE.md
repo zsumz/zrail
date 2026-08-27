@@ -363,6 +363,12 @@ Imports and aliases are retained when they resolve exactly. A constructor-like
 call that cannot be proven to name a type or variant remains unresolved; an
 exact owner fails closed instead of treating capitalization as type evidence.
 Type-relative paths such as `<State>::Ready` retain the qualified self type.
+An explicit single-item path such as `<State as Factory>::Ready` selects the
+trait item and is not construction, even when `State::Ready` is a variant.
+If the explicit trait itself cannot be resolved, Zrail retains an unresolved
+associated-item boundary instead of fabricating a construction identity.
+Longer associated-type projections remain unresolved until their concrete type
+identity is proven.
 For dependency types whose declaration shape is unavailable, ordinary
 `Type::item` syntax stays unresolved even when a local extension trait defines
 the same item; only an exact `<Type as LocalTrait>::item` occurrence can prove

@@ -44,7 +44,7 @@ const FILES: &[(&str, &str)] = &[
     ("zrail.toml", CONTRACT),
     (
         "src/lib.rs",
-        "//! Constructor fixture.\npub mod model;\nmod capabilities;\nmod extensions;\nmod owner;\nmod qualified;\nmod self_trespass;\nmod trespasser;\nmod values;\n",
+        "//! Constructor fixture.\npub mod model;\nmod capabilities;\nmod extensions;\nmod owner;\nmod qualified;\nmod self_trespass;\nmod trait_qualified;\nmod trespasser;\nmod values;\n",
     ),
     (
         "src/capabilities.rs",
@@ -96,6 +96,14 @@ fn own() {
     let _ = State { epoch: 0, secret: 0 };
 }
 fn inspect(state: &State) { let _ = state.secret; }
+trait Extension {
+    fn ready(value: u64) -> u64;
+    const idle: u64;
+}
+fn generic_trait_values<T: Extension>() {
+    let _ = <T as Extension>::ready(1);
+    let _ = <T as Extension>::idle;
+}
 ",
     ),
     (
@@ -111,6 +119,24 @@ fn trespass() {
     let make = <choice>::ready;
     let _ = make(2);
     let _ = <choice>::idle;
+}
+",
+    ),
+    (
+        "src/trait_qualified.rs",
+        r"//! Explicit trait items are values even when variants share their names.
+use crate::model::choice;
+trait Extension {
+    fn ready(value: u64) -> u64;
+    const idle: u64;
+}
+impl Extension for choice {
+    fn ready(value: u64) -> u64 { value }
+    const idle: u64 = 0;
+}
+fn values() {
+    let _ = <choice as Extension>::ready(1);
+    let _ = <choice as Extension>::idle;
 }
 ",
     ),

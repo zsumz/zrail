@@ -22,8 +22,15 @@ pub(super) fn classify(
     bindings: &IncludeBindings,
     file: &str,
     budget: &mut ProjectionBudget,
-) -> Result<(), ProjectionLimit> {
+) -> Result<Disposition, ProjectionLimit> {
     let occurrence = resolve(subject, bindings, file, budget)?;
+    if subject.is_some_and(|subject| subject.direct_trait_item) {
+        for route in &mut result.routes {
+            let selection = occurrence.selection(&route.domain);
+            catalog.classify_value(route, context, selection);
+        }
+        return Ok(Disposition::AssociatedItem(occurrence.quality));
+    }
     if subject.is_some_and(|subject| subject.force_unresolved) {
         result.unresolved = true;
         for route in &mut result.routes {
@@ -32,19 +39,35 @@ pub(super) fn classify(
             route.origin = ResolvedOrigin::Unknown;
             route.terminal = ResolvedTerminal::Unknown;
         }
-        return Ok(());
+        return Ok(Disposition::ConstructionCandidate);
     }
     for route in &mut result.routes {
         let selection = occurrence.selection(&route.domain);
         catalog.classify_value(route, context, selection);
     }
-    Ok(())
+    Ok(Disposition::ConstructionCandidate)
 }
 
-#[derive(Default)]
+#[derive(Clone, Copy, Eq, PartialEq)]
+pub(super) enum Disposition {
+    ConstructionCandidate,
+    AssociatedItem(AnalysisQuality),
+}
+
 pub(super) struct OccurrenceTraits {
     explicit: bool,
     exact: BTreeMap<CompilationDomain, String>,
+    quality: AnalysisQuality,
+}
+
+impl Default for OccurrenceTraits {
+    fn default() -> Self {
+        Self {
+            explicit: false,
+            exact: BTreeMap::new(),
+            quality: AnalysisQuality::Exact,
+        }
+    }
 }
 
 impl OccurrenceTraits {
@@ -78,6 +101,7 @@ pub(super) fn resolve(
     let mut occurrence = OccurrenceTraits {
         explicit: true,
         exact: BTreeMap::new(),
+        quality: AnalysisQuality::Unresolved,
     };
     let Some(fact) = &subject.trait_identity else {
         return Ok(occurrence);
@@ -96,6 +120,18 @@ pub(super) fn resolve(
         },
         budget,
     )?;
+    let complete = !resolved.unresolved
+        && resolved.expected > 0
+        && resolved.routes.len() == resolved.expected
+        && resolved
+            .routes
+            .iter()
+            .all(|route| exact_trait_route(route, bindings, file, &fact.guard));
+    let domains = resolved
+        .routes
+        .iter()
+        .map(|route| route.domain.clone())
+        .collect::<BTreeSet<_>>();
     let mut by_domain = BTreeMap::<CompilationDomain, BTreeSet<_>>::new();
     for route in resolved.routes {
         by_domain.entry(route.domain).or_default().insert((
@@ -107,12 +143,77 @@ pub(super) fn resolve(
     }
     for (domain, routes) in by_domain {
         let routes = routes.into_iter().collect::<Vec<_>>();
-        let [(name, AnalysisQuality::Exact, ResolvedOrigin::CrateLocal, ResolvedTerminal::Type)] =
-            routes.as_slice()
-        else {
+        let [(name, AnalysisQuality::Exact, origin, terminal)] = routes.as_slice() else {
             continue;
         };
+        if !exact_trait_identity(
+            name,
+            *origin,
+            *terminal,
+            &domain,
+            bindings,
+            file,
+            &fact.guard,
+        ) {
+            continue;
+        }
         occurrence.exact.insert(domain, name.clone());
     }
+    if complete
+        && domains
+            .iter()
+            .all(|domain| occurrence.exact.contains_key(domain))
+    {
+        occurrence.quality = AnalysisQuality::Exact;
+    }
     Ok(occurrence)
+}
+
+fn exact_trait_route(
+    route: &resolution::Route,
+    bindings: &IncludeBindings,
+    file: &str,
+    guard: &SyntaxGuard,
+) -> bool {
+    route.quality == AnalysisQuality::Exact
+        && exact_trait_identity(
+            &route.name,
+            route.origin,
+            route.terminal,
+            &route.domain,
+            bindings,
+            file,
+            guard,
+        )
+}
+
+fn exact_trait_identity(
+    name: &str,
+    origin: ResolvedOrigin,
+    terminal: ResolvedTerminal,
+    domain: &CompilationDomain,
+    bindings: &IncludeBindings,
+    file: &str,
+    guard: &SyntaxGuard,
+) -> bool {
+    match (origin, terminal) {
+        (ResolvedOrigin::CrateLocal, ResolvedTerminal::Type) => true,
+        (ResolvedOrigin::External, ResolvedTerminal::Type | ResolvedTerminal::Unknown) => {
+            let root = name.trim_start_matches("::").split("::").next();
+            root.is_some_and(|root| {
+                matches!(root, "std" | "core")
+                    || bindings
+                        .active_instances(file, guard)
+                        .iter()
+                        .any(|instance| {
+                            bindings
+                                .instances
+                                .get(*instance)
+                                .is_some_and(|source| &source.domain == domain)
+                                && bindings.is_extern_root(*instance, root)
+                        })
+            })
+        }
+        _ => false,
+    }
 }

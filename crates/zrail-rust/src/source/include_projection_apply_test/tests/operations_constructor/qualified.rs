@@ -2,7 +2,10 @@
 
 use zrail_core::{AnalysisQuality, OwnerKind};
 
-use super::super::{canonicalize_operations, domain, matching_operations, parsed_file};
+use super::super::{
+    canonicalize_operations, canonicalize_operations_with_external, domain, matching_operations,
+    parsed_file,
+};
 use crate::source::{SourceIndex, SourceOperationKind};
 
 #[test]
@@ -54,6 +57,52 @@ fn qualified_associated_function_is_discarded_as_value() {
 }
 
 #[test]
+fn explicit_local_trait_method_beats_same_named_tuple_variant() {
+    assert_no_construction(
+        "enum Choice { Ready(u64) } trait Extension { fn Ready(value: u64) -> u64; } impl Extension for Choice { fn Ready(value: u64) -> u64 { value } } fn run() { let _ = <Choice as Extension>::Ready(44); }",
+    );
+}
+
+#[test]
+fn explicit_local_trait_const_beats_same_named_unit_variant() {
+    assert_no_construction(
+        "enum Choice { Idle } trait Extension { const Idle: u64; } impl Extension for Choice { const Idle: u64 = 0; } fn run() { let _ = <Choice as Extension>::Idle; }",
+    );
+}
+
+#[test]
+fn explicit_trait_alias_beats_same_named_variant() {
+    assert_no_construction(
+        "mod traits { pub trait Extension { fn Ready(value: u64) -> u64; } } enum Choice { Ready(u64) } impl traits::Extension for Choice { fn Ready(value: u64) -> u64 { value } } use traits::Extension as Alias; fn run() { let _ = <Choice as Alias>::Ready(44); }",
+    );
+}
+
+#[test]
+fn explicit_external_trait_method_beats_same_named_variant() {
+    let source = "enum Choice { Ready(u64) } impl external::Extension for Choice { fn Ready(value: u64) -> u64 { value } } fn run() { let _ = <Choice as external::Extension>::Ready(44); }";
+    let mut index = index(source);
+    let findings = canonicalize_operations_with_external(&mut index, &domain(), &[], "external");
+
+    assert!(findings.is_empty(), "unexpected findings: {findings:#?}");
+    assert!(construction_operations(&index).is_empty());
+    assert!(explicit_trait_boundaries(&index).is_empty());
+}
+
+#[test]
+fn generic_explicit_trait_method_is_not_construction() {
+    assert_no_construction(
+        "trait Extension { fn Ready(value: u64) -> Self; } fn run<T: Extension>(value: u64) -> T { <T as Extension>::Ready(value) }",
+    );
+}
+
+#[test]
+fn generic_explicit_trait_const_is_not_construction() {
+    assert_no_construction(
+        "trait Extension { const Idle: u64; } fn run<T: Extension>() -> u64 { <T as Extension>::Idle }",
+    );
+}
+
+#[test]
 fn generic_qualified_constructor_fails_closed() {
     assert_unresolved("fn run<T>() { let _ = <T>::Ready(1); }", "<T>::Ready");
 }
@@ -67,11 +116,51 @@ fn type_relative_variant_ignores_local_value_shadow() {
 }
 
 #[test]
-fn trait_qualified_projection_fails_closed() {
+fn nested_associated_type_variant_remains_unresolved() {
     assert_unresolved(
         "trait Extension { type Associated; } fn run<T: Extension>() { let _ = <T as Extension>::Associated::Ready(1); }",
         "<T as Extension>::Associated::Ready",
     );
+}
+
+fn assert_no_construction(source: &str) {
+    let mut index = index(source);
+    let findings = canonicalize_operations(&mut index, &domain(), &[]);
+
+    assert!(findings.is_empty(), "unexpected findings: {findings:#?}");
+    assert!(
+        construction_operations(&index).is_empty(),
+        "operations: {:#?}",
+        construction_operations(&index)
+    );
+    assert!(
+        explicit_trait_boundaries(&index).is_empty(),
+        "boundaries: {:#?}",
+        explicit_trait_boundaries(&index)
+    );
+}
+
+fn construction_operations(index: &SourceIndex) -> Vec<&crate::source::SourceOperationFact> {
+    index
+        .files
+        .iter()
+        .flat_map(|file| &file.operations)
+        .filter(|operation| {
+            matches!(
+                operation.kind,
+                SourceOperationKind::TypeConstruction | SourceOperationKind::ConstructorCapability
+            )
+        })
+        .collect()
+}
+
+fn explicit_trait_boundaries(index: &SourceIndex) -> Vec<&crate::source::CallResolutionFact> {
+    index
+        .files
+        .iter()
+        .flat_map(|file| &file.call_resolutions)
+        .filter(|fact| fact.kind == crate::source::CallResolutionKind::ExplicitTrait)
+        .collect()
 }
 
 fn assert_exact_construction(body: &str, selector: &str) {

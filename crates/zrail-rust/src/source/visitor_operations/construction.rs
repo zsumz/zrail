@@ -120,6 +120,8 @@ impl FactVisitor<'_> {
                 .as_deref()
                 .map_or_else(|| subject.written(), path_text),
             explicit_trait: subject.is_trait_qualified(),
+            direct_trait_item: subject.is_trait_qualified()
+                && subject.associated_segments() == Some(1),
             trait_identity: subject
                 .explicit_trait_path()
                 .map(|path| self.qualified_trait_fact(&path)),

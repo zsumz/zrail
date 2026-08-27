@@ -46,6 +46,7 @@ pub(super) fn apply(
     let mut unresolved = BTreeSet::new();
     for file in &index.files {
         let mut operations = file.operations.clone();
+        let mut call_resolutions = Vec::new();
         if let Err(limit) = identity::canonicalize(
             &mut operations,
             bindings,
@@ -53,6 +54,7 @@ pub(super) fn apply(
             &associated,
             &mut budget,
             &mut unresolved,
+            &mut call_resolutions,
         ) {
             return vec![super::include_projection_apply::budget_exhausted(limit)];
         }
@@ -78,10 +80,15 @@ pub(super) fn apply(
         ) {
             return vec![super::include_projection_apply::budget_exhausted(limit)];
         }
-        planned.push(operations);
+        planned.push((operations, call_resolutions));
     }
-    for (file, operations) in index.files.iter_mut().zip(planned) {
+    for (file, (operations, call_resolutions)) in index.files.iter_mut().zip(planned) {
         file.operations = operations;
+        for boundary in call_resolutions {
+            if !file.call_resolutions.contains(&boundary) {
+                file.call_resolutions.push(boundary);
+            }
+        }
     }
     index.analysis_metrics.projection_work = index
         .analysis_metrics

@@ -61,16 +61,28 @@ fn fully_qualified_trait_alias_is_value() {
 }
 
 #[test]
-fn unresolved_qualified_trait_fails_closed() {
+fn unresolved_qualified_trait_is_not_construction() {
     let mut index = external_fixture(
         trait_declaration(),
         implementation(),
         "let _ = <external::Choice as Extension>::Ready(44);",
     );
     canonicalize_external(&mut index);
-    let operations = external_owned(&index, "external::Choice::Ready");
-    assert_eq!(operations.len(), 1, "operations: {operations:#?}");
-    assert_eq!(operations[0].identity.quality, AnalysisQuality::Unresolved);
+    assert!(external_owned(&index, "external::Choice::Ready").is_empty());
+    let boundary = index
+        .files
+        .iter()
+        .find(|file| file.relative == "src/user.rs")
+        .and_then(|file| {
+            file.call_resolutions
+                .iter()
+                .find(|fact| fact.written == "<external::Choice as Extension>::Ready")
+        })
+        .expect("unresolved trait-associated call boundary");
+    assert_eq!(
+        boundary.kind,
+        crate::source::CallResolutionKind::ExplicitTrait
+    );
 }
 
 #[test]

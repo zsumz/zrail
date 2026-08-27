@@ -86,6 +86,28 @@ fn split_impl_associated_values_do_not_impersonate_constructors() {
     );
 }
 
+#[test]
+fn explicit_trait_items_do_not_reach_constructor_owners() {
+    let repository = fixture::Repository::new("trait-qualified-values");
+    let report = check(&repository);
+
+    assert!(
+        !report.findings.iter().any(|finding| {
+            matches!(finding.id.as_str(), "OWN-003" | "OWN-006")
+                && finding.path.as_deref() == Some("src/trait_qualified.rs")
+        }),
+        "trait-associated item reached a constructor owner: {}",
+        report.human(),
+    );
+    assert!(
+        !report.findings.iter().any(|finding| {
+            finding.id == "OWN-006" && finding.path.as_deref() == Some("src/owner.rs")
+        }),
+        "generic trait-associated item was retained as unresolved construction: {}",
+        report.human(),
+    );
+}
+
 fn check(repository: &fixture::Repository) -> Report {
     check_repository(
         repository.path(),

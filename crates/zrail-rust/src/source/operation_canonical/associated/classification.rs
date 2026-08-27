@@ -15,7 +15,9 @@ pub(super) fn classify(
     context: &SyntaxGuard,
     selection: TraitSelection<'_>,
 ) {
-    if route.terminal != ResolvedTerminal::Unknown {
+    if route.terminal != ResolvedTerminal::Unknown
+        && !matches!(selection, TraitSelection::Explicit(Some(_)))
+    {
         return;
     }
     let Some((self_type, item)) = route.name.rsplit_once("::") else {
