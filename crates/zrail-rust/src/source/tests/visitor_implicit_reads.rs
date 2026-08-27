@@ -47,7 +47,7 @@ fn assign(source: Outer, state: &mut State) {
 }
 
 #[test]
-fn struct_update_emits_omitted_field_reads() {
+fn struct_update_retains_deferred_receipt() {
     let facts = operations(
         r"struct State { public: usize, secret: usize, spare: usize }
 fn update(previous: State) -> State {
@@ -62,20 +62,16 @@ fn opaque(previous: External) -> External {
 ",
     );
 
-    for name in ["State::secret", "State::spare"] {
-        assert_exact(&facts, 5, SourceOperationKind::FieldRead, name);
-    }
-    assert!(matching(&facts, SourceOperationKind::FieldRead, "State::public").is_empty());
-    assert!(facts.iter().any(|fact| {
-        fact.kind == SourceOperationKind::FieldRead
-            && fact.identity.name == "External::*"
-            && fact.identity.quality == AnalysisQuality::Unresolved
-            && fact.identity.span.is_some_and(|span| span.line == 9)
-    }));
+    let state = deferred_update(&facts, "State::*", 5);
+    let update = state.struct_update.as_ref().expect("deferred update");
+    assert_eq!(update.written, "State");
+    assert_eq!(update.explicit_fields.len(), 1);
+    assert_eq!(update.explicit_fields[0].name, "public");
+    deferred_update(&facts, "External::*", 9);
 }
 
 #[test]
-fn struct_update_omission_tracks_field_cfg_worlds() {
+fn struct_update_receipt_tracks_explicit_field_cfg() {
     let facts = operations(
         r#"struct State {
     public: usize,
@@ -92,22 +88,18 @@ fn update(previous: State) -> State {
 "#,
     );
 
-    let public = matching(&facts, SourceOperationKind::FieldRead, "State::public");
-    assert_eq!(public.len(), 1, "unexpected public reads: {public:#?}");
+    let receipt = deferred_update(&facts, "State::*", 10);
+    let update = receipt.struct_update.as_ref().expect("deferred update");
+    assert_eq!(update.explicit_fields.len(), 1);
+    assert_eq!(update.explicit_fields[0].name, "public");
     assert_eq!(
-        public[0].identity.guard.canonical_name(),
-        "cfg:not(feature=\"direct\")"
-    );
-    let extra = matching(&facts, SourceOperationKind::FieldRead, "State::extra");
-    assert_eq!(extra.len(), 1, "unexpected extra reads: {extra:#?}");
-    assert_eq!(
-        extra[0].identity.guard.canonical_name(),
-        "cfg:feature=\"extra\""
+        update.explicit_fields[0].guard.canonical_name(),
+        "cfg:feature=\"direct\""
     );
 }
 
 #[test]
-fn struct_update_unites_cfg_partitioned_field_declarations() {
+fn struct_update_defers_cfg_partitioned_declarations() {
     let facts = operations(
         r#"struct State {
     #[cfg(feature = "wide")]
@@ -119,9 +111,15 @@ fn update(previous: State) -> State { State { ..previous } }
 "#,
     );
 
-    let value = matching(&facts, SourceOperationKind::FieldRead, "State::value");
-    assert_eq!(value.len(), 1, "unexpected value reads: {value:#?}");
-    assert_eq!(value[0].identity.guard.canonical_name(), "ordinary");
+    let receipt = deferred_update(&facts, "State::*", 7);
+    assert!(
+        receipt
+            .struct_update
+            .as_ref()
+            .expect("deferred update")
+            .explicit_fields
+            .is_empty()
+    );
 }
 
 #[test]
@@ -179,6 +177,23 @@ fn assert_no_construction(facts: &[crate::source::SourceOperationFact], line: us
             && fact.identity.name == name
             && fact.identity.span.is_some_and(|span| span.line == line)
     }));
+}
+
+fn deferred_update<'a>(
+    facts: &'a [crate::source::SourceOperationFact],
+    name: &str,
+    line: usize,
+) -> &'a crate::source::SourceOperationFact {
+    facts
+        .iter()
+        .find(|fact| {
+            fact.kind == SourceOperationKind::FieldRead
+                && fact.identity.name == name
+                && fact.identity.quality == AnalysisQuality::Unresolved
+                && fact.identity.span.is_some_and(|span| span.line == line)
+                && fact.struct_update.is_some()
+        })
+        .unwrap_or_else(|| panic!("missing deferred update {name} on line {line}: {facts:#?}"))
 }
 
 fn assert_exact(

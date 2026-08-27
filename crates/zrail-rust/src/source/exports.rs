@@ -2,6 +2,7 @@
 
 pub(crate) use super::{
     active_facts::retain_active_facts,
+    associated_items::AssociatedItemFact,
     canonical::canonicalize as canonicalize_dependency_roots,
     canonical_observed::CanonicalizationContext,
     cfg::{CfgContext, CfgPredicate, CfgTruth},

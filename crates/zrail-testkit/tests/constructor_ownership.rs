@@ -24,6 +24,13 @@ fn lowercase_self_and_alias_constructors_raise_real_owner_findings() {
     }
     for rule in [
         "ticket-construction",
+        "ready-construction",
+        "uppercase-construction",
+    ] {
+        assert_finding(&report, rule, "src/capabilities.rs");
+    }
+    for rule in [
+        "ticket-construction",
         "marker-construction",
         "ready-construction",
         "idle-construction",
@@ -57,6 +64,21 @@ fn proven_values_do_not_impersonate_constructors() {
                 && finding.path.as_deref() == Some("src/values.rs")
         }),
         "value syntax reached a constructor owner: {}",
+        report.human(),
+    );
+}
+
+#[test]
+fn split_impl_associated_values_do_not_impersonate_constructors() {
+    let repository = fixture::Repository::new("associated-values");
+    let report = check(&repository);
+
+    assert!(
+        !report.findings.iter().any(|finding| {
+            matches!(finding.id.as_str(), "OWN-003" | "OWN-006")
+                && finding.path.as_deref() == Some("src/values.rs")
+        }),
+        "associated value reached a constructor owner: {}",
         report.human(),
     );
 }

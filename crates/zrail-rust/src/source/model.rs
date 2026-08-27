@@ -165,6 +165,7 @@ pub(crate) struct RustFileFacts {
     pub(crate) opaque_macro_inputs: Vec<MacroExpansionFact>,
     pub(crate) macro_definitions: Vec<MacroDefinitionFact>,
     pub(crate) import_bindings: Vec<ImportBindingFact>,
+    pub(crate) associated_items: Vec<super::associated_items::AssociatedItemFact>,
     pub(crate) glob_imports: Vec<super::glob_imports::GlobImportFact>,
     pub(crate) inline_module_scopes: Vec<SourceSpan>,
     pub(crate) compile_effects: Vec<CompileEffectFact>,

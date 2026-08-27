@@ -15,7 +15,7 @@ use super::{
     ordinary_use_bindings::{UseBindingContext, collect_use},
 };
 
-use members::{enum_variants, impl_values};
+use members::enum_variants;
 
 pub(super) fn collect<'a>(
     items: impl Iterator<Item = &'a Item>,
@@ -162,9 +162,6 @@ pub(super) fn collect<'a>(
             ),
             Item::ForeignMod(item) => {
                 foreign(&mut bindings, item, enclosing_guard, lexical_scope);
-            }
-            Item::Impl(item) => {
-                impl_values(&mut bindings, item, enclosing_guard, lexical_scope);
             }
             _ => {}
         }

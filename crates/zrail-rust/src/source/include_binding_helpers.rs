@@ -1,8 +1,11 @@
 //! Small deterministic helpers shared by include binding lookup.
 
-use zrail_core::AnalysisQuality;
+use zrail_core::{AnalysisQuality, SourceSpan};
 
-use super::include_bindings::{ResolvedOrigin, ResolvedPath, ResolvedTerminal};
+use super::{
+    include_bindings::{ResolvedOrigin, ResolvedPath, ResolvedTerminal},
+    include_resolution_state::ModuleBoundary,
+};
 
 pub(super) const MAX_RESOLVED_PATH_BYTES: usize = 1_024;
 
@@ -77,6 +80,23 @@ pub(super) fn canonical_name(prefix: &[String], written: &str) -> Option<String>
                 format!("{}::{written}", prefix.join("::"))
             }
         })
+}
+
+pub(super) fn block_local_name(
+    boundaries: &[ModuleBoundary],
+    lexical_scope: &[SourceSpan],
+    file: &str,
+    written: &str,
+) -> String {
+    let anonymous = lexical_scope.iter().rev().find(|span| {
+        !boundaries.iter().any(
+            |boundary| matches!(boundary, ModuleBoundary::Inline(_, module) if module == *span),
+        )
+    });
+    let Some(scope) = anonymous else {
+        return written.into();
+    };
+    format!("<block@{file}:{}:{}>::{written}", scope.line, scope.column)
 }
 
 pub(super) fn canonical_local_name(prefix: &[String], written: &str) -> Option<String> {

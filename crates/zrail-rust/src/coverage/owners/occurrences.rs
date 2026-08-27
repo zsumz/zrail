@@ -206,6 +206,7 @@ const fn call_operation(kind: CallOwnerEvidenceKind) -> &'static str {
 const fn operation_kind(kind: SourceOperationKind) -> &'static str {
     match kind {
         SourceOperationKind::TypeConstruction => "type-construction",
+        SourceOperationKind::ConstructorCapability => "constructor-capability",
         SourceOperationKind::MethodCall => "method-call",
         SourceOperationKind::FieldReceiverCall => "field-receiver-call",
         SourceOperationKind::FieldRead => "field-read",

@@ -95,6 +95,7 @@ pub(super) fn parsed_file(relative: &str, source: &str) -> RustFileFacts {
         opaque_macro_inputs: visitor.opaque_macro_inputs,
         macro_definitions: visitor.macro_definitions,
         import_bindings: visitor.import_bindings,
+        associated_items: visitor.associated_items,
         glob_imports: visitor.glob_imports,
         inline_module_scopes: visitor.inline_module_scopes,
         compile_effects: visitor.compile_effects,
@@ -142,6 +143,48 @@ pub(super) fn canonicalize_operations(
     modules: &[CompilationModuleEdge],
 ) -> Vec<zrail_core::Finding> {
     canonicalize_operation_worlds(index, std::slice::from_ref(domain), modules)
+}
+
+pub(super) fn canonicalize_operations_with_external(
+    index: &mut SourceIndex,
+    domain: &CompilationDomain,
+    modules: &[CompilationModuleEdge],
+    external: &str,
+) -> Vec<zrail_core::Finding> {
+    let bindings = IncludeBindings::collect_with_extern_roots(
+        index,
+        &[CompilationRoot {
+            file: "src/lib.rs".into(),
+            domain: domain.clone(),
+        }],
+        modules,
+        &[],
+        &crate::source::BindingMacroPolicy::default(),
+        None,
+        std::collections::BTreeMap::from([(
+            domain.package.clone(),
+            std::collections::BTreeSet::from([external.into()]),
+        )]),
+    );
+    let mut findings = bindings.apply(index);
+    let domains = index
+        .files
+        .iter()
+        .map(|file| {
+            (
+                file.relative.clone(),
+                std::collections::BTreeSet::from([domain.clone()]),
+            )
+        })
+        .collect();
+    findings.extend(crate::source::operation_canonical::apply(
+        index,
+        &bindings,
+        &domains,
+        &zrail_core::AnalysisLimits::default(),
+    ));
+    crate::source::operation_place_canonical::apply(index, &domains);
+    findings
 }
 
 pub(super) fn canonicalize_operation_worlds(

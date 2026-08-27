@@ -20,6 +20,7 @@ pub(super) struct Route {
     pub(super) terminal: ResolvedTerminal,
 }
 
+#[derive(Clone)]
 pub(super) struct Resolution {
     pub(super) expected: usize,
     pub(super) routes: Vec<Route>,

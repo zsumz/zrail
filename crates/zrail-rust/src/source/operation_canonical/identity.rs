@@ -18,12 +18,16 @@ pub(super) fn canonicalize(
     operations: &mut Vec<SourceOperationFact>,
     bindings: &IncludeBindings,
     file: &str,
+    associated: &super::associated::Catalog,
     budget: &mut ProjectionBudget,
     unresolved: &mut BTreeSet<(String, Option<SourceSpan>)>,
 ) -> Result<(), ProjectionLimit> {
     let mut canonical = Vec::with_capacity(operations.len());
     for mut operation in operations.drain(..) {
-        if operation.kind != SourceOperationKind::TypeConstruction {
+        if !matches!(
+            operation.kind,
+            SourceOperationKind::TypeConstruction | SourceOperationKind::ConstructorCapability
+        ) {
             canonical.push(operation);
             continue;
         }
@@ -41,12 +45,14 @@ pub(super) fn canonicalize(
         } else {
             ResolutionUsage::ConstructorValue
         };
-        let result = resolution::resolve(
+        let mut result = resolution::resolve(
             resolution::Request {
                 bindings,
                 file,
                 fact: &operation.identity,
                 file_local: operation.file_local
+                    && operation.subject_origin
+                        != super::super::operation_model::OperationSubjectOrigin::LocalDeclaration
                     && (construction == ConstructorForm::Named || operation.construction_proven),
                 subject_origin: operation.subject_origin,
                 written,
@@ -55,6 +61,9 @@ pub(super) fn canonicalize(
             },
             budget,
         )?;
+        for route in &mut result.routes {
+            associated.classify_value(route, &operation.identity.guard);
+        }
         if result.expected == 0 {
             canonical.push(operation);
             continue;
@@ -63,12 +72,12 @@ pub(super) fn canonicalize(
         let mut removed = false;
         let mut unknown = false;
         for route in result.routes {
-            match disposition(construction, route.terminal) {
+            match disposition(operation.kind, construction, route.terminal) {
                 Disposition::Discard => removed = true,
-                Disposition::Keep => insert(&mut candidates, route),
+                Disposition::Keep(form) => insert(&mut candidates, route, form),
                 Disposition::Unknown => {
                     unknown = true;
-                    insert(&mut candidates, route);
+                    insert(&mut candidates, route, ConstructorForm::Unknown);
                 }
             }
         }
@@ -85,6 +94,16 @@ pub(super) fn canonicalize(
         } else if candidates.len() > 1 || removed {
             quality = quality.max(AnalysisQuality::Conservative);
         }
+        let retained_form = retained_form(candidates.values().map(|candidate| candidate.form));
+        if operation.kind == SourceOperationKind::ConstructorCapability {
+            operation.kind = if retained_form == ConstructorForm::Unit {
+                SourceOperationKind::TypeConstruction
+            } else {
+                SourceOperationKind::ConstructorCapability
+            };
+            operation.construction = Some(retained_form);
+            operation.construction_proven = !unknown && retained_form != ConstructorForm::Unknown;
+        }
         apply_candidates(&mut operation, candidates, quality);
         operation.file_local = false;
         if construction == ConstructorForm::Named && result.blocks_completeness {
@@ -100,9 +119,14 @@ pub(super) fn canonicalize(
 struct Candidate {
     quality: AnalysisQuality,
     origin: ResolvedOrigin,
+    form: ConstructorForm,
 }
 
-fn insert(candidates: &mut BTreeMap<String, Candidate>, route: resolution::Route) {
+fn insert(
+    candidates: &mut BTreeMap<String, Candidate>,
+    route: resolution::Route,
+    form: ConstructorForm,
+) {
     candidates
         .entry(route.name)
         .and_modify(|candidate| {
@@ -111,11 +135,28 @@ fn insert(candidates: &mut BTreeMap<String, Candidate>, route: resolution::Route
                 candidate.origin = ResolvedOrigin::Unknown;
                 candidate.quality = AnalysisQuality::Unresolved;
             }
+            if candidate.form != form {
+                candidate.form = ConstructorForm::Unknown;
+                candidate.quality = candidate.quality.max(AnalysisQuality::Conservative);
+            }
         })
         .or_insert(Candidate {
             quality: route.quality,
             origin: route.origin,
+            form,
         });
+}
+
+fn retained_form(forms: impl Iterator<Item = ConstructorForm>) -> ConstructorForm {
+    forms
+        .reduce(|left, right| {
+            if left == right {
+                left
+            } else {
+                ConstructorForm::Unknown
+            }
+        })
+        .unwrap_or(ConstructorForm::Unknown)
 }
 
 fn apply_candidates(
@@ -145,17 +186,40 @@ fn apply_candidates(
 }
 
 enum Disposition {
-    Keep,
+    Keep(ConstructorForm),
     Discard,
     Unknown,
 }
 
-fn disposition(construction: ConstructorForm, terminal: ResolvedTerminal) -> Disposition {
+fn disposition(
+    kind: SourceOperationKind,
+    construction: ConstructorForm,
+    terminal: ResolvedTerminal,
+) -> Disposition {
+    if kind == SourceOperationKind::ConstructorCapability {
+        return match terminal {
+            ResolvedTerminal::Constructor(ConstructorForm::Tuple) => {
+                Disposition::Keep(ConstructorForm::Tuple)
+            }
+            ResolvedTerminal::Constructor(ConstructorForm::Unit) => {
+                Disposition::Keep(ConstructorForm::Unit)
+            }
+            ResolvedTerminal::Constructor(ConstructorForm::Unknown) | ResolvedTerminal::Unknown => {
+                Disposition::Unknown
+            }
+            ResolvedTerminal::Constructor(ConstructorForm::Named)
+            | ResolvedTerminal::Type
+            | ResolvedTerminal::Value
+            | ResolvedTerminal::Module => Disposition::Discard,
+        };
+    }
     if matches!(construction, ConstructorForm::Named) {
-        return Disposition::Keep;
+        return Disposition::Keep(ConstructorForm::Named);
     }
     match terminal {
-        ResolvedTerminal::Constructor(form) if form == construction => Disposition::Keep,
+        ResolvedTerminal::Constructor(form) if form == construction => {
+            Disposition::Keep(construction)
+        }
         ResolvedTerminal::Constructor(ConstructorForm::Unknown) | ResolvedTerminal::Unknown => {
             Disposition::Unknown
         }

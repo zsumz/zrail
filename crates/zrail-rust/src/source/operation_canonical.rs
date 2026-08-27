@@ -1,5 +1,6 @@
 //! Operation subjects reuse guarded Rust binding truth after source projection.
 
+mod associated;
 mod identity;
 mod resolution;
 mod updates;
@@ -25,7 +26,7 @@ pub(super) fn apply(
     let affected = index
         .files
         .iter()
-        .map(|file| file.operations.len())
+        .map(|file| file.operations.len() + file.associated_items.len())
         .sum::<usize>();
     let metrics = bindings.instances.metrics();
     let mut budget = ProjectionBudget::new(ProjectionLimits::for_contract(
@@ -36,6 +37,10 @@ pub(super) fn apply(
         limits,
     ));
     let catalog = Catalog::collect(&index.files, compilation_domains);
+    let associated = match associated::Catalog::collect(index, bindings, &mut budget) {
+        Ok(catalog) => catalog,
+        Err(limit) => return vec![super::include_projection_apply::budget_exhausted(limit)],
+    };
     let mut planned = Vec::with_capacity(index.files.len());
     let mut unresolved = BTreeSet::new();
     for file in &index.files {
@@ -44,6 +49,7 @@ pub(super) fn apply(
             &mut operations,
             bindings,
             &file.relative,
+            &associated,
             &mut budget,
             &mut unresolved,
         ) {

@@ -13,6 +13,7 @@ use super::{
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum SourceOperationKind {
     TypeConstruction,
+    ConstructorCapability,
     MethodCall,
     FieldReceiverCall,
     FieldRead,
@@ -81,9 +82,7 @@ pub(crate) enum OperationSubjectOrigin {
 #[derive(Clone, Debug)]
 pub(super) struct LocalType {
     pub(super) identity: String,
-    pub(super) form: ConstructorForm,
     pub(super) fields: BTreeMap<String, LocalField>,
-    pub(super) variants: BTreeMap<String, ConstructorForm>,
 }
 
 #[derive(Clone, Debug)]
@@ -95,22 +94,9 @@ pub(super) struct LocalField {
 pub(super) type LocalTypes = BTreeMap<String, LocalType>;
 
 pub(super) fn local_type(item: &Item, prefix: &str) -> Option<(String, LocalType)> {
-    let (name, form, fields, variants) = match item {
-        Item::Struct(item) => (
-            item.ident.to_string(),
-            fields_form(&item.fields),
-            named_fields(&item.fields),
-            BTreeMap::new(),
-        ),
-        Item::Enum(item) => (
-            item.ident.to_string(),
-            ConstructorForm::Named,
-            BTreeMap::new(),
-            item.variants
-                .iter()
-                .map(|variant| (variant.ident.to_string(), fields_form(&variant.fields)))
-                .collect(),
-        ),
+    let (name, fields) = match item {
+        Item::Struct(item) => (item.ident.to_string(), named_fields(&item.fields)),
+        Item::Enum(item) => (item.ident.to_string(), BTreeMap::new()),
         _ => return None,
     };
     let identity = if prefix.is_empty() {
@@ -118,15 +104,7 @@ pub(super) fn local_type(item: &Item, prefix: &str) -> Option<(String, LocalType
     } else {
         format!("{prefix}::{name}")
     };
-    Some((
-        name,
-        LocalType {
-            identity,
-            form,
-            fields,
-            variants,
-        },
-    ))
+    Some((name, LocalType { identity, fields }))
 }
 
 fn named_fields(fields: &Fields) -> BTreeMap<String, LocalField> {
@@ -155,14 +133,6 @@ fn named_fields(fields: &Fields) -> BTreeMap<String, LocalField> {
         }
     }
     named
-}
-
-fn fields_form(fields: &Fields) -> ConstructorForm {
-    match fields {
-        Fields::Named(_) => ConstructorForm::Named,
-        Fields::Unnamed(_) => ConstructorForm::Tuple,
-        Fields::Unit => ConstructorForm::Unit,
-    }
 }
 
 pub(super) fn append(mut base: TypeIdentity, suffix: impl Iterator<Item = String>) -> TypeIdentity {

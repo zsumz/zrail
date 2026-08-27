@@ -1,7 +1,7 @@
 //! One-pass Rust syntax facts shared by source and capability rails.
-
 mod active_facts;
 mod assignee_expression;
+mod associated_items;
 mod attributes;
 mod calls;
 mod canonical;

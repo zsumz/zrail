@@ -3,7 +3,7 @@
 use std::collections::BTreeSet;
 
 use syn::{
-    ItemImpl, ItemMod, ItemStruct, ItemUse,
+    Block, ItemImpl, ItemMod, ItemStruct, ItemUse,
     spanned::Spanned,
     visit::{self, Visit},
 };
@@ -63,6 +63,12 @@ impl<'ast> Visit<'ast> for Collector {
         for item in items {
             self.visit_item(item);
         }
+        self.lexical_scope.pop();
+    }
+
+    fn visit_block(&mut self, block: &'ast Block) {
+        self.lexical_scope.push(source_span(block.span()));
+        visit::visit_block(self, block);
         self.lexical_scope.pop();
     }
 

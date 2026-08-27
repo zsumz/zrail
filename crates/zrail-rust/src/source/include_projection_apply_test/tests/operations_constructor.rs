@@ -160,3 +160,18 @@ fn index(files: impl IntoIterator<Item = crate::source::RustFileFacts>) -> Sourc
         analysis_metrics: crate::source::SourceAnalysisMetrics::default(),
     }
 }
+
+#[path = "operations_constructor/capability.rs"]
+mod capability;
+
+#[path = "operations_constructor/shadows.rs"]
+mod shadows;
+
+#[path = "operations_constructor/associated.rs"]
+mod associated;
+
+#[path = "operations_constructor/updates.rs"]
+mod updates;
+
+#[path = "operations_constructor/self_shadows.rs"]
+mod self_shadows;

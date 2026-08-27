@@ -360,6 +360,9 @@ reason = "State creation stays behind one transition boundary."
 ```
 
 It observes struct literals, tuple structs, enum variants, and `Self` forms.
+Taking a tuple-struct or tuple-variant constructor as a first-class function
+value is governed at that acquisition site as constructor capability; the same
+`type-construction` owner covers both direct construction and that capability.
 Imports and aliases are retained when they resolve exactly. A constructor-like
 call that cannot be proven to name a type or variant remains unresolved; an
 exact owner fails closed instead of treating capitalization as type evidence.

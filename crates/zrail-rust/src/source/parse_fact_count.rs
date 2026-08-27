@@ -15,6 +15,7 @@ pub(crate) fn fact_count(file: &RustFileFacts) -> usize {
         + candidate_count(&file.opaque_macro_inputs)
         + file.macro_definitions.len()
         + file.import_bindings.len()
+        + file.associated_items.len()
         + file.glob_imports.len()
         + file.inline_module_scopes.len()
         + file

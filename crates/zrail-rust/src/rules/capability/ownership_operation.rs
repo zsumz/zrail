@@ -76,6 +76,7 @@ fn selector_matches(owner: &OwnerContract, operation: &SourceOperationFact) -> b
     opaque_field_matches(owner, operation)
         || path_matches(&owner.selector, fact)
         || (fact.quality != AnalysisQuality::Exact
+            && fact.canonical.is_empty()
             && last_segment(&owner.selector) == last_segment(&fact.name))
 }
 
@@ -116,7 +117,10 @@ fn last_segment(path: &str) -> &str {
 
 fn operation_matches(owner: &OwnerContract, operation: &SourceOperationFact) -> bool {
     match (owner.kind, operation.kind) {
-        (OwnerKind::TypeConstruction, SourceOperationKind::TypeConstruction)
+        (
+            OwnerKind::TypeConstruction,
+            SourceOperationKind::TypeConstruction | SourceOperationKind::ConstructorCapability,
+        )
         | (OwnerKind::MethodName, SourceOperationKind::MethodCall)
         | (OwnerKind::FieldRead | OwnerKind::FieldAuthority, SourceOperationKind::FieldRead)
         | (

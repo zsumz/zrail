@@ -8,7 +8,7 @@ use crate::source::{CfgPredicate, SyntaxGuard, operation_model::unwrapped};
 
 impl FactVisitor<'_> {
     pub(in crate::source) fn record_struct_construction(&mut self, expression: &ExprStruct) {
-        let identity = self.resolve_identity(&expression.path);
+        let identity = self.resolve_construction_identity(&expression.path);
         self.push_operation(
             SourceOperationKind::TypeConstruction,
             &identity,
@@ -26,19 +26,14 @@ impl FactVisitor<'_> {
         let Expr::Path(callee) = unwrapped(call.func.as_ref()) else {
             return;
         };
-        let local = self.constructor_form(&callee.path);
-        if local.is_some_and(|(form, proven)| proven && form != ConstructorForm::Tuple) {
-            return;
-        }
-        let mut identity = self.resolve_identity(&callee.path);
-        if local.is_none_or(|(_, proven)| !proven) {
-            identity.quality = AnalysisQuality::Unresolved;
-        }
+        let mut identity = self.resolve_construction_identity(&callee.path);
+        identity.quality = AnalysisQuality::Unresolved;
         let guard = self.constructor_candidate_guard(&callee.path);
         if guard.predicate().is_satisfiable() == Some(false) {
             return;
         }
-        self.push_guarded_construction(
+        self.push_guarded_constructor_candidate(
+            SourceOperationKind::TypeConstruction,
             &identity,
             path_text(&callee.path),
             callee
@@ -47,7 +42,7 @@ impl FactVisitor<'_> {
                 .last()
                 .map(|segment| segment.ident.span()),
             ConstructorForm::Tuple,
-            local.is_some_and(|(_, proven)| proven),
+            false,
             &guard,
         );
     }
@@ -59,19 +54,14 @@ impl FactVisitor<'_> {
         {
             return;
         }
-        let local = self.constructor_form(&expression.path);
-        if local.is_some_and(|(form, proven)| proven && form != ConstructorForm::Unit) {
-            return;
-        }
-        let mut identity = self.resolve_identity(&expression.path);
-        if local.is_none_or(|(_, proven)| !proven) {
-            identity.quality = AnalysisQuality::Unresolved;
-        }
+        let mut identity = self.resolve_construction_identity(&expression.path);
+        identity.quality = AnalysisQuality::Unresolved;
         let guard = self.constructor_candidate_guard(&expression.path);
         if guard.predicate().is_satisfiable() == Some(false) {
             return;
         }
-        self.push_guarded_construction(
+        self.push_guarded_constructor_candidate(
+            SourceOperationKind::ConstructorCapability,
             &identity,
             path_text(&expression.path),
             expression
@@ -79,8 +69,8 @@ impl FactVisitor<'_> {
                 .segments
                 .last()
                 .map(|segment| segment.ident.span()),
-            ConstructorForm::Unit,
-            local.is_some_and(|(_, proven)| proven),
+            ConstructorForm::Unknown,
+            false,
             &guard,
         );
     }

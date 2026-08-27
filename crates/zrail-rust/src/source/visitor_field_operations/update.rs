@@ -5,7 +5,7 @@ use zrail_core::AnalysisQuality;
 
 use super::{FactVisitor, candidates};
 use crate::source::{
-    CfgPredicate, ConstructorForm, SourceOperationKind, SyntaxGuard,
+    SourceOperationKind, SyntaxGuard,
     attributes::cfg_guard,
     fact::source_span,
     operation_model::{FieldPlaceFact, StructUpdateFact, StructUpdateField, path_text},
@@ -24,7 +24,11 @@ impl FactVisitor<'_> {
         let Some(rest) = &expression.rest else {
             return;
         };
-        let base = self.resolve_identity(&expression.path);
+        // A written update path can be shadowed by block-local type and import
+        // bindings. Retain it for the guarded binding graph instead of using
+        // the visitor's declaration cache, which cannot represent every Rust
+        // namespace shadow.
+        let base = self.resolve_construction_identity(&expression.path);
         let explicit_fields = expression
             .fields
             .iter()
@@ -36,58 +40,29 @@ impl FactVisitor<'_> {
                 Member::Unnamed(_) => None,
             })
             .collect::<Vec<_>>();
-        let fields = self
-            .local_types
-            .iter()
-            .rev()
-            .flat_map(|scope| scope.values())
-            .find(|local| local.identity == base.name && local.form == ConstructorForm::Named)
-            .map(|local| {
-                local
-                    .fields
-                    .iter()
-                    .map(|(name, field)| (name.clone(), field.clone()))
-                    .collect::<Vec<_>>()
-            });
         let guard = self.syntax_guard();
-        if let Some(fields) = fields {
-            for (name, field) in fields {
-                let explicit = explicit_fields
-                    .iter()
-                    .filter(|candidate| candidate.name == name)
-                    .map(|candidate| candidate.guard.predicate())
-                    .collect::<Vec<_>>();
-                let omitted =
-                    SyntaxGuard::from_predicate(CfgPredicate::not(CfgPredicate::any(explicit)));
-                let field_guard = guard.combine(&field.guard).combine(omitted);
-                if field_guard.predicate().is_satisfiable() != Some(false) {
-                    self.push_path_field_read(&expression.path, &name, rest.span(), &field_guard);
-                }
-            }
-        } else {
-            let mut identity = base;
-            identity.name.push_str("::*");
-            identity.quality = AnalysisQuality::Unresolved;
-            let place = FieldPlaceFact {
-                base_name: identity.name.trim_end_matches("::*").into(),
-                base_quality: AnalysisQuality::Unresolved,
-                base_file_local: identity.file_local,
-                base_origin: identity.origin,
-                base_span: identity.span,
-                fields: Vec::new(),
-            };
-            self.push_deferred_struct_update(
-                &identity,
-                place,
-                StructUpdateFact {
-                    written: path_text(&expression.path),
-                    rest_span: source_span(rest.span()),
-                    explicit_fields,
-                },
-                rest.span(),
-                &guard,
-            );
-        }
+        let place = FieldPlaceFact {
+            base_name: base.name.clone(),
+            base_quality: base.quality,
+            base_file_local: base.file_local,
+            base_origin: base.origin,
+            base_span: base.span,
+            fields: Vec::new(),
+        };
+        let mut identity = base;
+        identity.name.push_str("::*");
+        identity.quality = AnalysisQuality::Unresolved;
+        self.push_deferred_struct_update(
+            &identity,
+            place,
+            StructUpdateFact {
+                written: path_text(&expression.path),
+                rest_span: source_span(rest.span()),
+                explicit_fields,
+            },
+            rest.span(),
+            &guard,
+        );
     }
 
     fn push_path_field_read(

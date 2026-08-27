@@ -44,6 +44,12 @@ impl FactVisitor<'_> {
             &enclosing_guard,
             &lexical_scope,
         ));
+        self.associated_items
+            .extend(crate::source::associated_items::collect(
+                items.iter().copied(),
+                &enclosing_guard,
+                &lexical_scope,
+            ));
         self.local_imports.push(LocalImportScope { aliases, globs });
         visit(self);
         self.local_imports.pop();

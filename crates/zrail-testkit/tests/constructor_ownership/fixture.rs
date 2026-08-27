@@ -44,7 +44,31 @@ const FILES: &[(&str, &str)] = &[
     ("zrail.toml", CONTRACT),
     (
         "src/lib.rs",
-        "//! Constructor fixture.\npub mod model;\nmod owner;\nmod self_trespass;\nmod trespasser;\nmod values;\n",
+        "//! Constructor fixture.\npub mod model;\nmod capabilities;\nmod extensions;\nmod owner;\nmod self_trespass;\nmod trespasser;\nmod values;\n",
+    ),
+    (
+        "src/capabilities.rs",
+        r"//! First-class constructor capabilities.
+use crate::model::{Ticket, choice, ticket};
+fn apply<T, U>(make: fn(T) -> U, value: T) -> U { make(value) }
+fn ticket_factory() -> fn(u64) -> Ticket { Ticket }
+fn trespass() {
+    let make = ticket;
+    let _ = make(1);
+    let variant = choice::ready;
+    let _ = variant(2);
+    let _ = apply(Ticket, 3);
+    let _ = Option::map(Some(4), ticket);
+    let _ = (Ticket as fn(u64) -> Ticket)(5);
+    let _ = ticket_factory()(6);
+}
+",
+    ),
+    (
+        "src/extensions.rs",
+        r"//! Split impl values.
+impl crate::model::Ticket { pub fn version() -> u64 { 1 } }
+",
     ),
     (
         "src/model.rs",
@@ -123,7 +147,7 @@ fn values(ticket: fn(u64), marker: u64) {
     let _ = marker;
     let _ = MARKER;
     crate::model::choice::ticket(2);
-    let _ = crate::model::ticket;
+    let _ = crate::model::Ticket::version();
     let _ = crate::model::marker();
 }
 ",

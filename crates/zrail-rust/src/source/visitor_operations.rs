@@ -45,7 +45,12 @@ impl FactVisitor<'_> {
     }
 
     pub(in crate::source) fn with_self_type(&mut self, ty: &Type, visit: impl FnOnce(&mut Self)) {
-        let identity = self.resolve_type(ty);
+        let anonymous_scope = self.lexical_scope.len() > self.inline_modules.len();
+        let identity = if anonymous_scope {
+            self.resolve_self_type(ty)
+        } else {
+            self.resolve_type(ty)
+        };
         self.self_types.push(identity);
         visit(self);
         self.self_types.pop();

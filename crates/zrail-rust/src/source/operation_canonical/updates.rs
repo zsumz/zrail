@@ -75,14 +75,15 @@ pub(super) fn expand(
             expanded.push(operation);
             continue;
         }
-        let resolution_failed = result.unresolved || result.blocks_completeness;
         let mut groups = BTreeMap::<String, FieldGroup>::new();
+        let mut resolved_bases = BTreeSet::new();
         let mut missing = result.unresolved;
         for route in &result.routes {
             if route.origin != ResolvedOrigin::CrateLocal {
                 missing = true;
                 continue;
             }
+            resolved_bases.insert(route.name.clone());
             let Some(fields) = catalog.named_fields(&route.name, &route.domain) else {
                 missing = true;
                 continue;
@@ -127,26 +128,27 @@ pub(super) fn expand(
             }
         }
         if missing || result.blocks_completeness || groups.is_empty() {
-            if resolution_failed {
+            if result.blocks_completeness {
                 unresolved_findings.insert((file.into(), Some(update.rest_span)));
             }
-            let bases = if groups.is_empty() {
-                vec![place.base_name.clone()]
-            } else {
-                groups.into_keys().collect()
-            };
+            let mut bases = resolved_bases.clone();
+            bases.extend(groups.into_keys());
+            if bases.is_empty() {
+                bases.insert(place.base_name.clone());
+            }
             for base in bases {
                 budget.retain_fact(remaining)?;
                 let name = join(&base, "::*").unwrap_or_else(|| "<unresolved>::*".into());
-                push_unique(
-                    &mut expanded,
-                    field_operation(
-                        &operation,
-                        name,
-                        AnalysisQuality::Unresolved,
-                        operation.identity.guard.clone(),
-                    ),
+                let mut receipt = field_operation(
+                    &operation,
+                    name.clone(),
+                    AnalysisQuality::Unresolved,
+                    operation.identity.guard.clone(),
                 );
+                if resolved_bases.contains(&base) {
+                    receipt.identity.canonical.push(name);
+                }
+                push_unique(&mut expanded, receipt);
             }
         }
     }

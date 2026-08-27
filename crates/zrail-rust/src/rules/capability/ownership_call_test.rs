@@ -62,6 +62,7 @@ fn empty_file() -> RustFileFacts {
         opaque_macro_inputs: Vec::new(),
         macro_definitions: Vec::new(),
         import_bindings: Vec::new(),
+        associated_items: Vec::new(),
         glob_imports: Vec::new(),
         inline_module_scopes: Vec::new(),
         compile_effects: Vec::new(),

@@ -39,8 +39,9 @@ impl FactVisitor<'_> {
         );
     }
 
-    pub(in crate::source) fn push_guarded_construction(
+    pub(in crate::source) fn push_guarded_constructor_candidate(
         &mut self,
+        kind: SourceOperationKind,
         identity: &TypeIdentity,
         written: String,
         span: Option<proc_macro2::Span>,
@@ -49,7 +50,7 @@ impl FactVisitor<'_> {
         guard: &super::super::SyntaxGuard,
     ) {
         self.push_operation_with_method(
-            SourceOperationKind::TypeConstruction,
+            kind,
             identity,
             written,
             span,

@@ -62,6 +62,47 @@ fn unreviewed_item_namespace_still_blocks_completeness() {
 }
 
 #[test]
+fn authorized_opaque_namespace_keeps_struct_update_complete_and_fail_closed() {
+    let file = parsed_file(
+        "src/lib.rs",
+        "#[unknown] struct State { value: u64 } fn update(base: State) { let _ = State { ..base }; }",
+    );
+    let mut index = index(file);
+    let bindings = root_bindings(&index, true);
+
+    let findings = canonicalize_operations(&mut index, &bindings);
+
+    assert!(findings.is_empty(), "{findings:#?}");
+    assert!(
+        index.files[0].operations.iter().any(|operation| {
+            operation.kind == crate::source::SourceOperationKind::FieldRead
+                && operation.identity.name.ends_with("State::value")
+                && operation.identity.quality == AnalysisQuality::Unresolved
+        }),
+        "{:#?}",
+        index.files[0].operations
+    );
+}
+
+#[test]
+fn unreviewed_opaque_namespace_blocks_struct_update_completeness() {
+    let file = parsed_file(
+        "src/lib.rs",
+        "#[unknown] struct State { value: u64 } fn update(base: State) { let _ = State { ..base }; }",
+    );
+    let mut index = index(file);
+    let bindings = root_bindings(&index, false);
+
+    let findings = canonicalize_operations(&mut index, &bindings);
+
+    assert!(
+        findings
+            .iter()
+            .any(|finding| finding.id == "RUST-INCLUDE-002")
+    );
+}
+
+#[test]
 fn target_cfg_alias_is_conservative_without_blocking_completeness() {
     let file = parsed_file(
         "src/lib.rs",
@@ -183,4 +224,18 @@ fn root_bindings(index: &SourceIndex, authorize_opacity: bool) -> IncludeBinding
         None,
         BTreeMap::from([("fixture".into(), BTreeSet::from(["external".into()]))]),
     )
+}
+
+fn canonicalize_operations(
+    index: &mut SourceIndex,
+    bindings: &IncludeBindings,
+) -> Vec<zrail_core::Finding> {
+    let mut findings = bindings.apply(index);
+    findings.extend(crate::source::operation_canonical::apply(
+        index,
+        bindings,
+        &BTreeMap::from([("src/lib.rs".into(), BTreeSet::from([domain()]))]),
+        &zrail_core::AnalysisLimits::default(),
+    ));
+    findings
 }

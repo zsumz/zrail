@@ -2,7 +2,7 @@
 
 use super::{
     BindingAnchor, BindingKind, ModuleBinding,
-    include_binding_helpers::{canonical_name, join, split_root, unresolved},
+    include_binding_helpers::{block_local_name, canonical_name, join, split_root, unresolved},
     include_bindings::{
         BindingSite, IncludeBindings, ResolvedOrigin, ResolvedPath, ResolvedTerminal,
     },
@@ -29,24 +29,11 @@ impl IncludeBindings {
             {
                 Vec::new()
             }
-            BindingKind::LocalType => {
-                let Some(name) = canonical_name(&site.module.names, request.written) else {
-                    return Ok(vec![unresolved(request.written)]);
-                };
-                vec![ResolvedPath {
-                    requires_projection: name != request.written || site.crossed_include,
-                    name,
-                    quality: site.binding.quality,
-                    crossed_include: site.crossed_include,
-                    blocks_completeness: false,
-                    origin: ResolvedOrigin::CrateLocal,
-                    terminal: ResolvedTerminal::Type,
-                }]
-            }
+            BindingKind::LocalType => self.local_terminal(site, request, ResolvedTerminal::Type),
             BindingKind::LocalConstructor(form) => {
-                local_terminal(site, request, ResolvedTerminal::Constructor(form))
+                self.local_terminal(site, request, ResolvedTerminal::Constructor(form))
             }
-            BindingKind::LocalValue => local_terminal(site, request, ResolvedTerminal::Value),
+            BindingKind::LocalValue => self.local_terminal(site, request, ResolvedTerminal::Value),
             BindingKind::OpaqueAlias
                 if request.usage == ResolutionUsage::Type && suffix.is_empty() =>
             {
@@ -215,23 +202,34 @@ impl IncludeBindings {
             }
         }
     }
-}
 
-fn local_terminal(
-    site: &BindingSite,
-    request: &ResolveRequest<'_>,
-    terminal: ResolvedTerminal,
-) -> Vec<ResolvedPath> {
-    let Some(name) = canonical_name(&site.module.names, request.written) else {
-        return vec![unresolved(request.written)];
-    };
-    vec![ResolvedPath {
-        requires_projection: name != request.written || site.crossed_include,
-        name,
-        quality: site.binding.quality,
-        crossed_include: site.crossed_include,
-        blocks_completeness: false,
-        origin: ResolvedOrigin::CrateLocal,
-        terminal,
-    }]
+    fn local_terminal(
+        &self,
+        site: &BindingSite,
+        request: &ResolveRequest<'_>,
+        terminal: ResolvedTerminal,
+    ) -> Vec<ResolvedPath> {
+        let file = self
+            .instances
+            .get(site.instance)
+            .map_or("<unknown>", |source| source.file.as_str());
+        let written = block_local_name(
+            &site.module.boundaries,
+            &site.binding.lexical_scope,
+            file,
+            request.written,
+        );
+        let Some(name) = canonical_name(&site.module.names, &written) else {
+            return vec![unresolved(request.written)];
+        };
+        vec![ResolvedPath {
+            requires_projection: name != request.written || site.crossed_include,
+            name,
+            quality: site.binding.quality,
+            crossed_include: site.crossed_include,
+            blocks_completeness: false,
+            origin: ResolvedOrigin::CrateLocal,
+            terminal,
+        }]
+    }
 }

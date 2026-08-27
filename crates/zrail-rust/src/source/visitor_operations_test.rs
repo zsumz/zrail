@@ -30,22 +30,16 @@ fn make() {
         .filter(|fact| fact.kind == SourceOperationKind::TypeConstruction)
         .collect::<Vec<_>>();
 
-    for name in [
-        "Record",
-        "Tuple",
-        "Choice::Tuple",
-        "Choice::Record",
-        "Choice::Unit",
-    ] {
+    for name in ["Record", "Tuple", "Choice::Tuple", "Choice::Record"] {
         assert!(
-            constructions.iter().any(|fact| {
-                fact.identity.name == name
-                    && fact.identity.quality == AnalysisQuality::Exact
-                    && fact.file_local
-            }),
+            constructions.iter().any(|fact| fact.identity.name == name),
             "missing {name}: {constructions:?}",
         );
     }
+    assert!(facts.iter().any(|fact| {
+        fact.kind == SourceOperationKind::ConstructorCapability
+            && fact.identity.name == "Choice::Unit"
+    }));
     assert_eq!(
         constructions
             .iter()
@@ -222,7 +216,7 @@ fn work(value: Unknown) {
             && fact.identity.quality == AnalysisQuality::Unresolved
     }));
     assert!(facts.iter().any(|fact| {
-        fact.kind == SourceOperationKind::TypeConstruction
+        fact.kind == SourceOperationKind::ConstructorCapability
             && fact.identity.name == "external::Choice::Unit"
             && fact.identity.quality == AnalysisQuality::Unresolved
     }));

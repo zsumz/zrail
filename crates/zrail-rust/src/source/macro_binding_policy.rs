@@ -65,6 +65,16 @@ impl BindingMacroPolicy {
             for binding in &mut file.import_bindings {
                 self.restore_binding(&file.relative, binding);
             }
+            for item in &mut file.associated_items {
+                if !item.replacement_macros.is_empty()
+                    && item
+                        .replacement_macros
+                        .iter()
+                        .all(|occurrence| self.covers(&file.relative, occurrence))
+                {
+                    item.quality = item.quality_without_macros;
+                }
+            }
         }
     }
 

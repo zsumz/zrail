@@ -26,6 +26,7 @@ pub(crate) fn retain_active_facts(
         retain_expansions(&mut file.opaque_macro_inputs, domains);
         file.macro_definitions.retain(|fact| active(&fact.guard));
         file.import_bindings.retain(|fact| active(&fact.guard));
+        file.associated_items.retain(|fact| active(&fact.guard));
         file.glob_imports.retain(|fact| active(&fact.guard));
         file.compile_effects
             .retain(|fact| active(&fact.invocation.observation.guard));
