@@ -1,21 +1,20 @@
 //! Named field syntax always emits an operation; exact identity requires a proven declaration.
 
-use syn::{Expr, ExprField, ExprMethodCall, ExprStruct, Member, Path, spanned::Spanned};
+use syn::{Expr, ExprField, ExprMethodCall, Member, Path};
 use zrail_core::AnalysisQuality;
-
-use crate::source::CfgPredicate;
 
 use super::{
     FactVisitor, SourceOperationKind, SyntaxGuard,
-    attributes::cfg_guard,
     fact::source_span,
-    operation_model::{ConstructorForm, FieldPlaceFact, unwrapped},
+    operation_model::{FieldPlaceFact, unwrapped},
     place_expression::PlaceExpression,
     visitor_patterns::PatternFieldAccess,
 };
 
 #[path = "visitor_field_candidates.rs"]
 mod candidates;
+#[path = "visitor_field_operations/update.rs"]
+mod update;
 
 impl FactVisitor<'_> {
     pub(in crate::source) fn record_field_read(&mut self, field: &ExprField) {
@@ -123,92 +122,6 @@ impl FactVisitor<'_> {
                 );
             }
         }
-    }
-
-    pub(in crate::source) fn record_assignee_source_field(&mut self, path: &Path, member: &Member) {
-        let Member::Named(member) = member else {
-            return;
-        };
-        let guard = self.syntax_guard();
-        self.push_path_field_read(path, &member.to_string(), member.span(), &guard);
-    }
-
-    pub(in crate::source) fn record_struct_update_reads(&mut self, expression: &ExprStruct) {
-        let Some(rest) = &expression.rest else {
-            return;
-        };
-        let base = self.resolve_identity(&expression.path);
-        let fields = self
-            .local_types
-            .iter()
-            .rev()
-            .flat_map(|scope| scope.values())
-            .find(|local| local.identity == base.name && local.form == ConstructorForm::Named)
-            .map(|local| {
-                local
-                    .fields
-                    .iter()
-                    .map(|(name, field)| (name.clone(), field.clone()))
-                    .collect::<Vec<_>>()
-            });
-        let guard = self.syntax_guard();
-        if let Some(fields) = fields {
-            for (name, field) in fields {
-                let explicit = expression
-                    .fields
-                    .iter()
-                    .filter(|candidate| match &candidate.member {
-                        Member::Named(member) => member == name.as_str(),
-                        Member::Unnamed(_) => false,
-                    })
-                    .map(|candidate| cfg_guard(&candidate.attrs).predicate())
-                    .collect::<Vec<_>>();
-                let omitted =
-                    SyntaxGuard::from_predicate(CfgPredicate::not(CfgPredicate::any(explicit)));
-                let field_guard = guard.combine(&field.guard).combine(omitted);
-                if field_guard.predicate().is_satisfiable() != Some(false) {
-                    self.push_path_field_read(&expression.path, &name, rest.span(), &field_guard);
-                }
-            }
-        } else {
-            let mut identity = base;
-            identity.name.push_str("::*");
-            identity.quality = AnalysisQuality::Unresolved;
-            self.push_field_operation(
-                SourceOperationKind::FieldRead,
-                &identity,
-                "*".into(),
-                Some(rest.span()),
-                None,
-                &guard,
-            );
-        }
-    }
-
-    fn push_path_field_read(
-        &mut self,
-        path: &Path,
-        member: &str,
-        span: proc_macro2::Span,
-        guard: &SyntaxGuard,
-    ) {
-        let base = self.resolve_identity(path);
-        let identity = candidates::declared_field_identity(self, &base, member);
-        let place = FieldPlaceFact {
-            base_name: base.name,
-            base_quality: base.quality,
-            base_file_local: base.file_local,
-            base_span: base.span,
-            fields: vec![member.into()],
-        };
-        self.push_field_operation(
-            SourceOperationKind::FieldRead,
-            &identity,
-            member.into(),
-            Some(span),
-            Some(place),
-            guard,
-        );
     }
 
     fn record_field(&mut self, kind: SourceOperationKind, field: &ExprField) {

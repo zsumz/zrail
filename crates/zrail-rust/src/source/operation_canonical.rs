@@ -1,87 +1,91 @@
-//! Compilation paths turn file-local operation subjects into canonical Rust identities.
+//! Operation subjects reuse guarded Rust binding truth after source projection.
 
-use std::collections::{BTreeMap, BTreeSet, VecDeque};
+mod identity;
+mod resolution;
+mod updates;
 
-use zrail_core::AnalysisQuality;
+use std::collections::{BTreeMap, BTreeSet};
 
-use super::{CompilationModuleEdge, CompilationRoot, SourceIndex};
+use zrail_core::Finding;
 
-const MAX_MODULE_DEPTH: usize = 128;
+use super::{
+    CompilationDomain, SourceIndex,
+    include_bindings::IncludeBindings,
+    include_projection_budget::{ProjectionBudget, ProjectionLimits},
+    operation_place_canonical::catalog::Catalog,
+    parse::{MAX_FACTS_PER_FILE, fact_count},
+};
 
 pub(super) fn apply(
     index: &mut SourceIndex,
-    roots: &[CompilationRoot],
-    edges: &[CompilationModuleEdge],
-) {
-    let identities = module_identities(roots, edges);
-    for file in &mut index.files {
-        let modules = identities.get(&file.relative);
-        for operation in &mut file.operations {
-            if !operation.file_local {
-                continue;
-            }
-            let candidates = modules
-                .into_iter()
-                .flatten()
-                .map(|module| join_identity(module, &operation.identity.name))
-                .collect::<Vec<_>>();
-            match candidates.as_slice() {
-                [identity] => operation.identity.name.clone_from(identity),
-                [] => operation.identity.quality = AnalysisQuality::Unresolved,
-                _ => {
-                    operation.identity.canonical = candidates;
-                    operation.identity.quality = AnalysisQuality::Conservative;
-                }
-            }
-            operation.file_local = false;
+    bindings: &IncludeBindings,
+    compilation_domains: &BTreeMap<String, BTreeSet<CompilationDomain>>,
+    limits: &zrail_core::AnalysisLimits,
+) -> Vec<Finding> {
+    let affected = index
+        .files
+        .iter()
+        .map(|file| file.operations.len())
+        .sum::<usize>();
+    let metrics = bindings.instances.metrics();
+    let mut budget = ProjectionBudget::new(ProjectionLimits::for_contract(
+        affected,
+        metrics
+            .base_contexts
+            .saturating_add(metrics.derived_contexts),
+        limits,
+    ));
+    let catalog = Catalog::collect(&index.files, compilation_domains);
+    let mut planned = Vec::with_capacity(index.files.len());
+    let mut unresolved = BTreeSet::new();
+    for file in &index.files {
+        let mut operations = file.operations.clone();
+        if let Err(limit) = identity::canonicalize(
+            &mut operations,
+            bindings,
+            &file.relative,
+            &mut budget,
+            &mut unresolved,
+        ) {
+            return vec![super::include_projection_apply::budget_exhausted(limit)];
         }
-    }
-}
-
-fn module_identities(
-    roots: &[CompilationRoot],
-    edges: &[CompilationModuleEdge],
-) -> BTreeMap<String, BTreeSet<String>> {
-    let mut identities = BTreeMap::<String, BTreeSet<String>>::new();
-    let mut queue = VecDeque::new();
-    let mut visited = BTreeSet::new();
-    for root in roots {
-        queue.push_back((
-            root.file.clone(),
-            root.domain.clone(),
-            "crate".to_owned(),
-            0,
-        ));
-    }
-    while let Some((file, domain, identity, depth)) = queue.pop_front() {
-        if !visited.insert((file.clone(), domain.clone(), identity.clone())) {
-            continue;
+        let Some(mut remaining) = MAX_FACTS_PER_FILE.checked_sub(fact_count(file)) else {
+            return vec![super::include_projection_apply::budget_exhausted(
+                super::include_projection_budget::ProjectionLimit::Facts,
+            )];
+        };
+        remaining = remaining.saturating_add(
+            operations
+                .iter()
+                .filter(|operation| operation.struct_update.is_some())
+                .count(),
+        );
+        if let Err(limit) = updates::expand(
+            &mut operations,
+            bindings,
+            &catalog,
+            &file.relative,
+            &mut budget,
+            &mut remaining,
+            &mut unresolved,
+        ) {
+            return vec![super::include_projection_apply::budget_exhausted(limit)];
         }
-        identities
-            .entry(file.clone())
-            .or_default()
-            .insert(identity.clone());
-        if depth == MAX_MODULE_DEPTH {
-            continue;
-        }
-        for edge in edges.iter().filter(|edge| {
-            edge.parent == file && edge.domain == domain && edge.parent_scope.is_empty()
-        }) {
-            queue.push_back((
-                edge.child.clone(),
-                edge.domain.clone(),
-                format!("{identity}::{}", edge.module_name),
-                depth + 1,
-            ));
-        }
+        planned.push(operations);
     }
-    identities
-}
-
-fn join_identity(module: &str, local: &str) -> String {
-    if local.is_empty() {
-        module.to_owned()
-    } else {
-        format!("{module}::{local}")
+    for (file, operations) in index.files.iter_mut().zip(planned) {
+        file.operations = operations;
     }
+    index.analysis_metrics.projection_work = index
+        .analysis_metrics
+        .projection_work
+        .saturating_add(budget.used_work());
+    index.analysis_metrics.projected_facts = index
+        .analysis_metrics
+        .projected_facts
+        .saturating_add(budget.retained_facts());
+    unresolved
+        .into_iter()
+        .map(|(file, span)| super::include_projection_apply::unresolved(Some(&file), span))
+        .collect()
 }

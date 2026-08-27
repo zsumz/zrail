@@ -5,8 +5,9 @@ use zrail_core::SourceSpan;
 use crate::{
     inventory::{FileClass, RustSourceFile},
     source::{
-        CompilationDomain, CompilationMode, Reachability, RustFileFacts, SourceIndex, SourceSyntax,
-        imports::ImportMap, visitor::FactVisitor,
+        CompilationDomain, CompilationMode, CompilationModuleEdge, CompilationRoot,
+        ModuleDeclaration, Reachability, RustFileFacts, SourceIndex, SourceSyntax,
+        imports::ImportMap, include_bindings::IncludeBindings, visitor::FactVisitor,
     },
 };
 use syn::visit::Visit;
@@ -108,4 +109,71 @@ pub(super) fn parsed_file(relative: &str, source: &str) -> RustFileFacts {
         opaque_binding_macros: visitor.opaque_binding_macros,
         facade_implementation: Vec::new(),
     }
+}
+
+pub(super) fn module<'a>(modules: &'a [ModuleDeclaration], name: &str) -> &'a ModuleDeclaration {
+    modules
+        .iter()
+        .find(|module| module.name == name)
+        .expect("module declaration")
+}
+
+pub(super) fn module_edge(
+    parent: &str,
+    module_name: &str,
+    child: &str,
+    declaration: &ModuleDeclaration,
+    domain: &CompilationDomain,
+) -> CompilationModuleEdge {
+    CompilationModuleEdge {
+        parent: parent.into(),
+        module_name: module_name.into(),
+        child: child.into(),
+        domain: domain.clone(),
+        guard: declaration.guard.clone(),
+        parent_scope: declaration.lexical_scope.clone(),
+        span: declaration.span,
+    }
+}
+
+pub(super) fn canonicalize_operations(
+    index: &mut SourceIndex,
+    domain: &CompilationDomain,
+    modules: &[CompilationModuleEdge],
+) -> Vec<zrail_core::Finding> {
+    canonicalize_operation_worlds(index, std::slice::from_ref(domain), modules)
+}
+
+pub(super) fn canonicalize_operation_worlds(
+    index: &mut SourceIndex,
+    domains: &[CompilationDomain],
+    modules: &[CompilationModuleEdge],
+) -> Vec<zrail_core::Finding> {
+    let bindings = IncludeBindings::collect(
+        index,
+        &domains
+            .iter()
+            .map(|domain| CompilationRoot {
+                file: "src/lib.rs".into(),
+                domain: domain.clone(),
+            })
+            .collect::<Vec<_>>(),
+        modules,
+        &[],
+        &crate::source::BindingMacroPolicy::default(),
+    );
+    let mut findings = bindings.apply(index);
+    let domains = index
+        .files
+        .iter()
+        .map(|file| (file.relative.clone(), domains.iter().cloned().collect()))
+        .collect();
+    findings.extend(crate::source::operation_canonical::apply(
+        index,
+        &bindings,
+        &domains,
+        &zrail_core::AnalysisLimits::default(),
+    ));
+    crate::source::operation_place_canonical::apply(index, &domains);
+    findings
 }

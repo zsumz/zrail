@@ -43,7 +43,6 @@ pub(crate) fn canonicalize(
         analysis_limits.derived_source_instances,
     );
     let macro_visibility = super::macro_visibility::MacroVisibility::collect(index, module_edges);
-    super::operation_canonical::apply(index, compilation_roots, compilation_edges);
     let mut findings = Vec::new();
     for file in &mut index.files {
         let selected = selected_packages(contexts, &packages, &cargo.packages, &file.relative);
@@ -96,6 +95,12 @@ pub(crate) fn canonicalize(
         external_roots(cargo),
     );
     findings.extend(include_bindings.apply_with_contract_limits(index, analysis_limits));
+    findings.extend(super::operation_canonical::apply(
+        index,
+        &include_bindings,
+        compilation_domains,
+        analysis_limits,
+    ));
     super::operation_place_canonical::apply(index, compilation_domains);
     for file in &mut index.files {
         findings.extend(super::calls::resolution_findings(

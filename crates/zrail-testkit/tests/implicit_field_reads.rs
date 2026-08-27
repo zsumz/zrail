@@ -1,4 +1,4 @@
-//! Implicit field reads reach exact owners or fail closed when field shape is opaque.
+//! Implicit field reads reach exact owners, including through local imports.
 
 use std::{fs, path::PathBuf};
 
@@ -26,7 +26,7 @@ fn destructuring_source_read_reaches_field_owner() {
 }
 
 #[test]
-fn opaque_imported_update_fails_each_field_owner_closed() {
+fn imported_local_update_reaches_each_field_owner_exactly() {
     let root = repository();
     let report = check(&root);
 
@@ -34,7 +34,7 @@ fn opaque_imported_update_fails_each_field_owner_closed() {
         let finding = find(&report, rule, "src/update.rs");
         assert_eq!(
             finding.analysis,
-            AnalysisQuality::Unresolved,
+            AnalysisQuality::Exact,
             "{}",
             report.human()
         );

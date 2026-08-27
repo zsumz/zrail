@@ -4,7 +4,10 @@ use zrail_core::{AnalysisQuality, Finding};
 
 use super::super::{SourceInstanceIssue, include_projection_budget::ProjectionLimit};
 
-pub(super) fn unresolved(path: Option<&str>, span: Option<zrail_core::SourceSpan>) -> Finding {
+pub(in crate::source) fn unresolved(
+    path: Option<&str>,
+    span: Option<zrail_core::SourceSpan>,
+) -> Finding {
     let mut finding = Finding::error(
         "RUST-INCLUDE-002",
         "rust.source.include-bindings",
@@ -48,7 +51,7 @@ pub(super) fn context_issue(issue: &SourceInstanceIssue) -> Finding {
     path.map_or(finding.clone(), |path| finding.at(path, None))
 }
 
-pub(super) fn budget_exhausted(limit: ProjectionLimit) -> Finding {
+pub(in crate::source) fn budget_exhausted(limit: ProjectionLimit) -> Finding {
     let (id, exhausted) = match limit {
         ProjectionLimit::Work => ("RUST-PROJECTION-001", "work"),
         ProjectionLimit::Facts => ("RUST-PROJECTION-002", "fact"),

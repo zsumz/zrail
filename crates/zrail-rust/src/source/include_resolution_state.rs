@@ -93,6 +93,7 @@ impl LookupMode {
 pub(super) enum ResolutionUsage {
     Path,
     Type,
+    OperationType,
     Call,
 }
 

@@ -84,7 +84,7 @@ pub(super) fn declaring(
                 .flatten()
                 .filter_map(|declaration| {
                     let declared = declaration.domains.get(domain)?;
-                    let member = declaration.members.get(field)?.get(domain)?;
+                    let member = declaration.members.get(field)?.domains.get(domain)?;
                     Some((declared, member))
                 })
                 .collect::<Vec<_>>();

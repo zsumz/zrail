@@ -22,8 +22,10 @@ pub(crate) struct SourceOperationFact {
     pub(crate) kind: SourceOperationKind,
     pub(crate) identity: ObservedFact,
     pub(crate) file_local: bool,
+    pub(crate) exact_construction_syntax: bool,
     pub(crate) method: Option<String>,
     pub(crate) place: Option<FieldPlaceFact>,
+    pub(crate) struct_update: Option<StructUpdateFact>,
 }
 
 impl SourceOperationFact {
@@ -47,6 +49,19 @@ pub(crate) struct FieldPlaceFact {
     pub(crate) base_file_local: bool,
     pub(crate) base_span: Option<SourceSpan>,
     pub(crate) fields: Vec<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct StructUpdateFact {
+    pub(crate) written: String,
+    pub(crate) rest_span: SourceSpan,
+    pub(crate) explicit_fields: Vec<StructUpdateField>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct StructUpdateField {
+    pub(crate) name: String,
+    pub(crate) guard: SyntaxGuard,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

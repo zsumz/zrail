@@ -1,6 +1,6 @@
 //! Projected type declarations repair exact field places across source files.
 
-mod catalog;
+pub(super) mod catalog;
 mod repair;
 mod routes;
 

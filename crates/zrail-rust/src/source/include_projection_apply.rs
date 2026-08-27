@@ -13,7 +13,8 @@ use super::{
     include_resolution_state::ResolutionUsage,
     parse::{MAX_FACTS_PER_FILE, fact_count},
 };
-use findings::{budget_exhausted, context_issue, unresolved};
+use findings::context_issue;
+pub(super) use findings::{budget_exhausted, unresolved};
 
 struct FileProjection {
     index: usize,

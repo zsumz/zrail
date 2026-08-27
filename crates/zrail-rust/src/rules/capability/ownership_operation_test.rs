@@ -87,7 +87,9 @@ fn operation(kind: SourceOperationKind, method: Option<&str>) -> SourceOperation
             namespace: FactNamespace::Type,
         },
         file_local: false,
+        exact_construction_syntax: false,
         method: method.map(str::to_owned),
         place: None,
+        struct_update: None,
     }
 }

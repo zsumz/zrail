@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use zrail_core::AnalysisQuality;
 
 use super::*;
-use crate::source::{CompilationDomain, CompilationMode};
+use crate::source::{CompilationDomain, CompilationMode, SyntaxGuard};
 
 #[test]
 fn declaring_field_is_missing_outside_its_feature_world() {
@@ -21,7 +21,13 @@ fn declaring_field_is_missing_outside_its_feature_world() {
     };
     let declaration = super::super::catalog::Declaration {
         domains: candidate.domains.clone(),
-        members: BTreeMap::from([("epoch".into(), BTreeMap::from([(on.clone(), exact)]))]),
+        members: BTreeMap::from([(
+            "epoch".into(),
+            super::super::catalog::Member {
+                domains: BTreeMap::from([(on.clone(), exact)]),
+                guard: SyntaxGuard::Ordinary,
+            },
+        )]),
         fields: BTreeMap::new(),
     };
     let catalog = Catalog(BTreeMap::from([(

@@ -281,3 +281,9 @@ mod hub;
 
 #[path = "include_projection_apply_test/tests/opacity.rs"]
 mod opacity;
+
+#[path = "include_projection_apply_test/tests/operations_relative.rs"]
+mod operations_relative;
+
+#[path = "include_projection_apply_test/tests/operations_alias.rs"]
+mod operations_alias;

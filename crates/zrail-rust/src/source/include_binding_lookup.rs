@@ -167,7 +167,10 @@ fn filter_namespace(sites: &mut Vec<BindingSite>, suffix: &str, usage: Resolutio
                 BindingKind::Import | BindingKind::LocalConstructor | BindingKind::LocalValue
             )
         });
-    } else if usage == ResolutionUsage::Type {
+    } else if matches!(
+        usage,
+        ResolutionUsage::Type | ResolutionUsage::OperationType
+    ) {
         sites.retain(|site| {
             matches!(
                 site.binding.kind,
