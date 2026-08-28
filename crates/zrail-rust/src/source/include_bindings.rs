@@ -4,12 +4,12 @@
 pub(super) mod implicit_prelude;
 #[path = "implicit_prelude_catalog.rs"]
 mod implicit_prelude_catalog;
-#[path = "include_binding_activity.rs"]
-mod include_binding_activity;
 #[path = "include_binding_requirement.rs"]
 mod include_binding_requirement;
 #[path = "include_prelude.rs"]
 mod include_prelude;
+#[path = "include_binding_instances.rs"]
+mod instance_catalogs;
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -17,7 +17,7 @@ use zrail_core::AnalysisQuality;
 
 use super::{
     CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot, ConstructorForm,
-    ImportBindingFact, ModuleBinding, SourceIndex, SourceInstanceId, SourceInstances, SyntaxGuard,
+    ImportBindingFact, SourceIndex, SourceInstanceId, SourceInstances, SyntaxGuard,
     include_binding_catalog::FileBindings, include_resolution_state::EffectiveModule,
     macro_binding_policy::BindingMacroPolicy,
 };
@@ -29,13 +29,13 @@ pub(in crate::source) fn known_implicit_prelude_name(name: &str) -> bool {
 }
 
 pub(super) struct IncludeBindings {
-    pub(super) files: BTreeMap<String, FileBindings>,
-    pub(super) inline_module_names: BTreeMap<String, BTreeMap<zrail_core::SourceSpan, String>>,
+    pub(super) files: BTreeMap<SourceInstanceId, FileBindings>,
+    pub(super) inline_module_names:
+        BTreeMap<SourceInstanceId, BTreeMap<zrail_core::SourceSpan, String>>,
     pub(super) opaque_namespace_scopes:
-        BTreeMap<String, BTreeSet<(Vec<zrail_core::SourceSpan>, SyntaxGuard, bool)>>,
-    pub(super) prelude_directives: BTreeMap<String, Vec<super::model::PreludeDirective>>,
+        BTreeMap<SourceInstanceId, BTreeSet<(Vec<zrail_core::SourceSpan>, SyntaxGuard, bool)>>,
+    pub(super) prelude_directives: BTreeMap<SourceInstanceId, Vec<super::model::PreludeDirective>>,
     pub(super) instances: SourceInstances,
-    active_instances: BTreeMap<(String, SyntaxGuard), Vec<SourceInstanceId>>,
     extern_roots: BTreeMap<String, BTreeSet<String>>,
 }
 
@@ -130,64 +130,13 @@ impl IncludeBindings {
         extern_roots: BTreeMap<String, BTreeSet<String>>,
     ) -> Self {
         let instances = SourceInstances::build_with_limit(roots, modules, includes, derived_limit);
-        let active_instances = include_binding_activity::active_instances(index, &instances);
+        let catalogs = instance_catalogs::collect(index, &instances, binding_macros);
         Self {
-            files: index
-                .files
-                .iter()
-                .map(|file| {
-                    (
-                        file.relative.clone(),
-                        FileBindings::collect(&file.import_bindings),
-                    )
-                })
-                .collect(),
-            inline_module_names: index
-                .files
-                .iter()
-                .map(|file| {
-                    (
-                        file.relative.clone(),
-                        file.import_bindings
-                            .iter()
-                            .filter_map(|binding| match binding.kind {
-                                super::BindingKind::Module(ModuleBinding::Inline(span)) => {
-                                    binding.name.as_ref().map(|name| (span, name.clone()))
-                                }
-                                _ => None,
-                            })
-                            .collect(),
-                    )
-                })
-                .collect(),
-            opaque_namespace_scopes: index
-                .files
-                .iter()
-                .map(|file| {
-                    (
-                        file.relative.clone(),
-                        file.item_macros
-                            .iter()
-                            .chain(&file.opaque_binding_macros)
-                            .filter(|fact| binding_macros.retains_opacity(&file.relative, fact))
-                            .map(|fact| {
-                                (
-                                    fact.lexical_scope.clone(),
-                                    fact.guard.clone(),
-                                    binding_macros.opacity_is_authorized(&file.relative, fact),
-                                )
-                            })
-                            .collect(),
-                    )
-                })
-                .collect(),
-            prelude_directives: index
-                .files
-                .iter()
-                .map(|file| (file.relative.clone(), file.prelude_directives.clone()))
-                .collect(),
+            files: catalogs.files,
+            inline_module_names: catalogs.inline_module_names,
+            opaque_namespace_scopes: catalogs.opaque_namespace_scopes,
+            prelude_directives: catalogs.prelude_directives,
             instances,
-            active_instances,
             extern_roots,
         }
     }
@@ -200,15 +149,28 @@ impl IncludeBindings {
         })
     }
 
-    pub(super) fn active_instances(&self, file: &str, guard: &SyntaxGuard) -> &[SourceInstanceId] {
-        self.active_instances
-            .get(&(file.to_owned(), guard.clone()))
-            .map_or(&[], Vec::as_slice)
+    pub(super) fn active_instances(
+        &self,
+        file: &str,
+        syntax: super::SourceSyntax,
+        guard: &SyntaxGuard,
+    ) -> Vec<SourceInstanceId> {
+        self.instances
+            .for_source(file, syntax)
+            .iter()
+            .copied()
+            .filter(|id| {
+                self.instances.get(*id).is_some_and(|source| {
+                    guard.availability_in_domain(&source.domain).is_available()
+                })
+            })
+            .collect()
     }
 
     pub(super) fn contextual_projection_is_generic(
         &self,
         file: &str,
+        syntax: super::SourceSyntax,
         written: &str,
         guard: &SyntaxGuard,
     ) -> bool {
@@ -217,13 +179,15 @@ impl IncludeBindings {
             return false;
         };
         let root = root.strip_prefix("r#").unwrap_or(root);
-        self.active_instances(file, guard).iter().any(|instance| {
-            self.instances.get(*instance).is_some_and(|source| {
-                source
-                    .generic_types
-                    .iter()
-                    .any(|generic| generic.strip_prefix("r#").unwrap_or(generic) == root)
+        self.active_instances(file, syntax, guard)
+            .iter()
+            .any(|instance| {
+                self.instances.get(*instance).is_some_and(|source| {
+                    source
+                        .generic_types
+                        .iter()
+                        .any(|generic| generic.strip_prefix("r#").unwrap_or(generic) == root)
+                })
             })
-        })
     }
 }

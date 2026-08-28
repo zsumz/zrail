@@ -58,14 +58,16 @@ pub(crate) fn canonicalize(
                     .map(|effect| &mut effect.invocation),
             )
         {
-            let local_macros = macro_definitions.local_names(&file.relative, &expansion.guard);
+            let local_macros =
+                macro_definitions.local_names(&file.relative, file.syntax, &expansion.guard);
             macro_visibility.resolve(
                 expansion,
                 &file.relative,
+                file.syntax,
                 file.reachability,
                 local_macros.as_ref(),
             );
-            macro_definitions.apply(&file.relative, expansion);
+            macro_definitions.apply(&file.relative, file.syntax, expansion);
         }
         let observed = super::canonical_observed::roots(file);
         let (roots, overflowed) = dependency_roots(&selected, &observed);
@@ -115,6 +117,7 @@ pub(crate) fn canonicalize(
             if boundary.kind == super::CallResolutionKind::ContextualAssociatedTypeProjection
                 && include_bindings.contextual_projection_is_generic(
                     &file.relative,
+                    file.syntax,
                     &boundary.written,
                     &boundary.guard,
                 )

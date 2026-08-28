@@ -8,6 +8,7 @@ impl Walker<'_> {
     pub(super) fn walk_include(
         &mut self,
         source: &str,
+        source_syntax: SourceSyntax,
         context: &TraversalContext,
         include: &IncludeBoundary,
     ) {
@@ -15,7 +16,7 @@ impl Walker<'_> {
             return;
         };
         if let Some(output) = &include.out_dir {
-            self.walk_out_dir(source, &context, include, output);
+            self.walk_out_dir(source, source_syntax, &context, include, output);
             return;
         }
         let Some(relative) = &include.path else {
@@ -34,6 +35,7 @@ impl Walker<'_> {
         match join_relative(&parent(source), relative) {
             Ok(path) => self.follow_include(
                 source,
+                source_syntax,
                 path,
                 &format!("literal include {relative:?}"),
                 syntax(include.context),
@@ -52,6 +54,7 @@ impl Walker<'_> {
     fn walk_out_dir(
         &mut self,
         source: &str,
+        source_syntax: SourceSyntax,
         context: &TraversalContext,
         include: &IncludeBoundary,
         output: &str,
@@ -75,6 +78,7 @@ impl Walker<'_> {
             .insert((source.to_owned(), output.to_owned()));
         self.follow_include(
             source,
+            source_syntax,
             target,
             &format!("OUT_DIR include {output:?}"),
             syntax(include.context),

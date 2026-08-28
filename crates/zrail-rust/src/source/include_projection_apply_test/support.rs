@@ -106,7 +106,7 @@ pub(super) fn parsed_file(relative: &str, source: &str) -> RustFileFacts {
         macro_definitions: visitor.macro_definitions,
         import_bindings: visitor.import_bindings,
         associated_items: visitor.associated_items,
-        trait_inheritance: visitor.trait_inheritance,
+        trait_declarations: visitor.trait_declarations,
         glob_imports: visitor.glob_imports,
         inline_module_scopes: visitor.inline_module_scopes,
         prelude_directives: crate::source::include_bindings::implicit_prelude::directives(&syntax),
@@ -140,8 +140,10 @@ pub(super) fn module_edge(
 ) -> CompilationModuleEdge {
     CompilationModuleEdge {
         parent: parent.into(),
+        parent_syntax: SourceSyntax::Items,
         module_name: module_name.into(),
         child: child.into(),
+        child_syntax: SourceSyntax::Items,
         domain: domain.clone(),
         guard: declaration.guard.clone(),
         parent_scope: declaration.lexical_scope.clone(),
@@ -167,6 +169,7 @@ pub(super) fn canonicalize_operations_with_external(
         index,
         &[CompilationRoot {
             file: "src/lib.rs".into(),
+            syntax: SourceSyntax::Items,
             domain: domain.clone(),
         }],
         modules,
@@ -210,6 +213,7 @@ pub(super) fn canonicalize_operation_worlds(
             .iter()
             .map(|domain| CompilationRoot {
                 file: "src/lib.rs".into(),
+                syntax: SourceSyntax::Items,
                 domain: domain.clone(),
             })
             .collect::<Vec<_>>(),

@@ -29,13 +29,13 @@ impl IncludeBindings {
         let floor = if mode.exact_scope() {
             scope.len()
         } else {
-            self.lexical_floor(&source.file, scope, budget)?
+            self.lexical_floor(instance, scope, budget)?
         };
         let mut selected = Vec::new();
         let mut depth = None;
         for binding in self
             .files
-            .get(&source.file)
+            .get(&instance)
             .and_then(|bindings| bindings.named.get(name))
             .into_iter()
             .flatten()

@@ -14,7 +14,7 @@ use super::{
     resolution,
 };
 use crate::source::{
-    SyntaxGuard,
+    SourceSyntax, SyntaxGuard,
     include_binding_helpers::join,
     include_bindings::{IncludeBindings, ResolvedOrigin},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
@@ -28,6 +28,7 @@ pub(super) fn expand(
     bindings: &IncludeBindings,
     catalog: &Catalog,
     file: &str,
+    syntax: SourceSyntax,
     budget: &mut ProjectionBudget,
     remaining: &mut usize,
     unresolved_findings: &mut BTreeSet<(String, Option<SourceSpan>)>,
@@ -66,6 +67,7 @@ pub(super) fn expand(
             resolution::Request {
                 bindings,
                 file,
+                syntax,
                 fact: &subject,
                 file_local: place.base_file_local,
                 subject_origin: place.base_origin,

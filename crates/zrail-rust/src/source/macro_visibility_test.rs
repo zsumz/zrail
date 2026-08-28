@@ -6,7 +6,7 @@ use zrail_core::AnalysisQuality;
 
 use super::super::{
     MacroCandidate, MacroDerivation, MacroExpansionFact, ObservedFact, Reachability,
-    ReachabilityKind,
+    ReachabilityKind, SourceSyntax,
 };
 
 use super::{MacroVisibility, imported_candidate};
@@ -38,6 +38,7 @@ fn repository_globs_remove_only_the_redundant_unresolved_spelling() {
     MacroVisibility::default().resolve(
         &mut invocation,
         "src/lib.rs",
+        SourceSyntax::Items,
         Reachability::from_kind(ReachabilityKind::Production),
         Some(&local),
     );
@@ -67,6 +68,7 @@ fn unknown_or_external_names_remain_conservative() {
     MacroVisibility::default().resolve(
         &mut invocation,
         "src/lib.rs",
+        SourceSyntax::Items,
         Reachability::from_kind(ReachabilityKind::Production),
         Some(&BTreeSet::new()),
     );
@@ -105,11 +107,14 @@ fn exact_repository_aliases_follow_parent_macro_imports() {
     let reachability = Reachability::from_kind(ReachabilityKind::Production);
     let mut visibility = MacroVisibility::default();
     visibility.parents.insert(
-        "src/child.rs".into(),
-        std::collections::BTreeMap::from([("src/hub.rs".into(), reachability)]),
+        ("src/child.rs".into(), SourceSyntax::Items),
+        std::collections::BTreeMap::from([(
+            ("src/hub.rs".into(), SourceSyntax::Items),
+            reachability,
+        )]),
     );
     visibility.imports.insert(
-        ("src/hub.rs".into(), "Debug".into()),
+        ("src/hub.rs".into(), SourceSyntax::Items, "Debug".into()),
         vec![super::super::MacroImportFact {
             name: "Debug".into(),
             target: "std::fmt::Debug".into(),
@@ -130,6 +135,7 @@ fn exact_repository_aliases_follow_parent_macro_imports() {
     visibility.resolve(
         &mut invocation,
         "src/child.rs",
+        SourceSyntax::Items,
         reachability,
         Some(&BTreeSet::new()),
     );

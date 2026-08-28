@@ -34,6 +34,7 @@ pub(super) struct Resolution {
 pub(super) struct Request<'a> {
     pub(super) bindings: &'a IncludeBindings,
     pub(super) file: &'a str,
+    pub(super) syntax: super::super::SourceSyntax,
     pub(super) fact: &'a ObservedFact,
     pub(super) file_local: bool,
     pub(super) subject_origin: OperationSubjectOrigin,
@@ -51,6 +52,7 @@ pub(super) fn resolve(
     let Request {
         bindings,
         file,
+        syntax,
         fact,
         file_local,
         subject_origin,
@@ -62,7 +64,7 @@ pub(super) fn resolve(
     } = request;
     let instances = bindings
         .instances
-        .for_file(file)
+        .for_source(file, syntax)
         .iter()
         .copied()
         .filter(|id| {

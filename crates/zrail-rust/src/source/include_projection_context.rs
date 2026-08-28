@@ -1,11 +1,11 @@
 //! Include instances resolve contextual `Self` and generic trait candidates.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::AnalysisQuality;
 
 use super::super::{
-    GenericAssociatedCandidate, ObservedFact, SourceInstanceId,
+    BoundSubject, GenericAssociatedCandidate, ObservedFact, ProviderAuthority, SourceInstanceId,
     include_binding_helpers::unresolved,
     include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedPath},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
@@ -73,7 +73,7 @@ pub(super) fn associated_candidates(
     } else {
         fact.associated_candidates.clone()
     };
-    let mut resolved = BTreeMap::<String, GenericAssociatedCandidate>::new();
+    let mut resolved = BTreeMap::<(String, Vec<String>), GenericAssociatedCandidate>::new();
     for raw in raw {
         let candidates = bindings.resolve_written(
             &WrittenResolveRequest {
@@ -93,12 +93,16 @@ pub(super) fn associated_candidates(
             continue;
         }
         for candidate in candidates {
+            let authority = authority(&candidate);
             insert_candidate(
                 &mut resolved,
                 GenericAssociatedCandidate {
                     name: candidate.name,
                     canonical: Vec::new(),
                     quality: candidate.quality.max(raw.quality),
+                    projection: raw.projection.clone(),
+                    provider_complete: candidate.origin == ResolvedOrigin::CrateLocal,
+                    provider_authorities: [authority].into(),
                 },
             );
         }
@@ -114,28 +118,92 @@ fn inherited_candidates(
     let Some((receiver, item)) = written.rsplit_once("::") else {
         return Vec::new();
     };
-    source
-        .generic_bounds
+    let declared = source
+        .generic_types
         .iter()
-        .find(|bounds| visible_path(&bounds.parameter) == visible_path(receiver))
-        .into_iter()
-        .flat_map(|bounds| &bounds.traits)
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let Some(subject) = BoundSubject::from_receiver(receiver, &declared) else {
+        return Vec::new();
+    };
+    let mut candidates = source
+        .trait_bounds
+        .iter()
+        .filter(|bounds| bounds.subject.without_qualifier() == subject.without_qualifier())
+        .flat_map(|bounds| &bounds.providers)
         .map(|trait_path| GenericAssociatedCandidate {
             name: format!("{trait_path}::{item}"),
             canonical: Vec::new(),
             quality: AnalysisQuality::Exact,
+            projection: Vec::new(),
+            provider_complete: false,
+            provider_authorities: [ProviderAuthority::Unknown].into(),
         })
-        .collect()
+        .collect::<Vec<_>>();
+    let BoundSubject::Projection {
+        root, associated, ..
+    } = subject
+    else {
+        return candidates;
+    };
+    let root = if visible(&root) == "Self" {
+        BoundSubject::SelfType
+    } else {
+        BoundSubject::TypeParameter(root)
+    };
+    candidates.extend(
+        source
+            .trait_bounds
+            .iter()
+            .filter(|bounds| bounds.subject.without_qualifier() == root)
+            .flat_map(|bounds| &bounds.providers)
+            .map(|trait_path| GenericAssociatedCandidate {
+                name: format!("{trait_path}::{item}"),
+                canonical: Vec::new(),
+                quality: AnalysisQuality::Exact,
+                projection: associated.clone(),
+                provider_complete: false,
+                provider_authorities: [ProviderAuthority::Unknown].into(),
+            }),
+    );
+    candidates.sort();
+    candidates.dedup();
+    candidates
 }
 
 fn insert_candidate(
-    candidates: &mut BTreeMap<String, GenericAssociatedCandidate>,
+    candidates: &mut BTreeMap<(String, Vec<String>), GenericAssociatedCandidate>,
     candidate: GenericAssociatedCandidate,
 ) {
+    let key = (candidate.name.clone(), candidate.projection.clone());
     candidates
-        .entry(candidate.name.clone())
-        .and_modify(|existing| existing.quality = existing.quality.max(candidate.quality))
+        .entry(key)
+        .and_modify(|existing| {
+            existing.quality = existing.quality.max(candidate.quality);
+            existing.provider_complete &= candidate.provider_complete;
+            existing
+                .provider_authorities
+                .extend(candidate.provider_authorities.iter().cloned());
+        })
         .or_insert(candidate);
+}
+
+fn authority(candidate: &ResolvedPath) -> ProviderAuthority {
+    match candidate.origin {
+        ResolvedOrigin::CrateLocal => ProviderAuthority::LocalCrate,
+        ResolvedOrigin::External => external_authority(&candidate.name),
+        ResolvedOrigin::Unknown => ProviderAuthority::Unknown,
+    }
+}
+
+fn external_authority(path: &str) -> ProviderAuthority {
+    path.trim_start_matches("::")
+        .split("::")
+        .next()
+        .filter(|root| !root.is_empty())
+        .map_or(ProviderAuthority::Unknown, |root| {
+            ProviderAuthority::ExternalRoot(visible(root).into())
+        })
 }
 
 fn self_suffix(written: &str) -> Option<&str> {
@@ -145,8 +213,4 @@ fn self_suffix(written: &str) -> Option<&str> {
 
 fn visible(name: &str) -> &str {
     name.strip_prefix("r#").unwrap_or(name)
-}
-
-fn visible_path(path: &str) -> String {
-    path.split("::").map(visible).collect::<Vec<_>>().join("::")
 }

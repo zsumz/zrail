@@ -23,9 +23,15 @@ pub(crate) fn fact_count(file: &RustFileFacts) -> usize {
         + file.import_bindings.len()
         + file.associated_items.len()
         + file
-            .trait_inheritance
+            .trait_declarations
             .iter()
-            .map(|fact| 1 + fact.providers.len())
+            .map(|fact| {
+                1 + fact
+                    .bounds
+                    .iter()
+                    .map(|bound| 1 + bound.providers.len())
+                    .sum::<usize>()
+            })
             .sum::<usize>()
         + file.glob_imports.len()
         + file.inline_module_scopes.len()
@@ -54,8 +60,8 @@ pub(crate) fn fact_count(file: &RustFileFacts) -> usize {
         + file
             .includes
             .iter()
-            .flat_map(|include| &include.generic_bounds)
-            .map(|bounds| 1 + bounds.traits.len())
+            .flat_map(|include| &include.trait_bounds)
+            .map(|bound| 1 + bound.providers.len())
             .sum::<usize>()
         + file.item_macros.len()
         + file.opaque_binding_macros.len()

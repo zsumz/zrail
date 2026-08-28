@@ -113,7 +113,7 @@ fn finish(
         macro_definitions: visitor.macro_definitions,
         import_bindings: visitor.import_bindings,
         associated_items: visitor.associated_items,
-        trait_inheritance: visitor.trait_inheritance,
+        trait_declarations: visitor.trait_declarations,
         glob_imports: visitor.glob_imports,
         inline_module_scopes: visitor.inline_module_scopes,
         prelude_directives: Vec::new(),

@@ -119,7 +119,7 @@ pub fn doctor_repository(
         lock: lock_path.to_string_lossy().into_owned(),
         contract_sha256: model.bundle.sha256,
         packages: model.cargo.packages.len(),
-        rust_files: model.source.files.len(),
+        rust_files: model.source.physical_file_count(),
         contract_sources: model.bundle.sources.len(),
         analysis,
         status: status.into(),

@@ -172,6 +172,6 @@ fn finish_check(
         analysis,
         contract_sha256: model.bundle.sha256,
         packages: model.cargo.packages.len(),
-        rust_files: model.source.files.len(),
+        rust_files: model.source.physical_file_count(),
     }
 }

@@ -39,7 +39,7 @@ pub(in crate::source) struct FactVisitor<'a> {
     pub(in crate::source) import_bindings: Vec<ImportBindingFact>,
     pub(in crate::source) associated_items:
         Vec<crate::source::associated_items::AssociatedItemFact>,
-    pub(in crate::source) trait_inheritance: Vec<super::model::TraitInheritanceFact>,
+    pub(in crate::source) trait_declarations: Vec<super::model::TraitDeclarationFact>,
     pub(in crate::source) glob_imports: Vec<super::GlobImportFact>,
     pub(in crate::source) inline_module_scopes: Vec<zrail_core::SourceSpan>,
     pub(in crate::source) compile_effects: Vec<CompileEffectFact>,

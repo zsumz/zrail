@@ -5,7 +5,7 @@ use std::collections::BTreeSet;
 use zrail_core::SourceSpan;
 
 use super::{
-    CompilationDomain, IncludeContext, SourceEntry, SourceInstanceId, SyntaxGuard,
+    CompilationDomain, IncludeContext, SourceEntry, SourceInstanceId, SourceSyntax, SyntaxGuard,
     macro_definitions::{DefinitionSite, MacroDefinitions, Resolution},
     model::MacroDefinitionFact,
 };
@@ -78,7 +78,14 @@ impl MacroDefinitions {
     ) -> Result<(Option<(DefinitionSite, bool)>, bool), ()> {
         let source = self.instances.get(instance).ok_or(())?;
         let mut selected = self
-            .visible_local_definition(&source.file, &source.domain, name, scope, Some(point))
+            .visible_local_definition(
+                &source.file,
+                source.syntax,
+                &source.domain,
+                name,
+                scope,
+                Some(point),
+            )
             .map(|definition| {
                 Ok((
                     definition.lexical_scope.len(),
@@ -130,7 +137,7 @@ impl MacroDefinitions {
         }
         let source = self.instances.get(instance).ok_or(())?;
         let mut selected = self
-            .visible_local_definition(&source.file, &source.domain, name, &[], None)
+            .visible_local_definition(&source.file, source.syntax, &source.domain, name, &[], None)
             .map(|definition| {
                 Ok((
                     definition.span.ok_or(())?,
@@ -161,13 +168,14 @@ impl MacroDefinitions {
     fn visible_local_definition(
         &self,
         file: &str,
+        syntax: SourceSyntax,
         domain: &CompilationDomain,
         name: &str,
         scope: &[SourceSpan],
         point: Option<SourceSpan>,
     ) -> Option<&MacroDefinitionFact> {
         self.files
-            .get(file)?
+            .get(&(file.into(), syntax))?
             .iter()
             .filter(|definition| definition.name == name)
             .filter(|definition| definition.guard.available_in(domain_guard(domain)))

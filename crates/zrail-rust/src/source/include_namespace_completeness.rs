@@ -53,10 +53,10 @@ impl IncludeBindings {
         let Some(source) = self.instances.get(instance) else {
             return Ok(NamespaceOpacity::Blocking);
         };
-        let floor = self.lexical_floor(&source.file, scope, budget)?;
+        let floor = self.lexical_floor(instance, scope, budget)?;
         let mut opacity = self
             .opaque_namespace_scopes
-            .get(&source.file)
+            .get(&instance)
             .into_iter()
             .flatten()
             .filter(|(opaque, guard, _)| {
@@ -93,7 +93,7 @@ impl IncludeBindings {
                 )?);
             }
         }
-        if self.lexical_floor(&source.file, scope, budget)? == 0
+        if self.lexical_floor(instance, scope, budget)? == 0
             && let (Some(parent), SourceEntry::Include(edge)) =
                 (source.parent, &source.entered_from)
         {

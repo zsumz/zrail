@@ -94,6 +94,7 @@ pub(super) fn retain_candidates(
             && !candidate.requires_projection
             && complete
             && !state.project_expression
+            && associated_candidates == fact.associated_candidates
         {
             continue;
         }
@@ -115,11 +116,15 @@ pub(super) fn retain_candidates(
             continue;
         }
         state.budget.retain_fact(state.remaining_file_facts)?;
+        let retains_generic_occurrence =
+            candidate.generic_shadow.is_some() || !associated_candidates.is_empty();
         state.additions.insert(
             key,
             ObservedFact {
                 name,
-                written: candidate.generic_shadow.and_then(|_| fact.written.clone()),
+                written: retains_generic_occurrence
+                    .then(|| fact.written.clone())
+                    .flatten(),
                 implicit_prelude: super::super::ImplicitPreludeEligibility::Disabled,
                 canonical: Vec::new(),
                 span: fact.span,
@@ -149,11 +154,14 @@ fn merge_candidate_vec(
     candidates: &[super::super::GenericAssociatedCandidate],
 ) {
     for candidate in candidates {
-        if let Some(existing) = target
-            .iter_mut()
-            .find(|existing| existing.name == candidate.name)
-        {
+        if let Some(existing) = target.iter_mut().find(|existing| {
+            existing.name == candidate.name && existing.projection == candidate.projection
+        }) {
             existing.quality = existing.quality.max(candidate.quality);
+            existing.provider_complete &= candidate.provider_complete;
+            existing
+                .provider_authorities
+                .extend(candidate.provider_authorities.iter().cloned());
         } else {
             target.push(candidate.clone());
         }

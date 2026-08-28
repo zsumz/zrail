@@ -25,7 +25,9 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     });
     let mut seen = BTreeSet::new();
     for file in &context.source.files {
-        seen.insert(file.relative.as_str());
+        if !seen.insert(file.relative.as_str()) {
+            continue;
+        }
         let budget = source_policy::budget_for(
             &file.relative,
             file.class,

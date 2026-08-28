@@ -1,7 +1,7 @@
 //! Expression includes inherit only the caller bindings Rust places in scope.
 
 use super::super::{
-    GenericParameterBounds, GuardAvailability, IncludeContext, LexicalSelfIdentity, SyntaxGuard,
+    GuardAvailability, IncludeContext, LexicalSelfIdentity, SyntaxGuard, TraitBoundFact,
 };
 use super::{SourceEntry, SourceInstance};
 
@@ -9,7 +9,7 @@ use super::{SourceEntry, SourceInstance};
 pub(super) struct InheritedBindings {
     pub(super) generic_types: Vec<String>,
     pub(super) generic_values: Vec<String>,
-    pub(super) generic_bounds: Vec<GenericParameterBounds>,
+    pub(super) trait_bounds: Vec<TraitBoundFact>,
     pub(super) current_self: Option<LexicalSelfIdentity>,
     pub(super) value_shadows: Vec<(String, SyntaxGuard)>,
 }
@@ -29,7 +29,7 @@ pub(super) fn child_context(
                 InheritedBindings {
                     generic_types: parent.generic_types.clone(),
                     generic_values: parent.generic_values.clone(),
-                    generic_bounds: parent.generic_bounds.clone(),
+                    trait_bounds: parent.trait_bounds.clone(),
                     current_self: parent.current_self.clone(),
                     value_shadows: parent.value_shadows.clone(),
                 }
@@ -44,7 +44,7 @@ pub(super) fn child_context(
             generic_values.extend(edge.generic_values.iter().cloned());
             generic_values.sort();
             generic_values.dedup();
-            let generic_bounds = merge_bounds(inherited.generic_bounds, &edge.generic_bounds);
+            let trait_bounds = merge_bounds(inherited.trait_bounds, &edge.trait_bounds);
             let current_self = edge.current_self.clone().or(inherited.current_self);
             let mut shadows = inherited.value_shadows;
             shadows.extend(edge.value_shadows.iter().cloned());
@@ -53,7 +53,7 @@ pub(super) fn child_context(
             InheritedBindings {
                 generic_types,
                 generic_values,
-                generic_bounds,
+                trait_bounds,
                 current_self,
                 value_shadows: shadows,
             }
@@ -63,16 +63,13 @@ pub(super) fn child_context(
     Some((guard, inherited))
 }
 
-fn merge_bounds(
-    inherited: Vec<GenericParameterBounds>,
-    local: &[GenericParameterBounds],
-) -> Vec<GenericParameterBounds> {
+fn merge_bounds(inherited: Vec<TraitBoundFact>, local: &[TraitBoundFact]) -> Vec<TraitBoundFact> {
     let mut merged = inherited
         .into_iter()
-        .map(|bounds| (bounds.parameter.clone(), bounds))
+        .map(|bounds| (bounds.subject.clone(), bounds))
         .collect::<std::collections::BTreeMap<_, _>>();
     for bounds in local {
-        merged.insert(bounds.parameter.clone(), bounds.clone());
+        merged.insert(bounds.subject.clone(), bounds.clone());
     }
     merged.into_values().collect()
 }

@@ -20,8 +20,10 @@ use super::{
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct ResolvedModuleEdge {
     pub(crate) parent: String,
+    pub(crate) parent_syntax: super::SourceSyntax,
     pub(crate) module_name: String,
     pub(crate) child: String,
+    pub(crate) child_syntax: super::SourceSyntax,
     pub(crate) child_base: super::SubmoduleBase,
     pub(crate) reachability: super::Reachability,
     pub(crate) guard: SyntaxGuard,
@@ -31,8 +33,10 @@ pub(crate) struct ResolvedModuleEdge {
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct CompilationModuleEdge {
     pub(crate) parent: String,
+    pub(crate) parent_syntax: super::SourceSyntax,
     pub(crate) module_name: String,
     pub(crate) child: String,
+    pub(crate) child_syntax: super::SourceSyntax,
     pub(crate) domain: super::CompilationDomain,
     pub(crate) guard: SyntaxGuard,
     pub(crate) parent_scope: Vec<SourceSpan>,

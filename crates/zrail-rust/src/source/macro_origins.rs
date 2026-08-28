@@ -30,7 +30,25 @@ pub(super) fn resolve(expansion: &mut MacroExpansionFact, packages: &[&Package])
         resolve_candidate(candidate, packages);
     }
     expansion.refresh_quality();
-    super::macro_builtin::normalize_derive(expansion);
+    normalize_derive(expansion);
+}
+
+fn normalize_derive(expansion: &mut MacroExpansionFact) {
+    if !expansion.has_builtin_derive_syntax()
+        || !expansion
+            .candidates
+            .iter()
+            .any(|candidate| candidate.origins.contains(&MacroOrigin::CompilerBuiltin))
+    {
+        return;
+    }
+    expansion
+        .candidates
+        .retain(|candidate| !candidate.origins.contains(&MacroOrigin::CompilerBuiltin));
+    expansion
+        .candidates
+        .extend(MacroExpansionFact::compiler_builtin(expansion.observation.clone()).candidates);
+    expansion.refresh_quality();
 }
 
 fn discard_non_macro_builtin_aliases(expansion: &mut MacroExpansionFact) {

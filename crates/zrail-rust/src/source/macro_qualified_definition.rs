@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use zrail_core::AnalysisQuality;
 
 use super::{
-    MacroCandidate, MacroOrigin, SourceEntry, SourceInstanceId,
+    MacroCandidate, MacroOrigin, SourceEntry, SourceInstanceId, SourceSyntax,
     macro_definitions::{DefinitionSite, MacroDefinitions},
 };
 
@@ -13,13 +13,13 @@ const MAX_QUALIFIED_DEFINITION_PATHS: usize = 16_384;
 
 pub(super) fn inline_module_names(
     index: &super::SourceIndex,
-) -> BTreeMap<String, BTreeMap<zrail_core::SourceSpan, String>> {
+) -> BTreeMap<(String, SourceSyntax), BTreeMap<zrail_core::SourceSpan, String>> {
     index
         .files
         .iter()
         .map(|file| {
             (
-                file.relative.clone(),
+                (file.relative.clone(), file.syntax),
                 file.import_bindings
                     .iter()
                     .filter_map(|binding| match binding.kind {
@@ -37,8 +37,8 @@ pub(super) fn inline_module_names(
 impl MacroDefinitions {
     pub(super) fn collect_qualified_sites(&mut self) {
         let mut sites = BTreeMap::<(SourceInstanceId, String), BTreeSet<DefinitionSite>>::new();
-        for (file, definitions) in &self.files {
-            for instance in self.instances.for_file(file) {
+        for ((file, syntax), definitions) in &self.files {
+            for instance in self.instances.for_source(file, *syntax) {
                 let Some(source) = self.instances.get(*instance) else {
                     self.qualified_sites_complete = false;
                     return;
@@ -54,13 +54,15 @@ impl MacroDefinitions {
                         definition.guard.availability_in_domain(&source.domain)
                             == super::GuardAvailability::Exact
                     })
-                    .filter(|definition| self.definition_is_module_scoped(file, definition))
+                    .filter(|definition| {
+                        self.definition_is_module_scoped(file, *syntax, definition)
+                    })
                 {
                     let Some((root, mut names)) = self.module_location(*instance, &[]) else {
                         self.qualified_sites_complete = false;
                         return;
                     };
-                    names.extend(self.inline_names(file, &definition.lexical_scope));
+                    names.extend(self.inline_names(file, *syntax, &definition.lexical_scope));
                     names.push(normalize(&definition.name));
                     let Some(site) = self.site(file, &source.domain, definition).ok() else {
                         self.qualified_sites_complete = false;
@@ -159,12 +161,17 @@ impl MacroDefinitions {
             }
             _ => return None,
         };
-        names.extend(self.inline_names(&source.file, scope));
+        names.extend(self.inline_names(&source.file, source.syntax, scope));
         Some((root, names))
     }
 
-    fn inline_names(&self, file: &str, scope: &[zrail_core::SourceSpan]) -> Vec<String> {
-        let Some(modules) = self.inline_module_names.get(file) else {
+    fn inline_names(
+        &self,
+        file: &str,
+        syntax: SourceSyntax,
+        scope: &[zrail_core::SourceSpan],
+    ) -> Vec<String> {
+        let Some(modules) = self.inline_module_names.get(&(file.into(), syntax)) else {
             return Vec::new();
         };
         scope
@@ -176,9 +183,10 @@ impl MacroDefinitions {
     fn definition_is_module_scoped(
         &self,
         file: &str,
+        syntax: SourceSyntax,
         definition: &super::model::MacroDefinitionFact,
     ) -> bool {
-        let modules = self.inline_module_names.get(file);
+        let modules = self.inline_module_names.get(&(file.into(), syntax));
         definition
             .lexical_scope
             .iter()

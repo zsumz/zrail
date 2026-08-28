@@ -28,7 +28,7 @@ impl IncludeBindings {
         let mut sites = Vec::new();
         for binding in self
             .files
-            .get(&source.file)
+            .get(&instance)
             .and_then(|bindings| bindings.named.get(name))
             .into_iter()
             .flatten()

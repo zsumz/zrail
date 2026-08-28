@@ -55,6 +55,7 @@ impl Local { fn set(&mut self) { self.inner.value = 1; } }
         &index,
         &[CompilationRoot {
             file: "src/lib.rs".into(),
+            syntax: SourceSyntax::Items,
             domain: domain.clone(),
         }],
         &modules,
@@ -62,7 +63,13 @@ impl Local { fn set(&mut self) { self.inner.value = 1; } }
         &crate::source::BindingMacroPolicy::default(),
     );
 
-    assert_eq!(bindings.instances.for_file("src/shared.rs").len(), 2);
+    assert_eq!(
+        bindings
+            .instances
+            .for_source("src/shared.rs", SourceSyntax::Items)
+            .len(),
+        2
+    );
     assert_eq!(bindings.instances.metrics().derived_contexts, 1);
     assert!(bindings.apply(&mut index).is_empty());
     let domains = compilation_domains(&index, &domain);
@@ -156,6 +163,7 @@ impl Node {
         &index,
         &[CompilationRoot {
             file: "src/lib.rs".into(),
+            syntax: SourceSyntax::Items,
             domain: domain.clone(),
         }],
         &modules,
@@ -229,8 +237,10 @@ fn module_edge(
 ) -> CompilationModuleEdge {
     CompilationModuleEdge {
         parent: parent.into(),
+        parent_syntax: SourceSyntax::Items,
         module_name: module_name.into(),
         child: child.into(),
+        child_syntax: SourceSyntax::Items,
         domain: domain.clone(),
         guard: declaration.guard.clone(),
         parent_scope: declaration.lexical_scope.clone(),

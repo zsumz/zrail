@@ -57,8 +57,8 @@ pub(super) fn locked(model: &RepositoryModel) -> LockedAnalysis {
             }
         }
     }
-    for file in &model.source.files {
-        record(&mut inventory, "rust", &file.relative);
+    for path in model.source.physical_paths() {
+        record(&mut inventory, "rust", path);
     }
     let cargo_lock_sha256 = model
         .resolved_cargo
@@ -89,7 +89,7 @@ pub(super) fn locked(model: &RepositoryModel) -> LockedAnalysis {
         feature_worlds: Some(model.feature_worlds.len()),
         packages: packages.len(),
         targets: packages.iter().map(|package| package.targets.len()).sum(),
-        physical_rust_files: model.source.files.len(),
+        physical_rust_files: model.source.physical_file_count(),
         base_source_contexts: metrics.base_contexts,
         derived_source_contexts: metrics.derived_contexts,
         source_facts: model

@@ -118,7 +118,9 @@ fn conditional_paths_and_generated_includes_are_unresolved() {
     assert!(
         unresolved
             .iter()
-            .any(|message| message.contains("requires Rust items"))
+            .any(|message| message.contains("Rust items")),
+        "{}",
+        report.human()
     );
 }
 

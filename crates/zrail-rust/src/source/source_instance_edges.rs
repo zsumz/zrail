@@ -31,11 +31,11 @@ pub(crate) struct SourceInstanceMetrics {
 
 pub(super) fn grouped_modules(
     edges: &[CompilationModuleEdge],
-) -> BTreeMap<(String, CompilationDomain), Vec<&CompilationModuleEdge>> {
+) -> BTreeMap<(String, super::SourceSyntax, CompilationDomain), Vec<&CompilationModuleEdge>> {
     let mut grouped = BTreeMap::new();
     for edge in edges {
         grouped
-            .entry((edge.parent.clone(), edge.domain.clone()))
+            .entry((edge.parent.clone(), edge.parent_syntax, edge.domain.clone()))
             .or_insert_with(Vec::new)
             .push(edge);
     }
@@ -44,11 +44,11 @@ pub(super) fn grouped_modules(
 
 pub(super) fn grouped_includes(
     edges: &[CompilationIncludeEdge],
-) -> BTreeMap<(String, CompilationDomain), Vec<&CompilationIncludeEdge>> {
+) -> BTreeMap<(String, super::SourceSyntax, CompilationDomain), Vec<&CompilationIncludeEdge>> {
     let mut grouped = BTreeMap::new();
     for edge in edges {
         grouped
-            .entry((edge.parent.clone(), edge.domain.clone()))
+            .entry((edge.parent.clone(), edge.parent_syntax, edge.domain.clone()))
             .or_insert_with(Vec::new)
             .push(edge);
     }

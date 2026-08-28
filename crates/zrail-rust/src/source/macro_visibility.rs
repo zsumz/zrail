@@ -6,7 +6,7 @@ use zrail_core::AnalysisQuality;
 
 use super::{
     MacroCandidate, MacroDerivation, MacroExpansionFact, MacroImportFact, ObservedFact,
-    Reachability, SyntaxGuard,
+    Reachability, SourceSyntax, SyntaxGuard,
 };
 
 pub(super) use super::macro_visibility_graph::MacroVisibility;
@@ -19,6 +19,7 @@ impl MacroVisibility {
         &self,
         invocation: &mut MacroExpansionFact,
         file: &str,
+        syntax: SourceSyntax,
         file_reachability: Reachability,
         local_macros: Option<&BTreeSet<&str>>,
     ) {
@@ -35,7 +36,7 @@ impl MacroVisibility {
                 candidates.push(candidate);
                 continue;
             }
-            if !self.repository_candidate(file, &candidate.observation.name) {
+            if !self.repository_candidate(file, syntax, &candidate.observation.name) {
                 candidates.push(candidate);
                 continue;
             }
@@ -46,7 +47,7 @@ impl MacroVisibility {
             } else {
                 file_reachability
             };
-            match self.imports_for(file, &candidate.observation.name, reachability) {
+            match self.imports_for(file, syntax, &candidate.observation.name, reachability) {
                 VisibilityLookup::Known(imports)
                     if imports
                         .iter()

@@ -2,16 +2,17 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use syn::{GenericParam, Generics, Type, TypeParamBound, WherePredicate};
-use zrail_core::AnalysisQuality;
+use syn::Generics;
 
-use super::super::{GenericAssociatedCandidate, GenericParameterBounds, fact::written_path};
+use super::super::{
+    BoundSubject, GenericAssociatedCandidate, ProviderAuthority, TraitBoundFact, trait_bounds,
+};
 use super::FactVisitor;
 
 #[derive(Debug)]
 pub(in crate::source) struct GenericBoundScope {
     declared: BTreeSet<String>,
-    bounds: BTreeMap<String, Vec<String>>,
+    bounds: Vec<TraitBoundFact>,
 }
 
 impl FactVisitor<'_> {
@@ -21,14 +22,14 @@ impl FactVisitor<'_> {
         include_self: bool,
         visit: impl FnOnce(&mut Self),
     ) {
-        self.with_generics_and_self_bounds(generics, include_self, Vec::new(), visit);
+        self.with_generics_and_bounds(generics, include_self, Vec::new(), visit);
     }
 
-    pub(in crate::source) fn with_generics_and_self_bounds(
+    pub(in crate::source) fn with_generics_and_bounds(
         &mut self,
         generics: &Generics,
         include_self: bool,
-        self_bounds: Vec<String>,
+        additional: Vec<TraitBoundFact>,
         visit: impl FnOnce(&mut Self),
     ) {
         let checkpoint = (self.generic_types.len(), self.generic_values.len());
@@ -45,12 +46,9 @@ impl FactVisitor<'_> {
                 .const_params()
                 .map(|parameter| parameter.ident.to_string()),
         );
-        let mut scope = scope(generics, include_self);
-        scope
-            .bounds
-            .entry("Self".into())
-            .or_default()
-            .extend(self_bounds);
+        let mut scope = self.scope(generics, include_self);
+        scope.bounds.extend(additional);
+        trait_bounds::normalize(&mut scope.bounds);
         self.generic_bound_scopes.push(scope);
         visit(self);
         self.generic_bound_scopes.pop();
@@ -68,23 +66,21 @@ impl FactVisitor<'_> {
         self.generic_bound_scopes = inherited_bounds;
     }
 
-    pub(in crate::source) fn active_generic_bounds(&self) -> Vec<GenericParameterBounds> {
-        let mut effective = BTreeMap::<String, Vec<String>>::new();
+    pub(in crate::source) fn active_trait_bounds(&self) -> Vec<TraitBoundFact> {
+        let mut effective = BTreeMap::<BoundSubject, TraitBoundFact>::new();
         for scope in &self.generic_bound_scopes {
-            for parameter in &scope.declared {
-                effective.insert(parameter.clone(), Vec::new());
+            for declared in &scope.declared {
+                effective.retain(|subject, _| visible(subject.root()) != visible(declared));
             }
-            for (parameter, traits) in &scope.bounds {
-                let entry = effective.entry(parameter.clone()).or_default();
-                entry.extend(traits.iter().cloned());
-                entry.sort();
-                entry.dedup();
+            for fact in &scope.bounds {
+                let key = fact.subject.clone();
+                effective
+                    .entry(key)
+                    .and_modify(|existing| merge(existing, fact))
+                    .or_insert_with(|| fact.clone());
             }
         }
-        effective
-            .into_iter()
-            .map(|(parameter, traits)| GenericParameterBounds { parameter, traits })
-            .collect()
+        effective.into_values().collect()
     }
 
     pub(in crate::source) fn generic_associated_candidates(
@@ -94,91 +90,84 @@ impl FactVisitor<'_> {
         let Some((receiver, item)) = written.rsplit_once("::") else {
             return Vec::new();
         };
-        self.active_generic_bounds()
-            .into_iter()
-            .find(|bounds| visible_path(&bounds.parameter) == visible_path(receiver))
-            .into_iter()
-            .flat_map(|bounds| bounds.traits)
-            .map(|trait_path| GenericAssociatedCandidate {
-                name: format!("{trait_path}::{item}"),
-                canonical: Vec::new(),
-                quality: AnalysisQuality::Exact,
-            })
-            .collect()
-    }
-}
-
-fn scope(generics: &Generics, include_self: bool) -> GenericBoundScope {
-    let mut declared = generics
-        .params
-        .iter()
-        .filter_map(|parameter| match parameter {
-            GenericParam::Type(parameter) => Some(parameter.ident.to_string()),
-            _ => None,
-        })
-        .collect::<BTreeSet<_>>();
-    if include_self {
-        declared.insert("Self".into());
-    }
-    let mut bounds = BTreeMap::<String, Vec<String>>::new();
-    for parameter in generics.type_params() {
-        extend_bounds(&mut bounds, parameter.ident.to_string(), &parameter.bounds);
-    }
-    for predicate in generics
-        .where_clause
-        .iter()
-        .flat_map(|clause| &clause.predicates)
-    {
-        let WherePredicate::Type(predicate) = predicate else {
-            continue;
+        let declared = self.generic_types.iter().cloned().collect::<BTreeSet<_>>();
+        let Some(subject) = BoundSubject::from_receiver(receiver, &declared) else {
+            return Vec::new();
         };
-        let Some(parameter) = bounded_type_path(&predicate.bounded_ty, &declared) else {
-            continue;
-        };
-        extend_bounds(&mut bounds, parameter, &predicate.bounds);
-    }
-    for traits in bounds.values_mut() {
-        traits.sort();
-        traits.dedup();
-    }
-    GenericBoundScope { declared, bounds }
-}
-
-fn extend_bounds(
-    bounds: &mut BTreeMap<String, Vec<String>>,
-    parameter: String,
-    candidates: &syn::punctuated::Punctuated<TypeParamBound, syn::Token![+]>,
-) {
-    bounds
-        .entry(parameter)
-        .or_default()
-        .extend(candidates.iter().filter_map(|bound| match bound {
-            TypeParamBound::Trait(bound)
-                if matches!(bound.modifier, syn::TraitBoundModifier::None) =>
-            {
-                Some(written_path(&bound.path))
-            }
-            _ => None,
-        }));
-}
-
-fn bounded_type_path(ty: &Type, declared: &BTreeSet<String>) -> Option<String> {
-    let Type::Path(path) = ty else {
-        return None;
-    };
-    let root = path.path.segments.first()?.ident.to_string();
-    (path.qself.is_none()
-        && path.path.leading_colon.is_none()
-        && declared
+        let active = self.active_trait_bounds();
+        let mut resolved = active
             .iter()
-            .any(|generic| visible(generic) == visible(&root)))
-    .then(|| written_path(&path.path))
+            .filter(|fact| equivalent(&fact.subject, &subject))
+            .flat_map(|fact| candidates(fact, item, &[]))
+            .collect::<Vec<_>>();
+        let BoundSubject::Projection {
+            root, associated, ..
+        } = subject
+        else {
+            return resolved;
+        };
+        resolved.extend(
+            active
+                .iter()
+                .filter(|fact| {
+                    equivalent(
+                        &fact.subject,
+                        &if visible(&root) == "Self" {
+                            BoundSubject::SelfType
+                        } else {
+                            BoundSubject::TypeParameter(root.clone())
+                        },
+                    )
+                })
+                .flat_map(|fact| candidates(fact, item, &associated)),
+        );
+        resolved.sort();
+        resolved.dedup();
+        resolved
+    }
+
+    fn scope(&self, generics: &Generics, include_self: bool) -> GenericBoundScope {
+        GenericBoundScope {
+            declared: trait_bounds::declared(generics, include_self),
+            bounds: trait_bounds::from_generics(
+                generics,
+                include_self,
+                &self.syntax_guard(),
+                &self.lexical_scope,
+            ),
+        }
+    }
 }
 
 fn visible(name: &str) -> &str {
     name.strip_prefix("r#").unwrap_or(name)
 }
 
-fn visible_path(path: &str) -> String {
-    path.split("::").map(visible).collect::<Vec<_>>().join("::")
+fn equivalent(left: &BoundSubject, right: &BoundSubject) -> bool {
+    left.without_qualifier() == right.without_qualifier()
+}
+
+fn candidates(
+    fact: &TraitBoundFact,
+    item: &str,
+    projection: &[String],
+) -> Vec<GenericAssociatedCandidate> {
+    fact.providers
+        .iter()
+        .map(|provider| GenericAssociatedCandidate {
+            name: format!("{provider}::{item}"),
+            canonical: Vec::new(),
+            quality: fact.quality,
+            projection: projection.to_vec(),
+            provider_complete: false,
+            provider_authorities: [ProviderAuthority::Unknown].into(),
+        })
+        .collect()
+}
+
+fn merge(existing: &mut TraitBoundFact, fact: &TraitBoundFact) {
+    existing.providers.extend(fact.providers.iter().cloned());
+    existing.providers.sort();
+    existing.providers.dedup();
+    existing.quality = existing.quality.max(fact.quality);
 }

@@ -121,6 +121,9 @@ fn boundary_for(
                 name: (*candidate).into(),
                 canonical: Vec::new(),
                 quality: zrail_core::AnalysisQuality::Unresolved,
+                projection: Vec::new(),
+                provider_complete: true,
+                provider_authorities: [crate::source::ProviderAuthority::Unknown].into(),
             })
             .collect(),
         occurrence: Some(occurrence),
@@ -148,7 +151,7 @@ fn file() -> RustFileFacts {
         macro_definitions: Vec::new(),
         import_bindings: Vec::new(),
         associated_items: Vec::new(),
-        trait_inheritance: Vec::new(),
+        trait_declarations: Vec::new(),
         glob_imports: Vec::new(),
         inline_module_scopes: Vec::new(),
         prelude_directives: Vec::new(),

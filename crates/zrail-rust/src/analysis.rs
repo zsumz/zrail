@@ -45,7 +45,7 @@ pub struct AnalysisIssue {
 pub struct AnalysisMetrics {
     /// Physical Rust files parsed successfully.
     pub physical_rust_files: usize,
-    /// Physical source facts collected before contextual projection.
+    /// Syntax-specific source facts collected before contextual projection.
     pub physical_facts: usize,
     /// Input-sized `(file, compilation-domain)` contexts.
     pub base_contexts: usize,
@@ -80,7 +80,7 @@ pub enum AnalysisOutcome {
 impl AnalysisOutcome {
     pub(crate) fn from_source(source: &SourceIndex) -> Self {
         let metrics = AnalysisMetrics {
-            physical_rust_files: source.files.len(),
+            physical_rust_files: source.physical_file_count(),
             physical_facts: source.files.iter().map(crate::source::fact_count).sum(),
             base_contexts: source.analysis_metrics.base_contexts,
             derived_contexts: source.analysis_metrics.derived_contexts,

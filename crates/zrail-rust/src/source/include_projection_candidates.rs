@@ -139,9 +139,10 @@ pub(super) fn aggregate(
             resolved
         };
         let test_instance = source.is_some_and(|source| source.domain.mode.enables_cfg_test());
-        let associated_candidates = if generic_identity
-            .as_ref()
-            .is_some_and(super::GenericRootIdentity::is_associated)
+        let associated_candidates = if !fact.associated_candidates.is_empty()
+            || generic_identity
+                .as_ref()
+                .is_some_and(super::GenericRootIdentity::is_associated)
         {
             match source {
                 Some(source) => {
@@ -184,12 +185,19 @@ pub(super) fn aggregate(
             entry.blocks_completeness |= candidate.blocks_completeness;
             if generic_candidate {
                 entry.generic_shadow = generic_identity.as_ref().map(|identity| identity.shadow);
+            }
+            if generic_candidate || !associated_candidates.is_empty() {
                 for candidate in &associated_candidates {
+                    let key = (candidate.name.clone(), candidate.projection.clone());
                     entry
                         .associated_candidates
-                        .entry(candidate.name.clone())
+                        .entry(key)
                         .and_modify(|existing| {
                             existing.quality = existing.quality.max(candidate.quality);
+                            existing.provider_complete &= candidate.provider_complete;
+                            existing
+                                .provider_authorities
+                                .extend(candidate.provider_authorities.iter().cloned());
                         })
                         .or_insert_with(|| candidate.clone());
                 }

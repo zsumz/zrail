@@ -1,11 +1,12 @@
 //! Macro definition lookup is restricted to active compilation domains.
 
-use super::{CompilationDomain, MacroDefinitions, SourceInstanceId, SyntaxGuard};
+use super::{MacroDefinitions, SourceInstanceId, SourceSyntax, SyntaxGuard};
 
 impl MacroDefinitions {
     pub(super) fn active_instances(
         &self,
         file: &str,
+        syntax: SourceSyntax,
         guard: &SyntaxGuard,
     ) -> Option<Vec<SourceInstanceId>> {
         if !self.instances.is_complete() {
@@ -13,7 +14,7 @@ impl MacroDefinitions {
         }
         Some(
             self.instances
-                .for_file(file)
+                .for_source(file, syntax)
                 .iter()
                 .copied()
                 .filter(|id| {
@@ -23,20 +24,6 @@ impl MacroDefinitions {
                             .is_available()
                     })
                 })
-                .collect(),
-        )
-    }
-
-    pub(super) fn active_domains(
-        &self,
-        file: &str,
-        guard: &SyntaxGuard,
-    ) -> Option<Vec<&CompilationDomain>> {
-        let domains = self.domains.get(file)?;
-        Some(
-            domains
-                .iter()
-                .filter(|domain| guard.availability_in_domain(domain).is_available())
                 .collect(),
         )
     }

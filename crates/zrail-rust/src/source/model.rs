@@ -2,6 +2,8 @@
 
 #[path = "model_bindings.rs"]
 mod bindings;
+#[path = "model_bound_subject.rs"]
+mod bound_subject;
 #[path = "model_generic_roots.rs"]
 mod generic_roots;
 #[path = "model_lexical_context.rs"]
@@ -9,7 +11,7 @@ mod lexical_context;
 #[path = "source_metrics.rs"]
 mod source_metrics;
 
-use zrail_core::{AnalysisQuality, Finding, SourceSpan};
+use zrail_core::{AnalysisQuality, SourceSpan};
 
 use crate::inventory::FileClass;
 
@@ -21,16 +23,19 @@ pub(crate) use bindings::{
     BindingAnchor, BindingKind, BindingVisibility, ConstructorForm, ImportBindingFact,
     MacroImportFact, ModuleBinding,
 };
+pub(crate) use bound_subject::BoundSubject;
 pub(crate) use generic_roots::{
     GenericRootIdentity, GenericRootShadow, RootLookupNamespace, generic_root_identity,
     generic_root_shadow, identity_for_generic_root,
 };
 pub(crate) use lexical_context::{
-    AssociatedOccurrenceKind, GenericAssociatedCandidate, GenericParameterBounds,
-    LexicalSelfIdentity, TraitInheritanceFact,
+    AssociatedOccurrenceKind, GenericAssociatedCandidate, LexicalSelfIdentity, ProviderAuthority,
+    TraitBoundFact, TraitDeclarationFact,
 };
 
+#[cfg(test)]
 pub(crate) use source_metrics::SourceAnalysisMetrics;
+pub(crate) use source_metrics::SourceIndex;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct AsyncSyntaxFact {
@@ -156,7 +161,7 @@ pub(crate) struct ModuleDeclaration {
     pub(crate) span: Option<SourceSpan>,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum SourceSyntax {
     Items,
     Expression,
@@ -183,7 +188,7 @@ pub(crate) struct IncludeBoundary {
     pub(crate) lexical_scope: Vec<SourceSpan>,
     pub(crate) generic_types: Vec<String>,
     pub(crate) generic_values: Vec<String>,
-    pub(crate) generic_bounds: Vec<GenericParameterBounds>,
+    pub(crate) trait_bounds: Vec<TraitBoundFact>,
     pub(crate) current_self: Option<LexicalSelfIdentity>,
     pub(crate) inherits_parent_context: bool,
     pub(crate) value_shadows: Vec<(String, SyntaxGuard)>,
@@ -212,7 +217,7 @@ pub(crate) struct RustFileFacts {
     pub(crate) macro_definitions: Vec<MacroDefinitionFact>,
     pub(crate) import_bindings: Vec<ImportBindingFact>,
     pub(crate) associated_items: Vec<super::associated_items::AssociatedItemFact>,
-    pub(crate) trait_inheritance: Vec<TraitInheritanceFact>,
+    pub(crate) trait_declarations: Vec<TraitDeclarationFact>,
     pub(crate) glob_imports: Vec<super::glob_imports::GlobImportFact>,
     pub(crate) inline_module_scopes: Vec<SourceSpan>,
     pub(crate) prelude_directives: Vec<PreludeDirective>,
@@ -227,11 +232,4 @@ pub(crate) struct RustFileFacts {
     pub(crate) item_macros: Vec<ObservedFact>,
     pub(crate) opaque_binding_macros: Vec<ObservedFact>,
     pub(crate) facade_implementation: Vec<ObservedFact>,
-}
-
-#[derive(Clone, Debug, Default)]
-pub(crate) struct SourceIndex {
-    pub(crate) files: Vec<RustFileFacts>,
-    pub(crate) findings: Vec<Finding>,
-    pub(crate) analysis_metrics: SourceAnalysisMetrics,
 }

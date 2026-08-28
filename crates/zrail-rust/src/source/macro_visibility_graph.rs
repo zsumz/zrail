@@ -3,18 +3,18 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use super::macro_visibility_reachability::{
-    Edges, VisibilityNode, bounded_nodes, insert_reachable, intersect_edges,
+    Edges, VisibilityKey, VisibilityNode, bounded_nodes, insert_reachable, intersect_edges,
 };
-use super::{MacroImportFact, Reachability};
+use super::{MacroImportFact, Reachability, SourceSyntax};
 
 #[derive(Default)]
 pub(super) struct MacroVisibility {
-    pub(super) imports: BTreeMap<(String, String), Vec<MacroImportFact>>,
-    pub(super) import_overflow: BTreeSet<(String, String)>,
-    pub(super) children: BTreeMap<(String, String), Edges>,
-    pub(super) child_overflow: BTreeSet<(String, String)>,
-    pub(super) parents: BTreeMap<String, Edges>,
-    pub(super) parent_overflow: BTreeSet<String>,
+    pub(super) imports: BTreeMap<(String, SourceSyntax, String), Vec<MacroImportFact>>,
+    pub(super) import_overflow: BTreeSet<(String, SourceSyntax, String)>,
+    pub(super) children: BTreeMap<(String, SourceSyntax, String), Edges>,
+    pub(super) child_overflow: BTreeSet<(String, SourceSyntax, String)>,
+    pub(super) parents: BTreeMap<VisibilityKey, Edges>,
+    pub(super) parent_overflow: BTreeSet<VisibilityKey>,
 }
 
 pub(super) enum VisibilityLookup<'a> {
@@ -26,6 +26,7 @@ impl MacroVisibility {
     pub(super) fn imports_for<'a>(
         &'a self,
         file: &str,
+        syntax: SourceSyntax,
         path: &str,
         reachability: Reachability,
     ) -> VisibilityLookup<'a> {
@@ -34,7 +35,7 @@ impl MacroVisibility {
             return VisibilityLookup::Unknown;
         };
         let root = prefix.first().copied();
-        let Some(mut nodes) = self.start_nodes(file, root, reachability) else {
+        let Some(mut nodes) = self.start_nodes(file, syntax, root, reachability) else {
             return VisibilityLookup::Unknown;
         };
         let mut module_index = 1;
@@ -59,7 +60,7 @@ impl MacroVisibility {
             .into_iter()
             .filter(|node| node.reachability.covers(reachability))
         {
-            let key = (node.file, (*name).to_owned());
+            let key = (node.file, node.syntax, (*name).to_owned());
             if self.import_overflow.contains(&key) {
                 return VisibilityLookup::Unknown;
             }
@@ -71,11 +72,13 @@ impl MacroVisibility {
     fn start_nodes(
         &self,
         file: &str,
+        syntax: SourceSyntax,
         root: Option<&str>,
         reachability: Reachability,
     ) -> Option<Vec<VisibilityNode>> {
         let node = VisibilityNode {
             file: file.to_owned(),
+            syntax,
             reachability,
         };
         match root {
@@ -87,21 +90,26 @@ impl MacroVisibility {
         }
     }
 
-    pub(super) fn repository_candidate(&self, file: &str, path: &str) -> bool {
+    pub(super) fn repository_candidate(
+        &self,
+        file: &str,
+        syntax: SourceSyntax,
+        path: &str,
+    ) -> bool {
         if super::macro_visibility::repository_path(path) {
             return true;
         }
         let Some(root) = path.split("::").next() else {
             return false;
         };
-        let key = (file.to_owned(), root.to_owned());
+        let key = (file.to_owned(), syntax, root.to_owned());
         self.children.contains_key(&key) || self.child_overflow.contains(&key)
     }
 
     fn child_nodes(&self, nodes: &[VisibilityNode], module: &str) -> Option<Vec<VisibilityNode>> {
         let mut children = Edges::new();
         for node in nodes {
-            let key = (node.file.clone(), module.to_owned());
+            let key = (node.file.clone(), node.syntax, module.to_owned());
             if self.child_overflow.contains(&key) {
                 return None;
             }
@@ -117,18 +125,20 @@ impl MacroVisibility {
     }
 
     fn parent_nodes(&self, node: &VisibilityNode) -> Option<Vec<VisibilityNode>> {
-        if self.parent_overflow.contains(&node.file) {
+        let key = (node.file.clone(), node.syntax);
+        if self.parent_overflow.contains(&key) {
             return None;
         }
-        let edges = self.parents.get(&node.file)?;
+        let edges = self.parents.get(&key)?;
         bounded_nodes(intersect_edges(edges, node.reachability))
     }
 
     fn parent_nodes_or_inline(&self, node: &VisibilityNode) -> Option<Vec<VisibilityNode>> {
-        if self.parent_overflow.contains(&node.file) {
+        let key = (node.file.clone(), node.syntax);
+        if self.parent_overflow.contains(&key) {
             None
         } else {
-            self.parents.get(&node.file).map_or_else(
+            self.parents.get(&key).map_or_else(
                 || Some(vec![node.clone()]),
                 |edges| bounded_nodes(intersect_edges(edges, node.reachability)),
             )
@@ -139,7 +149,11 @@ impl MacroVisibility {
         let mut parents = Edges::new();
         for node in nodes {
             for parent in self.parent_nodes(node)? {
-                insert_reachable(&mut parents, &parent.file, parent.reachability);
+                insert_reachable(
+                    &mut parents,
+                    &(parent.file.clone(), parent.syntax),
+                    parent.reachability,
+                );
             }
         }
         if parents.is_empty() {
@@ -156,10 +170,11 @@ impl MacroVisibility {
             let mut parents = Edges::new();
             let mut roots = Vec::new();
             for node in &current {
-                if !seen.insert(node.clone()) || self.parent_overflow.contains(&node.file) {
+                let key = (node.file.clone(), node.syntax);
+                if !seen.insert(node.clone()) || self.parent_overflow.contains(&key) {
                     return None;
                 }
-                let Some(edges) = self.parents.get(&node.file) else {
+                let Some(edges) = self.parents.get(&key) else {
                     roots.push(node.clone());
                     continue;
                 };

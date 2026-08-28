@@ -49,7 +49,7 @@ pub(super) struct Walker<'a> {
     pub(super) cargo: &'a CargoWorkspace,
     pub(super) feature_worlds: &'a [ResolvedFeatureWorld],
     pub(super) findings: Vec<Finding>,
-    pub(super) facts: BTreeMap<&'a str, &'a RustFileFacts>,
+    pub(super) facts: BTreeMap<(&'a str, SourceSyntax), &'a RustFileFacts>,
     pub(super) entries: BTreeMap<&'a str, RepositoryEntryKind>,
     pub(super) reached: BTreeMap<String, Reachability>,
     pub(super) reached_packages: BTreeMap<String, BTreeSet<String>>,
@@ -60,8 +60,8 @@ pub(super) struct Walker<'a> {
     pub(super) compilation_edges: BTreeSet<CompilationModuleEdge>,
     pub(super) compilation_includes: BTreeSet<CompilationIncludeEdge>,
     pub(super) compilation_roots: BTreeSet<CompilationRoot>,
-    pub(super) visited: BTreeSet<(String, SubmoduleBase, TraversalContext)>,
-    pub(super) queue: VecDeque<(String, SubmoduleBase, TraversalContext)>,
+    pub(super) visited: BTreeSet<(String, SourceSyntax, SubmoduleBase, TraversalContext)>,
+    pub(super) queue: VecDeque<(String, SourceSyntax, SubmoduleBase, TraversalContext)>,
 }
 
 impl<'a> Walker<'a> {
@@ -81,7 +81,7 @@ impl<'a> Walker<'a> {
             facts: source
                 .files
                 .iter()
-                .map(|file| (file.relative.as_str(), file))
+                .map(|file| ((file.relative.as_str(), file.syntax), file))
                 .collect(),
             entries: inventory
                 .entries
@@ -104,8 +104,8 @@ impl<'a> Walker<'a> {
 
     pub(super) fn run(mut self) -> SourceGraphAnalysis {
         self.seed_cargo_targets();
-        while let Some((path, submodule_base, context)) = self.queue.pop_front() {
-            self.walk_file(&path, submodule_base, &context);
+        while let Some((path, syntax, submodule_base, context)) = self.queue.pop_front() {
+            self.walk_file(&path, syntax, submodule_base, &context);
         }
         self.reject_orphans();
         self.reject_stale_out_dir();
@@ -190,18 +190,24 @@ impl<'a> Walker<'a> {
         }
     }
 
-    fn walk_file(&mut self, path: &str, submodule_base: SubmoduleBase, context: &TraversalContext) {
+    fn walk_file(
+        &mut self,
+        path: &str,
+        syntax: SourceSyntax,
+        submodule_base: SubmoduleBase,
+        context: &TraversalContext,
+    ) {
         let (modules, includes) = {
-            let Some(file) = self.facts.get(path) else {
+            let Some(file) = self.facts.get(&(path, syntax)) else {
                 return;
             };
             (file.modules.clone(), file.includes.clone())
         };
         for declaration in modules {
-            self.walk_module(path, submodule_base, context, &declaration);
+            self.walk_module(path, syntax, submodule_base, context, &declaration);
         }
         for include in includes {
-            self.walk_include(path, context, &include);
+            self.walk_include(path, syntax, context, &include);
         }
     }
 }

@@ -165,19 +165,22 @@ fn bindings(index: &SourceIndex) -> IncludeBindings {
         index,
         &[CompilationRoot {
             file: "src/lib.rs".into(),
+            syntax: SourceSyntax::Items,
             domain: domain.clone(),
         }],
         &[],
         &[CompilationIncludeEdge {
             parent: "src/lib.rs".into(),
+            parent_syntax: SourceSyntax::Items,
             child: "src/imports.rs".into(),
+            child_syntax: SourceSyntax::Items,
             domain,
             guard: SyntaxGuard::Ordinary,
             context: IncludeContext::Items,
             parent_scope: Vec::new(),
             generic_types: Vec::new(),
             generic_values: Vec::new(),
-            generic_bounds: Vec::new(),
+            trait_bounds: Vec::new(),
             current_self: None,
             inherits_parent_context: true,
             value_shadows: Vec::new(),
@@ -257,7 +260,7 @@ fn file(
         macro_definitions: Vec::new(),
         import_bindings,
         associated_items: Vec::new(),
-        trait_inheritance: Vec::new(),
+        trait_declarations: Vec::new(),
         glob_imports: Vec::new(),
         inline_module_scopes: Vec::new(),
         prelude_directives: Vec::new(),
@@ -275,26 +278,21 @@ fn file(
     }
 }
 
+#[path = "include_projection_apply_test/tests/generic_roots.rs"]
+mod generic_roots;
 #[path = "include_projection_apply_test/tests/hub.rs"]
 mod hub;
 #[path = "include_projection_apply_test/tests/opacity.rs"]
 mod opacity;
-#[path = "include_projection_apply_test/tests/operations_relative.rs"]
-mod operations_relative;
-#[path = "include_projection_apply_test/tests/scale.rs"]
-mod scale;
-
 #[path = "include_projection_apply_test/tests/operations_alias.rs"]
 mod operations_alias;
-
 #[path = "include_projection_apply_test/tests/operations_constructor.rs"]
 mod operations_constructor;
-
-#[path = "include_projection_apply_test/tests/operations_self.rs"]
-mod operations_self;
-
 #[path = "include_projection_apply_test/tests/operations_global.rs"]
 mod operations_global;
-
-#[path = "include_projection_apply_test/tests/generic_roots.rs"]
-mod generic_roots;
+#[path = "include_projection_apply_test/tests/operations_relative.rs"]
+mod operations_relative;
+#[path = "include_projection_apply_test/tests/operations_self.rs"]
+mod operations_self;
+#[path = "include_projection_apply_test/tests/scale.rs"]
+mod scale;

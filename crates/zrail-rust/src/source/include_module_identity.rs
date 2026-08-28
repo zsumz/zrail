@@ -45,7 +45,7 @@ impl IncludeBindings {
             }
             _ => return Ok(None),
         };
-        if let Some(names) = self.inline_module_names.get(&source.file) {
+        if let Some(names) = self.inline_module_names.get(&instance) {
             for span in scope {
                 budget.consume_work()?;
                 if let Some(name) = names.get(span) {
@@ -64,11 +64,11 @@ impl IncludeBindings {
 
     pub(super) fn lexical_floor(
         &self,
-        file: &str,
+        instance: SourceInstanceId,
         scope: &[zrail_core::SourceSpan],
         budget: &mut ProjectionBudget,
     ) -> Result<usize, ProjectionLimit> {
-        let Some(modules) = self.inline_module_names.get(file) else {
+        let Some(modules) = self.inline_module_names.get(&instance) else {
             return Ok(0);
         };
         for (index, span) in scope.iter().enumerate().rev() {

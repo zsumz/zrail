@@ -1,13 +1,19 @@
 //! Generic parameters never borrow constructor identity across Rust namespaces.
 
+#[path = "generic_shadow_ownership/aliased_impl_self.rs"]
+mod aliased_impl_self;
 #[path = "generic_shadow_ownership/associated_includes.rs"]
 mod associated_includes;
+#[path = "generic_shadow_ownership/bound_subjects.rs"]
+mod bound_subjects;
 #[path = "generic_shadow_ownership/direct.rs"]
 mod direct;
 #[path = "generic_shadow_ownership/fields.rs"]
 mod fields;
 #[path = "generic_shadow_ownership/fixture.rs"]
 mod fixture;
+#[path = "generic_shadow_ownership/fragment_syntax.rs"]
+mod fragment_syntax;
 #[path = "generic_shadow_ownership/includes.rs"]
 mod includes;
 #[path = "generic_shadow_ownership/observed.rs"]

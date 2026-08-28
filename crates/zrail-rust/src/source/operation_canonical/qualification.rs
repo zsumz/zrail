@@ -6,7 +6,7 @@ use zrail_core::AnalysisQuality;
 
 use super::resolution;
 use crate::source::{
-    CompilationDomain, SyntaxGuard,
+    CompilationDomain, SourceSyntax, SyntaxGuard,
     include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedTerminal},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::ResolutionUsage,
@@ -20,16 +20,16 @@ pub(super) fn classify(
     context: &SyntaxGuard,
     written: &str,
     bindings: &IncludeBindings,
-    file: &str,
+    occurrence: Occurrence<'_>,
     budget: &mut ProjectionBudget,
 ) -> Result<Disposition, ProjectionLimit> {
-    let occurrence = resolve(subject, bindings, file, budget)?;
+    let traits = resolve(subject, bindings, occurrence, budget)?;
     if subject.is_some_and(|subject| subject.direct_trait_item) {
         for route in &mut result.routes {
-            let selection = occurrence.selection(&route.domain);
+            let selection = traits.selection(&route.domain);
             catalog.classify_value(route, context, selection);
         }
-        return Ok(Disposition::AssociatedItem(occurrence.quality));
+        return Ok(Disposition::AssociatedItem(traits.quality));
     }
     if subject.is_some_and(|subject| subject.force_unresolved) {
         result.unresolved = true;
@@ -42,7 +42,7 @@ pub(super) fn classify(
         return Ok(Disposition::ConstructionCandidate);
     }
     for route in &mut result.routes {
-        let selection = occurrence.selection(&route.domain);
+        let selection = traits.selection(&route.domain);
         catalog.classify_value(route, context, selection);
     }
     Ok(Disposition::ConstructionCandidate)
@@ -52,6 +52,12 @@ pub(super) fn classify(
 pub(super) enum Disposition {
     ConstructionCandidate,
     AssociatedItem(AnalysisQuality),
+}
+
+#[derive(Clone, Copy)]
+pub(super) struct Occurrence<'a> {
+    pub(super) file: &'a str,
+    pub(super) syntax: SourceSyntax,
 }
 
 pub(super) struct OccurrenceTraits {
@@ -89,9 +95,10 @@ pub(super) enum TraitSelection<'a> {
 pub(super) fn resolve(
     subject: Option<&QualifiedOperationSubject>,
     bindings: &IncludeBindings,
-    file: &str,
+    occurrence: Occurrence<'_>,
     budget: &mut ProjectionBudget,
 ) -> Result<OccurrenceTraits, ProjectionLimit> {
+    let Occurrence { file, syntax } = occurrence;
     let Some(subject) = subject else {
         return Ok(OccurrenceTraits::default());
     };
@@ -111,6 +118,7 @@ pub(super) fn resolve(
         resolution::Request {
             bindings,
             file,
+            syntax,
             fact,
             file_local: false,
             subject_origin: OperationSubjectOrigin::WrittenPath,
@@ -128,7 +136,7 @@ pub(super) fn resolve(
         && resolved
             .routes
             .iter()
-            .all(|route| exact_trait_route(route, bindings, file, &fact.guard));
+            .all(|route| exact_trait_route(route, bindings, file, syntax, &fact.guard));
     let domains = resolved
         .routes
         .iter()
@@ -155,6 +163,7 @@ pub(super) fn resolve(
             &domain,
             bindings,
             file,
+            syntax,
             &fact.guard,
         ) {
             continue;
@@ -175,6 +184,7 @@ fn exact_trait_route(
     route: &resolution::Route,
     bindings: &IncludeBindings,
     file: &str,
+    syntax: SourceSyntax,
     guard: &SyntaxGuard,
 ) -> bool {
     route.quality == AnalysisQuality::Exact
@@ -185,6 +195,7 @@ fn exact_trait_route(
             &route.domain,
             bindings,
             file,
+            syntax,
             guard,
         )
 }
@@ -196,6 +207,7 @@ fn exact_trait_identity(
     domain: &CompilationDomain,
     bindings: &IncludeBindings,
     file: &str,
+    syntax: SourceSyntax,
     guard: &SyntaxGuard,
 ) -> bool {
     match (origin, terminal) {
@@ -205,7 +217,7 @@ fn exact_trait_identity(
             root.is_some_and(|root| {
                 matches!(root, "std" | "core")
                     || bindings
-                        .active_instances(file, guard)
+                        .active_instances(file, syntax, guard)
                         .iter()
                         .any(|instance| {
                             bindings

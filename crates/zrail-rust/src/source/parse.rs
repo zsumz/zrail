@@ -39,7 +39,7 @@ pub(crate) fn index_rust_source(
 pub(crate) fn index_rust_source_with_hints(
     inventory: &RepositoryInventory,
     rust: &RustSourceContract,
-    syntax_hints: &BTreeMap<String, SourceSyntax>,
+    syntax_hints: &BTreeMap<String, std::collections::BTreeSet<SourceSyntax>>,
 ) -> SourceIndex {
     let mut index = SourceIndex::default();
     for source_file in &inventory.rust_files {
@@ -49,14 +49,16 @@ pub(crate) fn index_rust_source_with_hints(
                 .push(analysis_limit(&source_file.relative, error));
             continue;
         }
-        match parse_source(
-            source_file,
-            rust,
-            syntax_hints.get(&source_file.relative).copied(),
-        ) {
-            Ok((facts, incomplete_cfg)) => {
-                if !rust.feature_worlds.is_empty() {
-                    index.findings.extend(incomplete_cfg.into_iter().map(|span| {
+        let requested = syntax_hints.get(&source_file.relative);
+        let syntaxes = requested.map_or_else(
+            || vec![None],
+            |syntaxes| syntaxes.iter().copied().map(Some).collect::<Vec<_>>(),
+        );
+        for syntax in syntaxes {
+            match parse_source(source_file, rust, syntax) {
+                Ok((facts, incomplete_cfg)) => {
+                    if !rust.feature_worlds.is_empty() {
+                        index.findings.extend(incomplete_cfg.into_iter().map(|span| {
                         Finding::error(
                             "RUST-CFG-001",
                             "rust.source.feature-world",
@@ -69,35 +71,36 @@ pub(crate) fn index_rust_source_with_hints(
                             "use direct cfg(feature = ...) items or make the attribute identity unconditional",
                         )
                     }));
-                }
-                let count = fact_count(&facts);
-                if count > MAX_FACTS_PER_FILE {
-                    index.findings.push(analysis_limit(
+                    }
+                    let count = fact_count(&facts);
+                    if count > MAX_FACTS_PER_FILE {
+                        index.findings.push(analysis_limit(
                         &source_file.relative,
                         format!(
                             "Rust source exceeds the {MAX_FACTS_PER_FILE}-fact per-file safety limit"
                         ),
                     ));
-                    continue;
+                        continue;
+                    }
+                    index.files.push(facts);
                 }
-                index.files.push(facts);
+                Err(error) => index.findings.push(
+                    Finding::error(
+                        "RUST-PARSE-001",
+                        "rust.parse",
+                        "source",
+                        format!("Rust source could not be parsed: {error}"),
+                    )
+                    .at(&source_file.relative, None)
+                    .with_analysis(AnalysisQuality::Unresolved)
+                    .with_help("fix the syntax error before trusting architecture analysis"),
+                ),
             }
-            Err(error) => index.findings.push(
-                Finding::error(
-                    "RUST-PARSE-001",
-                    "rust.parse",
-                    "source",
-                    format!("Rust source could not be parsed: {error}"),
-                )
-                .at(&source_file.relative, None)
-                .with_analysis(AnalysisQuality::Unresolved)
-                .with_help("fix the syntax error before trusting architecture analysis"),
-            ),
         }
     }
     index
         .files
-        .sort_by(|left, right| left.relative.cmp(&right.relative));
+        .sort_by(|left, right| (&left.relative, left.syntax).cmp(&(&right.relative, right.syntax)));
     index
 }
 
@@ -110,7 +113,14 @@ fn parse_source(
         Some(SourceSyntax::Expression) => return parse_fragments::expression(source_file),
         Some(SourceSyntax::ImplItems) => return parse_fragments::impl_items(source_file),
         Some(SourceSyntax::TraitItems) => return parse_fragments::trait_items(source_file),
-        Some(SourceSyntax::Items) | None => {}
+        Some(SourceSyntax::Items) => {
+            let syntax = syn::parse_file(&source_file.source)?;
+            return Ok((
+                index_file_with_policy(source_file, rust, &syntax),
+                super::cfg::cfg_completeness::file(&syntax),
+            ));
+        }
+        None => {}
     }
     match syn::parse_file(&source_file.source) {
         Ok(syntax) => Ok((
@@ -182,7 +192,7 @@ fn index_file_as(
         macro_definitions: visitor.macro_definitions,
         import_bindings: visitor.import_bindings,
         associated_items: visitor.associated_items,
-        trait_inheritance: visitor.trait_inheritance,
+        trait_declarations: visitor.trait_declarations,
         glob_imports: visitor.glob_imports,
         inline_module_scopes: visitor.inline_module_scopes,
         prelude_directives: super::include_bindings::implicit_prelude::directives(syntax),

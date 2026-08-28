@@ -124,7 +124,9 @@ impl IncludeBindings {
             let Some(source) = self.instances.get(location.instance) else {
                 return Ok(None);
             };
-            if let Some(index) = self.inline_module_index(&source.file, &location.scope, budget)? {
+            if let Some(index) =
+                self.inline_module_index(location.instance, &location.scope, budget)?
+            {
                 location.scope.truncate(index + 1);
                 return Ok(Some(()));
             }
@@ -153,9 +155,11 @@ impl IncludeBindings {
             let Some(source) = self.instances.get(location.instance) else {
                 return Ok(None);
             };
-            if let Some(index) = self.inline_module_index(&source.file, &location.scope, budget)? {
+            if let Some(index) =
+                self.inline_module_index(location.instance, &location.scope, budget)?
+            {
                 let parent =
-                    self.inline_module_index(&source.file, &location.scope[..index], budget)?;
+                    self.inline_module_index(location.instance, &location.scope[..index], budget)?;
                 if let Some(parent) = parent {
                     location.scope.truncate(parent + 1);
                     return Ok(Some(()));
@@ -182,11 +186,11 @@ impl IncludeBindings {
 
     fn inline_module_index(
         &self,
-        file: &str,
+        instance: SourceInstanceId,
         scope: &[SourceSpan],
         budget: &mut ProjectionBudget,
     ) -> Result<Option<usize>, ProjectionLimit> {
-        let Some(modules) = self.inline_module_names.get(file) else {
+        let Some(modules) = self.inline_module_names.get(&instance) else {
             return Ok(None);
         };
         for (index, span) in scope.iter().enumerate().rev() {
@@ -203,11 +207,11 @@ impl IncludeBindings {
         location: &mut QualifiedLocation,
         budget: &mut ProjectionBudget,
     ) -> Result<(), ProjectionLimit> {
-        let Some(source) = self.instances.get(location.instance) else {
+        if self.instances.get(location.instance).is_none() {
             location.scope.clear();
             return Ok(());
-        };
-        if let Some(index) = self.inline_module_index(&source.file, &location.scope, budget)? {
+        }
+        if let Some(index) = self.inline_module_index(location.instance, &location.scope, budget)? {
             location.scope.truncate(index + 1);
         } else {
             location.scope.clear();

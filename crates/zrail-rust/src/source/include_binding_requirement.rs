@@ -60,13 +60,16 @@ impl IncludeBindings {
                     let Some(root) = written_root(written) else {
                         return false;
                     };
-                    self.instances.for_file(&file.relative).iter().any(|id| {
-                        self.instances.get(*id).is_some_and(|source| {
-                            super::implicit_prelude_catalog::core(root, &source.domain.edition)
-                                .is_some()
-                                || super::implicit_prelude_catalog::std_only(root).is_some()
+                    self.instances
+                        .for_source(&file.relative, file.syntax)
+                        .iter()
+                        .any(|id| {
+                            self.instances.get(*id).is_some_and(|source| {
+                                super::implicit_prelude_catalog::core(root, &source.domain.edition)
+                                    .is_some()
+                                    || super::implicit_prelude_catalog::std_only(root).is_some()
+                            })
                         })
-                    })
                 })
         }) {
             return true;
@@ -84,11 +87,14 @@ impl IncludeBindings {
             .filter_map(|fact| fact.written.as_deref())
             .filter_map(written_root)
             .collect::<BTreeSet<_>>();
-        self.instances.for_file(&file.relative).iter().any(|id| {
-            roots
-                .iter()
-                .any(|root| is_qualifier(root) || self.ancestor_can_bind(*id, root))
-        })
+        self.instances
+            .for_source(&file.relative, file.syntax)
+            .iter()
+            .any(|id| {
+                roots
+                    .iter()
+                    .any(|root| is_qualifier(root) || self.ancestor_can_bind(*id, root))
+            })
     }
 
     fn ancestor_can_bind(&self, mut id: crate::source::SourceInstanceId, root: &str) -> bool {
@@ -96,11 +102,11 @@ impl IncludeBindings {
             let Some(instance) = self.instances.get(id) else {
                 return false;
             };
-            if self.files.get(&instance.file).is_some_and(|bindings| {
+            if self.files.get(&id).is_some_and(|bindings| {
                 bindings.named.contains_key(root) || !bindings.globs.is_empty()
             }) || self
                 .opaque_namespace_scopes
-                .get(&instance.file)
+                .get(&id)
                 .is_some_and(|scopes| !scopes.is_empty())
             {
                 return true;

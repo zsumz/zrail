@@ -30,6 +30,7 @@ pub(super) struct FactProjection {
 pub(super) struct ProjectionRequest<'a> {
     pub(super) bindings: &'a IncludeBindings,
     pub(super) file: &'a str,
+    pub(super) syntax: super::SourceSyntax,
     pub(super) facts: &'a [ObservedFact],
     pub(super) usage: ResolutionUsage,
     pub(super) call_sites: &'a BTreeSet<CallSite>,
@@ -59,12 +60,15 @@ pub(super) fn project(
     let mut removals = BTreeSet::new();
     for fact in request.facts.iter().filter(|fact| fact.written.is_some()) {
         let usage = retention::fact_usage(fact, request.usage, request.call_sites);
-        let instances = request.bindings.active_instances(request.file, &fact.guard);
+        let instances =
+            request
+                .bindings
+                .active_instances(request.file, request.syntax, &fact.guard);
         if instances.is_empty() {
             continue;
         }
         let (aggregate, compatible, test_coverage) =
-            aggregate(request.bindings, fact, instances, usage, budget, cache)?;
+            aggregate(request.bindings, fact, &instances, usage, budget, cache)?;
         if aggregate.len() > MAX_PROJECTED_IDENTITIES {
             *uncertain = uncertain.or(fact.span);
             continue;

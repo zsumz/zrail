@@ -1,7 +1,7 @@
 //! Source-context limits distinguish ordinary input from multiplicative expansion.
 
 use super::*;
-use crate::source::{CompilationMode, IncludeContext, IncludeOccurrenceId};
+use crate::source::{CompilationMode, IncludeContext, IncludeOccurrenceId, SourceSyntax};
 use zrail_core::SourceSpan;
 
 #[test]
@@ -9,6 +9,7 @@ fn ordinary_base_contexts_are_not_capped_at_four_thousand() {
     let roots = (0..6_001)
         .map(|index| CompilationRoot {
             file: format!("src/unit_{index}.rs"),
+            syntax: SourceSyntax::Items,
             domain: domain(),
         })
         .collect::<Vec<_>>();
@@ -29,6 +30,7 @@ fn include_cycles_retain_the_exact_chain() {
     let instances = SourceInstances::build(
         &[CompilationRoot {
             file: "src/lib.rs".into(),
+            syntax: SourceSyntax::Items,
             domain: domain(),
         }],
         &[],
@@ -51,6 +53,7 @@ fn include_cycles_retain_the_exact_chain() {
 fn reviewed_derived_context_limit_is_applied_exactly() {
     let roots = ["src/lib.rs", "src/bin_a.rs", "src/bin_b.rs"].map(|file| CompilationRoot {
         file: file.into(),
+        syntax: SourceSyntax::Items,
         domain: domain(),
     });
     let includes = [
@@ -74,6 +77,7 @@ fn repeated_module_mounts_remain_distinct_inside_each_domain() {
     test.mode = CompilationMode::LibraryTest;
     let roots = [library.clone(), test.clone()].map(|domain| CompilationRoot {
         file: "src/lib.rs".into(),
+        syntax: SourceSyntax::Items,
         domain,
     });
     let modules = [library, test]
@@ -81,8 +85,10 @@ fn repeated_module_mounts_remain_distinct_inside_each_domain() {
         .flat_map(|domain| {
             ["left", "right"].map(move |module_name| CompilationModuleEdge {
                 parent: "src/lib.rs".into(),
+                parent_syntax: SourceSyntax::Items,
                 module_name: module_name.into(),
                 child: "src/shared.rs".into(),
+                child_syntax: SourceSyntax::Items,
                 domain: domain.clone(),
                 guard: SyntaxGuard::Ordinary,
                 parent_scope: Vec::new(),
@@ -92,7 +98,7 @@ fn repeated_module_mounts_remain_distinct_inside_each_domain() {
         .collect::<Vec<_>>();
 
     let instances = SourceInstances::build(&roots, &modules, &[]);
-    let shared = instances.for_file("src/shared.rs");
+    let shared = instances.for_source("src/shared.rs", SourceSyntax::Items);
 
     assert_eq!(shared.len(), 4);
     assert_eq!(instances.metrics().base_contexts, 4);
@@ -110,14 +116,16 @@ fn repeated_module_mounts_remain_distinct_inside_each_domain() {
 fn include(parent: &str, child: &str) -> CompilationIncludeEdge {
     CompilationIncludeEdge {
         parent: parent.into(),
+        parent_syntax: SourceSyntax::Items,
         child: child.into(),
+        child_syntax: SourceSyntax::Items,
         domain: domain(),
         guard: SyntaxGuard::Ordinary,
         context: IncludeContext::Items,
         parent_scope: Vec::new(),
         generic_types: Vec::new(),
         generic_values: Vec::new(),
-        generic_bounds: Vec::new(),
+        trait_bounds: Vec::new(),
         current_self: None,
         inherits_parent_context: true,
         value_shadows: Vec::new(),

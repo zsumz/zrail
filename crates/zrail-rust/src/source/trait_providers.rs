@@ -5,9 +5,10 @@ use std::collections::{BTreeMap, BTreeSet};
 use syn::{Item, TypeParamBound};
 use zrail_core::{AnalysisQuality, Finding};
 
-use super::model::TraitInheritanceFact;
+use super::model::TraitDeclarationFact;
 use super::{
-    CompilationDomain, GenericAssociatedCandidate, SourceIndex, SyntaxGuard,
+    BoundSubject, CompilationDomain, GenericAssociatedCandidate, ProviderAuthority, SourceIndex,
+    SyntaxGuard,
     fact::{source_span, written_path},
     include_bindings::IncludeBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimits},
@@ -22,7 +23,7 @@ pub(super) fn collect<'a>(
     items: impl Iterator<Item = &'a Item>,
     enclosing_guard: &SyntaxGuard,
     scope: &[zrail_core::SourceSpan],
-) -> Vec<TraitInheritanceFact> {
+) -> Vec<TraitDeclarationFact> {
     items
         .filter_map(|item| {
             let Item::Trait(item) = item else {
@@ -40,19 +41,34 @@ pub(super) fn collect<'a>(
                     _ => None,
                 })
                 .collect::<Vec<_>>();
-            if providers.is_empty() {
-                return None;
-            }
             let guard = item_guard(&item.attrs, enclosing_guard);
             let macros = replacement_macros(&item.attrs, &guard, scope);
-            Some(TraitInheritanceFact {
+            let declaration_quality = if macros.is_empty() {
+                quality(&item.attrs)
+            } else {
+                AnalysisQuality::Unresolved
+            };
+            let mut bounds =
+                super::trait_bounds::from_generics(&item.generics, true, &guard, scope);
+            if !providers.is_empty() {
+                bounds.push(super::trait_bounds::explicit(
+                    BoundSubject::SelfType,
+                    providers,
+                    &guard,
+                    scope,
+                    source_span(item.ident.span()),
+                ));
+            }
+            bounds.extend(super::trait_bounds::associated_types(item, &guard, scope));
+            bounds.retain(|bound| bound.subject.root() == "Self");
+            for bound in &mut bounds {
+                bound.quality = bound.quality.max(declaration_quality);
+            }
+            super::trait_bounds::normalize(&mut bounds);
+            Some(TraitDeclarationFact {
                 trait_path: item.ident.to_string(),
-                providers,
-                quality: if macros.is_empty() {
-                    quality(&item.attrs)
-                } else {
-                    AnalysisQuality::Unresolved
-                },
+                bounds,
+                quality: declaration_quality,
                 guard,
                 lexical_scope: scope.to_vec(),
                 span: source_span(item.ident.span()),
@@ -71,7 +87,7 @@ pub(super) fn apply(
         .files
         .iter()
         .map(|file| {
-            file.trait_inheritance.len()
+            file.trait_declarations.len()
                 + file
                     .paths
                     .iter()
@@ -108,35 +124,72 @@ fn expand_candidates(
     domains: &BTreeSet<CompilationDomain>,
     graph: &ProviderGraph,
 ) {
-    let mut additions = BTreeMap::<String, AnalysisQuality>::new();
-    for candidate in candidates.iter() {
+    let mut expanded =
+        BTreeMap::<(String, Vec<String>, Vec<String>), GenericAssociatedCandidate>::new();
+    for mut candidate in std::mem::take(candidates) {
         let Some((trait_path, item)) = candidate.name.rsplit_once("::") else {
+            insert_candidate(&mut expanded, candidate);
             continue;
         };
+        let base_complete = !domains.is_empty()
+            && domains
+                .iter()
+                .all(|domain| graph.complete(domain, trait_path, &candidate.projection));
         for domain in domains {
-            for (provider, provider_quality) in graph
-                .get(&(domain.clone(), trait_path.into()))
+            for (provider, provider_edge) in graph
+                .providers(domain, trait_path, &candidate.projection)
                 .into_iter()
                 .flatten()
             {
-                additions
-                    .entry(format!("{provider}::{item}"))
-                    .and_modify(|quality| {
-                        *quality = (*quality).max(candidate.quality).max(*provider_quality);
-                    })
-                    .or_insert(candidate.quality.max(*provider_quality));
+                let provider_complete = graph.complete(domain, provider, &[]);
+                let mut provider_authorities = provider_edge.authorities.clone();
+                if !provider_complete {
+                    provider_authorities.insert(ProviderAuthority::Unknown);
+                }
+                insert_candidate(
+                    &mut expanded,
+                    GenericAssociatedCandidate {
+                        name: format!("{provider}::{item}"),
+                        canonical: Vec::new(),
+                        quality: candidate.quality.max(provider_edge.quality),
+                        projection: Vec::new(),
+                        provider_complete,
+                        provider_authorities,
+                    },
+                );
             }
         }
+        if candidate.projection.is_empty() || !base_complete {
+            candidate.provider_complete &= base_complete;
+            if !base_complete {
+                candidate.quality = AnalysisQuality::Unresolved;
+                candidate
+                    .provider_authorities
+                    .insert(ProviderAuthority::Unknown);
+            }
+            insert_candidate(&mut expanded, candidate);
+        }
     }
-    candidates.extend(
-        additions
-            .into_iter()
-            .map(|(name, quality)| GenericAssociatedCandidate {
-                name,
-                canonical: Vec::new(),
-                quality,
-            }),
+    *candidates = expanded.into_values().collect();
+}
+
+fn insert_candidate(
+    candidates: &mut BTreeMap<(String, Vec<String>, Vec<String>), GenericAssociatedCandidate>,
+    candidate: GenericAssociatedCandidate,
+) {
+    let key = (
+        candidate.name.clone(),
+        candidate.canonical.clone(),
+        candidate.projection.clone(),
     );
-    candidates.sort();
-    candidates.dedup();
+    candidates
+        .entry(key)
+        .and_modify(|existing| {
+            existing.quality = existing.quality.max(candidate.quality);
+            existing.provider_complete &= candidate.provider_complete;
+            existing
+                .provider_authorities
+                .extend(candidate.provider_authorities.iter().cloned());
+        })
+        .or_insert(candidate);
 }

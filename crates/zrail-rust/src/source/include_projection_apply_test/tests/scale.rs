@@ -70,6 +70,7 @@ fn repositories_without_include_edges_perform_zero_projection_work() {
     let roots = (0..6_001)
         .map(|unit| CompilationRoot {
             file: format!("src/unit_{unit}.rs"),
+            syntax: SourceSyntax::Items,
             domain: domain(),
         })
         .collect::<Vec<_>>();
@@ -106,19 +107,22 @@ fn scaled_bindings(index: &SourceIndex) -> IncludeBindings {
     let domain = domain();
     let root = CompilationRoot {
         file: "src/lib.rs".into(),
+        syntax: SourceSyntax::Items,
         domain: domain.clone(),
     };
     let roots = vec![root; ROOTS];
     let includes = [CompilationIncludeEdge {
         parent: "src/lib.rs".into(),
+        parent_syntax: SourceSyntax::Items,
         child: "src/imports.rs".into(),
+        child_syntax: SourceSyntax::Items,
         domain,
         guard: SyntaxGuard::Ordinary,
         context: IncludeContext::Items,
         parent_scope: Vec::new(),
         generic_types: Vec::new(),
         generic_values: Vec::new(),
-        generic_bounds: Vec::new(),
+        trait_bounds: Vec::new(),
         current_self: None,
         inherits_parent_context: true,
         value_shadows: Vec::new(),

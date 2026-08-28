@@ -6,7 +6,7 @@ use zrail_core::{AnalysisQuality, SourceSpan};
 
 use super::super::{resolution, resolution::Route};
 use crate::source::{
-    AssociatedItemFact, CompilationDomain, FactNamespace, ObservedFact,
+    AssociatedItemFact, CompilationDomain, FactNamespace, ObservedFact, SourceSyntax,
     include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedTerminal},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::ResolutionUsage,
@@ -16,6 +16,7 @@ use crate::source::{
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 struct ResolveKey {
     file: String,
+    syntax: SourceSyntax,
     path: String,
     quality: AnalysisQuality,
     guard: crate::source::SyntaxGuard,
@@ -48,9 +49,10 @@ impl<'a> Resolver<'a> {
         fact: &AssociatedItemFact,
         path: &str,
         file: &str,
+        syntax: SourceSyntax,
     ) -> Result<Vec<Route>, ProjectionLimit> {
         Ok(self
-            .resolve(fact, path, file)?
+            .resolve(fact, path, file, syntax)?
             .routes
             .into_iter()
             .filter(|route| {
@@ -72,12 +74,13 @@ impl<'a> Resolver<'a> {
         fact: &AssociatedItemFact,
         path: Option<&str>,
         file: &str,
+        syntax: SourceSyntax,
     ) -> Result<BTreeMap<CompilationDomain, Vec<TraitRoute>>, ProjectionLimit> {
         let Some(path) = path else {
             return Ok(BTreeMap::new());
         };
         let mut routes = BTreeMap::<CompilationDomain, Vec<TraitRoute>>::new();
-        for route in self.resolve(fact, path, file)?.routes {
+        for route in self.resolve(fact, path, file, syntax)?.routes {
             if route.quality == AnalysisQuality::Exact && route.origin != ResolvedOrigin::Unknown {
                 routes.entry(route.domain).or_default().push(TraitRoute {
                     name: route.name,
@@ -97,9 +100,10 @@ impl<'a> Resolver<'a> {
         fact: &AssociatedItemFact,
         path: &str,
         file: &str,
+        syntax: SourceSyntax,
     ) -> Result<Vec<(CompilationDomain, TraitRoute)>, ProjectionLimit> {
         Ok(self
-            .trait_routes(fact, Some(path), file)?
+            .trait_routes(fact, Some(path), file, syntax)?
             .into_iter()
             .filter_map(|(domain, routes)| {
                 let [route] = routes.as_slice() else {
@@ -115,9 +119,11 @@ impl<'a> Resolver<'a> {
         fact: &AssociatedItemFact,
         path: &str,
         file: &str,
+        syntax: SourceSyntax,
     ) -> Result<resolution::Resolution, ProjectionLimit> {
         let key = ResolveKey {
             file: file.into(),
+            syntax,
             path: path.into(),
             quality: fact.quality,
             guard: fact.guard.clone(),
@@ -144,6 +150,7 @@ impl<'a> Resolver<'a> {
             resolution::Request {
                 bindings: self.bindings,
                 file,
+                syntax,
                 fact: &observed,
                 file_local: false,
                 subject_origin: OperationSubjectOrigin::WrittenPath,

@@ -12,7 +12,7 @@ use super::{
     resolution,
 };
 use crate::source::{
-    CallResolutionFact, CallResolutionKind,
+    CallResolutionFact, CallResolutionKind, SourceSyntax,
     include_bindings::{IncludeBindings, ResolvedTerminal},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::ResolutionUsage,
@@ -22,6 +22,7 @@ pub(super) fn canonicalize(
     operations: &mut Vec<SourceOperationFact>,
     bindings: &IncludeBindings,
     file: &str,
+    syntax: SourceSyntax,
     associated: &super::associated::Catalog,
     budget: &mut ProjectionBudget,
     unresolved: &mut BTreeSet<(String, Option<SourceSpan>)>,
@@ -59,6 +60,7 @@ pub(super) fn canonicalize(
             resolution::Request {
                 bindings,
                 file,
+                syntax,
                 fact: &operation.identity,
                 file_local: operation.file_local
                     && operation.subject_origin
@@ -84,7 +86,7 @@ pub(super) fn canonicalize(
                 .as_deref()
                 .unwrap_or(&operation.identity.name),
             bindings,
-            file,
+            super::qualification::Occurrence { file, syntax },
             budget,
         )?;
         if let super::qualification::Disposition::AssociatedItem(quality) = qualification {

@@ -1,32 +1,30 @@
 //! Textual macro definitions resolve inside exact Cargo and lexical namespaces.
 
+mod catalog;
 mod domains;
 
 use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::AnalysisQuality;
 
-use crate::cargo::{CargoWorkspace, Package};
-
 use super::macro_definition_candidate::{
     add_include_scope_uncertainty, candidate_order, discard_file_wide_definition_guess,
     local_policy_name, repository_candidate,
 };
 use super::{
-    CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot,
-    MacroCandidate, MacroDerivation, MacroExpansionFact, SourceIndex, SourceInstanceId,
-    SourceInstances, SyntaxGuard, model::MacroDefinitionFact,
+    CompilationDomain, MacroCandidate, MacroDerivation, MacroExpansionFact, SourceInstanceId,
+    SourceInstances, SourceSyntax, SyntaxGuard, model::MacroDefinitionFact,
 };
 
 const MAX_DEFINITIONS_PER_DOMAIN: usize = 256;
 const MAX_VISIBLE_DEFINITIONS: usize = 64;
 
 pub(super) struct MacroDefinitions {
-    pub(super) files: BTreeMap<String, Vec<MacroDefinitionFact>>,
+    pub(super) files: BTreeMap<(String, SourceSyntax), Vec<MacroDefinitionFact>>,
     pub(super) packages: BTreeMap<String, PackageOrigin>,
-    pub(super) domains: BTreeMap<String, BTreeSet<CompilationDomain>>,
     pub(super) instances: SourceInstances,
-    pub(super) inline_module_names: BTreeMap<String, BTreeMap<zrail_core::SourceSpan, String>>,
+    pub(super) inline_module_names:
+        BTreeMap<(String, SourceSyntax), BTreeMap<zrail_core::SourceSpan, String>>,
     pub(super) qualified_sites:
         BTreeMap<(super::SourceInstanceId, String), BTreeSet<DefinitionSite>>,
     pub(super) qualified_sites_complete: bool,
@@ -57,46 +55,15 @@ pub(super) struct Resolution {
 }
 
 impl MacroDefinitions {
-    pub(super) fn collect_with_limit(
-        index: &SourceIndex,
-        cargo: &CargoWorkspace,
-        domains: &BTreeMap<String, BTreeSet<CompilationDomain>>,
-        roots: &[CompilationRoot],
-        edges: &[CompilationModuleEdge],
-        includes: &[CompilationIncludeEdge],
-        derived_limit: Option<usize>,
-    ) -> Self {
-        let mut definitions = Self {
-            files: index
-                .files
-                .iter()
-                .map(|file| (file.relative.clone(), file.macro_definitions.clone()))
-                .collect(),
-            packages: cargo
-                .packages
-                .iter()
-                .map(|package| (package.name.clone(), package_origin(package)))
-                .collect(),
-            domains: domains.clone(),
-            instances: SourceInstances::build_with_limit(roots, edges, includes, derived_limit),
-            inline_module_names: super::macro_qualified_definition::inline_module_names(index),
-            qualified_sites: BTreeMap::new(),
-            qualified_sites_complete: true,
-            names: BTreeMap::new(),
-            overflowed: BTreeSet::new(),
-        };
-        definitions.collect_names();
-        definitions.collect_qualified_sites();
-        definitions
-    }
-
     pub(super) fn local_names<'a>(
         &'a self,
         file: &str,
+        syntax: SourceSyntax,
         guard: &SyntaxGuard,
     ) -> Option<BTreeSet<&'a str>> {
         let mut names = BTreeSet::new();
-        for domain in self.active_domains(file, guard)? {
+        for instance in self.active_instances(file, syntax, guard)? {
+            let domain = &self.instances.get(instance)?.domain;
             if self.overflowed.contains(domain) {
                 return None;
             }
@@ -114,8 +81,13 @@ impl MacroDefinitions {
         Some(names)
     }
 
-    pub(super) fn apply(&self, file: &str, expansion: &mut MacroExpansionFact) {
-        let Some(instances) = self.active_instances(file, &expansion.guard) else {
+    pub(super) fn apply(
+        &self,
+        file: &str,
+        syntax: SourceSyntax,
+        expansion: &mut MacroExpansionFact,
+    ) {
+        let Some(instances) = self.active_instances(file, syntax, &expansion.guard) else {
             Self::add_unknown(expansion);
             return;
         };
@@ -202,20 +174,22 @@ impl MacroDefinitions {
     }
 
     fn collect_names(&mut self) {
-        for (file, domains) in &self.domains {
-            let definitions = self.files.get(file).into_iter().flatten();
-            for domain in domains {
-                if self.overflowed.contains(domain) {
-                    continue;
-                }
-                let names = self.names.entry(domain.clone()).or_default();
-                for definition in definitions.clone() {
-                    names.insert(definition.name.clone());
-                }
-                if names.len() > MAX_DEFINITIONS_PER_DOMAIN {
-                    self.names.remove(domain);
-                    self.overflowed.insert(domain.clone());
-                }
+        for (_, source) in self.instances.iter() {
+            let definitions = self
+                .files
+                .get(&(source.file.clone(), source.syntax))
+                .into_iter()
+                .flatten();
+            if self.overflowed.contains(&source.domain) {
+                continue;
+            }
+            let names = self.names.entry(source.domain.clone()).or_default();
+            for definition in definitions {
+                names.insert(definition.name.clone());
+            }
+            if names.len() > MAX_DEFINITIONS_PER_DOMAIN {
+                self.names.remove(&source.domain);
+                self.overflowed.insert(source.domain.clone());
             }
         }
     }
@@ -229,12 +203,5 @@ impl MacroDefinitions {
             MacroDerivation::LocalDefinition,
         ));
         expansion.refresh_quality();
-    }
-}
-
-fn package_origin(package: &Package) -> PackageOrigin {
-    PackageOrigin {
-        name: package.name.clone(),
-        directory: package.directory.clone(),
     }
 }

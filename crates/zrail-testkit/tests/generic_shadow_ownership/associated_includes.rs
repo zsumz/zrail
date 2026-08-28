@@ -53,6 +53,19 @@ fn associated_item_include_inherits_generic_bounds() {
 }
 
 #[test]
+fn trait_item_include_keeps_associated_provider_surface_fail_closed() {
+    let repository = Repository::new(
+        "trait-item-associated-bound",
+        "mod owner; pub trait Factory { fn ready(); } pub trait Provider { include!(\"trait_items.inc\"); } pub struct Product; impl Factory for Product { fn ready() {} } pub fn run<T: Provider>() { T::Factory::ready(); }",
+        "pub fn own() { <crate::Product as crate::Factory>::ready(); }",
+        &call_owner("factory-ready", "crate::Factory::ready"),
+    );
+    repository.write("src/trait_items.inc", "type Factory: crate::Factory;");
+
+    assert_eq!(resolution_count(&repository.check(), "src/lib.rs"), 1);
+}
+
+#[test]
 fn non_rs_associated_fragment_is_analyzed() {
     let repository = impl_repository(
         "non-rs-associated-fragment",

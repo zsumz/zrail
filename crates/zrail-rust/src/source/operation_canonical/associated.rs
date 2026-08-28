@@ -9,7 +9,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use super::resolution::Route;
 use crate::source::{
-    AssociatedItemFact, CompilationDomain, SourceIndex, SyntaxGuard,
+    AssociatedItemFact, CompilationDomain, SourceIndex, SourceSyntax, SyntaxGuard,
     associated_items::AssociatedItemKind,
     include_bindings::{IncludeBindings, ResolvedOrigin},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
@@ -64,6 +64,7 @@ impl Catalog {
                 catalog.collect_fact(
                     fact,
                     &file.relative,
+                    file.syntax,
                     &mut resolver,
                     &mut defaults,
                     &mut implementations,
@@ -107,13 +108,16 @@ impl Catalog {
         &mut self,
         fact: &AssociatedItemFact,
         file: &str,
+        syntax: SourceSyntax,
         resolver: &mut routes::Resolver<'_>,
         defaults: &mut BTreeMap<DefaultKey, BTreeMap<String, Vec<SyntaxGuard>>>,
         implementations: &mut Vec<DefaultImpl>,
     ) -> Result<(), ProjectionLimit> {
         match &fact.kind {
             AssociatedItemKind::TraitDefault { trait_path, item } => {
-                for (domain, route) in resolver.local_trait_routes(fact, trait_path, file)? {
+                for (domain, route) in
+                    resolver.local_trait_routes(fact, trait_path, file, syntax)?
+                {
                     defaults
                         .entry(DefaultKey {
                             domain,
@@ -130,8 +134,8 @@ impl Catalog {
                 trait_path,
                 item,
             } => {
-                let self_routes = resolver.self_routes(fact, self_type, file)?;
-                let traits = resolver.trait_routes(fact, trait_path.as_deref(), file)?;
+                let self_routes = resolver.self_routes(fact, self_type, file, syntax)?;
+                let traits = resolver.trait_routes(fact, trait_path.as_deref(), file, syntax)?;
                 for route in self_routes {
                     let (identity, origin) =
                         trait_for_domain(trait_path.as_deref(), &traits, &route.domain);

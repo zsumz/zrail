@@ -10,6 +10,7 @@ impl Walker<'_> {
     pub(super) fn walk_module(
         &mut self,
         source: &str,
+        source_syntax: SourceSyntax,
         submodule_base: SubmoduleBase,
         context: &TraversalContext,
         declaration: &ModuleDeclaration,
@@ -22,13 +23,16 @@ impl Walker<'_> {
             Ok(ModuleTarget::Exact(path)) => self.follow_module(
                 ResolvedModuleEdge {
                     parent: source.to_owned(),
+                    parent_syntax: source_syntax,
                     module_name: declaration.name.clone(),
                     child: path,
+                    child_syntax: SourceSyntax::Items,
                     child_base: SubmoduleBase::SourceParent,
                     reachability: target_context.reachability,
                     guard: target_context.guard.clone(),
                     span: declaration.span,
                 },
+                source_syntax,
                 &declaration.lexical_scope,
                 declaration.span,
                 &label,
@@ -47,13 +51,16 @@ impl Walker<'_> {
                     [(path, submodule_base)] => self.follow_module(
                         ResolvedModuleEdge {
                             parent: source.to_owned(),
+                            parent_syntax: source_syntax,
                             module_name: declaration.name.clone(),
                             child: path.clone(),
+                            child_syntax: SourceSyntax::Items,
                             child_base: *submodule_base,
                             reachability: target_context.reachability,
                             guard: target_context.guard.clone(),
                             span: declaration.span,
                         },
+                        source_syntax,
                         &declaration.lexical_scope,
                         declaration.span,
                         &label,

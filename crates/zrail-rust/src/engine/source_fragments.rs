@@ -18,7 +18,7 @@ pub(super) fn index(
     inventory: &mut RepositoryInventory,
     contract: &Contract,
 ) -> Result<SourceIndex, CheckError> {
-    let mut hints = BTreeMap::<String, SourceSyntax>::new();
+    let mut hints = BTreeMap::<String, BTreeSet<SourceSyntax>>::new();
     let mut source_bytes = inventory
         .rust_files
         .iter()
@@ -33,6 +33,13 @@ pub(super) fn index(
         let source = index_rust_source_with_hints(inventory, &contract.source.rust, &hints);
         let mut changed = false;
         for file in &source.files {
+            if hints
+                .entry(file.relative.clone())
+                .or_default()
+                .insert(file.syntax)
+            {
+                changed = true;
+            }
             for include in &file.includes {
                 let Some(relative) = &include.path else {
                     continue;
@@ -41,8 +48,7 @@ pub(super) fn index(
                     continue;
                 };
                 let syntax = syntax(include.context);
-                if !hints.contains_key(&target) {
-                    hints.insert(target.clone(), syntax);
+                if hints.entry(target.clone()).or_default().insert(syntax) {
                     changed = true;
                 }
                 if loaded.insert(target.clone()) {

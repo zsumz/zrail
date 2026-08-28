@@ -3,7 +3,7 @@
 use zrail_core::{Finding, SourceSpan, glob_matches};
 
 use crate::{
-    inventory::{FileClass, RepositoryEntryKind},
+    inventory::RepositoryEntryKind,
     source::{SourceSyntax, SubmoduleBase},
 };
 
@@ -25,20 +25,6 @@ impl Walker<'_> {
                 origin,
                 span,
                 format!("{label} resolves outside the indexed Rust roots: {target}"),
-            );
-            return false;
-        }
-        let indexable = target.to_ascii_lowercase().ends_with(".rs")
-            || expected_syntax != SourceSyntax::Items
-            || self
-                .facts
-                .get(target.as_str())
-                .is_some_and(|file| file.class == FileClass::Generated);
-        if !indexable {
-            self.unresolved(
-                origin,
-                span,
-                format!("{label} does not resolve to an indexable .rs file: {target}"),
             );
             return false;
         }
@@ -64,27 +50,18 @@ impl Walker<'_> {
                     .entry(target.clone())
                     .or_default()
                     .insert(context.domain.clone());
-                let Some(file) = self.facts.get(target.as_str()) else {
-                    self.unresolved(
-                        origin,
-                        span,
-                        format!("{label} source could not be indexed exactly: {target}"),
-                    );
-                    return false;
-                };
-                if file.syntax != expected_syntax {
+                if !self.facts.contains_key(&(target.as_str(), expected_syntax)) {
                     self.unresolved(
                         origin,
                         span,
                         format!(
-                            "{label} requires {} source but {target} parses as {}",
-                            syntax_name(expected_syntax),
-                            syntax_name(file.syntax)
+                            "{label} source could not be indexed as {}: {target}",
+                            syntax_name(expected_syntax)
                         ),
                     );
                     return false;
                 }
-                let state = (target, submodule_base, context);
+                let state = (target, expected_syntax, submodule_base, context);
                 if self.visited.insert(state.clone()) {
                     self.queue.push_back(state);
                 }

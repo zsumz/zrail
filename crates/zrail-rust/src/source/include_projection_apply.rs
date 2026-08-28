@@ -36,7 +36,10 @@ impl IncludeBindings {
         let include_facts = index
             .files
             .iter()
-            .filter(|file| self.instances.requires_projection(&file.relative))
+            .filter(|file| {
+                self.instances
+                    .requires_projection(&file.relative, file.syntax)
+            })
             .map(fact_count)
             .sum();
         let metrics = self.instances.metrics();
@@ -65,7 +68,9 @@ impl IncludeBindings {
             .files
             .iter()
             .filter(|file| {
-                !self.instances.requires_projection(&file.relative)
+                !self
+                    .instances
+                    .requires_projection(&file.relative, file.syntax)
                     && self.requires_ordinary_resolution(file)
             })
             .map(fact_count)
@@ -83,16 +88,18 @@ impl IncludeBindings {
         });
         let mut planned = Vec::new();
         let mut findings = Vec::new();
+        let mut projection_files = std::collections::BTreeSet::new();
         let mut resolution_cache = ResolutionCache::new();
         for file_index in order {
             let file = &index.files[file_index];
-            let include_connected = self.instances.requires_projection(&file.relative);
+            let include_connected = self
+                .instances
+                .requires_projection(&file.relative, file.syntax);
             if !include_connected && !self.requires_ordinary_resolution(file) {
                 continue;
             }
             if include_connected {
-                index.analysis_metrics.projection_files =
-                    index.analysis_metrics.projection_files.saturating_add(1);
+                projection_files.insert(file.relative.clone());
             }
             let budget = if include_connected {
                 &mut include_budget
@@ -120,6 +127,7 @@ impl IncludeBindings {
                 &ProjectionRequest {
                     bindings: self,
                     file: &file.relative,
+                    syntax: file.syntax,
                     facts: &file.paths,
                     usage: ResolutionUsage::Path,
                     call_sites: &call_sites,
@@ -137,6 +145,7 @@ impl IncludeBindings {
                 &ProjectionRequest {
                     bindings: self,
                     file: &file.relative,
+                    syntax: file.syntax,
                     facts: &file.calls,
                     usage: ResolutionUsage::Call,
                     call_sites: &call_sites,
@@ -160,6 +169,7 @@ impl IncludeBindings {
             });
         }
         index.analysis_metrics.projection_work = include_budget.used_work();
+        index.analysis_metrics.projection_files = projection_files.len();
         index.analysis_metrics.projected_facts = include_budget.retained_facts();
         for projection in planned {
             let file = &mut index.files[projection.index];

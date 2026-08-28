@@ -92,12 +92,12 @@ impl IncludeBindings {
         let floor = if mode.exact_scope() {
             scope.len()
         } else {
-            self.lexical_floor(&source.file, scope, budget)?
+            self.lexical_floor(instance, scope, budget)?
         };
         let mut sites = Vec::new();
         for binding in self
             .files
-            .get(&source.file)
+            .get(&instance)
             .into_iter()
             .flat_map(|bindings| &bindings.globs)
         {

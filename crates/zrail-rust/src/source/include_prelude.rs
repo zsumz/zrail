@@ -109,7 +109,7 @@ impl IncludeBindings {
             availability = merge(
                 availability,
                 self.directive_availability(
-                    &source.file,
+                    current,
                     &current_scope,
                     PreludeDirectiveKind::NoImplicit,
                     &context,
@@ -153,9 +153,9 @@ impl IncludeBindings {
         }
         self.instances
             .get(root)
-            .map_or(GuardAvailability::Possible, |source| {
+            .map_or(GuardAvailability::Possible, |_| {
                 self.directive_availability(
-                    &source.file,
+                    root,
                     &[],
                     PreludeDirectiveKind::NoStd,
                     &context,
@@ -166,14 +166,14 @@ impl IncludeBindings {
 
     fn directive_availability(
         &self,
-        file: &str,
+        instance: SourceInstanceId,
         scope: &[SourceSpan],
         kind: PreludeDirectiveKind,
         context: &SyntaxGuard,
         domain: &crate::source::CompilationDomain,
     ) -> GuardAvailability {
         self.prelude_directives
-            .get(file)
+            .get(&instance)
             .into_iter()
             .flatten()
             .filter(|directive| {

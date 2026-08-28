@@ -14,7 +14,8 @@ pub(in crate::source) struct CandidateAggregate {
     pub(in crate::source) requires_projection: bool,
     pub(in crate::source) blocks_completeness: bool,
     pub(in crate::source) generic_shadow: Option<GenericRootShadow>,
-    pub(in crate::source) associated_candidates: BTreeMap<String, GenericAssociatedCandidate>,
+    pub(in crate::source) associated_candidates:
+        BTreeMap<(String, Vec<String>), GenericAssociatedCandidate>,
 }
 
 impl Default for CandidateAggregate {

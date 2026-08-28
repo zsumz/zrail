@@ -1,16 +1,13 @@
 //! Cargo roots, modules, and include occurrences form exact source instances.
 
-use std::collections::{BTreeMap, BTreeSet, VecDeque};
+use std::collections::{BTreeMap, BTreeSet};
 
 use super::{
-    CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, GenericParameterBounds,
-    LexicalSelfIdentity, SyntaxGuard,
+    CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, LexicalSelfIdentity,
+    SyntaxGuard, TraitBoundFact,
 };
 
-use super::{
-    source_instance_edges::{MIN_DERIVED_SOURCE_CONTEXTS, SourceInstanceMetrics},
-    source_instance_edges::{grouped_includes, grouped_modules},
-};
+use super::source_instance_edges::SourceInstanceMetrics;
 
 use inheritance::{InheritedBindings, child_context};
 
@@ -21,9 +18,15 @@ pub(crate) use super::source_instance_edges::SourceInstanceIssue;
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct SourceInstanceId(pub(crate) usize);
 
+struct SourceOccurrence {
+    file: String,
+    syntax: super::SourceSyntax,
+}
+
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct CompilationRoot {
     pub(crate) file: String,
+    pub(crate) syntax: super::SourceSyntax,
     pub(crate) domain: CompilationDomain,
 }
 
@@ -37,11 +40,12 @@ pub(crate) enum SourceEntry {
 #[derive(Clone, Debug)]
 pub(crate) struct SourceInstance {
     pub(crate) file: String,
+    pub(crate) syntax: super::SourceSyntax,
     pub(crate) domain: CompilationDomain,
     pub(crate) guard: SyntaxGuard,
     pub(crate) generic_types: Vec<String>,
     pub(crate) generic_values: Vec<String>,
-    pub(crate) generic_bounds: Vec<GenericParameterBounds>,
+    pub(crate) trait_bounds: Vec<TraitBoundFact>,
     pub(crate) current_self: Option<LexicalSelfIdentity>,
     pub(crate) value_shadows: Vec<(String, SyntaxGuard)>,
     pub(crate) parent: Option<SourceInstanceId>,
@@ -51,99 +55,16 @@ pub(crate) struct SourceInstance {
 
 pub(crate) struct SourceInstances {
     instances: Vec<SourceInstance>,
-    by_file: BTreeMap<String, Vec<SourceInstanceId>>,
+    by_file: BTreeMap<(String, super::SourceSyntax), Vec<SourceInstanceId>>,
     module_children: BTreeMap<SourceInstanceId, Vec<(CompilationModuleEdge, SourceInstanceId)>>,
     include_children: BTreeMap<SourceInstanceId, Vec<(CompilationIncludeEdge, SourceInstanceId)>>,
-    identities: BTreeSet<(String, CompilationDomain)>,
+    identities: BTreeSet<(String, super::SourceSyntax, CompilationDomain)>,
     derived_limit: usize,
     issues: Vec<SourceInstanceIssue>,
     metrics: SourceInstanceMetrics,
 }
 
 impl SourceInstances {
-    #[cfg(test)]
-    pub(crate) fn build(
-        roots: &[CompilationRoot],
-        modules: &[CompilationModuleEdge],
-        includes: &[CompilationIncludeEdge],
-    ) -> Self {
-        Self::build_with_limit(roots, modules, includes, None)
-    }
-
-    pub(crate) fn build_with_limit(
-        roots: &[CompilationRoot],
-        modules: &[CompilationModuleEdge],
-        includes: &[CompilationIncludeEdge],
-        derived_limit: Option<usize>,
-    ) -> Self {
-        let module_edges = grouped_modules(modules);
-        let include_edges = grouped_includes(includes);
-        let derived_limit = derived_limit.unwrap_or_else(|| {
-            modules
-                .len()
-                .saturating_add(includes.len())
-                .saturating_mul(8)
-                .max(MIN_DERIVED_SOURCE_CONTEXTS)
-        });
-        let mut graph = Self {
-            instances: Vec::new(),
-            by_file: BTreeMap::new(),
-            module_children: BTreeMap::new(),
-            include_children: BTreeMap::new(),
-            identities: BTreeSet::new(),
-            derived_limit,
-            issues: Vec::new(),
-            metrics: SourceInstanceMetrics::default(),
-        };
-        let mut queue = VecDeque::new();
-        for root in roots {
-            if let Some(id) = graph.push(
-                root.file.clone(),
-                root.domain.clone(),
-                None,
-                SourceEntry::CargoRoot,
-                SyntaxGuard::Ordinary,
-                InheritedBindings::default(),
-                0,
-            ) {
-                queue.push_back(id);
-            }
-        }
-        while let Some(parent) = queue.pop_front() {
-            let instance = graph.instances[parent.0].clone();
-            let key = (instance.file.clone(), instance.domain.clone());
-            for edge in module_edges.get(&key).into_iter().flatten() {
-                if let Some(child) = graph.add_child(
-                    parent,
-                    edge.child.clone(),
-                    SourceEntry::Module((*edge).clone()),
-                ) {
-                    graph
-                        .module_children
-                        .entry(parent)
-                        .or_default()
-                        .push(((*edge).clone(), child));
-                    queue.push_back(child);
-                }
-            }
-            for edge in include_edges.get(&key).into_iter().flatten() {
-                if let Some(child) = graph.add_child(
-                    parent,
-                    edge.child.clone(),
-                    SourceEntry::Include((*edge).clone()),
-                ) {
-                    graph
-                        .include_children
-                        .entry(parent)
-                        .or_default()
-                        .push(((*edge).clone(), child));
-                    queue.push_back(child);
-                }
-            }
-        }
-        graph
-    }
-
     fn add_child(
         &mut self,
         parent: SourceInstanceId,
@@ -165,8 +86,13 @@ impl SourceInstances {
             return None;
         }
         let (guard, inherited) = child_context(parent_instance, &entry)?;
+        let syntax = match &entry {
+            SourceEntry::Module(edge) => edge.child_syntax,
+            SourceEntry::Include(edge) => edge.child_syntax,
+            SourceEntry::CargoRoot => return None,
+        };
         self.push(
-            file,
+            SourceOccurrence { file, syntax },
             parent_instance.domain.clone(),
             Some(parent),
             entry,
@@ -178,7 +104,7 @@ impl SourceInstances {
 
     fn push(
         &mut self,
-        file: String,
+        occurrence: SourceOccurrence,
         domain: CompilationDomain,
         parent: Option<SourceInstanceId>,
         entered_from: SourceEntry,
@@ -186,7 +112,8 @@ impl SourceInstances {
         inherited: InheritedBindings,
         depth: usize,
     ) -> Option<SourceInstanceId> {
-        let identity = (file.clone(), domain.clone());
+        let SourceOccurrence { file, syntax } = occurrence;
+        let identity = (file.clone(), syntax, domain.clone());
         let base = self.identities.insert(identity);
         if !base && self.metrics.derived_contexts >= self.derived_limit {
             self.record_issue(SourceInstanceIssue::DerivedContextLimit {
@@ -205,18 +132,22 @@ impl SourceInstances {
         let InheritedBindings {
             generic_types,
             generic_values,
-            generic_bounds,
+            trait_bounds,
             current_self,
             value_shadows,
         } = inherited;
-        self.by_file.entry(file.clone()).or_default().push(id);
+        self.by_file
+            .entry((file.clone(), syntax))
+            .or_default()
+            .push(id);
         self.instances.push(SourceInstance {
             file,
+            syntax,
             domain,
             guard,
             generic_types,
             generic_values,
-            generic_bounds,
+            trait_bounds,
             current_self,
             value_shadows,
             parent,
@@ -226,6 +157,9 @@ impl SourceInstances {
         Some(id)
     }
 }
+
+#[path = "source_instance_build.rs"]
+mod build;
 
 #[path = "source_instance_access.rs"]
 mod access;

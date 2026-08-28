@@ -157,9 +157,15 @@ fn merge_candidates(
 ) {
     for candidate in candidates {
         if let Some(existing) = target.iter_mut().find(|existing| {
-            existing.name == candidate.name && existing.canonical == candidate.canonical
+            existing.name == candidate.name
+                && existing.canonical == candidate.canonical
+                && existing.projection == candidate.projection
         }) {
             existing.quality = existing.quality.max(candidate.quality);
+            existing.provider_complete &= candidate.provider_complete;
+            existing
+                .provider_authorities
+                .extend(candidate.provider_authorities.iter().cloned());
         } else {
             target.push(candidate.clone());
         }

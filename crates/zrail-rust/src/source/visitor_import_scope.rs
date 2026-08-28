@@ -44,7 +44,7 @@ impl FactVisitor<'_> {
                 &enclosing_guard,
                 &lexical_scope,
             ));
-        self.trait_inheritance
+        self.trait_declarations
             .extend(crate::source::trait_providers::collect(
                 items.iter().copied(),
                 &enclosing_guard,

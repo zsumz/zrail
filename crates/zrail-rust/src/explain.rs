@@ -44,8 +44,10 @@ pub fn explain_path(
         .source
         .files
         .iter()
-        .find(|file| file.relative == relative)
-        .map_or(Reachability::UNREACHABLE, |file| file.reachability);
+        .filter(|file| file.relative == relative)
+        .fold(Reachability::UNREACHABLE, |reachability, file| {
+            reachability.join(file.reachability)
+        });
     let package = model
         .cargo
         .packages

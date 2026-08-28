@@ -1,9 +1,12 @@
 //! Complex visitor walks preserve mutation, macro, module, and block semantics.
 
+mod async_syntax;
+pub(super) use async_syntax::{visit_async, visit_await};
+
 use syn::{
-    BinOp, Block, ExprAssign, ExprAsync, ExprAwait, ExprBinary, ExprClosure, ExprForLoop,
-    ExprRawAddr, ExprReference, ImplItemFn, Item, ItemFn, ItemImpl, ItemMod, ItemTrait, Macro,
-    PointerMutability, Signature, Stmt, TraitItemFn,
+    BinOp, Block, ExprAssign, ExprBinary, ExprClosure, ExprForLoop, ExprRawAddr, ExprReference,
+    ImplItemFn, Item, ItemFn, ItemImpl, ItemMod, ItemTrait, Macro, PointerMutability, Signature,
+    Stmt, TraitItemFn,
     spanned::Spanned,
     visit::{self, Visit},
 };
@@ -84,14 +87,6 @@ pub(super) fn visit_raw_address(visitor: &mut FactVisitor<'_>, expression: &Expr
     }
 }
 
-pub(super) fn visit_async(visitor: &mut FactVisitor<'_>, expression: &ExprAsync) {
-    visitor.record_async_syntax(
-        zrail_core::AsyncSyntax::AsyncBlock,
-        expression.async_token.span,
-    );
-    visit::visit_expr_async(visitor, expression);
-}
-
 pub(super) fn visit_closure(visitor: &mut FactVisitor<'_>, expression: &ExprClosure) {
     if let Some(token) = expression.asyncness {
         visitor.record_async_syntax(zrail_core::AsyncSyntax::AsyncClosure, token.span);
@@ -108,11 +103,6 @@ pub(super) fn visit_for(visitor: &mut FactVisitor<'_>, expression: &ExprForLoop)
     visitor.with_pattern_values(&expression.pat, input, |visitor| {
         visitor.visit_block(&expression.body);
     });
-}
-
-pub(super) fn visit_await(visitor: &mut FactVisitor<'_>, expression: &ExprAwait) {
-    visitor.record_async_syntax(zrail_core::AsyncSyntax::Await, expression.await_token.span);
-    visit::visit_expr_await(visitor, expression);
 }
 
 pub(super) fn visit_item_fn(visitor: &mut FactVisitor<'_>, function: &ItemFn) {
@@ -138,28 +128,40 @@ pub(super) fn visit_item_impl(visitor: &mut FactVisitor<'_>, implementation: &It
         .trait_
         .as_ref()
         .filter(|(negative, _, _)| negative.is_none())
-        .map(|(_, path, _)| vec![super::super::fact::written_path(path)])
+        .map(|(_, path, _)| {
+            vec![super::super::trait_bounds::explicit(
+                super::super::BoundSubject::SelfType,
+                vec![super::super::fact::written_path(path)],
+                &visitor.syntax_guard(),
+                &visitor.lexical_scope,
+                super::super::fact::source_span(path.span()),
+            )]
+        })
         .unwrap_or_default();
     visitor.with_self_type(&implementation.self_ty, |visitor| {
-        visitor.with_generics_and_self_bounds(
-            &implementation.generics,
-            true,
-            self_bounds,
-            |visitor| {
-                visit::visit_item_impl(visitor, implementation);
-            },
-        );
+        visitor.with_generics_and_bounds(&implementation.generics, true, self_bounds, |visitor| {
+            visit::visit_item_impl(visitor, implementation);
+        });
     });
 }
 
 pub(super) fn visit_item_trait(visitor: &mut FactVisitor<'_>, item: &ItemTrait) {
     visitor.record_unsafe_trait(item);
-    visitor.with_generics_and_self_bounds(
-        &item.generics,
-        true,
+    let mut bounds = vec![super::super::trait_bounds::explicit(
+        super::super::BoundSubject::SelfType,
         vec![item.ident.to_string()],
-        |visitor| visit::visit_item_trait(visitor, item),
-    );
+        &visitor.syntax_guard(),
+        &visitor.lexical_scope,
+        super::super::fact::source_span(item.ident.span()),
+    )];
+    bounds.extend(super::super::trait_bounds::associated_types(
+        item,
+        &visitor.syntax_guard(),
+        &visitor.lexical_scope,
+    ));
+    visitor.with_generics_and_bounds(&item.generics, true, bounds, |visitor| {
+        visit::visit_item_trait(visitor, item);
+    });
 }
 
 pub(super) fn visit_impl_item_fn(visitor: &mut FactVisitor<'_>, function: &ImplItemFn) {

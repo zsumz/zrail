@@ -6,12 +6,25 @@ use super::{
 };
 
 impl SourceInstances {
+    pub(crate) fn iter(&self) -> impl Iterator<Item = (SourceInstanceId, &SourceInstance)> {
+        self.instances
+            .iter()
+            .enumerate()
+            .map(|(index, source)| (SourceInstanceId(index), source))
+    }
+
     pub(crate) fn get(&self, id: SourceInstanceId) -> Option<&SourceInstance> {
         self.instances.get(id.0)
     }
 
-    pub(crate) fn for_file(&self, file: &str) -> &[SourceInstanceId] {
-        self.by_file.get(file).map_or(&[], Vec::as_slice)
+    pub(crate) fn for_source(
+        &self,
+        file: &str,
+        syntax: super::super::SourceSyntax,
+    ) -> &[SourceInstanceId] {
+        self.by_file
+            .get(&(file.to_owned(), syntax))
+            .map_or(&[], Vec::as_slice)
     }
 
     pub(crate) fn includes_from(
@@ -42,8 +55,12 @@ impl SourceInstances {
         self.metrics
     }
 
-    pub(crate) fn requires_projection(&self, file: &str) -> bool {
-        self.for_file(file)
+    pub(crate) fn requires_projection(
+        &self,
+        file: &str,
+        syntax: super::super::SourceSyntax,
+    ) -> bool {
+        self.for_source(file, syntax)
             .iter()
             .copied()
             .any(|id| !self.includes_from(id).is_empty() || self.has_include_ancestor(id))

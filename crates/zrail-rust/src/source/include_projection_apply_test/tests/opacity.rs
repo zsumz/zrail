@@ -216,6 +216,7 @@ fn root_bindings(index: &SourceIndex, authorize_opacity: bool) -> IncludeBinding
         index,
         &[CompilationRoot {
             file: "src/lib.rs".into(),
+            syntax: SourceSyntax::Items,
             domain: domain(),
         }],
         &[],

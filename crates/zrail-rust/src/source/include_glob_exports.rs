@@ -37,7 +37,7 @@ fn collect_inner(
     let mut sites = Vec::new();
     for binding in bindings
         .files
-        .get(&source.file)
+        .get(&instance)
         .into_iter()
         .flat_map(|bindings| &bindings.globs)
     {
