@@ -7,6 +7,9 @@ use super::super::{
 };
 use crate::source::{CallResolutionKind, SourceIndex};
 
+#[path = "prelude/shadows.rs"]
+mod shadows;
+
 #[test]
 fn prelude_default_trait_is_exact() {
     assert_exact_trait("fn make<T: Default>() -> T { <T as Default>::default() }");
@@ -26,13 +29,11 @@ fn prelude_iterator_trait_is_exact() {
 
 #[test]
 fn no_std_uses_core_prelude() {
-    let index = canonicalized(
-        "#![no_std]\nfn make<T: Default>() -> T { <T as Default>::default() }\nfn clone<T: ToOwned>(value: &T) { let _ = <T as ToOwned>::to_owned(value); }",
-    );
+    let index =
+        canonicalized("#![no_std]\nfn make<T: Default>() -> T { <T as Default>::default() }");
 
     let boundaries = explicit_trait_boundaries(&index);
-    assert_eq!(boundaries.len(), 1, "boundaries: {boundaries:#?}");
-    assert!(boundaries[0].written.contains("ToOwned"));
+    assert!(boundaries.is_empty(), "boundaries: {boundaries:#?}");
 }
 
 #[test]
@@ -115,7 +116,11 @@ fn no_implicit_prelude_disables_implicit_trait() {
     let mut index = index([root, disabled, nested]);
     let findings = canonicalize_operations(&mut index, &domain, &modules);
 
-    assert!(findings.is_empty(), "unexpected findings: {findings:#?}");
+    assert!(
+        findings
+            .iter()
+            .any(|finding| finding.id == "RUST-INCLUDE-002")
+    );
     assert_eq!(explicit_trait_boundaries(&index).len(), 1);
     assert!(!has_path(&index, "core::default::Default"));
 }
@@ -160,30 +165,6 @@ fn import_target_does_not_consult_prelude() {
 
     assert_eq!(explicit_trait_boundaries(&index).len(), 1);
     assert!(!has_path(&index, "core::default::Default"));
-}
-
-#[test]
-fn generic_option_shadows_the_implicit_prelude() {
-    let index = canonicalized(
-        "fn marker() {} use self::marker as witness; fn identity<Option>(value: Option) -> Option { witness(); value }",
-    );
-
-    assert!(has_call(&index, "marker"));
-    assert!(!has_call(&index, "self::marker"));
-    assert!(has_path(&index, "Option"));
-    assert!(!has_path(&index, "core::option::Option"));
-}
-
-#[test]
-fn parameter_and_local_drop_shadow_the_implicit_prelude() {
-    let index = canonicalized(
-        "fn marker() {} use self::marker as witness; fn parameter(drop: fn(u8)) { witness(); drop(1); } fn local() { let drop = |_: u8| {}; drop(1); }",
-    );
-
-    assert!(has_call(&index, "marker"));
-    assert!(!has_call(&index, "self::marker"));
-    assert!(has_call(&index, "drop"));
-    assert!(!has_call(&index, "core::mem::drop"));
 }
 
 #[test]

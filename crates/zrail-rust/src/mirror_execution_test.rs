@@ -150,6 +150,7 @@ fn declaration(guard: SyntaxGuard) -> ObservedFact {
     ObservedFact {
         name: "proof".into(),
         written: None,
+        implicit_prelude: crate::source::ImplicitPreludeEligibility::Disabled,
         canonical: Vec::new(),
         span: None,
         quality: AnalysisQuality::Exact,

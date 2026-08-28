@@ -27,6 +27,7 @@ pub(super) fn enum_variants(
             BindingDraft {
                 name: Some(name.clone()),
                 target: name,
+                generic_types: Vec::new(),
                 kind: BindingKind::LocalConstructor(constructor_form(&variant.fields)),
                 anchor: BindingAnchor::Lexical,
                 visibility: visibility(&item.vis),

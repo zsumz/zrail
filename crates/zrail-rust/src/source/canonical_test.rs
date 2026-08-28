@@ -73,6 +73,7 @@ fn observed(name: &str, quality: AnalysisQuality) -> ObservedFact {
     ObservedFact {
         name: name.into(),
         written: None,
+        implicit_prelude: crate::source::ImplicitPreludeEligibility::Disabled,
         canonical: Vec::new(),
         span: None,
         quality,

@@ -32,6 +32,7 @@ pub(crate) struct CompilationIncludeEdge {
     pub(crate) context: IncludeContext,
     pub(crate) parent_scope: Vec<SourceSpan>,
     pub(crate) generic_types: Vec<String>,
+    pub(crate) prelude_value_shadows: Vec<(String, super::SyntaxGuard)>,
     pub(crate) include_span: SourceSpan,
     pub(crate) occurrence: IncludeOccurrenceId,
 }
@@ -55,6 +56,7 @@ pub(super) fn include_boundary(
         context,
         lexical_scope: Vec::new(),
         generic_types: Vec::new(),
+        prelude_value_shadows: Vec::new(),
         occurrence: IncludeOccurrenceId::new(span),
         span: Some(span),
     })

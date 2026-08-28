@@ -22,6 +22,7 @@ pub(super) fn fact(name: impl Into<String>, span: Span, quality: AnalysisQuality
     ObservedFact {
         name: name.into(),
         written: None,
+        implicit_prelude: super::ImplicitPreludeEligibility::Disabled,
         canonical: Vec::new(),
         span: Some(source_span(span)),
         quality,
@@ -40,6 +41,7 @@ pub(super) fn written_fact(
 ) -> ObservedFact {
     let mut fact = fact(name, span, quality);
     fact.written = Some(written.into());
+    fact.implicit_prelude = super::ImplicitPreludeEligibility::Eligible;
     fact.lexical_scope = lexical_scope.to_vec();
     fact
 }

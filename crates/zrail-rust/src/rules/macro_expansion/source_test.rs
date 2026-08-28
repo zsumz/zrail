@@ -82,6 +82,7 @@ fn candidate(requirement: &str) -> MacroCandidate {
         observation: ObservedFact {
             name: "derive".into(),
             written: None,
+            implicit_prelude: crate::source::ImplicitPreludeEligibility::Disabled,
             canonical: vec!["derive".into()],
             span: None,
             quality: AnalysisQuality::Exact,

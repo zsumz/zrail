@@ -5,7 +5,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use zrail_core::AnalysisQuality;
 
 use super::{
-    ObservedFact, SourceInstanceId, SyntaxGuard,
+    ImplicitPreludeEligibility, ObservedFact, SourceInstanceId, SyntaxGuard,
+    include_binding_helpers::{lexical_shadow, normalize, unresolved},
     include_bindings::{IncludeBindings, ResolvedPath},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
     include_resolution_state::{ResolutionUsage, WrittenResolveRequest},
@@ -20,6 +21,7 @@ pub(super) struct ResolutionCacheKey {
     scope: Vec<zrail_core::SourceSpan>,
     usage: ResolutionUsage,
     guard: SyntaxGuard,
+    implicit_prelude: ImplicitPreludeEligibility,
 }
 
 pub(super) struct CandidateAggregate {
@@ -58,41 +60,68 @@ pub(super) fn aggregate(
     let mut common = None;
     for instance in instances {
         let written = fact.written.as_deref().unwrap_or(&fact.name);
+        let source = bindings.instances.get(*instance);
+        let implicit_prelude = source.map_or(fact.implicit_prelude, |source| {
+            shadow::eligibility(fact, usage, source)
+        });
         let key = ResolutionCacheKey {
             instance: *instance,
             written: written.into(),
             scope: fact.lexical_scope.clone(),
             usage,
             guard: fact.guard.clone(),
+            implicit_prelude,
         };
-        let mut resolved = if let Some(resolved) = cache.get(&key) {
+        let resolved = if let Some(resolved) = cache.get(&key) {
             resolved.clone()
         } else {
-            let mut seen = BTreeSet::new();
-            let resolved = bindings.resolve_written(
-                &WrittenResolveRequest {
-                    instance: *instance,
-                    written,
-                    scope: &fact.lexical_scope,
-                    depth: 0,
-                    usage,
-                    guard: &fact.guard,
-                    allow_implicit_prelude: false,
-                },
-                &mut seen,
-                budget,
-            )?;
+            let resolved = match implicit_prelude {
+                ImplicitPreludeEligibility::LocalShadow => vec![lexical_shadow(written, usage)],
+                ImplicitPreludeEligibility::GenericShadow => {
+                    vec![unresolved(written)]
+                }
+                ImplicitPreludeEligibility::PossibleShadow => {
+                    let mut candidates = bindings.resolve_written(
+                        &WrittenResolveRequest {
+                            instance: *instance,
+                            written,
+                            scope: &fact.lexical_scope,
+                            depth: 0,
+                            usage,
+                            guard: &fact.guard,
+                            allow_implicit_prelude: true,
+                        },
+                        &mut BTreeSet::new(),
+                        budget,
+                    )?;
+                    for candidate in &mut candidates {
+                        candidate.quality = AnalysisQuality::Unresolved;
+                        candidate.blocks_completeness = true;
+                    }
+                    candidates.push(unresolved(written));
+                    normalize(candidates)
+                }
+                ImplicitPreludeEligibility::Eligible | ImplicitPreludeEligibility::Disabled => {
+                    let mut seen = BTreeSet::new();
+                    bindings.resolve_written(
+                        &WrittenResolveRequest {
+                            instance: *instance,
+                            written,
+                            scope: &fact.lexical_scope,
+                            depth: 0,
+                            usage,
+                            guard: &fact.guard,
+                            allow_implicit_prelude: implicit_prelude
+                                == ImplicitPreludeEligibility::Eligible,
+                        },
+                        &mut seen,
+                        budget,
+                    )?
+                }
+            };
             cache.insert(key, resolved.clone());
             resolved
         };
-        let source = bindings.instances.get(*instance);
-        if source.is_some_and(|source| generic_root(fact, &source.generic_types)) {
-            for candidate in &mut resolved {
-                candidate.quality = AnalysisQuality::Unresolved;
-                candidate.requires_projection = true;
-                candidate.blocks_completeness = true;
-            }
-        }
         let test_instance = source.is_some_and(|source| source.domain.mode.enables_cfg_test());
         if test_instance {
             test_coverage.instances += 1;
@@ -130,13 +159,8 @@ pub(super) fn aggregate(
     Ok((aggregate, compatible, test_coverage))
 }
 
-fn generic_root(fact: &ObservedFact, generic_types: &[String]) -> bool {
-    let Some(written) = fact.written.as_deref() else {
-        return false;
-    };
-    let root = written.trim_start_matches("::").split("::").next();
-    root.is_some_and(|root| generic_types.iter().any(|generic| generic == root))
-}
+#[path = "include_projection_shadow.rs"]
+mod shadow;
 
 #[derive(Clone, Copy)]
 pub(super) struct TestCoverage {

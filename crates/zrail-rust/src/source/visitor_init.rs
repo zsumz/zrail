@@ -12,6 +12,7 @@ impl<'a> FactVisitor<'a> {
             .map(|(path, quality, guard)| ObservedFact {
                 name: path.to_owned(),
                 written: None,
+                implicit_prelude: super::ImplicitPreludeEligibility::Disabled,
                 canonical: Vec::new(),
                 span: None,
                 quality,
@@ -27,6 +28,7 @@ impl<'a> FactVisitor<'a> {
                 .map(|(path, guard)| ObservedFact {
                     name: path.to_owned(),
                     written: None,
+                    implicit_prelude: super::ImplicitPreludeEligibility::Disabled,
                     canonical: Vec::new(),
                     span: None,
                     quality: AnalysisQuality::Conservative,
@@ -41,6 +43,7 @@ impl<'a> FactVisitor<'a> {
             guard_context: super::SyntaxGuard::Ordinary,
             lexical_scope: Vec::new(),
             generic_types: Vec::new(),
+            generic_values: Vec::new(),
             next_path_namespace: super::FactNamespace::Unknown,
             paths,
             calls: Vec::new(),

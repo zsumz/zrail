@@ -100,6 +100,7 @@ pub(super) fn apply(
             file.import_bindings.push(ImportBindingFact {
                 name: Some(binding.name.clone()),
                 target: binding.name.clone(),
+                generic_types: Vec::new(),
                 kind: binding_kind(binding.kind),
                 anchor: BindingAnchor::Lexical,
                 visibility: if binding.public {

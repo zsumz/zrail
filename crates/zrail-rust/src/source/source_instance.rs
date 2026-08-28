@@ -2,14 +2,14 @@
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
-use super::{
-    CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, IncludeContext, SyntaxGuard,
-};
+use super::{CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, SyntaxGuard};
 
 use super::{
     source_instance_edges::{MIN_DERIVED_SOURCE_CONTEXTS, SourceInstanceMetrics},
     source_instance_edges::{grouped_includes, grouped_modules},
 };
+
+use inheritance::{InheritedBindings, child_context};
 
 const MAX_SOURCE_INSTANCE_DEPTH: usize = 128;
 
@@ -37,6 +37,7 @@ pub(crate) struct SourceInstance {
     pub(crate) domain: CompilationDomain,
     pub(crate) guard: SyntaxGuard,
     pub(crate) generic_types: Vec<String>,
+    pub(crate) prelude_value_shadows: Vec<(String, SyntaxGuard)>,
     pub(crate) parent: Option<SourceInstanceId>,
     pub(crate) entered_from: SourceEntry,
     depth: usize,
@@ -96,7 +97,7 @@ impl SourceInstances {
                 None,
                 SourceEntry::CargoRoot,
                 SyntaxGuard::Ordinary,
-                Vec::new(),
+                InheritedBindings::default(),
                 0,
             ) {
                 queue.push_back(id);
@@ -157,28 +158,14 @@ impl SourceInstances {
             self.record_issue(SourceInstanceIssue::Cycle { chain });
             return None;
         }
-        let guard = match &entry {
-            SourceEntry::Module(edge) => edge.guard.clone(),
-            SourceEntry::Include(edge) => edge.guard.clone(),
-            SourceEntry::CargoRoot => return None,
-        };
-        let generic_types = match &entry {
-            SourceEntry::Include(edge) if edge.context == IncludeContext::Expression => {
-                let mut generic_types = parent_instance.generic_types.clone();
-                generic_types.extend(edge.generic_types.iter().cloned());
-                generic_types.sort();
-                generic_types.dedup();
-                generic_types
-            }
-            _ => Vec::new(),
-        };
+        let (guard, inherited) = child_context(parent_instance, &entry)?;
         self.push(
             file,
             parent_instance.domain.clone(),
             Some(parent),
             entry,
             guard,
-            generic_types,
+            inherited,
             depth,
         )
     }
@@ -190,7 +177,7 @@ impl SourceInstances {
         parent: Option<SourceInstanceId>,
         entered_from: SourceEntry,
         guard: SyntaxGuard,
-        generic_types: Vec<String>,
+        inherited: InheritedBindings,
         depth: usize,
     ) -> Option<SourceInstanceId> {
         let identity = (file.clone(), domain.clone());
@@ -209,12 +196,17 @@ impl SourceInstances {
             self.metrics.derived_contexts = self.metrics.derived_contexts.saturating_add(1);
         }
         let id = SourceInstanceId(self.instances.len());
+        let InheritedBindings {
+            generic_types,
+            prelude_value_shadows,
+        } = inherited;
         self.by_file.entry(file.clone()).or_default().push(id);
         self.instances.push(SourceInstance {
             file,
             domain,
             guard,
             generic_types,
+            prelude_value_shadows,
             parent,
             entered_from,
             depth,
@@ -225,6 +217,9 @@ impl SourceInstances {
 
 #[path = "source_instance_access.rs"]
 mod access;
+
+#[path = "source_instance_inheritance.rs"]
+mod inheritance;
 
 #[cfg(test)]
 #[path = "source_instance_test.rs"]

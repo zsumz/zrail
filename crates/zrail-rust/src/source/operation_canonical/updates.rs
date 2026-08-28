@@ -51,6 +51,7 @@ pub(super) fn expand(
         let subject = ObservedFact {
             name: place.base_name.clone(),
             written: Some(update.written.clone()),
+            implicit_prelude: operation.identity.implicit_prelude,
             canonical: Vec::new(),
             span: place.base_span,
             quality: place.base_quality,
@@ -167,6 +168,7 @@ fn field_operation(
         identity: ObservedFact {
             name,
             written: None,
+            implicit_prelude: crate::source::ImplicitPreludeEligibility::Disabled,
             canonical: Vec::new(),
             span: source.struct_update.as_ref().map(|update| update.rest_span),
             quality,

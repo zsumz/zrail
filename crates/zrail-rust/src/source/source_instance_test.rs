@@ -1,7 +1,7 @@
 //! Source-context limits distinguish ordinary input from multiplicative expansion.
 
 use super::*;
-use crate::source::{CompilationMode, IncludeOccurrenceId};
+use crate::source::{CompilationMode, IncludeContext, IncludeOccurrenceId};
 use zrail_core::SourceSpan;
 
 #[test]
@@ -116,6 +116,7 @@ fn include(parent: &str, child: &str) -> CompilationIncludeEdge {
         context: IncludeContext::Items,
         parent_scope: Vec::new(),
         generic_types: Vec::new(),
+        prelude_value_shadows: Vec::new(),
         include_span: span(),
         occurrence: IncludeOccurrenceId::new(span()),
     }

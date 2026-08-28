@@ -129,6 +129,7 @@ impl<'a> Resolver<'a> {
         let observed = ObservedFact {
             name: path.into(),
             written: Some(path.into()),
+            implicit_prelude: crate::source::ImplicitPreludeEligibility::Eligible,
             canonical: Vec::new(),
             span: Some(fact.span),
             quality: fact.quality,

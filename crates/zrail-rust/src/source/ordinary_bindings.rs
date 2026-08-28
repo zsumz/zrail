@@ -52,6 +52,7 @@ pub(super) fn collect<'a>(
                     BindingDraft {
                         name: Some(name),
                         target: item.ident.to_string(),
+                        generic_types: Vec::new(),
                         kind: BindingKind::Import,
                         anchor: if item.ident == "self" {
                             BindingAnchor::CrateRoot
@@ -89,6 +90,11 @@ pub(super) fn collect<'a>(
                     BindingDraft {
                         name: Some(item.ident.to_string()),
                         target,
+                        generic_types: item
+                            .generics
+                            .type_params()
+                            .map(|parameter| parameter.ident.to_string())
+                            .collect(),
                         kind,
                         anchor,
                         visibility: visibility(&item.vis),

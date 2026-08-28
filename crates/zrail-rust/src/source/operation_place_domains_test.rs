@@ -48,6 +48,7 @@ fn fact(name: &str, guard: SyntaxGuard, physical: bool) -> ObservedFact {
     ObservedFact {
         name: name.into(),
         written: physical.then(|| "State".into()),
+        implicit_prelude: crate::source::ImplicitPreludeEligibility::Disabled,
         canonical: Vec::new(),
         span: Some(span()),
         quality: AnalysisQuality::Exact,

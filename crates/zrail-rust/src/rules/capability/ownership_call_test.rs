@@ -27,6 +27,7 @@ fn unresolved_direct_call_fails_closed_inside_its_allowed_owner() {
     file.calls.push(ObservedFact {
         name: "danger".into(),
         written: Some("danger".into()),
+        implicit_prelude: crate::source::ImplicitPreludeEligibility::Disabled,
         canonical: Vec::new(),
         span: None,
         quality: AnalysisQuality::Unresolved,

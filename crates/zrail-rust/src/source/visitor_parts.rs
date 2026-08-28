@@ -1,11 +1,12 @@
 //! Visitor support is grouped behind its traversal façade without widening it.
 
 use super::{
-    AsyncSyntaxFact, CompileEffectFact, ConstructorForm, FactNamespace, GlobImportFact,
-    GuardAvailability, MacroCandidate, MacroDerivation, MacroExpansionFact, ObservedFact,
-    SourceOperationFact, SourceOperationKind, SyntaxGuard, attributes, calls, fact, glob_imports,
-    import_helpers, imports, includes, macro_expansion, macro_origins, model, operation_model,
-    ordinary_bindings, place_expression, scoped_globs, scoped_imports,
+    AsyncSyntaxFact, CfgPredicate, CompileEffectFact, ConstructorForm, FactNamespace,
+    GlobImportFact, GuardAvailability, ImplicitPreludeEligibility, MacroCandidate, MacroDerivation,
+    MacroExpansionFact, ObservedFact, SourceOperationFact, SourceOperationKind, SyntaxGuard,
+    attributes, calls, fact, glob_imports, import_helpers, imports, includes, macro_expansion,
+    macro_origins, model, operation_model, ordinary_bindings, place_expression, scoped_globs,
+    scoped_imports,
 };
 
 #[path = "visitor_async.rs"]
@@ -32,6 +33,8 @@ pub(in crate::source) mod visitor_operations;
 pub(in crate::source) mod visitor_paths;
 #[path = "visitor_patterns.rs"]
 pub(in crate::source) mod visitor_patterns;
+#[path = "visitor_prelude.rs"]
+pub(in crate::source) mod visitor_prelude;
 #[path = "visitor_values.rs"]
 pub(in crate::source) mod visitor_values;
 

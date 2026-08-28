@@ -42,6 +42,17 @@ impl IncludeBindings {
                 module,
             ));
         }
+        if self.extern_prelude_precedes_implicit(request) {
+            return Ok(vec![ResolvedPath {
+                name: request.written.into(),
+                quality: AnalysisQuality::Exact,
+                crossed_include,
+                requires_projection: crossed_include,
+                blocks_completeness: false,
+                origin: ResolvedOrigin::External,
+                terminal: ResolvedTerminal::Unknown,
+            }]);
+        }
         if request.allow_implicit_prelude
             && let Some(prelude) = self.implicit_prelude_candidate(
                 request.instance,
@@ -54,6 +65,11 @@ impl IncludeBindings {
             )
         {
             return Ok(vec![prelude]);
+        }
+        if request.allow_implicit_prelude
+            && super::include_bindings::known_implicit_prelude_name(split_root(request.written).0)
+        {
+            return Ok(vec![unresolved(request.written)]);
         }
         Ok(vec![ResolvedPath {
             name: request.written.into(),

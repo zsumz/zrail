@@ -14,9 +14,10 @@ pub(crate) use super::{
     macro_model::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin},
     model::{
         AsyncSyntaxFact, BindingAnchor, BindingKind, BindingVisibility, CallResolutionFact,
-        CallResolutionKind, ConstructorForm, FactNamespace, GuardAvailability, ImportBindingFact,
-        IncludeBoundary, IncludeContext, MacroImportFact, ModuleBinding, ModuleDeclaration,
-        ObservedFact, RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
+        CallResolutionKind, ConstructorForm, FactNamespace, GuardAvailability,
+        ImplicitPreludeEligibility, ImportBindingFact, IncludeBoundary, IncludeContext,
+        MacroImportFact, ModuleBinding, ModuleDeclaration, ObservedFact, RustFileFacts,
+        SourceIndex, SourceSyntax, SyntaxGuard,
     },
     modules::{CompilationModuleEdge, ResolvedModuleEdge},
     operation_model::{SourceOperationFact, SourceOperationKind},

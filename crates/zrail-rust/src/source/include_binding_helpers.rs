@@ -43,6 +43,29 @@ pub(super) fn unresolved(name: &str) -> ResolvedPath {
     }
 }
 
+pub(super) fn lexical_shadow(
+    name: &str,
+    usage: super::include_resolution_state::ResolutionUsage,
+) -> ResolvedPath {
+    ResolvedPath {
+        name: name.into(),
+        quality: AnalysisQuality::Exact,
+        crossed_include: false,
+        requires_projection: true,
+        blocks_completeness: false,
+        origin: ResolvedOrigin::CrateLocal,
+        terminal: if matches!(
+            usage,
+            super::include_resolution_state::ResolutionUsage::Type
+                | super::include_resolution_state::ResolutionUsage::OperationType
+        ) {
+            ResolvedTerminal::Type
+        } else {
+            ResolvedTerminal::Value
+        },
+    }
+}
+
 pub(super) fn opaque(name: &str, blocks_completeness: bool) -> ResolvedPath {
     ResolvedPath {
         name: name.into(),

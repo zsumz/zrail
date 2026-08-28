@@ -110,6 +110,7 @@ fn imported_candidate(
             import.target.clone()
         },
         written: original.written.clone(),
+        implicit_prelude: original.implicit_prelude,
         canonical: Vec::new(),
         span: original.span,
         quality: if local {

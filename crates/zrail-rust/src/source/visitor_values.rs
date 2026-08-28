@@ -163,14 +163,45 @@ impl FactVisitor<'_> {
     }
 
     pub(in crate::source) fn local_value_shadow_guard(&self, name: &str) -> SyntaxGuard {
+        let name = name.strip_prefix("r#").unwrap_or(name);
         SyntaxGuard::from_predicate(CfgPredicate::any(
             self.local_values
                 .iter()
-                .filter_map(|scope| scope.get(name))
-                .flatten()
+                .flat_map(|scope| scope.iter())
+                .filter(|(candidate, _)| candidate.strip_prefix("r#").unwrap_or(candidate) == name)
+                .flat_map(|(_, bindings)| bindings)
                 .map(|binding| binding.guard.predicate())
                 .collect(),
         ))
+    }
+
+    pub(in crate::source) fn implicit_prelude_value_shadows(&self) -> Vec<(String, SyntaxGuard)> {
+        let mut guards = BTreeMap::<String, Vec<CfgPredicate>>::new();
+        for name in &self.generic_values {
+            let name = name.strip_prefix("r#").unwrap_or(name);
+            if crate::source::include_bindings::known_implicit_prelude_name(name) {
+                guards
+                    .entry(name.into())
+                    .or_default()
+                    .push(CfgPredicate::True);
+            }
+        }
+        for scope in &self.local_values {
+            for (name, bindings) in scope {
+                let name = name.strip_prefix("r#").unwrap_or(name);
+                if !crate::source::include_bindings::known_implicit_prelude_name(name) {
+                    continue;
+                }
+                guards
+                    .entry(name.into())
+                    .or_default()
+                    .extend(bindings.iter().map(|binding| binding.guard.predicate()));
+            }
+        }
+        guards
+            .into_iter()
+            .map(|(name, guards)| (name, SyntaxGuard::from_predicate(CfgPredicate::any(guards))))
+            .collect()
     }
 
     fn install_pattern(

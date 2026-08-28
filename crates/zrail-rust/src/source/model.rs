@@ -47,12 +47,22 @@ pub(crate) enum GuardAvailability {
 pub(crate) struct ObservedFact {
     pub(crate) name: String,
     pub(crate) written: Option<String>,
+    pub(crate) implicit_prelude: ImplicitPreludeEligibility,
     pub(crate) canonical: Vec<String>,
     pub(crate) span: Option<SourceSpan>,
     pub(crate) quality: AnalysisQuality,
     pub(crate) guard: SyntaxGuard,
     pub(crate) lexical_scope: Vec<SourceSpan>,
     pub(crate) namespace: FactNamespace,
+}
+
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) enum ImplicitPreludeEligibility {
+    Eligible,
+    Disabled,
+    LocalShadow,
+    GenericShadow,
+    PossibleShadow,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -149,6 +159,7 @@ pub(crate) struct IncludeBoundary {
     pub(crate) context: IncludeContext,
     pub(crate) lexical_scope: Vec<SourceSpan>,
     pub(crate) generic_types: Vec<String>,
+    pub(crate) prelude_value_shadows: Vec<(String, SyntaxGuard)>,
     pub(crate) occurrence: IncludeOccurrenceId,
     pub(crate) span: Option<SourceSpan>,
 }

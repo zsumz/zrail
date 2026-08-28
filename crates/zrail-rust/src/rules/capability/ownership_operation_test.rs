@@ -94,6 +94,7 @@ fn operation(kind: SourceOperationKind, method: Option<&str>) -> SourceOperation
         identity: ObservedFact {
             name: "crate::State::values".into(),
             written: Some("values".into()),
+            implicit_prelude: crate::source::ImplicitPreludeEligibility::Disabled,
             canonical: Vec::new(),
             span: None,
             quality: AnalysisQuality::Exact,

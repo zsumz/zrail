@@ -7,13 +7,15 @@ use super::{FactVisitor, attributes::is_test_attribute, fact::fact};
 
 impl FactVisitor<'_> {
     pub(in crate::source) fn record_call(&mut self, call: &ExprCall) {
-        self.calls.extend(super::calls::facts(
+        let facts = super::calls::facts(
             call,
             self.imports,
             &self.syntax_guard(),
             &self.generic_types,
             &self.lexical_scope,
-        ));
+        );
+        self.calls
+            .extend(self.with_implicit_prelude_scope(facts, true));
     }
 
     pub(in crate::source) fn record_method_call(&mut self, call: &ExprMethodCall) {

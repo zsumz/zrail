@@ -8,7 +8,7 @@ mod walk;
 use syn::{
     Attribute, Block, ExprBinary, ExprForLoop, ExprIf, ExprMacro, ExprMatch, ExprMethodCall,
     ExprPath, ExprRawAddr, ExprStruct, ExprWhile, ItemForeignMod, ItemMacro, ItemMod, ItemStatic,
-    Macro, PatReference, PatStruct, PatType, StmtMacro, TypePath,
+    ItemType, Macro, PatReference, PatStruct, PatType, StmtMacro, TypePath,
     visit::{self, Visit},
 };
 
@@ -191,6 +191,12 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
 
     fn visit_item_trait(&mut self, item: &'ast syn::ItemTrait) {
         walk::visit_item_trait(self, item);
+    }
+
+    fn visit_item_type(&mut self, item: &'ast ItemType) {
+        self.with_generics(&item.generics, false, |visitor| {
+            visit::visit_item_type(visitor, item);
+        });
     }
 
     fn visit_impl_item_fn(&mut self, function: &'ast syn::ImplItemFn) {

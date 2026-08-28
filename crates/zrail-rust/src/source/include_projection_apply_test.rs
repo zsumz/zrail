@@ -177,6 +177,7 @@ fn bindings(index: &SourceIndex) -> IncludeBindings {
             context: IncludeContext::Items,
             parent_scope: Vec::new(),
             generic_types: Vec::new(),
+            prelude_value_shadows: Vec::new(),
             include_span: span(),
             occurrence: IncludeOccurrenceId::new(span()),
         }],
@@ -192,6 +193,7 @@ fn fixture_index() -> SourceIndex {
                 vec![ObservedFact {
                     name: "Spawn::new".into(),
                     written: Some("Spawn::new".into()),
+                    implicit_prelude: crate::source::ImplicitPreludeEligibility::Disabled,
                     canonical: Vec::new(),
                     span: Some(span()),
                     quality: AnalysisQuality::Exact,
@@ -207,6 +209,7 @@ fn fixture_index() -> SourceIndex {
                 vec![ImportBindingFact {
                     name: Some("Spawn".into()),
                     target: "std::process::Command".into(),
+                    generic_types: Vec::new(),
                     kind: BindingKind::Import,
                     anchor: crate::source::BindingAnchor::Lexical,
                     visibility: crate::source::BindingVisibility::Private,
@@ -263,16 +266,6 @@ fn file(
         opaque_binding_macros: Vec::new(),
         facade_implementation: Vec::new(),
     }
-}
-
-fn fact_lengths(index: &SourceIndex) -> Vec<(String, usize, usize)> {
-    let mut lengths = index
-        .files
-        .iter()
-        .map(|file| (file.relative.clone(), file.paths.len(), file.calls.len()))
-        .collect::<Vec<_>>();
-    lengths.sort();
-    lengths
 }
 
 #[path = "include_projection_apply_test/tests/scale.rs"]

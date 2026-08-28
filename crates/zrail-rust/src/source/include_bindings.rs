@@ -22,6 +22,12 @@ use super::{
     macro_binding_policy::BindingMacroPolicy,
 };
 
+pub(in crate::source) fn known_implicit_prelude_name(name: &str) -> bool {
+    let name = name.strip_prefix("r#").unwrap_or(name);
+    implicit_prelude_catalog::core(name, "2024").is_some()
+        || implicit_prelude_catalog::std_only(name).is_some()
+}
+
 pub(super) struct IncludeBindings {
     pub(super) files: BTreeMap<String, FileBindings>,
     pub(super) inline_module_names: BTreeMap<String, BTreeMap<zrail_core::SourceSpan, String>>,

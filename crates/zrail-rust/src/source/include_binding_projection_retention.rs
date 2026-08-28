@@ -109,6 +109,7 @@ pub(super) fn retain_candidates(
             ObservedFact {
                 name,
                 written: None,
+                implicit_prelude: super::super::ImplicitPreludeEligibility::Disabled,
                 canonical: Vec::new(),
                 span: fact.span,
                 quality,

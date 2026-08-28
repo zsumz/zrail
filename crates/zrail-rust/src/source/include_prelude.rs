@@ -14,6 +14,33 @@ use crate::source::{
 };
 
 impl IncludeBindings {
+    pub(in crate::source) fn extern_prelude_precedes_implicit(
+        &self,
+        request: &crate::source::include_resolution_state::ResolveRequest<'_>,
+    ) -> bool {
+        let Some(source) = self.instances.get(request.instance) else {
+            return false;
+        };
+        if source.domain.edition == "2015" {
+            return false;
+        }
+        let (root, suffix) = split_root(request.written);
+        if !self.is_extern_root(request.instance, root) {
+            return false;
+        }
+        if !suffix.is_empty()
+            || matches!(
+                request.usage,
+                ResolutionUsage::Type | ResolutionUsage::OperationType
+            )
+        {
+            return true;
+        }
+        implicit_prelude_catalog::core(root, &source.domain.edition)
+            .or_else(|| implicit_prelude_catalog::std_only(root))
+            .is_none_or(|entry| entry.kind == PreludeItemKind::Type)
+    }
+
     pub(in crate::source) fn implicit_prelude_candidate(
         &self,
         instance: SourceInstanceId,

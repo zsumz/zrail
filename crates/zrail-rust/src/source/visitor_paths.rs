@@ -51,7 +51,9 @@ impl FactVisitor<'_> {
             &self.lexical_scope,
         );
         fact.namespace = std::mem::take(&mut self.next_path_namespace);
-        self.paths.push(fact);
+        let value_position = fact.namespace == super::FactNamespace::Value;
+        self.paths
+            .extend(self.with_implicit_prelude_scope(std::iter::once(fact), value_position));
         self.paths
             .extend(super::calls::candidates(path, self.imports, &name, &guard));
     }

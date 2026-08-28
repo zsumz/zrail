@@ -15,6 +15,7 @@ pub(in crate::source) struct FactVisitor<'a> {
     pub(in crate::source) guard_context: super::SyntaxGuard,
     pub(in crate::source) lexical_scope: Vec<zrail_core::SourceSpan>,
     pub(in crate::source) generic_types: Vec<String>,
+    pub(in crate::source) generic_values: Vec<String>,
     pub(in crate::source) next_path_namespace: super::FactNamespace,
     pub(in crate::source) paths: Vec<ObservedFact>,
     pub(in crate::source) calls: Vec<ObservedFact>,
@@ -54,7 +55,7 @@ impl FactVisitor<'_> {
         include_self: bool,
         visit: impl FnOnce(&mut Self),
     ) {
-        let checkpoint = self.generic_types.len();
+        let checkpoint = (self.generic_types.len(), self.generic_values.len());
         if include_self {
             self.generic_types.push("Self".into());
         }
@@ -67,13 +68,26 @@ impl FactVisitor<'_> {
                     _ => None,
                 }),
         );
+        self.generic_values
+            .extend(
+                generics
+                    .params
+                    .iter()
+                    .filter_map(|parameter| match parameter {
+                        syn::GenericParam::Const(parameter) => Some(parameter.ident.to_string()),
+                        _ => None,
+                    }),
+            );
         visit(self);
-        self.generic_types.truncate(checkpoint);
+        self.generic_types.truncate(checkpoint.0);
+        self.generic_values.truncate(checkpoint.1);
     }
 
     pub(in crate::source) fn with_fresh_generics(&mut self, visit: impl FnOnce(&mut Self)) {
-        let inherited = std::mem::take(&mut self.generic_types);
+        let inherited_types = std::mem::take(&mut self.generic_types);
+        let inherited_values = std::mem::take(&mut self.generic_values);
         visit(self);
-        self.generic_types = inherited;
+        self.generic_types = inherited_types;
+        self.generic_values = inherited_values;
     }
 }

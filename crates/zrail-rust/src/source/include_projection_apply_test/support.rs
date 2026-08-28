@@ -43,6 +43,16 @@ pub(super) fn observed_names(index: &SourceIndex) -> Vec<(String, Vec<String>)> 
     observed
 }
 
+pub(super) fn fact_lengths(index: &SourceIndex) -> Vec<(String, usize, usize)> {
+    let mut lengths = index
+        .files
+        .iter()
+        .map(|file| (file.relative.clone(), file.paths.len(), file.calls.len()))
+        .collect::<Vec<_>>();
+    lengths.sort();
+    lengths
+}
+
 pub(super) fn domain() -> CompilationDomain {
     CompilationDomain {
         package: "fixture".into(),

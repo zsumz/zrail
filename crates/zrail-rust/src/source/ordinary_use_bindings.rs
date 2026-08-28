@@ -96,6 +96,7 @@ fn push_binding(
         BindingDraft {
             name,
             target: use_target(target),
+            generic_types: Vec::new(),
             kind,
             anchor: context.anchor,
             visibility: context.visibility.clone(),

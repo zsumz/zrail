@@ -9,6 +9,7 @@ use super::SyntaxGuard;
 pub(crate) struct ImportBindingFact {
     pub(crate) name: Option<String>,
     pub(crate) target: String,
+    pub(crate) generic_types: Vec<String>,
     pub(crate) kind: BindingKind,
     pub(crate) anchor: BindingAnchor,
     pub(crate) visibility: BindingVisibility,

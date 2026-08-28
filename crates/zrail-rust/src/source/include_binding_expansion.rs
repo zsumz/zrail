@@ -7,7 +7,7 @@ use super::{
         BindingSite, IncludeBindings, ResolvedOrigin, ResolvedPath, ResolvedTerminal,
     },
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
-    include_resolution_state::{LookupMode, ResolutionTrail, ResolutionUsage, ResolveRequest},
+    include_resolution_state::{ResolutionTrail, ResolutionUsage, ResolveRequest},
 };
 
 impl IncludeBindings {
@@ -54,45 +54,11 @@ impl IncludeBindings {
                     .unwrap_or_else(|| request.written.into());
                 vec![unresolved(&name)]
             }
-            BindingKind::Import | BindingKind::TypeAlias => {
-                let Some(target) = join(&site.binding.target, suffix) else {
-                    return Ok(vec![unresolved(request.written)]);
-                };
-                let Some(target) = self.anchor_target(site, target) else {
-                    return Ok(vec![unresolved(request.written)]);
-                };
-                let root = split_root(target.trim_start_matches("::")).0;
-                if site.binding.kind == BindingKind::Import
-                    && self.is_extern_root(site.instance, root)
-                {
-                    vec![ResolvedPath {
-                        name: target,
-                        quality: zrail_core::AnalysisQuality::Exact,
-                        crossed_include: false,
-                        requires_projection: true,
-                        blocks_completeness: false,
-                        origin: ResolvedOrigin::External,
-                        terminal: ResolvedTerminal::Unknown,
-                    }]
-                } else {
-                    self.resolve_in(
-                        ResolveRequest {
-                            instance: site.instance,
-                            written: &target,
-                            scope: &site.binding.lexical_scope,
-                            depth: request.depth,
-                            mode: LookupMode::binding_target(
-                                site.module.clone(),
-                                !suffix.is_empty() || site.binding.kind == BindingKind::Import,
-                            ),
-                            usage: request.usage,
-                            guard: request.guard.clone(),
-                            allow_implicit_prelude: false,
-                        },
-                        trail,
-                        budget,
-                    )?
-                }
+            BindingKind::Import => {
+                self.expand_import_binding(site, request, suffix, trail, budget)?
+            }
+            BindingKind::TypeAlias => {
+                self.expand_type_alias_binding(site, request, suffix, trail, budget)?
             }
             BindingKind::Glob => vec![unresolved(request.written)],
         };
@@ -235,3 +201,6 @@ impl IncludeBindings {
         }]
     }
 }
+
+#[path = "include_binding_aliases.rs"]
+mod aliases;

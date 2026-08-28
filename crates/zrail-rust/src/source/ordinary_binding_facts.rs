@@ -19,6 +19,7 @@ pub(super) struct BindingContext<'a> {
 pub(super) struct BindingDraft<'a> {
     pub(super) name: Option<String>,
     pub(super) target: String,
+    pub(super) generic_types: Vec<String>,
     pub(super) kind: BindingKind,
     pub(super) anchor: BindingAnchor,
     pub(super) visibility: BindingVisibility,
@@ -40,6 +41,7 @@ pub(super) fn local(
         BindingDraft {
             name: Some(name.clone()),
             target: name,
+            generic_types: Vec::new(),
             kind,
             anchor: BindingAnchor::Lexical,
             visibility: visibility(context.visibility),
@@ -70,6 +72,7 @@ pub(super) fn module(
         BindingDraft {
             name: Some(name.clone()),
             target: name,
+            generic_types: Vec::new(),
             kind: BindingKind::Module(module),
             anchor: BindingAnchor::Lexical,
             visibility: visibility(&item.vis),
@@ -148,6 +151,7 @@ pub(super) fn push(bindings: &mut Vec<ImportBindingFact>, draft: BindingDraft<'_
     bindings.push(ImportBindingFact {
         name: draft.name,
         target: draft.target,
+        generic_types: draft.generic_types,
         kind: draft.kind,
         anchor: draft.anchor,
         visibility: draft.visibility,

@@ -18,6 +18,7 @@ pub(super) fn repository_candidate(
         observation: ObservedFact {
             name: policy_name.into(),
             written: None,
+            implicit_prelude: crate::source::ImplicitPreludeEligibility::Disabled,
             canonical: Vec::new(),
             span: expansion.span,
             quality: AnalysisQuality::Exact,
