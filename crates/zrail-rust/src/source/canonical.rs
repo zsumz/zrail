@@ -1,5 +1,7 @@
 //! Cargo dependency roots canonicalize policy paths without hiding source spelling.
 
+#[path = "canonical_associated.rs"]
+mod associated_candidates;
 mod packages;
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -9,7 +11,7 @@ use zrail_core::{AnalysisQuality, Finding};
 use super::{
     CanonicalizationContext, ObservedFact, SourceIndex, macro_definitions::MacroDefinitions,
 };
-use packages::{dependency_roots, selected_packages};
+use packages::{dependency_roots, external_roots, selected_packages};
 
 const MAX_IDENTITIES_PER_ROOT: usize = 4;
 
@@ -95,6 +97,12 @@ pub(crate) fn canonicalize(
         external_roots(cargo),
     );
     findings.extend(include_bindings.apply_with_contract_limits(index, analysis_limits));
+    findings.extend(super::trait_providers::apply(
+        index,
+        &include_bindings,
+        compilation_domains,
+        analysis_limits,
+    ));
     findings.extend(super::operation_canonical::apply(
         index,
         &include_bindings,
@@ -117,6 +125,7 @@ pub(crate) fn canonicalize(
         file.call_resolutions.retain(|boundary| {
             boundary.kind != super::CallResolutionKind::ContextualAssociatedTypeProjection
         });
+        super::calls::normalize_resolutions(&mut file.call_resolutions);
         findings.extend(super::calls::resolution_findings(
             &file.relative,
             &file.call_resolutions,
@@ -144,7 +153,7 @@ pub(crate) fn canonicalize(
         {
             canonicalize_fact_bounded(fact, &roots, &overflowed);
             for candidate in &mut fact.associated_candidates {
-                super::canonical_associated::apply(candidate, &roots, &overflowed);
+                associated_candidates::apply(candidate, &roots, &overflowed);
             }
         }
         for boundary in super::calls::generic_resolution_boundaries(file) {
@@ -154,24 +163,6 @@ pub(crate) fn canonicalize(
         }
     }
     index.findings.extend(findings);
-}
-
-fn external_roots(cargo: &crate::cargo::CargoWorkspace) -> BTreeMap<String, BTreeSet<String>> {
-    cargo
-        .packages
-        .iter()
-        .map(|package| {
-            let roots = package
-                .dependencies
-                .iter()
-                .filter(|dependency| {
-                    dependency.crate_root_authority != crate::cargo::CrateRootAuthority::Unresolved
-                })
-                .map(|dependency| crate::cargo::rust_crate_root(&dependency.crate_root))
-                .collect();
-            (package.name.clone(), roots)
-        })
-        .collect()
 }
 
 fn canonicalize_fact(fact: &mut ObservedFact, roots: &BTreeMap<String, BTreeSet<String>>) {

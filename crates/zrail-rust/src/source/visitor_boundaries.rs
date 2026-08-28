@@ -117,23 +117,38 @@ impl FactVisitor<'_> {
 
     pub(in crate::source) fn record_expression_macro(&mut self, invocation: &Macro) {
         if let Some(mut boundary) = include_boundary(invocation, IncludeContext::Expression) {
-            boundary.guard = self.syntax_guard();
-            boundary.lexical_scope.clone_from(&self.lexical_scope);
-            boundary.generic_types.clone_from(&self.generic_types);
-            boundary.generic_values.clone_from(&self.generic_values);
-            boundary.generic_bounds = self.active_generic_bounds();
-            boundary.current_self =
-                self.self_types
-                    .last()
-                    .map(|identity| super::super::LexicalSelfIdentity {
-                        name: identity.name.clone(),
-                        quality: identity.quality,
-                        file_local: identity.file_local,
-                    });
-            boundary.inherits_parent_context = self.inherits_parent_context;
-            boundary.value_shadows = self.lexical_value_shadows();
+            self.populate_context(&mut boundary);
             self.includes.push(boundary);
         }
+    }
+
+    pub(in crate::source) fn record_associated_macro(
+        &mut self,
+        invocation: &Macro,
+        context: IncludeContext,
+    ) {
+        if let Some(mut boundary) = include_boundary(invocation, context) {
+            self.populate_context(&mut boundary);
+            self.includes.push(boundary);
+        }
+    }
+
+    fn populate_context(&self, boundary: &mut super::super::IncludeBoundary) {
+        boundary.guard = self.syntax_guard();
+        boundary.lexical_scope.clone_from(&self.lexical_scope);
+        boundary.generic_types.clone_from(&self.generic_types);
+        boundary.generic_values.clone_from(&self.generic_values);
+        boundary.generic_bounds = self.active_generic_bounds();
+        boundary.current_self =
+            self.self_types
+                .last()
+                .map(|identity| super::super::LexicalSelfIdentity {
+                    name: identity.name.clone(),
+                    quality: identity.quality,
+                    file_local: identity.file_local,
+                });
+        boundary.inherits_parent_context = self.inherits_parent_context;
+        boundary.value_shadows = self.lexical_value_shadows();
     }
 
     pub(in crate::source) fn record_statement_macro(&mut self, statement: &StmtMacro) {

@@ -1,6 +1,6 @@
 //! Written and physically resolved path identity are retained together.
 
-use crate::source::CallResolutionKind;
+use crate::source::{CallResolutionKind, GenericRootShadow, identity_for_generic_root};
 use syn::{
     ExprPath, Path,
     spanned::Spanned,
@@ -17,11 +17,52 @@ impl FactVisitor<'_> {
     pub(in crate::source) fn record_expression_path(&mut self, expression: &ExprPath) {
         let previous =
             std::mem::replace(&mut self.next_path_namespace, super::FactNamespace::Value);
-        if let Some(boundary) = super::calls::unresolved_path_projection(
+        if let Some(mut boundary) = super::calls::unresolved_path_projection(
             expression,
             self.syntax_guard(),
             &self.generic_types,
         ) {
+            boundary.associated_candidates = self.generic_associated_candidates(&boundary.written);
+            let identity = super::generic_root_identity(
+                &boundary.written,
+                super::RootLookupNamespace::Type,
+                &self.generic_types,
+                &self.generic_values,
+            )
+            .or_else(|| {
+                boundary.written.starts_with("Self::").then(|| {
+                    identity_for_generic_root(&boundary.written, GenericRootShadow::TypeParameter)
+                })
+            });
+            if let Some(identity) = identity {
+                let direct_call = self
+                    .constructor_path_exclusions
+                    .contains(&super::fact::source_span(expression.path.span()));
+                let mut fact = written_fact(
+                    identity.name,
+                    boundary.written,
+                    expression.path.span(),
+                    identity.quality,
+                    &self.lexical_scope,
+                );
+                fact.namespace = FactNamespace::Value;
+                fact.generic_shadow = Some(identity.shadow);
+                fact.associated_candidates = boundary.associated_candidates;
+                fact.inherits_parent_context = self.inherits_parent_context;
+                if direct_call {
+                    self.calls.push(fact);
+                } else {
+                    self.paths.push(fact);
+                }
+                for attribute in &expression.attrs {
+                    self.visit_attribute(attribute);
+                }
+                for segment in &expression.path.segments {
+                    self.visit_path_arguments(&segment.arguments);
+                }
+                self.next_path_namespace = previous;
+                return;
+            }
             let contextual =
                 boundary.kind == CallResolutionKind::ContextualAssociatedTypeProjection;
             self.call_resolutions.push(boundary);
@@ -88,9 +129,26 @@ impl FactVisitor<'_> {
         {
             return None;
         }
-        let identity = self.resolve_identity(path);
-        if identity.origin != OperationSubjectOrigin::CurrentSelf {
+        if path.segments.len() > 2 {
             return None;
+        }
+        let identity = self.resolve_identity(path);
+        let written = written_path(path);
+        let associated_candidates = self.generic_associated_candidates(&written);
+        if identity.origin != OperationSubjectOrigin::CurrentSelf {
+            let synthetic = identity_for_generic_root(&written, GenericRootShadow::TypeParameter);
+            let mut fact = written_fact(
+                synthetic.name,
+                written,
+                path.span(),
+                synthetic.quality,
+                &self.lexical_scope,
+            );
+            fact.namespace = namespace;
+            fact.generic_shadow = Some(synthetic.shadow);
+            fact.associated_candidates = associated_candidates;
+            fact.implicit_prelude = super::ImplicitPreludeEligibility::Disabled;
+            return Some(fact);
         }
         let mut fact = written_fact(
             identity.name.clone(),
@@ -100,6 +158,7 @@ impl FactVisitor<'_> {
             &self.lexical_scope,
         );
         fact.namespace = namespace;
+        fact.associated_candidates = associated_candidates;
         fact.implicit_prelude = super::ImplicitPreludeEligibility::Disabled;
         Some(fact)
     }

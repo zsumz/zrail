@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 
 use zrail_core::AnalysisQuality;
 
-use super::{
+use super::super::{
     GenericAssociatedCandidate, ObservedFact, SourceInstanceId,
     include_binding_helpers::unresolved,
     include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedPath},
@@ -28,6 +28,9 @@ pub(super) fn current_self(
     let Some(suffix) = self_suffix(written) else {
         return Ok(None);
     };
+    if suffix.matches("::").count() > 1 {
+        return Ok(None);
+    }
     let Some(identity) = &source.current_self else {
         return Ok(None);
     };
@@ -108,17 +111,17 @@ fn inherited_candidates(
     source: &SourceInstance,
 ) -> Vec<GenericAssociatedCandidate> {
     let written = fact.written.as_deref().unwrap_or(&fact.name);
-    let Some((root, suffix)) = written.split_once("::") else {
+    let Some((receiver, item)) = written.rsplit_once("::") else {
         return Vec::new();
     };
     source
         .generic_bounds
         .iter()
-        .find(|bounds| visible(&bounds.parameter) == visible(root))
+        .find(|bounds| visible_path(&bounds.parameter) == visible_path(receiver))
         .into_iter()
         .flat_map(|bounds| &bounds.traits)
         .map(|trait_path| GenericAssociatedCandidate {
-            name: format!("{trait_path}::{suffix}"),
+            name: format!("{trait_path}::{item}"),
             canonical: Vec::new(),
             quality: AnalysisQuality::Exact,
         })
@@ -142,4 +145,8 @@ fn self_suffix(written: &str) -> Option<&str> {
 
 fn visible(name: &str) -> &str {
     name.strip_prefix("r#").unwrap_or(name)
+}
+
+fn visible_path(path: &str) -> String {
+    path.split("::").map(visible).collect::<Vec<_>>().join("::")
 }

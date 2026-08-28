@@ -1,8 +1,7 @@
 //! Small injected budgets prove repository-wide projection failure semantics.
 
-use zrail_core::AnalysisQuality;
-
 use crate::inventory::FileClass;
+use zrail_core::AnalysisQuality;
 
 use super::*;
 use crate::source::{
@@ -258,6 +257,7 @@ fn file(
         macro_definitions: Vec::new(),
         import_bindings,
         associated_items: Vec::new(),
+        trait_inheritance: Vec::new(),
         glob_imports: Vec::new(),
         inline_module_scopes: Vec::new(),
         prelude_directives: Vec::new(),

@@ -2,6 +2,8 @@
 
 use zrail_core::AnalysisQuality;
 
+use super::SyntaxGuard;
+
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum AssociatedOccurrenceKind {
     DirectCall,
@@ -36,4 +38,14 @@ pub(crate) struct LexicalSelfIdentity {
     pub(crate) name: String,
     pub(crate) quality: AnalysisQuality,
     pub(crate) file_local: bool,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct TraitInheritanceFact {
+    pub(crate) trait_path: String,
+    pub(crate) providers: Vec<String>,
+    pub(crate) quality: AnalysisQuality,
+    pub(crate) guard: SyntaxGuard,
+    pub(crate) lexical_scope: Vec<zrail_core::SourceSpan>,
+    pub(crate) span: zrail_core::SourceSpan,
 }

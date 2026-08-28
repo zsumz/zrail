@@ -41,7 +41,7 @@ pub(crate) fn identity_for_generic_root(
     written: &str,
     shadow: GenericRootShadow,
 ) -> GenericRootIdentity {
-    let root = generic_root(written).unwrap_or(written);
+    let root = written_root(written).unwrap_or(written);
     let visible = root.strip_prefix("r#").unwrap_or(root);
     let label = match shadow {
         GenericRootShadow::TypeParameter => "type-parameter",
@@ -77,14 +77,14 @@ pub(crate) fn generic_root_shadow(
 }
 
 fn generic_root(written: &str) -> Option<&str> {
-    if written.starts_with("::") {
-        return None;
-    }
-    written
-        .split("::")
-        .next()
+    written_root(written).filter(|root| !matches!(*root, "crate" | "self" | "super" | "Self"))
+}
+
+fn written_root(written: &str) -> Option<&str> {
+    (!written.starts_with("::"))
+        .then(|| written.split("::").next())
+        .flatten()
         .filter(|root| !root.is_empty())
-        .filter(|root| !matches!(*root, "crate" | "self" | "super" | "Self"))
 }
 
 fn contains(generics: &[String], root: &str) -> bool {

@@ -17,7 +17,7 @@ use crate::{
     rules::source_graph,
     source::{
         CanonicalizationContext, CompilationDomain, ResolvedModuleEdge, SourceIndex,
-        canonicalize_dependency_roots, index_rust_source,
+        canonicalize_dependency_roots,
     },
 };
 
@@ -68,7 +68,7 @@ pub(crate) fn load_model_with_bundle(
     inventory
         .rust_files
         .retain(|file| cargo.source_is_active(&file.relative));
-    let mut source = index_rust_source(&inventory, &bundle.contract.source.rust);
+    let mut source = super::source_fragments::index(&mut inventory, &bundle.contract)?;
     let applied_item_macro_manifests =
         super::item_macro_manifests::apply(&inventory, &bundle.contract, &mut source)?;
     let graph = source_graph::analyze(

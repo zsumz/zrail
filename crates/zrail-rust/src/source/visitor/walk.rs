@@ -134,18 +134,32 @@ pub(super) fn visit_signature(visitor: &mut FactVisitor<'_>, signature: &Signatu
 
 pub(super) fn visit_item_impl(visitor: &mut FactVisitor<'_>, implementation: &ItemImpl) {
     visitor.record_unsafe_impl(implementation);
+    let self_bounds = implementation
+        .trait_
+        .as_ref()
+        .filter(|(negative, _, _)| negative.is_none())
+        .map(|(_, path, _)| vec![super::super::fact::written_path(path)])
+        .unwrap_or_default();
     visitor.with_self_type(&implementation.self_ty, |visitor| {
-        visitor.with_generics(&implementation.generics, true, |visitor| {
-            visit::visit_item_impl(visitor, implementation);
-        });
+        visitor.with_generics_and_self_bounds(
+            &implementation.generics,
+            true,
+            self_bounds,
+            |visitor| {
+                visit::visit_item_impl(visitor, implementation);
+            },
+        );
     });
 }
 
 pub(super) fn visit_item_trait(visitor: &mut FactVisitor<'_>, item: &ItemTrait) {
     visitor.record_unsafe_trait(item);
-    visitor.with_generics(&item.generics, true, |visitor| {
-        visit::visit_item_trait(visitor, item);
-    });
+    visitor.with_generics_and_self_bounds(
+        &item.generics,
+        true,
+        vec![item.ident.to_string()],
+        |visitor| visit::visit_item_trait(visitor, item),
+    );
 }
 
 pub(super) fn visit_impl_item_fn(visitor: &mut FactVisitor<'_>, function: &ImplItemFn) {

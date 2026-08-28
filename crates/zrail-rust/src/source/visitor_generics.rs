@@ -21,6 +21,16 @@ impl FactVisitor<'_> {
         include_self: bool,
         visit: impl FnOnce(&mut Self),
     ) {
+        self.with_generics_and_self_bounds(generics, include_self, Vec::new(), visit);
+    }
+
+    pub(in crate::source) fn with_generics_and_self_bounds(
+        &mut self,
+        generics: &Generics,
+        include_self: bool,
+        self_bounds: Vec<String>,
+        visit: impl FnOnce(&mut Self),
+    ) {
         let checkpoint = (self.generic_types.len(), self.generic_values.len());
         if include_self {
             self.generic_types.push("Self".into());
@@ -35,7 +45,13 @@ impl FactVisitor<'_> {
                 .const_params()
                 .map(|parameter| parameter.ident.to_string()),
         );
-        self.generic_bound_scopes.push(scope(generics));
+        let mut scope = scope(generics, include_self);
+        scope
+            .bounds
+            .entry("Self".into())
+            .or_default()
+            .extend(self_bounds);
+        self.generic_bound_scopes.push(scope);
         visit(self);
         self.generic_bound_scopes.pop();
         self.generic_types.truncate(checkpoint.0);
@@ -75,16 +91,16 @@ impl FactVisitor<'_> {
         &self,
         written: &str,
     ) -> Vec<GenericAssociatedCandidate> {
-        let Some((root, suffix)) = written.split_once("::") else {
+        let Some((receiver, item)) = written.rsplit_once("::") else {
             return Vec::new();
         };
         self.active_generic_bounds()
             .into_iter()
-            .find(|bounds| visible(&bounds.parameter) == visible(root))
+            .find(|bounds| visible_path(&bounds.parameter) == visible_path(receiver))
             .into_iter()
             .flat_map(|bounds| bounds.traits)
             .map(|trait_path| GenericAssociatedCandidate {
-                name: format!("{trait_path}::{suffix}"),
+                name: format!("{trait_path}::{item}"),
                 canonical: Vec::new(),
                 quality: AnalysisQuality::Exact,
             })
@@ -92,8 +108,8 @@ impl FactVisitor<'_> {
     }
 }
 
-fn scope(generics: &Generics) -> GenericBoundScope {
-    let declared = generics
+fn scope(generics: &Generics, include_self: bool) -> GenericBoundScope {
+    let mut declared = generics
         .params
         .iter()
         .filter_map(|parameter| match parameter {
@@ -101,6 +117,9 @@ fn scope(generics: &Generics) -> GenericBoundScope {
             _ => None,
         })
         .collect::<BTreeSet<_>>();
+    if include_self {
+        declared.insert("Self".into());
+    }
     let mut bounds = BTreeMap::<String, Vec<String>>::new();
     for parameter in generics.type_params() {
         extend_bounds(&mut bounds, parameter.ident.to_string(), &parameter.bounds);
@@ -113,7 +132,7 @@ fn scope(generics: &Generics) -> GenericBoundScope {
         let WherePredicate::Type(predicate) = predicate else {
             continue;
         };
-        let Some(parameter) = bare_type_parameter(&predicate.bounded_ty) else {
+        let Some(parameter) = bounded_type_path(&predicate.bounded_ty, &declared) else {
             continue;
         };
         extend_bounds(&mut bounds, parameter, &predicate.bounds);
@@ -143,14 +162,23 @@ fn extend_bounds(
         }));
 }
 
-fn bare_type_parameter(ty: &Type) -> Option<String> {
+fn bounded_type_path(ty: &Type, declared: &BTreeSet<String>) -> Option<String> {
     let Type::Path(path) = ty else {
         return None;
     };
-    (path.qself.is_none() && path.path.leading_colon.is_none() && path.path.segments.len() == 1)
-        .then(|| path.path.segments[0].ident.to_string())
+    let root = path.path.segments.first()?.ident.to_string();
+    (path.qself.is_none()
+        && path.path.leading_colon.is_none()
+        && declared
+            .iter()
+            .any(|generic| visible(generic) == visible(&root)))
+    .then(|| written_path(&path.path))
 }
 
 fn visible(name: &str) -> &str {
     name.strip_prefix("r#").unwrap_or(name)
+}
+
+fn visible_path(path: &str) -> String {
+    path.split("::").map(visible).collect::<Vec<_>>().join("::")
 }

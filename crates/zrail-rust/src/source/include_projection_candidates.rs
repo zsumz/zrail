@@ -12,6 +12,12 @@ use super::{
     include_resolution_state::{ResolutionUsage, WrittenResolveRequest},
 };
 
+#[path = "include_projection_aggregate.rs"]
+mod aggregate_model;
+#[path = "include_projection_context.rs"]
+mod context;
+pub(super) use aggregate_model::{CandidateAggregate, TestCoverage};
+
 pub(super) type ResolutionCache = BTreeMap<ResolutionCacheKey, Vec<ResolvedPath>>;
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -24,32 +30,6 @@ pub(super) struct ResolutionCacheKey {
     implicit_prelude: ImplicitPreludeEligibility,
     generic_shadow: Option<GenericRootShadow>,
     inherits_parent_context: bool,
-}
-
-pub(super) struct CandidateAggregate {
-    pub(super) instances: usize,
-    pub(super) test_instances: usize,
-    pub(super) quality: AnalysisQuality,
-    pub(super) production: bool,
-    pub(super) requires_projection: bool,
-    pub(super) blocks_completeness: bool,
-    pub(super) generic_shadow: Option<GenericRootShadow>,
-    pub(super) associated_candidates: BTreeMap<String, super::GenericAssociatedCandidate>,
-}
-
-impl Default for CandidateAggregate {
-    fn default() -> Self {
-        Self {
-            instances: 0,
-            test_instances: 0,
-            quality: AnalysisQuality::Exact,
-            production: false,
-            requires_projection: false,
-            blocks_completeness: false,
-            generic_shadow: None,
-            associated_candidates: BTreeMap::new(),
-        }
-    }
 }
 
 pub(super) fn aggregate(
@@ -85,9 +65,9 @@ pub(super) fn aggregate(
             resolved.clone()
         } else {
             let contextual_self = match source {
-                Some(source) => super::include_projection_context::current_self(
-                    bindings, fact, *instance, source, usage, budget,
-                )?,
+                Some(source) => {
+                    context::current_self(bindings, fact, *instance, source, usage, budget)?
+                }
                 None => None,
             };
             let resolved = if let Some(resolved) = contextual_self {
@@ -164,9 +144,9 @@ pub(super) fn aggregate(
             .is_some_and(super::GenericRootIdentity::is_associated)
         {
             match source {
-                Some(source) => super::include_projection_context::associated_candidates(
-                    bindings, fact, *instance, source, budget,
-                )?,
+                Some(source) => {
+                    context::associated_candidates(bindings, fact, *instance, source, budget)?
+                }
                 None => fact.associated_candidates.clone(),
             }
         } else {
@@ -225,18 +205,3 @@ pub(super) fn aggregate(
 
 #[path = "include_projection_shadow.rs"]
 mod shadow;
-
-#[derive(Clone, Copy)]
-pub(super) struct TestCoverage {
-    pub(super) instances: usize,
-    pub(super) compatible: bool,
-}
-
-impl Default for TestCoverage {
-    fn default() -> Self {
-        Self {
-            instances: 0,
-            compatible: true,
-        }
-    }
-}

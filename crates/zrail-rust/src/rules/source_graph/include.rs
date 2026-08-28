@@ -112,5 +112,7 @@ const fn syntax(context: IncludeContext) -> SourceSyntax {
     match context {
         IncludeContext::Items => SourceSyntax::Items,
         IncludeContext::Expression => SourceSyntax::Expression,
+        IncludeContext::ImplItems => SourceSyntax::ImplItems,
+        IncludeContext::TraitItems => SourceSyntax::TraitItems,
     }
 }

@@ -106,6 +106,7 @@ pub(super) fn parsed_file(relative: &str, source: &str) -> RustFileFacts {
         macro_definitions: visitor.macro_definitions,
         import_bindings: visitor.import_bindings,
         associated_items: visitor.associated_items,
+        trait_inheritance: visitor.trait_inheritance,
         glob_imports: visitor.glob_imports,
         inline_module_scopes: visitor.inline_module_scopes,
         prelude_directives: crate::source::include_bindings::implicit_prelude::directives(&syntax),

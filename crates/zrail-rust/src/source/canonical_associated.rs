@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::AnalysisQuality;
 
-use super::GenericAssociatedCandidate;
+use super::super::GenericAssociatedCandidate;
 
 pub(super) fn apply(
     candidate: &mut GenericAssociatedCandidate,

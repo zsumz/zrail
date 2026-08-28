@@ -87,6 +87,19 @@ pub(super) fn unresolved_owner_count(report: &Report, rule: &str, path: &str) ->
         .count()
 }
 
+pub(super) fn conservative_owner_count(report: &Report, rule: &str, path: &str) -> usize {
+    report
+        .findings
+        .iter()
+        .filter(|finding| {
+            finding.id == "OWN-003"
+                && finding.rule == rule
+                && finding.path.as_deref() == Some(path)
+                && finding.analysis == AnalysisQuality::Conservative
+        })
+        .count()
+}
+
 pub(super) fn finding_count(report: &Report, id: &str, rule: &str, path: &str) -> usize {
     report
         .findings

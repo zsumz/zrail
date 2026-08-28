@@ -29,6 +29,7 @@ impl Walker<'_> {
             return false;
         }
         let indexable = target.to_ascii_lowercase().ends_with(".rs")
+            || expected_syntax != SourceSyntax::Items
             || self
                 .facts
                 .get(target.as_str())
@@ -172,5 +173,7 @@ fn syntax_name(syntax: SourceSyntax) -> &'static str {
     match syntax {
         SourceSyntax::Items => "Rust items",
         SourceSyntax::Expression => "a Rust expression",
+        SourceSyntax::ImplItems => "Rust impl items",
+        SourceSyntax::TraitItems => "Rust trait items",
     }
 }

@@ -4,6 +4,26 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::cargo::{CrateRootAuthority, Package, rust_crate_root};
 
+pub(super) fn external_roots(
+    cargo: &crate::cargo::CargoWorkspace,
+) -> BTreeMap<String, BTreeSet<String>> {
+    cargo
+        .packages
+        .iter()
+        .map(|package| {
+            let roots = package
+                .dependencies
+                .iter()
+                .filter(|dependency| {
+                    dependency.crate_root_authority != CrateRootAuthority::Unresolved
+                })
+                .map(|dependency| rust_crate_root(&dependency.crate_root))
+                .collect();
+            (package.name.clone(), roots)
+        })
+        .collect()
+}
+
 pub(super) fn selected_packages<'a>(
     contexts: &BTreeMap<String, BTreeSet<String>>,
     packages: &BTreeMap<&'a str, &'a Package>,

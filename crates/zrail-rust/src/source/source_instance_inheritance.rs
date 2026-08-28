@@ -24,7 +24,7 @@ pub(super) fn child_context(
         SourceEntry::CargoRoot => return None,
     };
     let inherited = match entry {
-        SourceEntry::Include(edge) if edge.context == IncludeContext::Expression => {
+        SourceEntry::Include(edge) if edge.context != IncludeContext::Items => {
             let mut inherited = if edge.inherits_parent_context {
                 InheritedBindings {
                     generic_types: parent.generic_types.clone(),

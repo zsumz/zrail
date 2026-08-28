@@ -1,60 +1,21 @@
 //! Macro identity uses exact lexical imports before conservative file-wide candidates.
 
+#[path = "visitor_import_scope.rs"]
+mod scope;
+
 use std::collections::BTreeMap;
 
-use syn::{Item, Path, spanned::Spanned};
+use syn::{Path, spanned::Spanned};
 use zrail_core::AnalysisQuality;
 
 use super::{
     FactVisitor, MacroCandidate, MacroDerivation, MacroExpansionFact, SyntaxGuard, fact::fact,
-    ordinary_bindings, scoped_globs, scoped_imports,
+    scoped_imports,
 };
 
 const MAX_MACRO_CANDIDATES: usize = 64;
 
 impl FactVisitor<'_> {
-    pub(in crate::source) fn with_import_scope<'a>(
-        &mut self,
-        items: impl Iterator<Item = &'a Item>,
-        visit: impl FnOnce(&mut Self),
-    ) {
-        let items = items.collect::<Vec<_>>();
-        let aliases =
-            scoped_imports::collect(items.iter().copied(), |path| self.resolve_text(path));
-        let globs = scoped_globs::collect(items.iter().copied());
-        let enclosing_guard = self.syntax_guard();
-        let lexical_scope = self.lexical_scope.clone();
-        self.inline_module_scopes
-            .extend(items.iter().filter_map(|item| {
-                let Item::Mod(module) = item else {
-                    return None;
-                };
-                module
-                    .content
-                    .as_ref()
-                    .map(|_| super::fact::source_span(module.ident.span()))
-            }));
-        self.glob_imports.extend(super::glob_imports::collect(
-            items.iter().copied(),
-            &enclosing_guard,
-            &lexical_scope,
-        ));
-        self.import_bindings.extend(ordinary_bindings::collect(
-            items.iter().copied(),
-            &enclosing_guard,
-            &lexical_scope,
-        ));
-        self.associated_items
-            .extend(crate::source::associated_items::collect(
-                items.iter().copied(),
-                &enclosing_guard,
-                &lexical_scope,
-            ));
-        self.local_imports.push(LocalImportScope { aliases, globs });
-        visit(self);
-        self.local_imports.pop();
-    }
-
     pub(in crate::source) fn resolve_macro_path(
         &self,
         path: &Path,
@@ -147,7 +108,7 @@ impl FactVisitor<'_> {
             .collect()
     }
 
-    fn resolve_text(&self, path: &str) -> scoped_imports::ScopedAlias {
+    pub(in crate::source) fn resolve_text(&self, path: &str) -> scoped_imports::ScopedAlias {
         let (target, quality, _, local_module, guard) = self.resolve_text_scoped(path);
         scoped_imports::ScopedAlias {
             target,

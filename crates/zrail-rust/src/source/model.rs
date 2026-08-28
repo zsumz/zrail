@@ -27,7 +27,7 @@ pub(crate) use generic_roots::{
 };
 pub(crate) use lexical_context::{
     AssociatedOccurrenceKind, GenericAssociatedCandidate, GenericParameterBounds,
-    LexicalSelfIdentity,
+    LexicalSelfIdentity, TraitInheritanceFact,
 };
 
 pub(crate) use source_metrics::SourceAnalysisMetrics;
@@ -160,12 +160,16 @@ pub(crate) struct ModuleDeclaration {
 pub(crate) enum SourceSyntax {
     Items,
     Expression,
+    ImplItems,
+    TraitItems,
 }
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum IncludeContext {
     Items,
     Expression,
+    ImplItems,
+    TraitItems,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -208,6 +212,7 @@ pub(crate) struct RustFileFacts {
     pub(crate) macro_definitions: Vec<MacroDefinitionFact>,
     pub(crate) import_bindings: Vec<ImportBindingFact>,
     pub(crate) associated_items: Vec<super::associated_items::AssociatedItemFact>,
+    pub(crate) trait_inheritance: Vec<TraitInheritanceFact>,
     pub(crate) glob_imports: Vec<super::glob_imports::GlobImportFact>,
     pub(crate) inline_module_scopes: Vec<SourceSpan>,
     pub(crate) prelude_directives: Vec<PreludeDirective>,

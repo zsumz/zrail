@@ -1,14 +1,12 @@
 //! Direct function and associated-function calls with conservative glob candidates.
 
 use std::borrow::Cow;
-use std::collections::{BTreeMap, BTreeSet};
 
 use syn::{Expr, ExprCall, ExprPath, Path, Type, spanned::Spanned as _};
-use zrail_core::{AnalysisQuality, Finding};
+use zrail_core::AnalysisQuality;
 
 use super::{
-    AssociatedOccurrenceKind, CompilationDomain, GenericAssociatedCandidate, GenericRootShadow,
-    ObservedFact, RustFileFacts, SyntaxGuard,
+    ObservedFact, SyntaxGuard,
     fact::{source_span, written_fact, written_path},
     imports::ImportMap,
     model::{CallResolutionFact, CallResolutionKind},
@@ -18,10 +16,16 @@ use super::{
 mod candidates;
 #[path = "calls_contextual_projection.rs"]
 mod contextual_projection;
+#[path = "calls_resolution.rs"]
+mod resolution;
 
 #[cfg(test)]
 pub(crate) use candidates::MAX_MACRO_CANDIDATES;
 pub(super) use candidates::{candidates, macro_candidates};
+pub(crate) use resolution::resolution_finding;
+pub(super) use resolution::{
+    generic_resolution_boundaries, normalize_resolutions, resolution_findings,
+};
 
 pub(super) fn facts(
     call: &ExprCall,
@@ -84,135 +88,6 @@ pub(super) fn unresolved_path_projection(
     })
 }
 
-pub(super) fn resolution_findings(
-    path: &str,
-    calls: &[CallResolutionFact],
-    domains: Option<&BTreeSet<CompilationDomain>>,
-) -> Vec<Finding> {
-    let Some(domains) = domains else {
-        return Vec::new();
-    };
-    calls
-        .iter()
-        .filter(|call| {
-            domains.iter().any(|domain| {
-                call.guard
-                    .available_in(SyntaxGuard::for_test_only(domain.mode.enables_cfg_test()))
-            })
-        })
-        .map(|call| resolution_finding(path, call))
-        .collect()
-}
-
-pub(crate) fn resolution_finding(path: &str, call: &CallResolutionFact) -> Finding {
-    let (message, help) = match call.kind {
-        CallResolutionKind::AssociatedTypeProjection
-        | CallResolutionKind::ContextualAssociatedTypeProjection => (
-            format!(
-                "qualified expression path crosses an associated-type projection that zrail cannot resolve exactly: {}",
-                call.written
-            ),
-            "name one concrete type before trusting path or direct-call authority at this site",
-        ),
-        CallResolutionKind::ExplicitTrait => (
-            format!(
-                "explicit trait in qualified associated-item path cannot be resolved exactly: {}",
-                call.written
-            ),
-            "import or qualify the exact trait before trusting associated-item or direct-call authority at this site",
-        ),
-        CallResolutionKind::GenericAssociatedItem => (
-            format!(
-                "generic-root associated item cannot be resolved to one exact policy identity: {}",
-                call.written
-            ),
-            "use an explicit trait-qualified path before trusting associated-item, capability, or direct-call authority at this site",
-        ),
-    };
-    Finding::error(
-        "RUST-CALL-001",
-        "rust.source.call-resolution",
-        "source",
-        message,
-    )
-    .at(path, Some(call.span))
-    .with_analysis(AnalysisQuality::Unresolved)
-    .with_help(help)
-}
-
-pub(super) fn generic_resolution_boundaries(file: &RustFileFacts) -> Vec<CallResolutionFact> {
-    let call_sites = file
-        .calls
-        .iter()
-        .filter_map(boundary_key)
-        .collect::<BTreeSet<_>>();
-    let mut boundaries = BTreeMap::<
-        (String, zrail_core::SourceSpan, SyntaxGuard),
-        (AssociatedOccurrenceKind, Vec<GenericAssociatedCandidate>),
-    >::new();
-    for fact in file.paths.iter().chain(&file.calls).filter(|fact| {
-        fact.generic_shadow == Some(GenericRootShadow::TypeParameter)
-            && fact
-                .written
-                .as_deref()
-                .is_some_and(|written| written.contains("::"))
-    }) {
-        let (Some(written), Some(span)) = (fact.written.as_ref(), fact.span) else {
-            continue;
-        };
-        let key = (written.clone(), span, fact.guard.clone());
-        let occurrence = if call_sites.contains(&key) {
-            AssociatedOccurrenceKind::DirectCall
-        } else if fact.namespace == super::FactNamespace::Type {
-            AssociatedOccurrenceKind::TypeReference
-        } else {
-            AssociatedOccurrenceKind::ValueReference
-        };
-        let entry = boundaries
-            .entry(key)
-            .or_insert_with(|| (occurrence, Vec::new()));
-        if occurrence == AssociatedOccurrenceKind::DirectCall {
-            entry.0 = occurrence;
-        }
-        merge_candidates(&mut entry.1, &fact.associated_candidates);
-    }
-    boundaries
-        .into_iter()
-        .map(
-            |((written, span, guard), (occurrence, associated_candidates))| CallResolutionFact {
-                written,
-                span,
-                guard,
-                kind: CallResolutionKind::GenericAssociatedItem,
-                associated_candidates,
-                occurrence: Some(occurrence),
-            },
-        )
-        .collect()
-}
-
-fn boundary_key(fact: &ObservedFact) -> Option<(String, zrail_core::SourceSpan, SyntaxGuard)> {
-    (fact.generic_shadow == Some(GenericRootShadow::TypeParameter))
-        .then(|| Some((fact.written.clone()?, fact.span?, fact.guard.clone())))
-        .flatten()
-}
-
-fn merge_candidates(
-    target: &mut Vec<GenericAssociatedCandidate>,
-    candidates: &[GenericAssociatedCandidate],
-) {
-    for candidate in candidates {
-        if let Some(existing) = target.iter_mut().find(|existing| {
-            existing.name == candidate.name && existing.canonical == candidate.canonical
-        }) {
-            existing.quality = existing.quality.max(candidate.quality);
-        } else {
-            target.push(candidate.clone());
-        }
-    }
-    target.sort();
-}
-
 pub(super) fn callee_path(expression: &Expr) -> Option<&ExprPath> {
     match expression {
         Expr::Path(path) => Some(path),
@@ -268,6 +143,16 @@ fn projection_text(callee: &ExprPath) -> Option<String> {
 }
 
 fn unresolved_call_text(callee: &ExprPath, generic_types: &[String]) -> Option<String> {
+    if callee.qself.is_none()
+        && callee.path.segments.len() > 2
+        && callee.path.segments.first().is_some_and(|segment| {
+            generic_types
+                .iter()
+                .any(|generic| segment.ident == generic.as_str())
+        })
+    {
+        return Some(WrittenOperationSubject::from_expression(callee).written());
+    }
     if let Some(projection) = projection_text(callee) {
         return Some(projection);
     }

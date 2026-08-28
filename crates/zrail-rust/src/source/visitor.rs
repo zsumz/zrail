@@ -7,8 +7,9 @@ mod walk;
 
 use syn::{
     Attribute, Block, ExprBinary, ExprForLoop, ExprIf, ExprMacro, ExprMatch, ExprMethodCall,
-    ExprPath, ExprRawAddr, ExprStruct, ExprWhile, ItemForeignMod, ItemMacro, ItemMod, ItemStatic,
-    ItemType, Macro, PatReference, PatStruct, PatType, StmtMacro, TypePath,
+    ExprPath, ExprRawAddr, ExprStruct, ExprWhile, ImplItemMacro, ItemForeignMod, ItemMacro,
+    ItemMod, ItemStatic, ItemType, Macro, PatReference, PatStruct, PatType, StmtMacro,
+    TraitItemMacro, TypePath,
     visit::{self, Visit},
 };
 
@@ -20,55 +21,45 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     fn visit_file(&mut self, file: &'ast syn::File) {
         scopes::visit_file(self, file);
     }
-
     fn visit_item(&mut self, item: &'ast syn::Item) {
         self.with_cfg(visitor_context::item_attrs(item), |visitor| {
             walk::visit_item(visitor, item);
         });
     }
-
     fn visit_impl_item(&mut self, item: &'ast syn::ImplItem) {
         self.with_cfg(visitor_context::impl_attrs(item), |visitor| {
             visit::visit_impl_item(visitor, item);
         });
     }
-
     fn visit_trait_item(&mut self, item: &'ast syn::TraitItem) {
         self.with_cfg(visitor_context::trait_attrs(item), |visitor| {
             visit::visit_trait_item(visitor, item);
         });
     }
-
     fn visit_foreign_item(&mut self, item: &'ast syn::ForeignItem) {
         self.with_cfg(visitor_context::foreign_attrs(item), |visitor| {
             visit::visit_foreign_item(visitor, item);
         });
     }
-
     fn visit_expr(&mut self, expression: &'ast syn::Expr) {
         self.with_cfg(visitor_context::expr_attrs(expression), |visitor| {
             visit::visit_expr(visitor, expression);
         });
     }
-
     fn visit_local(&mut self, local: &'ast syn::Local) {
         scopes::visit_local(self, local);
     }
-
     fn visit_arm(&mut self, arm: &'ast syn::Arm) {
         self.with_cfg(&arm.attrs, |visitor| conditions::visit_arm(visitor, arm));
     }
-
     fn visit_field(&mut self, field: &'ast syn::Field) {
         self.with_cfg(&field.attrs, |visitor| visit::visit_field(visitor, field));
     }
-
     fn visit_variant(&mut self, variant: &'ast syn::Variant) {
         self.with_cfg(&variant.attrs, |visitor| {
             visit::visit_variant(visitor, variant);
         });
     }
-
     fn visit_path(&mut self, path: &'ast syn::Path) {
         self.record_path(path);
         visit::visit_path(self, path);
@@ -158,6 +149,16 @@ impl<'ast> Visit<'ast> for FactVisitor<'_> {
     fn visit_item_macro(&mut self, item: &'ast ItemMacro) {
         self.record_item_macro(item);
         visit::visit_item_macro(self, item);
+    }
+
+    fn visit_impl_item_macro(&mut self, item: &'ast ImplItemMacro) {
+        self.record_associated_macro(&item.mac, super::IncludeContext::ImplItems);
+        visit::visit_impl_item_macro(self, item);
+    }
+
+    fn visit_trait_item_macro(&mut self, item: &'ast TraitItemMacro) {
+        self.record_associated_macro(&item.mac, super::IncludeContext::TraitItems);
+        visit::visit_trait_item_macro(self, item);
     }
 
     fn visit_expr_macro(&mut self, expression: &'ast ExprMacro) {

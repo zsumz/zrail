@@ -24,7 +24,7 @@ pub(crate) use super::{
     },
     modules::{CompilationModuleEdge, ResolvedModuleEdge},
     operation_model::{SourceOperationFact, SourceOperationKind},
-    parse::{fact_count, index_rust_source},
+    parse::{fact_count, index_rust_source_with_hints},
     paths::{ModuleTarget, ResolutionError, SubmoduleBase, join_relative, module_target, parent},
     reachability::{Reachability, ReachabilityKind},
     source_instance::{
@@ -35,6 +35,9 @@ pub(crate) use super::{
     },
     type_shape::{ConstShapeFact, TypeArgumentFact, TypeShapeFact, type_shape},
 };
+
+#[cfg(test)]
+pub(crate) use super::parse::index_rust_source;
 
 #[cfg(test)]
 pub(crate) use super::model::SourceAnalysisMetrics;

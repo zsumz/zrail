@@ -10,6 +10,7 @@ mod lock_state;
 mod macro_implementations;
 mod model;
 mod receipts;
+mod source_fragments;
 
 use std::{error::Error, fmt, path::Path};
 

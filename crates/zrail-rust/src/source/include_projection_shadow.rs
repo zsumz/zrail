@@ -42,6 +42,11 @@ pub(super) fn generic_identity(
         &source.generic_types,
         &source.generic_values,
     )
+    .or_else(|| {
+        (written.starts_with("Self::")
+            && source.generic_types.iter().any(|generic| generic == "Self"))
+        .then(|| identity_for_generic_root(written, GenericRootShadow::TypeParameter))
+    })
 }
 
 fn generic_root_lookup(

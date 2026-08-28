@@ -1,5 +1,9 @@
 //! Deterministic filesystem traversal bounded to the repository root.
 
+#[path = "scan_referenced.rs"]
+mod referenced;
+pub(crate) use referenced::load_referenced_source;
+
 use std::{
     error::Error,
     fmt, fs,

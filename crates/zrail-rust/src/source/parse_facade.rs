@@ -3,7 +3,7 @@
 use syn::{Item, spanned::Spanned};
 use zrail_core::AnalysisQuality;
 
-use super::{ObservedFact, fact::fact};
+use super::super::{ObservedFact, fact::fact};
 
 pub(super) fn items(relative: &str, syntax: &syn::File) -> Vec<ObservedFact> {
     syntax

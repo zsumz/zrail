@@ -29,6 +29,26 @@ pub(in crate::source) fn file(syntax: &syn::File) -> Vec<zrail_core::SourceSpan>
 pub(in crate::source) fn expression(syntax: &syn::Expr) -> Vec<zrail_core::SourceSpan> {
     let mut collector = Collector::default();
     collector.visit_expr(syntax);
+    finish(collector)
+}
+
+pub(in crate::source) fn impl_items(items: &[syn::ImplItem]) -> Vec<zrail_core::SourceSpan> {
+    let mut collector = Collector::default();
+    for item in items {
+        collector.visit_impl_item(item);
+    }
+    finish(collector)
+}
+
+pub(in crate::source) fn trait_items(items: &[syn::TraitItem]) -> Vec<zrail_core::SourceSpan> {
+    let mut collector = Collector::default();
+    for item in items {
+        collector.visit_trait_item(item);
+    }
+    finish(collector)
+}
+
+fn finish(mut collector: Collector) -> Vec<zrail_core::SourceSpan> {
     collector.spans.sort();
     collector.spans.dedup();
     collector.spans

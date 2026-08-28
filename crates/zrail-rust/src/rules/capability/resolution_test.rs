@@ -148,6 +148,7 @@ fn file() -> RustFileFacts {
         macro_definitions: Vec::new(),
         import_bindings: Vec::new(),
         associated_items: Vec::new(),
+        trait_inheritance: Vec::new(),
         glob_imports: Vec::new(),
         inline_module_scopes: Vec::new(),
         prelude_directives: Vec::new(),

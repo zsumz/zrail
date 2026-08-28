@@ -1,5 +1,7 @@
 //! Generic parameters never borrow constructor identity across Rust namespaces.
 
+#[path = "generic_shadow_ownership/associated_includes.rs"]
+mod associated_includes;
 #[path = "generic_shadow_ownership/direct.rs"]
 mod direct;
 #[path = "generic_shadow_ownership/fields.rs"]
@@ -12,3 +14,7 @@ mod includes;
 mod observed;
 #[path = "generic_shadow_ownership/self_identity.rs"]
 mod self_identity;
+#[path = "generic_shadow_ownership/self_trait.rs"]
+mod self_trait;
+#[path = "generic_shadow_ownership/trait_bounds.rs"]
+mod trait_bounds;
