@@ -1,8 +1,9 @@
 //! Include instances carry lexical generic and value shadows into projection.
 
 use super::super::{
-    GuardAvailability, ImplicitPreludeEligibility, ObservedFact,
-    include_resolution_state::ResolutionUsage, source_instance::SourceInstance,
+    FactNamespace, GenericRootShadow, GuardAvailability, ImplicitPreludeEligibility, ObservedFact,
+    RootLookupNamespace, generic_root_shadow, include_resolution_state::ResolutionUsage,
+    source_instance::SourceInstance,
 };
 
 pub(super) fn eligibility(
@@ -10,40 +11,41 @@ pub(super) fn eligibility(
     usage: ResolutionUsage,
     source: &SourceInstance,
 ) -> ImplicitPreludeEligibility {
-    if generic_root(fact, &source.generic_types) {
-        return ImplicitPreludeEligibility::GenericShadow;
+    let written = fact.written.as_deref().unwrap_or(&fact.name);
+    let lookup = root_lookup(fact.namespace, usage, written);
+    if let Some(shadow) = generic_root_shadow(
+        written,
+        lookup,
+        &source.generic_types,
+        &source.generic_values,
+    ) {
+        return generic_eligibility(shadow, written);
     }
-    inherited_value_shadow(fact, usage, source).unwrap_or(fact.implicit_prelude)
+    inherited_value_shadow(fact, lookup, source).unwrap_or(fact.implicit_prelude)
 }
 
-fn generic_root(fact: &ObservedFact, generic_types: &[String]) -> bool {
-    let Some(written) = fact.written.as_deref() else {
-        return false;
-    };
-    if written.starts_with("::") {
-        return false;
+fn generic_eligibility(shadow: GenericRootShadow, written: &str) -> ImplicitPreludeEligibility {
+    match shadow {
+        GenericRootShadow::TypeParameter
+            if written.contains("::")
+                || super::super::include_bindings::known_implicit_prelude_name(
+                    written.split("::").next().unwrap_or(written),
+                ) =>
+        {
+            ImplicitPreludeEligibility::GenericShadow
+        }
+        GenericRootShadow::TypeParameter | GenericRootShadow::ConstParameter => {
+            ImplicitPreludeEligibility::LocalShadow
+        }
     }
-    let root = written.split("::").next();
-    root.is_some_and(|root| {
-        !matches!(root, "crate" | "self" | "super" | "Self")
-            && generic_types.iter().any(|generic| {
-                generic.strip_prefix("r#").unwrap_or(generic)
-                    == root.strip_prefix("r#").unwrap_or(root)
-            })
-    })
 }
 
 fn inherited_value_shadow(
     fact: &ObservedFact,
-    usage: ResolutionUsage,
+    lookup: RootLookupNamespace,
     source: &SourceInstance,
 ) -> Option<ImplicitPreludeEligibility> {
-    if fact.implicit_prelude != ImplicitPreludeEligibility::Eligible
-        || !matches!(
-            usage,
-            ResolutionUsage::Path | ResolutionUsage::Call | ResolutionUsage::ConstructorValue
-        )
-    {
+    if lookup != RootLookupNamespace::Value {
         return None;
     }
     let written = fact.written.as_deref()?;
@@ -51,17 +53,7 @@ fn inherited_value_shadow(
         return None;
     }
     let root = written.strip_prefix("r#").unwrap_or(written);
-    let context = source.guard.combine(&fact.guard);
-    let availability = source
-        .prelude_value_shadows
-        .iter()
-        .filter(|(name, _)| name == root)
-        .fold(GuardAvailability::Absent, |current, (_, guard)| {
-            merge(
-                current,
-                guard.availability_for_domain(&context, &source.domain),
-            )
-        });
+    let availability = source.value_shadow_availability(root, &fact.guard);
     match availability {
         GuardAvailability::Exact => Some(ImplicitPreludeEligibility::LocalShadow),
         GuardAvailability::Possible => Some(ImplicitPreludeEligibility::PossibleShadow),
@@ -69,12 +61,21 @@ fn inherited_value_shadow(
     }
 }
 
-const fn merge(left: GuardAvailability, right: GuardAvailability) -> GuardAvailability {
-    match (left, right) {
-        (GuardAvailability::Exact, _) | (_, GuardAvailability::Exact) => GuardAvailability::Exact,
-        (GuardAvailability::Possible, _) | (_, GuardAvailability::Possible) => {
-            GuardAvailability::Possible
+pub(in crate::source) fn root_lookup(
+    namespace: FactNamespace,
+    usage: ResolutionUsage,
+    written: &str,
+) -> RootLookupNamespace {
+    match namespace {
+        FactNamespace::Type => RootLookupNamespace::Type,
+        FactNamespace::Unknown
+            if matches!(
+                usage,
+                ResolutionUsage::Type | ResolutionUsage::OperationType
+            ) || written.contains("::") =>
+        {
+            RootLookupNamespace::Type
         }
-        _ => GuardAvailability::Absent,
+        FactNamespace::Value | FactNamespace::Unknown => RootLookupNamespace::Value,
     }
 }

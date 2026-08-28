@@ -68,6 +68,8 @@ pub(super) fn canonicalize(
                 written,
                 usage,
                 construction: Some(construction),
+                root_lookup: operation.root_lookup,
+                generic_shadow: operation.generic_shadow,
             },
             budget,
         )?;
@@ -106,7 +108,9 @@ pub(super) fn canonicalize(
             continue;
         }
         if result.expected == 0 {
-            canonical.push(operation);
+            if result.suppressed == 0 {
+                canonical.push(operation);
+            }
             continue;
         }
         let mut candidates = BTreeMap::<String, candidates::Candidate>::new();

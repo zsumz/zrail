@@ -102,6 +102,8 @@ fn operation(kind: SourceOperationKind, method: Option<&str>) -> SourceOperation
             lexical_scope: Vec::new(),
             namespace: FactNamespace::Type,
         },
+        root_lookup: None,
+        generic_shadow: None,
         file_local: false,
         subject_origin: crate::source::OperationSubjectOrigin::WrittenPath,
         construction: None,

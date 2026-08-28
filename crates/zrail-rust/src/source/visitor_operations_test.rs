@@ -276,3 +276,6 @@ mod visitor_implicit_reads;
 
 #[path = "tests/visitor_constructor_calls.rs"]
 mod visitor_constructor_calls;
+
+#[path = "tests/visitor_generic_roots.rs"]
+mod visitor_generic_roots;

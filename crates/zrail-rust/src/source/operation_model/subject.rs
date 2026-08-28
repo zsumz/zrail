@@ -4,6 +4,7 @@ use std::borrow::Cow;
 
 use syn::{ExprPath, Path, Type};
 
+use crate::source::RootLookupNamespace;
 use crate::source::fact::written_path;
 
 #[derive(Clone, Copy)]
@@ -108,6 +109,17 @@ impl<'a> WrittenOperationSubject<'a> {
 
     pub(in crate::source) const fn is_trait_qualified(self) -> bool {
         matches!(self, Self::TraitQualified { .. })
+    }
+
+    pub(in crate::source) fn root_lookup(self) -> RootLookupNamespace {
+        match self {
+            Self::Path(path) if path.leading_colon.is_none() && path.segments.len() == 1 => {
+                RootLookupNamespace::Value
+            }
+            Self::Path(_) | Self::TypeRelative { .. } | Self::TraitQualified { .. } => {
+                RootLookupNamespace::Type
+            }
+        }
     }
 
     pub(in crate::source) fn associated_segments(self) -> Option<usize> {

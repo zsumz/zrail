@@ -57,6 +57,7 @@ impl FactVisitor<'_> {
                 kind: SourceOperationKind::TypeConstruction,
                 form: ConstructorForm::Tuple,
                 proven: false,
+                root_lookup: subject.root_lookup(),
                 qualified_subject: self.qualified_subject(subject),
             },
         );
@@ -94,6 +95,7 @@ impl FactVisitor<'_> {
                 kind: SourceOperationKind::ConstructorCapability,
                 form: ConstructorForm::Unknown,
                 proven: false,
+                root_lookup: subject.root_lookup(),
                 qualified_subject: self.qualified_subject(subject),
             },
         );

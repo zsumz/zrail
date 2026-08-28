@@ -2,6 +2,8 @@
 
 #[path = "model_bindings.rs"]
 mod bindings;
+#[path = "model_generic_roots.rs"]
+mod generic_roots;
 #[path = "source_metrics.rs"]
 mod source_metrics;
 
@@ -17,6 +19,7 @@ pub(crate) use bindings::{
     BindingAnchor, BindingKind, BindingVisibility, ConstructorForm, ImportBindingFact,
     MacroImportFact, ModuleBinding,
 };
+pub(crate) use generic_roots::{GenericRootShadow, RootLookupNamespace, generic_root_shadow};
 
 pub(crate) use source_metrics::SourceAnalysisMetrics;
 
@@ -159,7 +162,8 @@ pub(crate) struct IncludeBoundary {
     pub(crate) context: IncludeContext,
     pub(crate) lexical_scope: Vec<SourceSpan>,
     pub(crate) generic_types: Vec<String>,
-    pub(crate) prelude_value_shadows: Vec<(String, SyntaxGuard)>,
+    pub(crate) generic_values: Vec<String>,
+    pub(crate) value_shadows: Vec<(String, SyntaxGuard)>,
     pub(crate) occurrence: IncludeOccurrenceId,
     pub(crate) span: Option<SourceSpan>,
 }

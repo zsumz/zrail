@@ -147,6 +147,8 @@ impl<'a> Resolver<'a> {
                 written: path,
                 usage: ResolutionUsage::Type,
                 construction: None,
+                root_lookup: None,
+                generic_shadow: None,
             },
             self.budget,
         )?;

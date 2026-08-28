@@ -120,7 +120,8 @@ impl FactVisitor<'_> {
             boundary.guard = self.syntax_guard();
             boundary.lexical_scope.clone_from(&self.lexical_scope);
             boundary.generic_types.clone_from(&self.generic_types);
-            boundary.prelude_value_shadows = self.implicit_prelude_value_shadows();
+            boundary.generic_values.clone_from(&self.generic_values);
+            boundary.value_shadows = self.lexical_value_shadows();
             self.includes.push(boundary);
         }
     }

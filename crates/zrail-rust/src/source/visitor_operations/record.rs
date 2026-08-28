@@ -16,6 +16,7 @@ struct OperationDetails<'a> {
     place: Option<FieldPlaceFact>,
     struct_update: Option<StructUpdateFact>,
     qualified_subject: Option<QualifiedOperationSubject>,
+    root_lookup: Option<super::super::RootLookupNamespace>,
     guard: Option<&'a super::super::SyntaxGuard>,
 }
 
@@ -36,6 +37,7 @@ impl FactVisitor<'_> {
             OperationDetails {
                 construction,
                 construction_proven: construction == Some(ConstructorForm::Named),
+                root_lookup: construction.map(|_| super::super::RootLookupNamespace::Type),
                 ..OperationDetails::default()
             },
         );
@@ -57,6 +59,7 @@ impl FactVisitor<'_> {
             OperationDetails {
                 construction: Some(candidate.form),
                 construction_proven: candidate.proven,
+                root_lookup: Some(candidate.root_lookup),
                 guard: Some(guard),
                 qualified_subject: candidate.qualified_subject,
                 ..OperationDetails::default()
@@ -146,6 +149,7 @@ impl FactVisitor<'_> {
             place,
             struct_update,
             qualified_subject,
+            root_lookup,
             guard,
         } = details;
         let mut observed = span.map_or_else(
@@ -169,7 +173,21 @@ impl FactVisitor<'_> {
         if let Some(guard) = guard {
             observed.apply_guard(guard);
         }
-        observed.namespace = super::super::FactNamespace::Type;
+        observed.namespace = match root_lookup {
+            Some(super::super::RootLookupNamespace::Value) => super::super::FactNamespace::Value,
+            Some(super::super::RootLookupNamespace::Type) | None => {
+                super::super::FactNamespace::Type
+            }
+        };
+        let generic_shadow = root_lookup.and_then(|lookup| {
+            let written = observed.written.as_deref().unwrap_or(&observed.name);
+            super::super::generic_root_shadow(
+                written,
+                lookup,
+                &self.generic_types,
+                &self.generic_values,
+            )
+        });
         if self.operations.iter().any(|operation| {
             operation.kind == kind
                 && operation.identity.name == observed.name
@@ -182,6 +200,8 @@ impl FactVisitor<'_> {
         self.operations.push(SourceOperationFact {
             kind,
             identity: observed,
+            root_lookup,
+            generic_shadow,
             file_local: identity.file_local,
             subject_origin: identity.origin,
             construction,

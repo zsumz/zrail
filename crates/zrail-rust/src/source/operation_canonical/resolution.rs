@@ -3,7 +3,8 @@
 use zrail_core::AnalysisQuality;
 
 use super::super::{
-    CompilationDomain, ConstructorForm, GuardAvailability, ObservedFact,
+    CompilationDomain, ConstructorForm, GenericRootShadow, GuardAvailability, ObservedFact,
+    RootLookupNamespace, generic_root_shadow,
     include_binding_helpers::canonical_local_name,
     include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedTerminal},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
@@ -23,6 +24,7 @@ pub(super) struct Route {
 #[derive(Clone)]
 pub(super) struct Resolution {
     pub(super) expected: usize,
+    pub(super) suppressed: usize,
     pub(super) routes: Vec<Route>,
     pub(super) unresolved: bool,
     pub(super) blocks_completeness: bool,
@@ -38,6 +40,8 @@ pub(super) struct Request<'a> {
     pub(super) written: &'a str,
     pub(super) usage: ResolutionUsage,
     pub(super) construction: Option<ConstructorForm>,
+    pub(super) root_lookup: Option<RootLookupNamespace>,
+    pub(super) generic_shadow: Option<GenericRootShadow>,
 }
 
 pub(super) fn resolve(
@@ -53,6 +57,8 @@ pub(super) fn resolve(
         written,
         usage,
         construction,
+        root_lookup,
+        generic_shadow,
     } = request;
     let instances = bindings
         .instances
@@ -70,17 +76,41 @@ pub(super) fn resolve(
         })
         .collect::<Vec<_>>();
     let mut resolution = Resolution {
-        expected: instances.len(),
+        expected: 0,
+        suppressed: 0,
         routes: Vec::new(),
         unresolved: false,
         blocks_completeness: false,
     };
     for instance in instances {
         let Some(source) = bindings.instances.get(instance) else {
+            resolution.expected += 1;
             resolution.unresolved = true;
             resolution.blocks_completeness = true;
             continue;
         };
+        let inherited_generic_shadow = root_lookup.and_then(|lookup| {
+            generic_root_shadow(
+                written,
+                lookup,
+                &source.generic_types,
+                &source.generic_values,
+            )
+        });
+        if generic_shadow.is_some() || inherited_generic_shadow.is_some() {
+            resolution.suppressed += 1;
+            continue;
+        }
+        let value_shadow = if root_lookup == Some(RootLookupNamespace::Value) {
+            source.value_shadow_availability(written, &fact.guard)
+        } else {
+            GuardAvailability::Absent
+        };
+        if value_shadow == GuardAvailability::Exact {
+            resolution.suppressed += 1;
+            continue;
+        }
+        resolution.expected += 1;
         let guard_quality = match source
             .guard
             .combine(&fact.guard)
@@ -134,13 +164,16 @@ pub(super) fn resolve(
         let ambiguous = resolved.len() != 1;
         resolution.unresolved |= ambiguous || resolved.is_empty();
         for candidate in resolved {
-            let quality = candidate.quality.max(guard_quality).max(if ambiguous {
-                AnalysisQuality::Unresolved
-            } else {
-                AnalysisQuality::Exact
-            });
+            let quality = candidate.quality.max(guard_quality).max(
+                if ambiguous || value_shadow == GuardAvailability::Possible {
+                    AnalysisQuality::Unresolved
+                } else {
+                    AnalysisQuality::Exact
+                },
+            );
             resolution.unresolved |= quality == AnalysisQuality::Unresolved;
-            resolution.blocks_completeness |= candidate.blocks_completeness;
+            resolution.blocks_completeness |=
+                candidate.blocks_completeness || value_shadow == GuardAvailability::Possible;
             resolution.routes.push(Route {
                 domain: source.domain.clone(),
                 name: candidate.name,

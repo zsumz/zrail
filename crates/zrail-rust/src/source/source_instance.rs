@@ -37,7 +37,8 @@ pub(crate) struct SourceInstance {
     pub(crate) domain: CompilationDomain,
     pub(crate) guard: SyntaxGuard,
     pub(crate) generic_types: Vec<String>,
-    pub(crate) prelude_value_shadows: Vec<(String, SyntaxGuard)>,
+    pub(crate) generic_values: Vec<String>,
+    pub(crate) value_shadows: Vec<(String, SyntaxGuard)>,
     pub(crate) parent: Option<SourceInstanceId>,
     pub(crate) entered_from: SourceEntry,
     depth: usize,
@@ -198,7 +199,8 @@ impl SourceInstances {
         let id = SourceInstanceId(self.instances.len());
         let InheritedBindings {
             generic_types,
-            prelude_value_shadows,
+            generic_values,
+            value_shadows,
         } = inherited;
         self.by_file.entry(file.clone()).or_default().push(id);
         self.instances.push(SourceInstance {
@@ -206,7 +208,8 @@ impl SourceInstances {
             domain,
             guard,
             generic_types,
-            prelude_value_shadows,
+            generic_values,
+            value_shadows,
             parent,
             entered_from,
             depth,

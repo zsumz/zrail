@@ -2,9 +2,10 @@
 
 use super::{
     AsyncSyntaxFact, CfgPredicate, CompileEffectFact, ConstructorForm, FactNamespace,
-    GlobImportFact, GuardAvailability, ImplicitPreludeEligibility, MacroCandidate, MacroDerivation,
-    MacroExpansionFact, ObservedFact, SourceOperationFact, SourceOperationKind, SyntaxGuard,
-    attributes, calls, fact, glob_imports, import_helpers, imports, includes, macro_expansion,
+    GenericRootShadow, GlobImportFact, GuardAvailability, ImplicitPreludeEligibility,
+    MacroCandidate, MacroDerivation, MacroExpansionFact, ObservedFact, RootLookupNamespace,
+    SourceOperationFact, SourceOperationKind, SyntaxGuard, attributes, calls, fact,
+    generic_root_shadow, glob_imports, import_helpers, imports, includes, macro_expansion,
     macro_origins, model, operation_model, ordinary_bindings, place_expression, scoped_globs,
     scoped_imports,
 };

@@ -69,6 +69,8 @@ pub(super) fn expand(
                 written: &update.written,
                 usage: ResolutionUsage::OperationType,
                 construction: None,
+                root_lookup: None,
+                generic_shadow: None,
             },
             budget,
         )?;
@@ -176,6 +178,8 @@ fn field_operation(
             lexical_scope: source.identity.lexical_scope.clone(),
             namespace: FactNamespace::Type,
         },
+        root_lookup: None,
+        generic_shadow: None,
         file_local: false,
         subject_origin: OperationSubjectOrigin::WrittenPath,
         construction: None,

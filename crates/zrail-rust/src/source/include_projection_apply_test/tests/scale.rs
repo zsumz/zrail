@@ -117,7 +117,8 @@ fn scaled_bindings(index: &SourceIndex) -> IncludeBindings {
         context: IncludeContext::Items,
         parent_scope: Vec::new(),
         generic_types: Vec::new(),
-        prelude_value_shadows: Vec::new(),
+        generic_values: Vec::new(),
+        value_shadows: Vec::new(),
         include_span: span(),
         occurrence: IncludeOccurrenceId::new(span()),
     }];

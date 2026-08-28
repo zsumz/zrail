@@ -117,6 +117,8 @@ pub(super) fn resolve(
             written,
             usage: ResolutionUsage::Type,
             construction: None,
+            root_lookup: None,
+            generic_shadow: None,
         },
         budget,
     )?;

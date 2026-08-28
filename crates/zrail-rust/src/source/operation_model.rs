@@ -28,6 +28,8 @@ pub(crate) enum SourceOperationKind {
 pub(crate) struct SourceOperationFact {
     pub(crate) kind: SourceOperationKind,
     pub(crate) identity: ObservedFact,
+    pub(crate) root_lookup: Option<super::RootLookupNamespace>,
+    pub(crate) generic_shadow: Option<super::GenericRootShadow>,
     pub(crate) file_local: bool,
     pub(crate) subject_origin: OperationSubjectOrigin,
     pub(crate) construction: Option<ConstructorForm>,

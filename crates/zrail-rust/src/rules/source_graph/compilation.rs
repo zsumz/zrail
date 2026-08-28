@@ -98,7 +98,8 @@ impl Walker<'_> {
                 context: include.context,
                 parent_scope: include.lexical_scope.clone(),
                 generic_types: include.generic_types.clone(),
-                prelude_value_shadows: include.prelude_value_shadows.clone(),
+                generic_values: include.generic_values.clone(),
+                value_shadows: include.value_shadows.clone(),
                 include_span: include.occurrence.span(),
                 occurrence: include.occurrence,
             });

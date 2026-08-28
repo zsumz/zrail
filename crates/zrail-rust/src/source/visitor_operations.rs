@@ -23,6 +23,7 @@ pub(in crate::source) struct ConstructorCandidate {
     pub(in crate::source) kind: SourceOperationKind,
     pub(in crate::source) form: ConstructorForm,
     pub(in crate::source) proven: bool,
+    pub(in crate::source) root_lookup: super::RootLookupNamespace,
     pub(in crate::source) qualified_subject:
         Option<super::operation_model::QualifiedOperationSubject>,
 }

@@ -1,6 +1,9 @@
 //! Prelude eligibility follows occurrence-local generic and value shadowing.
 
-use super::{CfgPredicate, FactVisitor, ImplicitPreludeEligibility, ObservedFact, SyntaxGuard};
+use super::{
+    CfgPredicate, FactVisitor, GenericRootShadow, ImplicitPreludeEligibility, ObservedFact,
+    RootLookupNamespace, SyntaxGuard, generic_root_shadow,
+};
 
 impl FactVisitor<'_> {
     pub(in crate::source) fn with_implicit_prelude_scope(
@@ -27,33 +30,34 @@ impl FactVisitor<'_> {
             return vec![fact];
         };
         let root_name = root.strip_prefix("r#").unwrap_or(&root);
-        let generic_type = self
-            .generic_types
-            .iter()
-            .any(|generic| generic.strip_prefix("r#").unwrap_or(generic) == root_name);
-        if generic_type && (!value_position || written.contains("::")) {
-            fact.implicit_prelude =
-                if crate::source::include_bindings::known_implicit_prelude_name(&root) {
-                    ImplicitPreludeEligibility::GenericShadow
-                } else {
-                    ImplicitPreludeEligibility::LocalShadow
-                };
-            return vec![fact];
-        }
-        if value_position
-            && !written.contains("::")
-            && self
-                .generic_values
-                .iter()
-                .any(|generic| generic.strip_prefix("r#").unwrap_or(generic) == root_name)
+        let lookup = if value_position && !written.contains("::") {
+            RootLookupNamespace::Value
+        } else {
+            RootLookupNamespace::Type
+        };
+        if let Some(shadow) =
+            generic_root_shadow(&written, lookup, &self.generic_types, &self.generic_values)
         {
-            fact.implicit_prelude = ImplicitPreludeEligibility::LocalShadow;
+            fact.implicit_prelude = generic_eligibility(shadow, &root);
             return vec![fact];
         }
         if !value_position || written.contains("::") {
             return vec![fact];
         }
         split_value_shadow(fact, &self.local_value_shadow_guard(root_name))
+    }
+}
+
+fn generic_eligibility(shadow: GenericRootShadow, root: &str) -> ImplicitPreludeEligibility {
+    match shadow {
+        GenericRootShadow::TypeParameter
+            if crate::source::include_bindings::known_implicit_prelude_name(root) =>
+        {
+            ImplicitPreludeEligibility::GenericShadow
+        }
+        GenericRootShadow::TypeParameter | GenericRootShadow::ConstParameter => {
+            ImplicitPreludeEligibility::LocalShadow
+        }
     }
 }
 
