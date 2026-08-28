@@ -7,6 +7,7 @@ mod ownership_call;
 mod ownership_operation;
 mod ownership_operation_macros;
 mod profiles;
+mod resolution;
 mod syntax;
 
 use zrail_core::{AnalysisQuality, Finding, FindingSink, glob_matches};
@@ -25,6 +26,7 @@ pub(crate) use profiles::assigned_profiles;
 pub(crate) use syntax::syntax_name as async_syntax_name;
 
 pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
+    resolution::check(context, findings);
     check_exact_scopes(context, findings);
     profiles::check(context, findings);
     compile::check_paths(context, findings);

@@ -201,6 +201,7 @@ fn fixture_index() -> SourceIndex {
                     guard: SyntaxGuard::Ordinary,
                     lexical_scope: Vec::new(),
                     namespace: crate::source::FactNamespace::Unknown,
+                    generic_shadow: None,
                 }],
                 Vec::new(),
             ),
@@ -292,3 +293,6 @@ mod operations_self;
 
 #[path = "include_projection_apply_test/tests/operations_global.rs"]
 mod operations_global;
+
+#[path = "include_projection_apply_test/tests/generic_roots.rs"]
+mod generic_roots;

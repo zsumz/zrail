@@ -108,7 +108,7 @@ pub(super) fn retain_candidates(
             key,
             ObservedFact {
                 name,
-                written: None,
+                written: candidate.generic_shadow.and_then(|_| fact.written.clone()),
                 implicit_prelude: super::super::ImplicitPreludeEligibility::Disabled,
                 canonical: Vec::new(),
                 span: fact.span,
@@ -116,6 +116,7 @@ pub(super) fn retain_candidates(
                 guard,
                 lexical_scope: fact.lexical_scope.clone(),
                 namespace: fact.namespace,
+                generic_shadow: candidate.generic_shadow,
             },
         );
     }

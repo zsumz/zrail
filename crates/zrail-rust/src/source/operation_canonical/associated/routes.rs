@@ -136,6 +136,7 @@ impl<'a> Resolver<'a> {
             guard: fact.guard.clone(),
             lexical_scope: fact.lexical_scope.clone(),
             namespace: FactNamespace::Type,
+            generic_shadow: None,
         };
         let resolved = resolution::resolve(
             resolution::Request {

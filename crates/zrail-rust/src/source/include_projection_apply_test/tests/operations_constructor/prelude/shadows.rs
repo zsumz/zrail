@@ -11,14 +11,11 @@ fn generic_option_shadows_the_implicit_prelude() {
     )]);
     let findings = canonicalize_operations(&mut index, &domain(), &[]);
 
-    assert!(
-        findings
-            .iter()
-            .any(|finding| finding.id == "RUST-INCLUDE-002")
-    );
+    assert!(findings.is_empty(), "unexpected findings: {findings:#?}");
     assert!(has_call(&index, "marker"));
     assert!(!has_call(&index, "self::marker"));
     assert!(!has_path(&index, "core::option::Option"));
+    assert!(has_path(&index, "<type-parameter Option>"));
 }
 
 #[test]

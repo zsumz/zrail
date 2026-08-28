@@ -58,6 +58,7 @@ pub(super) fn expand(
             guard: operation.identity.guard.clone(),
             lexical_scope: operation.identity.lexical_scope.clone(),
             namespace: FactNamespace::Type,
+            generic_shadow: operation.identity.generic_shadow,
         };
         let result = resolution::resolve(
             resolution::Request {
@@ -177,6 +178,7 @@ fn field_operation(
             guard,
             lexical_scope: source.identity.lexical_scope.clone(),
             namespace: FactNamespace::Type,
+            generic_shadow: source.identity.generic_shadow,
         },
         root_lookup: None,
         generic_shadow: None,

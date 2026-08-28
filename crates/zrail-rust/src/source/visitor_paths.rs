@@ -52,10 +52,13 @@ impl FactVisitor<'_> {
         );
         fact.namespace = std::mem::take(&mut self.next_path_namespace);
         let value_position = fact.namespace == super::FactNamespace::Value;
-        self.paths
-            .extend(self.with_implicit_prelude_scope(std::iter::once(fact), value_position));
-        self.paths
-            .extend(super::calls::candidates(path, self.imports, &name, &guard));
+        let scoped = self.with_implicit_prelude_scope(std::iter::once(fact), value_position);
+        let generic_root = scoped.iter().any(|fact| fact.generic_shadow.is_some());
+        self.paths.extend(scoped);
+        if !generic_root {
+            self.paths
+                .extend(super::calls::candidates(path, self.imports, &name, &guard));
+        }
     }
 }
 

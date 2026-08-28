@@ -157,6 +157,7 @@ fn declaration(guard: SyntaxGuard) -> ObservedFact {
         guard,
         lexical_scope: Vec::new(),
         namespace: FactNamespace::Value,
+        generic_shadow: None,
     }
 }
 

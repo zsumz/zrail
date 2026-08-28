@@ -34,6 +34,9 @@ impl FactVisitor<'_> {
         {
             return self.self_identity(path);
         }
+        if let Some(generic) = self.generic_identity(path) {
+            return generic;
+        }
         if let Some(local) = self.local_identity(path) {
             return local;
         }
@@ -60,6 +63,9 @@ impl FactVisitor<'_> {
             .is_some_and(|segment| segment.ident == "Self")
         {
             return self.self_identity(path);
+        }
+        if let Some(generic) = self.generic_identity(path) {
+            return generic;
         }
         let written = path_text(path);
         let (resolved, quality, _, _, _) = self.resolve_text_scoped(&written);
@@ -110,5 +116,22 @@ impl FactVisitor<'_> {
             },
             segments.map(|segment| segment.ident.to_string()),
         ))
+    }
+
+    fn generic_identity(&self, path: &Path) -> Option<TypeIdentity> {
+        let written = path_text(path);
+        let identity = super::super::generic_root_identity(
+            &written,
+            super::super::RootLookupNamespace::Type,
+            &self.generic_types,
+            &self.generic_values,
+        )?;
+        Some(TypeIdentity {
+            name: identity.name,
+            quality: identity.quality,
+            file_local: false,
+            origin: OperationSubjectOrigin::WrittenPath,
+            span: Some(source_span(path.span())),
+        })
     }
 }

@@ -4,7 +4,7 @@ use syn::visit::Visit;
 
 use zrail_core::AnalysisQuality;
 
-use super::super::{FactVisitor, imports::ImportMap};
+use super::super::{FactVisitor, GenericRootShadow, imports::ImportMap};
 
 #[test]
 fn restricted_visibility_paths_are_not_observed_authority() {
@@ -77,4 +77,38 @@ fn associated_callable_projection_is_not_an_exact_raw_path() {
         "{:#?}",
         visitor.paths
     );
+}
+
+#[test]
+fn generic_roots_have_synthetic_path_and_call_identity() {
+    let syntax = syn::parse_file(
+        r"
+struct Marker;
+struct Choice;
+impl Choice { fn ready() {} }
+trait Factory { fn ready(); }
+fn value<const Marker: usize>() -> usize { Marker }
+fn call<Choice: Factory>() { Choice::ready(); }
+",
+    )
+    .expect("parse generic identity fixture");
+    let imports = ImportMap::from_file(&syntax);
+    let mut visitor = FactVisitor::new(&imports);
+    visitor.visit_file(&syntax);
+
+    assert!(visitor.paths.iter().any(|fact| {
+        fact.name == "<const-parameter Marker>"
+            && fact.generic_shadow == Some(GenericRootShadow::ConstParameter)
+            && fact.quality == AnalysisQuality::Exact
+    }));
+    for facts in [&visitor.paths, &visitor.calls] {
+        assert!(facts.iter().any(|fact| {
+            fact.name == "<type-parameter Choice>::ready"
+                && fact.generic_shadow == Some(GenericRootShadow::TypeParameter)
+                && fact.quality == AnalysisQuality::Unresolved
+        }));
+        assert!(!facts.iter().any(|fact| {
+            fact.written.as_deref() == Some("Choice::ready") && fact.name == "Choice::ready"
+        }));
+    }
 }

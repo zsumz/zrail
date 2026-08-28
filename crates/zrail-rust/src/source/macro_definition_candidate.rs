@@ -25,6 +25,7 @@ pub(super) fn repository_candidate(
             guard: expansion.guard.clone(),
             lexical_scope: expansion.lexical_scope.clone(),
             namespace: super::FactNamespace::Unknown,
+            generic_shadow: None,
         },
         origins: vec![MacroOrigin::Repository {
             package: site.package,

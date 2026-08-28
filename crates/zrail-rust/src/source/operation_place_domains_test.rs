@@ -55,6 +55,7 @@ fn fact(name: &str, guard: SyntaxGuard, physical: bool) -> ObservedFact {
         guard,
         lexical_scope: Vec::new(),
         namespace: FactNamespace::Type,
+        generic_shadow: None,
     }
 }
 

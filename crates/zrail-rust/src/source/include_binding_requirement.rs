@@ -23,12 +23,17 @@ impl IncludeBindings {
             .iter()
             .chain(&file.calls)
             .any(|fact| match fact.implicit_prelude {
-                ImplicitPreludeEligibility::LocalShadow => fact
-                    .written
-                    .as_deref()
-                    .is_some_and(|written| fact.name != written),
+                ImplicitPreludeEligibility::LocalShadow => {
+                    fact.generic_shadow.is_none()
+                        && fact
+                            .written
+                            .as_deref()
+                            .is_some_and(|written| fact.name != written)
+                }
                 ImplicitPreludeEligibility::GenericShadow
-                | ImplicitPreludeEligibility::PossibleShadow => fact.written.is_some(),
+                | ImplicitPreludeEligibility::PossibleShadow => {
+                    fact.generic_shadow.is_none() && fact.written.is_some()
+                }
                 ImplicitPreludeEligibility::Eligible | ImplicitPreludeEligibility::Disabled => {
                     false
                 }
@@ -37,21 +42,24 @@ impl IncludeBindings {
             return true;
         }
         if file.paths.iter().chain(&file.calls).any(|fact| {
-            matches!(
-                fact.implicit_prelude,
-                ImplicitPreludeEligibility::Eligible | ImplicitPreludeEligibility::GenericShadow
-            ) && fact.written.as_deref().is_some_and(|written| {
-                let Some(root) = written_root(written) else {
-                    return false;
-                };
-                self.instances.for_file(&file.relative).iter().any(|id| {
-                    self.instances.get(*id).is_some_and(|source| {
-                        super::implicit_prelude_catalog::core(root, &source.domain.edition)
-                            .is_some()
-                            || super::implicit_prelude_catalog::std_only(root).is_some()
+            fact.generic_shadow.is_none()
+                && matches!(
+                    fact.implicit_prelude,
+                    ImplicitPreludeEligibility::Eligible
+                        | ImplicitPreludeEligibility::GenericShadow
+                )
+                && fact.written.as_deref().is_some_and(|written| {
+                    let Some(root) = written_root(written) else {
+                        return false;
+                    };
+                    self.instances.for_file(&file.relative).iter().any(|id| {
+                        self.instances.get(*id).is_some_and(|source| {
+                            super::implicit_prelude_catalog::core(root, &source.domain.edition)
+                                .is_some()
+                                || super::implicit_prelude_catalog::std_only(root).is_some()
+                        })
                     })
                 })
-            })
         }) {
             return true;
         }

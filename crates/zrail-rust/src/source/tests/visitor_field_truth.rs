@@ -92,6 +92,32 @@ fn inspect(state: State, ptr: StatePtr, boxed: Box<State>, arc: Arc<State>, pin:
 }
 
 #[test]
+fn typed_generic_receiver_keeps_synthetic_identity_before_local_catalog_lookup() {
+    let facts = operations(
+        r"use core::ops::Deref;
+struct State { secret: u64 }
+struct Actual { secret: u64 }
+fn inspect<State>(state: State) -> u64
+where State: Deref<Target = Actual>
+{
+    state.secret
+}
+",
+    );
+
+    let field = facts
+        .iter()
+        .find(|fact| {
+            fact.kind == SourceOperationKind::FieldRead
+                && fact.identity.written.as_deref() == Some("secret")
+        })
+        .expect("generic field read");
+    assert_eq!(field.identity.name, "<type-parameter State>::secret");
+    assert_eq!(field.identity.quality, AnalysisQuality::Unresolved);
+    assert!(!field.file_local);
+}
+
+#[test]
 fn unknown_shadows_tombstone_outer_types_and_cfg_bindings_keep_both_worlds() {
     let facts = operations(
         r#"struct A { secret: usize }

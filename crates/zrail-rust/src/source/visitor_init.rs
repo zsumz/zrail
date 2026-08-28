@@ -19,6 +19,7 @@ impl<'a> FactVisitor<'a> {
                 guard,
                 lexical_scope: Vec::new(),
                 namespace: super::FactNamespace::Unknown,
+                generic_shadow: None,
             })
             .collect::<Vec<_>>();
         paths.extend(
@@ -35,6 +36,7 @@ impl<'a> FactVisitor<'a> {
                     guard,
                     lexical_scope: Vec::new(),
                     namespace: super::FactNamespace::Unknown,
+                    generic_shadow: None,
                 }),
         );
         Self {

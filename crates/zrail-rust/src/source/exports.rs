@@ -3,6 +3,7 @@
 pub(crate) use super::{
     active_facts::retain_active_facts,
     associated_items::AssociatedItemFact,
+    calls::resolution_finding as call_resolution_finding,
     canonical::canonicalize as canonicalize_dependency_roots,
     canonical_observed::CanonicalizationContext,
     cfg::{CfgContext, CfgPredicate, CfgTruth},
@@ -14,10 +15,11 @@ pub(crate) use super::{
     macro_model::{MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin},
     model::{
         AsyncSyntaxFact, BindingAnchor, BindingKind, BindingVisibility, CallResolutionFact,
-        CallResolutionKind, ConstructorForm, FactNamespace, GenericRootShadow, GuardAvailability,
-        ImplicitPreludeEligibility, ImportBindingFact, IncludeBoundary, IncludeContext,
-        MacroImportFact, ModuleBinding, ModuleDeclaration, ObservedFact, RootLookupNamespace,
-        RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard, generic_root_shadow,
+        CallResolutionKind, ConstructorForm, FactNamespace, GenericRootIdentity, GenericRootShadow,
+        GuardAvailability, ImplicitPreludeEligibility, ImportBindingFact, IncludeBoundary,
+        IncludeContext, MacroImportFact, ModuleBinding, ModuleDeclaration, ObservedFact,
+        RootLookupNamespace, RustFileFacts, SourceIndex, SourceSyntax, SyntaxGuard,
+        generic_root_identity, generic_root_shadow, identity_for_generic_root,
     },
     modules::{CompilationModuleEdge, ResolvedModuleEdge},
     operation_model::{SourceOperationFact, SourceOperationKind},

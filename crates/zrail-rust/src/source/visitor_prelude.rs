@@ -2,7 +2,7 @@
 
 use super::{
     CfgPredicate, FactVisitor, GenericRootShadow, ImplicitPreludeEligibility, ObservedFact,
-    RootLookupNamespace, SyntaxGuard, generic_root_shadow,
+    RootLookupNamespace, SyntaxGuard, generic_root_identity,
 };
 
 impl FactVisitor<'_> {
@@ -35,10 +35,14 @@ impl FactVisitor<'_> {
         } else {
             RootLookupNamespace::Type
         };
-        if let Some(shadow) =
-            generic_root_shadow(&written, lookup, &self.generic_types, &self.generic_values)
+        if let Some(identity) =
+            generic_root_identity(&written, lookup, &self.generic_types, &self.generic_values)
         {
-            fact.implicit_prelude = generic_eligibility(shadow, &root);
+            fact.name = identity.name;
+            fact.quality = identity.quality;
+            fact.canonical.clear();
+            fact.generic_shadow = Some(identity.shadow);
+            fact.implicit_prelude = generic_eligibility(identity.shadow, &root);
             return vec![fact];
         }
         if !value_position || written.contains("::") {

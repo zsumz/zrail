@@ -1,8 +1,9 @@
 //! Include instances carry lexical generic and value shadows into projection.
 
 use super::super::{
-    FactNamespace, GenericRootShadow, GuardAvailability, ImplicitPreludeEligibility, ObservedFact,
-    RootLookupNamespace, generic_root_shadow, include_resolution_state::ResolutionUsage,
+    FactNamespace, GenericRootIdentity, GenericRootShadow, GuardAvailability,
+    ImplicitPreludeEligibility, ObservedFact, RootLookupNamespace, generic_root_identity,
+    identity_for_generic_root, include_resolution_state::ResolutionUsage,
     source_instance::SourceInstance,
 };
 
@@ -11,17 +12,45 @@ pub(super) fn eligibility(
     usage: ResolutionUsage,
     source: &SourceInstance,
 ) -> ImplicitPreludeEligibility {
+    if let Some(identity) = generic_identity(fact, usage, Some(source)) {
+        return generic_eligibility(
+            identity.shadow,
+            fact.written.as_deref().unwrap_or(&fact.name),
+        );
+    }
     let written = fact.written.as_deref().unwrap_or(&fact.name);
     let lookup = root_lookup(fact.namespace, usage, written);
-    if let Some(shadow) = generic_root_shadow(
+    inherited_value_shadow(fact, lookup, source).unwrap_or(fact.implicit_prelude)
+}
+
+pub(super) fn generic_identity(
+    fact: &ObservedFact,
+    usage: ResolutionUsage,
+    source: Option<&SourceInstance>,
+) -> Option<GenericRootIdentity> {
+    let written = fact.written.as_deref().unwrap_or(&fact.name);
+    if let Some(shadow) = fact.generic_shadow {
+        return Some(identity_for_generic_root(written, shadow));
+    }
+    let source = source?;
+    generic_root_identity(
         written,
-        lookup,
+        generic_root_lookup(fact.namespace, usage, written),
         &source.generic_types,
         &source.generic_values,
-    ) {
-        return generic_eligibility(shadow, written);
+    )
+}
+
+fn generic_root_lookup(
+    namespace: FactNamespace,
+    usage: ResolutionUsage,
+    written: &str,
+) -> RootLookupNamespace {
+    if written.contains("::") {
+        RootLookupNamespace::Type
+    } else {
+        root_lookup(namespace, usage, written)
     }
-    inherited_value_shadow(fact, lookup, source).unwrap_or(fact.implicit_prelude)
 }
 
 fn generic_eligibility(shadow: GenericRootShadow, written: &str) -> ImplicitPreludeEligibility {

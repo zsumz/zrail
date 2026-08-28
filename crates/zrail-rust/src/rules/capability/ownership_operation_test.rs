@@ -101,6 +101,7 @@ fn operation(kind: SourceOperationKind, method: Option<&str>) -> SourceOperation
             guard: SyntaxGuard::Ordinary,
             lexical_scope: Vec::new(),
             namespace: FactNamespace::Type,
+            generic_shadow: None,
         },
         root_lookup: None,
         generic_shadow: None,

@@ -1,52 +1,65 @@
-//! An authorized owner cannot turn unresolved macro-opaque call identity into authority.
+//! Generic call boundaries are relevant only to matching call-owner authority.
 
-use zrail_core::{AnalysisQuality, FindingSink, OwnerContract, OwnerKind, PolicyReachability};
+use zrail_core::{OwnerContract, OwnerKind, PolicyReachability};
 
-use super::check;
 use crate::{
     inventory::FileClass,
     source::{
-        FactNamespace, ObservedFact, Reachability, ReachabilityKind, RustFileFacts, SourceSyntax,
-        SyntaxGuard,
+        CallResolutionFact, CallResolutionKind, Reachability, ReachabilityKind, RustFileFacts,
+        SourceSyntax, SyntaxGuard,
     },
 };
 
+use super::owner_relies_on;
+
 #[test]
-fn unresolved_direct_call_fails_closed_inside_its_allowed_owner() {
-    let owner = OwnerContract {
-        name: "danger-call".into(),
+fn matching_call_owner_relies_on_generic_associated_identity() {
+    assert!(owner_relies_on(
+        &owner("crate::Factory::ready"),
+        &file(),
+        &boundary("Choice::ready"),
+    ));
+}
+
+#[test]
+fn unrelated_call_owner_does_not_make_generic_rust_incomplete() {
+    assert!(!owner_relies_on(
+        &owner("std::process::Command::new"),
+        &file(),
+        &boundary("D::Error::custom"),
+    ));
+}
+
+fn owner(selector: &str) -> OwnerContract {
+    OwnerContract {
+        name: "call-owner".into(),
         kind: OwnerKind::Call,
         reachability: PolicyReachability::All,
         within: vec!["src/**".into()],
-        selector: "danger".into(),
+        selector: selector.into(),
         mutating_methods: Vec::new(),
         allow: vec!["src/owner.rs".into()],
-        reason: "one exact invocation owner".into(),
-    };
-    let mut file = empty_file();
-    file.calls.push(ObservedFact {
-        name: "danger".into(),
-        written: Some("danger".into()),
-        implicit_prelude: crate::source::ImplicitPreludeEligibility::Disabled,
-        canonical: Vec::new(),
-        span: None,
-        quality: AnalysisQuality::Unresolved,
-        guard: SyntaxGuard::Ordinary,
-        lexical_scope: Vec::new(),
-        namespace: FactNamespace::Value,
-        generic_shadow: None,
-    });
-    let mut findings = FindingSink::default();
-
-    assert!(check(&owner, &file, &mut findings));
-    let finding = findings.iter().next().expect("fail-closed owner finding");
-    assert_eq!(finding.id, "OWN-005");
-    assert_eq!(finding.analysis, AnalysisQuality::Unresolved);
+        reason: "one exact call boundary".into(),
+    }
 }
 
-fn empty_file() -> RustFileFacts {
+fn boundary(written: &str) -> CallResolutionFact {
+    CallResolutionFact {
+        written: written.into(),
+        span: zrail_core::SourceSpan {
+            line: 1,
+            column: 1,
+            end_line: 1,
+            end_column: 2,
+        },
+        guard: SyntaxGuard::Ordinary,
+        kind: CallResolutionKind::GenericAssociatedItem,
+    }
+}
+
+fn file() -> RustFileFacts {
     RustFileFacts {
-        relative: "src/owner.rs".into(),
+        relative: "src/lib.rs".into(),
         packages: vec!["app".into()],
         class: FileClass::Implementation,
         reachability: Reachability::from_kind(ReachabilityKind::Production),

@@ -108,6 +108,11 @@ pub(crate) fn canonicalize(
             &file.call_resolutions,
             compilation_domains.get(&file.relative),
         ));
+        for boundary in super::calls::generic_resolution_boundaries(file) {
+            if !file.call_resolutions.contains(&boundary) {
+                file.call_resolutions.push(boundary);
+            }
+        }
         let selected = selected_packages(contexts, &packages, &cargo.packages, &file.relative);
         let observed = super::canonical_observed::roots(file);
         let (roots, overflowed) = dependency_roots(&selected, &observed);

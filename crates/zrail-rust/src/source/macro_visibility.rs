@@ -121,6 +121,7 @@ fn imported_candidate(
         guard: original.guard.clone(),
         lexical_scope: original.lexical_scope.clone(),
         namespace: original.namespace,
+        generic_shadow: original.generic_shadow,
     };
     if local {
         observation.canonical.push(original.name.clone());

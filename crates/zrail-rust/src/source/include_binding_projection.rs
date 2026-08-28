@@ -71,7 +71,8 @@ pub(super) fn project(
             && aggregate.len() == 1
             && aggregate.values().all(|candidate| {
                 candidate.instances == instances.len()
-                    && candidate.quality != AnalysisQuality::Unresolved
+                    && (candidate.quality != AnalysisQuality::Unresolved
+                        || candidate.generic_shadow.is_some())
             });
         if authoritative {
             removals.extend(

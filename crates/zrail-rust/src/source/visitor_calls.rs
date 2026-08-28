@@ -14,8 +14,13 @@ impl FactVisitor<'_> {
             &self.generic_types,
             &self.lexical_scope,
         );
-        self.calls
-            .extend(self.with_implicit_prelude_scope(facts, true));
+        let scoped = self.with_implicit_prelude_scope(facts, true);
+        let generic_root = scoped.iter().any(|fact| fact.generic_shadow.is_some());
+        self.calls.extend(
+            scoped
+                .into_iter()
+                .filter(|fact| !generic_root || fact.generic_shadow.is_some()),
+        );
     }
 
     pub(in crate::source) fn record_method_call(&mut self, call: &ExprMethodCall) {

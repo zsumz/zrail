@@ -89,6 +89,7 @@ fn candidate(requirement: &str) -> MacroCandidate {
             guard: SyntaxGuard::Ordinary,
             lexical_scope: Vec::new(),
             namespace: FactNamespace::Unknown,
+            generic_shadow: None,
         },
         origins: vec![MacroOrigin::External {
             package: "derive-impl".into(),

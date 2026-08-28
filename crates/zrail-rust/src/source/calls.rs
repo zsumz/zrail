@@ -7,7 +7,7 @@ use syn::{Expr, ExprCall, ExprPath, Path, Type, spanned::Spanned as _};
 use zrail_core::{AnalysisQuality, Finding};
 
 use super::{
-    CompilationDomain, ObservedFact, SyntaxGuard,
+    CompilationDomain, GenericRootShadow, ObservedFact, RustFileFacts, SyntaxGuard,
     fact::{source_span, written_fact, written_path},
     imports::ImportMap,
     model::{CallResolutionFact, CallResolutionKind},
@@ -84,39 +84,75 @@ pub(super) fn resolution_findings(
         .iter()
         .filter(|call| {
             domains.iter().any(|domain| {
-                call.guard.available_in(SyntaxGuard::for_test_only(
-                    domain.mode.enables_cfg_test(),
-                ))
+                call.guard
+                    .available_in(SyntaxGuard::for_test_only(domain.mode.enables_cfg_test()))
             })
         })
-        .map(|call| {
-            let (message, help) = match call.kind {
-                CallResolutionKind::AssociatedTypeProjection => (
-                    format!(
-                        "qualified expression path crosses an associated-type projection that zrail cannot resolve exactly: {}",
-                        call.written
-                    ),
-                    "name one concrete type before trusting path or direct-call authority at this site",
-                ),
-                CallResolutionKind::ExplicitTrait => (
-                    format!(
-                        "explicit trait in qualified associated-item path cannot be resolved exactly: {}",
-                        call.written
-                    ),
-                    "import or qualify the exact trait before trusting associated-item or direct-call authority at this site",
-                ),
-            };
-            Finding::error(
-                "RUST-CALL-001",
-                "rust.source.call-resolution",
-                "source",
-                message,
-            )
-            .at(path, Some(call.span))
-            .with_analysis(AnalysisQuality::Unresolved)
-            .with_help(help)
-        })
+        .map(|call| resolution_finding(path, call))
         .collect()
+}
+
+pub(crate) fn resolution_finding(path: &str, call: &CallResolutionFact) -> Finding {
+    let (message, help) = match call.kind {
+        CallResolutionKind::AssociatedTypeProjection => (
+            format!(
+                "qualified expression path crosses an associated-type projection that zrail cannot resolve exactly: {}",
+                call.written
+            ),
+            "name one concrete type before trusting path or direct-call authority at this site",
+        ),
+        CallResolutionKind::ExplicitTrait => (
+            format!(
+                "explicit trait in qualified associated-item path cannot be resolved exactly: {}",
+                call.written
+            ),
+            "import or qualify the exact trait before trusting associated-item or direct-call authority at this site",
+        ),
+        CallResolutionKind::GenericAssociatedItem => (
+            format!(
+                "generic-root associated item cannot be resolved to one exact policy identity: {}",
+                call.written
+            ),
+            "use an explicit trait-qualified path before trusting associated-item or direct-call authority at this site",
+        ),
+    };
+    Finding::error(
+        "RUST-CALL-001",
+        "rust.source.call-resolution",
+        "source",
+        message,
+    )
+    .at(path, Some(call.span))
+    .with_analysis(AnalysisQuality::Unresolved)
+    .with_help(help)
+}
+
+pub(super) fn generic_resolution_boundaries(file: &RustFileFacts) -> Vec<CallResolutionFact> {
+    let mut boundaries = Vec::<CallResolutionFact>::new();
+    for fact in file.paths.iter().chain(&file.calls).filter(|fact| {
+        fact.generic_shadow == Some(GenericRootShadow::TypeParameter)
+            && fact.namespace != super::FactNamespace::Type
+            && fact
+                .written
+                .as_deref()
+                .is_some_and(|written| written.contains("::"))
+    }) {
+        let (Some(written), Some(span)) = (fact.written.as_ref(), fact.span) else {
+            continue;
+        };
+        if boundaries.iter().any(|boundary| {
+            boundary.written == *written && boundary.span == span && boundary.guard == fact.guard
+        }) {
+            continue;
+        }
+        boundaries.push(CallResolutionFact {
+            written: written.clone(),
+            span,
+            guard: fact.guard.clone(),
+            kind: CallResolutionKind::GenericAssociatedItem,
+        });
+    }
+    boundaries
 }
 
 fn callee_path(expression: &Expr) -> Option<&ExprPath> {

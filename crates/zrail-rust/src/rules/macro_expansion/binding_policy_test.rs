@@ -144,6 +144,7 @@ fn fact(name: &str, quality: AnalysisQuality) -> ObservedFact {
         guard: SyntaxGuard::Ordinary,
         lexical_scope: Vec::new(),
         namespace: FactNamespace::Unknown,
+        generic_shadow: None,
     }
 }
 

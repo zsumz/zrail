@@ -161,7 +161,7 @@ fn generic_associated_self_type_in_expression_include_fails_closed() {
     let report = check(&root);
     assert!(
         report.findings.iter().any(|finding| {
-            finding.id == "RUST-INCLUDE-002"
+            finding.id == "RUST-CALL-001"
                 && finding.path.as_deref() == Some("src/expression.rs")
                 && finding.analysis == AnalysisQuality::Unresolved
         }),

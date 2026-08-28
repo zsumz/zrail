@@ -74,6 +74,29 @@ pub(super) fn exact_owner_count(report: &Report, rule: &str, path: &str) -> usiz
         .count()
 }
 
+pub(super) fn unresolved_owner_count(report: &Report, rule: &str, path: &str) -> usize {
+    report
+        .findings
+        .iter()
+        .filter(|finding| {
+            finding.id == "OWN-003"
+                && finding.rule == rule
+                && finding.path.as_deref() == Some(path)
+                && finding.analysis == AnalysisQuality::Unresolved
+        })
+        .count()
+}
+
+pub(super) fn finding_count(report: &Report, id: &str, rule: &str, path: &str) -> usize {
+    report
+        .findings
+        .iter()
+        .filter(|finding| {
+            finding.id == id && finding.rule == rule && finding.path.as_deref() == Some(path)
+        })
+        .count()
+}
+
 pub(super) fn assert_no_owner(report: &Report, rule: &str, path: &str) {
     assert!(
         report.findings.iter().all(|finding| {
@@ -119,6 +142,27 @@ within = ["src/**"]
 match = "{selector}"
 allow = ["src/owner.rs"]
 reason = "Calls stay behind the reviewed owner."
+"#
+    )
+}
+
+pub(super) fn capability_owner(name: &str, selector: &str) -> String {
+    owner(name, "capability", selector)
+}
+
+pub(super) fn field_owner(name: &str, kind: &str, selector: &str) -> String {
+    owner(name, kind, selector)
+}
+
+fn owner(name: &str, kind: &str, selector: &str) -> String {
+    format!(
+        r#"[[owner]]
+name = "{name}"
+kind = "{kind}"
+within = ["src/**"]
+match = "{selector}"
+allow = ["src/owner.rs"]
+reason = "Generic identity must not borrow unrelated authority."
 "#
     )
 }

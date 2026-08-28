@@ -19,7 +19,10 @@ pub(crate) use bindings::{
     BindingAnchor, BindingKind, BindingVisibility, ConstructorForm, ImportBindingFact,
     MacroImportFact, ModuleBinding,
 };
-pub(crate) use generic_roots::{GenericRootShadow, RootLookupNamespace, generic_root_shadow};
+pub(crate) use generic_roots::{
+    GenericRootIdentity, GenericRootShadow, RootLookupNamespace, generic_root_identity,
+    generic_root_shadow, identity_for_generic_root,
+};
 
 pub(crate) use source_metrics::SourceAnalysisMetrics;
 
@@ -57,6 +60,7 @@ pub(crate) struct ObservedFact {
     pub(crate) guard: SyntaxGuard,
     pub(crate) lexical_scope: Vec<SourceSpan>,
     pub(crate) namespace: FactNamespace,
+    pub(crate) generic_shadow: Option<GenericRootShadow>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -80,6 +84,7 @@ pub(crate) struct CallResolutionFact {
 pub(crate) enum CallResolutionKind {
     AssociatedTypeProjection,
     ExplicitTrait,
+    GenericAssociatedItem,
 }
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
