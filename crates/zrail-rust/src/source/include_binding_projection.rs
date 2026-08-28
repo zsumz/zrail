@@ -23,6 +23,7 @@ pub(super) type CallSite = (Option<zrail_core::SourceSpan>, String, SyntaxGuard)
 pub(super) struct FactProjection {
     pub(super) additions: Vec<ObservedFact>,
     pub(super) qualities: BTreeMap<FactKey, AnalysisQuality>,
+    pub(super) associated_candidates: BTreeMap<FactKey, Vec<super::GenericAssociatedCandidate>>,
     pub(super) removals: BTreeSet<FactKey>,
 }
 
@@ -54,6 +55,7 @@ pub(super) fn project(
         .collect::<BTreeMap<_, _>>();
     let mut additions = BTreeMap::<FactKey, ObservedFact>::new();
     let mut qualities = BTreeMap::<FactKey, AnalysisQuality>::new();
+    let mut associated_candidates = BTreeMap::new();
     let mut removals = BTreeSet::new();
     for fact in request.facts.iter().filter(|fact| fact.written.is_some()) {
         let usage = retention::fact_usage(fact, request.usage, request.call_sites);
@@ -92,6 +94,7 @@ pub(super) fn project(
             existing: &existing,
             additions: &mut additions,
             qualities: &mut qualities,
+            associated_candidates: &mut associated_candidates,
             uncertain,
             budget,
             remaining_file_facts,
@@ -108,6 +111,7 @@ pub(super) fn project(
     Ok(FactProjection {
         additions: additions.into_values().collect(),
         qualities,
+        associated_candidates,
         removals,
     })
 }

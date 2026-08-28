@@ -137,6 +137,8 @@ impl<'a> Resolver<'a> {
             lexical_scope: fact.lexical_scope.clone(),
             namespace: FactNamespace::Type,
             generic_shadow: None,
+            associated_candidates: Vec::new(),
+            inherits_parent_context: true,
         };
         let resolved = resolution::resolve(
             resolution::Request {

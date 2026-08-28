@@ -173,6 +173,7 @@ impl FactVisitor<'_> {
         if let Some(guard) = guard {
             observed.apply_guard(guard);
         }
+        observed.inherits_parent_context = self.inherits_parent_context;
         observed.namespace = match root_lookup {
             Some(super::super::RootLookupNamespace::Value) => super::super::FactNamespace::Value,
             Some(super::super::RootLookupNamespace::Type) | None => {

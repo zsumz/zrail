@@ -81,6 +81,8 @@ fn observed(name: &str, quality: AnalysisQuality) -> ObservedFact {
         lexical_scope: Vec::new(),
         namespace: crate::source::FactNamespace::Unknown,
         generic_shadow: None,
+        associated_candidates: Vec::new(),
+        inherits_parent_context: true,
     }
 }
 

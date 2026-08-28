@@ -9,6 +9,14 @@ use crate::source::{ImplicitPreludeEligibility, RustFileFacts};
 
 impl IncludeBindings {
     pub(in crate::source) fn requires_ordinary_resolution(&self, file: &RustFileFacts) -> bool {
+        if file
+            .paths
+            .iter()
+            .chain(&file.calls)
+            .any(|fact| !fact.associated_candidates.is_empty())
+        {
+            return true;
+        }
         if file.paths.iter().chain(&file.calls).any(|fact| {
             fact.quality == AnalysisQuality::Unresolved
                 && fact

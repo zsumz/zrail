@@ -24,7 +24,8 @@ pub(crate) struct CanonicalizationContext<'a> {
 }
 
 pub(super) fn roots(file: &RustFileFacts) -> BTreeSet<String> {
-    file.paths
+    let facts = file
+        .paths
         .iter()
         .chain(&file.calls)
         .chain(file.operations.iter().map(|operation| &operation.identity))
@@ -47,7 +48,15 @@ pub(super) fn roots(file: &RustFileFacts) -> BTreeSet<String> {
                 .iter()
                 .map(|candidate| &candidate.observation)
         }))
+        .collect::<Vec<_>>();
+    facts
+        .iter()
         .filter_map(|fact| split_root(&fact.name).map(|root| visible_root(root).into()))
+        .chain(facts.iter().flat_map(|fact| {
+            fact.associated_candidates.iter().filter_map(|candidate| {
+                split_root(&candidate.name).map(|root| visible_root(root).into())
+            })
+        }))
         .collect()
 }
 

@@ -32,6 +32,9 @@ pub(super) fn generic_identity(
     if let Some(shadow) = fact.generic_shadow {
         return Some(identity_for_generic_root(written, shadow));
     }
+    if !fact.inherits_parent_context {
+        return None;
+    }
     let source = source?;
     generic_root_identity(
         written,
@@ -74,6 +77,9 @@ fn inherited_value_shadow(
     lookup: RootLookupNamespace,
     source: &SourceInstance,
 ) -> Option<ImplicitPreludeEligibility> {
+    if !fact.inherits_parent_context {
+        return None;
+    }
     if lookup != RootLookupNamespace::Value {
         return None;
     }

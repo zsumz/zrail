@@ -2,7 +2,10 @@
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
-use super::{CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, SyntaxGuard};
+use super::{
+    CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, GenericParameterBounds,
+    LexicalSelfIdentity, SyntaxGuard,
+};
 
 use super::{
     source_instance_edges::{MIN_DERIVED_SOURCE_CONTEXTS, SourceInstanceMetrics},
@@ -38,6 +41,8 @@ pub(crate) struct SourceInstance {
     pub(crate) guard: SyntaxGuard,
     pub(crate) generic_types: Vec<String>,
     pub(crate) generic_values: Vec<String>,
+    pub(crate) generic_bounds: Vec<GenericParameterBounds>,
+    pub(crate) current_self: Option<LexicalSelfIdentity>,
     pub(crate) value_shadows: Vec<(String, SyntaxGuard)>,
     pub(crate) parent: Option<SourceInstanceId>,
     pub(crate) entered_from: SourceEntry,
@@ -200,6 +205,8 @@ impl SourceInstances {
         let InheritedBindings {
             generic_types,
             generic_values,
+            generic_bounds,
+            current_self,
             value_shadows,
         } = inherited;
         self.by_file.entry(file.clone()).or_default().push(id);
@@ -209,6 +216,8 @@ impl SourceInstances {
             guard,
             generic_types,
             generic_values,
+            generic_bounds,
+            current_self,
             value_shadows,
             parent,
             entered_from,

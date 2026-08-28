@@ -178,6 +178,9 @@ fn bindings(index: &SourceIndex) -> IncludeBindings {
             parent_scope: Vec::new(),
             generic_types: Vec::new(),
             generic_values: Vec::new(),
+            generic_bounds: Vec::new(),
+            current_self: None,
+            inherits_parent_context: true,
             value_shadows: Vec::new(),
             include_span: span(),
             occurrence: IncludeOccurrenceId::new(span()),
@@ -202,6 +205,8 @@ fn fixture_index() -> SourceIndex {
                     lexical_scope: Vec::new(),
                     namespace: crate::source::FactNamespace::Unknown,
                     generic_shadow: None,
+                    associated_candidates: Vec::new(),
+                    inherits_parent_context: true,
                 }],
                 Vec::new(),
             ),
@@ -270,17 +275,14 @@ fn file(
     }
 }
 
-#[path = "include_projection_apply_test/tests/scale.rs"]
-mod scale;
-
 #[path = "include_projection_apply_test/tests/hub.rs"]
 mod hub;
-
 #[path = "include_projection_apply_test/tests/opacity.rs"]
 mod opacity;
-
 #[path = "include_projection_apply_test/tests/operations_relative.rs"]
 mod operations_relative;
+#[path = "include_projection_apply_test/tests/scale.rs"]
+mod scale;
 
 #[path = "include_projection_apply_test/tests/operations_alias.rs"]
 mod operations_alias;

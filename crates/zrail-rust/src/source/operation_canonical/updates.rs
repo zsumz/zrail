@@ -59,6 +59,8 @@ pub(super) fn expand(
             lexical_scope: operation.identity.lexical_scope.clone(),
             namespace: FactNamespace::Type,
             generic_shadow: operation.identity.generic_shadow,
+            associated_candidates: operation.identity.associated_candidates.clone(),
+            inherits_parent_context: operation.identity.inherits_parent_context,
         };
         let result = resolution::resolve(
             resolution::Request {
@@ -179,6 +181,8 @@ fn field_operation(
             lexical_scope: source.identity.lexical_scope.clone(),
             namespace: FactNamespace::Type,
             generic_shadow: source.identity.generic_shadow,
+            associated_candidates: source.identity.associated_candidates.clone(),
+            inherits_parent_context: source.identity.inherits_parent_context,
         },
         root_lookup: None,
         generic_shadow: None,

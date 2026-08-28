@@ -10,3 +10,5 @@ mod fixture;
 mod includes;
 #[path = "generic_shadow_ownership/observed.rs"]
 mod observed;
+#[path = "generic_shadow_ownership/self_identity.rs"]
+mod self_identity;

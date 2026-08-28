@@ -3,10 +3,17 @@
 use syn::{ExprCall, ExprMethodCall, ItemFn};
 use zrail_core::AnalysisQuality;
 
-use super::{FactVisitor, attributes::is_test_attribute, fact::fact};
+use super::{FactNamespace, FactVisitor, attributes::is_test_attribute, fact::fact};
 
 impl FactVisitor<'_> {
     pub(in crate::source) fn record_call(&mut self, call: &ExprCall) {
+        if let Some(path) = super::calls::callee_path(call.func.as_ref())
+            && let Some(mut fact) = self.current_self_fact(&path.path, FactNamespace::Value)
+        {
+            fact.inherits_parent_context = self.inherits_parent_context;
+            self.calls.push(fact);
+            return;
+        }
         let facts = super::calls::facts(
             call,
             self.imports,

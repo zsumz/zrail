@@ -1,5 +1,6 @@
 //! Written and physically resolved path identity are retained together.
 
+use crate::source::CallResolutionKind;
 use syn::{
     ExprPath, Path,
     spanned::Spanned,
@@ -7,8 +8,9 @@ use syn::{
 };
 
 use super::{
-    FactVisitor,
+    FactNamespace, FactVisitor,
     fact::{written_fact, written_path},
+    operation_model::OperationSubjectOrigin,
 };
 
 impl FactVisitor<'_> {
@@ -20,7 +22,14 @@ impl FactVisitor<'_> {
             self.syntax_guard(),
             &self.generic_types,
         ) {
+            let contextual =
+                boundary.kind == CallResolutionKind::ContextualAssociatedTypeProjection;
             self.call_resolutions.push(boundary);
+            if contextual {
+                visit::visit_expr_path(self, expression);
+                self.next_path_namespace = previous;
+                return;
+            }
             for attribute in &expression.attrs {
                 self.visit_attribute(attribute);
             }
@@ -37,6 +46,12 @@ impl FactVisitor<'_> {
     }
 
     pub(in crate::source) fn record_path(&mut self, path: &Path) {
+        let namespace = std::mem::take(&mut self.next_path_namespace);
+        if let Some(mut fact) = self.current_self_fact(path, namespace) {
+            fact.inherits_parent_context = self.inherits_parent_context;
+            self.paths.push(fact);
+            return;
+        }
         let guard = self.syntax_guard();
         let (name, quality) = self.imports.resolve(path, &guard);
         if name.is_empty() {
@@ -50,7 +65,7 @@ impl FactVisitor<'_> {
             quality,
             &self.lexical_scope,
         );
-        fact.namespace = std::mem::take(&mut self.next_path_namespace);
+        fact.namespace = namespace;
         let value_position = fact.namespace == super::FactNamespace::Value;
         let scoped = self.with_implicit_prelude_scope(std::iter::once(fact), value_position);
         let generic_root = scoped.iter().any(|fact| fact.generic_shadow.is_some());
@@ -59,6 +74,34 @@ impl FactVisitor<'_> {
             self.paths
                 .extend(super::calls::candidates(path, self.imports, &name, &guard));
         }
+    }
+
+    pub(in crate::source) fn current_self_fact(
+        &self,
+        path: &Path,
+        namespace: FactNamespace,
+    ) -> Option<super::ObservedFact> {
+        if path
+            .segments
+            .first()
+            .is_none_or(|segment| segment.ident != "Self")
+        {
+            return None;
+        }
+        let identity = self.resolve_identity(path);
+        if identity.origin != OperationSubjectOrigin::CurrentSelf {
+            return None;
+        }
+        let mut fact = written_fact(
+            identity.name.clone(),
+            identity.name,
+            path.span(),
+            identity.quality,
+            &self.lexical_scope,
+        );
+        fact.namespace = namespace;
+        fact.implicit_prelude = super::ImplicitPreludeEligibility::Disabled;
+        Some(fact)
     }
 }
 

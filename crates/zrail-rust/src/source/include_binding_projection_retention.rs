@@ -38,6 +38,8 @@ pub(super) struct RetentionState<'a> {
     pub(super) existing: &'a BTreeMap<FactKey, AnalysisQuality>,
     pub(super) additions: &'a mut BTreeMap<FactKey, ObservedFact>,
     pub(super) qualities: &'a mut BTreeMap<FactKey, AnalysisQuality>,
+    pub(super) associated_candidates:
+        &'a mut BTreeMap<FactKey, Vec<super::super::GenericAssociatedCandidate>>,
     pub(super) uncertain: &'a mut Option<zrail_core::SourceSpan>,
     pub(super) budget: &'a mut ProjectionBudget,
     pub(super) remaining_file_facts: &'a mut usize,
@@ -53,6 +55,11 @@ pub(super) fn retain_candidates(
 ) -> Result<(), ProjectionLimit> {
     demote_non_authoritative_written_fact(fact, &aggregate, compatible, instance_count, state);
     for (name, candidate) in aggregate {
+        let associated_candidates = candidate
+            .associated_candidates
+            .values()
+            .cloned()
+            .collect::<Vec<_>>();
         let complete = (compatible && candidate.instances == instance_count)
             || (!candidate.production
                 && test_coverage.instances > 0
@@ -94,13 +101,17 @@ pub(super) fn retain_candidates(
         if state.existing.contains_key(&key) {
             state
                 .qualities
-                .entry(key)
+                .entry(key.clone())
                 .and_modify(|existing| *existing = (*existing).max(quality))
                 .or_insert(quality);
+            if !associated_candidates.is_empty() {
+                merge_candidates(state.associated_candidates, key, &associated_candidates);
+            }
             continue;
         }
         if let Some(existing) = state.additions.get_mut(&key) {
             existing.quality = existing.quality.max(quality);
+            merge_candidate_vec(&mut existing.associated_candidates, &associated_candidates);
             continue;
         }
         state.budget.retain_fact(state.remaining_file_facts)?;
@@ -117,10 +128,37 @@ pub(super) fn retain_candidates(
                 lexical_scope: fact.lexical_scope.clone(),
                 namespace: fact.namespace,
                 generic_shadow: candidate.generic_shadow,
+                associated_candidates,
+                inherits_parent_context: fact.inherits_parent_context,
             },
         );
     }
     Ok(())
+}
+
+fn merge_candidates(
+    updates: &mut BTreeMap<FactKey, Vec<super::super::GenericAssociatedCandidate>>,
+    key: FactKey,
+    candidates: &[super::super::GenericAssociatedCandidate],
+) {
+    merge_candidate_vec(updates.entry(key).or_default(), candidates);
+}
+
+fn merge_candidate_vec(
+    target: &mut Vec<super::super::GenericAssociatedCandidate>,
+    candidates: &[super::super::GenericAssociatedCandidate],
+) {
+    for candidate in candidates {
+        if let Some(existing) = target
+            .iter_mut()
+            .find(|existing| existing.name == candidate.name)
+        {
+            existing.quality = existing.quality.max(candidate.quality);
+        } else {
+            target.push(candidate.clone());
+        }
+    }
+    target.sort();
 }
 
 fn demote_non_authoritative_written_fact(

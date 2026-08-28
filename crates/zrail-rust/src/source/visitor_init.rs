@@ -20,6 +20,8 @@ impl<'a> FactVisitor<'a> {
                 lexical_scope: Vec::new(),
                 namespace: super::FactNamespace::Unknown,
                 generic_shadow: None,
+                associated_candidates: Vec::new(),
+                inherits_parent_context: true,
             })
             .collect::<Vec<_>>();
         paths.extend(
@@ -37,6 +39,8 @@ impl<'a> FactVisitor<'a> {
                     lexical_scope: Vec::new(),
                     namespace: super::FactNamespace::Unknown,
                     generic_shadow: None,
+                    associated_candidates: Vec::new(),
+                    inherits_parent_context: true,
                 }),
         );
         Self {
@@ -46,6 +50,9 @@ impl<'a> FactVisitor<'a> {
             lexical_scope: Vec::new(),
             generic_types: Vec::new(),
             generic_values: Vec::new(),
+            generic_bound_scopes: Vec::new(),
+            block_depth: 0,
+            inherits_parent_context: true,
             next_path_namespace: super::FactNamespace::Unknown,
             paths,
             calls: Vec::new(),

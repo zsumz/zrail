@@ -100,6 +100,8 @@ pub(super) fn canonicalize(
                     span,
                     guard: operation.identity.guard.clone(),
                     kind: CallResolutionKind::ExplicitTrait,
+                    associated_candidates: Vec::new(),
+                    occurrence: None,
                 };
                 if !call_resolutions.contains(&boundary) {
                     call_resolutions.push(boundary);

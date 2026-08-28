@@ -205,4 +205,25 @@ impl IncludeBindings {
             .get(&(file.to_owned(), guard.clone()))
             .map_or(&[], Vec::as_slice)
     }
+
+    pub(super) fn contextual_projection_is_generic(
+        &self,
+        file: &str,
+        written: &str,
+        guard: &SyntaxGuard,
+    ) -> bool {
+        let written = written.strip_prefix('<').unwrap_or(written);
+        let Some(root) = written.split("::").next() else {
+            return false;
+        };
+        let root = root.strip_prefix("r#").unwrap_or(root);
+        self.active_instances(file, guard).iter().any(|instance| {
+            self.instances.get(*instance).is_some_and(|source| {
+                source
+                    .generic_types
+                    .iter()
+                    .any(|generic| generic.strip_prefix("r#").unwrap_or(generic) == root)
+            })
+        })
+    }
 }

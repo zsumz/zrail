@@ -22,6 +22,7 @@ impl FactVisitor<'_> {
         mut fact: ObservedFact,
         value_position: bool,
     ) -> Vec<ObservedFact> {
+        fact.inherits_parent_context = self.inherits_parent_context;
         let Some(written) = fact.written.clone() else {
             return vec![fact];
         };
@@ -42,6 +43,9 @@ impl FactVisitor<'_> {
             fact.quality = identity.quality;
             fact.canonical.clear();
             fact.generic_shadow = Some(identity.shadow);
+            if identity.shadow == GenericRootShadow::TypeParameter {
+                fact.associated_candidates = self.generic_associated_candidates(&written);
+            }
             fact.implicit_prelude = generic_eligibility(identity.shadow, &root);
             return vec![fact];
         }

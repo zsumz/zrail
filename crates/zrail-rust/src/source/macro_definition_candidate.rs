@@ -26,6 +26,8 @@ pub(super) fn repository_candidate(
             lexical_scope: expansion.lexical_scope.clone(),
             namespace: super::FactNamespace::Unknown,
             generic_shadow: None,
+            associated_candidates: Vec::new(),
+            inherits_parent_context: true,
         },
         origins: vec![MacroOrigin::Repository {
             package: site.package,

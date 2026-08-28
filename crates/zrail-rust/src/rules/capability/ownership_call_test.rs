@@ -35,6 +35,8 @@ fn unresolved_direct_call_fails_closed_inside_its_allowed_owner() {
         lexical_scope: Vec::new(),
         namespace: FactNamespace::Value,
         generic_shadow: None,
+        associated_candidates: Vec::new(),
+        inherits_parent_context: true,
     });
     let mut findings = FindingSink::default();
 

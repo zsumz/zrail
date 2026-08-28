@@ -6,6 +6,12 @@ use super::RustFileFacts;
 pub(crate) fn fact_count(file: &RustFileFacts) -> usize {
     file.paths.len()
         + file.calls.len()
+        + file
+            .paths
+            .iter()
+            .chain(&file.calls)
+            .map(|fact| fact.associated_candidates.len())
+            .sum::<usize>()
         + file.call_resolutions.len()
         + file.methods.len()
         + file.operations.len()
@@ -40,6 +46,12 @@ pub(crate) fn fact_count(file: &RustFileFacts) -> usize {
         + file.tests.len()
         + file.modules.len()
         + file.includes.len()
+        + file
+            .includes
+            .iter()
+            .flat_map(|include| &include.generic_bounds)
+            .map(|bounds| 1 + bounds.traits.len())
+            .sum::<usize>()
         + file.item_macros.len()
         + file.opaque_binding_macros.len()
         + file.facade_implementation.len()

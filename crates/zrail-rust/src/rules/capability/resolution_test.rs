@@ -5,8 +5,9 @@ use zrail_core::{OwnerContract, OwnerKind, PolicyReachability};
 use crate::{
     inventory::FileClass,
     source::{
-        CallResolutionFact, CallResolutionKind, Reachability, ReachabilityKind, RustFileFacts,
-        SourceSyntax, SyntaxGuard,
+        AssociatedOccurrenceKind, CallResolutionFact, CallResolutionKind,
+        GenericAssociatedCandidate, Reachability, ReachabilityKind, RustFileFacts, SourceSyntax,
+        SyntaxGuard,
     },
 };
 
@@ -30,6 +31,47 @@ fn unrelated_call_owner_does_not_make_generic_rust_incomplete() {
     ));
 }
 
+#[test]
+fn capability_owner_applies_to_generic_function_reference() {
+    assert!(owner_relies_on(
+        &capability_owner("crate::Factory::ready"),
+        &file(),
+        &boundary_for(
+            "Choice::ready",
+            AssociatedOccurrenceKind::ValueReference,
+            &["Factory::ready"],
+        ),
+    ));
+}
+
+#[test]
+fn unrelated_same_named_owner_is_not_implicated() {
+    assert!(!owner_relies_on(
+        &owner("crate::Widget::ready"),
+        &file(),
+        &boundary("Choice::ready"),
+    ));
+}
+
+#[test]
+fn multiple_candidates_fail_closed_only_for_matching_authority() {
+    let boundary = boundary_for(
+        "Choice::ready",
+        AssociatedOccurrenceKind::DirectCall,
+        &["Factory::ready", "Alternative::ready"],
+    );
+    assert!(owner_relies_on(
+        &owner("crate::Alternative::ready"),
+        &file(),
+        &boundary,
+    ));
+    assert!(!owner_relies_on(
+        &owner("crate::Unrelated::ready"),
+        &file(),
+        &boundary,
+    ));
+}
+
 fn owner(selector: &str) -> OwnerContract {
     OwnerContract {
         name: "call-owner".into(),
@@ -43,7 +85,26 @@ fn owner(selector: &str) -> OwnerContract {
     }
 }
 
+fn capability_owner(selector: &str) -> OwnerContract {
+    OwnerContract {
+        kind: OwnerKind::Capability,
+        ..owner(selector)
+    }
+}
+
 fn boundary(written: &str) -> CallResolutionFact {
+    boundary_for(
+        written,
+        AssociatedOccurrenceKind::DirectCall,
+        &["Factory::ready"],
+    )
+}
+
+fn boundary_for(
+    written: &str,
+    occurrence: AssociatedOccurrenceKind,
+    candidates: &[&str],
+) -> CallResolutionFact {
     CallResolutionFact {
         written: written.into(),
         span: zrail_core::SourceSpan {
@@ -54,6 +115,15 @@ fn boundary(written: &str) -> CallResolutionFact {
         },
         guard: SyntaxGuard::Ordinary,
         kind: CallResolutionKind::GenericAssociatedItem,
+        associated_candidates: candidates
+            .iter()
+            .map(|candidate| GenericAssociatedCandidate {
+                name: (*candidate).into(),
+                canonical: Vec::new(),
+                quality: zrail_core::AnalysisQuality::Unresolved,
+            })
+            .collect(),
+        occurrence: Some(occurrence),
     }
 }
 

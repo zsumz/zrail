@@ -121,6 +121,16 @@ impl FactVisitor<'_> {
             boundary.lexical_scope.clone_from(&self.lexical_scope);
             boundary.generic_types.clone_from(&self.generic_types);
             boundary.generic_values.clone_from(&self.generic_values);
+            boundary.generic_bounds = self.active_generic_bounds();
+            boundary.current_self =
+                self.self_types
+                    .last()
+                    .map(|identity| super::super::LexicalSelfIdentity {
+                        name: identity.name.clone(),
+                        quality: identity.quality,
+                        file_local: identity.file_local,
+                    });
+            boundary.inherits_parent_context = self.inherits_parent_context;
             boundary.value_shadows = self.lexical_value_shadows();
             self.includes.push(boundary);
         }

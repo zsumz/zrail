@@ -102,6 +102,8 @@ fn operation(kind: SourceOperationKind, method: Option<&str>) -> SourceOperation
             lexical_scope: Vec::new(),
             namespace: FactNamespace::Type,
             generic_shadow: None,
+            associated_candidates: Vec::new(),
+            inherits_parent_context: true,
         },
         root_lookup: None,
         generic_shadow: None,

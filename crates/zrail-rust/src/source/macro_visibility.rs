@@ -122,6 +122,8 @@ fn imported_candidate(
         lexical_scope: original.lexical_scope.clone(),
         namespace: original.namespace,
         generic_shadow: original.generic_shadow,
+        associated_candidates: original.associated_candidates.clone(),
+        inherits_parent_context: original.inherits_parent_context,
     };
     if local {
         observation.canonical.push(original.name.clone());

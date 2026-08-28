@@ -22,6 +22,8 @@ pub(in crate::source) mod visitor_calls;
 pub(in crate::source) mod visitor_context;
 #[path = "visitor_field_operations.rs"]
 pub(in crate::source) mod visitor_field_operations;
+#[path = "visitor_generics.rs"]
+pub(in crate::source) mod visitor_generics;
 #[path = "visitor_imports.rs"]
 pub(in crate::source) mod visitor_imports;
 #[path = "visitor_init.rs"]

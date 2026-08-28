@@ -181,6 +181,9 @@ fn apply_projection(facts: &mut Vec<ObservedFact>, projection: FactProjection) {
         if let Some(quality) = projection.qualities.get(&key) {
             fact.quality = *quality;
         }
+        if let Some(candidates) = projection.associated_candidates.get(&key) {
+            fact.associated_candidates.clone_from(candidates);
+        }
     }
     facts.extend(projection.additions);
 }

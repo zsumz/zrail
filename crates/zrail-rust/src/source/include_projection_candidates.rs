@@ -23,6 +23,7 @@ pub(super) struct ResolutionCacheKey {
     guard: SyntaxGuard,
     implicit_prelude: ImplicitPreludeEligibility,
     generic_shadow: Option<GenericRootShadow>,
+    inherits_parent_context: bool,
 }
 
 pub(super) struct CandidateAggregate {
@@ -33,6 +34,7 @@ pub(super) struct CandidateAggregate {
     pub(super) requires_projection: bool,
     pub(super) blocks_completeness: bool,
     pub(super) generic_shadow: Option<GenericRootShadow>,
+    pub(super) associated_candidates: BTreeMap<String, super::GenericAssociatedCandidate>,
 }
 
 impl Default for CandidateAggregate {
@@ -45,6 +47,7 @@ impl Default for CandidateAggregate {
             requires_projection: false,
             blocks_completeness: false,
             generic_shadow: None,
+            associated_candidates: BTreeMap::new(),
         }
     }
 }
@@ -76,11 +79,20 @@ pub(super) fn aggregate(
             guard: fact.guard.clone(),
             implicit_prelude,
             generic_shadow: generic_identity.as_ref().map(|identity| identity.shadow),
+            inherits_parent_context: fact.inherits_parent_context,
         };
         let resolved = if let Some(resolved) = cache.get(&key) {
             resolved.clone()
         } else {
-            let resolved = if let Some(identity) = &generic_identity {
+            let contextual_self = match source {
+                Some(source) => super::include_projection_context::current_self(
+                    bindings, fact, *instance, source, usage, budget,
+                )?,
+                None => None,
+            };
+            let resolved = if let Some(resolved) = contextual_self {
+                resolved
+            } else if let Some(identity) = &generic_identity {
                 vec![ResolvedPath {
                     name: identity.name.clone(),
                     quality: identity.quality,
@@ -147,6 +159,19 @@ pub(super) fn aggregate(
             resolved
         };
         let test_instance = source.is_some_and(|source| source.domain.mode.enables_cfg_test());
+        let associated_candidates = if generic_identity
+            .as_ref()
+            .is_some_and(super::GenericRootIdentity::is_associated)
+        {
+            match source {
+                Some(source) => super::include_projection_context::associated_candidates(
+                    bindings, fact, *instance, source, budget,
+                )?,
+                None => fact.associated_candidates.clone(),
+            }
+        } else {
+            Vec::new()
+        };
         if test_instance {
             test_coverage.instances += 1;
             test_coverage.compatible &= resolved.len() == 1;
@@ -179,6 +204,15 @@ pub(super) fn aggregate(
             entry.blocks_completeness |= candidate.blocks_completeness;
             if generic_candidate {
                 entry.generic_shadow = generic_identity.as_ref().map(|identity| identity.shadow);
+                for candidate in &associated_candidates {
+                    entry
+                        .associated_candidates
+                        .entry(candidate.name.clone())
+                        .and_modify(|existing| {
+                            existing.quality = existing.quality.max(candidate.quality);
+                        })
+                        .or_insert_with(|| candidate.clone());
+                }
             }
             entry.production |= bindings
                 .instances

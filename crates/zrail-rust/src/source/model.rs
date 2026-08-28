@@ -4,6 +4,8 @@
 mod bindings;
 #[path = "model_generic_roots.rs"]
 mod generic_roots;
+#[path = "model_lexical_context.rs"]
+mod lexical_context;
 #[path = "source_metrics.rs"]
 mod source_metrics;
 
@@ -22,6 +24,10 @@ pub(crate) use bindings::{
 pub(crate) use generic_roots::{
     GenericRootIdentity, GenericRootShadow, RootLookupNamespace, generic_root_identity,
     generic_root_shadow, identity_for_generic_root,
+};
+pub(crate) use lexical_context::{
+    AssociatedOccurrenceKind, GenericAssociatedCandidate, GenericParameterBounds,
+    LexicalSelfIdentity,
 };
 
 pub(crate) use source_metrics::SourceAnalysisMetrics;
@@ -61,6 +67,8 @@ pub(crate) struct ObservedFact {
     pub(crate) lexical_scope: Vec<SourceSpan>,
     pub(crate) namespace: FactNamespace,
     pub(crate) generic_shadow: Option<GenericRootShadow>,
+    pub(crate) associated_candidates: Vec<GenericAssociatedCandidate>,
+    pub(crate) inherits_parent_context: bool,
 }
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -78,11 +86,14 @@ pub(crate) struct CallResolutionFact {
     pub(crate) span: SourceSpan,
     pub(crate) guard: SyntaxGuard,
     pub(crate) kind: CallResolutionKind,
+    pub(crate) associated_candidates: Vec<GenericAssociatedCandidate>,
+    pub(crate) occurrence: Option<AssociatedOccurrenceKind>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum CallResolutionKind {
     AssociatedTypeProjection,
+    ContextualAssociatedTypeProjection,
     ExplicitTrait,
     GenericAssociatedItem,
 }
@@ -168,6 +179,9 @@ pub(crate) struct IncludeBoundary {
     pub(crate) lexical_scope: Vec<SourceSpan>,
     pub(crate) generic_types: Vec<String>,
     pub(crate) generic_values: Vec<String>,
+    pub(crate) generic_bounds: Vec<GenericParameterBounds>,
+    pub(crate) current_self: Option<LexicalSelfIdentity>,
+    pub(crate) inherits_parent_context: bool,
     pub(crate) value_shadows: Vec<(String, SyntaxGuard)>,
     pub(crate) occurrence: IncludeOccurrenceId,
     pub(crate) span: Option<SourceSpan>,

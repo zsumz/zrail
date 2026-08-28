@@ -15,10 +15,15 @@ pub(super) fn visit_item(visitor: &mut FactVisitor<'_>, item: &Item) {
     let local_values = std::mem::take(&mut visitor.local_values);
     let pattern_inputs = std::mem::take(&mut visitor.pattern_inputs);
     let self_types = std::mem::take(&mut visitor.self_types);
+    let inherits_parent_context = visitor.inherits_parent_context;
+    if visitor.block_depth > 0 {
+        visitor.inherits_parent_context = false;
+    }
     visitor.with_fresh_generics(|visitor| visit::visit_item(visitor, item));
     visitor.local_values = local_values;
     visitor.pattern_inputs = pattern_inputs;
     visitor.self_types = self_types;
+    visitor.inherits_parent_context = inherits_parent_context;
 }
 
 pub(super) fn visit_binary(visitor: &mut FactVisitor<'_>, expression: &ExprBinary) {
@@ -202,6 +207,7 @@ pub(super) fn visit_module(visitor: &mut FactVisitor<'_>, module: &ItemMod) {
 }
 
 pub(super) fn visit_block(visitor: &mut FactVisitor<'_>, block: &Block) {
+    visitor.block_depth = visitor.block_depth.saturating_add(1);
     visitor.with_lexical_scope(block.span(), |visitor| {
         visitor.with_value_scope(|visitor| {
             let items = block.stmts.iter().filter_map(|statement| match statement {
@@ -211,4 +217,5 @@ pub(super) fn visit_block(visitor: &mut FactVisitor<'_>, block: &Block) {
             visitor.with_import_scope(items, |visitor| visit::visit_block(visitor, block));
         });
     });
+    visitor.block_depth = visitor.block_depth.saturating_sub(1);
 }

@@ -16,6 +16,9 @@ pub(in crate::source) struct FactVisitor<'a> {
     pub(in crate::source) lexical_scope: Vec<zrail_core::SourceSpan>,
     pub(in crate::source) generic_types: Vec<String>,
     pub(in crate::source) generic_values: Vec<String>,
+    pub(in crate::source) generic_bound_scopes: Vec<super::visitor_generics::GenericBoundScope>,
+    pub(in crate::source) block_depth: usize,
+    pub(in crate::source) inherits_parent_context: bool,
     pub(in crate::source) next_path_namespace: super::FactNamespace,
     pub(in crate::source) paths: Vec<ObservedFact>,
     pub(in crate::source) calls: Vec<ObservedFact>,
@@ -46,48 +49,4 @@ pub(in crate::source) struct FactVisitor<'a> {
     pub(in crate::source) includes: Vec<IncludeBoundary>,
     pub(in crate::source) item_macros: Vec<ObservedFact>,
     pub(in crate::source) opaque_binding_macros: Vec<ObservedFact>,
-}
-
-impl FactVisitor<'_> {
-    pub(in crate::source) fn with_generics(
-        &mut self,
-        generics: &syn::Generics,
-        include_self: bool,
-        visit: impl FnOnce(&mut Self),
-    ) {
-        let checkpoint = (self.generic_types.len(), self.generic_values.len());
-        if include_self {
-            self.generic_types.push("Self".into());
-        }
-        self.generic_types.extend(
-            generics
-                .params
-                .iter()
-                .filter_map(|parameter| match parameter {
-                    syn::GenericParam::Type(parameter) => Some(parameter.ident.to_string()),
-                    _ => None,
-                }),
-        );
-        self.generic_values
-            .extend(
-                generics
-                    .params
-                    .iter()
-                    .filter_map(|parameter| match parameter {
-                        syn::GenericParam::Const(parameter) => Some(parameter.ident.to_string()),
-                        _ => None,
-                    }),
-            );
-        visit(self);
-        self.generic_types.truncate(checkpoint.0);
-        self.generic_values.truncate(checkpoint.1);
-    }
-
-    pub(in crate::source) fn with_fresh_generics(&mut self, visit: impl FnOnce(&mut Self)) {
-        let inherited_types = std::mem::take(&mut self.generic_types);
-        let inherited_values = std::mem::take(&mut self.generic_values);
-        visit(self);
-        self.generic_types = inherited_types;
-        self.generic_values = inherited_values;
-    }
 }

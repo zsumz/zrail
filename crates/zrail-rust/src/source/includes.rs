@@ -4,6 +4,7 @@ use syn::{Expr, Macro, Token, parse::Parser, punctuated::Punctuated, spanned::Sp
 use zrail_core::SourceSpan;
 
 use super::{
+    GenericParameterBounds, LexicalSelfIdentity,
     fact::source_span,
     model::{IncludeBoundary, IncludeContext},
 };
@@ -33,6 +34,9 @@ pub(crate) struct CompilationIncludeEdge {
     pub(crate) parent_scope: Vec<SourceSpan>,
     pub(crate) generic_types: Vec<String>,
     pub(crate) generic_values: Vec<String>,
+    pub(crate) generic_bounds: Vec<GenericParameterBounds>,
+    pub(crate) current_self: Option<LexicalSelfIdentity>,
+    pub(crate) inherits_parent_context: bool,
     pub(crate) value_shadows: Vec<(String, super::SyntaxGuard)>,
     pub(crate) include_span: SourceSpan,
     pub(crate) occurrence: IncludeOccurrenceId,
@@ -58,6 +62,9 @@ pub(super) fn include_boundary(
         lexical_scope: Vec::new(),
         generic_types: Vec::new(),
         generic_values: Vec::new(),
+        generic_bounds: Vec::new(),
+        current_self: None,
+        inherits_parent_context: true,
         value_shadows: Vec::new(),
         occurrence: IncludeOccurrenceId::new(span),
         span: Some(span),

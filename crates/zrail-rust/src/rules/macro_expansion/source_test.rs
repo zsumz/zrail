@@ -90,6 +90,8 @@ fn candidate(requirement: &str) -> MacroCandidate {
             lexical_scope: Vec::new(),
             namespace: FactNamespace::Unknown,
             generic_shadow: None,
+            associated_candidates: Vec::new(),
+            inherits_parent_context: true,
         },
         origins: vec![MacroOrigin::External {
             package: "derive-impl".into(),

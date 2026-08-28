@@ -103,16 +103,25 @@ pub(crate) fn canonicalize(
     ));
     super::operation_place_canonical::apply(index, compilation_domains);
     for file in &mut index.files {
+        for boundary in &mut file.call_resolutions {
+            if boundary.kind == super::CallResolutionKind::ContextualAssociatedTypeProjection
+                && include_bindings.contextual_projection_is_generic(
+                    &file.relative,
+                    &boundary.written,
+                    &boundary.guard,
+                )
+            {
+                boundary.kind = super::CallResolutionKind::AssociatedTypeProjection;
+            }
+        }
+        file.call_resolutions.retain(|boundary| {
+            boundary.kind != super::CallResolutionKind::ContextualAssociatedTypeProjection
+        });
         findings.extend(super::calls::resolution_findings(
             &file.relative,
             &file.call_resolutions,
             compilation_domains.get(&file.relative),
         ));
-        for boundary in super::calls::generic_resolution_boundaries(file) {
-            if !file.call_resolutions.contains(&boundary) {
-                file.call_resolutions.push(boundary);
-            }
-        }
         let selected = selected_packages(contexts, &packages, &cargo.packages, &file.relative);
         let observed = super::canonical_observed::roots(file);
         let (roots, overflowed) = dependency_roots(&selected, &observed);
@@ -134,6 +143,14 @@ pub(crate) fn canonicalize(
             .chain(&mut file.item_macros)
         {
             canonicalize_fact_bounded(fact, &roots, &overflowed);
+            for candidate in &mut fact.associated_candidates {
+                super::canonical_associated::apply(candidate, &roots, &overflowed);
+            }
+        }
+        for boundary in super::calls::generic_resolution_boundaries(file) {
+            if !file.call_resolutions.contains(&boundary) {
+                file.call_resolutions.push(boundary);
+            }
         }
     }
     index.findings.extend(findings);

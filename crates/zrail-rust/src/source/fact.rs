@@ -30,6 +30,8 @@ pub(super) fn fact(name: impl Into<String>, span: Span, quality: AnalysisQuality
         lexical_scope: Vec::new(),
         namespace: super::FactNamespace::Unknown,
         generic_shadow: None,
+        associated_candidates: Vec::new(),
+        inherits_parent_context: true,
     }
 }
 
