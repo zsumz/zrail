@@ -80,7 +80,11 @@ pub(super) fn associated_candidates(
     }
     raw.sort();
     raw.dedup();
-    let occurrence_projection = candidates::occurrence_projection(fact, source);
+    if raw.is_empty() {
+        return Ok(Vec::new());
+    }
+    let occurrence_projections =
+        candidates::resolve_occurrence(bindings, fact, instance, source, budget)?;
     let mut resolved = BTreeMap::<
         (String, ProjectionIdentity, AssociatedCandidateKind),
         GenericAssociatedCandidate,
@@ -110,30 +114,43 @@ pub(super) fn associated_candidates(
         )?;
         if candidates.is_empty() {
             for (projection, quality) in projections {
-                if !matches_occurrence(&projection, occurrence_projection.as_ref()) {
+                let Some(occurrence_quality) =
+                    candidates::matching_quality(&projection, occurrence_projections.as_deref())
+                else {
                     continue;
-                }
+                };
                 let mut candidate = raw.clone();
-                candidate.projection = retained_projection(raw.kind, &projection, &raw.name);
-                candidate.quality = candidate.quality.max(quality);
+                candidate.projection =
+                    candidates::retained_projection(raw.kind, &projection, &raw.name);
+                candidate.quality = candidate.quality.max(quality).max(occurrence_quality);
                 insert_candidate(&mut resolved, candidate);
             }
             continue;
         }
         for candidate in candidates {
             for (projection, projection_quality) in &projections {
-                if !matches_occurrence(projection, occurrence_projection.as_ref()) {
+                let Some(occurrence_quality) =
+                    candidates::matching_quality(projection, occurrence_projections.as_deref())
+                else {
                     continue;
-                }
+                };
                 let authority = authority(&candidate);
-                let quality = candidate.quality.max(raw.quality).max(*projection_quality);
+                let quality = candidate
+                    .quality
+                    .max(raw.quality)
+                    .max(*projection_quality)
+                    .max(occurrence_quality);
                 insert_candidate(
                     &mut resolved,
                     GenericAssociatedCandidate {
                         name: candidate.name.clone(),
                         canonical: Vec::new(),
                         quality,
-                        projection: retained_projection(raw.kind, projection, &candidate.name),
+                        projection: candidates::retained_projection(
+                            raw.kind,
+                            projection,
+                            &candidate.name,
+                        ),
                         kind: raw.kind,
                         provider_complete: match raw.kind {
                             AssociatedCandidateKind::TraitProvider => {
@@ -151,34 +168,6 @@ pub(super) fn associated_candidates(
         }
     }
     Ok(resolved.into_values().collect())
-}
-
-fn matches_occurrence(
-    projection: &ProjectionIdentity,
-    occurrence: Option<&ProjectionIdentity>,
-) -> bool {
-    occurrence.is_none_or(|occurrence| projection.matches(occurrence))
-}
-
-fn retained_projection(
-    kind: AssociatedCandidateKind,
-    projection: &ProjectionIdentity,
-    candidate_name: &str,
-) -> ProjectionIdentity {
-    let mismatched_provider = projection
-        .qualifying_trait
-        .as_ref()
-        .zip(
-            candidate_name
-                .rsplit_once("::")
-                .map(|(provider, _)| provider),
-        )
-        .is_some_and(|(qualifier, provider)| qualifier.path != provider);
-    if kind == AssociatedCandidateKind::TypeEquality || mismatched_provider {
-        ProjectionIdentity::default()
-    } else {
-        projection.clone()
-    }
 }
 
 fn insert_candidate(

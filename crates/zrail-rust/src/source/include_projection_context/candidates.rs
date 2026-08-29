@@ -2,9 +2,14 @@
 
 use std::collections::BTreeSet;
 
+use zrail_core::AnalysisQuality;
+
 use crate::source::{
     AssociatedCandidateKind, BoundSubject, GenericAssociatedCandidate, ObservedFact,
-    ProjectionIdentity, ProviderAuthority, TraitBoundFact, source_instance::SourceInstance,
+    ProjectionIdentity, ProviderAuthority, SourceInstanceId, TraitBoundFact,
+    include_bindings::IncludeBindings,
+    include_projection_budget::{ProjectionBudget, ProjectionLimit},
+    source_instance::SourceInstance,
 };
 
 pub(super) fn inherited(
@@ -48,6 +53,68 @@ pub(super) fn occurrence_projection(
     source: &SourceInstance,
 ) -> Option<ProjectionIdentity> {
     occurrence(fact, source).and_then(|(subject, _)| subject.projection().cloned())
+}
+
+pub(super) fn resolve_occurrence(
+    bindings: &IncludeBindings,
+    fact: &ObservedFact,
+    instance: SourceInstanceId,
+    source: &SourceInstance,
+    budget: &mut ProjectionBudget,
+) -> Result<Option<Vec<(ProjectionIdentity, AnalysisQuality)>>, ProjectionLimit> {
+    let Some(projection) = occurrence_projection(fact, source) else {
+        return Ok(None);
+    };
+    let mut resolved = super::projection_resolution::resolve(
+        bindings,
+        instance,
+        source,
+        &projection,
+        &fact.lexical_scope,
+        &fact.guard,
+        budget,
+    )?;
+    if resolved.len() != 1 {
+        for (_, quality) in &mut resolved {
+            *quality = (*quality).max(AnalysisQuality::Unresolved);
+        }
+    }
+    Ok(Some(resolved))
+}
+
+pub(super) fn matching_quality(
+    projection: &ProjectionIdentity,
+    occurrences: Option<&[(ProjectionIdentity, AnalysisQuality)]>,
+) -> Option<AnalysisQuality> {
+    let Some(occurrences) = occurrences else {
+        return Some(AnalysisQuality::Exact);
+    };
+    occurrences
+        .iter()
+        .filter(|(occurrence, _)| projection.matches(occurrence))
+        .map(|(_, quality)| *quality)
+        .max()
+}
+
+pub(super) fn retained_projection(
+    kind: AssociatedCandidateKind,
+    projection: &ProjectionIdentity,
+    candidate_name: &str,
+) -> ProjectionIdentity {
+    let mismatched_provider = projection
+        .qualifying_trait
+        .as_ref()
+        .zip(
+            candidate_name
+                .rsplit_once("::")
+                .map(|(provider, _)| provider),
+        )
+        .is_some_and(|(qualifier, provider)| qualifier.path != provider);
+    if kind == AssociatedCandidateKind::TypeEquality || mismatched_provider {
+        ProjectionIdentity::default()
+    } else {
+        projection.clone()
+    }
 }
 
 fn occurrence(fact: &ObservedFact, source: &SourceInstance) -> Option<(BoundSubject, String)> {

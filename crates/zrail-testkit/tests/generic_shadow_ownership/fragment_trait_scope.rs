@@ -38,6 +38,10 @@ where
 "#;
 
 const FRAGMENT: &str = "type Factory = Product; fn run() { <Self as Other>::Factory::ready(); }";
+const CURRENT_TRAIT_FRAGMENT: &str =
+    "type Factory = Product; fn run() { <Self as Provider>::Factory::ready(); }";
+const ALIASED_TRAIT_FRAGMENT: &str =
+    "type Factory = Product; fn run() { <Self as CallProvider>::Factory::ready(); }";
 
 #[test]
 fn fragment_associated_definition_does_not_cross_an_explicit_trait() {
@@ -64,6 +68,70 @@ fn filtered_fragment_candidate_is_removed_without_a_matching_bound() {
     );
 
     assert_resolution(&product, 0);
+}
+
+#[test]
+fn fragment_associated_definition_matches_current_trait_in_nested_module() {
+    let source = r#"mod owner;
+
+pub mod nested {
+    pub trait Provider {
+        type Factory;
+        fn run();
+    }
+
+    pub struct Product;
+    impl Product {
+        pub fn ready() {}
+    }
+
+    pub struct Process;
+    impl Provider for Process {
+        include!("impl_items.inc");
+    }
+}
+"#;
+    let repository = Repository::new(
+        "fragment-current-trait-nested-module",
+        source,
+        "pub fn own() { crate::nested::Product::ready(); }",
+        &call_owner("product-ready", "crate::nested::Product::ready"),
+    );
+    repository.write("src/impl_items.inc", CURRENT_TRAIT_FRAGMENT);
+
+    assert_resolution(&repository, 1);
+}
+
+#[test]
+fn fragment_associated_definition_matches_equivalent_trait_alias() {
+    let source = r#"mod owner;
+
+pub trait Provider {
+    type Factory;
+    fn run();
+}
+use Provider as ImplProvider;
+use Provider as CallProvider;
+
+pub struct Product;
+impl Product {
+    pub fn ready() {}
+}
+
+pub struct Process;
+impl ImplProvider for Process {
+    include!("impl_items.inc");
+}
+"#;
+    let repository = Repository::new(
+        "fragment-current-trait-alias",
+        source,
+        "pub fn own() { crate::Product::ready(); }",
+        &call_owner("product-ready", "crate::Product::ready"),
+    );
+    repository.write("src/impl_items.inc", ALIASED_TRAIT_FRAGMENT);
+
+    assert_resolution(&repository, 1);
 }
 
 #[test]
