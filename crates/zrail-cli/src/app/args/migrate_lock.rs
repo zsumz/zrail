@@ -14,6 +14,7 @@ pub(crate) struct MigrateLockOptions {
     pub(crate) config: PathBuf,
     pub(crate) lock: PathBuf,
     pub(crate) base: OsString,
+    pub(crate) target: Option<OsString>,
     pub(crate) output: PathBuf,
 }
 
@@ -22,6 +23,7 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
     let mut config = PathBuf::from("zrail.toml");
     let mut lock = PathBuf::from("zrail.lock");
     let mut base = None;
+    let mut target = None;
     let mut output = None;
     let mut index = 0;
     while index < arguments.len() {
@@ -34,6 +36,11 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
                 &mut base,
                 os_value(arguments, &mut index, "--base")?,
                 "migration base",
+            )?,
+            "--target" => set_once(
+                &mut target,
+                os_value(arguments, &mut index, "--target")?,
+                "migration target",
             )?,
             "--output" => set_once(
                 &mut output,
@@ -49,6 +56,11 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
         config,
         lock,
         base: base.unwrap_or_else(|| OsStr::new("HEAD").to_os_string()),
+        target,
         output: output.ok_or_else(|| CliError::new("migrate-lock requires --output PATH"))?,
     }))
 }
+
+#[cfg(test)]
+#[path = "migrate_lock_test.rs"]
+mod migrate_lock_test;

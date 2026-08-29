@@ -149,8 +149,9 @@ pub(super) const fn rank_lint_suppressions(mode: LintSuppressionMode) -> u8 {
 pub(super) const fn rank_glob_imports(mode: GlobImportMode) -> u8 {
     match mode {
         GlobImportMode::Allow => 0,
-        GlobImportMode::FacadeReexportsOnly => 1,
-        GlobImportMode::Deny => 2,
+        GlobImportMode::FacadeReexportsAndTestSuper => 1,
+        GlobImportMode::FacadeReexportsOnly => 2,
+        GlobImportMode::Deny => 3,
     }
 }
 

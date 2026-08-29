@@ -84,14 +84,31 @@ fn display_macro_invocations(values: &[super::MacroInvocationExplanation]) -> St
         .iter()
         .map(|value| {
             format!(
-                "{} -> {} @ {}",
+                "{} -> {} [{}] @ {} ({})",
                 value.written,
                 value.preferred.as_deref().unwrap_or("<unresolved>"),
-                display_list(&value.origins)
+                quality(value.resolution),
+                display_list(&value.origins),
+                occurrence_identity(value),
             )
         })
         .collect::<Vec<_>>()
         .join("; ")
+}
+
+fn occurrence_identity(value: &super::MacroInvocationExplanation) -> String {
+    value.span.map_or_else(
+        || value.input_sha256.clone(),
+        |span| format!("{}:{}:{}", span.line, span.column, value.input_sha256),
+    )
+}
+
+const fn quality(value: zrail_core::AnalysisQuality) -> &'static str {
+    match value {
+        zrail_core::AnalysisQuality::Exact => "exact",
+        zrail_core::AnalysisQuality::Conservative => "conservative",
+        zrail_core::AnalysisQuality::Unresolved => "unresolved",
+    }
 }
 
 fn display_list(values: &[String]) -> String {

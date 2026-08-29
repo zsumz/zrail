@@ -73,7 +73,7 @@ impl MacroBindingFailure {
                 "qualify or resolve the macro origin, or use binding = \"conservative\" after reviewing the unresolved name-only boundary"
             }
             Self::SourceMismatch { .. } => {
-                "bind source to the exact observed external package source"
+                "bind source to the exact observed compiler, repository, or dependency source"
             }
             Self::DefinitionMismatch { .. } => {
                 "bind definition to one macro_rules! definition in the observed repository implementation package"

@@ -64,6 +64,28 @@ fn one_package_can_have_distinct_exact_source_attestations() {
         .expect("exact dependency sources are independent authorities");
 }
 
+#[test]
+fn repository_macro_provenance_is_not_dependency_crate_root_authority() {
+    let mut contract = minimal_contract();
+    contract.dependencies.crate_roots = vec![crate::CrateRootContract {
+        package: "runtime".into(),
+        root: "runtime".into(),
+        reason: "Repository macro provenance is a different authority kind.".into(),
+        source: CrateRootSource::Repository {
+            package: "runtime".into(),
+            directory: "crates/runtime".into(),
+        },
+    }];
+
+    let error = super::super::validate::validate_contract(&contract)
+        .expect_err("reject repository provenance for dependency crate roots");
+    assert!(
+        error
+            .to_string()
+            .contains("may not select repository macro provenance")
+    );
+}
+
 fn registry(requirement: &str) -> CrateRootSource {
     CrateRootSource::Registry {
         registry: None,

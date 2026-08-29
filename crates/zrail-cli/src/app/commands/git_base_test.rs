@@ -171,6 +171,10 @@ fn snapshot_rejects_symlinked_architecture_inputs() {
 pub(crate) fn commit_all(root: &Path) {
     run_git(root, &["init", "--quiet"]);
     run_git(root, &["add", "."]);
+    commit_index(root);
+}
+
+pub(crate) fn commit_index(root: &Path) {
     run_git(
         root,
         &[
@@ -188,7 +192,23 @@ pub(crate) fn commit_all(root: &Path) {
     );
 }
 
-fn run_git(root: &Path, arguments: &[&str]) {
+pub(crate) fn head_revision(root: &Path) -> String {
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(root)
+        .args(["rev-parse", "HEAD"])
+        .env("GIT_CONFIG_NOSYSTEM", "1")
+        .env("GIT_TERMINAL_PROMPT", "0")
+        .output()
+        .expect("resolve fixture revision");
+    assert!(output.status.success(), "resolve fixture revision");
+    String::from_utf8(output.stdout)
+        .expect("UTF-8 revision")
+        .trim()
+        .into()
+}
+
+pub(crate) fn run_git(root: &Path, arguments: &[&str]) {
     let status = Command::new("git")
         .arg("-C")
         .arg(root)

@@ -106,6 +106,7 @@ pub(super) fn visibility(value: &BindingVisibility) -> String {
 pub(super) const fn glob_mode(value: GlobImportMode) -> &'static str {
     match value {
         GlobImportMode::Allow => "allow",
+        GlobImportMode::FacadeReexportsAndTestSuper => "facade-reexports-and-test-super",
         GlobImportMode::FacadeReexportsOnly => "facade-reexports-only",
         GlobImportMode::Deny => "deny",
     }

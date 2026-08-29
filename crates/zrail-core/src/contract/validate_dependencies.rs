@@ -3,8 +3,10 @@
 use std::collections::BTreeSet;
 
 use super::{
-    Contract, CrateRootSource, validate_limits::ValidationErrors,
-    validate_paths::validate_package_name, validate_sets::require_reason,
+    Contract, CrateRootSource,
+    validate_limits::ValidationErrors,
+    validate_paths::{validate_package_name, validate_repository_literal},
+    validate_sets::require_reason,
     validate_source::valid_rust_path,
 };
 
@@ -25,6 +27,12 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
             ));
         }
         validate_source(&attestation.source, &attestation.package, errors);
+        if matches!(attestation.source, CrateRootSource::Repository { .. }) {
+            errors.push(format!(
+                "dependency crate-root attestation for {:?} may not select repository macro provenance",
+                attestation.package
+            ));
+        }
         if let CrateRootSource::CargoLock { package, .. } = &attestation.source
             && package != &attestation.package
         {
@@ -88,6 +96,11 @@ pub(super) fn validate_source(
                 || optional_empty(tag.as_ref())
                 || optional_empty(rev.as_ref())
                 || optional_empty(requirement.as_ref())
+        }
+        CrateRootSource::Repository { package, directory } => {
+            validate_package_name(package, errors);
+            validate_repository_literal(directory, errors);
+            package.trim().is_empty() || directory.trim().is_empty()
         }
     };
     if invalid {

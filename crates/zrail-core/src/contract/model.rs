@@ -70,9 +70,9 @@ pub use types::{
 #[serde(deny_unknown_fields)]
 #[doc = "Rust source architecture policy."] pub struct RustSourceContract {
     #[doc = "Governs module-level documentation."] pub module_docs: ModuleDocsMode,
-    #[doc = "Governs implementation logic in `lib.rs` and `mod.rs` facades."] pub facades: FacadeMode,
+    #[doc = "Governs declarations and implementation logic in `lib.rs` and `mod.rs` facades."] pub facades: FacadeMode,
     #[serde(default)]
-    #[doc = "Governs implementation logic in `main.rs` entrypoints."] pub entrypoints: FacadeMode,
+    #[doc = "Governs declarations and implementation logic in `main.rs` entrypoints."] pub entrypoints: FacadeMode,
     #[doc = "Governs placement of unit tests relative to implementation files."] pub tests: TestMode,
     #[serde(default)] #[doc = "Exact reasoned facade and implementation role overrides."] pub file_roles: Vec<FileRoleContract>,
     #[serde(default)] #[doc = "Compiler-owned source trees governed by provenance manifests and budgets."] pub generated: Vec<GeneratedSourceContract>,

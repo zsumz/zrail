@@ -29,7 +29,7 @@ pub(super) fn check_allowed(
             .at(&file.relative, expansion.span)
             .because(&owner.reason)
             .with_analysis(AnalysisQuality::Unresolved)
-            .with_help("bind the exact macro provenance and attest source_operations = \"none\""),
+            .with_help(attestation_help(owner.kind)),
         );
     }
     !expansions.is_empty()
@@ -61,7 +61,10 @@ pub(super) fn reject_outside(
             .at(&file.relative, expansion.span)
             .because(&owner.reason)
             .with_analysis(AnalysisQuality::Unresolved)
-            .with_help("move the macro invocation into its declared owner or attest source_operations = \"none\" after exact review"),
+            .with_help(format!(
+                "move the macro invocation into its declared owner or {} after exact review",
+                attestation_help(owner.kind)
+            )),
         );
     }
 }
@@ -74,11 +77,12 @@ fn unresolved_expansions<'a>(
     file.macro_expansions.iter().filter(|expansion| {
         expansion.observation.guard != SyntaxGuard::Never
             && ownership::fact_applies(owner, file, &expansion.observation)
-            && !crate::rules::closes_source_operations(
+            && !crate::rules::closes_owned_operations(
                 context.contract,
                 context.source,
                 context.resolved_cargo,
                 expansion,
+                owner.kind,
             )
     })
 }
@@ -106,5 +110,14 @@ const fn operation_label(kind: OwnerKind) -> &'static str {
         OwnerKind::FieldMutation => "field mutation",
         OwnerKind::FieldAuthority => "field access",
         OwnerKind::Call | OwnerKind::Capability | OwnerKind::Directory => "source operation",
+    }
+}
+
+const fn attestation_help(kind: OwnerKind) -> &'static str {
+    match kind {
+        OwnerKind::FieldWrite | OwnerKind::FieldMutableBorrow | OwnerKind::FieldMutation => {
+            "bind the exact macro provenance and attest field_mutation = \"none\""
+        }
+        _ => "bind the exact macro provenance and attest source_operations = \"none\"",
     }
 }

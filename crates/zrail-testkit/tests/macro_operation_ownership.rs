@@ -60,6 +60,29 @@ fn every_operation_owner_fails_closed_for_every_macro_form() {
         "exact source-operation-free attestation did not close the boundary: {}",
         report.human(),
     );
+    for rule in ["field-write", "field-borrow", "field-mutation"] {
+        assert!(
+            !report.findings.iter().any(|finding| {
+                finding.rule == rule && finding.path.as_deref() == Some("src/field_attested.rs")
+            }),
+            "field-only attestation did not close {rule}: {}",
+            report.human(),
+        );
+    }
+    for rule in [
+        "construction",
+        "method-name",
+        "field-read",
+        "field-authority",
+    ] {
+        assert!(
+            report.findings.iter().any(|finding| {
+                finding.rule == rule && finding.path.as_deref() == Some("src/field_attested.rs")
+            }),
+            "field-only attestation incorrectly closed {rule}: {}",
+            report.human(),
+        );
+    }
     let coverage =
         governed_surface_report(&root, "zrail.toml".as_ref()).expect("build macro coverage");
     let field_owner = coverage
@@ -95,6 +118,7 @@ fn repository() -> PathBuf {
     write(&root, "src/owner.rs", OPAQUE_FORMS);
     write(&root, "src/outside.rs", OPAQUE_FORMS);
     write(&root, "src/attested.rs", ATTESTED);
+    write(&root, "src/field_attested.rs", FIELD_ATTESTED);
     root
 }
 
@@ -133,9 +157,11 @@ edition = "2024"
 const LIBRARY: &str = r#"//! Macro operation fixture.
 macro_rules! emit { () => {} }
 macro_rules! clean { () => {} }
+macro_rules! mutation_clean { () => {} }
 #[path = "owner.rs"] mod owner;
 #[path = "outside.rs"] mod outside;
 #[path = "attested.rs"] mod attested;
+#[path = "field_attested.rs"] mod field_attested;
 pub struct State { pub epoch: usize }
 "#;
 
@@ -152,6 +178,10 @@ fn run() {
 
 const ATTESTED: &str = r"//! Attested macro form.
 pub fn run() { clean!(); }
+";
+
+const FIELD_ATTESTED: &str = r"//! Field-mutation-attested macro form.
+pub fn run() { mutation_clean!(); }
 ";
 
 const CONTRACT: &str = include_str!("macro_operation_ownership.toml");

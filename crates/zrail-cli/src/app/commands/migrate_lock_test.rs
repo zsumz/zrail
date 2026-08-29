@@ -48,13 +48,14 @@ fn immutable_base_migration_writes_a_digest_bound_scoped_report() {
         config: "zrail.toml".into(),
         lock: "zrail.lock".into(),
         base: "HEAD".into(),
+        target: None,
         output: "migration.json".into(),
     })
     .expect("migrate immutable base");
 
     let artifact = fs::read_to_string(root.join("migration.json")).expect("read report");
     assert!(artifact.contains("\"from_semantics\": 1"));
-    assert!(artifact.contains("\"to_semantics\": 4"));
+    assert!(artifact.contains("\"to_semantics\": 5"));
     assert!(artifact.contains("\"newly-observable\""));
     assert!(output.text.contains("--accept-migration sha256:"));
     let acceptance = output
@@ -74,6 +75,7 @@ fn immutable_base_migration_writes_a_digest_bound_scoped_report() {
         base: "HEAD".into(),
         accept_grants: false,
         accept_migration: None,
+        migration_report: None,
     };
     let refused = update(&update_options).expect("refuse unaccepted migration");
     assert_eq!(refused.exit_code, 1);

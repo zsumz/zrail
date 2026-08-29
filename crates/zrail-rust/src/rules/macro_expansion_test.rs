@@ -119,6 +119,7 @@ fn allowance(name: &str) -> MacroExpansionAllow {
         async_syntax: zrail_core::MacroAsyncSyntax::Opaque,
         duplication_effect: zrail_core::MacroDuplicationEffect::Opaque,
         source_operations: zrail_core::MacroSourceOperations::Opaque,
+        field_mutation: zrail_core::MacroFieldMutation::Opaque,
         definition: name.starts_with("local::").then(|| "src/lib.rs".into()),
         source: None,
         reason: "reviewed".into(),

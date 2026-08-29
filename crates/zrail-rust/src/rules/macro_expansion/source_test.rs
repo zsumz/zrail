@@ -67,6 +67,7 @@ fn allowance() -> MacroExpansionAllow {
         async_syntax: zrail_core::MacroAsyncSyntax::Opaque,
         duplication_effect: zrail_core::MacroDuplicationEffect::Opaque,
         source_operations: zrail_core::MacroSourceOperations::Opaque,
+        field_mutation: zrail_core::MacroFieldMutation::Opaque,
         definition: None,
         source: Some(CrateRootSource::CargoLock {
             package: "derive-impl".into(),

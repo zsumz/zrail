@@ -3,8 +3,8 @@
 use std::collections::BTreeSet;
 
 use crate::contract::{
-    Contract, CrateRootSource, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect,
-    MacroExpansionBindings, MacroExpansionMode, MacroSourceOperations, validate_dependencies,
+    Contract, CrateRootSource, MacroAsyncSyntax, MacroDuplicationEffect, MacroExpansionBindings,
+    MacroExpansionMode, MacroFieldMutation, MacroSourceOperations, validate_dependencies,
     validate_limits::ValidationErrors, validate_paths::validate_repository_literal,
     validate_sets::require_reason,
 };
@@ -45,16 +45,19 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
             }
         }
         if allowed.bindings == MacroExpansionBindings::None {
-            validate_closed_claim(allowed, "namespace_effect = \"none\"", errors);
+            validate_closed_claim(allowed, "namespace_effect = \"none\"", false, errors);
         }
         if allowed.async_syntax == MacroAsyncSyntax::None {
-            validate_closed_claim(allowed, "async_syntax = \"none\"", errors);
+            validate_closed_claim(allowed, "async_syntax = \"none\"", false, errors);
         }
         if allowed.duplication_effect == MacroDuplicationEffect::None {
-            validate_closed_claim(allowed, "duplication_effect = \"none\"", errors);
+            validate_closed_claim(allowed, "duplication_effect = \"none\"", false, errors);
         }
         if allowed.source_operations == MacroSourceOperations::None {
-            validate_closed_claim(allowed, "source_operations = \"none\"", errors);
+            validate_closed_claim(allowed, "source_operations = \"none\"", true, errors);
+        }
+        if allowed.field_mutation == MacroFieldMutation::None {
+            validate_closed_claim(allowed, "field_mutation = \"none\"", true, errors);
         }
     }
 }
@@ -62,15 +65,10 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
 fn validate_closed_claim(
     allowed: &crate::MacroExpansionAllow,
     claim: &str,
+    compiler_provenance: bool,
     errors: &mut ValidationErrors,
 ) {
-    if allowed.binding != MacroBindingMode::Exact {
-        errors.push(format!(
-            "macro expansion allowance {:?} with {claim} requires exact binding",
-            allowed.name
-        ));
-    }
-    if allowed.source.is_none() && allowed.definition.is_none() {
+    if !compiler_provenance && allowed.source.is_none() && allowed.definition.is_none() {
         errors.push(format!(
             "macro expansion allowance {:?} with {claim} requires source or definition provenance",
             allowed.name
@@ -91,7 +89,7 @@ fn validate_closed_claim(
 fn immutable_source(source: &CrateRootSource) -> bool {
     match source {
         CrateRootSource::Legacy => false,
-        CrateRootSource::CargoLock { .. } => true,
+        CrateRootSource::CargoLock { .. } | CrateRootSource::Repository { .. } => true,
         CrateRootSource::Registry { requirement, .. } => exact_registry_pin(requirement),
         CrateRootSource::Git {
             branch, tag, rev, ..

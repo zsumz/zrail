@@ -1,4 +1,4 @@
-//! Binding-clean expansion authority requires exact, source-bound review.
+//! Closed expansion claims require immutable provenance and exact use-site binding.
 
 use crate::{CrateRootSource, MacroExpansionAllow, MacroExpansionBindings, MacroExpansionMode};
 
@@ -119,7 +119,7 @@ fn no_binding_attestation_rejects_mutable_external_sources() {
 }
 
 #[test]
-fn no_binding_attestation_rejects_conservative_name_binding() {
+fn conservative_name_permission_can_carry_an_exact_occurrence_claim() {
     let mut contract = minimal_contract();
     contract.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
     let mut allowance = no_binding_allowance(Some(CrateRootSource::Registry {
@@ -130,9 +130,8 @@ fn no_binding_attestation_rejects_conservative_name_binding() {
     allowance.binding = crate::MacroBindingMode::Conservative;
     contract.source.rust.macros.allow.push(allowance);
 
-    let errors =
-        validate_contract(&contract).expect_err("conservative no-binding authority must fail");
-    assert!(errors.to_string().contains("requires exact binding"));
+    validate_contract(&contract)
+        .expect("runtime binding quality decides whether the claim applies per occurrence");
 }
 
 #[test]
@@ -166,7 +165,7 @@ fn exact_local_no_duplication_attestation_is_valid() {
 }
 
 #[test]
-fn no_source_operations_attestation_requires_exact_provenance() {
+fn compiler_source_operations_claim_can_defer_provenance_to_exact_binding() {
     let mut contract = minimal_contract();
     contract.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
     let mut allowance = no_binding_allowance(None);
@@ -174,13 +173,38 @@ fn no_source_operations_attestation_requires_exact_provenance() {
     allowance.source_operations = crate::MacroSourceOperations::None;
     contract.source.rust.macros.allow.push(allowance);
 
-    let errors =
-        validate_contract(&contract).expect_err("unproven no-source-operations claim must fail");
-    assert!(
-        errors
-            .to_string()
-            .contains("source_operations = \"none\" requires source or definition provenance")
-    );
+    validate_contract(&contract)
+        .expect("exact compiler origin may supply source-operation provenance at the occurrence");
+}
+
+#[test]
+fn compiler_field_mutation_claim_can_defer_provenance_to_exact_binding() {
+    let mut contract = minimal_contract();
+    contract.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
+    let mut allowance = no_binding_allowance(None);
+    allowance.bindings = MacroExpansionBindings::Opaque;
+    allowance.field_mutation = crate::MacroFieldMutation::None;
+    contract.source.rust.macros.allow.push(allowance);
+
+    validate_contract(&contract)
+        .expect("exact compiler origin may supply field-mutation provenance at the occurrence");
+}
+
+#[test]
+fn repository_source_is_valid_macro_provenance() {
+    let mut contract = minimal_contract();
+    contract.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
+    contract
+        .source
+        .rust
+        .macros
+        .allow
+        .push(no_binding_allowance(Some(CrateRootSource::Repository {
+            package: "workspace-macros".into(),
+            directory: "crates/workspace-macros".into(),
+        })));
+
+    validate_contract(&contract).expect("repository macro provenance is immutable in the lock");
 }
 
 #[test]
@@ -205,6 +229,7 @@ fn no_binding_allowance(source: Option<CrateRootSource>) -> MacroExpansionAllow 
         async_syntax: crate::MacroAsyncSyntax::Opaque,
         duplication_effect: crate::MacroDuplicationEffect::Opaque,
         source_operations: crate::MacroSourceOperations::Opaque,
+        field_mutation: crate::MacroFieldMutation::Opaque,
         definition: None,
         source,
         reason: "Reviewed output preserves the ordinary namespace exactly.".into(),

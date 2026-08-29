@@ -112,6 +112,7 @@ pub(super) const fn lint_mode(mode: LintSuppressionMode) -> &'static str {
 pub(super) const fn glob_import_mode(mode: GlobImportMode) -> &'static str {
     match mode {
         GlobImportMode::Allow => "allow",
+        GlobImportMode::FacadeReexportsAndTestSuper => "facade-reexports-and-test-super",
         GlobImportMode::FacadeReexportsOnly => "facade-reexports-only",
         GlobImportMode::Deny => "deny",
     }

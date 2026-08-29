@@ -22,6 +22,7 @@ pub(super) struct CountRatchetSpec<'a> {
     pub(super) finding_rule: &'static str,
     pub(super) category: &'static str,
     pub(super) debt: &'a str,
+    pub(super) report_source_lock_drift: bool,
 }
 
 pub(super) fn evaluate(
@@ -67,14 +68,16 @@ pub(super) fn evaluate(
         );
     }
     for target in ratchets.keys().filter(|target| !seen.contains(*target)) {
-        findings.push(value::ratchet_finding(
-            spec,
-            target,
-            format!(
-                "{} ratchet names missing governed source {target:?}",
-                spec.debt
-            ),
-        ));
+        if spec.report_source_lock_drift {
+            findings.push(value::ratchet_finding(
+                spec,
+                target,
+                format!(
+                    "{} ratchet names missing governed source {target:?}",
+                    spec.debt
+                ),
+            ));
+        }
     }
 }
 

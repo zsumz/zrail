@@ -203,7 +203,21 @@ zrail migrate-lock --base HEAD --output zrail-migration.json
 zrail update --accept-migration sha256:<reviewed-report-digest>
 ```
 
-Migration acceptance never accepts grants in the current worktree.
+When the current engine cannot analyze the prior-epoch base, repair the source
+on a committed descendant and review a two-revision bridge:
+
+```sh
+zrail migrate-lock --base <old-good> --target HEAD --output zrail-migration.json
+zrail update --base <old-good> --accept-migration sha256:<reviewed-report-digest> \
+  --migration-report zrail-migration.json
+```
+
+The bridge binds both commits, both contract and lock identities, the base
+analysis failure, and every changed repository file. The target must retain the
+exact prior lock. Migration acceptance verifies the named report as the sole
+nonignored untracked review artifact, requires tracked worktree bytes and modes
+to reproduce the committed target, and never accepts contract grants in the
+current worktree.
 
 ## Crates
 

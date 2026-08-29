@@ -36,6 +36,13 @@ source_operations = "none"
 reason = "Exact fixture expansion emits no source operations."
 
 [[source.rust.macros.allow]]
+name = "mutation_clean"
+resolution = "exact"
+definition = "src/lib.rs"
+field_mutation = "none"
+reason = "Exact fixture expansion emits no writes, mutable borrows, or field mutations."
+
+[[source.rust.macros.allow]]
 name = "OpaqueDerive"
 resolution = "conservative"
 reason = "Fixture derive output intentionally remains opaque."

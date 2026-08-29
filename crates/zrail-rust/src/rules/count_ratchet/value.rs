@@ -16,7 +16,7 @@ pub(super) fn check_value(
     report_unratcheted: &impl Fn(&RustFileFacts, &mut FindingSink),
 ) {
     if value == 0 {
-        if ratchet.is_some() {
+        if ratchet.is_some() && spec.report_source_lock_drift {
             findings.push(
                 ratchet_finding(
                     spec,
@@ -36,15 +36,17 @@ pub(super) fn check_value(
         return;
     };
     let Some(locked) = locked else {
-        findings.push(
-            ratchet_finding(
-                spec,
-                &file.relative,
-                format!("reviewed {} ratchet is absent from zrail.lock", spec.debt),
-            )
-            .because(&ratchet.reason)
-            .with_help("run `zrail update` and review the generated debt"),
-        );
+        if spec.report_source_lock_drift {
+            findings.push(
+                ratchet_finding(
+                    spec,
+                    &file.relative,
+                    format!("reviewed {} ratchet is absent from zrail.lock", spec.debt),
+                )
+                .because(&ratchet.reason)
+                .with_help("run `zrail update` and review the generated debt"),
+            );
+        }
         return;
     };
     if value > locked.value {
@@ -59,7 +61,7 @@ pub(super) fn check_value(
             )
             .because(&ratchet.reason),
         );
-    } else if value < locked.value {
+    } else if value < locked.value && spec.report_source_lock_drift {
         findings.push(
             ratchet_finding(
                 spec,

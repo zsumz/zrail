@@ -7,7 +7,7 @@ use zrail_core::{
 
 use crate::app::{args::UpdateOptions, error::CliError};
 
-use super::git_base::GitSnapshot;
+use super::{git_base::GitSnapshot, git_migration, migration_bridge};
 
 pub(super) fn compare(
     options: &UpdateOptions,
@@ -23,6 +23,7 @@ pub(super) fn compare(
         after,
         candidate,
         options.accept_migration.as_deref(),
+        options.migration_report.as_deref(),
     )
 }
 
@@ -50,6 +51,7 @@ pub(super) fn compare_from_repository(
     after: &ContractBundle,
     candidate: &LockFile,
     accept_migration: Option<&str>,
+    migration_report: Option<&std::path::Path>,
 ) -> Result<DiffReport, CliError> {
     let snapshot = GitSnapshot::create(authority_root, base, config, lock)?;
     let before = load_contract(snapshot.root(), config)
@@ -63,18 +65,39 @@ pub(super) fn compare_from_repository(
                 authority_root,
                 std::ffi::OsStr::new(snapshot.commit()),
             )?;
-            let reanalyzed = zrail_rust::build_lock(repository.root(), config)
-                .map_err(|error| CliError::new(format!("reanalyze migration base: {error}")))?;
-            let report = compare_lock_epochs(old, &reanalyzed)
-                .map_err(|error| CliError::new(error.to_string()))?;
-            let expected = format!("sha256:{}", report.sha256());
-            if accept_migration != Some(expected.as_str()) {
-                return Err(CliError::new(format!(
-                    "lock semantics migration requires --accept-migration {expected} produced by `zrail migrate-lock --base {}`",
-                    base.to_string_lossy()
-                )));
+            match zrail_rust::build_lock(repository.root(), config) {
+                Ok(reanalyzed) => {
+                    if migration_report.is_some() {
+                        return Err(CliError::new(
+                            "--migration-report is only valid for a cross-revision migration",
+                        ));
+                    }
+                    let report = compare_lock_epochs(old, &reanalyzed)
+                        .map_err(|error| CliError::new(error.to_string()))?;
+                    require_acceptance(
+                        accept_migration,
+                        &report.sha256(),
+                        &format!("--base {}", base.to_string_lossy()),
+                    )?;
+                    Some(reanalyzed)
+                }
+                Err(_) => Some(migrate_across_revisions(&CrossRevision {
+                    authority_root,
+                    base,
+                    config,
+                    lock,
+                    before: &before,
+                    after,
+                    candidate,
+                    acceptance: accept_migration,
+                    report_path: migration_report,
+                })?),
             }
-            Some(reanalyzed)
+        }
+        _ if migration_report.is_some() => {
+            return Err(CliError::new(
+                "--migration-report is only valid for a cross-revision migration",
+            ));
         }
         _ => None,
     };
@@ -87,6 +110,77 @@ pub(super) fn compare_from_repository(
         &after.sha256,
         Some(candidate),
     ))
+}
+
+struct CrossRevision<'a> {
+    authority_root: &'a std::path::Path,
+    base: &'a std::ffi::OsStr,
+    config: &'a std::path::Path,
+    lock: &'a std::path::Path,
+    before: &'a ContractBundle,
+    after: &'a ContractBundle,
+    candidate: &'a LockFile,
+    acceptance: Option<&'a str>,
+    report_path: Option<&'a std::path::Path>,
+}
+
+fn migrate_across_revisions(inputs: &CrossRevision<'_>) -> Result<LockFile, CliError> {
+    let bridge = migration_bridge::build(
+        inputs.authority_root,
+        inputs.base,
+        std::ffi::OsStr::new("HEAD"),
+        inputs.config,
+        inputs.lock,
+    )?;
+    if bridge.base_contract.sha256 != inputs.before.sha256 {
+        return Err(CliError::new(
+            "migration bridge base contract changed while recomputing authority",
+        ));
+    }
+    let report_path = inputs.report_path.ok_or_else(|| {
+        CliError::new("cross-revision migration requires --migration-report PATH")
+    })?;
+    let report = bridge
+        .report
+        .json()
+        .map_err(|error| CliError::new(format!("serialize lock migration bridge: {error}")))?;
+    git_migration::require_worktree_target(
+        inputs.authority_root,
+        &bridge.target_snapshot,
+        report_path,
+        &report,
+    )?;
+    if bridge.report.target.contract_sha256 != inputs.after.sha256
+        || !bridge.target_lock.same_resolved_state(inputs.candidate)
+    {
+        return Err(CliError::new(
+            "current worktree does not match the reviewed migration target commit",
+        ));
+    }
+    require_acceptance(
+        inputs.acceptance,
+        &bridge.report.sha256(),
+        &format!("--base {} --target HEAD", inputs.base.to_string_lossy()),
+    )?;
+    // The reviewed bridge accepts its listed resolved-state changes. Rebinding only the
+    // digest lets the normal contract comparison independently retain grant authority.
+    let mut migrated = bridge.target_lock;
+    migrated.contract_sha256.clone_from(&inputs.before.sha256);
+    Ok(migrated)
+}
+
+fn require_acceptance(
+    accepted: Option<&str>,
+    report_sha256: &str,
+    command_arguments: &str,
+) -> Result<(), CliError> {
+    let expected = format!("sha256:{report_sha256}");
+    if accepted == Some(expected.as_str()) {
+        return Ok(());
+    }
+    Err(CliError::new(format!(
+        "lock semantics migration requires --accept-migration {expected} produced by `zrail migrate-lock {command_arguments}`"
+    )))
 }
 
 #[cfg(test)]

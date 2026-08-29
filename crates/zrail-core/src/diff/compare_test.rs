@@ -1,4 +1,6 @@
 //! Architecture changes are classified by effective permission.
+use super::compare_architecture;
+use crate::diff::compare_fixture_test::contract_with_hard_limit;
 use crate::{
     ChangeKind, CrateRootContract, CrateRootSource, DependencyMode, FacadeMode,
     GeneratedSourceContract, ItemMacroContract, LintSuppressionMode, LockFile, LockedDependency,
@@ -6,9 +8,6 @@ use crate::{
     LockedPackage, LockedRatchet, MacroBindingMode, MacroExpansionAllow, MacroExpansionMode,
     MacroInputMode, OutDirSourceContract, OwnerContract, OwnerKind,
 };
-
-use super::compare_architecture;
-use crate::diff::compare_fixture_test::contract_with_hard_limit;
 
 #[test]
 fn raising_a_hard_ceiling_is_a_grant() {
@@ -83,6 +82,7 @@ fn macro_expansion_denial_revokes_power_and_allowance_grants_it() {
         async_syntax: crate::MacroAsyncSyntax::Opaque,
         duplication_effect: crate::MacroDuplicationEffect::Opaque,
         source_operations: crate::MacroSourceOperations::Opaque,
+        field_mutation: crate::MacroFieldMutation::Opaque,
         definition: None,
         source: None,
         reason: "Reviewed async control-flow expansion.".into(),

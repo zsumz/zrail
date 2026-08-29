@@ -6,7 +6,7 @@ use super::check_repository;
 
 #[test]
 fn profiles_deny_async_syntax_and_globs_keep_only_facade_reexports() {
-    let root = repository();
+    let root = repository("facade-reexports-only");
     write(
         &root,
         "src/lib.rs",
@@ -41,6 +41,40 @@ pub async fn work() {
     reset(&root);
 }
 
+#[test]
+fn test_super_mode_uses_semantic_test_reachability_and_exact_spelling() {
+    let root = repository("facade-reexports-and-test-super");
+    write(
+        &root,
+        "src/lib.rs",
+        r"//! facade
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::*;
+    pub use super::*;
+}
+#[cfg(test)]
+mod worker_test /* fixture declaration */;
+#[cfg(any(test, unix))]
+use super::*;
+use super::*;
+",
+    );
+    write(
+        &root,
+        "src/worker_test.rs",
+        "//! test-only module\nuse super::*;\nuse crate::*;\n",
+    );
+
+    let result = check_repository(&root, "zrail.toml".as_ref(), "zrail.lock".as_ref())
+        .expect("check repository");
+    let report = result.report.human();
+
+    assert_eq!(error_count(&report, "RUST-HYG-009"), 5, "{report}");
+    reset(&root);
+}
+
 fn error_count(report: &str, id: &str) -> usize {
     report
         .lines()
@@ -48,7 +82,7 @@ fn error_count(report: &str, id: &str) -> usize {
         .count()
 }
 
-fn repository() -> PathBuf {
+fn repository(glob_imports: &str) -> PathBuf {
     let root = std::env::temp_dir().join(format!(
         "zrail-async-glob-{}-{:?}",
         std::process::id(),
@@ -61,7 +95,11 @@ fn repository() -> PathBuf {
         "Cargo.toml",
         "[package]\nname = \"policy-app\"\nversion = \"0.0.0\"\nedition = \"2024\"\n",
     );
-    write(&root, "zrail.toml", CONTRACT);
+    write(
+        &root,
+        "zrail.toml",
+        &CONTRACT.replace("$GLOB_IMPORTS", glob_imports),
+    );
     root
 }
 
@@ -99,7 +137,7 @@ tests = "allow"
 [source.rust.hygiene]
 unsafe = "allow"
 lint_suppressions = "allow"
-glob_imports = "facade-reexports-only"
+glob_imports = "$GLOB_IMPORTS"
 
 [profiles.sync.effects]
 deny = []

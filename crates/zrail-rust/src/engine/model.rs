@@ -115,11 +115,36 @@ pub(crate) fn load_model_with_bundle(
     let item_macro_findings =
         source_graph::review_item_macros(&bundle.contract, &source, resolved_cargo.as_ref());
     source.findings.extend(item_macro_findings);
+    let requires_repository_implementation =
+        bundle
+            .contract
+            .source
+            .rust
+            .item_macros
+            .iter()
+            .any(|allowance| {
+                allowance.manifest.is_some()
+                    && matches!(
+                        allowance.source.as_ref(),
+                        Some(zrail_core::CrateRootSource::Repository { .. })
+                    )
+            });
+    let repository_implementations = if requires_repository_implementation {
+        super::macro_implementations::locked_for_sources(
+            &bundle.contract,
+            &inventory,
+            &cargo,
+            &source,
+        )?
+    } else {
+        Vec::new()
+    };
     let item_macro_manifests = super::item_macro_manifests::locked(
         applied_item_macro_manifests,
         &bundle.contract,
         &source,
         resolved_cargo.as_ref(),
+        &repository_implementations,
         &graph.compilation_domains,
     )?;
     Ok(RepositoryModel {

@@ -63,7 +63,9 @@ impl MacroDefinitions {
             _ => return None,
         };
         resolved.include_scope_uncertain |= include_scope_uncertain;
-        resolved.definition_exact &= source.guard.is_exact();
+        if !resolved.sites.is_empty() {
+            resolved.definition_exact &= source.guard.is_exact();
+        }
         seen.remove(&instance);
         Some(resolved)
     }

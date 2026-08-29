@@ -39,6 +39,8 @@ pub enum GlobImportMode {
     #[default]
     /// Permit glob imports in every Rust source role.
     Allow,
+    /// Permit facade re-exports and private `super::*` imports in test-only source.
+    FacadeReexportsAndTestSuper,
     /// Permit only top-level outward re-exports in effective facade files.
     FacadeReexportsOnly,
     /// Reject every written glob import.
@@ -137,7 +139,7 @@ pub enum FacadeMode {
     /// Permit executable implementation logic in the governed facade.
     Allow,
     #[default]
-    /// Require the governed facade to remain declarative.
+    /// Permit wiring, type and constant declarations, and thin language entrypoints only.
     Declarative,
 }
 

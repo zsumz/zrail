@@ -155,7 +155,7 @@ fn glob_imports(model: &RepositoryModel) -> GovernedSourcePolicyRail {
                         &file.relative,
                         &fact.guard,
                     ),
-                    allowed: glob_import_is_allowed(mode, effective, fact),
+                    allowed: glob_import_is_allowed(mode, effective, file.reachability, fact),
                 })
         })
         .collect::<Vec<_>>();

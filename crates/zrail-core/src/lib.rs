@@ -27,12 +27,13 @@ pub use contract::{
     LintSuppressionMode, MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES,
     MAX_TEST_MIRROR_INPUTS, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect,
     MacroExpansionAllow, MacroExpansionBindings, MacroExpansionContract, MacroExpansionMode,
-    MacroInputMode, MacroSourceOperations, ModuleDocsMode, OutDirSourceContract, OwnerContract,
-    OwnerKind, PolicyMode, PolicyReachability, ProfileContract, RatchetContract,
-    RepositoryContract, RustDuplicationContract, RustFieldContract, RustSourceContract,
-    RustTypeContract, RustTypeKind, ScopeContract, SourceContract, SymbolBoundary, SymlinkMode,
-    SyntaxBoundary, TestExecutionIdentity, TestMirrorContract, TestMode, TypeProhibition,
-    contract_imports, load_contract, load_contract_with_entry, parse_evidence_reference,
+    MacroFieldMutation, MacroInputMode, MacroSourceOperations, ModuleDocsMode,
+    OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode, PolicyReachability,
+    ProfileContract, RatchetContract, RepositoryContract, RustDuplicationContract,
+    RustFieldContract, RustSourceContract, RustTypeContract, RustTypeKind, ScopeContract,
+    SourceContract, SymbolBoundary, SymlinkMode, SyntaxBoundary, TestExecutionIdentity,
+    TestMirrorContract, TestMode, TypeProhibition, contract_imports, load_contract,
+    load_contract_with_entry, parse_evidence_reference,
 };
 pub use contract_edit::{ContractEditError, format_contract_source, migrate_contract_source};
 pub use diagnostic::{
@@ -56,8 +57,9 @@ pub use lock::{
     LockedRatchet,
 };
 pub use migration::{
-    LockMigrationClassification, LockMigrationEntry, LockMigrationError, LockMigrationReport,
-    LockMigrationSummary, compare_lock_epochs,
+    LockMigrationBridgeReport, LockMigrationClassification, LockMigrationEntry, LockMigrationError,
+    LockMigrationFileChange, LockMigrationFileState, LockMigrationReport, LockMigrationRevision,
+    LockMigrationSummary, compare_lock_epochs, compare_lock_epochs_across_revisions,
 };
 pub use path::{glob_matches, normalize_relative, repository_file, repository_relative};
 pub use ratchet::normalize_ratchet_selector;

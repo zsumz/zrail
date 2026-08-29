@@ -20,6 +20,7 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
                 finding_rule: "rust.module-docs.ratchet",
                 category: "source-shape",
                 debt: "missing module documentation",
+                report_source_lock_drift: false,
             },
             None,
             findings,

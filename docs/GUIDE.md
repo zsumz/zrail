@@ -73,7 +73,11 @@ zrail init --exclude 'fixtures/**' --exclude-from .zrailignore
 Both flags are repeatable. Exclusion files contain one pattern per line; blank
 lines and lines beginning with `#` are ignored, and `!` negation is rejected.
 Patterns are normalized, sorted, and deduplicated. An exclusion cannot hide an
-active Cargo target.
+active Cargo target. Every exclusion must match inventory except the exact
+`target/**` directory of a discovered Cargo workspace or package, which may be
+declared before artifacts exist. Once that directory exists, it must contain a
+`CACHEDIR.TAG` beginning with the standard signature or the exclusion is
+rejected as stale or misdirected.
 
 Add `--baseline` for an atomic contract-and-lock initialization after reviewing
 the intended preset and selection:
@@ -195,13 +199,34 @@ zrail update --accept-migration sha256:<reviewed-report-digest>
 ```
 
 Adapters are explicit and fail closed for unknown epochs. The current engine
-can reanalyze locks from every released prior semantics epoch (`1` through `3`)
-directly into current semantics `4`; adopters do not need to delete an older
+can reanalyze locks from every released prior semantics epoch (`1` through `4`)
+directly into current semantics `5`; adopters do not need to delete an older
 lock or manufacture a lock-free base commit. Each exact old or new authority
 subject is classified as preserved, retired, newly observable, or changed
 interpretation. Migration acceptance is recomputed for the selected immutable
 base and never accepts current-worktree grants; `--accept-grants` remains a
 separate authority boundary.
+
+If an engine change makes that immutable base unanalyzable, make only the
+required source or contract repairs on a committed descendant and request an
+explicit bridge:
+
+```sh
+zrail migrate-lock --base <old-good> --target HEAD --output zrail-migration.json
+zrail update --base <old-good> --accept-migration sha256:<reviewed-report-digest> \
+  --migration-report zrail-migration.json
+```
+
+The bridge is available only when strict reanalysis actually fails. The target
+must descend from the base, retain the exact prior lock, and pass the current
+engine. Its digest binds both commit identifiers, both contract and lock
+identities, the normalized base
+failure, every added, removed, content-changed, or mode-changed repository file,
+and the complete authority-surface comparison. Update recomputes that report,
+verifies the named report as the sole nonignored untracked review artifact, and
+compares tracked target bytes and modes directly without trusting Git index
+flags. Ignored build outputs remain outside the reviewed target state. Any
+contract grant remains a separate `--accept-grants` decision.
 
 ### Contract schema and fragments
 
@@ -291,6 +316,13 @@ The Rust adapter enforces:
 - source hygiene, optional file-size ceilings, and tightening ratchets; and
 - invariants connected to exact tests and content-addressed qualification
   gates.
+
+Declarative facades may wire external modules and imports and declare structs,
+enums, unions, type aliases, and constants. Implementations, ordinary functions,
+statics, inline modules, and other behavioral items remain behind named module
+boundaries. A `main` function or procedural-macro entrypoint is declarative only
+when its body is empty or a single expression handoff without local statements,
+branches, loops, macros, or inline blocks.
 
 External crate-root attestations bind to the exact registry or Git declaration.
 Roots that no active canonical policy relies on remain unresolved rather than
@@ -608,10 +640,12 @@ continues to resolve globs regardless of this setting:
 glob_imports = "facade-reexports-only"
 ```
 
-The middle mode permits only a top-level outward `pub use path::*` in an
-effective facade. Private imports, block-local imports, inline-module imports,
-and globs in implementation, test, auxiliary, entrypoint, or generated source
-are rejected. The other modes are `allow` and `deny`.
+`facade-reexports-only` permits only a top-level outward `pub use path::*` in an
+effective facade. `facade-reexports-and-test-super` additionally permits the
+exact private import `use super::*` when its source-graph reachability or syntax
+guard proves it is test-only. Outside the existing outward-facade allowance, it
+does not allow production `super::*`, dependency globs, public re-exports, or
+other test globs. The remaining modes are `allow` and `deny`.
 
 Conventional `tests.rs`, `*_test.rs`, and `*_tests.rs` filenames receive test
 tooling defaults and budgets, as does source beneath a `tests/` directory.
@@ -637,13 +671,33 @@ allowance. Ordinary Rust expressions inside standard macro inputs are still
 analyzed. Other token DSLs require the separate `inputs = "opaque"` grant.
 
 Repository-owned macros lock a deterministic manifest of their implementing
-package, including helper macros and internal proc macros. External allowances
-bind to the exact dependency source. Built-in data macros and `include!` are
-handled directly, and included Rust remains fully analyzed.
+package, including helper macros and internal proc macros. The manifest follows
+the bounded transitive closure of workspace-member and repository-path helper
+crates, binding their manifests, Rust source, and literal compile inputs; a
+missing internal package fails closed. External allowances bind to the exact
+dependency source. Built-in data macros and `include!` are handled directly,
+and included Rust remains fully analyzed.
+
+Cross-crate workspace macros can bind their observed implementation directly:
+
+```toml
+[[source.rust.macros.allow]]
+name = "workspace_macros::reviewed"
+reason = "Reviewed workspace expansion."
+
+[source.rust.macros.allow.source]
+kind = "repository"
+package = "workspace-macros"
+directory = "crates/workspace-macros"
+```
+
+The package and directory must match the resolved repository origin. The lock
+then binds the complete deterministic implementation manifest; another package
+exporting the same macro name cannot borrow this authority.
 
 Ordinary macro permission does not make expansion output visible. Attribute,
 derive, and item macros therefore keep the surrounding namespace opaque unless
-an exact allowance with `source` or `definition` provenance separately sets
+an exact occurrence bound to `source` or `definition` provenance separately sets
 `namespace_effect = "none"`. That grant attests zero ordinary-namespace delta: the
 reviewed expansion preserves the annotated item subtree with the same binding
 kind, target, visibility, cfg domain, and child namespace, and introduces no
@@ -673,10 +727,33 @@ package = "model-macro"
 ```
 
 `source_operations = "none"` defaults to `"opaque"` and is a grant in semantic
-diffs. It requires the same exact binding and immutable external source or exact
-repository definition as other closed expansion claims. Compiler expansions
-whose output Zrail directly inspects are already closed; other compiler derives
-and macros remain opaque when their generated operations are not inspected.
+diffs. It closes only occurrences whose observed resolution is exact and whose
+provenance is an immutable dependency source, a content-locked repository
+source, an exact repository definition, or a sole exact compiler-builtin
+origin. An allowance may remain
+`resolution = "conservative"` for unresolved sites with the same spelling;
+those sites stay opaque and do not downgrade exact occurrences. Compiler
+expansions whose output Zrail directly inspects are already closed.
+
+Field mutation can be reviewed without making the broader and usually false
+claim that an expansion performs no source operations:
+
+```toml
+[[source.rust.macros.allow]]
+name = "workspace_macros::metadata"
+resolution = "exact"
+field_mutation = "none"
+reason = "Reviewed expansion writes, mutably borrows, and mutates no governed field."
+
+[source.rust.macros.allow.source]
+kind = "repository"
+package = "workspace-macros"
+directory = "crates/workspace-macros"
+```
+
+This closes only `field-write`, `field-mutable-borrow`, and `field-mutation`
+owners. Field reads, full field authority, construction, and method-name owners
+remain opaque unless the stronger `source_operations = "none"` claim applies.
 
 Literal and verified generated `include!` sources retain occurrence-specific
 lexical splices. Textual `macro_rules!` lookup follows caller prefixes, nested
@@ -758,6 +835,13 @@ candidate. Repository globs are narrowed against the bounded local macro
 namespace, while ambiguous glob candidates must all be allowed. `#[macro_use]`
 imports remain unresolved because their bare namespace cannot be attributed
 exactly without compiler expansion.
+
+`resolution` is the maximum fallback a name allowance permits, not a quality
+assigned to every use of that name. Each invocation retains its own exact,
+conservative, or unresolved result. Closed output claims apply only to exact
+occurrences, so one include-mounted or shadowed spelling cannot downgrade—or
+lend authority to—other occurrences. `zrail explain` renders that per-occurrence
+quality, source span, and invocation-input digest.
 
 Macro policy names are user-spellable Rust paths. Diagnostics prefer the stable
 public path (`quote::quote`) while an exact lexical spelling (`q`) may satisfy
@@ -1064,7 +1148,7 @@ JSON is the stable input for external coverage tooling.
 | `zrail diff` | Classify architecture changes between trusted states |
 | `zrail fmt` | Validate exact contract TOML without erasing authored layout or comments |
 | `zrail migrate-config` | Preview or apply the schema-1 to schema-2 contract migration |
-| `zrail migrate-lock` | Reanalyze an immutable base and emit an epoch-migration report |
+| `zrail migrate-lock` | Reanalyze an immutable base or review an explicit descendant migration bridge |
 | `zrail update` | Refresh reviewed lock state from committed authority |
 | `zrail review` | Analyze an untrusted proposal from protected authority |
 

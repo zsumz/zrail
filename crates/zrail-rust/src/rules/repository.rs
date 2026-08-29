@@ -10,6 +10,8 @@ use crate::inventory::{RepositoryEntry, RepositoryEntryKind, RepositoryInventory
 
 use super::RuleContext;
 
+mod cargo_cache;
+
 pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
     check_roots(context, findings);
     check_exclusions(context, findings);
@@ -37,6 +39,25 @@ fn check_roots(context: &RuleContext<'_>, findings: &mut FindingSink) {
 
 fn check_exclusions(context: &RuleContext<'_>, findings: &mut FindingSink) {
     for pattern in &context.contract.repository.exclude {
+        if let Some((target, valid)) = cargo_cache::exclusion(context, pattern) {
+            if !valid {
+                findings.push(
+                    Finding::error(
+                        "REP-006",
+                        "repository.exclude",
+                        "repository",
+                        format!(
+                            "Cargo target exclusion {pattern:?} requires a valid CACHEDIR.TAG"
+                        ),
+                    )
+                    .at(&target, None)
+                    .with_help(
+                        "keep the target directory absent or start CACHEDIR.TAG with the standard cache-directory signature",
+                    ),
+                );
+            }
+            continue;
+        }
         if !context
             .inventory
             .entries

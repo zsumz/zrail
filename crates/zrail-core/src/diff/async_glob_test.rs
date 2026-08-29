@@ -11,23 +11,33 @@ use super::compare_fixture_test::contract_with_hard_limit;
 #[test]
 fn stricter_glob_import_modes_are_revocations() {
     let allow = contract_with_hard_limit(300);
-    let mut facade_only = allow.clone();
+    let mut facade_and_test = allow.clone();
+    facade_and_test.source.rust.hygiene.glob_imports = GlobImportMode::FacadeReexportsAndTestSuper;
+    let mut facade_only = facade_and_test.clone();
     facade_only.source.rust.hygiene.glob_imports = GlobImportMode::FacadeReexportsOnly;
     let mut deny = facade_only.clone();
     deny.source.rust.hygiene.glob_imports = GlobImportMode::Deny;
 
-    for (before, after) in [(&allow, &facade_only), (&facade_only, &deny)] {
+    for (before, after) in [
+        (&allow, &facade_and_test),
+        (&facade_and_test, &facade_only),
+        (&facade_only, &deny),
+    ] {
         let report = compare_architecture(before, None, after, None);
         assert!(report.changes.iter().any(|change| {
             change.kind == ChangeKind::Revoke && change.rail == "rust.glob-imports"
         }));
     }
-    let report = compare_architecture(&deny, None, &allow, None);
-    assert!(
-        report.changes.iter().any(|change| {
+    for (before, after) in [
+        (&deny, &facade_only),
+        (&facade_only, &facade_and_test),
+        (&facade_and_test, &allow),
+    ] {
+        let report = compare_architecture(before, None, after, None);
+        assert!(report.changes.iter().any(|change| {
             change.kind == ChangeKind::Grant && change.rail == "rust.glob-imports"
-        })
-    );
+        }));
+    }
 }
 
 #[test]
@@ -62,6 +72,7 @@ fn trusting_macro_output_to_be_async_free_is_a_grant() {
         async_syntax: MacroAsyncSyntax::Opaque,
         duplication_effect: crate::MacroDuplicationEffect::Opaque,
         source_operations: crate::MacroSourceOperations::Opaque,
+        field_mutation: crate::MacroFieldMutation::Opaque,
         definition: Some("src/lib.rs".into()),
         source: None,
         reason: "Reviewed local macro output.".into(),
@@ -91,6 +102,7 @@ fn trusting_macro_output_to_be_duplication_free_is_a_grant() {
         async_syntax: MacroAsyncSyntax::Opaque,
         duplication_effect: crate::MacroDuplicationEffect::Opaque,
         source_operations: crate::MacroSourceOperations::Opaque,
+        field_mutation: crate::MacroFieldMutation::Opaque,
         definition: Some("src/lib.rs".into()),
         source: None,
         reason: "Reviewed local macro output.".into(),
@@ -120,6 +132,7 @@ fn trusting_macro_output_to_be_source_operation_free_is_a_grant() {
         async_syntax: MacroAsyncSyntax::Opaque,
         duplication_effect: crate::MacroDuplicationEffect::Opaque,
         source_operations: crate::MacroSourceOperations::Opaque,
+        field_mutation: crate::MacroFieldMutation::Opaque,
         definition: Some("src/lib.rs".into()),
         source: None,
         reason: "Reviewed local macro output.".into(),

@@ -63,7 +63,7 @@ fn epoch_one_migration_is_scoped_per_authority_subject() {
 
 #[test]
 fn migration_accepts_each_released_prior_epoch() {
-    for (schema, semantics) in [(1, 1), (1, 2), (2, 3)] {
+    for (schema, semantics) in [(1, 1), (1, 2), (2, 3), (3, 4)] {
         let mut old = LockFile::new("0".repeat(64));
         old.schema = schema;
         old.semantics = semantics;

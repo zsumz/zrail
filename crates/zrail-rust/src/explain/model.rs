@@ -104,6 +104,12 @@ pub struct MacroInvocationExplanation {
     pub preferred: Option<String>,
     /// Compiler, repository, dependency, or unresolved origins, separate from the name.
     pub origins: Vec<String>,
+    /// Actual resolution quality of this invocation, independent of name-level permission.
+    pub resolution: zrail_core::AnalysisQuality,
+    /// Exact source coordinates of the invocation, when available.
+    pub span: Option<zrail_core::SourceSpan>,
+    /// SHA-256 of the canonical invocation token input.
+    pub input_sha256: String,
 }
 
 /// One scoped item-producing macro authority effective for an explained path.

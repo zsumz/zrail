@@ -16,12 +16,19 @@ fn module_doc_debt_is_exact_and_new_files_receive_no_exemption() {
         "allow",
         &ratchet("rust.module-docs"),
     );
-    let missing_lock = finding(&check(&root), "RUST-DOC-002").clone();
-    assert!(
-        missing_lock.message.contains("absent"),
-        "{}",
-        missing_lock.message
-    );
+    let missing_lock = check(&root);
+    finding(&missing_lock, "LOCK-001");
+    assert_no_finding(&missing_lock, "RUST-DOC-002");
+
+    let mut incomplete_lock = build_lock(&root, "zrail.toml".as_ref()).expect("build lock");
+    incomplete_lock.ratchets.clear();
+    incomplete_lock
+        .write(&root.join("zrail.lock"))
+        .expect("write lock without ratchet");
+    let missing_ratchet = check(&root);
+    finding(&missing_ratchet, "LOCK-009");
+    assert_no_finding(&missing_ratchet, "RUST-DOC-002");
+
     lock(&root);
     assert_eq!(check(&root).status, ReportStatus::Pass);
 
@@ -37,8 +44,8 @@ fn module_doc_debt_is_exact_and_new_files_receive_no_exemption() {
         "//! Fixture.\nmod worker;\npub fn run() {}\n",
     );
     let cleaned = check(&root);
-    let stale = finding(&cleaned, "RUST-DOC-002");
-    assert!(stale.message.contains("removed"), "{}", stale.message);
+    finding(&cleaned, "LOCK-007");
+    assert_no_finding(&cleaned, "RUST-DOC-002");
     reset(&root);
 }
 
@@ -217,6 +224,14 @@ fn finding<'a>(report: &'a zrail_core::Report, id: &str) -> &'a zrail_core::Find
         .iter()
         .find(|finding| finding.id == id)
         .unwrap_or_else(|| panic!("missing {id}: {}", report.human()))
+}
+
+fn assert_no_finding(report: &zrail_core::Report, id: &str) {
+    assert!(
+        report.findings.iter().all(|finding| finding.id != id),
+        "unexpected {id}: {}",
+        report.human()
+    );
 }
 
 fn write(root: &Path, path: &str, contents: &str) {

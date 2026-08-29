@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::contract::{
     CrateRootSource, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect,
-    MacroExpansionBindings, MacroExpansionMode, MacroInputMode, MacroSourceOperations,
+    MacroExpansionBindings, MacroExpansionMode, MacroFieldMutation, MacroInputMode,
+    MacroSourceOperations,
 };
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
@@ -42,6 +43,9 @@ pub struct MacroExpansionAllow {
     #[serde(default)]
     /// Whether exact review proves that expansion output introduces no source operations.
     pub source_operations: MacroSourceOperations,
+    #[serde(default)]
+    /// Whether exact review proves that expansion output introduces no field mutation.
+    pub field_mutation: MacroFieldMutation,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     /// Optional package-qualified macro definition identity.
     pub definition: Option<String>,

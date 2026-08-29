@@ -36,11 +36,23 @@ fn mismatch(
         {
             Some(source_mismatch(allowance, vec!["compiler".into()]))
         }
-        MacroOrigin::Repository { package, directory } if allowance.source.is_some() => Some(
-            source_mismatch(allowance, vec![format!("repository:{package}:{directory}")]),
-        ),
+        MacroOrigin::Repository { package, directory }
+            if !matches!(
+                allowance.source.as_ref(),
+                Some(CrateRootSource::Repository {
+                    package: allowed_package,
+                    directory: allowed_directory,
+                }) if allowed_package == package && allowed_directory == directory
+            ) && allowance.source.is_some() =>
+        {
+            Some(source_mismatch(
+                allowance,
+                vec![format!("repository:{package}:{directory}")],
+            ))
+        }
         MacroOrigin::Repository { .. }
-            if allowance.definition.is_none()
+            if allowance.source.is_none()
+                && allowance.definition.is_none()
                 && !candidate.policy_names().all(|name| name.contains("::")) =>
         {
             Some(MacroBindingFailure::ConfidenceNotGranted {

@@ -113,11 +113,12 @@ fn opaque_macro_applies(
             || expansion
                 .observation
                 .is_production_applicable(file.reachability))
-        && !crate::rules::closes_source_operations(
+        && !crate::rules::closes_owned_operations(
             &model.bundle.contract,
             &model.source,
             model.resolved_cargo.as_ref(),
             expansion,
+            owner.kind,
         )
 }
 

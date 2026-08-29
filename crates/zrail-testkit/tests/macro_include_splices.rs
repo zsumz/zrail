@@ -7,16 +7,31 @@ use zrail_rust::{build_lock, check_repository};
 
 #[test]
 fn repeated_include_occurrences_receive_distinct_macro_environments() {
-    let root = fixture("occurrences", MANIFEST, COMPILER_ASSERT);
+    let root = fixture("occurrences", MANIFEST, MIXED_QUALITY_ASSERT);
     write(
         &root,
         "src/lib.rs",
-        "//! Library.\npub fn first() { let _ = include!(\"body.rs\"); }\nmacro_rules! assert { ($($tokens:tt)*) => { 1 }; }\npub fn second() { let _ = include!(\"body.rs\"); }\n",
+        "//! Library.\nmod owner;\npub struct State { pub epoch: usize }\npub fn first() { let _ = include!(\"body.rs\"); }\nmacro_rules! assert { ($($tokens:tt)*) => { 1 }; }\npub fn second() { let _ = include!(\"body.rs\"); }\n",
+    );
+    write(
+        &root,
+        "src/owner.rs",
+        "//! Mutation owner.\nuse crate::State;\npub fn advance(state: &mut State) { state.epoch += 1; }\n",
     );
     write(&root, "src/body.rs", "{ assert!(true) }\n");
     write_lock(&root);
 
-    assert_macro_failure(&check(&root), "assert");
+    let report = check(&root);
+    let opaque_mutations = report
+        .findings
+        .iter()
+        .filter(|finding| {
+            finding.id == "OWN-003"
+                && finding.rule == "state-write"
+                && finding.path.as_deref() == Some("src/body.rs")
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(opaque_mutations.len(), 1, "{}", report.human());
     reset(&root);
 }
 
@@ -258,6 +273,21 @@ const COMPILER_ASSERT: &str = r#"
 [[source.rust.macros.allow]]
 name = "assert"
 reason = "Reviewed compiler expansion."
+"#;
+
+const MIXED_QUALITY_ASSERT: &str = r#"
+[[source.rust.macros.allow]]
+name = "assert"
+binding = "conservative"
+field_mutation = "none"
+reason = "Reviewed exact compiler occurrence performs no field mutation."
+[[owner]]
+name = "state-write"
+kind = "field-write"
+within = ["src/**"]
+match = "crate::State::epoch"
+allow = ["src/owner.rs"]
+reason = "State writes stay in the mutation owner."
 "#;
 
 const CONSERVATIVE_ASSERT: &str = r#"

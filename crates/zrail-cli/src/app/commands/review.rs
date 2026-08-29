@@ -35,6 +35,7 @@ pub(crate) fn review(options: &ReviewOptions) -> Result<CommandResult, CliError>
         &proposed,
         &candidate,
         None,
+        None,
     )?;
     let source = checked
         .report

@@ -47,7 +47,7 @@ pub use model::{
 pub use modes::{
     AsyncSyntax, CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,
     GlobImportMode, LintSuppressionMode, MacroAsyncSyntax, MacroBindingMode,
-    MacroDuplicationEffect, MacroExpansionBindings, MacroExpansionMode, MacroInputMode,
-    MacroSourceOperations, ModuleDocsMode, OwnerKind, PolicyMode, PolicyReachability, SymlinkMode,
-    TestMode,
+    MacroDuplicationEffect, MacroExpansionBindings, MacroExpansionMode, MacroFieldMutation,
+    MacroInputMode, MacroSourceOperations, ModuleDocsMode, OwnerKind, PolicyMode,
+    PolicyReachability, SymlinkMode, TestMode,
 };

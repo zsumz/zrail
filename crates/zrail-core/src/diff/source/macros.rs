@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::{
     Contract, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect, MacroExpansionBindings,
-    MacroInputMode, MacroSourceOperations,
+    MacroFieldMutation, MacroInputMode, MacroSourceOperations,
 };
 
 use super::super::{
@@ -142,6 +142,19 @@ fn compare_existing(
             "changes whether reviewed expansion is trusted to introduce no source operations",
         ));
     }
+    if left.field_mutation != right.field_mutation {
+        let kind = if right.field_mutation == MacroFieldMutation::None {
+            ChangeKind::Grant
+        } else {
+            ChangeKind::Revoke
+        };
+        changes.push(ArchitectureChange::new(
+            kind,
+            "rust.macro-field-mutation",
+            name,
+            "changes whether reviewed expansion is trusted to introduce no field mutation",
+        ));
+    }
     if left.definition != right.definition {
         changes.push(
             ArchitectureChange::new(
@@ -162,7 +175,7 @@ fn compare_existing(
                 ChangeKind::Unknown,
                 "rust.macro-source",
                 name,
-                "trusted external macro dependency source changed",
+                "trusted macro implementation source changed",
             )
             .values(
                 left.source

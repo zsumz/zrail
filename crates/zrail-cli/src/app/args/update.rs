@@ -1,6 +1,6 @@
 //! Lock updates keep immutable-base and grant acceptance authority explicit.
 
-use std::ffi::OsString;
+use std::{ffi::OsString, path::PathBuf};
 
 use super::{Command, CommonOptions, as_string, os_value, parse_format, value};
 use crate::app::error::CliError;
@@ -11,6 +11,7 @@ pub(crate) struct UpdateOptions {
     pub(crate) base: OsString,
     pub(crate) accept_grants: bool,
     pub(crate) accept_migration: Option<String>,
+    pub(crate) migration_report: Option<PathBuf>,
 }
 
 pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
@@ -19,6 +20,7 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
     let mut base_set = false;
     let mut accept_grants = false;
     let mut accept_migration = None;
+    let mut migration_report = None;
     let mut index = 0;
     while index < arguments.len() {
         let flag = as_string(&arguments[index])?;
@@ -47,6 +49,14 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
                     ));
                 }
             }
+            "--migration-report" => {
+                let path = value(arguments, &mut index, "--migration-report")?;
+                if migration_report.replace(path).is_some() {
+                    return Err(CliError::new(
+                        "--migration-report may be specified only once",
+                    ));
+                }
+            }
             _ => return Err(CliError::new(format!("unknown option {flag:?}"))),
         }
         index += 1;
@@ -56,5 +66,6 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
         base,
         accept_grants,
         accept_migration,
+        migration_report,
     }))
 }

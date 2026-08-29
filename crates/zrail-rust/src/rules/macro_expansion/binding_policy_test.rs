@@ -87,20 +87,33 @@ fn source_operation_closure_requires_an_exact_bound_attestation() {
         AnalysisQuality::Exact,
         false,
     );
-    let source = source(exact.clone());
+    let index = source(exact.clone());
     let mut attested = clean_allowance("trusted::derive");
     attested.bindings = MacroExpansionBindings::Opaque;
     attested.source_operations = zrail_core::MacroSourceOperations::None;
+    attested.binding = MacroBindingMode::Conservative;
 
     assert!(crate::rules::closes_source_operations(
-        &contract(vec![attested]),
-        &source,
+        &contract(vec![attested.clone()]),
+        &index,
         None,
         &exact,
     ));
+    let uncertain = expansion(
+        "trusted::derive",
+        "trusted::derive",
+        AnalysisQuality::Conservative,
+        false,
+    );
+    assert!(!crate::rules::closes_source_operations(
+        &contract(vec![attested]),
+        &source(uncertain.clone()),
+        None,
+        &uncertain,
+    ));
     assert!(!crate::rules::closes_source_operations(
         &contract(vec![clean_allowance("trusted::derive")]),
-        &source,
+        &index,
         None,
         &exact,
     ));
@@ -202,6 +215,7 @@ fn clean_allowance(name: &str) -> MacroExpansionAllow {
         async_syntax: zrail_core::MacroAsyncSyntax::Opaque,
         duplication_effect: zrail_core::MacroDuplicationEffect::Opaque,
         source_operations: zrail_core::MacroSourceOperations::Opaque,
+        field_mutation: zrail_core::MacroFieldMutation::Opaque,
         definition: None,
         source: Some(CrateRootSource::Registry {
             registry: None,

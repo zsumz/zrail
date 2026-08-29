@@ -4,7 +4,7 @@ use zrail_core::{GlobImportMode, SourceSpan};
 
 use crate::{
     inventory::FileClass,
-    source::{BindingVisibility, GlobImportFact, SyntaxGuard},
+    source::{BindingVisibility, GlobImportFact, Reachability, ReachabilityKind, SyntaxGuard},
 };
 
 use super::glob_import_is_allowed;
@@ -40,12 +40,63 @@ fn syntactically_absent_globs_do_not_violate_even_deny_mode() {
     assert!(glob_import_is_allowed(
         GlobImportMode::Deny,
         FileClass::Implementation,
+        Reachability::from_kind(ReachabilityKind::Production),
         &absent,
     ));
 }
 
+#[test]
+fn test_super_mode_requires_exact_private_test_only_import() {
+    let mut import = fact(BindingVisibility::Private, SyntaxGuard::Ordinary, false);
+    import.target = "super".into();
+    let production = Reachability::from_kind(ReachabilityKind::Production);
+    let test = Reachability::from_kind(ReachabilityKind::Test);
+
+    assert!(glob_import_is_allowed(
+        GlobImportMode::FacadeReexportsAndTestSuper,
+        FileClass::Test,
+        test,
+        &import,
+    ));
+    assert!(!glob_import_is_allowed(
+        GlobImportMode::FacadeReexportsAndTestSuper,
+        FileClass::Implementation,
+        production,
+        &import,
+    ));
+
+    import.guard = SyntaxGuard::TestOnly;
+    assert!(glob_import_is_allowed(
+        GlobImportMode::FacadeReexportsAndTestSuper,
+        FileClass::Implementation,
+        production,
+        &import,
+    ));
+
+    import.target = "crate::support".into();
+    assert!(!glob_import_is_allowed(
+        GlobImportMode::FacadeReexportsAndTestSuper,
+        FileClass::Test,
+        test,
+        &import,
+    ));
+    import.target = "super".into();
+    import.visibility = BindingVisibility::Public;
+    assert!(!glob_import_is_allowed(
+        GlobImportMode::FacadeReexportsAndTestSuper,
+        FileClass::Test,
+        test,
+        &import,
+    ));
+}
+
 fn allowed(class: FileClass, fact: &GlobImportFact) -> bool {
-    glob_import_is_allowed(GlobImportMode::FacadeReexportsOnly, class, fact)
+    glob_import_is_allowed(
+        GlobImportMode::FacadeReexportsOnly,
+        class,
+        Reachability::from_kind(ReachabilityKind::Production),
+        fact,
+    )
 }
 
 fn fact(visibility: BindingVisibility, guard: SyntaxGuard, scoped: bool) -> GlobImportFact {

@@ -30,6 +30,8 @@ pub(crate) use evaluate::{RuleContext, evaluate};
 pub(crate) use hygiene::glob_import_is_allowed;
 pub(crate) use macro_expansion::binding_policy as binding_macro_policy;
 pub(crate) use macro_expansion::closes_async_syntax;
+pub(crate) use macro_expansion::closes_owned_operations;
+#[cfg(test)]
 pub(crate) use macro_expansion::closes_source_operations;
 pub(crate) use macro_expansion::closes_type_duplication;
 pub(crate) use repository::matching_directory_owner;

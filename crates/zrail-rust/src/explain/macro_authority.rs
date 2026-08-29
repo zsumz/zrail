@@ -108,6 +108,9 @@ pub(super) fn invocations(model: &RepositoryModel, path: &str) -> Vec<MacroInvoc
                 written: expansion.name.clone(),
                 preferred: expansion.preferred_policy_name().map(str::to_owned),
                 origins,
+                resolution: expansion.quality,
+                span: expansion.span,
+                input_sha256: expansion.input_sha256.clone(),
             }
         })
         .collect::<BTreeSet<_>>()

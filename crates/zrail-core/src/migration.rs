@@ -1,5 +1,6 @@
 //! Scoped review of a supported prior lock epoch against current semantics.
 
+mod bridge;
 mod surfaces;
 
 use std::{collections::BTreeSet, error::Error, fmt};
@@ -7,9 +8,13 @@ use std::{collections::BTreeSet, error::Error, fmt};
 use serde::{Deserialize, Serialize};
 
 use crate::{LOCK_SCHEMA, LOCK_SEMANTICS, LockFile};
+pub use bridge::{
+    LockMigrationBridgeReport, LockMigrationFileChange, LockMigrationFileState,
+    LockMigrationRevision,
+};
 use surfaces::surfaces;
 
-const SUPPORTED_PRIOR_EPOCHS: &[(u64, u64)] = &[(1, 1), (1, 2), (2, 3)];
+const SUPPORTED_PRIOR_EPOCHS: &[(u64, u64)] = &[(1, 1), (1, 2), (2, 3), (3, 4)];
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -65,7 +70,7 @@ pub struct LockMigrationReport {
     pub schema: u64,
     /// Prior lock semantics decoded by the adapter.
     pub from_semantics: u64,
-    /// New lock semantics produced for the identical repository revision.
+    /// New lock semantics produced for the reviewed comparison revision.
     pub to_semantics: u64,
     /// Counts derived from the complete subject list.
     pub summary: LockMigrationSummary,
@@ -109,15 +114,35 @@ pub fn compare_lock_epochs(
     before: &LockFile,
     after: &LockFile,
 ) -> Result<LockMigrationReport, LockMigrationError> {
+    compare_epochs(before, after, true)
+}
+
+/// Compares old authority with a current-engine lock from a reviewed descendant revision.
+///
+/// Unlike [`compare_lock_epochs`], this bridge permits the contract digest to change. The
+/// caller must bind both revisions, both locks, and the complete repository change manifest
+/// in a [`LockMigrationBridgeReport`].
+pub fn compare_lock_epochs_across_revisions(
+    before: &LockFile,
+    after: &LockFile,
+) -> Result<LockMigrationReport, LockMigrationError> {
+    compare_epochs(before, after, false)
+}
+
+fn compare_epochs(
+    before: &LockFile,
+    after: &LockFile,
+    require_identical_contract: bool,
+) -> Result<LockMigrationReport, LockMigrationError> {
     if !SUPPORTED_PRIOR_EPOCHS.contains(&(before.schema, before.semantics))
         || after.schema != LOCK_SCHEMA
         || after.semantics != LOCK_SEMANTICS
     {
         return Err(LockMigrationError(format!(
-            "lock migration supports released epochs schema 1/semantics 1, schema 1/semantics 2, and schema 2/semantics 3 to schema {LOCK_SCHEMA}/semantics {LOCK_SEMANTICS}"
+            "lock migration supports released epochs schema 1/semantics 1, schema 1/semantics 2, schema 2/semantics 3, and schema 3/semantics 4 to schema {LOCK_SCHEMA}/semantics {LOCK_SEMANTICS}"
         )));
     }
-    if before.contract_sha256 != after.contract_sha256 {
+    if require_identical_contract && before.contract_sha256 != after.contract_sha256 {
         return Err(LockMigrationError(
             "lock migration requires identical contract bytes at the base revision".into(),
         ));

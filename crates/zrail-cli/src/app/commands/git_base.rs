@@ -19,6 +19,7 @@ const MAX_GIT_TREE_BYTES: usize = 64 * 1024 * 1024;
 pub(super) struct GitSnapshot {
     temporary: git_materialize::TemporaryRoot,
     commit: String,
+    pub(super) tree: BTreeMap<String, TreeEntry>,
 }
 
 impl GitSnapshot {
@@ -38,7 +39,11 @@ impl GitSnapshot {
         let commit = resolve_commit(&repository, revision)?;
         let tree = read_tree(&repository, &commit)?;
         let temporary = git_materialize::materialize(&repository, &tree, config, lock)?;
-        Ok(Self { temporary, commit })
+        Ok(Self {
+            temporary,
+            commit,
+            tree,
+        })
     }
 
     pub(super) fn create_repository(repository: &Path, revision: &OsStr) -> Result<Self, CliError> {
@@ -52,7 +57,11 @@ impl GitSnapshot {
         let commit = resolve_commit(&repository, revision)?;
         let tree = read_tree(&repository, &commit)?;
         let temporary = git_materialize::materialize_repository(&repository, &tree)?;
-        Ok(Self { temporary, commit })
+        Ok(Self {
+            temporary,
+            commit,
+            tree,
+        })
     }
 
     pub(super) fn root(&self) -> &Path {
@@ -64,7 +73,7 @@ impl GitSnapshot {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub(super) struct TreeEntry {
     pub(super) mode: String,
     pub(super) object: String,
@@ -74,6 +83,14 @@ pub(super) struct TreeEntry {
 impl TreeEntry {
     pub(super) fn is_regular(&self) -> bool {
         matches!(self.mode.as_str(), "100644" | "100755")
+    }
+
+    pub(super) fn is_symlink(&self) -> bool {
+        self.mode == "120000"
+    }
+
+    pub(super) fn is_gitlink(&self) -> bool {
+        self.mode == "160000"
     }
 }
 
@@ -213,5 +230,6 @@ mod git_base_test;
 
 #[cfg(test)]
 pub(super) use git_base_test::{
-    CONTRACT_PREFIX, CONTRACT_SUFFIX, commit_all, fixture_root, git_available, reset,
+    CONTRACT_PREFIX, CONTRACT_SUFFIX, commit_all, commit_index, fixture_root, git_available,
+    head_revision, reset, run_git,
 };

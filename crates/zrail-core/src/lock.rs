@@ -22,7 +22,7 @@ pub use state::{LockedGate, LockedGateInput, LockedGeneratedSource, LockedMacroI
 /// Lock TOML format version supported by this crate.
 pub const LOCK_SCHEMA: u64 = 3;
 /// Resolved-architecture interpretation version produced by this crate.
-pub const LOCK_SEMANTICS: u64 = 4;
+pub const LOCK_SEMANTICS: u64 = 5;
 
 /// Canonical, contract-bound architecture state stored in `zrail.lock`.
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]

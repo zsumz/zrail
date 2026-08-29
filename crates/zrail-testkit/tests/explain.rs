@@ -120,10 +120,13 @@ fn explanation_separates_written_public_and_origin_macro_identity() {
     assert_eq!(invocation.written, "q");
     assert_eq!(invocation.preferred.as_deref(), Some("quote::quote"));
     assert_eq!(invocation.origins, ["external:quote:registry:crates.io:1"]);
+    assert_eq!(invocation.resolution, zrail_core::AnalysisQuality::Exact);
+    assert!(invocation.span.is_some());
+    assert_eq!(invocation.input_sha256.len(), 64);
     assert!(
         explanation
             .human()
-            .contains("q -> quote::quote @ external:quote")
+            .contains("q -> quote::quote [exact] @ external:quote")
     );
     fs::remove_dir_all(root).expect("remove explanation fixture");
 }

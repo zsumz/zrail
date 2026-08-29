@@ -1,16 +1,14 @@
 //! Item-producing macro authority follows path scope and optional origin binding.
 
+mod binding;
+
 use std::collections::BTreeSet;
 
-use zrail_core::{
-    Contract, ItemMacroContract, MacroExpansionAllow, MacroExpansionBindings, MacroInputMode,
-    glob_matches,
-};
+use zrail_core::{Contract, ItemMacroContract, glob_matches};
 
 use crate::{
-    cargo::{ResolvedCargoGraph, source_matches},
-    rules::macro_expansion,
-    source::{MacroExpansionFact, MacroOrigin, ObservedFact, RustFileFacts, SourceIndex},
+    cargo::ResolvedCargoGraph,
+    source::{MacroExpansionFact, ObservedFact, RustFileFacts, SourceIndex},
 };
 
 pub(super) fn review(
@@ -59,7 +57,7 @@ pub(super) fn matching_authorities(
         .enumerate()
         .filter(|(_, allowance)| selects(allowance, path))
         .filter(|(_, allowance)| name_matches(allowance, invocation, expansion))
-        .filter(|(_, allowance)| binding_matches(allowance, expansion, resolved_cargo))
+        .filter(|(_, allowance)| binding::matches(allowance, expansion, resolved_cargo))
         .map(|(index, _)| index)
         .collect()
 }
@@ -113,73 +111,6 @@ fn name_matches(
                     .contains(&allowance.name.as_str())
             })
         })
-}
-
-fn binding_matches(
-    allowance: &ItemMacroContract,
-    expansion: Option<&MacroExpansionFact>,
-    resolved_cargo: Option<&ResolvedCargoGraph>,
-) -> bool {
-    let Some(binding) = allowance.binding else {
-        return true;
-    };
-    let Some(expansion) = expansion else {
-        return false;
-    };
-    let macro_allowance = MacroExpansionAllow {
-        name: allowance.name.clone(),
-        inputs: MacroInputMode::Inspect,
-        binding,
-        bindings: MacroExpansionBindings::Opaque,
-        async_syntax: zrail_core::MacroAsyncSyntax::Opaque,
-        duplication_effect: zrail_core::MacroDuplicationEffect::Opaque,
-        source_operations: zrail_core::MacroSourceOperations::Opaque,
-        definition: None,
-        source: allowance.source.clone(),
-        reason: allowance.reason.clone(),
-    };
-    macro_expansion::binds_allowance(expansion, &macro_allowance)
-        && expansion.candidates.iter().all(|candidate| {
-            candidate.origins.iter().all(|origin| match origin {
-                MacroOrigin::CompilerBuiltin => allowance.source.is_none(),
-                MacroOrigin::Repository { .. } => {
-                    allowance.source.is_none()
-                        && candidate.definition.is_some()
-                        && candidate.definition_sha256.is_some()
-                }
-                MacroOrigin::External { package, source } => {
-                    allowance.source.as_ref().is_some_and(|allowed| {
-                        external_source_matches(allowed, package, source, resolved_cargo)
-                    })
-                }
-                MacroOrigin::Pending { .. } | MacroOrigin::Unresolved => false,
-            })
-        })
-}
-
-fn external_source_matches(
-    allowed: &zrail_core::CrateRootSource,
-    package: &str,
-    observed: &crate::cargo::DependencySource,
-    resolved_cargo: Option<&ResolvedCargoGraph>,
-) -> bool {
-    let zrail_core::CrateRootSource::CargoLock {
-        package: selected,
-        version,
-        source,
-    } = allowed
-    else {
-        return source_matches(allowed, observed);
-    };
-    let Some(graph) = resolved_cargo else {
-        return false;
-    };
-    let Ok(selected) = graph.lookup(selected, version.as_deref(), source.as_deref()) else {
-        return false;
-    };
-    graph
-        .package_for_source(package, observed)
-        .is_ok_and(|observed| observed == selected)
 }
 
 fn expansion_for<'a>(

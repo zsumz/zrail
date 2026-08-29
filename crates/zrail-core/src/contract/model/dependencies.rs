@@ -59,7 +59,7 @@ pub struct CrateRootContract {
 
 #[derive(Clone, Debug, Default, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "kebab-case", deny_unknown_fields)]
-/// Provenance identity for a reviewed external crate-root mapping.
+/// Provenance identity for reviewed Cargo or repository source.
 pub enum CrateRootSource {
     #[default]
     /// Legacy name-only authority, retained for older contracts.
@@ -103,6 +103,13 @@ pub enum CrateRootSource {
         /// Optional Cargo version requirement applied to the Git package.
         requirement: Option<String>,
     },
+    /// A package implemented inside the analyzed repository.
+    Repository {
+        /// Exact Cargo package name that owns the implementation.
+        package: String,
+        /// Normalized repository-relative package directory.
+        directory: String,
+    },
 }
 
 impl CrateRootSource {
@@ -143,6 +150,9 @@ impl CrateRootSource {
                 rev.as_deref().unwrap_or(""),
                 requirement.as_deref().unwrap_or("")
             ),
+            Self::Repository { package, directory } => {
+                format!("repository:{package}:{directory}")
+            }
         }
     }
 }

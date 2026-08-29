@@ -168,7 +168,7 @@ fn index_file_as(
     let (type_policy, synthetic_paths) = super::type_policy_index::collect(syntax);
     visitor.paths.extend(synthetic_paths);
     let facade_implementation = if matches!(effective, FileClass::Facade | FileClass::EntryPoint) {
-        facade::items(&source_file.relative, syntax)
+        facade::items(effective, syntax)
     } else {
         Vec::new()
     };

@@ -18,6 +18,7 @@ pub(super) fn check(context: &RuleContext<'_>, findings: &mut FindingSink) {
             finding_rule: "rust.tests.inline.ratchet",
             category: "test-placement",
             debt: "inline tests",
+            report_source_lock_drift: true,
         },
         None,
         findings,
