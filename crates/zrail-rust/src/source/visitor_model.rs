@@ -19,6 +19,7 @@ pub(in crate::source) struct FactVisitor<'a> {
     pub(in crate::source) generic_bound_scopes: Vec<super::visitor_generics::GenericBoundScope>,
     pub(in crate::source) block_depth: usize,
     pub(in crate::source) inherits_parent_context: bool,
+    pub(in crate::source) inherited_generic_roots: bool,
     pub(in crate::source) next_path_namespace: super::FactNamespace,
     pub(in crate::source) paths: Vec<ObservedFact>,
     pub(in crate::source) calls: Vec<ObservedFact>,

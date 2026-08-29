@@ -4,8 +4,8 @@ use std::borrow::Cow;
 
 use syn::{ExprPath, Path, Type};
 
-use crate::source::RootLookupNamespace;
-use crate::source::fact::written_path;
+use super::syntax_text::{segments_text, type_text as syntax_type_text};
+use crate::source::{RootLookupNamespace, fact::written_path};
 
 #[derive(Clone, Copy)]
 pub(in crate::source) enum WrittenOperationSubject<'a> {
@@ -19,6 +19,14 @@ pub(in crate::source) enum WrittenOperationSubject<'a> {
         path: &'a Path,
         trait_segments: usize,
     },
+}
+
+fn type_text(ty: &Type) -> String {
+    match ty {
+        Type::Path(path) if path.qself.is_none() => syntax_type_text(ty),
+        Type::Reference(reference) => format!("&{}", type_text(&reference.elem)),
+        _ => "unresolved self type".into(),
+    }
 }
 
 impl<'a> WrittenOperationSubject<'a> {
@@ -177,28 +185,4 @@ fn join_self<'a>(
     let mut path = self_path.path.clone();
     path.segments.extend(suffix.cloned());
     Some(path)
-}
-
-fn type_text(ty: &Type) -> String {
-    match ty {
-        Type::Path(path) if path.qself.is_none() => written_path(&path.path),
-        Type::Reference(reference) => format!("&{}", type_text(&reference.elem)),
-        _ => "unresolved self type".into(),
-    }
-}
-
-fn segments_text(path: &Path, start: usize, end: usize) -> String {
-    let text = path
-        .segments
-        .iter()
-        .skip(start)
-        .take(end.saturating_sub(start))
-        .map(|segment| segment.ident.to_string())
-        .collect::<Vec<_>>()
-        .join("::");
-    if text.is_empty() {
-        "unresolved associated item".into()
-    } else {
-        text
-    }
 }

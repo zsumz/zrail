@@ -27,6 +27,7 @@ pub(super) fn parsed_expression(
 ) -> (RustFileFacts, Vec<zrail_core::SourceSpan>) {
     let imports = ImportMap::default();
     let mut visitor = FactVisitor::new(&imports);
+    visitor.inherited_generic_roots = true;
     visitor.visit_expr(expression);
     (
         finish(source, visitor, SourceSyntax::Expression),
@@ -40,6 +41,7 @@ pub(super) fn impl_items(
     let items = syn::parse_str::<ImplItems>(&source.source)?.0;
     let imports = ImportMap::default();
     let mut visitor = FactVisitor::new(&imports);
+    visitor.inherited_generic_roots = true;
     for item in &items {
         visitor.visit_impl_item(item);
     }
@@ -55,6 +57,7 @@ pub(super) fn trait_items(
     let items = syn::parse_str::<TraitItems>(&source.source)?.0;
     let imports = ImportMap::default();
     let mut visitor = FactVisitor::new(&imports);
+    visitor.inherited_generic_roots = true;
     for item in &items {
         visitor.visit_trait_item(item);
     }

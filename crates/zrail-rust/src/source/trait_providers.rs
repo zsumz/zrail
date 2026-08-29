@@ -2,14 +2,14 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use syn::{Item, TypeParamBound};
+use syn::Item;
 use zrail_core::{AnalysisQuality, Finding};
 
 use super::model::TraitDeclarationFact;
 use super::{
-    BoundSubject, CompilationDomain, GenericAssociatedCandidate, ProviderAuthority, SourceIndex,
-    SyntaxGuard,
-    fact::{source_span, written_path},
+    AssociatedCandidateKind, CompilationDomain, GenericAssociatedCandidate, ProjectionIdentity,
+    ProviderAuthority, SourceIndex, SyntaxGuard,
+    fact::source_span,
     include_bindings::IncludeBindings,
     include_projection_budget::{ProjectionBudget, ProjectionLimits},
     ordinary_binding_facts::{item_guard, quality, replacement_macros},
@@ -29,18 +29,6 @@ pub(super) fn collect<'a>(
             let Item::Trait(item) = item else {
                 return None;
             };
-            let providers = item
-                .supertraits
-                .iter()
-                .filter_map(|bound| match bound {
-                    TypeParamBound::Trait(bound)
-                        if matches!(bound.modifier, syn::TraitBoundModifier::None) =>
-                    {
-                        Some(written_path(&bound.path))
-                    }
-                    _ => None,
-                })
-                .collect::<Vec<_>>();
             let guard = item_guard(&item.attrs, enclosing_guard);
             let macros = replacement_macros(&item.attrs, &guard, scope);
             let declaration_quality = if macros.is_empty() {
@@ -50,15 +38,13 @@ pub(super) fn collect<'a>(
             };
             let mut bounds =
                 super::trait_bounds::from_generics(&item.generics, true, &guard, scope);
-            if !providers.is_empty() {
-                bounds.push(super::trait_bounds::explicit(
-                    BoundSubject::SelfType,
-                    providers,
-                    &guard,
-                    scope,
-                    source_span(item.ident.span()),
-                ));
-            }
+            bounds.extend(super::trait_bounds::from_bounds(
+                &super::BoundSubject::SelfType,
+                &item.supertraits,
+                &guard,
+                scope,
+                source_span(item.ident.span()),
+            ));
             bounds.extend(super::trait_bounds::associated_types(item, &guard, scope));
             bounds.retain(|bound| bound.subject.root() == "Self");
             for bound in &mut bounds {
@@ -124,13 +110,32 @@ fn expand_candidates(
     domains: &BTreeSet<CompilationDomain>,
     graph: &ProviderGraph,
 ) {
-    let mut expanded =
-        BTreeMap::<(String, Vec<String>, Vec<String>), GenericAssociatedCandidate>::new();
+    let mut expanded = BTreeMap::<
+        (
+            String,
+            Vec<String>,
+            ProjectionIdentity,
+            AssociatedCandidateKind,
+        ),
+        GenericAssociatedCandidate,
+    >::new();
     for mut candidate in std::mem::take(candidates) {
+        if candidate.kind == AssociatedCandidateKind::TypeEquality {
+            insert_candidate(&mut expanded, candidate);
+            continue;
+        }
         let Some((trait_path, item)) = candidate.name.rsplit_once("::") else {
             insert_candidate(&mut expanded, candidate);
             continue;
         };
+        if candidate
+            .projection
+            .qualifying_trait
+            .as_ref()
+            .is_some_and(|qualifier| qualifier.path != trait_path)
+        {
+            continue;
+        }
         let base_complete = !domains.is_empty()
             && domains
                 .iter()
@@ -141,7 +146,8 @@ fn expand_candidates(
                 .into_iter()
                 .flatten()
             {
-                let provider_complete = graph.complete(domain, provider, &[]);
+                let provider_complete =
+                    graph.complete(domain, &provider, &ProjectionIdentity::default());
                 let mut provider_authorities = provider_edge.authorities.clone();
                 if !provider_complete {
                     provider_authorities.insert(ProviderAuthority::Unknown);
@@ -152,9 +158,28 @@ fn expand_candidates(
                         name: format!("{provider}::{item}"),
                         canonical: Vec::new(),
                         quality: candidate.quality.max(provider_edge.quality),
-                        projection: Vec::new(),
+                        projection: ProjectionIdentity::default(),
+                        kind: AssociatedCandidateKind::TraitProvider,
                         provider_complete,
                         provider_authorities,
+                    },
+                );
+            }
+            for (target, target_edge) in graph
+                .substitutions(domain, trait_path, &candidate.projection)
+                .into_iter()
+                .flatten()
+            {
+                insert_candidate(
+                    &mut expanded,
+                    GenericAssociatedCandidate {
+                        name: format!("{target}::{item}"),
+                        canonical: Vec::new(),
+                        quality: candidate.quality.max(target_edge.quality),
+                        projection: ProjectionIdentity::default(),
+                        kind: AssociatedCandidateKind::TypeEquality,
+                        provider_complete: target_edge.quality != AnalysisQuality::Unresolved,
+                        provider_authorities: target_edge.authorities,
                     },
                 );
             }
@@ -174,13 +199,22 @@ fn expand_candidates(
 }
 
 fn insert_candidate(
-    candidates: &mut BTreeMap<(String, Vec<String>, Vec<String>), GenericAssociatedCandidate>,
+    candidates: &mut BTreeMap<
+        (
+            String,
+            Vec<String>,
+            ProjectionIdentity,
+            AssociatedCandidateKind,
+        ),
+        GenericAssociatedCandidate,
+    >,
     candidate: GenericAssociatedCandidate,
 ) {
     let key = (
         candidate.name.clone(),
         candidate.canonical.clone(),
         candidate.projection.clone(),
+        candidate.kind,
     );
     candidates
         .entry(key)

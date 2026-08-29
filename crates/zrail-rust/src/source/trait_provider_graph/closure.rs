@@ -4,24 +4,28 @@ use std::collections::BTreeMap;
 
 use super::{EdgeKey, ProviderEdge, ProviderEdges};
 use crate::source::include_bindings::{ResolvedOrigin, ResolvedPath};
-use crate::source::{CompilationDomain, ProviderAuthority};
+use crate::source::{CompilationDomain, ProjectionIdentity, ProviderAuthority};
 
 pub(super) fn inherited_projection(
     domain: &CompilationDomain,
     trait_path: &str,
-    projection: &[String],
+    projection: &ProjectionIdentity,
     graph: &BTreeMap<EdgeKey, ProviderEdges>,
 ) -> Vec<(String, ProviderEdge)> {
     if projection.is_empty() {
         return Vec::new();
     }
     graph
-        .get(&(domain.clone(), trait_path.into(), Vec::new()))
+        .get(&(
+            domain.clone(),
+            trait_path.into(),
+            ProjectionIdentity::default(),
+        ))
         .into_iter()
         .flatten()
         .filter_map(|(provider, edge)| {
             graph
-                .get(&(domain.clone(), provider.clone(), projection.to_vec()))
+                .get(&(domain.clone(), provider.clone(), projection.clone()))
                 .map(|nested| (edge.quality, nested))
         })
         .flat_map(|(quality, nested)| {
@@ -43,7 +47,11 @@ pub(super) fn provider_supertraits(
         .iter()
         .filter_map(|(provider, edge)| {
             graph
-                .get(&(domain.clone(), provider.clone(), Vec::new()))
+                .get(&(
+                    domain.clone(),
+                    provider.clone(),
+                    ProjectionIdentity::default(),
+                ))
                 .map(|nested| (edge.quality, nested))
         })
         .flat_map(|(quality, nested)| {

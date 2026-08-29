@@ -2,6 +2,8 @@
 
 #[path = "operation_model/subject.rs"]
 pub(super) mod subject;
+#[path = "operation_model/syntax_text.rs"]
+mod syntax_text;
 
 use std::collections::BTreeMap;
 

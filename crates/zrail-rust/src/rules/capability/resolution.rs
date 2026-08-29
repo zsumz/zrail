@@ -100,11 +100,14 @@ fn incomplete_provider_matches(
         .iter()
         .filter(|authority| **authority != ProviderAuthority::Unknown)
         .any(|authority| selectors.contains(authority));
-    (occurrence != Some(AssociatedOccurrenceKind::TypeReference) && same_authority)
-        || (candidate
-            .provider_authorities
-            .contains(&ProviderAuthority::Unknown)
-            && same_associated_item(selector, &candidate.name))
+    let unknown_authority = candidate
+        .provider_authorities
+        .contains(&ProviderAuthority::Unknown);
+    let callable = occurrence != Some(AssociatedOccurrenceKind::TypeReference);
+    let same_item = same_associated_item(selector, &candidate.name);
+    let explicit_prefix = explicit_prefix(selector, &candidate.name);
+    (same_item && (unknown_authority || (callable && same_authority)))
+        || (callable && same_authority && explicit_prefix)
 }
 
 fn same_associated_item(selector: &str, candidate: &str) -> bool {
@@ -115,6 +118,28 @@ fn last_segment(path: &str) -> Option<&str> {
     path.rsplit("::")
         .next()
         .map(|segment| segment.strip_prefix("r#").unwrap_or(segment))
+}
+
+fn path_depth(path: &str) -> usize {
+    path.trim_start_matches("::")
+        .split("::")
+        .filter(|segment| !segment.is_empty())
+        .count()
+}
+
+fn explicit_prefix(selector: &str, candidate: &str) -> bool {
+    let selector_depth = path_depth(selector);
+    let candidate_depth = path_depth(candidate);
+    selector_depth < candidate_depth
+        || (selector_depth == candidate_depth
+            && matches!(
+                selector.trim_start_matches("::").split("::").next(),
+                Some("crate" | "self" | "super")
+            )
+            && !matches!(
+                candidate.trim_start_matches("::").split("::").next(),
+                Some("crate" | "self" | "super")
+            ))
 }
 
 fn selector_authorities(selector: &str) -> std::collections::BTreeSet<ProviderAuthority> {

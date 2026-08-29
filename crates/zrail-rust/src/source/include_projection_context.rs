@@ -1,11 +1,17 @@
 //! Include instances resolve contextual `Self` and generic trait candidates.
 
-use std::collections::{BTreeMap, BTreeSet};
+#[path = "include_projection_context/candidates.rs"]
+mod candidates;
+#[path = "include_projection_context_resolution.rs"]
+mod projection_resolution;
+
+use std::collections::BTreeMap;
 
 use zrail_core::AnalysisQuality;
 
 use super::super::{
-    BoundSubject, GenericAssociatedCandidate, ObservedFact, ProviderAuthority, SourceInstanceId,
+    AssociatedCandidateKind, GenericAssociatedCandidate, ObservedFact, ProjectionIdentity,
+    ProviderAuthority, SourceInstanceId,
     include_binding_helpers::unresolved,
     include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedPath},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
@@ -69,12 +75,23 @@ pub(super) fn associated_candidates(
     budget: &mut ProjectionBudget,
 ) -> Result<Vec<GenericAssociatedCandidate>, ProjectionLimit> {
     let raw = if fact.associated_candidates.is_empty() && fact.inherits_parent_context {
-        inherited_candidates(fact, source)
+        candidates::inherited(fact, source)
     } else {
         fact.associated_candidates.clone()
     };
-    let mut resolved = BTreeMap::<(String, Vec<String>), GenericAssociatedCandidate>::new();
+    let mut resolved = BTreeMap::<
+        (String, ProjectionIdentity, AssociatedCandidateKind),
+        GenericAssociatedCandidate,
+    >::new();
     for raw in raw {
+        let projections = projection_resolution::resolve(
+            bindings,
+            instance,
+            &raw.projection,
+            &fact.lexical_scope,
+            &fact.guard,
+            budget,
+        )?;
         let candidates = bindings.resolve_written(
             &WrittenResolveRequest {
                 instance,
@@ -89,93 +106,56 @@ pub(super) fn associated_candidates(
             budget,
         )?;
         if candidates.is_empty() {
-            insert_candidate(&mut resolved, raw);
+            for (projection, quality) in projections {
+                let mut candidate = raw.clone();
+                candidate.projection = projection;
+                candidate.quality = candidate.quality.max(quality);
+                insert_candidate(&mut resolved, candidate);
+            }
             continue;
         }
         for candidate in candidates {
-            let authority = authority(&candidate);
-            insert_candidate(
-                &mut resolved,
-                GenericAssociatedCandidate {
-                    name: candidate.name,
-                    canonical: Vec::new(),
-                    quality: candidate.quality.max(raw.quality),
-                    projection: raw.projection.clone(),
-                    provider_complete: candidate.origin == ResolvedOrigin::CrateLocal,
-                    provider_authorities: [authority].into(),
-                },
-            );
+            for (projection, projection_quality) in &projections {
+                let authority = authority(&candidate);
+                let quality = candidate.quality.max(raw.quality).max(*projection_quality);
+                insert_candidate(
+                    &mut resolved,
+                    GenericAssociatedCandidate {
+                        name: candidate.name.clone(),
+                        canonical: Vec::new(),
+                        quality,
+                        projection: projection.clone(),
+                        kind: raw.kind,
+                        provider_complete: match raw.kind {
+                            AssociatedCandidateKind::TraitProvider => {
+                                candidate.origin == ResolvedOrigin::CrateLocal
+                                    && quality != AnalysisQuality::Unresolved
+                            }
+                            AssociatedCandidateKind::TypeEquality => {
+                                quality != AnalysisQuality::Unresolved
+                            }
+                        },
+                        provider_authorities: [authority].into(),
+                    },
+                );
+            }
         }
     }
     Ok(resolved.into_values().collect())
 }
 
-fn inherited_candidates(
-    fact: &ObservedFact,
-    source: &SourceInstance,
-) -> Vec<GenericAssociatedCandidate> {
-    let written = fact.written.as_deref().unwrap_or(&fact.name);
-    let Some((receiver, item)) = written.rsplit_once("::") else {
-        return Vec::new();
-    };
-    let declared = source
-        .generic_types
-        .iter()
-        .cloned()
-        .collect::<BTreeSet<_>>();
-    let Some(subject) = BoundSubject::from_receiver(receiver, &declared) else {
-        return Vec::new();
-    };
-    let mut candidates = source
-        .trait_bounds
-        .iter()
-        .filter(|bounds| bounds.subject.without_qualifier() == subject.without_qualifier())
-        .flat_map(|bounds| &bounds.providers)
-        .map(|trait_path| GenericAssociatedCandidate {
-            name: format!("{trait_path}::{item}"),
-            canonical: Vec::new(),
-            quality: AnalysisQuality::Exact,
-            projection: Vec::new(),
-            provider_complete: false,
-            provider_authorities: [ProviderAuthority::Unknown].into(),
-        })
-        .collect::<Vec<_>>();
-    let BoundSubject::Projection {
-        root, associated, ..
-    } = subject
-    else {
-        return candidates;
-    };
-    let root = if visible(&root) == "Self" {
-        BoundSubject::SelfType
-    } else {
-        BoundSubject::TypeParameter(root)
-    };
-    candidates.extend(
-        source
-            .trait_bounds
-            .iter()
-            .filter(|bounds| bounds.subject.without_qualifier() == root)
-            .flat_map(|bounds| &bounds.providers)
-            .map(|trait_path| GenericAssociatedCandidate {
-                name: format!("{trait_path}::{item}"),
-                canonical: Vec::new(),
-                quality: AnalysisQuality::Exact,
-                projection: associated.clone(),
-                provider_complete: false,
-                provider_authorities: [ProviderAuthority::Unknown].into(),
-            }),
-    );
-    candidates.sort();
-    candidates.dedup();
-    candidates
-}
-
 fn insert_candidate(
-    candidates: &mut BTreeMap<(String, Vec<String>), GenericAssociatedCandidate>,
+    candidates: &mut BTreeMap<
+        (String, ProjectionIdentity, AssociatedCandidateKind),
+        GenericAssociatedCandidate,
+    >,
     candidate: GenericAssociatedCandidate,
 ) {
-    let key = (candidate.name.clone(), candidate.projection.clone());
+    let key = (
+        candidate.name.clone(),
+        candidate.projection.clone(),
+        candidate.kind,
+    );
     candidates
         .entry(key)
         .and_modify(|existing| {

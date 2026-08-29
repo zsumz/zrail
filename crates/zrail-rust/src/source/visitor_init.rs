@@ -53,6 +53,7 @@ impl<'a> FactVisitor<'a> {
             generic_bound_scopes: Vec::new(),
             block_depth: 0,
             inherits_parent_context: true,
+            inherited_generic_roots: false,
             next_path_namespace: super::FactNamespace::Unknown,
             paths,
             calls: Vec::new(),

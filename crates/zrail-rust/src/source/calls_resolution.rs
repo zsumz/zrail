@@ -160,6 +160,7 @@ fn merge_candidates(
             existing.name == candidate.name
                 && existing.canonical == candidate.canonical
                 && existing.projection == candidate.projection
+                && existing.kind == candidate.kind
         }) {
             existing.quality = existing.quality.max(candidate.quality);
             existing.provider_complete &= candidate.provider_complete;

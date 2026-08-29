@@ -4,7 +4,9 @@ use std::collections::BTreeMap;
 
 use zrail_core::AnalysisQuality;
 
-use super::super::{GenericAssociatedCandidate, GenericRootShadow};
+use super::super::{
+    AssociatedCandidateKind, GenericAssociatedCandidate, GenericRootShadow, ProjectionIdentity,
+};
 
 pub(in crate::source) struct CandidateAggregate {
     pub(in crate::source) instances: usize,
@@ -15,7 +17,7 @@ pub(in crate::source) struct CandidateAggregate {
     pub(in crate::source) blocks_completeness: bool,
     pub(in crate::source) generic_shadow: Option<GenericRootShadow>,
     pub(in crate::source) associated_candidates:
-        BTreeMap<(String, Vec<String>), GenericAssociatedCandidate>,
+        BTreeMap<(String, ProjectionIdentity, AssociatedCandidateKind), GenericAssociatedCandidate>,
 }
 
 impl Default for CandidateAggregate {

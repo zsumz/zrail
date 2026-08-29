@@ -2,11 +2,12 @@
 
 mod async_syntax;
 pub(super) use async_syntax::{visit_async, visit_await};
+mod mutation;
+pub(super) use mutation::{visit_assign, visit_binary, visit_raw_address, visit_reference};
 
 use syn::{
-    BinOp, Block, ExprAssign, ExprBinary, ExprClosure, ExprForLoop, ExprRawAddr, ExprReference,
-    ImplItemFn, Item, ItemFn, ItemImpl, ItemMod, ItemTrait, Macro, PointerMutability, Signature,
-    Stmt, TraitItemFn,
+    Block, ExprClosure, ExprForLoop, ImplItemFn, Item, ItemFn, ItemImpl, ItemMod, ItemTrait, Macro,
+    Signature, Stmt, TraitItemFn,
     spanned::Spanned,
     visit::{self, Visit},
 };
@@ -27,64 +28,6 @@ pub(super) fn visit_item(visitor: &mut FactVisitor<'_>, item: &Item) {
     visitor.pattern_inputs = pattern_inputs;
     visitor.self_types = self_types;
     visitor.inherits_parent_context = inherits_parent_context;
-}
-
-pub(super) fn visit_binary(visitor: &mut FactVisitor<'_>, expression: &ExprBinary) {
-    if matches!(
-        expression.op,
-        BinOp::AddAssign(_)
-            | BinOp::SubAssign(_)
-            | BinOp::MulAssign(_)
-            | BinOp::DivAssign(_)
-            | BinOp::RemAssign(_)
-            | BinOp::BitXorAssign(_)
-            | BinOp::BitAndAssign(_)
-            | BinOp::BitOrAssign(_)
-            | BinOp::ShlAssign(_)
-            | BinOp::ShrAssign(_)
-    ) {
-        visitor.with_place_operation(
-            super::super::SourceOperationKind::FieldWrite,
-            &expression.left,
-            |visitor| {
-                visit::visit_expr_binary(visitor, expression);
-            },
-        );
-    } else {
-        visit::visit_expr_binary(visitor, expression);
-    }
-}
-
-pub(super) fn visit_assign(visitor: &mut FactVisitor<'_>, expression: &ExprAssign) {
-    for attribute in &expression.attrs {
-        visitor.visit_attribute(attribute);
-    }
-    super::super::assignee_expression::visit(visitor, &expression.left);
-    visitor.visit_expr(&expression.right);
-}
-
-pub(super) fn visit_reference(visitor: &mut FactVisitor<'_>, expression: &ExprReference) {
-    if expression.mutability.is_some() {
-        visitor.with_place_operation(
-            super::super::SourceOperationKind::FieldMutableBorrow,
-            &expression.expr,
-            |visitor| visit::visit_expr_reference(visitor, expression),
-        );
-    } else {
-        visit::visit_expr_reference(visitor, expression);
-    }
-}
-
-pub(super) fn visit_raw_address(visitor: &mut FactVisitor<'_>, expression: &ExprRawAddr) {
-    if matches!(expression.mutability, PointerMutability::Mut(_)) {
-        visitor.with_place_operation(
-            super::super::SourceOperationKind::FieldMutableBorrow,
-            &expression.expr,
-            |visitor| visit::visit_expr_raw_addr(visitor, expression),
-        );
-    } else {
-        visit::visit_expr_raw_addr(visitor, expression);
-    }
 }
 
 pub(super) fn visit_closure(visitor: &mut FactVisitor<'_>, expression: &ExprClosure) {
@@ -124,20 +67,25 @@ pub(super) fn visit_signature(visitor: &mut FactVisitor<'_>, signature: &Signatu
 
 pub(super) fn visit_item_impl(visitor: &mut FactVisitor<'_>, implementation: &ItemImpl) {
     visitor.record_unsafe_impl(implementation);
-    let self_bounds = implementation
+    let mut self_bounds = implementation
         .trait_
         .as_ref()
         .filter(|(negative, _, _)| negative.is_none())
         .map(|(_, path, _)| {
             vec![super::super::trait_bounds::explicit(
                 super::super::BoundSubject::SelfType,
-                vec![super::super::fact::written_path(path)],
+                vec![super::super::GenericPathIdentity::trait_path(path)],
                 &visitor.syntax_guard(),
                 &visitor.lexical_scope,
                 super::super::fact::source_span(path.span()),
             )]
         })
         .unwrap_or_default();
+    self_bounds.extend(super::super::trait_bounds::impl_associated_types(
+        implementation,
+        &visitor.syntax_guard(),
+        &visitor.lexical_scope,
+    ));
     visitor.with_self_type(&implementation.self_ty, |visitor| {
         visitor.with_generics_and_bounds(&implementation.generics, true, self_bounds, |visitor| {
             visit::visit_item_impl(visitor, implementation);
@@ -149,7 +97,9 @@ pub(super) fn visit_item_trait(visitor: &mut FactVisitor<'_>, item: &ItemTrait) 
     visitor.record_unsafe_trait(item);
     let mut bounds = vec![super::super::trait_bounds::explicit(
         super::super::BoundSubject::SelfType,
-        vec![item.ident.to_string()],
+        vec![super::super::GenericPathIdentity::wildcard(
+            item.ident.to_string(),
+        )],
         &visitor.syntax_guard(),
         &visitor.lexical_scope,
         super::super::fact::source_span(item.ident.span()),

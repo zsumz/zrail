@@ -13,12 +13,19 @@ pub(crate) enum AssociatedOccurrenceKind {
     TypeReference,
 }
 
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub(crate) enum AssociatedCandidateKind {
+    TraitProvider,
+    TypeEquality,
+}
+
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct GenericAssociatedCandidate {
     pub(crate) name: String,
     pub(crate) canonical: Vec<String>,
     pub(crate) quality: AnalysisQuality,
-    pub(crate) projection: Vec<String>,
+    pub(crate) projection: super::ProjectionIdentity,
+    pub(crate) kind: AssociatedCandidateKind,
     pub(crate) provider_complete: bool,
     pub(crate) provider_authorities: BTreeSet<ProviderAuthority>,
 }
@@ -46,7 +53,8 @@ pub(crate) enum ProviderAuthority {
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) struct TraitBoundFact {
     pub(crate) subject: super::BoundSubject,
-    pub(crate) providers: Vec<String>,
+    pub(crate) providers: Vec<super::GenericPathIdentity>,
+    pub(crate) equalities: Vec<super::GenericPathIdentity>,
     pub(crate) quality: AnalysisQuality,
     pub(crate) guard: SyntaxGuard,
     pub(crate) lexical_scope: Vec<zrail_core::SourceSpan>,

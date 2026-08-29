@@ -4,7 +4,8 @@ use std::collections::BTreeSet;
 
 use syn::Type;
 
-use super::BoundSubject;
+use super::{AssociatedSegment, BoundSubject, GenericPathIdentity, ProjectionIdentity};
+use crate::source::GenericArgumentsIdentity;
 
 #[test]
 fn qualified_projection_retains_subject_and_qualifier() {
@@ -15,8 +16,16 @@ fn qualified_projection_retains_subject_and_qualifier() {
         subject,
         BoundSubject::Projection {
             root: "T".into(),
-            qualifying_trait: Some("api::Provider".into()),
-            associated: vec!["Factory".into()],
+            projection: ProjectionIdentity {
+                qualifying_trait: Some(GenericPathIdentity {
+                    path: "api::Provider".into(),
+                    arguments: GenericArgumentsIdentity::Exact(Vec::new()),
+                }),
+                associated: vec![AssociatedSegment {
+                    name: "Factory".into(),
+                    arguments: GenericArgumentsIdentity::Exact(Vec::new()),
+                }],
+            },
         }
     );
 }
@@ -30,8 +39,25 @@ fn self_projection_is_a_typed_subject() {
         subject,
         BoundSubject::Projection {
             root: "Self".into(),
-            qualifying_trait: None,
-            associated: vec!["Factory".into()],
+            projection: ProjectionIdentity {
+                qualifying_trait: None,
+                associated: vec![AssociatedSegment {
+                    name: "Factory".into(),
+                    arguments: GenericArgumentsIdentity::Exact(Vec::new()),
+                }],
+            },
         }
     );
+}
+
+#[test]
+fn qualifier_and_associated_generic_arguments_are_distinct() {
+    let left = syn::parse_str::<Type>("<T as Provider<A>>::Item<X>").expect("left type");
+    let right = syn::parse_str::<Type>("<T as Provider<B>>::Item<X>").expect("right type");
+    let declared = BTreeSet::from(["T".into()]);
+
+    let left = BoundSubject::from_type(&left, &declared).expect("left subject");
+    let right = BoundSubject::from_type(&right, &declared).expect("right subject");
+
+    assert_ne!(left, right);
 }

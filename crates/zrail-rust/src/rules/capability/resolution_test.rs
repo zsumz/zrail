@@ -5,9 +5,9 @@ use zrail_core::{OwnerContract, OwnerKind, PolicyReachability};
 use crate::{
     inventory::FileClass,
     source::{
-        AssociatedOccurrenceKind, CallResolutionFact, CallResolutionKind,
-        GenericAssociatedCandidate, Reachability, ReachabilityKind, RustFileFacts, SourceSyntax,
-        SyntaxGuard,
+        AssociatedCandidateKind, AssociatedOccurrenceKind, CallResolutionFact, CallResolutionKind,
+        GenericAssociatedCandidate, ProjectionIdentity, Reachability, ReachabilityKind,
+        RustFileFacts, SourceSyntax, SyntaxGuard,
     },
 };
 
@@ -72,6 +72,66 @@ fn multiple_candidates_fail_closed_only_for_matching_authority() {
     ));
 }
 
+#[test]
+fn same_external_root_different_item_is_not_relevant() {
+    let boundary = incomplete_boundary(
+        "Choice::ready",
+        "dependency::Derived::ready",
+        crate::source::ProviderAuthority::ExternalRoot("dependency".into()),
+    );
+
+    assert!(!owner_relies_on(
+        &owner("dependency::Other::shutdown"),
+        &file(),
+        &boundary,
+    ));
+}
+
+#[test]
+fn same_local_authority_different_item_is_not_relevant() {
+    let boundary = incomplete_boundary(
+        "Choice::ready",
+        "Factory::ready",
+        crate::source::ProviderAuthority::LocalCrate,
+    );
+
+    assert!(!owner_relies_on(
+        &owner("crate::Other::shutdown"),
+        &file(),
+        &boundary,
+    ));
+}
+
+#[test]
+fn unknown_provider_same_item_remains_fail_closed() {
+    let boundary = incomplete_boundary(
+        "Choice::ready",
+        "Derived::ready",
+        crate::source::ProviderAuthority::Unknown,
+    );
+
+    assert!(owner_relies_on(
+        &owner("crate::Factory::ready"),
+        &file(),
+        &boundary,
+    ));
+}
+
+#[test]
+fn trait_prefix_owner_remains_conservative() {
+    let boundary = incomplete_boundary(
+        "Choice::ready",
+        "dependency::Parent::ready",
+        crate::source::ProviderAuthority::ExternalRoot("dependency".into()),
+    );
+
+    assert!(owner_relies_on(
+        &owner("dependency::Derived"),
+        &file(),
+        &boundary,
+    ));
+}
+
 fn owner(selector: &str) -> OwnerContract {
     OwnerContract {
         name: "call-owner".into(),
@@ -121,13 +181,25 @@ fn boundary_for(
                 name: (*candidate).into(),
                 canonical: Vec::new(),
                 quality: zrail_core::AnalysisQuality::Unresolved,
-                projection: Vec::new(),
+                projection: ProjectionIdentity::default(),
+                kind: AssociatedCandidateKind::TraitProvider,
                 provider_complete: true,
                 provider_authorities: [crate::source::ProviderAuthority::Unknown].into(),
             })
             .collect(),
         occurrence: Some(occurrence),
     }
+}
+
+fn incomplete_boundary(
+    written: &str,
+    candidate: &str,
+    authority: crate::source::ProviderAuthority,
+) -> CallResolutionFact {
+    let mut boundary = boundary_for(written, AssociatedOccurrenceKind::DirectCall, &[candidate]);
+    boundary.associated_candidates[0].provider_complete = false;
+    boundary.associated_candidates[0].provider_authorities = [authority].into();
+    boundary
 }
 
 fn file() -> RustFileFacts {

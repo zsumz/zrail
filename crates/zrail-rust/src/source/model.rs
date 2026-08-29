@@ -8,6 +8,8 @@ mod bound_subject;
 mod generic_roots;
 #[path = "model_lexical_context.rs"]
 mod lexical_context;
+#[path = "model_projection_identity.rs"]
+mod projection_identity;
 #[path = "source_metrics.rs"]
 mod source_metrics;
 
@@ -29,8 +31,11 @@ pub(crate) use generic_roots::{
     generic_root_shadow, identity_for_generic_root,
 };
 pub(crate) use lexical_context::{
-    AssociatedOccurrenceKind, GenericAssociatedCandidate, LexicalSelfIdentity, ProviderAuthority,
-    TraitBoundFact, TraitDeclarationFact,
+    AssociatedCandidateKind, AssociatedOccurrenceKind, GenericAssociatedCandidate,
+    LexicalSelfIdentity, ProviderAuthority, TraitBoundFact, TraitDeclarationFact,
+};
+pub(crate) use projection_identity::{
+    AssociatedSegment, GenericArgumentsIdentity, GenericPathIdentity, ProjectionIdentity,
 };
 
 #[cfg(test)]

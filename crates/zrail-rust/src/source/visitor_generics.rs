@@ -5,7 +5,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use syn::Generics;
 
 use super::super::{
-    BoundSubject, GenericAssociatedCandidate, ProviderAuthority, TraitBoundFact, trait_bounds,
+    AssociatedCandidateKind, BoundSubject, GenericAssociatedCandidate, ProjectionIdentity,
+    ProviderAuthority, TraitBoundFact, trait_bounds,
 };
 use super::FactVisitor;
 
@@ -94,16 +95,21 @@ impl FactVisitor<'_> {
         let Some(subject) = BoundSubject::from_receiver(receiver, &declared) else {
             return Vec::new();
         };
+        self.generic_associated_candidates_for(&subject, item)
+    }
+
+    pub(in crate::source) fn generic_associated_candidates_for(
+        &self,
+        subject: &BoundSubject,
+        item: &str,
+    ) -> Vec<GenericAssociatedCandidate> {
         let active = self.active_trait_bounds();
         let mut resolved = active
             .iter()
-            .filter(|fact| equivalent(&fact.subject, &subject))
-            .flat_map(|fact| candidates(fact, item, &[]))
+            .filter(|fact| equivalent(&fact.subject, subject))
+            .flat_map(|fact| candidates(fact, item, &ProjectionIdentity::default()))
             .collect::<Vec<_>>();
-        let BoundSubject::Projection {
-            root, associated, ..
-        } = subject
-        else {
+        let BoundSubject::Projection { root, projection } = subject else {
             return resolved;
         };
         resolved.extend(
@@ -112,14 +118,14 @@ impl FactVisitor<'_> {
                 .filter(|fact| {
                     equivalent(
                         &fact.subject,
-                        &if visible(&root) == "Self" {
+                        &if visible(root) == "Self" {
                             BoundSubject::SelfType
                         } else {
                             BoundSubject::TypeParameter(root.clone())
                         },
                     )
                 })
-                .flat_map(|fact| candidates(fact, item, &associated)),
+                .flat_map(|fact| candidates(fact, item, projection)),
         );
         resolved.sort();
         resolved.dedup();
@@ -144,30 +150,63 @@ fn visible(name: &str) -> &str {
 }
 
 fn equivalent(left: &BoundSubject, right: &BoundSubject) -> bool {
-    left.without_qualifier() == right.without_qualifier()
+    match (left, right) {
+        (BoundSubject::SelfType, BoundSubject::SelfType) => true,
+        (BoundSubject::TypeParameter(left), BoundSubject::TypeParameter(right)) => {
+            visible(left) == visible(right)
+        }
+        (
+            BoundSubject::Projection {
+                root: left_root,
+                projection: left_projection,
+            },
+            BoundSubject::Projection {
+                root: right_root,
+                projection: right_projection,
+            },
+        ) => visible(left_root) == visible(right_root) && left_projection.matches(right_projection),
+        _ => false,
+    }
 }
 
 fn candidates(
     fact: &TraitBoundFact,
     item: &str,
-    projection: &[String],
+    projection: &ProjectionIdentity,
 ) -> Vec<GenericAssociatedCandidate> {
-    fact.providers
+    let providers = fact
+        .providers
         .iter()
         .map(|provider| GenericAssociatedCandidate {
-            name: format!("{provider}::{item}"),
+            name: format!("{}::{item}", provider.path),
             canonical: Vec::new(),
-            quality: fact.quality,
-            projection: projection.to_vec(),
+            quality: fact.quality.max(provider.quality()),
+            projection: projection.clone(),
+            kind: AssociatedCandidateKind::TraitProvider,
             provider_complete: false,
             provider_authorities: [ProviderAuthority::Unknown].into(),
-        })
-        .collect()
+        });
+    let equalities = fact
+        .equalities
+        .iter()
+        .map(|target| GenericAssociatedCandidate {
+            name: format!("{}::{item}", target.path),
+            canonical: Vec::new(),
+            quality: fact.quality.max(target.quality()),
+            projection: ProjectionIdentity::default(),
+            kind: AssociatedCandidateKind::TypeEquality,
+            provider_complete: false,
+            provider_authorities: [ProviderAuthority::Unknown].into(),
+        });
+    providers.chain(equalities).collect()
 }
 
 fn merge(existing: &mut TraitBoundFact, fact: &TraitBoundFact) {
     existing.providers.extend(fact.providers.iter().cloned());
     existing.providers.sort();
     existing.providers.dedup();
+    existing.equalities.extend(fact.equalities.iter().cloned());
+    existing.equalities.sort();
+    existing.equalities.dedup();
     existing.quality = existing.quality.max(fact.quality);
 }

@@ -188,7 +188,11 @@ pub(super) fn aggregate(
             }
             if generic_candidate || !associated_candidates.is_empty() {
                 for candidate in &associated_candidates {
-                    let key = (candidate.name.clone(), candidate.projection.clone());
+                    let key = (
+                        candidate.name.clone(),
+                        candidate.projection.clone(),
+                        candidate.kind,
+                    );
                     entry
                         .associated_candidates
                         .entry(key)

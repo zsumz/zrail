@@ -1,6 +1,9 @@
 //! Written and physically resolved path identity are retained together.
 
-use crate::source::{CallResolutionKind, GenericRootShadow, identity_for_generic_root};
+use crate::source::{
+    BoundSubject, CallResolutionKind, GenericRootShadow, identity_for_generic_root,
+};
+use std::collections::BTreeSet;
 use syn::{
     ExprPath, Path,
     spanned::Spanned,
@@ -22,7 +25,20 @@ impl FactVisitor<'_> {
             self.syntax_guard(),
             &self.generic_types,
         ) {
-            boundary.associated_candidates = self.generic_associated_candidates(&boundary.written);
+            let mut declared = self.generic_types.iter().cloned().collect::<BTreeSet<_>>();
+            if self.inherited_generic_roots
+                && let Some(qself) = &expression.qself
+                && let syn::Type::Path(path) = qself.ty.as_ref()
+                && path.qself.is_none()
+                && path.path.segments.len() == 1
+            {
+                declared.insert(path.path.segments[0].ident.to_string());
+            }
+            let structured = BoundSubject::from_expression(expression, &declared);
+            boundary.associated_candidates = structured.as_ref().map_or_else(
+                || self.generic_associated_candidates(&boundary.written),
+                |(subject, item)| self.generic_associated_candidates_for(subject, item),
+            );
             let identity = super::generic_root_identity(
                 &boundary.written,
                 super::RootLookupNamespace::Type,
@@ -31,6 +47,11 @@ impl FactVisitor<'_> {
             )
             .or_else(|| {
                 boundary.written.starts_with("Self::").then(|| {
+                    identity_for_generic_root(&boundary.written, GenericRootShadow::TypeParameter)
+                })
+            })
+            .or_else(|| {
+                structured.as_ref().map(|_| {
                     identity_for_generic_root(&boundary.written, GenericRootShadow::TypeParameter)
                 })
             });

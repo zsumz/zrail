@@ -4,19 +4,21 @@
 mod access;
 #[path = "trait_provider_graph/closure.rs"]
 mod closure;
+#[path = "trait_provider_graph/resolution.rs"]
+mod resolution;
 
 use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::AnalysisQuality;
 
 use super::super::{
-    BoundSubject, CompilationDomain, ProviderAuthority, SourceIndex, TraitBoundFact,
+    BoundSubject, CompilationDomain, ProjectionIdentity, ProviderAuthority, SourceIndex,
+    TraitBoundFact,
     include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedPath},
     include_projection_budget::{ProjectionBudget, ProjectionLimit},
-    include_resolution_state::{ResolutionTrail, ResolutionUsage, WrittenResolveRequest},
-    model::TraitDeclarationFact,
 };
 use closure::{authority, inherited_projection, merge_edge, provider_supertraits};
+use resolution::{resolve_bound, resolve_declaration};
 
 #[derive(Clone)]
 pub(in crate::source) struct ProviderEdge {
@@ -25,11 +27,12 @@ pub(in crate::source) struct ProviderEdge {
 }
 
 type ProviderEdges = BTreeMap<String, ProviderEdge>;
-type EdgeKey = (CompilationDomain, String, Vec<String>);
+type EdgeKey = (CompilationDomain, String, ProjectionIdentity);
 
 #[derive(Default)]
 pub(super) struct ProviderGraph {
     edges: BTreeMap<EdgeKey, ProviderEdges>,
+    substitutions: BTreeMap<EdgeKey, ProviderEdges>,
     declarations: BTreeMap<EdgeKey, AnalysisQuality>,
 }
 
@@ -56,22 +59,20 @@ pub(super) fn build(
                     if identity.origin == ResolvedOrigin::CrateLocal {
                         graph
                             .declarations
-                            .entry((source.domain.clone(), identity.name.clone(), Vec::new()))
+                            .entry((
+                                source.domain.clone(),
+                                identity.name.clone(),
+                                ProjectionIdentity::default(),
+                            ))
                             .and_modify(|current| *current = (*current).max(quality))
                             .or_insert(quality);
                     }
                     for bound in &declaration.bounds {
-                        let (providers, providers_complete) =
-                            resolve_bound(bindings, instance, bound, budget)?;
+                        let resolved = resolve_bound(bindings, instance, bound, budget)?;
                         if identity.origin == ResolvedOrigin::CrateLocal {
-                            graph.declare_bound(
-                                &source.domain,
-                                identity,
-                                bound,
-                                providers_complete,
-                            );
+                            graph.declare_bound(&source.domain, identity, bound, &resolved);
                         }
-                        graph.add_bound(&source.domain, identity, bound, &providers);
+                        graph.add_bound(&source.domain, identity, bound, &resolved);
                     }
                 }
             }
@@ -87,21 +88,23 @@ impl ProviderGraph {
         domain: &CompilationDomain,
         identity: &ResolvedPath,
         bound: &TraitBoundFact,
-        providers_complete: bool,
+        resolved: &resolution::ResolvedBound,
     ) {
-        let projection = match &bound.subject {
-            BoundSubject::SelfType => Vec::new(),
-            BoundSubject::Projection { associated, .. } => associated.clone(),
+        let projections = match &bound.subject {
+            BoundSubject::SelfType => vec![ProjectionIdentity::default()],
+            BoundSubject::Projection { .. } => resolved.projections.clone(),
             BoundSubject::TypeParameter(_) => return,
         };
         let mut quality = identity.quality.max(bound.quality);
-        if !providers_complete {
+        if !resolved.complete {
             quality = AnalysisQuality::Unresolved;
         }
-        self.declarations
-            .entry((domain.clone(), identity.name.clone(), projection))
-            .and_modify(|current| *current = (*current).max(quality))
-            .or_insert(quality);
+        for projection in projections {
+            self.declarations
+                .entry((domain.clone(), identity.name.clone(), projection))
+                .and_modify(|current| *current = (*current).max(quality))
+                .or_insert(quality);
+        }
     }
 
     fn add_bound(
@@ -109,29 +112,29 @@ impl ProviderGraph {
         domain: &CompilationDomain,
         identity: &ResolvedPath,
         bound: &TraitBoundFact,
-        providers: &[ResolvedPath],
+        resolved: &resolution::ResolvedBound,
     ) {
-        let projection = match &bound.subject {
-            BoundSubject::SelfType => Vec::new(),
-            BoundSubject::Projection { associated, .. } => associated.clone(),
+        let projections = match &bound.subject {
+            BoundSubject::SelfType => vec![ProjectionIdentity::default()],
+            BoundSubject::Projection { .. } => resolved.projections.clone(),
             BoundSubject::TypeParameter(_) => return,
         };
-        let entry = self
-            .edges
-            .entry((domain.clone(), identity.name.clone(), projection))
-            .or_default();
-        for provider in providers
-            .iter()
-            .filter(|provider| provider.quality != AnalysisQuality::Unresolved)
-        {
-            let quality = bound.quality.max(identity.quality).max(provider.quality);
-            merge_edge(
-                entry,
-                provider.name.clone(),
-                ProviderEdge {
-                    quality,
-                    authorities: [authority(provider)].into(),
-                },
+        for projection in projections {
+            add_edges(
+                self.edges
+                    .entry((domain.clone(), identity.name.clone(), projection.clone()))
+                    .or_default(),
+                identity,
+                bound,
+                &resolved.providers,
+            );
+            add_edges(
+                self.substitutions
+                    .entry((domain.clone(), identity.name.clone(), projection))
+                    .or_default(),
+                identity,
+                bound,
+                &resolved.equalities,
             );
         }
     }
@@ -155,67 +158,24 @@ impl ProviderGraph {
     }
 }
 
-fn resolve_declaration(
-    bindings: &IncludeBindings,
-    instance: super::super::SourceInstanceId,
-    declaration: &TraitDeclarationFact,
-    budget: &mut ProjectionBudget,
-) -> Result<Vec<ResolvedPath>, ProjectionLimit> {
-    resolve(
-        bindings,
-        instance,
-        &declaration.trait_path,
-        &declaration.lexical_scope,
-        &declaration.guard,
-        budget,
-    )
-}
-
-fn resolve_bound(
-    bindings: &IncludeBindings,
-    instance: super::super::SourceInstanceId,
+fn add_edges(
+    edges: &mut ProviderEdges,
+    identity: &ResolvedPath,
     bound: &TraitBoundFact,
-    budget: &mut ProjectionBudget,
-) -> Result<(Vec<ResolvedPath>, bool), ProjectionLimit> {
-    let mut resolved = Vec::new();
-    let mut complete = true;
-    for provider in &bound.providers {
-        let candidates = resolve(
-            bindings,
-            instance,
-            provider,
-            &bound.lexical_scope,
-            &bound.guard,
-            budget,
-        )?;
-        complete &= !candidates.is_empty()
-            && candidates
-                .iter()
-                .all(|candidate| candidate.quality != AnalysisQuality::Unresolved);
-        resolved.extend(candidates);
+    targets: &[ResolvedPath],
+) {
+    for target in targets
+        .iter()
+        .filter(|target| target.quality != AnalysisQuality::Unresolved)
+    {
+        let quality = bound.quality.max(identity.quality).max(target.quality);
+        merge_edge(
+            edges,
+            target.name.clone(),
+            ProviderEdge {
+                quality,
+                authorities: [authority(target)].into(),
+            },
+        );
     }
-    Ok((resolved, complete))
-}
-
-fn resolve(
-    bindings: &IncludeBindings,
-    instance: super::super::SourceInstanceId,
-    written: &str,
-    scope: &[zrail_core::SourceSpan],
-    guard: &super::super::SyntaxGuard,
-    budget: &mut ProjectionBudget,
-) -> Result<Vec<ResolvedPath>, ProjectionLimit> {
-    bindings.resolve_written(
-        &WrittenResolveRequest {
-            instance,
-            written,
-            scope,
-            depth: 0,
-            usage: ResolutionUsage::Type,
-            guard,
-            allow_implicit_prelude: true,
-        },
-        &mut ResolutionTrail::new(),
-        budget,
-    )
 }

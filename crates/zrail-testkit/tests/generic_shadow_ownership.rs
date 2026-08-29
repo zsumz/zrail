@@ -4,6 +4,8 @@
 mod aliased_impl_self;
 #[path = "generic_shadow_ownership/associated_includes.rs"]
 mod associated_includes;
+#[path = "generic_shadow_ownership/associated_substitutions.rs"]
+mod associated_substitutions;
 #[path = "generic_shadow_ownership/bound_subjects.rs"]
 mod bound_subjects;
 #[path = "generic_shadow_ownership/direct.rs"]
@@ -18,6 +20,8 @@ mod fragment_syntax;
 mod includes;
 #[path = "generic_shadow_ownership/observed.rs"]
 mod observed;
+#[path = "generic_shadow_ownership/qualified_projections.rs"]
+mod qualified_projections;
 #[path = "generic_shadow_ownership/self_identity.rs"]
 mod self_identity;
 #[path = "generic_shadow_ownership/self_trait.rs"]

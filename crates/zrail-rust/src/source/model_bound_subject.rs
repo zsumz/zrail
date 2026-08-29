@@ -2,9 +2,11 @@
 
 use std::collections::BTreeSet;
 
-use syn::Type;
+use syn::{ExprPath, Type};
 
-use super::super::fact::written_path;
+use super::super::{
+    AssociatedSegment, GenericPathIdentity, ProjectionIdentity, fact::written_path,
+};
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum BoundSubject {
@@ -12,8 +14,7 @@ pub(crate) enum BoundSubject {
     SelfType,
     Projection {
         root: String,
-        qualifying_trait: Option<String>,
-        associated: Vec<String>,
+        projection: ProjectionIdentity,
     },
 }
 
@@ -29,29 +30,19 @@ impl BoundSubject {
                 .segments
                 .iter()
                 .skip(qself.position)
-                .map(|segment| segment.ident.to_string())
+                .map(AssociatedSegment::from_path)
                 .collect::<Vec<_>>();
             if associated.is_empty() {
                 return None;
             }
-            let qualifying_trait = (qself.position > 0).then(|| {
-                let mut trait_path = path
-                    .path
-                    .segments
-                    .iter()
-                    .take(qself.position)
-                    .map(|segment| segment.ident.to_string())
-                    .collect::<Vec<_>>()
-                    .join("::");
-                if path.path.leading_colon.is_some() {
-                    trait_path.insert_str(0, "::");
-                }
-                trait_path
-            });
+            let qualifying_trait = (qself.position > 0)
+                .then(|| GenericPathIdentity::trait_path_prefix(&path.path, qself.position));
             return Some(Self::Projection {
                 root,
-                qualifying_trait,
-                associated,
+                projection: ProjectionIdentity {
+                    qualifying_trait,
+                    associated,
+                },
             });
         }
         if path.path.leading_colon.is_some() {
@@ -63,7 +54,7 @@ impl BoundSubject {
             return None;
         }
         let associated = segments
-            .map(|segment| segment.ident.to_string())
+            .map(AssociatedSegment::from_path)
             .collect::<Vec<_>>();
         if associated.is_empty() {
             Some(if visible(&root) == "Self" {
@@ -74,8 +65,10 @@ impl BoundSubject {
         } else {
             Some(Self::Projection {
                 root,
-                qualifying_trait: None,
-                associated,
+                projection: ProjectionIdentity {
+                    qualifying_trait: None,
+                    associated,
+                },
             })
         }
     }
@@ -86,6 +79,76 @@ impl BoundSubject {
             .and_then(|ty| Self::from_type(&ty, declared))
     }
 
+    pub(crate) fn from_expression(
+        expression: &ExprPath,
+        declared: &BTreeSet<String>,
+    ) -> Option<(Self, String)> {
+        let item = expression.path.segments.last()?.ident.to_string();
+        if let Some(qself) = &expression.qself {
+            let root = simple_root(&qself.ty, declared)?;
+            let associated = expression
+                .path
+                .segments
+                .iter()
+                .skip(qself.position)
+                .take(
+                    expression
+                        .path
+                        .segments
+                        .len()
+                        .saturating_sub(qself.position + 1),
+                )
+                .map(AssociatedSegment::from_path)
+                .collect::<Vec<_>>();
+            if associated.is_empty() {
+                return None;
+            }
+            let qualifying_trait = (qself.position > 0)
+                .then(|| GenericPathIdentity::trait_path_prefix(&expression.path, qself.position));
+            return Some((
+                Self::Projection {
+                    root,
+                    projection: ProjectionIdentity {
+                        qualifying_trait,
+                        associated,
+                    },
+                },
+                item,
+            ));
+        }
+        if expression.path.leading_colon.is_some() || expression.path.segments.len() < 2 {
+            return None;
+        }
+        let root = expression.path.segments.first()?.ident.to_string();
+        if !declared.iter().any(|name| visible(name) == visible(&root)) {
+            return None;
+        }
+        let associated = expression
+            .path
+            .segments
+            .iter()
+            .skip(1)
+            .take(expression.path.segments.len().saturating_sub(2))
+            .map(AssociatedSegment::from_path)
+            .collect::<Vec<_>>();
+        let subject = if associated.is_empty() {
+            if visible(&root) == "Self" {
+                Self::SelfType
+            } else {
+                Self::TypeParameter(root)
+            }
+        } else {
+            Self::Projection {
+                root,
+                projection: ProjectionIdentity {
+                    qualifying_trait: None,
+                    associated,
+                },
+            }
+        };
+        Some((subject, item))
+    }
+
     pub(crate) fn root(&self) -> &str {
         match self {
             Self::TypeParameter(root) | Self::Projection { root, .. } => root,
@@ -93,16 +156,10 @@ impl BoundSubject {
         }
     }
 
-    pub(crate) fn without_qualifier(&self) -> Self {
+    pub(crate) fn projection(&self) -> Option<&ProjectionIdentity> {
         match self {
-            Self::Projection {
-                root, associated, ..
-            } => Self::Projection {
-                root: root.clone(),
-                qualifying_trait: None,
-                associated: associated.clone(),
-            },
-            other => other.clone(),
+            Self::Projection { projection, .. } => Some(projection),
+            Self::TypeParameter(_) | Self::SelfType => None,
         }
     }
 }
