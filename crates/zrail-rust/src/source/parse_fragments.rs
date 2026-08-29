@@ -42,9 +42,16 @@ pub(super) fn impl_items(
     let imports = ImportMap::default();
     let mut visitor = FactVisitor::new(&imports);
     visitor.inherited_generic_roots = true;
-    for item in &items {
-        visitor.visit_impl_item(item);
-    }
+    let bounds = super::super::trait_bounds::fragment_impl_items(
+        &items,
+        &crate::source::SyntaxGuard::Ordinary,
+        &[],
+    );
+    visitor.with_generics_and_bounds(&syn::Generics::default(), true, bounds, |visitor| {
+        for item in &items {
+            visitor.visit_impl_item(item);
+        }
+    });
     Ok((
         finish(source, visitor, SourceSyntax::ImplItems),
         cfg_completeness::impl_items(&items),
@@ -58,9 +65,16 @@ pub(super) fn trait_items(
     let imports = ImportMap::default();
     let mut visitor = FactVisitor::new(&imports);
     visitor.inherited_generic_roots = true;
-    for item in &items {
-        visitor.visit_trait_item(item);
-    }
+    let bounds = super::super::trait_bounds::fragment_trait_items(
+        &items,
+        &crate::source::SyntaxGuard::Ordinary,
+        &[],
+    );
+    visitor.with_generics_and_bounds(&syn::Generics::default(), true, bounds, |visitor| {
+        for item in &items {
+            visitor.visit_trait_item(item);
+        }
+    });
     Ok((
         finish(source, visitor, SourceSyntax::TraitItems),
         cfg_completeness::trait_items(&items),

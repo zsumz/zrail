@@ -23,6 +23,18 @@ fn trait_argument_associated_bound_reaches_provider_owner() {
 }
 
 #[test]
+fn unqualified_projection_bound_reaches_qualified_occurrence() {
+    let fixture = repository(
+        "unqualified-bound-qualified-use",
+        "pub fn run<T: Provider>() where T::Factory: Factory { <T as Provider>::Factory::ready(); }",
+        "pub fn own() { <crate::Product as crate::Factory>::ready(); }",
+        &call_owner("factory-ready", "crate::Factory::ready"),
+    );
+
+    assert_resolution(&fixture, "src/lib.rs", 1);
+}
+
+#[test]
 fn trait_argument_associated_equality_reaches_concrete_owner() {
     let fixture = repository(
         "trait-argument-equality",
@@ -92,6 +104,38 @@ fn included_impl_associated_definition_is_projected() {
     );
 
     assert_resolution(&repository, "src/impl_items.inc", 1);
+}
+
+#[test]
+fn associated_definition_inside_impl_fragment_is_projected() {
+    let repository = Repository::new(
+        "fragment-local-associated-definition",
+        "mod owner; pub trait Provider { type Factory; fn run(); } pub struct Product; impl Product { pub fn ready() {} } pub struct Process; impl Provider for Process { include!(\"impl_items.inc\"); }",
+        "pub fn own() { crate::Product::ready(); }",
+        &call_owner("product-ready", "crate::Product::ready"),
+    );
+    repository.write(
+        "src/impl_items.inc",
+        "type Factory = Product; fn run() { <Self as Provider>::Factory::ready(); }",
+    );
+
+    assert_resolution(&repository, "src/impl_items.inc", 1);
+}
+
+#[test]
+fn associated_bound_inside_trait_fragment_is_projected() {
+    let repository = Repository::new(
+        "fragment-local-associated-bound",
+        "mod owner; pub trait Factory { fn ready(); } pub trait Provider { include!(\"trait_items.inc\"); } pub struct Product; impl Factory for Product { fn ready() {} }",
+        "pub fn own() { <crate::Product as crate::Factory>::ready(); }",
+        &call_owner("factory-ready", "crate::Factory::ready"),
+    );
+    repository.write(
+        "src/trait_items.inc",
+        "type Factory: crate::Factory; fn run() { <Self as Provider>::Factory::ready(); }",
+    );
+
+    assert_resolution(&repository, "src/trait_items.inc", 1);
 }
 
 #[test]

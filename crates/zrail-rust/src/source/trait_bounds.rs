@@ -2,6 +2,11 @@
 
 #[path = "trait_bounds/constraints.rs"]
 mod constraints;
+#[path = "trait_bounds/fragments.rs"]
+mod fragments;
+pub(super) use fragments::{
+    impl_items as fragment_impl_items, trait_items as fragment_trait_items,
+};
 
 use std::collections::BTreeSet;
 

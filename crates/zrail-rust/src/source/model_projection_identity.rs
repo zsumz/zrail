@@ -147,9 +147,11 @@ impl ProjectionIdentity {
                 .zip(&occurrence.associated)
                 .all(|(left, right)| left.matches(right))
             && match (&self.qualifying_trait, &occurrence.qualifying_trait) {
-                (_, None) => true,
                 (Some(left), Some(right)) => left.matches(right),
-                (None, Some(_)) => false,
+                // Rust accepts an unqualified projection only when it can select one
+                // associated type. Either the bound or the use may carry that explicit
+                // qualifier, so the unqualified spelling remains compatible here.
+                (None, _) | (_, None) => true,
             }
     }
 
