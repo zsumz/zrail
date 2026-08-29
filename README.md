@@ -43,10 +43,10 @@ target matching the machine that will run zrail:
 | Windows x86-64 | `x86_64-pc-windows-msvc` | `.zip` |
 
 For Linux x86-64 with glibc, download and verify one exact release like this
-(replace `0.0.3-rc.4` with the reviewed version):
+(replace `0.0.3-rc.5` with the reviewed version):
 
 ```sh
-ZRAIL_VERSION=0.0.3-rc.4
+ZRAIL_VERSION=0.0.3-rc.5
 ZRAIL_TARGET=x86_64-unknown-linux-gnu
 ZRAIL_ARCHIVE="zrail-${ZRAIL_VERSION}-${ZRAIL_TARGET}.tar.gz"
 ZRAIL_RELEASE="https://github.com/zsumz/zrail/releases/download/v${ZRAIL_VERSION}"
@@ -71,7 +71,7 @@ CI should use the same checked archive instead of compiling zrail on every run:
 ```yaml
 - name: Download verified zrail binary
   env:
-    ZRAIL_VERSION: 0.0.3-rc.4
+    ZRAIL_VERSION: 0.0.3-rc.5
     ZRAIL_TARGET: x86_64-unknown-linux-gnu
   run: |
     archive="zrail-${ZRAIL_VERSION}-${ZRAIL_TARGET}.tar.gz"
@@ -90,7 +90,7 @@ CI should use the same checked archive instead of compiling zrail on every run:
 If no prebuilt target fits, install from the locked registry source:
 
 ```sh
-cargo install zrail --registry crates-io --version 0.0.3-rc.4 --locked
+cargo install zrail --registry crates-io --version 0.0.3-rc.5 --locked
 ```
 
 Protected tags package, verify, checksum, attest, and publish `zrail-core`,

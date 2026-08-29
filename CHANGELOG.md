@@ -4,6 +4,8 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ## [Unreleased]
 
+## [0.0.3-rc.5] - 2026-08-29
+
 ### Added
 
 - Exact workspace-wide Cargo feature worlds, runtime-neutral async-syntax
@@ -24,6 +26,9 @@ All notable zrail changes are recorded here for reviewed release notes.
 - Ordinary Rust binding and typed-place resolution now retain prelude,
   re-export, conditional-compilation, typed-variable, and nested-field
   identities without silently accepting unresolved authority.
+- Included impl fragments now bind associated definitions to the exact current
+  trait across nested modules and equivalent aliases without leaking identity
+  across different traits.
 
 ## [0.0.3-rc.4] - 2026-08-25
 
