@@ -9,7 +9,7 @@ use super::super::{
     ordinary_binding_facts::replacement_macros,
 };
 
-pub(in crate::source) fn impl_items(
+pub(in crate::source) fn fragment_impl_items(
     items: &[ImplItem],
     guard: &SyntaxGuard,
     scope: &[SourceSpan],
@@ -45,7 +45,7 @@ pub(in crate::source) fn impl_items(
     facts
 }
 
-pub(in crate::source) fn trait_items(
+pub(in crate::source) fn fragment_trait_items(
     items: &[TraitItem],
     guard: &SyntaxGuard,
     scope: &[SourceSpan],
@@ -91,7 +91,7 @@ fn projection(ident: &syn::Ident, has_generics: bool) -> BoundSubject {
     BoundSubject::Projection {
         root: "Self".into(),
         projection: ProjectionIdentity {
-            qualifying_trait: None,
+            qualifying_trait: Some(GenericPathIdentity::current_trait_context()),
             associated: vec![AssociatedSegment::declaration(ident, has_generics)],
         },
     }

@@ -11,23 +11,17 @@ pub(super) fn inherited(
     fact: &ObservedFact,
     source: &SourceInstance,
 ) -> Vec<GenericAssociatedCandidate> {
-    let written = fact.written.as_deref().unwrap_or(&fact.name);
-    let Some((receiver, item)) = written.rsplit_once("::") else {
-        return Vec::new();
-    };
-    let declared = source
-        .generic_types
-        .iter()
-        .cloned()
-        .collect::<BTreeSet<_>>();
-    let Some(subject) = BoundSubject::from_receiver(receiver, &declared) else {
+    let Some((subject, item)) = occurrence(fact, source) else {
         return Vec::new();
     };
     let mut candidates = source
         .trait_bounds
         .iter()
         .filter(|bounds| equivalent(&bounds.subject, &subject))
-        .flat_map(|bounds| bound_candidates(bounds, item, &ProjectionIdentity::default()))
+        .flat_map(|bounds| {
+            let projection = bounds.subject.projection().cloned().unwrap_or_default();
+            bound_candidates(bounds, &item, &projection)
+        })
         .collect::<Vec<_>>();
     let BoundSubject::Projection { root, projection } = subject else {
         return candidates;
@@ -42,11 +36,30 @@ pub(super) fn inherited(
             .trait_bounds
             .iter()
             .filter(|bounds| equivalent(&bounds.subject, &root))
-            .flat_map(|bounds| bound_candidates(bounds, item, &projection)),
+            .flat_map(|bounds| bound_candidates(bounds, &item, &projection)),
     );
     candidates.sort();
     candidates.dedup();
     candidates
+}
+
+pub(super) fn occurrence_projection(
+    fact: &ObservedFact,
+    source: &SourceInstance,
+) -> Option<ProjectionIdentity> {
+    occurrence(fact, source).and_then(|(subject, _)| subject.projection().cloned())
+}
+
+fn occurrence(fact: &ObservedFact, source: &SourceInstance) -> Option<(BoundSubject, String)> {
+    let written = fact.written.as_deref().unwrap_or(&fact.name);
+    let (receiver, item) = written.rsplit_once("::")?;
+    let declared = source
+        .generic_types
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let subject = BoundSubject::from_receiver(receiver, &declared)?;
+    Some((subject, item.to_owned()))
 }
 
 fn equivalent(left: &BoundSubject, right: &BoundSubject) -> bool {
@@ -93,7 +106,7 @@ fn bound_candidates(
             name: format!("{}::{item}", target.path),
             canonical: Vec::new(),
             quality: bound.quality.max(target.quality()),
-            projection: ProjectionIdentity::default(),
+            projection: projection.clone(),
             kind: AssociatedCandidateKind::TypeEquality,
             provider_complete: false,
             provider_authorities: [ProviderAuthority::Unknown].into(),

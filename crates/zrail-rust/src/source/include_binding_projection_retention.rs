@@ -105,9 +105,7 @@ pub(super) fn retain_candidates(
                 .entry(key.clone())
                 .and_modify(|existing| *existing = (*existing).max(quality))
                 .or_insert(quality);
-            if !associated_candidates.is_empty() {
-                merge_candidates(state.associated_candidates, key, &associated_candidates);
-            }
+            merge_candidates(state.associated_candidates, key, &associated_candidates);
             continue;
         }
         if let Some(existing) = state.additions.get_mut(&key) {
@@ -155,7 +153,9 @@ fn merge_candidate_vec(
 ) {
     for candidate in candidates {
         if let Some(existing) = target.iter_mut().find(|existing| {
-            existing.name == candidate.name && existing.projection == candidate.projection
+            existing.name == candidate.name
+                && existing.projection == candidate.projection
+                && existing.kind == candidate.kind
         }) {
             existing.quality = existing.quality.max(candidate.quality);
             existing.provider_complete &= candidate.provider_complete;

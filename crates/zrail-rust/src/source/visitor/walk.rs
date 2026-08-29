@@ -72,13 +72,12 @@ pub(super) fn visit_item_impl(visitor: &mut FactVisitor<'_>, implementation: &It
         .as_ref()
         .filter(|(negative, _, _)| negative.is_none())
         .map(|(_, path, _)| {
-            vec![super::super::trait_bounds::explicit(
-                super::super::BoundSubject::SelfType,
-                vec![super::super::GenericPathIdentity::trait_path(path)],
+            super::super::trait_bounds::current_trait_bounds(
+                super::super::GenericPathIdentity::trait_path(path),
                 &visitor.syntax_guard(),
                 &visitor.lexical_scope,
                 super::super::fact::source_span(path.span()),
-            )]
+            )
         })
         .unwrap_or_default();
     self_bounds.extend(super::super::trait_bounds::impl_associated_types(
@@ -95,15 +94,12 @@ pub(super) fn visit_item_impl(visitor: &mut FactVisitor<'_>, implementation: &It
 
 pub(super) fn visit_item_trait(visitor: &mut FactVisitor<'_>, item: &ItemTrait) {
     visitor.record_unsafe_trait(item);
-    let mut bounds = vec![super::super::trait_bounds::explicit(
-        super::super::BoundSubject::SelfType,
-        vec![super::super::GenericPathIdentity::wildcard(
-            item.ident.to_string(),
-        )],
+    let mut bounds = super::super::trait_bounds::current_trait_bounds(
+        super::super::GenericPathIdentity::wildcard(item.ident.to_string()),
         &visitor.syntax_guard(),
         &visitor.lexical_scope,
         super::super::fact::source_span(item.ident.span()),
-    )];
+    );
     bounds.extend(super::super::trait_bounds::associated_types(
         item,
         &visitor.syntax_guard(),

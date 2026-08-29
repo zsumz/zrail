@@ -5,8 +5,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use syn::Generics;
 
 use super::super::{
-    AssociatedCandidateKind, BoundSubject, GenericAssociatedCandidate, ProjectionIdentity,
-    ProviderAuthority, TraitBoundFact, trait_bounds,
+    AssociatedCandidateKind, BoundSubject, GenericAssociatedCandidate, GenericPathIdentity,
+    ProjectionIdentity, ProviderAuthority, TraitBoundFact, trait_bounds,
 };
 use super::FactVisitor;
 
@@ -107,7 +107,20 @@ impl FactVisitor<'_> {
         let mut resolved = active
             .iter()
             .filter(|fact| equivalent(&fact.subject, subject))
-            .flat_map(|fact| candidates(fact, item, &ProjectionIdentity::default()))
+            .flat_map(|fact| {
+                let projection = fact
+                    .subject
+                    .projection()
+                    .filter(|projection| {
+                        projection
+                            .qualifying_trait
+                            .as_ref()
+                            .is_some_and(GenericPathIdentity::is_current_trait_context)
+                    })
+                    .cloned()
+                    .unwrap_or_default();
+                candidates(fact, item, &projection)
+            })
             .collect::<Vec<_>>();
         let BoundSubject::Projection { root, projection } = subject else {
             return resolved;
@@ -193,7 +206,7 @@ fn candidates(
             name: format!("{}::{item}", target.path),
             canonical: Vec::new(),
             quality: fact.quality.max(target.quality()),
-            projection: ProjectionIdentity::default(),
+            projection: projection.clone(),
             kind: AssociatedCandidateKind::TypeEquality,
             provider_complete: false,
             provider_authorities: [ProviderAuthority::Unknown].into(),

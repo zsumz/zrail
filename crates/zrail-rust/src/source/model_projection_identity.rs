@@ -39,6 +39,8 @@ pub(crate) struct GenericPathIdentity {
 }
 
 impl GenericPathIdentity {
+    const CURRENT_TRAIT_CONTEXT: &'static str = "<current-trait-context>";
+
     pub(crate) fn trait_path(path: &Path) -> Self {
         Self {
             path: written_path(path),
@@ -69,6 +71,14 @@ impl GenericPathIdentity {
             path: path.into(),
             arguments: GenericArgumentsIdentity::Any,
         }
+    }
+
+    pub(crate) fn current_trait_context() -> Self {
+        Self::wildcard(Self::CURRENT_TRAIT_CONTEXT)
+    }
+
+    pub(crate) fn is_current_trait_context(&self) -> bool {
+        self.path == Self::CURRENT_TRAIT_CONTEXT
     }
 
     pub(crate) fn with_path(&self, path: impl Into<String>) -> Self {
@@ -147,6 +157,11 @@ impl ProjectionIdentity {
                 .zip(&occurrence.associated)
                 .all(|(left, right)| left.matches(right))
             && match (&self.qualifying_trait, &occurrence.qualifying_trait) {
+                (Some(left), Some(right))
+                    if left.is_current_trait_context() || right.is_current_trait_context() =>
+                {
+                    true
+                }
                 (Some(left), Some(right)) => left.matches(right),
                 // Rust accepts an unqualified projection only when it can select one
                 // associated type. Either the bound or the use may carry that explicit

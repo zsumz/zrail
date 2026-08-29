@@ -16,6 +16,8 @@ mod fields;
 mod fixture;
 #[path = "generic_shadow_ownership/fragment_syntax.rs"]
 mod fragment_syntax;
+#[path = "generic_shadow_ownership/fragment_trait_scope.rs"]
+mod fragment_trait_scope;
 #[path = "generic_shadow_ownership/includes.rs"]
 mod includes;
 #[path = "generic_shadow_ownership/observed.rs"]
