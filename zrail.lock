@@ -6,19 +6,19 @@ contract_sha256 = "5d5f3b205064fef95fb482bb0c336f762f124663e0422bba65f223481f8e6
 ratchet = []
 
 [analysis]
-inventory_sha256 = "ff271a193fefc2171ce6d1fb5eb1d87506a4cc1cb3b930234a6f0c0b60b19ea4"
+inventory_sha256 = "6db0c86255f9e65e5f057fc28c178134887b14f8203bd05133e500ce5cf41b19"
 exclusions_sha256 = "ef568a36a951491c0b26fe6b44546c6ddde12f6decb83add621e64119697e04d"
 cargo_lock_sha256 = "dca1ad1c521d8a83069ecd23010fc06bed5a394ea99f2bbae6823cd76fa52608"
 cargo_features_sha256 = "0bb9192effdb5af624afe6f0b82b528f75ad768f379ff30a87268c42d7578558"
 feature_worlds_sha256 = "86fb12da86416b128876dd9acd57ead96deea36d3b3f51de50a2f7ef16b752d9"
 feature_worlds = 1
 packages = 4
-targets = 69
-physical_rust_files = 782
-base_source_contexts = 1271
+targets = 71
+physical_rust_files = 791
+base_source_contexts = 1283
 derived_source_contexts = 0
-source_facts = 235820
-projection_queries = 1662378
+source_facts = 238761
+projection_queries = 1675464
 projected_facts = 64
 unresolved_bindings = 0
 analyzer_semantics = 5
@@ -351,7 +351,7 @@ sha256 = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
 
 [[gate.input]]
 path = "README.md"
-sha256 = "80bb9e23d3fe5a3c3c436963352d10568944dc360cf591c64373b80701c4aa62"
+sha256 = "f34fcdfdf05bc54a1a3d0b1b30167c76bbafe4a48f53b052ae046d9921271c63"
 
 [[gate.input]]
 path = "scripts/package-release.py"

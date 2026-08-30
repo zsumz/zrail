@@ -120,7 +120,7 @@ impl Walker<'_> {
 pub(super) fn target_domains(kind: CargoTargetKind) -> Vec<(CompilationMode, Reachability)> {
     let reachability = target_reachability(kind);
     match kind {
-        CargoTargetKind::Library => vec![
+        CargoTargetKind::Library | CargoTargetKind::ProcMacro => vec![
             (CompilationMode::Library, reachability),
             (CompilationMode::LibraryTest, reachability),
         ],
@@ -140,7 +140,9 @@ pub(super) fn target_domains(kind: CargoTargetKind) -> Vec<(CompilationMode, Rea
 
 const fn target_reachability(kind: CargoTargetKind) -> Reachability {
     let kind = match kind {
-        CargoTargetKind::Library | CargoTargetKind::Binary => ReachabilityKind::Production,
+        CargoTargetKind::Library | CargoTargetKind::ProcMacro | CargoTargetKind::Binary => {
+            ReachabilityKind::Production
+        }
         CargoTargetKind::Test => ReachabilityKind::Test,
         CargoTargetKind::Benchmark => ReachabilityKind::Benchmark,
         CargoTargetKind::Example => ReachabilityKind::Example,

@@ -2,7 +2,13 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use super::{CargoWorkspace, DependencyKind, PackageFeatureResolution};
+use super::CargoWorkspace;
+
+mod contexts;
+mod diagnostics;
+mod resolution;
+
+use resolution::{FeatureClosure, fixed_point};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct FeatureWorldSpec {
@@ -51,13 +57,14 @@ pub(crate) fn resolve_feature_worlds(
     cargo: &CargoWorkspace,
     specs: &[FeatureWorldSpec],
 ) -> Result<Vec<ResolvedFeatureWorld>, String> {
+    let split_contexts = contexts::SplitContexts::new(cargo);
     let mut names = BTreeSet::new();
     let mut worlds = Vec::new();
     for spec in specs {
         if !names.insert(spec.name.as_str()) {
             return Err(format!("duplicate Cargo feature world {:?}", spec.name));
         }
-        worlds.push(resolve_world(cargo, spec)?);
+        worlds.push(resolve_world(cargo, spec, &split_contexts)?);
     }
     Ok(worlds)
 }
@@ -65,22 +72,34 @@ pub(crate) fn resolve_feature_worlds(
 fn resolve_world(
     cargo: &CargoWorkspace,
     spec: &FeatureWorldSpec,
+    split_contexts: &contexts::SplitContexts,
 ) -> Result<ResolvedFeatureWorld, String> {
     let selections = selections(cargo, spec)?;
-    let without_ambiguous = fixed_point(cargo, &selections, false)
+    let without_ambiguous = fixed_point(cargo, &selections, split_contexts, false)
         .map_err(|error| format!("feature world {:?}: {error}", spec.name))?;
-    let with_ambiguous = fixed_point(cargo, &selections, true)
+    let with_ambiguous = fixed_point(cargo, &selections, split_contexts, true)
         .map_err(|error| format!("feature world {:?}: {error}", spec.name))?;
-    if without_ambiguous != with_ambiguous {
-        return Err(format!(
-            "feature world {:?} is not exact: target-conditional, build, or development dependency edges change active features",
-            spec.name
+    if without_ambiguous.resolved != with_ambiguous.resolved {
+        return Err(diagnostics::non_convergent_world(
+            cargo,
+            spec,
+            &without_ambiguous,
+            &with_ambiguous,
+            split_contexts,
         ));
+    }
+    if let Some(error) = diagnostics::nonempty_split_context(spec, &with_ambiguous, split_contexts)
+    {
+        return Err(error);
     }
     let packages = selections
         .into_iter()
         .map(|(package, selection)| {
-            let active = with_ambiguous[&package].active.iter().cloned().collect();
+            let active = with_ambiguous.resolved[&package]
+                .active
+                .iter()
+                .cloned()
+                .collect();
             (
                 package,
                 ResolvedPackageFeatures {
@@ -149,80 +168,6 @@ fn selections(
         ));
     }
     Ok(selected)
-}
-
-fn fixed_point(
-    cargo: &CargoWorkspace,
-    selections: &BTreeMap<String, FeaturePackageSelection>,
-    include_ambiguous: bool,
-) -> Result<BTreeMap<String, PackageFeatureResolution>, String> {
-    let mut requested = selections
-        .iter()
-        .map(|(package, selection)| {
-            (
-                package.clone(),
-                selection.features.iter().cloned().collect(),
-            )
-        })
-        .collect::<BTreeMap<String, BTreeSet<String>>>();
-    loop {
-        let resolved = resolve_packages(cargo, selections, &requested)?;
-        let mut changed = false;
-        for package in &cargo.packages {
-            let source = &resolved[&package.name];
-            for dependency in &package.dependencies {
-                let Some(destination) = dependency.internal_package() else {
-                    continue;
-                };
-                if dependency.optional && !source.enabled_dependencies.contains(&dependency.alias) {
-                    continue;
-                }
-                let ambiguous =
-                    dependency.target.is_some() || dependency.kind != DependencyKind::Normal;
-                if ambiguous && !include_ambiguous {
-                    continue;
-                }
-                let destination_features = &cargo.package_features[destination];
-                let target = requested.get_mut(destination).ok_or_else(|| {
-                    format!("workspace dependency resolves to missing package {destination:?}")
-                })?;
-                if dependency.default_features
-                    && destination_features.declared().contains("default")
-                {
-                    changed |= target.insert("default".into());
-                }
-                for feature in dependency.features.iter().chain(
-                    source
-                        .dependency_features
-                        .get(&dependency.alias)
-                        .into_iter()
-                        .flatten(),
-                ) {
-                    changed |= target.insert(feature.clone());
-                }
-            }
-        }
-        if !changed {
-            return Ok(resolved);
-        }
-    }
-}
-
-fn resolve_packages(
-    cargo: &CargoWorkspace,
-    selections: &BTreeMap<String, FeaturePackageSelection>,
-    requested: &BTreeMap<String, BTreeSet<String>>,
-) -> Result<BTreeMap<String, PackageFeatureResolution>, String> {
-    selections
-        .iter()
-        .map(|(package, selection)| {
-            let features = requested[package].iter().cloned().collect::<Vec<_>>();
-            cargo.package_features[package]
-                .resolve_details(selection.default_features, &features)
-                .map(|resolved| (package.clone(), resolved))
-                .map_err(|error| format!("package {package:?}: {error}"))
-        })
-        .collect()
 }
 
 #[cfg(test)]

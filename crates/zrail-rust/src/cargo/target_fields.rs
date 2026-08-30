@@ -29,6 +29,18 @@ pub(super) fn optional_string(
     })
 }
 
+pub(super) fn optional_bool(
+    table: &toml::map::Map<String, Value>,
+    key: &str,
+) -> Result<Option<bool>, String> {
+    table.get(key).map_or(Ok(None), |value| {
+        value
+            .as_bool()
+            .map(Some)
+            .ok_or_else(|| format!("Cargo target {key} must be a boolean"))
+    })
+}
+
 pub(super) fn string_array(
     table: &toml::map::Map<String, Value>,
     key: &str,

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$repo_root"
+
+cargo test --locked --offline -p zrail-testkit \
+  --test self_projection_budget warm_process_wall_clock_smoke_is_advisory \
+  -- --ignored --nocapture

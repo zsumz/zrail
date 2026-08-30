@@ -20,7 +20,7 @@ pub struct GovernedCompilationDomain {
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize)]
-/// One configured workspace-wide exact Cargo feature world.
+/// One configured Cargo feature world with convergent per-package contexts.
 pub struct GovernedFeatureWorld {
     /// Stable contract-authored world name.
     pub name: String,

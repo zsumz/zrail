@@ -166,6 +166,11 @@ projected_facts = 500000
 Budget exhaustion makes analysis incomplete and prevents lock construction.
 Display flags never change these analysis budgets.
 
+Zrail's own qualification also rebuilds its lock candidate and rejects growth
+above the reviewed `projection_queries` ceiling. `scripts/perf-smoke` repeats
+that self-analysis in one warm process and prints advisory wall-clock timing;
+elapsed time is operational evidence and never becomes architectural truth.
+
 After committing the initial zrail state, compare later source and policy
 changes with the trusted base:
 
@@ -525,6 +530,13 @@ deny = ["derive-clone", "derive-copy", "impl-clone", "impl-copy", "opaque-expans
 reason = "Tickets transfer command authority and must not be duplicated."
 ```
 
+Use either the individual `deny` list or `clone_copy = "forbidden"`, never
+both on the same policy. The bundle closes exactly the five modeled
+prohibitions shown above. Semantic diffs compare that effective prohibition
+set, so changing between the bundle and the complete expanded list is an
+authority-neutral normalization. An `authority-token` intentionally requires
+the bundle as its explicit Clone/Copy-closed intent marker.
+
 Derive and manual-implementation checks cover structs and enums. Manual
 implementations use the ordinary canonical identity layer, so aliases such as
 `use std::clone::Clone as C; impl C for Ticket` and qualified
@@ -803,13 +815,38 @@ default_features = true
 features = []
 ```
 
-Every world must select every active workspace package exactly once. Zrail
-validates declared features, default-feature closure, optional-dependency
-activation, dependency feature forwarding, and workspace dependency
-propagation to a fixed point without invoking Cargo. Build, development, or
-target-conditional edges are included only when they cannot change that fixed
-point; otherwise the world is rejected as inexact instead of choosing a target
-configuration silently.
+Every world must select every active workspace package exactly once. Those
+selections describe zrail's workspace-wide static source invocation across all
+discovered targets; they do not model one particular `cargo -p` command, target
+triple, or root selection. The accepted subset guarantees one feature set per
+package across target versus host, normal versus build or proc-macro, and
+ordinary versus test, example, or benchmark contexts.
+
+Zrail validates declared features, default-feature closure,
+optional-dependency activation, dependency feature forwarding, and workspace
+dependency propagation to a fixed point without invoking Cargo. It compares a
+lower closure that excludes target-conditional, build, and development edges
+plus every internal edge downstream of those contexts or a proc-macro host
+package with an upper closure that includes them. Split-context reachability is
+propagated transitively through the bounded workspace package graph, including
+through optional edges that are inactive in the authored world. A difference
+rejects the world as inexact and names its exact feature and dependency witness.
+Equality of the two global unions is not sufficient: every structurally
+context-split package must also have an empty upper active feature set.
+
+This is a deliberately severe precision cost for avoiding a Cargo
+compilation-unit graph. Zrail rejects a featureful split-context package even
+when Cargo would give its host and target units the same features, and even
+when resolver 1 would unify them. Feature-empty split subgraphs are accepted.
+Proc-macro hosts are recognized from both `[lib] proc-macro = true` and an
+explicit `[lib] crate-type = ["proc-macro"]`; Cargo's explicit `crate-type`
+list takes precedence over the boolean.
+
+The convergence requirement applies to Cargo resolver 1, 2, and 3 workspaces.
+Zrail does not currently model the resolver version or a Cargo compilation-unit
+graph. Resolver 1, 2, and 3 repositories all use the same feature-empty
+split-context proof boundary. Cargo-backed resolver comparisons live only in
+zrail's trusted test fixtures; the runtime analyzer never invokes Cargo.
 
 Each resulting Cargo compilation domain includes the world name and the exact
 active features for its package. `cfg(feature = "...")`, Boolean combinations,

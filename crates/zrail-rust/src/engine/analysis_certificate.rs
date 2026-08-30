@@ -192,6 +192,7 @@ const fn target_kind(kind: crate::cargo::CargoTargetKind) -> &'static str {
     use crate::cargo::CargoTargetKind;
     match kind {
         CargoTargetKind::Library => "library",
+        CargoTargetKind::ProcMacro => "proc-macro",
         CargoTargetKind::Binary => "binary",
         CargoTargetKind::Example => "example",
         CargoTargetKind::Test => "test",

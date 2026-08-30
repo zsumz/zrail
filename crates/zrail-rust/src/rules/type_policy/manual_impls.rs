@@ -6,7 +6,9 @@ use zrail_core::{
     AnalysisQuality, DuplicationTrait, Finding, FindingSink, RustTypeContract, TypeProhibition,
 };
 
-use crate::source::{FactNamespace, RustFileFacts, TraitImplFact, TypeDeclarationFact};
+use crate::source::{
+    FactNamespace, RustFileFacts, TraitImplFact, TraitImplPolarity, TypeDeclarationFact,
+};
 
 use super::{RuleContext, duplication, identity};
 
@@ -131,7 +133,11 @@ pub(crate) fn analyze(
         policy.reachability,
         None,
     );
-    let matched = classify(policy, &target, &trait_identity, &implementation.trait_hint);
+    let matched = if implementation.polarity == TraitImplPolarity::Negative {
+        ManualImplMatch::Irrelevant
+    } else {
+        classify(policy, &target, &trait_identity, &implementation.trait_hint)
+    };
     ManualImplAnalysis {
         target,
         trait_identity,

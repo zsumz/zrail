@@ -65,6 +65,25 @@ impl Clone for T {
     reset(&root);
 }
 
+#[test]
+fn negative_impl_does_not_claim_duplication_authority() {
+    let root = repository(TYPE_POLICY);
+    write(
+        &root,
+        "src/lib.rs",
+        r"#![feature(negative_impls)]
+//! facade
+struct Ticket;
+impl !Clone for Ticket {}
+",
+    );
+
+    let report = report(&root);
+
+    assert_eq!(error_count(&report, "RUST-TYPE-004"), 0, "{report}");
+    reset(&root);
+}
+
 fn exact(value: &str) -> IdentityResolution {
     IdentityResolution {
         exact: BTreeSet::from([value.into()]),

@@ -33,7 +33,8 @@ pub(crate) use super::{
         CompilationRoot, SourceEntry, SourceInstanceId, SourceInstanceIssue, SourceInstances,
     },
     type_policy_model::{
-        DuplicationSyntaxKind, TraitImplFact, TypeDeclarationFact, TypeDeclarationKind,
+        DuplicationSyntaxKind, TraitImplFact, TraitImplPolarity, TypeDeclarationFact,
+        TypeDeclarationKind,
     },
     type_shape::{ConstShapeFact, TypeArgumentFact, TypeShapeFact, type_shape},
 };

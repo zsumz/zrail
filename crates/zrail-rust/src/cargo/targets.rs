@@ -11,7 +11,7 @@ use super::{
     model::{CargoTarget, CargoTargetKind},
     target_discovery::{auto_discovery_default, auto_enabled, discover_directory},
     target_explicit::{collect_build_script, explicit_target_path},
-    target_fields::{optional_string, required_string, string_array, target_path},
+    target_fields::{optional_bool, optional_string, required_string, string_array, target_path},
 };
 
 pub(super) fn collect_target_roots(
@@ -93,10 +93,23 @@ fn collect_library(
         let name =
             optional_string(table, "name")?.unwrap_or_else(|| super::rust_crate_root(package_name));
         validate_library_name(&name)?;
+        let proc_macro_flag = optional_bool(table, "proc-macro")?.unwrap_or(false);
+        let crate_types = string_array(table, "crate-type")?;
+        let proc_macro = if table.contains_key("crate-type") {
+            crate_types
+                .iter()
+                .any(|crate_type| crate_type == "proc-macro")
+        } else {
+            proc_macro_flag
+        };
         roots.insert(CargoTarget {
             name,
             path: target_path(table, "src/lib.rs")?,
-            kind: CargoTargetKind::Library,
+            kind: if proc_macro {
+                CargoTargetKind::ProcMacro
+            } else {
+                CargoTargetKind::Library
+            },
             required_features: Vec::new(),
         });
     } else if auto_enabled(package, "autolib", auto_default)?

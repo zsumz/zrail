@@ -37,7 +37,7 @@ pub struct GovernedSurfaceReport {
     pub ambiguous_occurrences: usize,
     /// Canonical identity of every enabled global or named policy rail.
     pub enabled_rails: Vec<String>,
-    /// Every configured exact workspace-wide Cargo feature world.
+    /// Every workspace-wide Cargo feature world accepted by the conservative proof boundary.
     pub feature_worlds: Vec<GovernedFeatureWorld>,
     /// Runtime-neutral syntax and written-import policies with exact occurrences.
     pub source_policies: Vec<GovernedSourcePolicyRail>,

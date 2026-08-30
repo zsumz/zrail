@@ -14,8 +14,8 @@ use super::{
     attributes::cfg_guard,
     fact::{source_span, written_fact},
     type_policy_model::{
-        DuplicationSyntaxFact, DuplicationSyntaxKind, TraitImplFact, TypeDeclarationFact,
-        TypeDeclarationKind, TypePolicyFacts,
+        DuplicationSyntaxFact, DuplicationSyntaxKind, TraitImplFact, TraitImplPolarity,
+        TypeDeclarationFact, TypeDeclarationKind, TypePolicyFacts,
     },
     type_policy_syntax::{
         collect_tokens, collect_use, derives, duplication_trait, last_segment, named_fields,
@@ -127,11 +127,16 @@ impl<'ast> Visit<'ast> for Collector {
     }
 
     fn visit_item_impl(&mut self, item: &'ast ItemImpl) {
-        if let Some((_, trait_path, _)) = &item.trait_ {
+        if let Some((negative, trait_path, _)) = &item.trait_ {
             self.facts.trait_impls.push(TraitImplFact {
                 trait_span: source_span(trait_path.span()),
                 trait_hint: last_segment(trait_path),
                 type_span: nominal_type_span(&item.self_ty),
+                polarity: if negative.is_some() {
+                    TraitImplPolarity::Negative
+                } else {
+                    TraitImplPolarity::Positive
+                },
                 guard: self.guard.clone(),
                 lexical_scope: self.lexical_scope.clone(),
             });
@@ -174,3 +179,7 @@ impl<'ast> Visit<'ast> for Collector {
         visit::visit_macro(self, invocation);
     }
 }
+
+#[cfg(test)]
+#[path = "type_policy_index_test.rs"]
+mod type_policy_index_test;

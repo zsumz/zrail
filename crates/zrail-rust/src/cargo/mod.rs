@@ -20,6 +20,10 @@ mod worlds;
 #[path = "resolved_git_test.rs"]
 mod resolved_git_test;
 
+#[cfg(test)]
+#[path = "targets_proc_macro_test.rs"]
+mod targets_proc_macro_test;
+
 pub(crate) use crate_roots::{apply_attestations, attestation_matches, source_matches};
 pub(crate) use features::{PackageFeatureResolution, PackageFeatureSet};
 pub(crate) use model::{

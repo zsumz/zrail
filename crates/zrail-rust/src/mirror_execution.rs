@@ -138,7 +138,7 @@ const fn mode_matches(kind: CargoTargetKind, mode: CompilationMode) -> bool {
     matches!(
         (kind, mode),
         (
-            CargoTargetKind::Library,
+            CargoTargetKind::Library | CargoTargetKind::ProcMacro,
             CompilationMode::Library | CompilationMode::LibraryTest
         ) | (
             CargoTargetKind::Binary,

@@ -148,8 +148,11 @@ Cargo.lock   Cargo's selected versions and checksums
 `zrail check` is read-only. `zrail diff` separates grants, revocations, debt,
 cleanup, neutral changes, and unknown comparisons.
 
-Optional workspace-wide `source.rust.feature_worlds` make Cargo feature closure,
-`cfg(feature)`, and target `required-features` exact without invoking Cargo;
+Optional `source.rust.feature_worlds` make workspace-wide Cargo feature closure,
+`cfg(feature)`, and target `required-features` exact only inside a conservative
+subset: every package structurally reachable through a target, build,
+development, or proc-macro host context must have no active features. Featureful
+split contexts are rejected even when Cargo would unify or converge them;
 non-feature target cfgs remain conservative.
 
 `zrail coverage --format json` exports a canonical census of every enabled rail

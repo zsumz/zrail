@@ -26,6 +26,7 @@ fn clone_copy_closure_and_written_syntax_changes_are_directed() {
     open.source.rust.types.push(type_policy());
     let mut strict = open.clone();
     strict.source.rust.types[0].clone_copy = CloneCopyPolicy::Forbidden;
+    strict.source.rust.types[0].deny.clear();
     strict.source.rust.duplication.deny_imports = vec![DuplicationTrait::Clone];
 
     let tightened = compare_architecture(&open, None, &strict, None);
@@ -34,11 +35,21 @@ fn clone_copy_closure_and_written_syntax_changes_are_directed() {
     assert_change(
         &tightened,
         ChangeKind::Revoke,
-        "rust.type-policy.clone-copy",
+        "rust.type-policy.prohibition",
     );
     assert_change(&tightened, ChangeKind::Revoke, "rust.duplication.import");
-    assert_change(&relaxed, ChangeKind::Grant, "rust.type-policy.clone-copy");
+    assert_change(&relaxed, ChangeKind::Grant, "rust.type-policy.prohibition");
     assert_change(&relaxed, ChangeKind::Grant, "rust.duplication.import");
+    for report in [&tightened, &relaxed] {
+        assert!(
+            report
+                .changes
+                .iter()
+                .all(|change| change.rail != "rust.type-policy.clone-copy"),
+            "bundle marker duplicated an effective authority change: {:?}",
+            report.changes
+        );
+    }
 }
 
 #[test]
@@ -75,6 +86,35 @@ fn removing_redundant_deny_from_clone_copy_closure_is_not_a_grant() {
     );
 }
 
+#[test]
+fn bundled_and_expanded_clone_copy_closure_are_authority_equivalent() {
+    let mut bundled = contract_with_hard_limit(300);
+    let mut bundled_policy = type_policy();
+    bundled_policy.clone_copy = CloneCopyPolicy::Forbidden;
+    bundled_policy.deny.clear();
+    bundled.source.rust.types.push(bundled_policy);
+
+    let mut expanded = bundled.clone();
+    expanded.source.rust.types[0].clone_copy = CloneCopyPolicy::Allow;
+    expanded.source.rust.types[0].deny = vec![
+        TypeProhibition::DeriveClone,
+        TypeProhibition::DeriveCopy,
+        TypeProhibition::ImplClone,
+        TypeProhibition::ImplCopy,
+        TypeProhibition::OpaqueExpansion,
+    ];
+
+    for report in [
+        compare_architecture(&bundled, None, &expanded, None),
+        compare_architecture(&expanded, None, &bundled, None),
+    ] {
+        assert_eq!(report.summary.grants, 0, "{:#?}", report.changes);
+        assert_eq!(report.summary.revokes, 0, "{:#?}", report.changes);
+        assert_eq!(report.summary.neutral, 1, "{:#?}", report.changes);
+        assert_change(&report, ChangeKind::Neutral, "rust.type-policy.clone-copy");
+    }
+}
+
 fn type_policy() -> RustTypeContract {
     RustTypeContract {
         name: "permit".into(),
@@ -95,6 +135,7 @@ fn authority() -> RustTypeContract {
     let mut policy = type_policy();
     policy.kind = RustTypeKind::AuthorityToken;
     policy.clone_copy = CloneCopyPolicy::Forbidden;
+    policy.deny.clear();
     policy.visibility = Some("private".into());
     policy.leaf_module = Some(true);
     policy.fields = Some(vec![RustFieldContract {

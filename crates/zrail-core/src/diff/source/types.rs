@@ -113,18 +113,22 @@ fn compare_existing(
             "changes the exact governed type subject",
         ));
     }
+    let effective_prohibitions_unchanged =
+        effective_prohibitions(left) == effective_prohibitions(right);
     compare_prohibitions(name, left, right, changes);
-    if left.clone_copy != right.clone_copy {
-        changes.push(ArchitectureChange::new(
-            if right.clone_copy == CloneCopyPolicy::Forbidden {
-                ChangeKind::Revoke
-            } else {
-                ChangeKind::Grant
-            },
-            "rust.type-policy.clone-copy",
-            name,
-            "changes bundled Clone/Copy surface closure",
-        ));
+    if left.clone_copy != right.clone_copy && effective_prohibitions_unchanged {
+        changes.push(
+            ArchitectureChange::new(
+                ChangeKind::Neutral,
+                "rust.type-policy.clone-copy",
+                name,
+                "changes the spelling of an unchanged effective Clone/Copy prohibition set",
+            )
+            .values(
+                clone_copy_name(left.clone_copy),
+                clone_copy_name(right.clone_copy),
+            ),
+        );
     }
     if left.reachability != right.reachability {
         changes.push(ArchitectureChange::new(
@@ -196,6 +200,13 @@ const fn trait_name(value: DuplicationTrait) -> &'static str {
     match value {
         DuplicationTrait::Clone => "clone",
         DuplicationTrait::Copy => "copy",
+    }
+}
+
+const fn clone_copy_name(value: CloneCopyPolicy) -> &'static str {
+    match value {
+        CloneCopyPolicy::Allow => "allow",
+        CloneCopyPolicy::Forbidden => "forbidden",
     }
 }
 

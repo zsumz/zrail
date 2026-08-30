@@ -49,8 +49,15 @@ pub(crate) struct TraitImplFact {
     pub(crate) trait_span: SourceSpan,
     pub(crate) trait_hint: String,
     pub(crate) type_span: Option<SourceSpan>,
+    pub(crate) polarity: TraitImplPolarity,
     pub(crate) guard: SyntaxGuard,
     pub(crate) lexical_scope: Vec<SourceSpan>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum TraitImplPolarity {
+    Positive,
+    Negative,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

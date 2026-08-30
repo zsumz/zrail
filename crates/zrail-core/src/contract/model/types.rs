@@ -95,10 +95,10 @@ pub struct RustTypeContract {
     /// Source reachability covered by this type policy.
     pub reachability: PolicyReachability,
     #[serde(default)]
-    /// Independently selected duplication prohibitions.
+    /// Independently selected prohibitions; mutually exclusive with the forbidden bundle.
     pub deny: Vec<TypeProhibition>,
     #[serde(default)]
-    /// Whether every modeled Clone/Copy surface is forbidden together.
+    /// Whether every modeled Clone/Copy surface is forbidden together, with an empty `deny` list.
     pub clone_copy: CloneCopyPolicy,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     /// Exact semantic visibility expected on the type declaration.

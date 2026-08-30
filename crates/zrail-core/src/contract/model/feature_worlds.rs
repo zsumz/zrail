@@ -4,11 +4,11 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-/// One named exact Cargo feature world covering every workspace package.
+/// One named Cargo feature world whose relevant compilation contexts converge.
 pub struct CargoFeatureWorldContract {
     /// Stable world name retained in compilation-domain and lock identity.
     pub name: String,
-    /// Complete per-package feature selections for the workspace.
+    /// Complete per-package feature selections shared by every relevant context.
     pub packages: Vec<CargoFeaturePackageContract>,
     /// Human explanation of the compilation world represented here.
     pub reason: String,

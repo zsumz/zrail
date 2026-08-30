@@ -16,7 +16,7 @@ fn authority_token_requires_private_leaf_clone_copy_closed_exact_shape() {
         path: "crates/app/src/authority.rs".into(),
         kind: RustTypeKind::AuthorityToken,
         reachability: crate::PolicyReachability::Production,
-        deny: vec![TypeProhibition::ImplClone],
+        deny: all_prohibitions(),
         clone_copy: CloneCopyPolicy::Allow,
         visibility: Some("pub(crate)".into()),
         leaf_module: Some(false),
@@ -38,6 +38,36 @@ fn authority_token_requires_private_leaf_clone_copy_closed_exact_shape() {
 #[test]
 fn exact_private_authority_shape_is_valid() {
     let contract = authority_contract("u64");
+
+    assert_eq!(errors(&contract), "");
+}
+
+#[test]
+fn bundled_clone_copy_closure_rejects_redundant_explicit_prohibitions() {
+    let mut contract = authority_contract("u64");
+    let policy = &mut contract.source.rust.types[0];
+    policy.kind = RustTypeKind::Type;
+    policy.visibility = None;
+    policy.leaf_module = None;
+    policy.fields = None;
+    policy.deny = vec![TypeProhibition::ImplClone];
+
+    assert!(
+        errors(&contract)
+            .contains("cannot combine clone_copy = \"forbidden\" with explicit deny prohibitions")
+    );
+}
+
+#[test]
+fn complete_expanded_clone_copy_closure_is_valid_for_an_ordinary_type() {
+    let mut contract = authority_contract("u64");
+    let policy = &mut contract.source.rust.types[0];
+    policy.kind = RustTypeKind::Type;
+    policy.clone_copy = CloneCopyPolicy::Allow;
+    policy.visibility = None;
+    policy.leaf_module = None;
+    policy.fields = None;
+    policy.deny = all_prohibitions();
 
     assert_eq!(errors(&contract), "");
 }
@@ -103,6 +133,16 @@ fn authority_contract(type_identity: &str) -> crate::Contract {
         reason: "Carries bounded authority.".into(),
     });
     contract
+}
+
+fn all_prohibitions() -> Vec<TypeProhibition> {
+    vec![
+        TypeProhibition::DeriveClone,
+        TypeProhibition::DeriveCopy,
+        TypeProhibition::ImplClone,
+        TypeProhibition::ImplCopy,
+        TypeProhibition::OpaqueExpansion,
+    ]
 }
 
 fn errors(contract: &crate::Contract) -> String {

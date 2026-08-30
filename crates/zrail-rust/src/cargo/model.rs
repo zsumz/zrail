@@ -116,6 +116,7 @@ pub(crate) struct CargoTarget {
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum CargoTargetKind {
     Library,
+    ProcMacro,
     Binary,
     Example,
     Test,
@@ -141,8 +142,19 @@ impl Package {
     pub(crate) fn library_crate_root(&self) -> Option<&str> {
         self.targets
             .iter()
-            .find(|target| target.kind == CargoTargetKind::Library)
+            .find(|target| {
+                matches!(
+                    target.kind,
+                    CargoTargetKind::Library | CargoTargetKind::ProcMacro
+                )
+            })
             .map(|target| target.name.as_str())
+    }
+
+    pub(crate) fn is_proc_macro(&self) -> bool {
+        self.targets
+            .iter()
+            .any(|target| target.kind == CargoTargetKind::ProcMacro)
     }
 }
 

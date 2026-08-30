@@ -57,6 +57,12 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
                 policy.name
             ));
         }
+        if policy.clone_copy == CloneCopyPolicy::Forbidden && !policy.deny.is_empty() {
+            errors.push(format!(
+                "Rust type policy {:?} cannot combine clone_copy = \"forbidden\" with explicit deny prohibitions",
+                policy.name
+            ));
+        }
         if let Some(visibility) = &policy.visibility {
             validate_visibility(&policy.name, visibility, errors);
         }
