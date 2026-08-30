@@ -35,7 +35,7 @@ fn descendant_target_bridges_a_base_the_current_engine_cannot_analyze() {
     assert!(artifact.contains("\"lock_sha256\""));
     let accepted = update(&update_options(&root, &base, Some(acceptance(&output))))
         .expect("accept reviewed bridge");
-    assert_eq!(accepted.exit_code, 0);
+    assert_eq!(accepted.exit_code, 0, "{}", accepted.text);
     reset(&root);
 }
 
@@ -60,7 +60,9 @@ fn target_source_mutation_invalidates_the_reviewed_bridge() {
     assert!(
         refused
             .text
-            .contains("does not match the reviewed migration target")
+            .contains("does not match the reviewed migration target"),
+        "{}",
+        refused.text
     );
     reset(&root);
 }
@@ -171,7 +173,31 @@ fn migration_acceptance_does_not_accept_target_policy_grants() {
         .expect("keep grant authority separate");
 
     assert_eq!(refused.exit_code, 1);
-    assert!(refused.text.contains("GRANT repository.root"));
+    assert!(
+        refused.text.contains("GRANT repository.root"),
+        "{}",
+        refused.text
+    );
+    reset(&root);
+}
+
+#[test]
+fn canonical_error_paths_do_not_bind_temporary_snapshot_locations() {
+    let root = fixture_root("canonical-error");
+    reset(&root);
+    fs::create_dir_all(root.join("alias")).expect("create alias component");
+    let written = root.join("alias/..");
+    let canonical = fs::canonicalize(&written).expect("canonicalize snapshot root");
+    fs::write(canonical.join("bad.rs"), [0xff]).expect("write invalid UTF-8");
+    let error = zrail_core::read_text_with_limit(&canonical.join("bad.rs"), 100)
+        .expect_err("read invalid source through canonical path");
+    let stable = super::stable_error(&error, &written);
+    assert!(stable.contains("<migration-base>"), "{stable}");
+    assert!(
+        !stable.contains(canonical.to_string_lossy().as_ref()),
+        "{stable}"
+    );
+    assert_eq!(stable, super::stable_error(&error, &canonical));
     reset(&root);
 }
 

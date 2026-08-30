@@ -114,7 +114,12 @@ fn revision(
 }
 
 fn stable_error(error: &str, root: &Path) -> String {
-    error.replace(root.to_string_lossy().as_ref(), "<migration-base>")
+    // Inventory errors use canonical paths (including Windows long-path and
+    // expanded temporary-directory spellings), not necessarily the input root.
+    let canonical = std::fs::canonicalize(root).unwrap_or_else(|_| root.to_owned());
+    error
+        .replace(canonical.to_string_lossy().as_ref(), "<migration-base>")
+        .replace(root.to_string_lossy().as_ref(), "<migration-base>")
 }
 
 #[cfg(test)]
