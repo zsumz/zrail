@@ -51,7 +51,9 @@ pub(crate) fn fact_count(file: &RustFileFacts) -> usize {
             .declarations
             .iter()
             .map(|declaration| {
-                1 + declaration.derives.len() + declaration.fields.as_ref().map_or(0, Vec::len)
+                1 + declaration.derives.len()
+                    + declaration.fields.as_ref().map_or(0, Vec::len)
+                    + declaration.module_occurrences.len()
             })
             .sum::<usize>()
         + file.tests.len()

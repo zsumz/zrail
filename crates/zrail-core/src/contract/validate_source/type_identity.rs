@@ -151,6 +151,9 @@ impl<'a> Parser<'a> {
         if self.cursor.peek() == Some(b'\'') && !self.cursor.char_literal_ahead() {
             return self.cursor.parse_lifetime();
         }
+        if self.cursor.consume(b'{') {
+            return self.parse_const() && self.cursor.consume_after_space(b'}');
+        }
         if self.cursor.literal_ahead() {
             return self.cursor.parse_literal();
         }

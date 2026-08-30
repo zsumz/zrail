@@ -232,6 +232,10 @@ verifies the named report as the sole nonignored untracked review artifact, and
 compares tracked target bytes and modes directly without trusting Git index
 flags. Ignored build outputs remain outside the reviewed target state. Any
 contract grant remains a separate `--accept-grants` decision.
+Gitlinks retain their Git object kind: a target containing any mode-160000
+entry is rejected under `submodules = "deny"`, even without `.gitmodules` or
+outside source roots. Allowed gitlinks are opaque, untraversed boundaries;
+their object identities remain bound by the target commit and change manifest.
 
 ### Contract schema and fragments
 
@@ -611,12 +615,20 @@ qualified; `impl Trait`, `dyn Trait`, inference, type macros, bare function
 types, and associated or constrained generic arguments are rejected rather
 than truncated to an outer path. An authored leading `crate::` is normalized
 against the analyzer's canonical local identity.
+Array lengths and simple braced const generic paths resolve in Rust's value
+namespace, independently of type names. Arbitrary const expressions and blocks
+with statements remain unsupported.
 
 Exact shape is resolved separately in every governed Cargo compilation domain.
 Inactive fields and child modules are absent; possible target predicates make
 their shape unresolved. Every selected feature world and test mode must match
 the contract, and mismatch diagnostics identify the domain. Coverage reports
-one resolved declaration shape per domain, not a union of written fields.
+one resolved declaration shape per logical source occurrence in each domain,
+not a union of written fields. Leafness includes child modules introduced in
+parent and sibling item includes. Repeated mounts retain separate leafness;
+diagnostics identify the source occurrence. An opaque logical module namespace
+cannot prove leafness: `duplication_effect = "none"` alone is insufficient,
+while occurrence-exact `namespace_effect = "none"` can close that boundary.
 An active or possibly active item-replacing attribute makes exact shape
 unsupported, even with `namespace_effect = "none"`: namespace preservation
 does not attest preservation of fields or representation. No shape-preservation
@@ -698,9 +710,17 @@ Repository-owned macros lock a deterministic input digest of their implementing
 package, including helper macros and internal proc macros. Input capture follows
 the bounded transitive closure of workspace-member and repository-path helper
 crates, binding every owned regular file (including JSON, templates, manifests,
-and Rust), the workspace manifest and Cargo lock, and literal compile inputs.
+and Rust), the workspace manifest, any Cargo lock, and literal compile inputs.
+Any registry or Git dependency in that provider/helper closure requires a
+regular `Cargo.lock`. Each closure manifest edge must resolve to exactly one
+outgoing lock edge; the validated entire lock binds concrete package names,
+versions, sources, checksums, and transitive dependency edges. Local-only
+closures can remain lock-free.
 Source exclusions cannot hide provider inputs. Missing internal packages or
 inputs, symlinks, unresolved includes, and exceeded input limits fail closed.
+Capture traverses only provider/helper roots and fixed prefixes of declared
+input patterns, not unrelated excluded repository trees. Reserved `.git`,
+`.zrail`, and `target` components are pruned before descent at every depth.
 External allowances bind to the exact
 dependency source. Built-in data macros and `include!` are handled directly,
 and included Rust remains fully analyzed.

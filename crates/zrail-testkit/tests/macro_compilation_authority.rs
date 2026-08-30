@@ -15,6 +15,7 @@ fn external_and_test_local_origins_are_both_authorized_and_content_bound() {
     reset(&root);
     fs::create_dir_all(root.join("src")).expect("create fixture");
     write(&root, "Cargo.toml", MANIFEST);
+    write(&root, "Cargo.lock", CARGO_LOCK);
     write(&root, "zrail.toml", CONTRACT);
     write(&root, "src/lib.rs", SOURCE);
     build_lock(&root, "zrail.toml".as_ref())
@@ -58,6 +59,18 @@ const MANIFEST: &str = concat!(
     "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\n",
     "[dependencies]\nreviewed_json = { package = \"serde_json\", version = \"1\" }\n",
 );
+
+const CARGO_LOCK: &str = r#"version = 4
+[[package]]
+name = "fixture"
+version = "0.0.0"
+dependencies = ["serde_json"]
+[[package]]
+name = "serde_json"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+"#;
 
 const SOURCE: &str = r#"//! Library.
 use reviewed_json::json;

@@ -7,8 +7,8 @@ use std::collections::BTreeSet;
 use zrail_core::LockedMacroImplementation;
 
 use crate::{
-    cargo::CargoWorkspace,
-    inventory::{RepositoryInventory, inventory_selected_cargo_repository},
+    cargo::{CargoWorkspace, ResolvedCargoGraph},
+    inventory::RepositoryInventory,
     source::{MacroOrigin, SourceIndex},
 };
 
@@ -26,6 +26,7 @@ pub(super) fn locked(
         &model.inventory,
         &model.cargo,
         &model.source,
+        model.resolved_cargo.as_ref(),
     )
 }
 
@@ -34,14 +35,12 @@ pub(super) fn locked_for_sources(
     inventory: &RepositoryInventory,
     cargo: &CargoWorkspace,
     source: &SourceIndex,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
 ) -> Result<Vec<LockedMacroImplementation>, CheckError> {
     let packages = trusted_packages(contract, source);
     if packages.is_empty() {
         return Ok(Vec::new());
     }
-    // Source exclusions cannot hide compile-effective provider inputs.
-    let inputs_inventory = inventory_selected_cargo_repository(&inventory.root, &[])
-        .map_err(|error| CheckError::from_message(error.to_string()))?;
     packages
         .into_iter()
         .map(|(package, directory)| {
@@ -73,12 +72,13 @@ pub(super) fn locked_for_sources(
                 .cloned()
                 .collect::<BTreeSet<_>>();
             repository_manifest(
-                &inputs_inventory,
+                inventory,
                 cargo,
                 source,
                 &package,
                 &directory,
                 &inputs,
+                resolved_cargo,
             )
         })
         .collect()

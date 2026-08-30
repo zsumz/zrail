@@ -56,6 +56,10 @@ pub(super) fn build(
     };
     let target_contract = load_contract(target_snapshot.root(), config)
         .map_err(|error| CliError::new(format!("load migration target contract: {error}")))?;
+    git_migration::require_submodule_policy(
+        &target_snapshot,
+        target_contract.contract.repository.submodules,
+    )?;
     let target_old_path = repository_file(target_snapshot.root(), lock).map_err(CliError::new)?;
     let target_old_bytes =
         read_bytes_with_limit(&target_old_path, MAX_INPUT_BYTES).map_err(|_| {

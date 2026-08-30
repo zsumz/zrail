@@ -4,7 +4,7 @@
 mod mounts;
 pub(crate) use mounts::inherit_replacing_mounts;
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 use syn::{
     Block, ItemImpl, ItemMod, ItemStruct, ItemUse,
@@ -36,13 +36,6 @@ pub(super) fn collect(syntax: &syn::File) -> (TypePolicyFacts, Vec<ObservedFact>
         ..Collector::default()
     };
     collector.visit_file(syntax);
-    for declaration in &mut collector.facts.declarations {
-        declaration.child_module_guards = collector
-            .child_modules
-            .get(&declaration.lexical_scope)
-            .cloned()
-            .unwrap_or_default();
-    }
     collector.synthetic_paths.sort_by_key(|fact| fact.span);
     (collector.facts, collector.synthetic_paths)
 }
@@ -51,7 +44,6 @@ pub(super) fn collect(syntax: &syn::File) -> (TypePolicyFacts, Vec<ObservedFact>
 struct Collector {
     facts: TypePolicyFacts,
     synthetic_paths: Vec<ObservedFact>,
-    child_modules: BTreeMap<Vec<SourceSpan>, Vec<SyntaxGuard>>,
     lexical_scope: Vec<SourceSpan>,
     guard: SyntaxGuard,
     replacement_macros: Vec<super::macro_binding_policy::MacroOccurrence>,
@@ -73,10 +65,6 @@ impl<'ast> Visit<'ast> for Collector {
     }
 
     fn visit_item_mod(&mut self, module: &'ast ItemMod) {
-        self.child_modules
-            .entry(self.lexical_scope.clone())
-            .or_default()
-            .push(self.guard.clone());
         let Some((_, items)) = &module.content else {
             return;
         };
@@ -117,7 +105,7 @@ impl<'ast> Visit<'ast> for Collector {
             derives: derives(&item.attrs, &self.guard),
             guard: self.guard.clone(),
             lexical_scope: self.lexical_scope.clone(),
-            child_module_guards: Vec::new(),
+            module_occurrences: Vec::new(),
             replacement_macros: self.replacement_macros.clone(),
             replacing_mounts: BTreeSet::new(),
         });
@@ -144,7 +132,7 @@ impl<'ast> Visit<'ast> for Collector {
             derives: derives(&item.attrs, &self.guard),
             guard: self.guard.clone(),
             lexical_scope: self.lexical_scope.clone(),
-            child_module_guards: Vec::new(),
+            module_occurrences: Vec::new(),
             replacement_macros: self.replacement_macros.clone(),
             replacing_mounts: BTreeSet::new(),
         });

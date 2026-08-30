@@ -19,6 +19,7 @@ fn migrate_same_revision(options: &MigrateLockOptions) -> Result<CommandResult, 
     let snapshot = GitSnapshot::create_repository(&options.root, &options.base)?;
     let contract = zrail_core::load_contract(snapshot.root(), &options.config)
         .map_err(|error| CliError::new(format!("load migration base contract: {error}")))?;
+    git_migration::require_submodule_policy(&snapshot, contract.contract.repository.submodules)?;
     let old_path = repository_file(snapshot.root(), &options.lock).map_err(CliError::new)?;
     let old = LockFile::read(&old_path)
         .map_err(|error| CliError::new(format!("load migration base lock: {error}")))?;

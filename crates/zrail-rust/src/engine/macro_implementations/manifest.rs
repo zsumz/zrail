@@ -2,13 +2,15 @@
 
 mod digest;
 mod packages;
+mod resolution;
+mod scan;
 
 use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::{LockedMacroImplementation, MAX_INPUT_BYTES, read_bytes_with_limit};
 
 use crate::{
-    cargo::CargoWorkspace,
+    cargo::{CargoWorkspace, ResolvedCargoGraph},
     inventory::{RepositoryEntryKind, RepositoryInventory},
     source::{SourceIndex, join_relative, parent},
 };
@@ -25,40 +27,50 @@ pub(super) fn repository_manifest(
     package_name: &str,
     directory: &str,
     extra_inputs: &BTreeSet<String>,
+    resolved_cargo: Option<&ResolvedCargoGraph>,
 ) -> Result<LockedMacroImplementation, CheckError> {
     let package = cargo
         .packages
         .iter()
-        .find(|package| package.name == package_name && package.directory == directory);
-    let entries = inventory
-        .entries
+        .find(|package| package.name == package_name && package.directory == directory)
+        .ok_or_else(|| CheckError::from_message(format!(
+            "repository macro provider {package_name:?} at {directory:?} has no active Cargo manifest"
+        )))?;
+    let packages = packages::implementation_packages(&cargo.packages, package)?;
+    let mut compile_inputs = BTreeSet::new();
+    for package in &packages {
+        for file in source.files.iter().filter(|file| {
+            !file.reachability.is_unreachable() && file.packages.contains(&package.name)
+        }) {
+            collect_compile_inputs(file, &mut compile_inputs)?;
+        }
+    }
+    let captured = scan::inputs(
+        &inventory.root,
+        cargo,
+        &packages,
+        extra_inputs,
+        &compile_inputs,
+    )?;
+    let entries = captured
         .iter()
-        .filter(|entry| entry.kind != RepositoryEntryKind::Directory && !reserved(&entry.relative))
         .map(|entry| (entry.relative.as_str(), entry))
         .collect::<BTreeMap<_, _>>();
     let mut inputs = BTreeMap::<String, Vec<u8>>::new();
-    let manifest_path = package.map_or_else(
-        || repository_path(directory, "Cargo.toml"),
-        crate::cargo::Package::manifest_path,
-    );
-    add_required_entry(&entries, &manifest_path, &mut inputs)?;
-    add_entry(&entries, "Cargo.lock", &mut inputs)?;
-    if let Some(package) = package {
-        add_entry(&entries, "Cargo.toml", &mut inputs)?;
-        for package in packages::implementation_packages(&cargo.packages, package)? {
-            add_required_entry(&entries, &package.manifest_path(), &mut inputs)?;
-            add_package_inputs(cargo, source, &entries, package, &mut inputs)?;
-        }
-    } else {
-        for path in entries
-            .keys()
-            .copied()
-            .filter(|path| inside_directory(path, directory))
-            .collect::<Vec<_>>()
-        {
-            add_entry(&entries, path, &mut inputs)?;
-        }
+    for path in entries.keys() {
+        add_entry(&entries, path, &mut inputs)?;
     }
+    for package in &packages {
+        add_required_entry(&entries, &package.manifest_path(), &mut inputs)?;
+    }
+    for path in compile_inputs {
+        add_required_entry(&entries, &path, &mut inputs)?;
+    }
+    resolution::validate(
+        &packages,
+        resolved_cargo,
+        inputs.get("Cargo.lock").map(Vec::as_slice),
+    )?;
     for pattern in extra_inputs {
         let paths = entries
             .keys()
@@ -82,49 +94,14 @@ pub(super) fn repository_manifest(
     })
 }
 
-fn add_package_inputs(
-    cargo: &CargoWorkspace,
-    source: &SourceIndex,
-    entries: &BTreeMap<&str, &crate::inventory::RepositoryEntry>,
-    package: &crate::cargo::Package,
-    inputs: &mut BTreeMap<String, Vec<u8>>,
-) -> Result<(), CheckError> {
-    for path in entries
-        .keys()
-        .copied()
-        .filter(|path| package_owns_path(&package.directory, path, &cargo.packages))
-    {
-        add_entry(entries, path, inputs)?;
-    }
-    for file in source
-        .files
-        .iter()
-        .filter(|file| !file.reachability.is_unreachable() && file.packages.contains(&package.name))
-    {
-        add_compile_inputs(entries, file, inputs)?;
-    }
-    Ok(())
-}
-
-fn reserved(path: &str) -> bool {
+pub(super) fn reserved(path: &str) -> bool {
     path.split('/')
         .any(|part| matches!(part, ".git" | ".zrail" | "target" | "zrail.lock"))
 }
 
-fn package_owns_path(directory: &str, path: &str, packages: &[crate::cargo::Package]) -> bool {
-    inside_directory(path, directory)
-        && !packages.iter().any(|package| {
-            package.directory != directory
-                && package.directory != "."
-                && inside_directory(path, &package.directory)
-                && inside_directory(&package.directory, directory)
-        })
-}
-
-fn add_compile_inputs(
-    entries: &BTreeMap<&str, &crate::inventory::RepositoryEntry>,
+fn collect_compile_inputs(
     file: &crate::source::RustFileFacts,
-    inputs: &mut BTreeMap<String, Vec<u8>>,
+    inputs: &mut BTreeSet<String>,
 ) -> Result<(), CheckError> {
     for effect in &file.compile_effects {
         if !effect.invocation.is_compiler_builtin()
@@ -146,7 +123,7 @@ fn add_compile_inputs(
                 "repository macro include input is invalid: {error:?}"
             ))
         })?;
-        add_required_entry(entries, &path, inputs)?;
+        inputs.insert(path);
     }
     Ok(())
 }
@@ -162,18 +139,6 @@ fn add_required_entry(
         )));
     }
     add_entry(entries, path, inputs)
-}
-
-fn repository_path(directory: &str, name: &str) -> String {
-    if directory == "." {
-        name.into()
-    } else {
-        format!("{directory}/{name}")
-    }
-}
-
-fn inside_directory(path: &str, directory: &str) -> bool {
-    directory == "." || path == directory || path.starts_with(&format!("{directory}/"))
 }
 
 fn add_entry(

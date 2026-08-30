@@ -2,6 +2,10 @@
 
 use super::{governed_surface_report, type_policy_test};
 
+#[path = "type_shape_test/tests/const_paths.rs"]
+mod const_paths;
+#[path = "type_shape_test/tests/leaf.rs"]
+mod leaf;
 #[path = "type_shape_test/tests/attribute.rs"]
 mod type_shape_attribute_test;
 #[path = "type_shape_test/tests/domain.rs"]

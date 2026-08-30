@@ -79,6 +79,7 @@ fn exact_field_types_accept_complete_recursive_shapes() {
         "&'a mut crate::authority::Permit",
         "(u64,crate::authority::Permit)",
         "[crate::authority::Permit;crate::authority::COUNT]",
+        "crate::Buffer<{crate::CAPACITY}>",
         "*const [u8]",
         "()",
         "!",
@@ -104,6 +105,8 @@ fn exact_field_types_reject_lossy_or_unqualified_shapes() {
         "core::option::Option<Permit>",
         "[u8;b'a']",
         "[u8;1.5]",
+        "crate::Buffer<{let size = 64; size}>",
+        "crate::Buffer<{crate::CAPACITY + 1}>",
     ] {
         let errors = errors(&authority_contract(type_identity));
         assert!(

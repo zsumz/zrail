@@ -67,6 +67,10 @@ pub(super) fn compare_from_repository(
             )?;
             match zrail_rust::build_lock(repository.root(), config) {
                 Ok(reanalyzed) => {
+                    git_migration::require_submodule_policy(
+                        &repository,
+                        before.contract.repository.submodules,
+                    )?;
                     if migration_report.is_some() {
                         return Err(CliError::new(
                             "--migration-report is only valid for a cross-revision migration",

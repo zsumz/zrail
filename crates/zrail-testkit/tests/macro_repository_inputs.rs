@@ -4,6 +4,11 @@ use std::{fs, path::Path};
 
 use zrail_rust::{build_lock, check_repository};
 
+#[path = "macro_repository_inputs/resolution.rs"]
+mod resolution;
+#[path = "macro_repository_inputs/scanning.rs"]
+mod scanning;
+
 #[test]
 fn provider_json_and_transitive_helper_template_invalidate_authority() {
     for path in [

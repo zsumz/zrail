@@ -10,6 +10,7 @@ use super::super::{RuleContext, identity};
 
 pub(crate) struct ResolvedDeclarationShape {
     pub(crate) domain: CompilationDomain,
+    pub(crate) occurrence: Option<usize>,
     pub(crate) kind: TypeDeclarationKind,
     pub(crate) visibility: String,
     pub(crate) leaf_module: Result<bool, String>,
@@ -47,13 +48,38 @@ pub(crate) fn resolve(
                     .availability_in_domain(domain)
                     .is_available()
         })
-        .map(|domain| ResolvedDeclarationShape {
-            domain: domain.clone(),
-            kind: declaration.kind,
-            visibility: declaration.visibility.clone(),
-            leaf_module: leaf_module(declaration, domain),
-            fields: fields(file, declaration, domain),
-            opacity: opacity(declaration, domain),
+        .flat_map(|domain| {
+            let occurrences = declaration
+                .module_occurrences
+                .iter()
+                .filter(|occurrence| {
+                    &occurrence.domain == domain
+                        && occurrence.identity.as_ref().is_none_or(|name| {
+                            identity::normalize(name) == identity::normalize(&policy.identity)
+                        })
+                })
+                .map(|occurrence| (Some(occurrence.instance.0), occurrence.leaf.clone()))
+                .collect::<Vec<_>>();
+            let occurrences = if occurrences.is_empty() {
+                vec![(
+                    None,
+                    Err("logical module occurrences are unresolved".into()),
+                )]
+            } else {
+                occurrences
+            };
+            occurrences
+                .into_iter()
+                .map(|(occurrence, leaf_module)| ResolvedDeclarationShape {
+                    domain: domain.clone(),
+                    occurrence,
+                    kind: declaration.kind,
+                    visibility: declaration.visibility.clone(),
+                    leaf_module,
+                    fields: fields(file, declaration, domain),
+                    opacity: opacity(declaration, domain),
+                })
+                .collect::<Vec<_>>()
         })
         .collect()
 }
@@ -75,23 +101,6 @@ fn opacity(declaration: &TypeDeclarationFact, domain: &CompilationDomain) -> Opt
     }
     (declaration.guard.availability_in_domain(domain) == GuardAvailability::Possible)
         .then(|| "declaration availability is unresolved".into())
-}
-
-fn leaf_module(
-    declaration: &TypeDeclarationFact,
-    domain: &CompilationDomain,
-) -> Result<bool, String> {
-    let mut leaf = true;
-    for guard in &declaration.child_module_guards {
-        match guard.availability_in_domain(domain) {
-            GuardAvailability::Absent => {}
-            GuardAvailability::Exact => leaf = false,
-            GuardAvailability::Possible => {
-                return Err("child-module availability is unresolved".into());
-            }
-        }
-    }
-    Ok(leaf)
 }
 
 fn fields(

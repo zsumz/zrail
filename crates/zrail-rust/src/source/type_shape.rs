@@ -155,6 +155,12 @@ fn const_shape(expression: &syn::Expr) -> Option<ConstShapeFact> {
         }),
         syn::Expr::Group(group) => const_shape(&group.expr),
         syn::Expr::Paren(paren) => const_shape(&paren.expr),
+        syn::Expr::Block(block) if block.attrs.is_empty() && block.label.is_none() => {
+            match block.block.stmts.as_slice() {
+                [syn::Stmt::Expr(value, None)] => const_shape(value),
+                _ => None,
+            }
+        }
         _ => None,
     }
 }

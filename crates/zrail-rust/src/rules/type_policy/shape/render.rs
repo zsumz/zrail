@@ -1,7 +1,8 @@
 //! Recursive canonical rendering for type and const shapes.
 
 use crate::source::{
-    CompilationDomain, ConstShapeFact, RustFileFacts, TypeArgumentFact, TypeShapeFact,
+    CompilationDomain, ConstShapeFact, FactNamespace, RustFileFacts, TypeArgumentFact,
+    TypeShapeFact,
 };
 
 use super::super::identity;
@@ -11,9 +12,13 @@ pub(crate) fn render_source(
     file: &RustFileFacts,
     domain: &CompilationDomain,
 ) -> Result<String, String> {
-    render(shape, &mut |written, span| {
-        let resolved = identity::at_span_in_domain(file, span, domain);
-        if primitive(written) && resolved.exact.is_empty() && !resolved.unresolved {
+    render(shape, &mut |written, span, namespace| {
+        let resolved = identity::at_span_in_domain(file, span, domain, namespace);
+        if namespace == FactNamespace::Type
+            && primitive(written)
+            && resolved.exact.is_empty()
+            && !resolved.unresolved
+        {
             return Ok(written.into());
         }
         resolved.one().map(str::to_owned).map_err(str::to_owned)
@@ -24,8 +29,8 @@ pub(crate) fn render_contract(source: &str) -> Result<String, String> {
     let parsed = syn::parse_str::<syn::Type>(source)
         .map_err(|error| format!("invalid Rust type syntax: {error}"))?;
     let shape = crate::source::type_shape(&parsed);
-    render(&shape, &mut |written, _| {
-        if primitive(written) || written.contains("::") {
+    render(&shape, &mut |written, _, namespace| {
+        if (namespace == FactNamespace::Type && primitive(written)) || written.contains("::") {
             Ok(identity::normalize(written).into())
         } else {
             Err(format!("unqualified non-primitive path {written:?}"))
@@ -35,7 +40,7 @@ pub(crate) fn render_contract(source: &str) -> Result<String, String> {
 
 fn render(
     shape: &TypeShapeFact,
-    resolve: &mut impl FnMut(&str, zrail_core::SourceSpan) -> Result<String, String>,
+    resolve: &mut impl FnMut(&str, zrail_core::SourceSpan, FactNamespace) -> Result<String, String>,
 ) -> Result<String, String> {
     match shape {
         TypeShapeFact::Path {
@@ -43,7 +48,7 @@ fn render(
             span,
             arguments,
         } => {
-            let mut result = resolve(written, *span)?;
+            let mut result = resolve(written, *span, FactNamespace::Type)?;
             if !arguments.is_empty() {
                 result.push('<');
                 result.push_str(
@@ -95,7 +100,7 @@ fn render(
 
 fn render_argument(
     argument: &TypeArgumentFact,
-    resolve: &mut impl FnMut(&str, zrail_core::SourceSpan) -> Result<String, String>,
+    resolve: &mut impl FnMut(&str, zrail_core::SourceSpan, FactNamespace) -> Result<String, String>,
 ) -> Result<String, String> {
     match argument {
         TypeArgumentFact::Type(value) => render(value, resolve),
@@ -106,11 +111,11 @@ fn render_argument(
 
 fn render_const(
     value: &ConstShapeFact,
-    resolve: &mut impl FnMut(&str, zrail_core::SourceSpan) -> Result<String, String>,
+    resolve: &mut impl FnMut(&str, zrail_core::SourceSpan, FactNamespace) -> Result<String, String>,
 ) -> Result<String, String> {
     match value {
         ConstShapeFact::Literal(value) => Ok(value.clone()),
-        ConstShapeFact::Path { written, span } => resolve(written, *span),
+        ConstShapeFact::Path { written, span } => resolve(written, *span, FactNamespace::Value),
     }
 }
 

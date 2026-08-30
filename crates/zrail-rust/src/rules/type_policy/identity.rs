@@ -111,12 +111,13 @@ pub(crate) fn at_span_in_domain(
     file: &RustFileFacts,
     span: SourceSpan,
     domain: &CompilationDomain,
+    namespace: FactNamespace,
 ) -> IdentityResolution {
     let mut resolution = IdentityResolution::default();
     for fact in file
         .paths
         .iter()
-        .filter(|fact| fact.span == Some(span) && fact.namespace == FactNamespace::Type)
+        .filter(|fact| fact.span == Some(span) && fact.namespace == namespace)
     {
         match fact.guard.availability_in_domain(domain) {
             GuardAvailability::Absent => {}

@@ -27,6 +27,7 @@ fn test_only_caller_definition_is_a_content_bound_second_origin() {
         DEPENDENCY_MANIFEST,
         &format!("{EXTERNAL_ONLY}{LOCAL_JSON}"),
     );
+    write(&root, "Cargo.lock", CARGO_LOCK);
     let source = "//! Library.\n#[cfg(test)]\nmacro_rules! json { ($($tokens:tt)*) => { 1 }; }\ninclude!(\"body.rs\");\n";
     write(&root, "src/lib.rs", source);
     write(&root, "src/body.rs", EXTERNAL_BODY);
@@ -143,6 +144,17 @@ const DEPENDENCY_MANIFEST: &str = concat!(
     "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\n",
     "[dependencies]\nreviewed_json = { package = \"serde_json\", version = \"1\" }\n",
 );
+const CARGO_LOCK: &str = r#"version = 4
+[[package]]
+name = "fixture"
+version = "0.0.0"
+dependencies = ["serde_json"]
+[[package]]
+name = "serde_json"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+"#;
 const EXTERNAL_BODY: &str = r#"use reviewed_json::json;
 pub fn run() { let _ = json!({"ok": true}); }
 "#;

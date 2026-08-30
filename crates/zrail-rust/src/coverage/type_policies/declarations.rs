@@ -44,8 +44,12 @@ pub(super) fn observations<'a>(
                 continue;
             }
             for shape in shape::resolve(context, policy, file, declaration) {
-                let domain_resolution =
-                    identity::at_span_in_domain(file, declaration.identity_span, &shape.domain);
+                let domain_resolution = identity::at_span_in_domain(
+                    file,
+                    declaration.identity_span,
+                    &shape.domain,
+                    FactNamespace::Type,
+                );
                 let mut quality = support::resolution_quality(&domain_resolution);
                 if !shape.is_exact() {
                     quality = quality.max(AnalysisQuality::Unresolved);

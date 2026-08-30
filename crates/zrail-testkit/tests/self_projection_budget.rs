@@ -9,7 +9,7 @@ use std::{
 use zrail_rust::build_lock;
 
 // Tightened to the committed self-analysis workload after source changes settle.
-const MAX_PROJECTION_QUERIES: usize = 1_675_464;
+const MAX_PROJECTION_QUERIES: usize = 1_231_749;
 
 #[test]
 fn self_hosted_projection_work_does_not_regress() {

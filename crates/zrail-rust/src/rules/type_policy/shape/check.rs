@@ -18,8 +18,8 @@ pub(crate) fn check(
             findings.push(
                 Finding::error(
                     "RUST-TYPE-002", &policy.name, "type-policy",
-                    format!("exact type {} {message} in compilation domain [{}]",
-                        policy.identity, shape.domain.canonical_identity()),
+                    format!("exact type {} {message} in compilation domain [{}], source occurrence {:?}",
+                        policy.identity, shape.domain.canonical_identity(), shape.occurrence),
                 )
                 .at(&file.relative, Some(declaration.identity_span))
                 .because(&policy.reason)

@@ -296,3 +296,5 @@ mod operations_relative;
 mod operations_self;
 #[path = "include_projection_apply_test/tests/scale.rs"]
 mod scale;
+#[path = "include_projection_apply_test/tests/type_modules.rs"]
+mod type_modules;

@@ -140,6 +140,7 @@ pub(crate) fn load_model_with_bundle(
             &inventory,
             &cargo,
             &source,
+            resolved_cargo.as_ref(),
         )?
     } else {
         Vec::new()

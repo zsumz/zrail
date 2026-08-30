@@ -23,9 +23,8 @@ pub(super) fn materialize(
     for (path, entry) in tree {
         validate_entry(path, entry, &mut total)?;
         if entry.is_gitlink() {
-            fs::create_dir_all(temporary.path().join(path)).map_err(|error| {
-                CliError::new(format!("create Git snapshot gitlink {path}: {error}"))
-            })?;
+            // The GitSnapshot tree retains this opaque repository boundary and
+            // its object identity. Do not invent an analyzable empty directory.
             continue;
         }
         let bytes = git_process::output(

@@ -28,6 +28,14 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ### Fixed
 
+- Migration enforces Git-tree gitlinks under submodule-deny policy; allowed
+  links remain opaque and content-bound instead of becoming empty directories.
+- Repository macro closures with external dependencies require exact validated
+  Cargo lock resolution. Targeted capture prunes reserved output directories
+  before descent without letting source exclusions hide implementation inputs.
+- Leafness follows logical source occurrences across parent and sibling includes,
+  requires a clean namespace, and stays separate for repeated mounts. Exact
+  field-type const paths resolve in the value namespace.
 - Exact type shape now filters guarded fields and child modules per compilation
   domain, rejects possible shape, checks every governed world, and reports domain
   identities. Active item-replacing attributes cannot claim exact representation

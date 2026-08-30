@@ -137,7 +137,7 @@ fn migration_report_cannot_replace_a_tracked_target_file() {
 
 #[cfg(unix)]
 #[test]
-fn repository_snapshot_binds_internal_symlinks_and_gitlinks() {
+fn repository_snapshot_binds_internal_symlinks() {
     use std::os::unix::fs::symlink;
 
     if !git_available() {
@@ -146,27 +146,17 @@ fn repository_snapshot_binds_internal_symlinks_and_gitlinks() {
     let (root, base) = bridge_fixture_root("repository-shapes", false, "src");
     fs::write(root.join("asset.txt"), "asset\n").expect("write asset");
     symlink("asset.txt", root.join("asset-link")).expect("create internal symlink");
-    run_git(&root, &["add", "."]);
-    run_git(
-        &root,
-        &[
-            "update-index",
-            "--add",
-            "--cacheinfo",
-            "160000",
-            &base,
-            "vendor/assets",
-        ],
-    );
-    commit_index(&root);
+    commit_all(&root);
 
     migrate_lock(&migration_options(&root, &base, Some("HEAD")))
         .expect("snapshot repository shapes");
     let report = fs::read_to_string(root.join("migration.json")).expect("read report");
     assert!(report.contains("\"mode\": \"120000\""));
-    assert!(report.contains("\"mode\": \"160000\""));
     reset(&root);
 }
+
+#[path = "migration_bridge_test/tests/gitlinks.rs"]
+mod gitlinks;
 
 #[test]
 fn migration_acceptance_does_not_accept_target_policy_grants() {

@@ -1,6 +1,7 @@
 //! Projection is planned in stable file order and committed only after full success.
 
 mod findings;
+mod type_modules;
 
 use zrail_core::Finding;
 
@@ -20,6 +21,7 @@ struct FileProjection {
     index: usize,
     paths: FactProjection,
     calls: FactProjection,
+    type_modules: Vec<Vec<super::type_policy_model::TypeModuleOccurrence>>,
 }
 
 impl IncludeBindings {
@@ -97,7 +99,10 @@ impl IncludeBindings {
             let include_connected = self
                 .instances
                 .requires_projection(&file.relative, file.syntax);
-            if !include_connected && !self.requires_ordinary_resolution(file) {
+            if !include_connected
+                && !self.requires_ordinary_resolution(file)
+                && file.type_policy.declarations.is_empty()
+            {
                 continue;
             }
             if include_connected {
@@ -164,10 +169,16 @@ impl IncludeBindings {
             if let Some(span) = uncertain {
                 findings.push(unresolved(Some(&file.relative), Some(span)));
             }
+            let type_modules =
+                match type_modules::project(self, file, budget, &mut remaining_file_facts) {
+                    Ok(modules) => modules,
+                    Err(limit) => return vec![budget_exhausted(limit)],
+                };
             planned.push(FileProjection {
                 index: file_index,
                 paths,
                 calls,
+                type_modules,
             });
         }
         index.analysis_metrics.projection_work = include_budget.used_work();
@@ -177,6 +188,14 @@ impl IncludeBindings {
             let file = &mut index.files[projection.index];
             apply_projection(&mut file.paths, projection.paths);
             apply_projection(&mut file.calls, projection.calls);
+            for (declaration, occurrences) in file
+                .type_policy
+                .declarations
+                .iter_mut()
+                .zip(projection.type_modules)
+            {
+                declaration.module_occurrences = occurrences;
+            }
         }
         findings
     }

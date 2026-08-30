@@ -20,9 +20,17 @@ pub(crate) struct TypeDeclarationFact {
     pub(crate) derives: Vec<DerivedTraitFact>,
     pub(crate) guard: SyntaxGuard,
     pub(crate) lexical_scope: Vec<SourceSpan>,
-    pub(crate) child_module_guards: Vec<SyntaxGuard>,
+    pub(crate) module_occurrences: Vec<TypeModuleOccurrence>,
     pub(crate) replacement_macros: Vec<super::macro_binding_policy::MacroOccurrence>,
     pub(crate) replacing_mounts: std::collections::BTreeSet<super::CompilationDomain>,
+}
+
+#[derive(Clone, Debug)]
+pub(crate) struct TypeModuleOccurrence {
+    pub(crate) instance: super::SourceInstanceId,
+    pub(crate) domain: super::CompilationDomain,
+    pub(crate) identity: Option<String>,
+    pub(crate) leaf: Result<bool, String>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
