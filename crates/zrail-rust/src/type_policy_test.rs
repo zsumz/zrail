@@ -81,7 +81,9 @@ fn authority_token_reports_field_representation_drift() {
 
     let report = report(&root);
 
-    assert_eq!(error_count(&report, "RUST-TYPE-002"), 1, "{report}");
+    assert_eq!(error_count(&report, "RUST-TYPE-002"), 2, "{report}");
+    assert!(report.contains("mode=library;"), "{report}");
+    assert!(report.contains("mode=library-test;"), "{report}");
     reset(&root);
 }
 

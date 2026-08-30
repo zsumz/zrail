@@ -79,7 +79,7 @@ fn compare_implementations(current: &LockFile, candidate: &LockFile, findings: &
                 "lock",
                 format!("zrail.lock retains stale repository macro implementation {identity:?}"),
             )),
-            (Some(left), Some(right)) if left.manifest_sha256 != right.manifest_sha256 => {
+            (Some(left), Some(right)) if left.inputs_sha256 != right.inputs_sha256 => {
                 findings.push(Finding::error(
                     "LOCK-023",
                     "lock.macro-implementation",

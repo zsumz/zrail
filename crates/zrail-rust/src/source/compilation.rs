@@ -6,6 +6,8 @@ use std::collections::BTreeSet;
 pub(crate) enum CompilationMode {
     Library,
     LibraryTest,
+    ProcMacro,
+    ProcMacroTest,
     Binary,
     BinaryTest,
     IntegrationTest,
@@ -20,6 +22,8 @@ impl CompilationMode {
         match self {
             Self::Library => "library",
             Self::LibraryTest => "library-test",
+            Self::ProcMacro => "proc-macro",
+            Self::ProcMacroTest => "proc-macro-test",
             Self::Binary => "binary",
             Self::BinaryTest => "binary-test",
             Self::IntegrationTest => "integration-test",
@@ -34,6 +38,7 @@ impl CompilationMode {
         matches!(
             self,
             Self::LibraryTest
+                | Self::ProcMacroTest
                 | Self::BinaryTest
                 | Self::IntegrationTest
                 | Self::Benchmark

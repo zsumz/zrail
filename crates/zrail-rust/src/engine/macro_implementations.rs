@@ -8,7 +8,7 @@ use zrail_core::LockedMacroImplementation;
 
 use crate::{
     cargo::CargoWorkspace,
-    inventory::RepositoryInventory,
+    inventory::{RepositoryInventory, inventory_selected_cargo_repository},
     source::{MacroOrigin, SourceIndex},
 };
 
@@ -36,10 +36,50 @@ pub(super) fn locked_for_sources(
     source: &SourceIndex,
 ) -> Result<Vec<LockedMacroImplementation>, CheckError> {
     let packages = trusted_packages(contract, source);
+    if packages.is_empty() {
+        return Ok(Vec::new());
+    }
+    // Source exclusions cannot hide compile-effective provider inputs.
+    let inputs_inventory = inventory_selected_cargo_repository(&inventory.root, &[])
+        .map_err(|error| CheckError::from_message(error.to_string()))?;
     packages
         .into_iter()
         .map(|(package, directory)| {
-            repository_manifest(inventory, cargo, source, &package, &directory)
+            let inputs = contract
+                .source
+                .rust
+                .macros
+                .allow
+                .iter()
+                .filter_map(|allowance| allowance.source.as_ref())
+                .chain(
+                    contract
+                        .source
+                        .rust
+                        .item_macros
+                        .iter()
+                        .filter_map(|allowance| allowance.source.as_ref()),
+                )
+                .filter_map(|authority| match authority {
+                    zrail_core::CrateRootSource::Repository {
+                        package: selected,
+                        directory: root,
+                        inputs,
+                        ..
+                    } if selected == &package && root == &directory => Some(inputs),
+                    _ => None,
+                })
+                .flatten()
+                .cloned()
+                .collect::<BTreeSet<_>>();
+            repository_manifest(
+                &inputs_inventory,
+                cargo,
+                source,
+                &package,
+                &directory,
+                &inputs,
+            )
         })
         .collect()
 }

@@ -38,11 +38,11 @@ pub use model::{
     DuplicationTrait, EffectBoundary, FileRole, FileRoleContract, FileSizeContract, GateContract,
     GateKind, GeneratedSourceContract, HygieneContract, InvariantContract, InvariantStatus,
     ItemMacroBinding, ItemMacroBindingKind, ItemMacroContract, ItemMacroManifest, LayerContract,
-    LayerDependencies, MAX_TEST_MIRROR_INPUTS, MacroExpansionAllow, MacroExpansionContract,
-    OutDirSourceContract, OwnerContract, ProfileContract, RatchetContract, RepositoryContract,
-    RustDuplicationContract, RustFieldContract, RustSourceContract, RustTypeContract, RustTypeKind,
-    ScopeContract, SourceContract, SymbolBoundary, SyntaxBoundary, TestExecutionIdentity,
-    TestMirrorContract, TypeProhibition,
+    LayerDependencies, MAX_TEST_MIRROR_INPUTS, MacroAmbientInputs, MacroExpansionAllow,
+    MacroExpansionContract, OutDirSourceContract, OwnerContract, ProfileContract, RatchetContract,
+    RepositoryContract, RustDuplicationContract, RustFieldContract, RustSourceContract,
+    RustTypeContract, RustTypeKind, ScopeContract, SourceContract, SymbolBoundary, SyntaxBoundary,
+    TestExecutionIdentity, TestMirrorContract, TypeProhibition,
 };
 pub use modes::{
     AsyncSyntax, CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,

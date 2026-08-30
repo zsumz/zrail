@@ -20,7 +20,9 @@ pub(crate) struct TypeDeclarationFact {
     pub(crate) derives: Vec<DerivedTraitFact>,
     pub(crate) guard: SyntaxGuard,
     pub(crate) lexical_scope: Vec<SourceSpan>,
-    pub(crate) leaf_module: bool,
+    pub(crate) child_module_guards: Vec<SyntaxGuard>,
+    pub(crate) replacement_macros: Vec<super::macro_binding_policy::MacroOccurrence>,
+    pub(crate) replacing_mounts: std::collections::BTreeSet<super::CompilationDomain>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

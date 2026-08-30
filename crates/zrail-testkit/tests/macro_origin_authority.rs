@@ -25,7 +25,7 @@ pub fn run() { let _ = helpers::reviewed!(); let _ = crate::helpers::reviewed!()
         &root,
         &[
             allowance_with_definition("helpers::reviewed", "src/lib.rs"),
-            allowance("crate::helpers::reviewed"),
+            allowance_with_definition("crate::helpers::reviewed", "src/lib.rs"),
         ],
     );
     lock(&root);
@@ -62,7 +62,14 @@ fn workspace_macro_package_changes_invalidate_repository_authority() {
         "app/src/lib.rs",
         "//! Consumer.\npub fn run() { let _ = workspace_macros::reviewed!(); }\n",
     );
-    contract(&root, &[allowance("workspace_macros::reviewed")]);
+    contract(
+        &root,
+        &[repository_allowance(
+            "workspace_macros::reviewed",
+            "workspace-macros",
+            "macros",
+        )],
+    );
     lock(&root);
     let report = check(&root);
     assert_eq!(report.status, ReportStatus::Pass, "{:#?}", report.findings);
@@ -101,7 +108,14 @@ fn internal_proc_macro_implementation_is_package_bound() {
         "app/src/lib.rs",
         "//! Consumer.\n#[derive(workspace_macros::Reviewed)]\npub struct Model;\n",
     );
-    contract(&root, &[allowance("workspace_macros::Reviewed")]);
+    contract(
+        &root,
+        &[repository_allowance(
+            "workspace_macros::Reviewed",
+            "workspace-macros",
+            "macros",
+        )],
+    );
     lock(&root);
     let report = check(&root);
     assert_eq!(report.status, ReportStatus::Pass, "{:#?}", report.findings);
@@ -137,7 +151,14 @@ fn excluded_repository_path_macro_package_is_content_bound() {
         "app/src/lib.rs",
         "//! Consumer.\npub fn run() { let _ = vendor_macros::reviewed!(); }\n",
     );
-    contract(&root, &[allowance("vendor_macros::reviewed")]);
+    contract(
+        &root,
+        &[repository_allowance(
+            "vendor_macros::reviewed",
+            "vendor-macros",
+            "vendor/macros",
+        )],
+    );
     lock(&root);
     let report = check(&root);
     assert_eq!(report.status, ReportStatus::Pass, "{:#?}", report.findings);
@@ -217,6 +238,13 @@ fn allowance_with_definition(name: &str, definition: &str) -> String {
     )
 }
 
+fn repository_allowance(name: &str, package: &str, directory: &str) -> String {
+    format!(
+        "{}[source.rust.macros.allow.source]\nkind = \"repository\"\npackage = \"{package}\"\ndirectory = \"{directory}\"\nambient_inputs = \"none\"\n",
+        allowance(name)
+    )
+}
+
 fn contract(root: &Path, allowances: &[String]) {
     write(
         root,
@@ -261,26 +289,4 @@ fn reset(root: &Path) {
     }
 }
 
-const CONTRACT: &str = r#"schema = 1
-adapters = ["rust"]
-[repository]
-roots = ["."]
-exclude = []
-workspace_members = "exact"
-nested_git = "deny"
-submodules = "deny"
-symlinks = "inside"
-[dependencies]
-mode = "observed"
-unassigned_packages = "allow"
-cycles = "deny"
-[source.rust]
-module_docs = "required"
-facades = "allow"
-tests = "allow"
-[source.rust.macros]
-mode = "deny-unreviewed"
-[source.rust.hygiene]
-unsafe = "deny"
-lint_suppressions = "allow"
-"#;
+const CONTRACT: &str = include_str!("macro_origin_authority/contract.toml");

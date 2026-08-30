@@ -8,7 +8,7 @@ use crate::{
     source::{RustFileFacts, SyntaxGuard},
 };
 
-use super::super::{GovernedCompilationDomain, GovernedTypeField};
+use super::super::GovernedCompilationDomain;
 
 pub(super) fn domains(
     model: &RepositoryModel,
@@ -30,15 +30,19 @@ pub(super) fn domains(
                 ))
                 && guard.availability_in_domain(domain).is_available()
         })
-        .map(|domain| GovernedCompilationDomain {
-            package: domain.package.clone(),
-            edition: domain.edition.clone(),
-            target: domain.target.clone(),
-            mode: compilation_mode(domain.mode).into(),
-            feature_world: domain.feature_world.clone(),
-            features: domain.active_features.iter().cloned().collect(),
-        })
+        .map(domain)
         .collect()
+}
+
+pub(super) fn domain(domain: &crate::source::CompilationDomain) -> GovernedCompilationDomain {
+    GovernedCompilationDomain {
+        package: domain.package.clone(),
+        edition: domain.edition.clone(),
+        target: domain.target.clone(),
+        mode: domain.mode.canonical_name().into(),
+        feature_world: domain.feature_world.clone(),
+        features: domain.active_features.iter().cloned().collect(),
+    }
 }
 
 pub(super) fn resolution_quality(resolution: &identity::IdentityResolution) -> AnalysisQuality {
@@ -59,18 +63,6 @@ pub(super) fn observed_identity(
         resolution.exact.iter().next().cloned().unwrap_or_default()
     } else {
         fallback.into()
-    }
-}
-
-pub(super) fn observed_field(
-    name: &str,
-    visibility: &str,
-    type_identity: Result<String, String>,
-) -> GovernedTypeField {
-    GovernedTypeField {
-        name: name.into(),
-        type_identity: type_identity.unwrap_or_else(|error| format!("<unresolved: {error}>")),
-        visibility: visibility.into(),
     }
 }
 
@@ -96,19 +88,5 @@ pub(super) const fn trait_name(value: DuplicationTrait) -> &'static str {
     match value {
         DuplicationTrait::Clone => "Clone",
         DuplicationTrait::Copy => "Copy",
-    }
-}
-
-const fn compilation_mode(value: crate::source::CompilationMode) -> &'static str {
-    match value {
-        crate::source::CompilationMode::Library => "library",
-        crate::source::CompilationMode::LibraryTest => "library-test",
-        crate::source::CompilationMode::Binary => "binary",
-        crate::source::CompilationMode::BinaryTest => "binary-test",
-        crate::source::CompilationMode::IntegrationTest => "integration-test",
-        crate::source::CompilationMode::Benchmark => "benchmark",
-        crate::source::CompilationMode::Example => "example",
-        crate::source::CompilationMode::ExampleTest => "example-test",
-        crate::source::CompilationMode::BuildScript => "build-script",
     }
 }

@@ -74,6 +74,8 @@ fn repository_macro_provenance_is_not_dependency_crate_root_authority() {
         source: CrateRootSource::Repository {
             package: "runtime".into(),
             directory: "crates/runtime".into(),
+            inputs: Vec::new(),
+            ambient_inputs: crate::MacroAmbientInputs::None,
         },
     }];
 

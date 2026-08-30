@@ -36,6 +36,7 @@ pub(super) struct IncludeBindings {
         BTreeMap<SourceInstanceId, BTreeSet<(Vec<zrail_core::SourceSpan>, SyntaxGuard, bool)>>,
     pub(super) prelude_directives: BTreeMap<SourceInstanceId, Vec<super::model::PreludeDirective>>,
     pub(super) instances: SourceInstances,
+    pub(super) module_cache: super::include_module_identity::ModuleIdentityCache,
     extern_roots: BTreeMap<String, BTreeSet<String>>,
 }
 
@@ -137,6 +138,7 @@ impl IncludeBindings {
             opaque_namespace_scopes: catalogs.opaque_namespace_scopes,
             prelude_directives: catalogs.prelude_directives,
             instances,
+            module_cache: super::include_module_identity::ModuleIdentityCache::default(),
             extern_roots,
         }
     }

@@ -335,7 +335,9 @@ being guessed.
 
 Effect profiles evaluate every Cargo target and syntax guard by default. A
 runtime boundary can narrow evaluation to ordinary facts reachable from library
-or binary targets:
+or binary targets. Proc-macro implementations have distinct `proc-macro` and
+`proc-macro-test` compilation domains and build reachability, not production
+reachability. Use `all` to govern their host-side effects as well:
 
 ```toml
 [profiles.kernel]
@@ -610,6 +612,16 @@ types, and associated or constrained generic arguments are rejected rather
 than truncated to an outer path. An authored leading `crate::` is normalized
 against the analyzer's canonical local identity.
 
+Exact shape is resolved separately in every governed Cargo compilation domain.
+Inactive fields and child modules are absent; possible target predicates make
+their shape unresolved. Every selected feature world and test mode must match
+the contract, and mismatch diagnostics identify the domain. Coverage reports
+one resolved declaration shape per domain, not a union of written fields.
+An active or possibly active item-replacing attribute makes exact shape
+unsupported, even with `namespace_effect = "none"`: namespace preservation
+does not attest preservation of fields or representation. No shape-preservation
+macro grant is currently supported.
+
 Repository-wide written syntax is intentionally separate from per-type
 Clone/Copy closure:
 
@@ -682,11 +694,14 @@ zrail cannot inspect are rejected unless their invocation path has a reasoned
 allowance. Ordinary Rust expressions inside standard macro inputs are still
 analyzed. Other token DSLs require the separate `inputs = "opaque"` grant.
 
-Repository-owned macros lock a deterministic manifest of their implementing
-package, including helper macros and internal proc macros. The manifest follows
+Repository-owned macros lock a deterministic input digest of their implementing
+package, including helper macros and internal proc macros. Input capture follows
 the bounded transitive closure of workspace-member and repository-path helper
-crates, binding their manifests, Rust source, and literal compile inputs; a
-missing internal package fails closed. External allowances bind to the exact
+crates, binding every owned regular file (including JSON, templates, manifests,
+and Rust), the workspace manifest and Cargo lock, and literal compile inputs.
+Source exclusions cannot hide provider inputs. Missing internal packages or
+inputs, symlinks, unresolved includes, and exceeded input limits fail closed.
+External allowances bind to the exact
 dependency source. Built-in data macros and `include!` are handled directly,
 and included Rust remains fully analyzed.
 
@@ -701,11 +716,30 @@ reason = "Reviewed workspace expansion."
 kind = "repository"
 package = "workspace-macros"
 directory = "crates/workspace-macros"
+inputs = ["schemas/api.json"]
+ambient_inputs = "none"
 ```
 
-The package and directory must match the resolved repository origin. The lock
-then binds the complete deterministic implementation manifest; another package
-exporting the same macro name cannot borrow this authority.
+The package and directory must match the resolved repository origin. Optional
+`inputs` patterns are repository-relative additions to the owned input set;
+each pattern must match a regular file. Capture is bounded to 4,096 files and
+64 MiB of framed input per implementation, plus individual-file read limits.
+The lock stores the deterministic result as `inputs_sha256`; another package
+exporting the same macro name cannot borrow this authority. A qualified name
+alone is insufficient: repository allowances require this source or an exact
+local `definition`.
+
+`ambient_inputs = "none"` is mandatory for repository source authority. It is
+an explicit, source-bound review attestation that macro output depends only on
+invocation tokens and captured inputs, not unbound environment values, build
+outputs, filesystem contents or metadata, process results, or network inputs.
+`CARGO_MANIFEST_DIR` may locate the bound package tree, but its absolute value
+must not influence output. `.git`, `.zrail`, `target`, and `zrail.lock` paths are
+reserved and excluded from capture; reliance on them violates this attestation.
+Keep any custom output/lock paths outside the captured package tree. This is
+not a sandbox or static proof of hermeticity: a provider that needs undeclared
+ambient inputs cannot honestly receive this authority. Changed provider/helper
+files or reviewed input patterns require review of the assumption again.
 
 Ordinary macro permission does not make expansion output visible. Attribute,
 derive, and item macros therefore keep the surrounding namespace opaque unless
@@ -761,6 +795,7 @@ reason = "Reviewed expansion writes, mutably borrows, and mutates no governed fi
 kind = "repository"
 package = "workspace-macros"
 directory = "crates/workspace-macros"
+ambient_inputs = "none"
 ```
 
 This closes only `field-write`, `field-mutable-borrow`, and `field-mutation`

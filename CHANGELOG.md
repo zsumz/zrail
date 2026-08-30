@@ -4,6 +4,45 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ## [Unreleased]
 
+## [0.0.3-rc.6] - Unreleased
+
+### Added
+
+- Repository-source macro authority, including cross-crate exports, bounded
+  provider/helper input digests, reviewed extra input patterns, and an explicit
+  no-ambient-input attestation. This is reviewed authority, not a runtime sandbox.
+- Digest-bound cross-revision lock migration for source fixes that make the new
+  engine unable to analyze the old base. Contract grants remain separately reviewed.
+- Distinct host-side proc-macro and proc-macro-test compilation domains, excluded
+  from production-only runtime profiles but governed by all-reachability profiles.
+- Deterministic self-hosted projection-work qualification and advisory timing smoke.
+
+### Changed
+
+- Workspace producer and exact internal pins advance to `0.0.3-rc.6`; lock
+  semantics are epoch 5 (schema 3). This candidate has not been released.
+- Cargo feature-world exactness is limited to the verified conservative subset;
+  unsupported split host/target contexts fail closed and have Cargo oracle fixtures.
+- Declarative facade conventions allow central data declarations and required
+  proc-macro entrypoints while continuing to reject implementation bodies elsewhere.
+
+### Fixed
+
+- Exact type shape now filters guarded fields and child modules per compilation
+  domain, rejects possible shape, checks every governed world, and reports domain
+  identities. Active item-replacing attributes cannot claim exact representation
+  through namespace-only authority. Coverage uses the same resolved shapes.
+- Repository macro input digests bind owned non-Rust files even when source
+  exclusions hide them; explicit input authority rejects missing/escaping inputs,
+  symlinks, and undeclared ambient assumptions. Qualified names cannot bypass review.
+- Macro resolution is occurrence-specific; target-predicate module mounts,
+  include-mounted fragments, and macro/module namespace collisions no longer
+  downgrade unrelated exact builtin origins.
+- Clone/Copy spelling-equivalent policies compare neutrally; negative impls do
+  not count as duplication grants, and redundant prohibitions are rejected.
+- Fresh worktrees tolerate absent disposable cache tags, documentation lock drift
+  uses lock diagnostics, and test-only `use super::*` remains a supported convention.
+
 ## [0.0.3-rc.5] - 2026-08-29
 
 ### Added

@@ -5,7 +5,9 @@ use std::collections::BTreeSet;
 use super::{
     Contract, CrateRootSource,
     validate_limits::ValidationErrors,
-    validate_paths::{validate_package_name, validate_repository_literal},
+    validate_paths::{
+        validate_package_name, validate_repository_literal, validate_repository_pattern,
+    },
     validate_sets::require_reason,
     validate_source::valid_rust_path,
 };
@@ -97,9 +99,32 @@ pub(super) fn validate_source(
                 || optional_empty(rev.as_ref())
                 || optional_empty(requirement.as_ref())
         }
-        CrateRootSource::Repository { package, directory } => {
+        CrateRootSource::Repository {
+            package,
+            directory,
+            inputs,
+            ..
+        } => {
             validate_package_name(package, errors);
             validate_repository_literal(directory, errors);
+            if inputs.len() > 4_096 {
+                errors.push("repository macro inputs exceed the 4096-pattern safety limit".into());
+            }
+            let mut seen = BTreeSet::new();
+            for input in inputs {
+                validate_repository_pattern(input, errors);
+                if !seen.insert(input) {
+                    errors.push(format!("duplicate repository macro input {input:?}"));
+                }
+                if input
+                    .split('/')
+                    .any(|part| matches!(part, ".git" | ".zrail" | "target" | "zrail.lock"))
+                {
+                    errors.push(format!(
+                        "repository macro input {input:?} selects reserved metadata or build output"
+                    ));
+                }
+            }
             package.trim().is_empty() || directory.trim().is_empty()
         }
     };

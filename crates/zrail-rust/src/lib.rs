@@ -47,6 +47,10 @@ mod place_domain_world_test;
 #[path = "type_policy_cfg_attr_test.rs"]
 mod type_policy_cfg_attr_test;
 
+#[cfg(test)]
+#[path = "type_shape_test.rs"]
+mod type_shape_test;
+
 pub use analysis::{AnalysisIssue, AnalysisIssueKind, AnalysisMetrics, AnalysisOutcome};
 pub use coverage::{
     GovernedAnalysis, GovernedCompilationDomain, GovernedDependencyPath, GovernedDependencyRule,

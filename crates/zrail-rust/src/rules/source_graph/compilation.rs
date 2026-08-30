@@ -120,9 +120,13 @@ impl Walker<'_> {
 pub(super) fn target_domains(kind: CargoTargetKind) -> Vec<(CompilationMode, Reachability)> {
     let reachability = target_reachability(kind);
     match kind {
-        CargoTargetKind::Library | CargoTargetKind::ProcMacro => vec![
+        CargoTargetKind::Library => vec![
             (CompilationMode::Library, reachability),
             (CompilationMode::LibraryTest, reachability),
+        ],
+        CargoTargetKind::ProcMacro => vec![
+            (CompilationMode::ProcMacro, reachability),
+            (CompilationMode::ProcMacroTest, reachability),
         ],
         CargoTargetKind::Binary => vec![
             (CompilationMode::Binary, reachability),
@@ -140,13 +144,15 @@ pub(super) fn target_domains(kind: CargoTargetKind) -> Vec<(CompilationMode, Rea
 
 const fn target_reachability(kind: CargoTargetKind) -> Reachability {
     let kind = match kind {
-        CargoTargetKind::Library | CargoTargetKind::ProcMacro | CargoTargetKind::Binary => {
-            ReachabilityKind::Production
-        }
+        CargoTargetKind::Library | CargoTargetKind::Binary => ReachabilityKind::Production,
         CargoTargetKind::Test => ReachabilityKind::Test,
         CargoTargetKind::Benchmark => ReachabilityKind::Benchmark,
         CargoTargetKind::Example => ReachabilityKind::Example,
-        CargoTargetKind::BuildScript => ReachabilityKind::Build,
+        CargoTargetKind::BuildScript | CargoTargetKind::ProcMacro => ReachabilityKind::Build,
     };
     Reachability::from_kind(kind)
 }
+
+#[cfg(test)]
+#[path = "compilation_test.rs"]
+mod compilation_test;

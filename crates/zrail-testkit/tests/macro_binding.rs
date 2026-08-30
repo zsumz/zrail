@@ -213,7 +213,7 @@ fn allowance_with_binding(name: &str, binding: &str) -> String {
 
 fn opaque_allowance(name: &str) -> String {
     format!(
-        "\n[[source.rust.macros.allow]]\nname = \"{name}\"\ninputs = \"opaque\"\nreason = \"Reviewed opaque expansion boundary.\"\n"
+        "\n[[source.rust.macros.allow]]\nname = \"{name}\"\ninputs = \"opaque\"\nreason = \"Reviewed opaque expansion boundary.\"\n[source.rust.macros.allow.source]\nkind = \"repository\"\npackage = \"fixture\"\ndirectory = \".\"\nambient_inputs = \"none\"\n"
     )
 }
 

@@ -43,7 +43,8 @@ target matching the machine that will run zrail:
 | Windows x86-64 | `x86_64-pc-windows-msvc` | `.zip` |
 
 For Linux x86-64 with glibc, download and verify one exact release like this
-(replace `0.0.3-rc.5` with the reviewed version):
+(replace `0.0.3-rc.5` with the reviewed version; this checkout prepares unreleased
+`0.0.3-rc.6`, so the installation examples still name the released candidate):
 
 ```sh
 ZRAIL_VERSION=0.0.3-rc.5

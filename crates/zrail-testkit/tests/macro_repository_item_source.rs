@@ -22,8 +22,8 @@ fn matching_repository_source_binds_item_manifest_and_implementation() {
         .expect("locked macro implementation");
     assert_eq!(implementation.package, "workspace-macros");
     assert_eq!(implementation.directory, "macros");
-    assert_eq!(implementation.manifest_sha256.len(), 64);
-    assert_eq!(authority.definition_sha256, implementation.manifest_sha256);
+    assert_eq!(implementation.inputs_sha256.len(), 64);
+    assert_eq!(authority.definition_sha256, implementation.inputs_sha256);
 
     lock.write(&root.join("zrail.lock")).expect("write lock");
     let report = check_repository(&root, "zrail.toml".as_ref(), "zrail.lock".as_ref())
@@ -199,7 +199,7 @@ mode = "allow"
 name = "workspace_macros::declare"
 path = "app/src/lib.rs"
 resolution = "exact"
-source = { kind = "repository", package = "SOURCE_PACKAGE", directory = "SOURCE_DIRECTORY" }
+source = { kind = "repository", package = "SOURCE_PACKAGE", directory = "SOURCE_DIRECTORY", ambient_inputs = "none" }
 manifest = "zrail/macros/declare.toml"
 reason = "The exact workspace macro owns this manifested namespace."
 [source.rust.hygiene]

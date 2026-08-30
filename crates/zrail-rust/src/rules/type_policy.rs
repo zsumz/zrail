@@ -57,6 +57,7 @@ fn evaluate_policy(
     }
     let had_uncertain = !uncertain.is_empty();
     for (file, declaration) in uncertain {
+        shape::check(context, policy, file, declaration, findings);
         subject_finding(
             policy,
             file,

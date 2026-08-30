@@ -81,6 +81,7 @@ fn local_definition(
         Some(zrail_core::CrateRootSource::Repository {
             package: allowed_package,
             directory: allowed_directory,
+            ..
         }) if allowed_package == package && allowed_directory == directory => {
             repository_implementations
                 .iter()
@@ -90,7 +91,7 @@ fn local_definition(
                 .map(|implementation| {
                     (
                         format!("repository:{package}:{directory}"),
-                        implementation.manifest_sha256.clone(),
+                        implementation.inputs_sha256.clone(),
                     )
                 })
                 .ok_or_else(|| "repository macro implementation manifest is unavailable".to_owned())

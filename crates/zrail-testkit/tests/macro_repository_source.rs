@@ -120,6 +120,7 @@ field_mutation = "none"
 reason = "Reviewed workspace macro performs no field mutation."
 [source.rust.macros.allow.source]
 kind = "repository"
+ambient_inputs = "none"
 package = "workspace-macros"
 directory = "SOURCE_DIRECTORY"
 [source.rust.hygiene]

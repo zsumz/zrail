@@ -89,7 +89,10 @@ pub fn run() { let _ = local_alias!(); }
         let root = repository(
             name.replace("::", "-as-").as_str(),
             source,
-            &allowance(name),
+            &format!(
+                "{}[source.rust.macros.allow.source]\nkind = \"repository\"\npackage = \"fixture\"\ndirectory = \".\"\nambient_inputs = \"none\"\n",
+                allowance(name)
+            ),
             "",
         );
         lock(&root);

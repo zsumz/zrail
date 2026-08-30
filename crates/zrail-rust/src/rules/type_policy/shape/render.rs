@@ -1,22 +1,18 @@
 //! Recursive canonical rendering for type and const shapes.
 
-use zrail_core::PolicyReachability;
-
 use crate::source::{
-    ConstShapeFact, FactNamespace, RustFileFacts, TypeArgumentFact, TypeShapeFact,
+    CompilationDomain, ConstShapeFact, RustFileFacts, TypeArgumentFact, TypeShapeFact,
 };
 
-use super::super::{RuleContext, identity};
+use super::super::identity;
 
 pub(crate) fn render_source(
     shape: &TypeShapeFact,
-    context: &RuleContext<'_>,
     file: &RustFileFacts,
-    reachability: PolicyReachability,
+    domain: &CompilationDomain,
 ) -> Result<String, String> {
     render(shape, &mut |written, span| {
-        let resolved =
-            identity::at_span(context, file, span, reachability, Some(FactNamespace::Type));
+        let resolved = identity::at_span_in_domain(file, span, domain);
         if primitive(written) && resolved.exact.is_empty() && !resolved.unresolved {
             return Ok(written.into());
         }

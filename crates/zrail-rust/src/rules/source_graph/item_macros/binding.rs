@@ -62,6 +62,7 @@ fn repository_definition_matches(
         Some(CrateRootSource::Repository {
             package: allowed_package,
             directory: allowed_directory,
+            ..
         }) => allowed_package == package && allowed_directory == directory,
         Some(_) => false,
     }

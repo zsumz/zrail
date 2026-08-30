@@ -43,42 +43,55 @@ pub(super) fn observations<'a>(
             if !candidate(file, declaration, policy, &resolution) {
                 continue;
             }
-            let (fields, fields_exact) = observed_fields(context, policy, file, declaration);
-            let mut quality = support::resolution_quality(&resolution);
-            if !fields_exact {
-                quality = quality.max(AnalysisQuality::Unresolved);
+            for shape in shape::resolve(context, policy, file, declaration) {
+                let domain_resolution =
+                    identity::at_span_in_domain(file, declaration.identity_span, &shape.domain);
+                let mut quality = support::resolution_quality(&domain_resolution);
+                if !shape.is_exact() {
+                    quality = quality.max(AnalysisQuality::Unresolved);
+                }
+                let allowed = domain_resolution.is_exact(&policy.identity)
+                    && shape::problems(policy, &shape).is_empty();
+                let fields = shape
+                    .fields
+                    .as_ref()
+                    .ok()
+                    .and_then(|fields| fields.as_ref())
+                    .map(|fields| {
+                        fields
+                            .iter()
+                            .map(|field| GovernedTypeField {
+                                name: field.name.clone(),
+                                visibility: field.visibility.clone(),
+                                type_identity: field.type_identity.clone(),
+                            })
+                            .collect()
+                    });
+                observations.push(GovernedTypeObservation {
+                    path: file.relative.clone(),
+                    operation: "declaration".into(),
+                    observed: support::observed_identity(
+                        &domain_resolution,
+                        policy
+                            .identity
+                            .rsplit("::")
+                            .next()
+                            .unwrap_or(&policy.identity),
+                    ),
+                    canonical: domain_resolution.exact.iter().cloned().collect(),
+                    declaration_kind: Some(kind_name(declaration.kind).into()),
+                    visibility: Some(declaration.visibility.clone()),
+                    leaf_module: shape.leaf_module.ok(),
+                    fields,
+                    span: declaration.identity_span,
+                    lexical_scope: declaration.lexical_scope.clone(),
+                    quality,
+                    guard: declaration.guard.canonical_name(),
+                    compilation_domains: vec![support::domain(&shape.domain)],
+                    allowed,
+                    closed: None,
+                });
             }
-            let allowed = resolution.is_exact(&policy.identity)
-                && shape_allowed(context, policy, file, declaration);
-            observations.push(GovernedTypeObservation {
-                path: file.relative.clone(),
-                operation: "declaration".into(),
-                observed: support::observed_identity(
-                    &resolution,
-                    policy
-                        .identity
-                        .rsplit("::")
-                        .next()
-                        .unwrap_or(&policy.identity),
-                ),
-                canonical: resolution.exact.iter().cloned().collect(),
-                declaration_kind: Some(kind_name(declaration.kind).into()),
-                visibility: Some(declaration.visibility.clone()),
-                leaf_module: Some(declaration.leaf_module),
-                fields,
-                span: declaration.identity_span,
-                lexical_scope: declaration.lexical_scope.clone(),
-                quality,
-                guard: declaration.guard.canonical_name(),
-                compilation_domains: support::domains(
-                    model,
-                    file,
-                    &declaration.guard,
-                    policy.reachability,
-                ),
-                allowed,
-                closed: None,
-            });
             observations.extend(derive_observations(model, policy, file, declaration));
             if resolution.is_exact(&policy.identity) {
                 selected.push(SelectedDeclaration { file, declaration });
@@ -107,62 +120,6 @@ fn candidate(
         .filter(|fact| fact.span == Some(declaration.identity_span))
         .flat_map(crate::source::ObservedFact::policy_names)
         .any(|name| name.rsplit("::").next() == Some(expected))
-}
-
-fn observed_fields(
-    context: &RuleContext<'_>,
-    policy: &RustTypeContract,
-    file: &RustFileFacts,
-    declaration: &TypeDeclarationFact,
-) -> (Option<Vec<GovernedTypeField>>, bool) {
-    let Some(fields) = &declaration.fields else {
-        return (None, true);
-    };
-    let mut exact = true;
-    let fields = fields
-        .iter()
-        .map(|field| {
-            let rendered =
-                shape::render_source(&field.type_shape, context, file, policy.reachability);
-            exact &= rendered.is_ok();
-            support::observed_field(&field.name, &field.visibility, rendered)
-        })
-        .collect();
-    (Some(fields), exact)
-}
-
-fn shape_allowed(
-    context: &RuleContext<'_>,
-    policy: &RustTypeContract,
-    file: &RustFileFacts,
-    declaration: &TypeDeclarationFact,
-) -> bool {
-    if policy
-        .visibility
-        .as_ref()
-        .is_some_and(|expected| declaration.visibility != *expected)
-        || policy
-            .leaf_module
-            .is_some_and(|expected| declaration.leaf_module != expected)
-    {
-        return false;
-    }
-    let Some(expected) = &policy.fields else {
-        return true;
-    };
-    let Some(actual) = &declaration.fields else {
-        return false;
-    };
-    declaration.kind == TypeDeclarationKind::NamedStruct
-        && expected.len() == actual.len()
-        && expected.iter().zip(actual).all(|(expected, actual)| {
-            expected.name == actual.name
-                && expected.visibility == actual.visibility
-                && shape::render_contract(&expected.type_identity).is_ok_and(|expected| {
-                    shape::render_source(&actual.type_shape, context, file, policy.reachability)
-                        == Ok(expected)
-                })
-        })
 }
 
 fn derive_observations(

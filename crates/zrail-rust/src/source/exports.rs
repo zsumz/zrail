@@ -32,6 +32,7 @@ pub(crate) use super::{
     source_instance::{
         CompilationRoot, SourceEntry, SourceInstanceId, SourceInstanceIssue, SourceInstances,
     },
+    type_policy_index::inherit_replacing_mounts,
     type_policy_model::{
         DuplicationSyntaxKind, TraitImplFact, TraitImplPolarity, TypeDeclarationFact,
         TypeDeclarationKind,

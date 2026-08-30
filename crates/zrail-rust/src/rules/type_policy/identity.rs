@@ -5,7 +5,8 @@ use std::collections::BTreeSet;
 use zrail_core::{AnalysisQuality, PolicyReachability, SourceSpan};
 
 use crate::source::{
-    CompilationDomain, CompilationMode, FactNamespace, RustFileFacts, SyntaxGuard,
+    CompilationDomain, CompilationMode, FactNamespace, GuardAvailability, RustFileFacts,
+    SyntaxGuard,
 };
 
 use super::super::RuleContext;
@@ -106,6 +107,30 @@ pub(crate) fn applies(
         })
 }
 
+pub(crate) fn at_span_in_domain(
+    file: &RustFileFacts,
+    span: SourceSpan,
+    domain: &CompilationDomain,
+) -> IdentityResolution {
+    let mut resolution = IdentityResolution::default();
+    for fact in file
+        .paths
+        .iter()
+        .filter(|fact| fact.span == Some(span) && fact.namespace == FactNamespace::Type)
+    {
+        match fact.guard.availability_in_domain(domain) {
+            GuardAvailability::Absent => {}
+            GuardAvailability::Exact if fact.quality == AnalysisQuality::Exact => {
+                resolution
+                    .exact
+                    .extend(fact.policy_names().map(str::to_owned));
+            }
+            _ => resolution.unresolved = true,
+        }
+    }
+    resolution
+}
+
 pub(crate) fn domain_identities(
     context: &RuleContext<'_>,
     file: &RustFileFacts,
@@ -125,7 +150,10 @@ pub(crate) fn domain_identities(
         .collect()
 }
 
-fn within_reachability(domain: &CompilationDomain, reachability: PolicyReachability) -> bool {
+pub(crate) fn within_reachability(
+    domain: &CompilationDomain,
+    reachability: PolicyReachability,
+) -> bool {
     reachability == PolicyReachability::All
         || matches!(
             domain.mode,

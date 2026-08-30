@@ -55,7 +55,7 @@ pub struct LockFile {
         skip_serializing_if = "Vec::is_empty"
     )]
     pub execution_receipts: Vec<LockedExecutionReceipt>,
-    /// Procedural-macro packages bound to their manifests.
+    /// Repository macro packages bound to their implementation input sets.
     #[serde(
         default,
         rename = "macro_implementation",

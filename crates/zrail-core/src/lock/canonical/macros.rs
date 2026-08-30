@@ -15,9 +15,9 @@ fn canonicalize_implementations(lock: &mut LockFile) -> Result<(), LockError> {
                 implementation.package, implementation.directory
             )));
         }
-        if !valid_digest(&implementation.manifest_sha256) {
+        if !valid_digest(&implementation.inputs_sha256) {
             return Err(LockError(format!(
-                "locked macro implementation {} has invalid manifest_sha256",
+                "locked macro implementation {} has invalid inputs_sha256",
                 implementation.package
             )));
         }

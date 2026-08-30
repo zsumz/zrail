@@ -1,6 +1,10 @@
 //! One syntax traversal extracts type shape plus written duplication boundaries.
 
-use std::collections::BTreeSet;
+#[path = "type_policy_mounts.rs"]
+mod mounts;
+pub(crate) use mounts::inherit_replacing_mounts;
+
+use std::collections::{BTreeMap, BTreeSet};
 
 use syn::{
     Block, ItemImpl, ItemMod, ItemStruct, ItemUse,
@@ -13,6 +17,7 @@ use super::{
     FactNamespace, ObservedFact, SyntaxGuard,
     attributes::cfg_guard,
     fact::{source_span, written_fact},
+    ordinary_binding_facts::replacement_macros,
     type_policy_model::{
         DuplicationSyntaxFact, DuplicationSyntaxKind, TraitImplFact, TraitImplPolarity,
         TypeDeclarationFact, TypeDeclarationKind, TypePolicyFacts,
@@ -27,11 +32,16 @@ use super::{
 pub(super) fn collect(syntax: &syn::File) -> (TypePolicyFacts, Vec<ObservedFact>) {
     let mut collector = Collector {
         guard: cfg_guard(&syntax.attrs),
+        replacement_macros: replacement_macros(&syntax.attrs, &cfg_guard(&syntax.attrs), &[]),
         ..Collector::default()
     };
     collector.visit_file(syntax);
     for declaration in &mut collector.facts.declarations {
-        declaration.leaf_module = !collector.child_modules.contains(&declaration.lexical_scope);
+        declaration.child_module_guards = collector
+            .child_modules
+            .get(&declaration.lexical_scope)
+            .cloned()
+            .unwrap_or_default();
     }
     collector.synthetic_paths.sort_by_key(|fact| fact.span);
     (collector.facts, collector.synthetic_paths)
@@ -41,21 +51,32 @@ pub(super) fn collect(syntax: &syn::File) -> (TypePolicyFacts, Vec<ObservedFact>
 struct Collector {
     facts: TypePolicyFacts,
     synthetic_paths: Vec<ObservedFact>,
-    child_modules: BTreeSet<Vec<SourceSpan>>,
+    child_modules: BTreeMap<Vec<SourceSpan>, Vec<SyntaxGuard>>,
     lexical_scope: Vec<SourceSpan>,
     guard: SyntaxGuard,
+    replacement_macros: Vec<super::macro_binding_policy::MacroOccurrence>,
 }
 
 impl<'ast> Visit<'ast> for Collector {
     fn visit_item(&mut self, item: &'ast syn::Item) {
         let previous = self.guard.clone();
         self.guard = previous.combine(cfg_guard(item_attrs(item)));
+        let previous_macros = self.replacement_macros.len();
+        self.replacement_macros.extend(replacement_macros(
+            item_attrs(item),
+            &self.guard,
+            &self.lexical_scope,
+        ));
         visit::visit_item(self, item);
+        self.replacement_macros.truncate(previous_macros);
         self.guard = previous;
     }
 
     fn visit_item_mod(&mut self, module: &'ast ItemMod) {
-        self.child_modules.insert(self.lexical_scope.clone());
+        self.child_modules
+            .entry(self.lexical_scope.clone())
+            .or_default()
+            .push(self.guard.clone());
         let Some((_, items)) = &module.content else {
             return;
         };
@@ -96,7 +117,9 @@ impl<'ast> Visit<'ast> for Collector {
             derives: derives(&item.attrs, &self.guard),
             guard: self.guard.clone(),
             lexical_scope: self.lexical_scope.clone(),
-            leaf_module: false,
+            child_module_guards: Vec::new(),
+            replacement_macros: self.replacement_macros.clone(),
+            replacing_mounts: BTreeSet::new(),
         });
         visit::visit_item_struct(self, item);
     }
@@ -121,7 +144,9 @@ impl<'ast> Visit<'ast> for Collector {
             derives: derives(&item.attrs, &self.guard),
             guard: self.guard.clone(),
             lexical_scope: self.lexical_scope.clone(),
-            leaf_module: false,
+            child_module_guards: Vec::new(),
+            replacement_macros: self.replacement_macros.clone(),
+            replacing_mounts: BTreeSet::new(),
         });
         visit::visit_item_enum(self, item);
     }

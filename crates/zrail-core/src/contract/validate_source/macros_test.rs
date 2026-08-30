@@ -202,6 +202,8 @@ fn repository_source_is_valid_macro_provenance() {
         .push(no_binding_allowance(Some(CrateRootSource::Repository {
             package: "workspace-macros".into(),
             directory: "crates/workspace-macros".into(),
+            inputs: Vec::new(),
+            ambient_inputs: crate::MacroAmbientInputs::None,
         })));
 
     validate_contract(&contract).expect("repository macro provenance is immutable in the lock");

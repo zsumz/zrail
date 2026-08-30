@@ -15,7 +15,7 @@ use super::modes::{
 pub use analysis::{AnalysisContract, AnalysisLimits};
 pub use dependencies::{
     CrateRootContract, CrateRootSource, DependenciesContract, DependencyEdgeKind,
-    DependencyReachability,
+    DependencyReachability, MacroAmbientInputs,
 };
 pub use evidence::{
     GateContract, GateKind, InvariantContract, InvariantStatus, MAX_TEST_MIRROR_INPUTS,

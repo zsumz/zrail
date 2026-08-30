@@ -136,6 +136,6 @@ fn implementation(digit: &str) -> LockedMacroImplementation {
     LockedMacroImplementation {
         package: "fixture".into(),
         directory: ".".into(),
-        manifest_sha256: digit.repeat(64),
+        inputs_sha256: digit.repeat(64),
     }
 }

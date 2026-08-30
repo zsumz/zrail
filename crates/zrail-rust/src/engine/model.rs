@@ -90,6 +90,11 @@ pub(crate) fn load_model_with_bundle(
             .copied()
             .unwrap_or_default();
     }
+    crate::source::inherit_replacing_mounts(
+        &mut source,
+        &graph.compilation_edges,
+        &graph.compilation_includes,
+    );
     canonicalize_dependency_roots(
         &mut source,
         CanonicalizationContext {

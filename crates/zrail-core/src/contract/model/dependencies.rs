@@ -109,7 +109,21 @@ pub enum CrateRootSource {
         package: String,
         /// Normalized repository-relative package directory.
         directory: String,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        /// Additional repository-relative file patterns in the reviewed implementation input set.
+        inputs: Vec<String>,
+        /// Explicit review that output does not depend on unbound ambient inputs.
+        ambient_inputs: MacroAmbientInputs,
     },
+}
+
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
+/// Reviewed ambient-input boundary for repository macro implementation authority.
+pub enum MacroAmbientInputs {
+    /// Only invocation tokens and bound files influence output; no unbound environment,
+    /// build outputs, filesystem, process, or network inputs. This is an attestation, not a sandbox.
+    None,
 }
 
 impl CrateRootSource {
@@ -150,8 +164,14 @@ impl CrateRootSource {
                 rev.as_deref().unwrap_or(""),
                 requirement.as_deref().unwrap_or("")
             ),
-            Self::Repository { package, directory } => {
-                format!("repository:{package}:{directory}")
+            Self::Repository {
+                package,
+                directory,
+                inputs,
+                ambient_inputs: MacroAmbientInputs::None,
+            } => {
+                let inputs = inputs.iter().collect::<std::collections::BTreeSet<_>>();
+                format!("repository:{package}:{directory}:inputs={inputs:?}:ambient=none")
             }
         }
     }

@@ -17,7 +17,7 @@ pub(super) fn failures(
     let mut failures = candidate
         .origins
         .iter()
-        .filter_map(|origin| mismatch(candidate, allowance, origin, resolved_cargo))
+        .filter_map(|origin| mismatch(allowance, origin, resolved_cargo))
         .collect::<Vec<_>>();
     failures.sort();
     failures.dedup();
@@ -25,7 +25,6 @@ pub(super) fn failures(
 }
 
 fn mismatch(
-    candidate: &MacroCandidate,
     allowance: &MacroExpansionAllow,
     origin: &MacroOrigin,
     resolved_cargo: Option<&ResolvedCargoGraph>,
@@ -42,6 +41,7 @@ fn mismatch(
                 Some(CrateRootSource::Repository {
                     package: allowed_package,
                     directory: allowed_directory,
+                    ..
                 }) if allowed_package == package && allowed_directory == directory
             ) && allowance.source.is_some() =>
         {
@@ -50,14 +50,13 @@ fn mismatch(
                 vec![format!("repository:{package}:{directory}")],
             ))
         }
-        MacroOrigin::Repository { .. }
-            if allowance.source.is_none()
-                && allowance.definition.is_none()
-                && !candidate.policy_names().all(|name| name.contains("::")) =>
+        MacroOrigin::Repository { package, directory }
+            if allowance.source.is_none() && allowance.definition.is_none() =>
         {
-            Some(MacroBindingFailure::ConfidenceNotGranted {
-                allowance: allowance.name.clone(),
-            })
+            Some(source_mismatch(
+                allowance,
+                vec![format!("repository:{package}:{directory}")],
+            ))
         }
         MacroOrigin::External { package, source }
             if allowance.source.as_ref().is_none_or(|allowed| {
@@ -107,7 +106,7 @@ fn source_mismatch(
     MacroBindingFailure::SourceMismatch {
         allowance: allowance.name.clone(),
         expected: allowance.source.as_ref().map_or_else(
-            || "explicit external source".into(),
+            || "explicit implementation source or local definition".into(),
             CrateRootSource::identity,
         ),
         observed,

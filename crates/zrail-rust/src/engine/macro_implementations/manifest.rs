@@ -1,10 +1,11 @@
 //! Deterministic package input capture and digesting.
 
+mod digest;
 mod packages;
 
-use std::{collections::BTreeMap, path::Path};
+use std::collections::{BTreeMap, BTreeSet};
 
-use zrail_core::{LockedMacroImplementation, MAX_INPUT_BYTES, read_bytes_with_limit, sha256_hex};
+use zrail_core::{LockedMacroImplementation, MAX_INPUT_BYTES, read_bytes_with_limit};
 
 use crate::{
     cargo::CargoWorkspace,
@@ -14,8 +15,8 @@ use crate::{
 
 use super::CheckError;
 
-pub(super) const MAX_IMPLEMENTATION_INPUTS: usize = 4_096;
-const MAX_IMPLEMENTATION_BYTES: usize = 64 * 1024 * 1024;
+use digest::MAX_IMPLEMENTATION_BYTES;
+pub(super) use digest::{MAX_IMPLEMENTATION_INPUTS, digest_inputs};
 
 pub(super) fn repository_manifest(
     inventory: &RepositoryInventory,
@@ -23,6 +24,7 @@ pub(super) fn repository_manifest(
     source: &SourceIndex,
     package_name: &str,
     directory: &str,
+    extra_inputs: &BTreeSet<String>,
 ) -> Result<LockedMacroImplementation, CheckError> {
     let package = cargo
         .packages
@@ -31,7 +33,7 @@ pub(super) fn repository_manifest(
     let entries = inventory
         .entries
         .iter()
-        .filter(|entry| entry.kind == RepositoryEntryKind::File)
+        .filter(|entry| entry.kind != RepositoryEntryKind::Directory && !reserved(&entry.relative))
         .map(|entry| (entry.relative.as_str(), entry))
         .collect::<BTreeMap<_, _>>();
     let mut inputs = BTreeMap::<String, Vec<u8>>::new();
@@ -40,6 +42,7 @@ pub(super) fn repository_manifest(
         crate::cargo::Package::manifest_path,
     );
     add_required_entry(&entries, &manifest_path, &mut inputs)?;
+    add_entry(&entries, "Cargo.lock", &mut inputs)?;
     if let Some(package) = package {
         add_entry(&entries, "Cargo.toml", &mut inputs)?;
         for package in packages::implementation_packages(&cargo.packages, package)? {
@@ -56,11 +59,26 @@ pub(super) fn repository_manifest(
             add_entry(&entries, path, &mut inputs)?;
         }
     }
+    for pattern in extra_inputs {
+        let paths = entries
+            .keys()
+            .copied()
+            .filter(|path| zrail_core::glob_matches(pattern, path))
+            .collect::<Vec<_>>();
+        if paths.is_empty() {
+            return Err(CheckError::from_message(format!(
+                "repository macro input {pattern:?} matches no bounded regular files"
+            )));
+        }
+        for path in paths {
+            add_required_entry(&entries, path, &mut inputs)?;
+        }
+    }
     let digest = digest_inputs(&inputs)?;
     Ok(LockedMacroImplementation {
         package: package_name.into(),
         directory: directory.into(),
-        manifest_sha256: digest,
+        inputs_sha256: digest,
     })
 }
 
@@ -71,9 +89,11 @@ fn add_package_inputs(
     package: &crate::cargo::Package,
     inputs: &mut BTreeMap<String, Vec<u8>>,
 ) -> Result<(), CheckError> {
-    for path in entries.keys().copied().filter(|path| {
-        is_rust_source(path) && package_owns_path(&package.directory, path, &cargo.packages)
-    }) {
+    for path in entries
+        .keys()
+        .copied()
+        .filter(|path| package_owns_path(&package.directory, path, &cargo.packages))
+    {
         add_entry(entries, path, inputs)?;
     }
     for file in source
@@ -86,11 +106,9 @@ fn add_package_inputs(
     Ok(())
 }
 
-fn is_rust_source(path: &str) -> bool {
-    Path::new(path)
-        .extension()
-        .and_then(|extension| extension.to_str())
-        .is_some_and(|extension| extension.eq_ignore_ascii_case("rs") || extension == "rsi")
+fn reserved(path: &str) -> bool {
+    path.split('/')
+        .any(|part| matches!(part, ".git" | ".zrail" | "target" | "zrail.lock"))
 }
 
 fn package_owns_path(directory: &str, path: &str, packages: &[crate::cargo::Package]) -> bool {
@@ -117,13 +135,18 @@ fn add_compile_inputs(
         {
             continue;
         }
-        let Some(target) = effect.target.as_deref() else {
-            continue;
-        };
-        let Ok(path) = join_relative(&parent(&file.relative), target) else {
-            continue;
-        };
-        add_entry(entries, &path, inputs)?;
+        let target = effect.target.as_deref().ok_or_else(|| {
+            CheckError::from_message(format!(
+                "repository macro implementation {} has an unresolved include input",
+                file.relative
+            ))
+        })?;
+        let path = join_relative(&parent(&file.relative), target).map_err(|error| {
+            CheckError::from_message(format!(
+                "repository macro include input is invalid: {error:?}"
+            ))
+        })?;
+        add_required_entry(entries, &path, inputs)?;
     }
     Ok(())
 }
@@ -135,7 +158,7 @@ fn add_required_entry(
 ) -> Result<(), CheckError> {
     if !entries.contains_key(path) {
         return Err(CheckError::from_message(format!(
-            "repository macro implementation manifest {path:?} is unavailable"
+            "repository macro implementation input {path:?} is unavailable"
         )));
     }
     add_entry(entries, path, inputs)
@@ -164,38 +187,32 @@ fn add_entry(
     let Some(entry) = entries.get(path) else {
         return Ok(());
     };
-    let bytes = read_bytes_with_limit(&entry.absolute, MAX_INPUT_BYTES)
-        .map_err(CheckError::from_message)?;
-    inputs.insert(path.into(), bytes);
-    Ok(())
-}
-
-pub(super) fn digest_inputs(inputs: &BTreeMap<String, Vec<u8>>) -> Result<String, CheckError> {
-    if inputs.len() > MAX_IMPLEMENTATION_INPUTS {
+    if entry.kind != RepositoryEntryKind::File {
+        return Err(CheckError::from_message(format!(
+            "repository macro input {path:?} is not a regular file"
+        )));
+    }
+    if inputs.len() == MAX_IMPLEMENTATION_INPUTS {
         return Err(CheckError::from_message(format!(
             "macro implementation exceeds the {MAX_IMPLEMENTATION_INPUTS}-input safety limit"
         )));
     }
-    let total = inputs.iter().try_fold(0_usize, |total, (path, bytes)| {
-        total
-            .checked_add(path.len())
-            .and_then(|value| value.checked_add(bytes.len()))
-            .and_then(|value| value.checked_add(16))
-    });
-    if total.is_none_or(|total| total > MAX_IMPLEMENTATION_BYTES) {
+    let bytes = read_bytes_with_limit(&entry.absolute, MAX_INPUT_BYTES)
+        .map_err(CheckError::from_message)?;
+    let captured = inputs
+        .iter()
+        .map(|(path, bytes)| path.len() + bytes.len() + 16)
+        .sum::<usize>();
+    if captured
+        .saturating_add(path.len())
+        .saturating_add(bytes.len())
+        .saturating_add(16)
+        > MAX_IMPLEMENTATION_BYTES
+    {
         return Err(CheckError::from_message(format!(
             "macro implementation exceeds the {MAX_IMPLEMENTATION_BYTES}-byte safety limit"
         )));
     }
-    let mut manifest = Vec::with_capacity(total.unwrap_or_default());
-    for (path, bytes) in inputs {
-        frame(&mut manifest, path.as_bytes());
-        frame(&mut manifest, bytes);
-    }
-    Ok(sha256_hex(&manifest))
-}
-
-fn frame(output: &mut Vec<u8>, bytes: &[u8]) {
-    output.extend_from_slice(&(bytes.len() as u64).to_le_bytes());
-    output.extend_from_slice(bytes);
+    inputs.insert(path.into(), bytes);
+    Ok(())
 }

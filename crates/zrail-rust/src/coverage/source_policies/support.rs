@@ -127,15 +127,5 @@ pub(super) const fn duplication_trait_name(value: DuplicationTrait) -> &'static 
 }
 
 const fn compilation_mode(value: CompilationMode) -> &'static str {
-    match value {
-        CompilationMode::Library => "library",
-        CompilationMode::LibraryTest => "library-test",
-        CompilationMode::Binary => "binary",
-        CompilationMode::BinaryTest => "binary-test",
-        CompilationMode::IntegrationTest => "integration-test",
-        CompilationMode::Benchmark => "benchmark",
-        CompilationMode::Example => "example",
-        CompilationMode::ExampleTest => "example-test",
-        CompilationMode::BuildScript => "build-script",
-    }
+    value.canonical_name()
 }

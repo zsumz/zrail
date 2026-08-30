@@ -1,5 +1,8 @@
 //! Default work capacity covers repository-scale ordinary resolution.
 
+#[path = "module_cache.rs"]
+mod module_cache;
+
 use super::*;
 
 const ROOTS: usize = 1_000;

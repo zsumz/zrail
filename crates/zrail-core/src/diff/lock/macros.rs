@@ -84,7 +84,7 @@ fn compare_implementations(
                 &identity,
                 "repository macro implementation package is no longer trusted",
             )),
-            (Some(left), Some(right)) if left.manifest_sha256 != right.manifest_sha256 => {
+            (Some(left), Some(right)) if left.inputs_sha256 != right.inputs_sha256 => {
                 changes.push(
                     ArchitectureChange::new(
                         ChangeKind::Unknown,
@@ -92,7 +92,7 @@ fn compare_implementations(
                         &identity,
                         "trusted repository macro implementation package changed",
                     )
-                    .values(&left.manifest_sha256, &right.manifest_sha256),
+                    .values(&left.inputs_sha256, &right.inputs_sha256),
                 );
             }
             _ => {}

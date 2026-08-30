@@ -37,7 +37,7 @@ pub struct LockedGateInput {
     pub sha256: String,
 }
 
-/// A macro-providing package bound to its declaring manifest.
+/// A macro-providing package bound to its reviewed implementation input set.
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct LockedMacroImplementation {
@@ -45,6 +45,7 @@ pub struct LockedMacroImplementation {
     pub package: String,
     /// Normalized repository-relative package directory.
     pub directory: String,
-    /// Lowercase SHA-256 digest of the package manifest.
-    pub manifest_sha256: String,
+    /// Lowercase SHA-256 digest of framed input paths and bytes, including helper packages.
+    #[serde(alias = "manifest_sha256")]
+    pub inputs_sha256: String,
 }

@@ -10,8 +10,30 @@ use super::{
     include_resolution_state::{EffectiveModule, ModuleBoundary},
 };
 
+pub(super) type ModuleIdentityCache = std::cell::RefCell<
+    std::collections::BTreeMap<
+        (SourceInstanceId, Vec<zrail_core::SourceSpan>),
+        Option<EffectiveModule>,
+    >,
+>;
+
 impl IncludeBindings {
     pub(super) fn effective_module(
+        &self,
+        instance: SourceInstanceId,
+        scope: &[zrail_core::SourceSpan],
+        budget: &mut ProjectionBudget,
+    ) -> Result<Option<EffectiveModule>, ProjectionLimit> {
+        let key = (instance, scope.to_vec());
+        if let Some(result) = self.module_cache.borrow().get(&key).cloned() {
+            return Ok(result);
+        }
+        let result = self.uncached_effective_module(instance, scope, budget)?;
+        self.module_cache.borrow_mut().insert(key, result.clone());
+        Ok(result)
+    }
+
+    fn uncached_effective_module(
         &self,
         instance: SourceInstanceId,
         scope: &[zrail_core::SourceSpan],
