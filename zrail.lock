@@ -343,7 +343,7 @@ sha256 = "e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de"
 
 [[gate.input]]
 path = "CHANGELOG.md"
-sha256 = "1a9fae1610d34d245132e4099b057c3aca4aa17b1061838dd3e8b0ca88868245"
+sha256 = "f094b6ffac7edcb23db4dd1a1a6a3508e9c568267ccb45b20cff6c77930f5cea"
 
 [[gate.input]]
 path = "LICENSE"
@@ -351,7 +351,7 @@ sha256 = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
 
 [[gate.input]]
 path = "README.md"
-sha256 = "bb00de5a11258174c040a33745bef24d540d57bee55d67c3fb188adaed92c139"
+sha256 = "e7649079c18c7c800c7d58cca976520d571d17536bcbe9fb497ab032e7aa5810"
 
 [[gate.input]]
 path = "scripts/package-release.py"

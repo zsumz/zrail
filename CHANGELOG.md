@@ -4,7 +4,7 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ## [Unreleased]
 
-## [0.0.3-rc.6] - Unreleased
+## [0.0.3-rc.6] - 2026-08-31
 
 ### Added
 
@@ -20,7 +20,7 @@ All notable zrail changes are recorded here for reviewed release notes.
 ### Changed
 
 - Workspace producer and exact internal pins advance to `0.0.3-rc.6`; lock
-  semantics are epoch 5 (schema 3). This candidate has not been released.
+  semantics are epoch 5 (schema 3).
 - Cargo feature-world exactness is limited to the verified conservative subset;
   unsupported split host/target contexts fail closed and have Cargo oracle fixtures.
 - Declarative facade conventions allow central data declarations and required
@@ -30,6 +30,8 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 - Migration enforces Git-tree gitlinks under submodule-deny policy; allowed
   links remain opaque and content-bound instead of becoming empty directories.
+- Migration reports normalize written and canonical temporary paths so Windows
+  and aliased paths retain stable reviewed report identities.
 - Repository macro closures with external dependencies require exact validated
   Cargo lock resolution. Targeted capture prunes reserved output directories
   before descent without letting source exclusions hide implementation inputs.
