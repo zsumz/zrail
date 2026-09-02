@@ -113,6 +113,31 @@ fn repeated_module_mounts_remain_distinct_inside_each_domain() {
     );
 }
 
+#[test]
+fn nested_mounts_retain_the_complete_cfg_predicate() {
+    let mut outer = include("src/lib.rs", "src/outer.rs");
+    outer.guard = SyntaxGuard::TestOnly;
+    let mut inner = include("src/outer.rs", "src/inner.rs");
+    inner.guard = SyntaxGuard::ProductionOnly;
+
+    let instances = SourceInstances::build(
+        &[CompilationRoot {
+            file: "src/lib.rs".into(),
+            syntax: SourceSyntax::Items,
+            domain: domain(),
+        }],
+        &[],
+        &[outer, inner],
+    );
+
+    let inner = instances
+        .for_source("src/inner.rs", SourceSyntax::Items)
+        .first()
+        .and_then(|instance| instances.get(*instance))
+        .expect("nested source instance");
+    assert_eq!(inner.guard, SyntaxGuard::Never);
+}
+
 fn include(parent: &str, child: &str) -> CompilationIncludeEdge {
     CompilationIncludeEdge {
         parent: parent.into(),

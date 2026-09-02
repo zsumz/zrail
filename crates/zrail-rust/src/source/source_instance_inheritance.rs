@@ -19,8 +19,8 @@ pub(super) fn child_context(
     entry: &SourceEntry,
 ) -> Option<(SyntaxGuard, InheritedBindings)> {
     let guard = match entry {
-        SourceEntry::Module(edge) => edge.guard.clone(),
-        SourceEntry::Include(edge) => edge.guard.clone(),
+        SourceEntry::Module(edge) => parent.guard.combine(&edge.guard),
+        SourceEntry::Include(edge) => parent.guard.combine(&edge.guard),
         SourceEntry::CargoRoot => return None,
     };
     let inherited = match entry {

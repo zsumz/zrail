@@ -22,6 +22,9 @@ pub(crate) enum MacroOrigin {
         package: String,
         source: DependencySource,
     },
+    UnknownExportSet {
+        reason: String,
+    },
     Unresolved,
 }
 

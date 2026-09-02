@@ -19,21 +19,21 @@ impl FactVisitor<'_> {
     pub(in crate::source) fn resolve_macro_path(
         &self,
         path: &Path,
-    ) -> (String, AnalysisQuality, bool, bool) {
+    ) -> (String, AnalysisQuality, bool, bool, SyntaxGuard) {
         let text = path
             .segments
             .iter()
             .map(|segment| segment.ident.to_string())
             .collect::<Vec<_>>()
             .join("::");
-        let (target, quality, scoped, local_module, _) = self.resolve_text_scoped(&text);
-        (target, quality, scoped, local_module)
+        self.resolve_text_scoped(&text)
     }
 
     pub(in crate::source) fn macro_invocation(&self, path: &Path) -> MacroExpansionFact {
         let written_name = path_text(path);
-        let (resolved, quality, scoped, local_module) = self.resolve_macro_path(path);
+        let (resolved, quality, scoped, local_module, import_guard) = self.resolve_macro_path(path);
         let mut observed = fact(resolved.clone(), path.span(), quality);
+        observed.guard = import_guard;
         if local_module {
             observed.canonical.push(resolved.clone());
         }

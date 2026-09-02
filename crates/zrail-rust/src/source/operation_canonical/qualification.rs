@@ -8,7 +8,7 @@ use super::resolution;
 use crate::source::{
     CompilationDomain, SourceSyntax, SyntaxGuard,
     include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedTerminal},
-    include_projection_budget::{ProjectionBudget, ProjectionLimit},
+    include_projection_budget::ProjectionLimit,
     include_resolution_state::ResolutionUsage,
     operation_model::{OperationSubjectOrigin, QualifiedOperationSubject},
 };
@@ -21,9 +21,9 @@ pub(super) fn classify(
     written: &str,
     bindings: &IncludeBindings,
     occurrence: Occurrence<'_>,
-    budget: &mut ProjectionBudget,
+    resolver: &mut resolution::Resolver<'_>,
 ) -> Result<Disposition, ProjectionLimit> {
-    let traits = resolve(subject, bindings, occurrence, budget)?;
+    let traits = resolve(subject, bindings, occurrence, resolver)?;
     if subject.is_some_and(|subject| subject.direct_trait_item) {
         for route in &mut result.routes {
             let selection = traits.selection(&route.domain);
@@ -96,7 +96,7 @@ pub(super) fn resolve(
     subject: Option<&QualifiedOperationSubject>,
     bindings: &IncludeBindings,
     occurrence: Occurrence<'_>,
-    budget: &mut ProjectionBudget,
+    resolver: &mut resolution::Resolver<'_>,
 ) -> Result<OccurrenceTraits, ProjectionLimit> {
     let Occurrence { file, syntax } = occurrence;
     let Some(subject) = subject else {
@@ -114,22 +114,19 @@ pub(super) fn resolve(
         return Ok(occurrence);
     };
     let written = fact.written.as_deref().unwrap_or(&fact.name);
-    let resolved = resolution::resolve(
-        resolution::Request {
-            bindings,
-            file,
-            syntax,
-            fact,
-            file_local: false,
-            subject_origin: OperationSubjectOrigin::WrittenPath,
-            written,
-            usage: ResolutionUsage::Type,
-            construction: None,
-            root_lookup: None,
-            generic_shadow: None,
-        },
-        budget,
-    )?;
+    let resolved = resolver.resolve(resolution::Request {
+        bindings,
+        file,
+        syntax,
+        fact,
+        file_local: false,
+        subject_origin: OperationSubjectOrigin::WrittenPath,
+        written,
+        usage: ResolutionUsage::Type,
+        construction: None,
+        root_lookup: None,
+        generic_shadow: None,
+    })?;
     let complete = !resolved.unresolved
         && resolved.expected > 0
         && resolved.routes.len() == resolved.expected

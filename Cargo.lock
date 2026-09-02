@@ -303,6 +303,7 @@ name = "zrail-rust"
 version = "0.0.3-rc.6"
 dependencies = [
  "proc-macro2",
+ "quote",
  "semver",
  "serde",
  "serde_json",

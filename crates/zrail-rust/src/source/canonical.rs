@@ -44,7 +44,9 @@ pub(crate) fn canonicalize(
         compilation_includes,
         analysis_limits.derived_source_instances,
     );
-    let macro_visibility = super::macro_visibility::MacroVisibility::collect(index, module_edges);
+    let macro_exports =
+        super::macro_resolution::MacroExports::collect(index, cargo, &macro_definitions.instances);
+    let macro_visibility = super::macro_resolution::MacroVisibility::collect(index, module_edges);
     let mut findings = Vec::new();
     for file in &mut index.files {
         let selected = selected_packages(contexts, &packages, &cargo.packages, &file.relative);
@@ -58,6 +60,7 @@ pub(crate) fn canonicalize(
                     .map(|effect| &mut effect.invocation),
             )
         {
+            macro_exports.apply(expansion, &file.relative, file.syntax);
             let local_macros =
                 macro_definitions.local_names(&file.relative, file.syntax, &expansion.guard);
             macro_visibility.resolve(

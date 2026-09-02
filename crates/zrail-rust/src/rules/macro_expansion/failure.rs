@@ -8,6 +8,10 @@ pub(super) enum MacroBindingFailure {
     PendingOrigin {
         candidate: String,
     },
+    UnknownExportSet {
+        candidate: String,
+        reason: String,
+    },
     SourceMismatch {
         allowance: String,
         expected: String,
@@ -36,6 +40,9 @@ impl MacroBindingFailure {
             }
             Self::PendingOrigin { candidate } => {
                 format!("candidate {candidate:?} has a pending origin")
+            }
+            Self::UnknownExportSet { candidate, reason } => {
+                format!("candidate {candidate:?} has an unknown export set: {reason}")
             }
             Self::SourceMismatch {
                 allowance,
@@ -71,6 +78,9 @@ impl MacroBindingFailure {
             | Self::PendingOrigin { .. }
             | Self::ConfidenceNotGranted { .. } => {
                 "qualify or resolve the macro origin, or use binding = \"conservative\" after reviewing the unresolved name-only boundary"
+            }
+            Self::UnknownExportSet { .. } => {
+                "make the glob target export set analyzable or qualify the macro path explicitly"
             }
             Self::SourceMismatch { .. } => {
                 "bind source to the exact observed compiler, repository, or dependency source"

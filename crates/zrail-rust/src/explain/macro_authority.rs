@@ -131,6 +131,9 @@ fn origin_name(origin: &MacroOrigin) -> String {
         MacroOrigin::External { package, source } => {
             format!("external:{package}:{}", dependency_source(source))
         }
+        MacroOrigin::UnknownExportSet { reason } => {
+            format!("unknown-export-set:{reason}")
+        }
         MacroOrigin::Unresolved => "unresolved".into(),
     }
 }

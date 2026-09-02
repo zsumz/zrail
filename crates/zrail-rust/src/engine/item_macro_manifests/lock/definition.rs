@@ -45,7 +45,9 @@ pub(super) fn resolved_definition(
                 MacroOrigin::CompilerBuiltin => {
                     return Err("compiler-owned item macros cannot use expansion manifests".into());
                 }
-                MacroOrigin::Pending { .. } | MacroOrigin::Unresolved => {
+                MacroOrigin::Pending { .. }
+                | MacroOrigin::UnknownExportSet { .. }
+                | MacroOrigin::Unresolved => {
                     return Err("macro definition origin is unresolved".into());
                 }
             };

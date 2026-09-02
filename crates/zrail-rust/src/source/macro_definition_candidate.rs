@@ -58,7 +58,7 @@ pub(super) fn local_policy_name(expansion: &MacroExpansionFact) -> String {
         .iter()
         .filter(|candidate| {
             candidate.derivation == MacroDerivation::LocalDefinition
-                || super::macro_visibility::repository_path(&candidate.observation.name)
+                || super::macro_resolution::repository_path(&candidate.observation.name)
         })
         .map(|candidate| candidate.observation.name.as_str())
         .collect::<BTreeSet<_>>();

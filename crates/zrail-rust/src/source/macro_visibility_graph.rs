@@ -96,7 +96,7 @@ impl MacroVisibility {
         syntax: SourceSyntax,
         path: &str,
     ) -> bool {
-        if super::macro_visibility::repository_path(path) {
+        if super::macro_resolution::repository_path(path) {
             return true;
         }
         let Some(root) = path.split("::").next() else {

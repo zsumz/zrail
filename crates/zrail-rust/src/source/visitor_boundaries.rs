@@ -1,7 +1,8 @@
 //! Macro positions identify includes and unresolved item-producing expansion.
 
+use quote::ToTokens;
 use syn::{
-    ExprUnsafe, ItemForeignMod, ItemImpl, ItemMacro, ItemMod, ItemStatic, ItemTrait, Macro,
+    ExprUnsafe, ItemFn, ItemForeignMod, ItemImpl, ItemMacro, ItemMod, ItemStatic, ItemTrait, Macro,
     Signature, StmtMacro, spanned::Spanned,
 };
 use zrail_core::{AnalysisQuality, sha256_hex};
@@ -10,10 +11,31 @@ use super::{
     FactVisitor,
     fact::{fact, source_span},
     includes::include_boundary,
-    model::{IncludeContext, MacroDefinitionFact},
+    model::{IncludeContext, MacroDefinitionExport, MacroDefinitionFact},
 };
 
 impl FactVisitor<'_> {
+    pub(in crate::source) fn record_proc_macro(&mut self, function: &ItemFn) {
+        if !matches!(function.vis, syn::Visibility::Public(_)) {
+            return;
+        }
+        let Some(name) = function
+            .attrs
+            .iter()
+            .find_map(|attribute| proc_macro_name(attribute, function))
+        else {
+            return;
+        };
+        self.macro_definitions.push(MacroDefinitionFact {
+            name,
+            sha256: sha256_hex(function.to_token_stream().to_string().as_bytes()),
+            export: MacroDefinitionExport::ProcMacro,
+            span: Some(source_span(function.sig.ident.span())),
+            guard: self.syntax_guard(),
+            lexical_scope: self.lexical_scope.clone(),
+        });
+    }
+
     pub(in crate::source) fn record_unsafe_expression(&mut self, expression: &ExprUnsafe) {
         self.unsafe_constructs.push(fact(
             "unsafe block",
@@ -97,6 +119,15 @@ impl FactVisitor<'_> {
             self.macro_definitions.push(MacroDefinitionFact {
                 name: name.to_string(),
                 sha256: sha256_hex(item.mac.tokens.to_string().as_bytes()),
+                export: if item
+                    .attrs
+                    .iter()
+                    .any(|attribute| attribute.path().is_ident("macro_export"))
+                {
+                    MacroDefinitionExport::CrateRoot
+                } else {
+                    MacroDefinitionExport::Lexical
+                },
                 span: Some(source_span(name.span())),
                 guard: self.syntax_guard(),
                 lexical_scope: self.lexical_scope.clone(),
@@ -159,6 +190,7 @@ impl FactVisitor<'_> {
                 self.macro_definitions.push(MacroDefinitionFact {
                     name: name.to_string(),
                     sha256: sha256_hex(statement.mac.tokens.to_string().as_bytes()),
+                    export: MacroDefinitionExport::Lexical,
                     span: Some(source_span(name.span())),
                     guard: self.syntax_guard(),
                     lexical_scope: self.lexical_scope.clone(),
@@ -169,7 +201,7 @@ impl FactVisitor<'_> {
         let include_count = self.includes.len();
         self.record_expression_macro(&statement.mac);
         if self.includes.len() == include_count {
-            let (name, quality, _, local_module) = self.resolve_macro_path(&statement.mac.path);
+            let (name, quality, _, local_module, _) = self.resolve_macro_path(&statement.mac.path);
             if quality == AnalysisQuality::Exact
                 && !local_module
                 && super::macro_origins::compiler_builtin(&name)
@@ -181,4 +213,24 @@ impl FactVisitor<'_> {
             self.opaque_binding_macros.push(opaque);
         }
     }
+}
+
+fn proc_macro_name(attribute: &syn::Attribute, function: &ItemFn) -> Option<String> {
+    if attribute.path().is_ident("proc_macro") || attribute.path().is_ident("proc_macro_attribute")
+    {
+        return Some(function.sig.ident.to_string());
+    }
+    if !attribute.path().is_ident("proc_macro_derive") {
+        return None;
+    }
+    let syn::Meta::List(list) = &attribute.meta else {
+        return None;
+    };
+    list.tokens
+        .clone()
+        .into_iter()
+        .find_map(|token| match token {
+            proc_macro2::TokenTree::Ident(name) => Some(name.to_string()),
+            _ => None,
+        })
 }

@@ -19,6 +19,7 @@ homepage = "https://github.com/zsumz/zrail"
 
 [workspace.dependencies]
 proc-macro2 = { version = "1.0.107", features = ["span-locations"] }
+quote = "1.0.47"
 semver = "1.0.28"
 serde = { version = "=1.0.229", features = ["derive"] }
 serde_json = "1.0.151"

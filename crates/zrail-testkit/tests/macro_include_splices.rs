@@ -112,7 +112,7 @@ fn expression_include_does_not_leak_macro_definitions() {
 }
 
 #[test]
-fn aliases_crossing_include_splices_require_conservative_name_authority() {
+fn aliases_crossing_include_splices_reject_name_only_authority() {
     let caller_exact = fixture("caller-alias-exact", DEPENDENCY_MANIFEST, COMPILER_ASSERT);
     write(
         &caller_exact,
@@ -144,7 +144,7 @@ fn aliases_crossing_include_splices_require_conservative_name_authority() {
         "pub fn run() { assert!(true); }\n",
     );
     write_lock(&caller_conservative);
-    assert_no_macro_failure(&check(&caller_conservative));
+    assert_macro_failure(&check(&caller_conservative), "assert");
     reset(&caller_conservative);
 
     let included_exact = fixture("included-alias-exact", DEPENDENCY_MANIFEST, COMPILER_ASSERT);
@@ -178,7 +178,7 @@ fn aliases_crossing_include_splices_require_conservative_name_authority() {
         "use reviewed_json::json as assert;\n",
     );
     write_lock(&included_conservative);
-    assert_no_macro_failure(&check(&included_conservative));
+    assert_macro_failure(&check(&included_conservative), "assert");
     reset(&included_conservative);
 }
 
@@ -213,17 +213,6 @@ fn assert_macro_failure(report: &Report, name: &str) {
         report.findings.iter().any(|finding| {
             finding.id.starts_with("RUST-MACRO-") && finding.message.contains(name)
         }),
-        "{}",
-        report.human()
-    );
-}
-
-fn assert_no_macro_failure(report: &Report) {
-    assert!(
-        !report
-            .findings
-            .iter()
-            .any(|finding| finding.id.starts_with("RUST-MACRO-")),
         "{}",
         report.human()
     );

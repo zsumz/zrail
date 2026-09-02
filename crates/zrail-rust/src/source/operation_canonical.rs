@@ -42,6 +42,7 @@ pub(super) fn apply(
         Ok(catalog) => catalog,
         Err(limit) => return vec![super::include_projection_apply::budget_exhausted(limit)],
     };
+    let mut resolver = resolution::Resolver::new(&mut budget);
     let mut planned = Vec::with_capacity(index.files.len());
     let mut unresolved = BTreeSet::new();
     for file in &index.files {
@@ -53,7 +54,7 @@ pub(super) fn apply(
             &file.relative,
             file.syntax,
             &associated,
-            &mut budget,
+            &mut resolver,
             &mut unresolved,
             &mut call_resolutions,
         ) {
@@ -76,7 +77,7 @@ pub(super) fn apply(
             &catalog,
             &file.relative,
             file.syntax,
-            &mut budget,
+            &mut resolver,
             &mut remaining,
             &mut unresolved,
         ) {
@@ -84,6 +85,7 @@ pub(super) fn apply(
         }
         planned.push((operations, call_resolutions));
     }
+    drop(resolver);
     for (file, (operations, call_resolutions)) in index.files.iter_mut().zip(planned) {
         file.operations = operations;
         for boundary in call_resolutions {

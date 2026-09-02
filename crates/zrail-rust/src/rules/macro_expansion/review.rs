@@ -61,6 +61,9 @@ fn review_with<'a>(
             .collect::<Vec<_>>();
         attempted.extend(candidate_attempts.iter().copied());
         let Some(names) = candidate_names(expansion, candidate, allowed) else {
+            if unresolved(candidate) {
+                reasons.extend(unresolved_failures(candidate));
+            }
             let mut missing = candidate
                 .policy_names()
                 .filter(|name| !allowed.contains_key(name))
@@ -151,6 +154,12 @@ fn unresolved_failures(candidate: &MacroCandidate) -> Vec<MacroBindingFailure> {
             MacroOrigin::Unresolved => Some(MacroBindingFailure::UnresolvedOrigin {
                 candidate: candidate_name.clone(),
             }),
+            MacroOrigin::UnknownExportSet { reason } => {
+                Some(MacroBindingFailure::UnknownExportSet {
+                    candidate: candidate_name.clone(),
+                    reason: reason.clone(),
+                })
+            }
             _ => None,
         })
         .collect::<Vec<_>>();
@@ -168,7 +177,9 @@ fn unresolved(candidate: &MacroCandidate) -> bool {
         || candidate.origins.iter().any(|origin| {
             matches!(
                 origin,
-                MacroOrigin::Pending { .. } | MacroOrigin::Unresolved
+                MacroOrigin::Pending { .. }
+                    | MacroOrigin::UnknownExportSet { .. }
+                    | MacroOrigin::Unresolved
             )
         })
 }

@@ -8,6 +8,8 @@ mod bound_subject;
 mod generic_roots;
 #[path = "model_lexical_context.rs"]
 mod lexical_context;
+#[path = "model_macro_definition.rs"]
+mod macro_definition;
 #[path = "model_projection_identity.rs"]
 mod projection_identity;
 #[path = "source_metrics.rs"]
@@ -34,6 +36,7 @@ pub(crate) use lexical_context::{
     AssociatedCandidateKind, AssociatedOccurrenceKind, GenericAssociatedCandidate,
     LexicalSelfIdentity, ProviderAuthority, TraitBoundFact, TraitDeclarationFact,
 };
+pub(crate) use macro_definition::{MacroDefinitionExport, MacroDefinitionFact};
 pub(crate) use projection_identity::{
     AssociatedSegment, GenericArgumentsIdentity, GenericPathIdentity, ProjectionIdentity,
 };
@@ -114,21 +117,6 @@ pub(crate) enum FactNamespace {
     Unknown,
     Type,
     Value,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) struct MacroDefinitionFact {
-    pub(crate) name: String,
-    pub(crate) sha256: String,
-    pub(crate) span: Option<SourceSpan>,
-    pub(crate) guard: SyntaxGuard,
-    pub(crate) lexical_scope: Vec<SourceSpan>,
-}
-
-impl MacroDefinitionFact {
-    pub(super) fn apply_guard(&mut self, guard: &SyntaxGuard) {
-        self.guard = self.guard.combine(guard);
-    }
 }
 
 impl ObservedFact {
