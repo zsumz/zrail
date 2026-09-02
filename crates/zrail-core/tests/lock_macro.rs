@@ -1,6 +1,6 @@
 //! Local macro observations are current-epoch, canonical resolved architecture.
 
-use zrail_core::{LockFile, LockedMacroImplementation};
+use zrail_core::{LOCK_SEMANTICS, LockFile, LockedMacroImplementation};
 
 #[test]
 fn macro_package_digest_participates_in_resolved_state() {
@@ -40,7 +40,7 @@ fn released_macro_digest_spelling_remains_readable_for_migration() {
     assert!(current.contains("inputs_sha256"));
     let previous = current
         .replace("inputs_sha256", "manifest_sha256")
-        .replace("semantics = 5", "semantics = 4");
+        .replace(&format!("semantics = {LOCK_SEMANTICS}"), "semantics = 4");
     let path = std::env::temp_dir().join(format!("zrail-legacy-macro-{}.lock", std::process::id()));
     std::fs::write(&path, &previous).unwrap();
     let parsed = LockFile::read(&path).unwrap();
