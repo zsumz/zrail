@@ -130,7 +130,7 @@ fn migration_report_cannot_replace_a_tracked_target_file() {
     }
     let (root, base) = bridge_fixture("output-collision", false);
     let mut options = migration_options(&root, &base, Some("HEAD"));
-    options.output = "src/lib.rs".into();
+    options.output = Some("src/lib.rs".into());
 
     let error = migrate_lock(&options).expect_err("reject tracked report output");
     assert!(error.message.contains("must not replace a tracked target"));
@@ -251,7 +251,8 @@ fn migration_options(
         lock: "zrail.lock".into(),
         base: base.into(),
         target: target.map(Into::into),
-        output: "migration.json".into(),
+        output: Some("migration.json".into()),
+        discover_base: false,
     }
 }
 

@@ -23,46 +23,6 @@ fn diff_requires_a_base_or_two_explicit_repository_states() {
 }
 
 #[test]
-fn explain_accepts_the_canonical_path_flag_in_any_option_order() {
-    let command = parse([
-        OsString::from("zrail"),
-        OsString::from("explain"),
-        OsString::from("--format"),
-        OsString::from("json"),
-        OsString::from("--path"),
-        OsString::from("src/lib.rs"),
-    ])
-    .expect("parse explain");
-    let Command::Explain { common, path } = command else {
-        panic!("expected explain command");
-    };
-
-    assert_eq!(path.to_string_lossy(), "src/lib.rs");
-    assert_eq!(common.format, crate::app::output::OutputFormat::Json);
-}
-
-#[test]
-fn explain_keeps_the_positional_path_compatible_without_ambiguity() {
-    let command = parse([
-        OsString::from("zrail"),
-        OsString::from("explain"),
-        OsString::from("src/lib.rs"),
-    ])
-    .expect("parse positional explain");
-    assert!(matches!(command, Command::Explain { .. }));
-
-    let error = parse([
-        OsString::from("zrail"),
-        OsString::from("explain"),
-        OsString::from("src/lib.rs"),
-        OsString::from("--path"),
-        OsString::from("src/main.rs"),
-    ])
-    .expect_err("two paths are ambiguous");
-    assert!(error.message.contains("only once"));
-}
-
-#[test]
 fn diff_base_and_explicit_states_are_mutually_exclusive() {
     let command = parse([
         OsString::from("zrail"),

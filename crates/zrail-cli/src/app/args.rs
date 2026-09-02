@@ -13,6 +13,7 @@ mod baseline;
 mod common;
 mod coverage;
 mod diff;
+mod explain;
 mod fmt;
 mod init;
 mod limit;
@@ -43,6 +44,7 @@ pub(crate) enum Command {
     Explain {
         common: CommonOptions,
         path: PathBuf,
+        hypothetical: bool,
     },
     Diff(DiffOptions),
     Review(ReviewOptions),
@@ -103,7 +105,7 @@ pub(crate) fn parse(arguments: impl IntoIterator<Item = OsString>) -> Result<Com
         "doctor" => Ok(Command::Doctor(common::parse(&remaining, false)?)),
         "baseline" => baseline::parse(&remaining),
         "update" => update::parse(&remaining),
-        "explain" | "guide" => parse_explain(&remaining),
+        "explain" | "guide" => explain::parse(&remaining),
         "diff" => diff::parse(&remaining),
         "review" => review::parse(&remaining),
         "init" => init::parse(&remaining),
@@ -116,42 +118,6 @@ pub(crate) fn parse(arguments: impl IntoIterator<Item = OsString>) -> Result<Com
         other => Err(CliError::new(format!("unknown command {other:?}"))
             .with_help("run `zrail help` for the supported command map")),
     }
-}
-
-fn parse_explain(arguments: &[OsString]) -> Result<Command, CliError> {
-    let mut common = CommonOptions::default();
-    let mut path = None;
-    let mut index = 0;
-    while index < arguments.len() {
-        let argument = as_string(&arguments[index])?;
-        match argument.as_str() {
-            "--path" => set_once(
-                &mut path,
-                value(arguments, &mut index, "--path")?,
-                "explain path",
-            )?,
-            "--root" => common.root = value(arguments, &mut index, "--root")?,
-            "--config" => common.config = value(arguments, &mut index, "--config")?,
-            "--lock" => common.lock = value(arguments, &mut index, "--lock")?,
-            "--format" => {
-                common.format = parse_format(&value(arguments, &mut index, "--format")?)?;
-            }
-            flag if flag.starts_with('-') => {
-                return Err(CliError::new(format!("unknown option {flag:?}")));
-            }
-            _ => set_once(
-                &mut path,
-                PathBuf::from(arguments[index].as_os_str()),
-                "explain path",
-            )?,
-        }
-        index += 1;
-    }
-    Ok(Command::Explain {
-        common,
-        path: path
-            .ok_or_else(|| CliError::new("explain requires --path <repository-relative-path>"))?,
-    })
 }
 
 pub(super) fn set_once<T>(target: &mut Option<T>, value: T, label: &str) -> Result<(), CliError> {

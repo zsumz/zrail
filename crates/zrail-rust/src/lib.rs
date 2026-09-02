@@ -66,7 +66,7 @@ pub use engine::{
 };
 pub use explain::{
     CallOwnerExplanation, CapabilityOwnerExplanation, ItemMacroAuthorityExplanation,
-    MacroInvocationExplanation, PathExplanation, explain_path,
+    MacroInvocationExplanation, PathExplanation, explain_hypothetical_path, explain_path,
 };
 pub use mirrors::{
     MirrorExecutionResult, MirrorPlan, MirrorReceiptBundle, MirrorResultSet, MirrorTestResult,

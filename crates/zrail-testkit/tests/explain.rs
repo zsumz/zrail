@@ -2,7 +2,52 @@
 
 use std::{fs, path::Path};
 
-use zrail_rust::explain_path;
+use zrail_rust::{explain_hypothetical_path, explain_path};
+
+#[test]
+fn nonexistent_paths_fail_with_interpretation_and_close_matches() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/good");
+    let error = explain_path(
+        &root,
+        Path::new("zrail.toml"),
+        Path::new("crates/fixture/src/workre.rs"),
+    )
+    .expect_err("a nonexistent path must not be classified");
+    let message = error.to_string();
+
+    assert!(message.contains("path does not exist"));
+    assert!(message.contains("interpreted as repository-relative"));
+    assert!(message.contains("crates/fixture/src/worker.rs"));
+    assert!(message.contains("--hypothetical-path"));
+}
+
+#[test]
+fn nonexistent_absolute_paths_report_their_interpretation() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/good");
+    let missing = root.join("crates/fixture/src/absent.rs");
+    let error = explain_path(&root, Path::new("zrail.toml"), &missing)
+        .expect_err("a nonexistent absolute path must not be classified");
+
+    assert!(
+        error
+            .to_string()
+            .contains("interpreted as an absolute path")
+    );
+}
+
+#[test]
+fn hypothetical_paths_retain_planning_classification() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/good");
+    let explanation = explain_hypothetical_path(
+        &root,
+        Path::new("zrail.toml"),
+        Path::new("crates/fixture/src/future.rs"),
+    )
+    .expect("classify a hypothetical repository path");
+
+    assert_eq!(explanation.path, "crates/fixture/src/future.rs");
+    assert_eq!(explanation.package.as_deref(), Some("fixture"));
+}
 
 #[test]
 fn explanation_contains_actionable_source_policy() {

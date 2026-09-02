@@ -4,12 +4,13 @@ mod evidence;
 mod macro_authority;
 mod model;
 mod owners;
+mod path_input;
 mod policy;
 mod render;
 
 use std::path::Path;
 
-use zrail_core::{glob_matches, normalize_relative};
+use zrail_core::glob_matches;
 
 use crate::{
     engine::{CheckError, load_model},
@@ -33,7 +34,25 @@ pub fn explain_path(
     path: &Path,
 ) -> Result<PathExplanation, CheckError> {
     let model = load_model(root, config)?;
-    let relative = normalize_relative(path).map_err(CheckError::from_message)?;
+    let relative = path_input::existing(&model, path)?;
+    Ok(explain_model(&model, relative))
+}
+
+/// Resolves policy for a repository-relative path that need not exist yet.
+///
+/// This is the explicit planning counterpart to [`explain_path`]. Absolute
+/// paths and parent traversal remain rejected.
+pub fn explain_hypothetical_path(
+    root: &Path,
+    config: &Path,
+    path: &Path,
+) -> Result<PathExplanation, CheckError> {
+    let model = load_model(root, config)?;
+    let relative = path_input::hypothetical(path)?;
+    Ok(explain_model(&model, relative))
+}
+
+fn explain_model(model: &crate::engine::RepositoryModel, relative: String) -> PathExplanation {
     let class = classify_path(&relative, &model.bundle.contract.source.rust.generated);
     let file_role = crate::source_policy::effective_file_role(
         &relative,
@@ -98,9 +117,9 @@ pub fn explain_path(
     let expected_sibling_test = sibling_tests_required
         .then(|| policy::sibling_path(&relative))
         .flatten();
-    let macro_invocations = macro_authority::invocations(&model, &relative);
-    let item_macro_authorities = macro_authority::item_authorities(&model, &relative);
-    Ok(PathExplanation {
+    let macro_invocations = macro_authority::invocations(model, &relative);
+    let item_macro_authorities = macro_authority::item_authorities(model, &relative);
+    PathExplanation {
         schema: 2,
         path: relative,
         file_class: crate::source_policy::role_name(class).into(),
@@ -172,7 +191,7 @@ pub fn explain_path(
             .filter(|allowed| allowed.async_syntax == zrail_core::MacroAsyncSyntax::None)
             .map(|allowed| allowed.name.clone())
             .collect(),
-        content_bound_macro_implementations: macro_authority::implementations(&model),
+        content_bound_macro_implementations: macro_authority::implementations(model),
         macro_invocations,
         item_macro_authorities,
         unsafe_code: policy::policy_mode(model.bundle.contract.source.rust.hygiene.unsafe_code)
@@ -197,7 +216,7 @@ pub fn explain_path(
             model.bundle.contract.source.rust.module_docs,
         ),
         sibling_tests_required,
-    })
+    }
 }
 
 #[cfg(test)]

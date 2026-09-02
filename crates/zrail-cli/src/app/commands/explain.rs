@@ -2,15 +2,23 @@
 
 use std::path::Path;
 
-use zrail_rust::explain_path;
+use zrail_rust::{explain_hypothetical_path, explain_path};
 
 use crate::app::{args::CommonOptions, error::CliError, output::OutputFormat};
 
 use super::CommandResult;
 
-pub(crate) fn explain(options: &CommonOptions, path: &Path) -> Result<CommandResult, CliError> {
-    let report = explain_path(&options.root, &options.config, path)
-        .map_err(|error| CliError::new(error.to_string()))?;
+pub(crate) fn explain(
+    options: &CommonOptions,
+    path: &Path,
+    hypothetical: bool,
+) -> Result<CommandResult, CliError> {
+    let report = if hypothetical {
+        explain_hypothetical_path(&options.root, &options.config, path)
+    } else {
+        explain_path(&options.root, &options.config, path)
+    }
+    .map_err(|error| CliError::new(error.to_string()))?;
     let text = match options.format {
         OutputFormat::Human => report.human(),
         OutputFormat::Json => report

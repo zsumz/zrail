@@ -9,6 +9,9 @@ use super::{
 };
 
 pub(crate) fn migrate_lock(options: &MigrateLockOptions) -> Result<CommandResult, CliError> {
+    if options.discover_base {
+        return super::migrate_lock_recovery::discover(options);
+    }
     if let Some(target) = options.target.as_deref() {
         return migrate_across_revisions(options, target);
     }
@@ -24,8 +27,10 @@ fn migrate_same_revision(options: &MigrateLockOptions) -> Result<CommandResult, 
     let old = LockFile::read(&old_path)
         .map_err(|error| CliError::new(format!("load migration base lock: {error}")))?;
     if old.contract_sha256 != contract.sha256 {
-        return Err(CliError::new(
-            "migration base lock was produced from different contract bytes",
+        return Err(super::migrate_lock_recovery::mismatch(
+            options,
+            &old.contract_sha256,
+            &contract.sha256,
         ));
     }
     let reanalyzed = zrail_rust::build_lock(snapshot.root(), &options.config)
@@ -64,7 +69,11 @@ fn write_report(
     target: &GitSnapshot,
     bridged: bool,
 ) -> Result<CommandResult, CliError> {
-    let output = repository_file(&options.root, &options.output).map_err(CliError::new)?;
+    let relative_output = options
+        .output
+        .as_deref()
+        .ok_or_else(|| CliError::new("migration report output is required"))?;
+    let output = repository_file(&options.root, relative_output).map_err(CliError::new)?;
     let config = repository_file(&options.root, &options.config).map_err(CliError::new)?;
     let lock = repository_file(&options.root, &options.lock).map_err(CliError::new)?;
     if output == config || output == lock {
@@ -72,11 +81,11 @@ fn write_report(
             "migration report output may not replace zrail.toml or zrail.lock",
         ));
     }
-    git_migration::require_report_output(target, &options.output)?;
+    git_migration::require_report_output(target, relative_output)?;
     replace_text(&output, rendered)
         .map_err(|error| CliError::new(format!("write {}: {error}", output.display())))?;
     let report = if bridged {
-        format!(" --migration-report {}", options.output.display())
+        format!(" --migration-report {}", relative_output.display())
     } else {
         String::new()
     };
