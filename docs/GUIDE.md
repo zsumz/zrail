@@ -124,6 +124,11 @@ zrail doctor
 zrail explain --path src/lib.rs
 ```
 
+Concrete explanations are strict: a missing path exits nonzero, reports how
+the input was interpreted, and suggests close repository paths. Use
+`zrail explain --hypothetical-path src/future.rs` to classify a deliberately
+future path.
+
 Diagnostic reports use schema 3. Status and the `errors`, `warnings`, `notes`,
 and per-rule `groups` counts cover the complete analysis. The `findings` array
 contains only the retained individual diagnostics; `summary.retained`,
@@ -203,14 +208,27 @@ zrail migrate-lock --base HEAD --output zrail-migration.json
 zrail update --accept-migration sha256:<reviewed-report-digest>
 ```
 
+When the worktree contract digest no longer matches the lock, locate immutable
+migration bases with a read-only history search:
+
+```sh
+zrail migrate-lock --discover-base
+```
+
+The report includes lock, worktree, and `HEAD` contract digests, states whether
+uncommitted contract edits caused the mismatch, and lists every usable
+candidate it finds. It never chooses a revision automatically; rerun
+`migrate-lock` with an explicitly reviewed `--base` and `--output`.
+
 Adapters are explicit and fail closed for unknown epochs. The current engine
-can reanalyze locks from every released prior semantics epoch (`1` through `4`)
-directly into current semantics `5`; adopters do not need to delete an older
+can reanalyze locks from every released prior semantics epoch (`1` through `5`)
+directly into current semantics `6`; adopters do not need to delete an older
 lock or manufacture a lock-free base commit. Each exact old or new authority
 subject is classified as preserved, retired, newly observable, or changed
-interpretation. Migration acceptance is recomputed for the selected immutable
-base and never accepts current-worktree grants; `--accept-grants` remains a
-separate authority boundary.
+interpretation. Macro-source subjects identify allowances whose binding changed;
+every changed lock authority retains its before and after values. Migration
+acceptance is recomputed for the selected immutable base and never accepts
+current-worktree grants; `--accept-grants` remains a separate authority boundary.
 
 If an engine change makes that immutable base unanalyzable, make only the
 required source or contract repairs on a committed descendant and request an
@@ -1236,11 +1254,11 @@ JSON is the stable input for external coverage tooling.
 | `zrail mirrors receipts` | Render all schema-2 receipts from strict plan-bound producer results |
 | `zrail mirrors verify` | Recompute a plan and verify its exact schema-2 receipts |
 | `zrail doctor` | Diagnose setup and compatibility problems |
-| `zrail explain` | Explain the policy and findings for one path |
+| `zrail explain` | Explain an existing path, or an explicitly hypothetical one |
 | `zrail diff` | Classify architecture changes between trusted states |
 | `zrail fmt` | Validate exact contract TOML without erasing authored layout or comments |
 | `zrail migrate-config` | Preview or apply the schema-1 to schema-2 contract migration |
-| `zrail migrate-lock` | Reanalyze an immutable base or review an explicit descendant migration bridge |
+| `zrail migrate-lock` | Discover or reanalyze an immutable base, or review an explicit descendant migration bridge |
 | `zrail update` | Refresh reviewed lock state from committed authority |
 | `zrail review` | Analyze an untrusted proposal from protected authority |
 

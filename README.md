@@ -110,6 +110,10 @@ zrail check
 zrail explain --path src/lib.rs
 ```
 
+`explain --path` requires a concrete existing path and suggests close matches
+for mistakes. Use `--hypothetical-path src/future.rs` only when deliberately
+planning policy for a path that does not exist yet.
+
 The `rust` preset fits conventional inline and integration tests. Run
 `zrail init` for the zsumz preset: sibling tests, reviewed macro expansion, and
 300-line source targets. Plain `init` creates only `zrail.toml` so its authority
@@ -205,6 +209,17 @@ zrail fmt --check
 zrail migrate-lock --base HEAD --output zrail-migration.json
 zrail update --accept-migration sha256:<reviewed-report-digest>
 ```
+
+If the current contract no longer matches the contract digest stored in the
+lock, discover usable immutable bases without selecting or writing one:
+
+```sh
+zrail migrate-lock --discover-base
+```
+
+Discovery reports the lock, worktree, and `HEAD` contract digests, whether
+uncommitted contract edits caused the mismatch, and every matching candidate
+it finds. Rerun migration with an explicitly reviewed `--base` revision.
 
 When the current engine cannot analyze the prior-epoch base, repair the source
 on a committed descendant and review a two-revision bridge:
