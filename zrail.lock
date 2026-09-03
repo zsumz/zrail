@@ -382,7 +382,7 @@ sha256 = "e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de"
 
 [[gate.input]]
 path = "CHANGELOG.md"
-sha256 = "ee553a712e307b0ab3f28cd740bcf577eab26b44c983b836201ece96a4da5733"
+sha256 = "448c700977485ba7d6d73dea422cee13a4e63c14abdb6b28a54aaccf000bf163"
 
 [[gate.input]]
 path = "LICENSE"
