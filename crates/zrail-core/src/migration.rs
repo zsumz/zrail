@@ -14,7 +14,7 @@ pub use bridge::{
 };
 use surfaces::surfaces;
 
-const SUPPORTED_PRIOR_EPOCHS: &[(u64, u64)] = &[(1, 1), (1, 2), (2, 3), (3, 4)];
+const SUPPORTED_PRIOR_EPOCHS: &[(u64, u64)] = &[(1, 1), (1, 2), (2, 3), (3, 4), (3, 5)];
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -139,7 +139,7 @@ fn compare_epochs(
         || after.semantics != LOCK_SEMANTICS
     {
         return Err(LockMigrationError(format!(
-            "lock migration supports released epochs schema 1/semantics 1, schema 1/semantics 2, schema 2/semantics 3, and schema 3/semantics 4 to schema {LOCK_SCHEMA}/semantics {LOCK_SEMANTICS}"
+            "lock migration supports released epochs schema 1/semantics 1, schema 1/semantics 2, schema 2/semantics 3, schema 3/semantics 4, and schema 3/semantics 5 to schema {LOCK_SCHEMA}/semantics {LOCK_SEMANTICS}"
         )));
     }
     if require_identical_contract && before.contract_sha256 != after.contract_sha256 {

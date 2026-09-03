@@ -30,3 +30,26 @@ fn local_glob_candidates_resolve_outer_aliases_only_inside_their_scope() {
         1
     );
 }
+
+#[test]
+fn absolute_macro_paths_bypass_lexical_aliases_and_globs() {
+    let file = syn::parse_file(
+        "use replacement as dependency;
+         fn run() { use local::*; ::dependency::reviewed!(); }",
+    )
+    .expect("parse absolute macro fixture");
+    let imports = ImportMap::from_file(&file);
+    let mut visitor = FactVisitor::new(&imports);
+
+    visitor.visit_file(&file);
+
+    let [expansion] = visitor.macro_expansions.as_slice() else {
+        panic!("expected one macro invocation");
+    };
+    assert!(expansion.absolute_path);
+    assert_eq!(expansion.candidates.len(), 1);
+    assert_eq!(
+        expansion.candidates[0].observation.name,
+        "dependency::reviewed"
+    );
+}

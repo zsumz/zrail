@@ -10,7 +10,7 @@ use zrail_core::{
 
 use crate::app::error::CliError;
 
-use super::{git_base::GitSnapshot, git_migration};
+use super::{git_base::GitSnapshot, git_migration, migrate_lock_recovery};
 
 pub(super) struct MigrationBridge {
     pub(super) report: LockMigrationBridgeReport,
@@ -42,8 +42,12 @@ pub(super) fn build(
     let old = LockFile::read(&old_path)
         .map_err(|error| CliError::new(format!("load migration base lock: {error}")))?;
     if old.contract_sha256 != base_contract.sha256 {
-        return Err(CliError::new(
-            "migration base lock was produced from different contract bytes",
+        return Err(migrate_lock_recovery::mismatch_at(
+            repository,
+            config,
+            lock,
+            &old.contract_sha256,
+            &base_contract.sha256,
         ));
     }
     let base_error = match zrail_rust::build_lock(base_snapshot.root(), config) {

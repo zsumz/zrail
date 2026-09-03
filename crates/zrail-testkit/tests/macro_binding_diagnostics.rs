@@ -26,17 +26,45 @@ fn unresolved_exact_allowance_is_attempted_and_suggests_conservative_binding() {
         binding
             .help
             .as_deref()
-            .is_some_and(|help| help.contains(r#"binding = "conservative""#))
+            .is_some_and(|help| help.contains(r#"resolution = "conservative""#))
     );
     reset(&root);
 }
 
 #[test]
-fn source_mismatch_reports_expected_and_observed_sources_once() {
+fn conservative_fallback_ignores_exact_source_claim_at_an_unresolved_site() {
+    let authority = r#"resolution = "conservative"
+[source.rust.macros.allow.source]
+kind = "repository"
+package = "fixture"
+directory = "."
+ambient_inputs = "none"
+"#;
+    let root = repository(
+        "conservative-source",
+        MANIFEST,
+        "//! Fixture.\npub fn run() { unknown!(); }\n",
+        &allowance("unknown", authority),
+    );
+
+    let report = check(&root);
+
+    assert_eq!(
+        report.status,
+        zrail_core::ReportStatus::Pass,
+        "{}",
+        report.human()
+    );
+    reset(&root);
+}
+
+#[test]
+fn conservative_allowance_still_checks_source_at_an_exact_site() {
     let manifest = format!(
         "{MANIFEST}\n[dependencies]\nreviewed_quote = {{ package = \"quote\", version = \"1\" }}\n"
     );
-    let authority = r#"[source.rust.macros.allow.source]
+    let authority = r#"resolution = "conservative"
+[source.rust.macros.allow.source]
 kind = "git"
 repository = "https://example.invalid/quote"
 rev = "reviewed"

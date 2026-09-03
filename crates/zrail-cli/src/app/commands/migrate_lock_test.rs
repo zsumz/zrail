@@ -49,13 +49,14 @@ fn immutable_base_migration_writes_a_digest_bound_scoped_report() {
         lock: "zrail.lock".into(),
         base: "HEAD".into(),
         target: None,
-        output: "migration.json".into(),
+        output: Some("migration.json".into()),
+        discover_base: false,
     })
     .expect("migrate immutable base");
 
     let artifact = fs::read_to_string(root.join("migration.json")).expect("read report");
     assert!(artifact.contains("\"from_semantics\": 1"));
-    assert!(artifact.contains("\"to_semantics\": 5"));
+    assert!(artifact.contains(&format!("\"to_semantics\": {LOCK_SEMANTICS}")));
     assert!(artifact.contains("\"newly-observable\""));
     assert!(output.text.contains("--accept-migration sha256:"));
     let acceptance = output

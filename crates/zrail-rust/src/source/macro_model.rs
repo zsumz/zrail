@@ -22,6 +22,9 @@ pub(crate) enum MacroOrigin {
         package: String,
         source: DependencySource,
     },
+    UnknownExportSet {
+        reason: String,
+    },
     Unresolved,
 }
 
@@ -57,6 +60,8 @@ pub(crate) struct MacroExpansionFact {
     /// Every statically feasible policy identity for this one invocation.
     pub(crate) candidates: Vec<MacroCandidate>,
     pub(crate) lexical_scope: Vec<zrail_core::SourceSpan>,
+    /// Whether the invocation path has a leading `::` and bypasses lexical imports.
+    pub(crate) absolute_path: bool,
     /// Digest of the canonical invocation token stream.
     pub(crate) input_sha256: String,
     builtin_derive_syntax: bool,
@@ -75,6 +80,7 @@ impl MacroExpansionFact {
             observation,
             candidates: vec![candidate],
             lexical_scope: Vec::new(),
+            absolute_path: false,
             input_sha256: zrail_core::sha256_hex(b""),
             builtin_derive_syntax: false,
         }
@@ -86,6 +92,7 @@ impl MacroExpansionFact {
             observation,
             candidates: vec![candidate],
             lexical_scope: Vec::new(),
+            absolute_path: false,
             input_sha256: zrail_core::sha256_hex(b""),
             builtin_derive_syntax: false,
         }
@@ -105,6 +112,7 @@ impl MacroExpansionFact {
             observation,
             candidates: vec![candidate],
             lexical_scope: Vec::new(),
+            absolute_path: false,
             input_sha256: zrail_core::sha256_hex(b""),
             builtin_derive_syntax: true,
         }
@@ -131,6 +139,7 @@ impl MacroExpansionFact {
             observation,
             candidates,
             lexical_scope: Vec::new(),
+            absolute_path: false,
             input_sha256: zrail_core::sha256_hex(b""),
             builtin_derive_syntax: false,
         }
@@ -142,6 +151,11 @@ impl MacroExpansionFact {
 
     pub(crate) fn with_lexical_scope(mut self, scope: &[zrail_core::SourceSpan]) -> Self {
         self.lexical_scope = scope.to_vec();
+        self
+    }
+
+    pub(crate) const fn with_absolute_path(mut self, absolute_path: bool) -> Self {
+        self.absolute_path = absolute_path;
         self
     }
 

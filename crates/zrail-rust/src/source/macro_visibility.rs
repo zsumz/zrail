@@ -9,13 +9,13 @@ use super::{
     Reachability, SourceSyntax, SyntaxGuard,
 };
 
-pub(super) use super::macro_visibility_graph::MacroVisibility;
+pub(in crate::source) use super::macro_visibility_graph::MacroVisibility;
 use super::macro_visibility_graph::VisibilityLookup;
 
 const MAX_MACRO_CANDIDATES: usize = 64;
 
 impl MacroVisibility {
-    pub(super) fn resolve(
+    pub(in crate::source) fn resolve(
         &self,
         invocation: &mut MacroExpansionFact,
         file: &str,
@@ -26,6 +26,14 @@ impl MacroVisibility {
         let mut candidates = Vec::new();
         let mut resolved_leaves = BTreeSet::new();
         for candidate in invocation.candidates.drain(..) {
+            if candidate
+                .origins
+                .iter()
+                .all(|origin| !matches!(origin, super::MacroOrigin::Pending { .. }))
+            {
+                candidates.push(candidate);
+                continue;
+            }
             // An explicit repository path is already its own namespace proof.
             // Visibility imports are needed for aliases and globs, but replacing
             // a written `crate::module::macro` with a module-local re-export can
@@ -178,7 +186,7 @@ fn same_candidate(left: &MacroCandidate, right: &MacroCandidate) -> bool {
         && left.origins == right.origins
 }
 
-pub(super) fn repository_path(path: &str) -> bool {
+pub(in crate::source) fn repository_path(path: &str) -> bool {
     path.split("::")
         .next()
         .is_some_and(|root| matches!(root, "crate" | "self" | "super"))

@@ -131,9 +131,13 @@ fn dependency_glob_candidates_remain_subject_to_macro_policy() {
         .expect("check globbed derive")
         .report;
 
-    assert!(report.findings.iter().any(|finding| {
-        finding.id == "RUST-MACRO-006" && finding.message.contains("proptest::prelude")
-    }));
+    assert!(
+        report.findings.iter().any(|finding| {
+            finding.id == "RUST-MACRO-006" && finding.message.contains("proptest::prelude")
+        }),
+        "{}",
+        report.human()
+    );
     reset(&root);
 }
 

@@ -124,6 +124,11 @@ zrail doctor
 zrail explain --path src/lib.rs
 ```
 
+Concrete explanations are strict: a missing path exits nonzero, reports how
+the input was interpreted, and suggests close repository paths. Use
+`zrail explain --hypothetical-path src/future.rs` to classify a deliberately
+future path.
+
 Diagnostic reports use schema 3. Status and the `errors`, `warnings`, `notes`,
 and per-rule `groups` counts cover the complete analysis. The `findings` array
 contains only the retained individual diagnostics; `summary.retained`,
@@ -203,14 +208,27 @@ zrail migrate-lock --base HEAD --output zrail-migration.json
 zrail update --accept-migration sha256:<reviewed-report-digest>
 ```
 
+When the worktree contract digest no longer matches the lock, locate immutable
+migration bases with a read-only history search:
+
+```sh
+zrail migrate-lock --discover-base
+```
+
+The report includes lock, worktree, and `HEAD` contract digests, states whether
+uncommitted contract edits caused the mismatch, and lists every usable
+candidate it finds. It never chooses a revision automatically; rerun
+`migrate-lock` with an explicitly reviewed `--base` and `--output`.
+
 Adapters are explicit and fail closed for unknown epochs. The current engine
-can reanalyze locks from every released prior semantics epoch (`1` through `4`)
-directly into current semantics `5`; adopters do not need to delete an older
+can reanalyze locks from every released prior semantics epoch (`1` through `5`)
+directly into current semantics `6`; adopters do not need to delete an older
 lock or manufacture a lock-free base commit. Each exact old or new authority
 subject is classified as preserved, retired, newly observable, or changed
-interpretation. Migration acceptance is recomputed for the selected immutable
-base and never accepts current-worktree grants; `--accept-grants` remains a
-separate authority boundary.
+interpretation. Macro-source subjects identify allowances whose binding changed;
+every changed lock authority retains its before and after values. Migration
+acceptance is recomputed for the selected immutable base and never accepts
+current-worktree grants; `--accept-grants` remains a separate authority boundary.
 
 If an engine change makes that immutable base unanalyzable, make only the
 required source or contract repairs on a committed descendant and request an
@@ -725,6 +743,18 @@ External allowances bind to the exact
 dependency source. Built-in data macros and `include!` are handled directly,
 and included Rust remains fully analyzed.
 
+An external `use dependency::module::*` can bind exactly when Cargo.lock selects
+one registry package with a checksum and its matching `.crate` is already in the
+local Cargo registry cache. Zrail does not invoke Cargo or use the network. It
+verifies the archive bytes against Cargo.lock, applies bounded archive and source
+limits, and proves direct public named re-exports of unconditional
+`#[macro_export] macro_rules!` definitions. Names absent from that closed module
+surface do not become candidates. A missing or corrupt archive, Git source,
+conditional export, public nested glob, opaque item macro, ambiguous module, or
+unsupported source shape stays unresolved; a reviewed occurrence may use
+`resolution = "conservative"` without turning that name-only fallback into exact
+source authority.
+
 Cross-crate workspace macros can bind their observed implementation directly:
 
 ```toml
@@ -748,6 +778,11 @@ The lock stores the deterministic result as `inputs_sha256`; another package
 exporting the same macro name cannot borrow this authority. A qualified name
 alone is insufficient: repository allowances require this source or an exact
 local `definition`.
+
+A public named proc-macro re-export from another repository package is governed
+by the re-exporting package. Its content-bound implementation manifest follows
+the transitive workspace and path-dependency closure, so the underlying
+proc-macro implementation remains part of the same locked authority.
 
 `ambient_inputs = "none"` is mandatory for repository source authority. It is
 an explicit, source-bound review attestation that macro output depends only on
@@ -922,7 +957,9 @@ An optional `definition` path can narrow a `macro_rules!` allowance, but path
 spelling never establishes origin. The default `resolution = "exact"` rejects an
 allowance when the candidate origin remains unresolved. A name-only allowance
 may opt into `resolution = "conservative"` to cover only the exact spelling at the
-invocation site; it cannot claim a `source` or `definition` for that unresolved
+invocation site. The same allowance may carry a `source` or `definition` claim
+for exact occurrences; that provenance is checked at those occurrences and is
+ignored by the name-only fallback, so it makes no origin claim for the unresolved
 candidate. Repository globs are narrowed against the bounded local macro
 namespace, while ambiguous glob candidates must all be allowed. `#[macro_use]`
 imports remain unresolved because their bare namespace cannot be attributed
@@ -939,7 +976,8 @@ Macro policy names are user-spellable Rust paths. Diagnostics prefer the stable
 public path (`quote::quote`) while an exact lexical spelling (`q`) may satisfy
 the same single resolved candidate. Dependency package and source provenance
 remain separate authority in `source`; zrail never encodes provenance by
-repeating path segments. `zrail explain` lists each observed macro's written
+repeating path segments. A leading `::` bypasses lexical aliases and glob
+imports, as it does in Rust. `zrail explain` lists each observed macro's written
 spelling, preferred policy name, and resolved origin independently.
 
 Item-producing macros are a separate source-graph boundary because their output
@@ -1236,11 +1274,11 @@ JSON is the stable input for external coverage tooling.
 | `zrail mirrors receipts` | Render all schema-2 receipts from strict plan-bound producer results |
 | `zrail mirrors verify` | Recompute a plan and verify its exact schema-2 receipts |
 | `zrail doctor` | Diagnose setup and compatibility problems |
-| `zrail explain` | Explain the policy and findings for one path |
+| `zrail explain` | Explain an existing path, or an explicitly hypothetical one |
 | `zrail diff` | Classify architecture changes between trusted states |
 | `zrail fmt` | Validate exact contract TOML without erasing authored layout or comments |
 | `zrail migrate-config` | Preview or apply the schema-1 to schema-2 contract migration |
-| `zrail migrate-lock` | Reanalyze an immutable base or review an explicit descendant migration bridge |
+| `zrail migrate-lock` | Discover or reanalyze an immutable base, or review an explicit descendant migration bridge |
 | `zrail update` | Refresh reviewed lock state from committed authority |
 | `zrail review` | Analyze an untrusted proposal from protected authority |
 

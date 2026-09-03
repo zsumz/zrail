@@ -1,5 +1,8 @@
 //! One bounded adapter exposes guarded type identity to every operation consumer.
 
+mod adapter;
+mod cache;
+
 use zrail_core::AnalysisQuality;
 
 use super::super::{
@@ -11,6 +14,8 @@ use super::super::{
     include_resolution_state::{ResolutionTrail, ResolutionUsage, WrittenResolveRequest},
     operation_model::OperationSubjectOrigin,
 };
+pub(super) use adapter::Resolver;
+use cache::Cache;
 
 #[derive(Clone)]
 pub(super) struct Route {
@@ -45,9 +50,10 @@ pub(super) struct Request<'a> {
     pub(super) generic_shadow: Option<GenericRootShadow>,
 }
 
-pub(super) fn resolve(
+fn resolve_request(
     request: Request<'_>,
     budget: &mut ProjectionBudget,
+    cache: &mut Cache,
 ) -> Result<Resolution, ProjectionLimit> {
     let Request {
         bindings,
@@ -149,20 +155,42 @@ pub(super) fn resolve(
         } else {
             written
         };
-        let mut trail = ResolutionTrail::new();
-        let resolved = bindings.resolve_written(
-            &WrittenResolveRequest {
-                instance,
-                written: lookup,
-                scope: &fact.lexical_scope,
-                depth: 0,
-                usage,
-                guard: &fact.guard,
-                allow_implicit_prelude: true,
-            },
-            &mut trail,
-            budget,
-        )?;
+        let resolved = if let Some(resolved) =
+            cache.get(instance, lookup, &fact.lexical_scope, usage, &fact.guard)
+        {
+            resolved
+        } else {
+            let mut trail = ResolutionTrail::new();
+            let resolved = bindings.resolve_written(
+                &WrittenResolveRequest {
+                    instance,
+                    written: lookup,
+                    scope: &fact.lexical_scope,
+                    depth: 0,
+                    usage,
+                    guard: &fact.guard,
+                    allow_implicit_prelude: true,
+                },
+                &mut trail,
+                budget,
+            )?;
+            if !resolved.is_empty()
+                && resolved.iter().all(|candidate| {
+                    candidate.quality != AnalysisQuality::Unresolved
+                        && !candidate.blocks_completeness
+                })
+            {
+                cache.insert(
+                    instance,
+                    lookup,
+                    &fact.lexical_scope,
+                    usage,
+                    &fact.guard,
+                    resolved.clone(),
+                );
+            }
+            resolved
+        };
         let ambiguous = resolved.len() != 1;
         resolution.unresolved |= ambiguous || resolved.is_empty();
         for candidate in resolved {

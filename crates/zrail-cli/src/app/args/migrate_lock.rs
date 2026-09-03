@@ -15,7 +15,8 @@ pub(crate) struct MigrateLockOptions {
     pub(crate) lock: PathBuf,
     pub(crate) base: OsString,
     pub(crate) target: Option<OsString>,
-    pub(crate) output: PathBuf,
+    pub(crate) output: Option<PathBuf>,
+    pub(crate) discover_base: bool,
 }
 
 pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
@@ -25,6 +26,7 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
     let mut base = None;
     let mut target = None;
     let mut output = None;
+    let mut discover_base = false;
     let mut index = 0;
     while index < arguments.len() {
         let flag = as_string(&arguments[index])?;
@@ -47,9 +49,23 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
                 value(arguments, &mut index, "--output")?,
                 "migration output",
             )?,
+            "--discover-base" if !discover_base => discover_base = true,
+            "--discover-base" => {
+                return Err(CliError::new(
+                    "migration base discovery may be specified only once",
+                ));
+            }
             _ => return Err(CliError::new(format!("unknown option {flag:?}"))),
         }
         index += 1;
+    }
+    if discover_base && (base.is_some() || target.is_some() || output.is_some()) {
+        return Err(CliError::new(
+            "--discover-base cannot be combined with --base, --target, or --output",
+        ));
+    }
+    if !discover_base && output.is_none() {
+        return Err(CliError::new("migrate-lock requires --output PATH"));
     }
     Ok(Command::MigrateLock(MigrateLockOptions {
         root,
@@ -57,7 +73,8 @@ pub(super) fn parse(arguments: &[OsString]) -> Result<Command, CliError> {
         lock,
         base: base.unwrap_or_else(|| OsStr::new("HEAD").to_os_string()),
         target,
-        output: output.ok_or_else(|| CliError::new("migrate-lock requires --output PATH"))?,
+        output,
+        discover_base,
     }))
 }
 

@@ -4,6 +4,8 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::cargo::{CrateRootAuthority, Package, rust_crate_root};
 
+use zrail_core::{AnalysisQuality, Finding};
+
 pub(super) fn external_roots(
     cargo: &crate::cargo::CargoWorkspace,
 ) -> BTreeMap<String, BTreeSet<String>> {
@@ -75,4 +77,19 @@ fn package_for_file<'a>(packages: &'a [Package], file: &str) -> Option<&'a Packa
         .iter()
         .filter(|package| package.contains_file(file))
         .max_by_key(|package| package.directory.len())
+}
+
+pub(super) fn identity_limit(path: &str, root: &str) -> Finding {
+    Finding::error(
+        "RUST-CANON-001",
+        "rust.source.dependency-identity",
+        "source",
+        format!(
+            "Cargo dependency root {root:?} exceeds the {}-identity analysis limit",
+            super::MAX_IDENTITIES_PER_ROOT
+        ),
+    )
+    .at(path, None)
+    .with_analysis(AnalysisQuality::Unresolved)
+    .with_help("split shared source or use distinct dependency aliases so policy identity is exact")
 }

@@ -1,26 +1,20 @@
-//! Qualified aliases crossing include splices cannot borrow dependency authority.
+//! Qualified aliases crossing include splices retain repository macro authority.
 
 use std::{fs, path::Path};
 
-use zrail_core::Report;
+use zrail_core::{Report, ReportStatus};
 use zrail_rust::{build_lock, check_repository};
 
 #[test]
-fn qualified_include_alias_requires_conservative_written_authority() {
-    let exact = fixture("exact", EXTERNAL_ONLY);
-    write_source(&exact);
-    write_lock(&exact);
-    assert_macro_failure(&check(&exact));
-    reset(&exact);
+fn qualified_include_alias_resolves_exact_repository_authority() {
+    let root = fixture("exact", REPOSITORY_ALLOWANCE);
+    write_source(&root);
+    write_lock(&root);
 
-    let conservative = fixture(
-        "conservative",
-        &format!("{EXTERNAL_ONLY}{CONSERVATIVE_WRITTEN}"),
-    );
-    write_source(&conservative);
-    write_lock(&conservative);
-    assert_no_macro_failure(&check(&conservative));
-    reset(&conservative);
+    let report = check(&root);
+
+    assert_eq!(report.status, ReportStatus::Pass, "{}", report.human());
+    reset(&root);
 }
 
 fn write_source(root: &Path) {
@@ -29,17 +23,17 @@ fn write_source(root: &Path) {
         "src/lib.rs",
         r#"//! Library.
 mod local {
-    macro_rules! json { ($($tokens:tt)*) => { 1 }; }
-    pub(crate) use json;
+    macro_rules! reviewed { ($($tokens:tt)*) => { 1 }; }
+    pub(crate) use reviewed;
 }
 include!("imports.rs");
-pub fn run() { reviewed_json::json!({"ok": true}); }
+pub fn run() { reviewed_namespace::reviewed!(); }
 "#,
     );
     write(
         root,
         "src/imports.rs",
-        "use crate::local as reviewed_json;\n",
+        "use crate::local as reviewed_namespace;\n",
     );
 }
 
@@ -69,27 +63,6 @@ fn write_lock(root: &Path) {
         .expect("write qualified include alias lock");
 }
 
-fn assert_macro_failure(report: &Report) {
-    assert!(
-        report.findings.iter().any(|finding| {
-            finding.id.starts_with("RUST-MACRO-") && finding.message.contains("reviewed_json::json")
-        }),
-        "{}",
-        report.human()
-    );
-}
-
-fn assert_no_macro_failure(report: &Report) {
-    assert!(
-        !report
-            .findings
-            .iter()
-            .any(|finding| finding.id.starts_with("RUST-MACRO-")),
-        "{}",
-        report.human()
-    );
-}
-
 fn write(root: &Path, path: &str, contents: &str) {
     fs::write(root.join(path), contents).expect("write fixture");
 }
@@ -100,10 +73,7 @@ fn reset(root: &Path) {
     }
 }
 
-const MANIFEST: &str = concat!(
-    "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\n",
-    "[dependencies]\nreviewed_json = { package = \"serde_json\", version = \"1\" }\n",
-);
+const MANIFEST: &str = "[package]\nname = \"fixture\"\nversion = \"0.0.0\"\nedition = \"2024\"\n";
 
 const CONTRACT: &str = r#"schema = 1
 adapters = ["rust"]
@@ -129,20 +99,9 @@ unsafe = "deny"
 lint_suppressions = "allow"
 "#;
 
-const EXTERNAL_ONLY: &str = r#"
+const REPOSITORY_ALLOWANCE: &str = r#"
 [[source.rust.macros.allow]]
-name = "serde_json::json"
-inputs = "opaque"
-reason = "Reviewed registry macro expansion."
-[source.rust.macros.allow.source]
-kind = "registry"
-requirement = "1"
-"#;
-
-const CONSERVATIVE_WRITTEN: &str = r#"
-[[source.rust.macros.allow]]
-name = "reviewed_json::json"
-binding = "conservative"
-inputs = "opaque"
-reason = "Reviewed unresolved qualified include alias."
+name = "crate::local::reviewed"
+definition = "src/lib.rs"
+reason = "Reviewed repository macro expansion."
 "#;

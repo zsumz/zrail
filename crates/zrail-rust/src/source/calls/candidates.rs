@@ -21,7 +21,11 @@ pub(crate) fn candidates(
         .call_candidates(path, guard)
         .into_iter()
         .filter(|candidate| candidate.path != resolved)
-        .map(|candidate| fact(candidate.path, path.span(), AnalysisQuality::Conservative))
+        .map(|candidate| {
+            let mut observed = fact(candidate.path, path.span(), AnalysisQuality::Conservative);
+            observed.guard = candidate.guard;
+            observed
+        })
         .collect()
 }
 
@@ -42,10 +46,9 @@ pub(crate) fn macro_candidates(
                 ImportCandidateKind::Glob => MacroDerivation::GlobImport,
                 ImportCandidateKind::ReExport => MacroDerivation::ReExport,
             };
-            (
-                fact(candidate.path, path.span(), AnalysisQuality::Conservative),
-                derivation,
-            )
+            let mut observed = fact(candidate.path, path.span(), AnalysisQuality::Conservative);
+            observed.guard = candidate.guard;
+            (observed, derivation)
         })
         .collect();
     (candidates, overflowed)

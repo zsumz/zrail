@@ -46,7 +46,9 @@ pub(super) fn matches(
                         external_source_matches(allowed, package, source, resolved_cargo)
                     })
                 }
-                MacroOrigin::Pending { .. } | MacroOrigin::Unresolved => false,
+                MacroOrigin::Pending { .. }
+                | MacroOrigin::UnknownExportSet { .. }
+                | MacroOrigin::Unresolved => false,
             })
         })
 }

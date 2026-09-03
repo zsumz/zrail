@@ -113,9 +113,13 @@ fn test_only_module_edge_cannot_authorize_a_production_macro() {
         .expect("check test-only macro visibility")
         .report;
 
-    assert!(report.findings.iter().any(|finding| {
-        finding.id.starts_with("RUST-MACRO") && finding.message.contains("reviewed")
-    }));
+    assert!(
+        report.findings.iter().any(|finding| {
+            finding.id.starts_with("RUST-MACRO") && finding.message.contains("reviewed")
+        }),
+        "{}",
+        report.human()
+    );
     reset(&root);
 }
 
@@ -151,9 +155,13 @@ fn test_only_module_edge_can_authorize_a_test_only_macro() {
         .expect("check test-only macro visibility")
         .report;
 
-    assert!(!report.findings.iter().any(|finding| {
-        finding.id.starts_with("RUST-MACRO") && finding.message.contains("reviewed")
-    }));
+    assert!(
+        !report.findings.iter().any(|finding| {
+            finding.id.starts_with("RUST-MACRO") && finding.message.contains("reviewed")
+        }),
+        "{}",
+        report.human()
+    );
     reset(&root);
 }
 

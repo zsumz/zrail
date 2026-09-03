@@ -1,6 +1,6 @@
 //! Guard-aware policy and call projections derived from collected imports.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::AnalysisQuality;
 
@@ -100,7 +100,7 @@ impl ImportMap {
             return (Vec::new(), false);
         };
         let remainder = &segments[1..];
-        let mut candidates = BTreeMap::new();
+        let mut candidates = BTreeSet::new();
         for (prefix, guard) in self.call_aliases.get(first).into_iter().flatten() {
             if !available(guard, context, overlap_domains) {
                 continue;
@@ -114,7 +114,11 @@ impl ImportMap {
             } else {
                 ImportCandidateKind::Exact
             };
-            candidates.insert(join_path(prefix.clone(), remainder), kind);
+            candidates.insert(ImportCandidate {
+                path: join_path(prefix.clone(), remainder),
+                kind,
+                guard: guard.clone(),
+            });
             if candidates.len() > limit {
                 return (Vec::new(), true);
             }
@@ -133,20 +137,16 @@ impl ImportMap {
             } else {
                 ImportCandidateKind::Glob
             };
-            candidates
-                .entry(format!("{glob}::{syntactic}"))
-                .or_insert(kind);
+            candidates.insert(ImportCandidate {
+                path: format!("{glob}::{syntactic}"),
+                kind,
+                guard: guard.clone(),
+            });
             if candidates.len() > limit {
                 return (Vec::new(), true);
             }
         }
-        (
-            candidates
-                .into_iter()
-                .map(|(path, kind)| ImportCandidate { path, kind })
-                .collect(),
-            false,
-        )
+        (candidates.into_iter().collect(), false)
     }
 
     pub(super) fn re_exports(&self, path: &syn::Path, context: &SyntaxGuard) -> bool {

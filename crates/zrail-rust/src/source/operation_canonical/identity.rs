@@ -14,7 +14,7 @@ use super::{
 use crate::source::{
     CallResolutionFact, CallResolutionKind, SourceSyntax,
     include_bindings::{IncludeBindings, ResolvedTerminal},
-    include_projection_budget::{ProjectionBudget, ProjectionLimit},
+    include_projection_budget::ProjectionLimit,
     include_resolution_state::ResolutionUsage,
 };
 
@@ -24,7 +24,7 @@ pub(super) fn canonicalize(
     file: &str,
     syntax: SourceSyntax,
     associated: &super::associated::Catalog,
-    budget: &mut ProjectionBudget,
+    resolver: &mut resolution::Resolver<'_>,
     unresolved: &mut BTreeSet<(String, Option<SourceSpan>)>,
     call_resolutions: &mut Vec<CallResolutionFact>,
 ) -> Result<(), ProjectionLimit> {
@@ -56,25 +56,22 @@ pub(super) fn canonicalize(
         } else {
             ResolutionUsage::ConstructorValue
         };
-        let mut result = resolution::resolve(
-            resolution::Request {
-                bindings,
-                file,
-                syntax,
-                fact: &operation.identity,
-                file_local: operation.file_local
-                    && operation.subject_origin
-                        != super::super::operation_model::OperationSubjectOrigin::LocalDeclaration
-                    && (construction == ConstructorForm::Named || operation.construction_proven),
-                subject_origin: operation.subject_origin,
-                written,
-                usage,
-                construction: Some(construction),
-                root_lookup: operation.root_lookup,
-                generic_shadow: operation.generic_shadow,
-            },
-            budget,
-        )?;
+        let mut result = resolver.resolve(resolution::Request {
+            bindings,
+            file,
+            syntax,
+            fact: &operation.identity,
+            file_local: operation.file_local
+                && operation.subject_origin
+                    != super::super::operation_model::OperationSubjectOrigin::LocalDeclaration
+                && (construction == ConstructorForm::Named || operation.construction_proven),
+            subject_origin: operation.subject_origin,
+            written,
+            usage,
+            construction: Some(construction),
+            root_lookup: operation.root_lookup,
+            generic_shadow: operation.generic_shadow,
+        })?;
         let qualification = super::qualification::classify(
             operation.qualified_subject.as_ref(),
             &mut result,
@@ -87,7 +84,7 @@ pub(super) fn canonicalize(
                 .unwrap_or(&operation.identity.name),
             bindings,
             super::qualification::Occurrence { file, syntax },
-            budget,
+            resolver,
         )?;
         if let super::qualification::Disposition::AssociatedItem(quality) = qualification {
             if quality != AnalysisQuality::Exact

@@ -2,7 +2,7 @@
 
 use crate::{
     LOCK_SEMANTICS, LockFile, LockMigrationClassification, LockedExecutionReceipt,
-    LockedGeneratedSource, compare_lock_epochs,
+    LockedGeneratedSource, LockedMacroSource, compare_lock_epochs,
 };
 
 #[test]
@@ -63,7 +63,7 @@ fn epoch_one_migration_is_scoped_per_authority_subject() {
 
 #[test]
 fn migration_accepts_each_released_prior_epoch() {
-    for (schema, semantics) in [(1, 1), (1, 2), (2, 3), (3, 4)] {
+    for (schema, semantics) in [(1, 1), (1, 2), (2, 3), (3, 4), (3, 5)] {
         let mut old = LockFile::new("0".repeat(64));
         old.schema = schema;
         old.semantics = semantics;
@@ -71,6 +71,56 @@ fn migration_accepts_each_released_prior_epoch() {
         let report = compare_lock_epochs(&old, &LockFile::new("0".repeat(64)))
             .expect("compare supported prior epoch");
         assert_eq!(report.from_semantics, semantics);
+    }
+}
+
+#[test]
+fn epoch_five_reports_changed_allowance_binding_authority() {
+    let digest = "0".repeat(64);
+    let mut old = LockFile::new(&digest);
+    old.semantics = 5;
+    old.analysis
+        .as_mut()
+        .expect("analysis certificate")
+        .analyzer_semantics = 5;
+    old.macro_sources
+        .push(macro_source("macro-review", "alpha", "1.0.0"));
+    let mut new = LockFile::new(digest);
+    new.macro_sources
+        .push(macro_source("macro-review", "beta", "2.0.0"));
+
+    let report = compare_lock_epochs(&old, &new).expect("compare epoch five");
+
+    let changed = report
+        .entries
+        .iter()
+        .find(|entry| entry.rail == "rust.macro-source" && entry.subject == "macro-review")
+        .expect("changed allowance binding");
+    assert_eq!(
+        changed.classification,
+        LockMigrationClassification::ChangedInterpretation
+    );
+    assert!(
+        changed
+            .before
+            .as_deref()
+            .is_some_and(|value| value.contains("alpha"))
+    );
+    assert!(
+        changed
+            .after
+            .as_deref()
+            .is_some_and(|value| value.contains("beta"))
+    );
+}
+
+fn macro_source(allowance: &str, package: &str, version: &str) -> LockedMacroSource {
+    LockedMacroSource {
+        allowance: allowance.into(),
+        package: package.into(),
+        version: version.into(),
+        source: "registry+https://example.invalid/index".into(),
+        checksum: Some("1".repeat(64)),
     }
 }
 

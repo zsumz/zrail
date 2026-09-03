@@ -49,6 +49,7 @@ pub(super) fn visit_for(visitor: &mut FactVisitor<'_>, expression: &ExprForLoop)
 }
 
 pub(super) fn visit_item_fn(visitor: &mut FactVisitor<'_>, function: &ItemFn) {
+    visitor.record_proc_macro(function);
     visitor.record_test_function(function);
     visitor.with_generics(&function.sig.generics, false, |visitor| {
         visitor.with_signature_values(&function.sig, |visitor| {

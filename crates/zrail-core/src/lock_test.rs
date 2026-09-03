@@ -3,7 +3,7 @@
 use std::{fs, path::PathBuf};
 
 use super::{
-    LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope,
+    LOCK_SEMANTICS, LockFile, LockedDependency, LockedDependencyKind, LockedDependencyScope,
     LockedDependencySource, LockedGate, LockedGateInput, LockedGeneratedSource, LockedPackage,
     LockedRatchet,
 };
@@ -72,7 +72,9 @@ fn current_locks_separate_format_semantics_and_producer() {
 
     let rendered = lock.render().expect("render current lock");
 
-    assert!(rendered.contains("schema = 3\nsemantics = 5\nproducer = \""));
+    assert!(rendered.contains(&format!(
+        "schema = 3\nsemantics = {LOCK_SEMANTICS}\nproducer = \""
+    )));
     assert!(!rendered.contains("\nengine = "));
 }
 

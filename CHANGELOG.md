@@ -4,6 +4,47 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ## [Unreleased]
 
+## [0.0.3-rc.7] - 2026-09-03
+
+### Added
+
+- Logical source mounts preserve package, crate, lexical imports, dependency
+  authority, configuration predicates, origin, and mount-specific identity while
+  retaining physical paths in diagnostics.
+- Read-only lock-base discovery searches Git history for every revision matching
+  the stored contract digest and reports whether local contract edits caused drift.
+
+### Changed
+
+- Workspace producer and exact internal pins advance to `0.0.3-rc.7`; lock
+  semantics are epoch 6 (schema 3).
+- Macro glob resolution now derives candidates from explicit exported macro sets,
+  follows nested re-exports, and records genuinely unknowable sets explicitly.
+- Rust invocation resolution queries the macro namespace independently of modules,
+  types, functions, constants, and values with the same spelling.
+- `zrail explain --path` now requires an existing path; deliberate future-path
+  classification uses the explicit `--hypothetical-path` option.
+
+### Fixed
+
+- Included fragments inherit the include site's import and dependency-authority
+  environment, and repeated mounts are resolved as distinct logical occurrences.
+- Empty repository glob chains no longer invent macro candidates or interfere
+  with compiler-provided macro authority.
+- Lock migration mismatches now report both contract digests, actionable base
+  recovery commands, candidate revisions, and local-edit causality.
+- Leading-`::` macro paths bypass lexical imports, and public workspace
+  proc-macro re-exports retain the re-exporting package's repository authority.
+- Integration-test targets resolve their own library crate root, including bare
+  macro imports from a named proc-macro re-export.
+- Conservative macro resolution now provides the documented per-occurrence
+  name-only fallback even when the same allowance carries exact source authority.
+- Macro binding diagnostics name the canonical `resolution` setting.
+- Crate source staging no longer requires Python 3.11's `tomllib` module.
+- External macro globs resolve exact exports from checksum-matched local
+  Cargo registry archives; missing, corrupt, conditional, globbed, or opaque
+  export surfaces remain unresolved and require conservative review.
+
 ## [0.0.3-rc.6] - 2026-08-31
 
 ### Added

@@ -5,9 +5,7 @@ use std::collections::BTreeMap;
 use zrail_core::{AnalysisQuality, MacroBindingMode, MacroExpansionAllow};
 
 use crate::cargo::ResolvedCargoGraph;
-use crate::source::{
-    MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin, SourceIndex,
-};
+use crate::source::{MacroCandidate, MacroExpansionFact, MacroOrigin, SourceIndex};
 
 use super::{bindings, failure::MacroBindingFailure, source};
 
@@ -61,6 +59,9 @@ fn review_with<'a>(
             .collect::<Vec<_>>();
         attempted.extend(candidate_attempts.iter().copied());
         let Some(names) = candidate_names(expansion, candidate, allowed) else {
+            if unresolved(candidate) {
+                reasons.extend(unresolved_failures(candidate));
+            }
             let mut missing = candidate
                 .policy_names()
                 .filter(|name| !allowed.contains_key(name))
@@ -75,7 +76,7 @@ fn review_with<'a>(
             continue;
         };
         if unresolved(candidate) {
-            if !conservative_written_binding(expansion, candidate, &names, allowed) {
+            if !conservative_name_binding(&names, allowed) {
                 reasons.extend(unresolved_failures(candidate));
                 reasons.extend(names.iter().map(|name| {
                     MacroBindingFailure::ConfidenceNotGranted {
@@ -116,12 +117,16 @@ pub(super) fn candidate_names<'a>(
     allowed: &BTreeMap<&str, &MacroExpansionAllow>,
 ) -> Option<Vec<&'a str>> {
     let names = candidate.policy_names().collect::<Vec<_>>();
+    let written_alias = names.len() == 1
+        && candidate.written_alias
+        && allowed.contains_key(expansion.name.as_str());
+    let conservative_fallback = unresolved(candidate)
+        && allowed
+            .get(expansion.name.as_str())
+            .is_some_and(|allowance| allowance.binding == MacroBindingMode::Conservative);
     if names.iter().all(|name| allowed.contains_key(name)) {
         Some(names)
-    } else if names.len() == 1
-        && candidate.written_alias
-        && allowed.contains_key(expansion.name.as_str())
-    {
+    } else if written_alias || conservative_fallback {
         Some(vec![expansion.name.as_str()])
     } else {
         None
@@ -151,6 +156,12 @@ fn unresolved_failures(candidate: &MacroCandidate) -> Vec<MacroBindingFailure> {
             MacroOrigin::Unresolved => Some(MacroBindingFailure::UnresolvedOrigin {
                 candidate: candidate_name.clone(),
             }),
+            MacroOrigin::UnknownExportSet { reason } => {
+                Some(MacroBindingFailure::UnknownExportSet {
+                    candidate: candidate_name.clone(),
+                    reason: reason.clone(),
+                })
+            }
             _ => None,
         })
         .collect::<Vec<_>>();
@@ -168,21 +179,19 @@ fn unresolved(candidate: &MacroCandidate) -> bool {
         || candidate.origins.iter().any(|origin| {
             matches!(
                 origin,
-                MacroOrigin::Pending { .. } | MacroOrigin::Unresolved
+                MacroOrigin::Pending { .. }
+                    | MacroOrigin::UnknownExportSet { .. }
+                    | MacroOrigin::Unresolved
             )
         })
 }
 
-fn conservative_written_binding(
-    expansion: &MacroExpansionFact,
-    candidate: &MacroCandidate,
+fn conservative_name_binding(
     names: &[&str],
     allowed: &BTreeMap<&str, &MacroExpansionAllow>,
 ) -> bool {
-    candidate.derivation == MacroDerivation::Written
-        && candidate.observation.name == expansion.name
-        && names == [expansion.name.as_str()]
-        && allowed[expansion.name.as_str()].binding == MacroBindingMode::Conservative
-        && allowed[expansion.name.as_str()].source.is_none()
-        && allowed[expansion.name.as_str()].definition.is_none()
+    !names.is_empty()
+        && names
+            .iter()
+            .all(|name| allowed[name].binding == MacroBindingMode::Conservative)
 }

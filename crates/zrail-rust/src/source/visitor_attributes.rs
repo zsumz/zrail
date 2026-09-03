@@ -89,7 +89,7 @@ impl FactVisitor<'_> {
             return;
         };
         for expansion in expansions {
-            let (resolved, quality, _, _) = self.resolve_macro_path(&expansion.path);
+            let (resolved, quality, _, _, _) = self.resolve_macro_path(&expansion.path);
             let observed = fact(
                 expansion
                     .path

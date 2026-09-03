@@ -13,7 +13,7 @@ import shutil
 import sys
 import tarfile
 import tempfile
-import tomllib
+from typing import Optional
 
 
 MAX_ARCHIVE_BYTES = 64 * 1024 * 1024
@@ -25,6 +25,82 @@ CRATES_IO_SOURCE = "registry+https://github.com/rust-lang/crates.io-index"
 
 class StageError(Exception):
     pass
+
+
+def basic_string(value: str, description: str) -> str:
+    try:
+        parsed = json.loads(value)
+    except (TypeError, json.JSONDecodeError) as error:
+        raise StageError(f"invalid {description}: {error}") from error
+    if not isinstance(parsed, str):
+        raise StageError(f"invalid {description}: expected a basic string")
+    return parsed
+
+
+def package_identity(path: Path) -> tuple[str, str]:
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeError) as error:
+        raise StageError(f"cannot read packaged Cargo.toml identity: {error}") from error
+    table = None
+    fields: dict[str, str] = {}
+    for line in lines:
+        stripped = line.strip()
+        if '"""' in stripped or "'''" in stripped:
+            raise StageError("packaged Cargo.toml identity uses an unsupported multiline string")
+        if stripped == "[package]":
+            table = "package"
+            continue
+        if stripped.startswith("["):
+            table = None
+            continue
+        if table != "package" or "=" not in stripped:
+            continue
+        key, value = (part.strip() for part in stripped.split("=", 1))
+        if key not in {"name", "version"}:
+            continue
+        if key in fields:
+            raise StageError(f"packaged Cargo.toml repeats package.{key}")
+        fields[key] = basic_string(value, f"packaged Cargo.toml package.{key}")
+    if set(fields) != {"name", "version"}:
+        raise StageError("packaged Cargo.toml lacks an explicit package name or version")
+    return fields["name"], fields["version"]
+
+
+def lock_packages(path: Path) -> list[dict[str, str]]:
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeError) as error:
+        raise StageError(f"cannot read packaged Cargo.lock: {error}") from error
+    packages: list[dict[str, str]] = []
+    package: Optional[dict[str, str]] = None
+    for line in lines:
+        stripped = line.strip()
+        if '"""' in stripped or "'''" in stripped:
+            raise StageError("packaged Cargo.lock uses an unsupported multiline string")
+        if stripped == "[[package]]":
+            if package is not None:
+                packages.append(package)
+            package = {}
+            continue
+        if stripped.startswith("["):
+            if package is not None:
+                packages.append(package)
+                package = None
+            continue
+        if package is None or "=" not in stripped:
+            continue
+        key, value = (part.strip() for part in stripped.split("=", 1))
+        if key not in {"name", "version", "source", "checksum"}:
+            continue
+        if key in package:
+            raise StageError(f"packaged Cargo.lock repeats package field {key}")
+        package[key] = basic_string(value, f"packaged Cargo.lock package {key}")
+    if package is not None:
+        packages.append(package)
+    if any("name" not in package or "version" not in package for package in packages):
+        raise StageError("packaged Cargo.lock has an invalid package list")
+    return packages
 
 
 def sha256(path: Path) -> str:
@@ -68,15 +144,7 @@ def verify_locked_dependencies(
         return
     lock_path = root / "Cargo.lock"
     require_regular_file(lock_path, "packaged Cargo.lock")
-    try:
-        lock = tomllib.loads(lock_path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, tomllib.TOMLDecodeError) as error:
-        raise StageError(f"cannot read packaged Cargo.lock: {error}") from error
-    packages = lock.get("package", [])
-    if not isinstance(packages, list) or any(
-        not isinstance(package, dict) for package in packages
-    ):
-        raise StageError("packaged Cargo.lock has an invalid package list")
+    packages = lock_packages(lock_path)
     for name, version, archive in dependencies:
         require_regular_file(archive, f"dependency archive for {name}")
         matches = [
@@ -172,18 +240,8 @@ def stage_archive(
         checksum_path = staged_root / ".cargo-checksum.json"
         if checksum_path.exists() or checksum_path.is_symlink():
             raise StageError("crate archive already contains .cargo-checksum.json")
-        try:
-            manifest = tomllib.loads(manifest_path.read_text(encoding="utf-8"))
-            package = manifest["package"]
-        except (
-            OSError,
-            UnicodeError,
-            KeyError,
-            TypeError,
-            tomllib.TOMLDecodeError,
-        ) as error:
-            raise StageError(f"cannot read packaged Cargo.toml identity: {error}") from error
-        if package.get("name") != name or package.get("version") != version:
+        manifest_name, manifest_version = package_identity(manifest_path)
+        if manifest_name != name or manifest_version != version:
             raise StageError("packaged Cargo.toml identity does not match the requested package")
 
         verify_locked_dependencies(staged_root, dependencies)

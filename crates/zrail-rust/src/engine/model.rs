@@ -99,6 +99,7 @@ pub(crate) fn load_model_with_bundle(
         &mut source,
         CanonicalizationContext {
             cargo: &cargo,
+            resolved_cargo: resolved_cargo.as_ref(),
             packages: &graph.packages,
             module_edges: &graph.module_edges,
             compilation_domains: &graph.compilation_domains,

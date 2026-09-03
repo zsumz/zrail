@@ -17,7 +17,7 @@ use crate::source::{
     SourceSyntax, SyntaxGuard,
     include_binding_helpers::join,
     include_bindings::{IncludeBindings, ResolvedOrigin},
-    include_projection_budget::{ProjectionBudget, ProjectionLimit},
+    include_projection_budget::ProjectionLimit,
     include_resolution_state::ResolutionUsage,
 };
 
@@ -29,7 +29,7 @@ pub(super) fn expand(
     catalog: &Catalog,
     file: &str,
     syntax: SourceSyntax,
-    budget: &mut ProjectionBudget,
+    resolver: &mut resolution::Resolver<'_>,
     remaining: &mut usize,
     unresolved_findings: &mut BTreeSet<(String, Option<SourceSpan>)>,
 ) -> Result<(), ProjectionLimit> {
@@ -63,22 +63,19 @@ pub(super) fn expand(
             associated_candidates: operation.identity.associated_candidates.clone(),
             inherits_parent_context: operation.identity.inherits_parent_context,
         };
-        let result = resolution::resolve(
-            resolution::Request {
-                bindings,
-                file,
-                syntax,
-                fact: &subject,
-                file_local: place.base_file_local,
-                subject_origin: place.base_origin,
-                written: &update.written,
-                usage: ResolutionUsage::OperationType,
-                construction: None,
-                root_lookup: None,
-                generic_shadow: None,
-            },
-            budget,
-        )?;
+        let result = resolver.resolve(resolution::Request {
+            bindings,
+            file,
+            syntax,
+            fact: &subject,
+            file_local: place.base_file_local,
+            subject_origin: place.base_origin,
+            written: &update.written,
+            usage: ResolutionUsage::OperationType,
+            construction: None,
+            root_lookup: None,
+            generic_shadow: None,
+        })?;
         if result.expected == 0 {
             expanded.push(operation);
             continue;
@@ -128,7 +125,7 @@ pub(super) fn expand(
                         } else {
                             AnalysisQuality::Exact
                         });
-                budget.retain_fact(remaining)?;
+                resolver.retain_fact(remaining)?;
                 push_unique(
                     &mut expanded,
                     field_operation(&operation, name, quality, guard),
@@ -145,7 +142,7 @@ pub(super) fn expand(
                 bases.insert(place.base_name.clone());
             }
             for base in bases {
-                budget.retain_fact(remaining)?;
+                resolver.retain_fact(remaining)?;
                 let name = join(&base, "::*").unwrap_or_else(|| "<unresolved>::*".into());
                 let mut receipt = field_operation(
                     &operation,

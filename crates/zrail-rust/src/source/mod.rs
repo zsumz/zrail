@@ -47,7 +47,7 @@ mod macro_inputs;
 mod macro_model;
 mod macro_origins;
 mod macro_qualified_definition;
-mod macro_visibility;
+mod macro_resolution;
 mod macro_visibility_collect;
 mod macro_visibility_graph;
 mod macro_visibility_reachability;

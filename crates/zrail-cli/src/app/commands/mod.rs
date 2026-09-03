@@ -22,6 +22,7 @@ mod init_template;
 mod migrate_config;
 mod migrate_lock;
 mod migrate_lock_artifact;
+mod migrate_lock_recovery;
 mod migration_bridge;
 mod mirrors;
 mod mutation_paths;

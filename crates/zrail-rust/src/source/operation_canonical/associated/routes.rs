@@ -31,16 +31,16 @@ pub(super) struct TraitRoute {
 
 pub(super) struct Resolver<'a> {
     bindings: &'a IncludeBindings,
-    budget: &'a mut ProjectionBudget,
     cache: BTreeMap<ResolveKey, resolution::Resolution>,
+    written: resolution::Resolver<'a>,
 }
 
 impl<'a> Resolver<'a> {
     pub(super) fn new(bindings: &'a IncludeBindings, budget: &'a mut ProjectionBudget) -> Self {
         Self {
             bindings,
-            budget,
             cache: BTreeMap::new(),
+            written: resolution::Resolver::new(budget),
         }
     }
 
@@ -146,22 +146,19 @@ impl<'a> Resolver<'a> {
             associated_candidates: Vec::new(),
             inherits_parent_context: true,
         };
-        let resolved = resolution::resolve(
-            resolution::Request {
-                bindings: self.bindings,
-                file,
-                syntax,
-                fact: &observed,
-                file_local: false,
-                subject_origin: OperationSubjectOrigin::WrittenPath,
-                written: path,
-                usage: ResolutionUsage::Type,
-                construction: None,
-                root_lookup: None,
-                generic_shadow: None,
-            },
-            self.budget,
-        )?;
+        let resolved = self.written.resolve(resolution::Request {
+            bindings: self.bindings,
+            file,
+            syntax,
+            fact: &observed,
+            file_local: false,
+            subject_origin: OperationSubjectOrigin::WrittenPath,
+            written: path,
+            usage: ResolutionUsage::Type,
+            construction: None,
+            root_lookup: None,
+            generic_shadow: None,
+        })?;
         self.cache.insert(key, resolved.clone());
         Ok(resolved)
     }

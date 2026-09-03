@@ -20,16 +20,18 @@ pub(super) struct ImportMap {
     pub(super) re_export_globs: BTreeMap<String, SyntaxGuard>,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(super) enum ImportCandidateKind {
     Exact,
     Glob,
     ReExport,
 }
 
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub(super) struct ImportCandidate {
     pub(super) path: String,
     pub(super) kind: ImportCandidateKind,
+    pub(super) guard: SyntaxGuard,
 }
 
 impl ImportMap {

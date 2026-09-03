@@ -63,7 +63,7 @@ fn discard_non_macro_builtin_aliases(expansion: &mut MacroExpansionFact) {
                 candidate.derivation,
                 MacroDerivation::ExactImport | MacroDerivation::ReExport
             )
-            && super::macro_visibility::repository_path(&candidate.observation.name);
+            && super::macro_resolution::repository_path(&candidate.observation.name);
         discarded |= non_macro_alias;
         !non_macro_alias
     });

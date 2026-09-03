@@ -43,10 +43,10 @@ target matching the machine that will run zrail:
 | Windows x86-64 | `x86_64-pc-windows-msvc` | `.zip` |
 
 For Linux x86-64 with glibc, download and verify one exact release like this
-(replace `0.0.3-rc.6` with the reviewed version):
+(replace `0.0.3-rc.7` with the reviewed version):
 
 ```sh
-ZRAIL_VERSION=0.0.3-rc.6
+ZRAIL_VERSION=0.0.3-rc.7
 ZRAIL_TARGET=x86_64-unknown-linux-gnu
 ZRAIL_ARCHIVE="zrail-${ZRAIL_VERSION}-${ZRAIL_TARGET}.tar.gz"
 ZRAIL_RELEASE="https://github.com/zsumz/zrail/releases/download/v${ZRAIL_VERSION}"
@@ -71,7 +71,7 @@ CI should use the same checked archive instead of compiling zrail on every run:
 ```yaml
 - name: Download verified zrail binary
   env:
-    ZRAIL_VERSION: 0.0.3-rc.6
+    ZRAIL_VERSION: 0.0.3-rc.7
     ZRAIL_TARGET: x86_64-unknown-linux-gnu
   run: |
     archive="zrail-${ZRAIL_VERSION}-${ZRAIL_TARGET}.tar.gz"
@@ -90,7 +90,7 @@ CI should use the same checked archive instead of compiling zrail on every run:
 If no prebuilt target fits, install from the locked registry source:
 
 ```sh
-cargo install zrail --registry crates-io --version 0.0.3-rc.6 --locked
+cargo install zrail --registry crates-io --version 0.0.3-rc.7 --locked
 ```
 
 Protected tags package, verify, checksum, attest, and publish `zrail-core`,
@@ -109,6 +109,10 @@ zrail baseline --accept-grants
 zrail check
 zrail explain --path src/lib.rs
 ```
+
+`explain --path` requires a concrete existing path and suggests close matches
+for mistakes. Use `--hypothetical-path src/future.rs` only when deliberately
+planning policy for a path that does not exist yet.
 
 The `rust` preset fits conventional inline and integration tests. Run
 `zrail init` for the zsumz preset: sibling tests, reviewed macro expansion, and
@@ -205,6 +209,17 @@ zrail fmt --check
 zrail migrate-lock --base HEAD --output zrail-migration.json
 zrail update --accept-migration sha256:<reviewed-report-digest>
 ```
+
+If the current contract no longer matches the contract digest stored in the
+lock, discover usable immutable bases without selecting or writing one:
+
+```sh
+zrail migrate-lock --discover-base
+```
+
+Discovery reports the lock, worktree, and `HEAD` contract digests, whether
+uncommitted contract edits caused the mismatch, and every matching candidate
+it finds. Rerun migration with an explicitly reviewed `--base` revision.
 
 When the current engine cannot analyze the prior-epoch base, repair the source
 on a committed descendant and review a two-revision bridge:
