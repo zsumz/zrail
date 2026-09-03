@@ -77,10 +77,10 @@ impl MacroBindingFailure {
             Self::UnresolvedOrigin { .. }
             | Self::PendingOrigin { .. }
             | Self::ConfidenceNotGranted { .. } => {
-                "qualify or resolve the macro origin, or use binding = \"conservative\" after reviewing the unresolved name-only boundary"
+                "qualify or resolve the macro origin, or use resolution = \"conservative\" after reviewing the unresolved name-only boundary"
             }
             Self::UnknownExportSet { .. } => {
-                "make the glob target export set analyzable or qualify the macro path explicitly"
+                "make the glob target export set analyzable, qualify the macro path explicitly, or use resolution = \"conservative\" after reviewing the unresolved name-only boundary"
             }
             Self::SourceMismatch { .. } => {
                 "bind source to the exact observed compiler, repository, or dependency source"

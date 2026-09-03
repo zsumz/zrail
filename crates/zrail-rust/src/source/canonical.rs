@@ -6,12 +6,12 @@ mod packages;
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use zrail_core::{AnalysisQuality, Finding};
+use zrail_core::AnalysisQuality;
 
 use super::{
     CanonicalizationContext, ObservedFact, SourceIndex, macro_definitions::MacroDefinitions,
 };
-use packages::{dependency_roots, external_roots, selected_packages};
+use packages::{dependency_roots, external_roots, identity_limit, selected_packages};
 
 const MAX_IDENTITIES_PER_ROOT: usize = 4;
 
@@ -22,6 +22,7 @@ pub(crate) fn canonicalize(
 ) {
     let CanonicalizationContext {
         cargo,
+        resolved_cargo,
         packages: contexts,
         module_edges,
         compilation_domains,
@@ -44,8 +45,12 @@ pub(crate) fn canonicalize(
         compilation_includes,
         analysis_limits.derived_source_instances,
     );
-    let macro_exports =
-        super::macro_resolution::MacroExports::collect(index, cargo, &macro_definitions.instances);
+    let macro_exports = super::macro_resolution::MacroExports::collect(
+        index,
+        cargo,
+        resolved_cargo,
+        &macro_definitions.instances,
+    );
     let macro_visibility = super::macro_resolution::MacroVisibility::collect(index, module_edges);
     let mut findings = Vec::new();
     for file in &mut index.files {
@@ -210,20 +215,6 @@ fn canonicalize_fact_bounded(
 
 fn visible_root(root: &str) -> &str {
     root.strip_prefix("r#").unwrap_or(root)
-}
-
-fn identity_limit(path: &str, root: &str) -> Finding {
-    Finding::error(
-        "RUST-CANON-001",
-        "rust.source.dependency-identity",
-        "source",
-        format!(
-            "Cargo dependency root {root:?} exceeds the {MAX_IDENTITIES_PER_ROOT}-identity analysis limit"
-        ),
-    )
-    .at(path, None)
-    .with_analysis(AnalysisQuality::Unresolved)
-    .with_help("split shared source or use distinct dependency aliases so policy identity is exact")
 }
 
 fn split_root(path: &str) -> Option<(&str, &str)> {

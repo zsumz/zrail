@@ -26,6 +26,15 @@ impl FactVisitor<'_> {
             .map(|segment| segment.ident.to_string())
             .collect::<Vec<_>>()
             .join("::");
+        if path.leading_colon.is_some() {
+            return (
+                text,
+                AnalysisQuality::Exact,
+                true,
+                false,
+                SyntaxGuard::Ordinary,
+            );
+        }
         self.resolve_text_scoped(&text)
     }
 
@@ -81,6 +90,7 @@ impl FactVisitor<'_> {
         }
         MacroExpansionFact::with_candidates(fact(written_name, path.span(), quality), candidates)
             .with_lexical_scope(&self.lexical_scope)
+            .with_absolute_path(path.leading_colon.is_some())
     }
 
     fn local_macro_candidates(&self, path: &Path, resolved: &str) -> Vec<MacroCandidate> {

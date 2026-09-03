@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::AnalysisLimits;
 
-use crate::cargo::CargoWorkspace;
+use crate::cargo::{CargoWorkspace, ResolvedCargoGraph};
 
 use super::{
     CompilationDomain, CompilationIncludeEdge, CompilationModuleEdge, CompilationRoot,
@@ -14,6 +14,7 @@ use super::{
 #[derive(Clone, Copy)]
 pub(crate) struct CanonicalizationContext<'a> {
     pub(crate) cargo: &'a CargoWorkspace,
+    pub(crate) resolved_cargo: Option<&'a ResolvedCargoGraph>,
     pub(crate) packages: &'a BTreeMap<String, BTreeSet<String>>,
     pub(crate) module_edges: &'a [ResolvedModuleEdge],
     pub(crate) compilation_domains: &'a BTreeMap<String, BTreeSet<CompilationDomain>>,

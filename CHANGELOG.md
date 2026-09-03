@@ -4,6 +4,20 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ## [Unreleased]
 
+### Fixed
+
+- Leading-`::` macro paths bypass lexical imports, and public workspace
+  proc-macro re-exports retain the re-exporting package's repository authority.
+- Integration-test targets resolve their own library crate root, including bare
+  macro imports from a named proc-macro re-export.
+- Conservative macro resolution now provides the documented per-occurrence
+  name-only fallback even when the same allowance carries exact source authority.
+- Macro binding diagnostics name the canonical `resolution` setting.
+- Crate source staging no longer requires Python 3.11's `tomllib` module.
+- External macro globs resolve exact exports from checksum-matched local
+  Cargo registry archives; missing, corrupt, conditional, globbed, or opaque
+  export surfaces remain unresolved and require conservative review.
+
 ## [0.0.3-rc.7] - 2026-09-02
 
 ### Added

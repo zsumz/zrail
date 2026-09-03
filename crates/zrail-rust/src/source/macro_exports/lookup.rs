@@ -28,12 +28,22 @@ impl MacroExports {
             ModuleResolution::Local { modules } => {
                 self.resolve_local(candidate, context, name, modules)
             }
-            ModuleResolution::External(origins)
+            ModuleResolution::External { origins, .. }
                 if candidate.derivation != MacroDerivation::GlobImport =>
             {
-                external(candidate, context, origins, self)
+                external(
+                    candidate,
+                    context,
+                    origins,
+                    candidate.observation.quality.max(AnalysisQuality::Exact),
+                    self,
+                )
             }
-            ModuleResolution::External(_) => unknown(format!(
+            ModuleResolution::External {
+                origins,
+                module: Some(module),
+            } => self.resolve_external_glob(candidate, context, origins, &module, name),
+            ModuleResolution::External { module: None, .. } => unknown(format!(
                 "macro export set for external glob {module_path:?} is unknown"
             )),
             ModuleResolution::Missing if candidate.derivation == MacroDerivation::GlobImport => {
@@ -44,6 +54,27 @@ impl MacroExports {
             ModuleResolution::Missing => ContextResolution::default(),
             ModuleResolution::Unknown(reason) => unknown(reason),
         }
+    }
+
+    fn resolve_external_glob(
+        &self,
+        candidate: &MacroCandidate,
+        context: &MountedModule,
+        origins: Vec<MacroOrigin>,
+        module: &super::ExternalModule,
+        name: &str,
+    ) -> ContextResolution {
+        let exports = match self.external.module(module) {
+            Ok(exports) => exports,
+            Err(reason) => return unknown(reason),
+        };
+        if let Some(reason) = exports.uncertain.get(name).or(exports.open.as_ref()) {
+            return unknown(reason.clone());
+        }
+        if exports.macros.contains(name) {
+            return external(candidate, context, origins, AnalysisQuality::Exact, self);
+        }
+        ContextResolution::default()
     }
 
     fn resolve_local(
@@ -105,6 +136,7 @@ fn external(
     candidate: &MacroCandidate,
     context: &MountedModule,
     origins: Vec<MacroOrigin>,
+    quality: AnalysisQuality,
     exports: &MacroExports,
 ) -> ContextResolution {
     let availability = candidate
@@ -117,12 +149,13 @@ fn external(
     }
     let exported = ExportedMacro {
         origins,
+        proc_macro: false,
         authority_name: Some(candidate.observation.name.clone()),
         definition: None,
         definition_name: None,
         definition_sha256: None,
         guard: SyntaxGuard::Ordinary,
-        quality: candidate.observation.quality.max(AnalysisQuality::Exact),
+        quality,
         visibility: ExportVisibility::default(),
     };
     ContextResolution {

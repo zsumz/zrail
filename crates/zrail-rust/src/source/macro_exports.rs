@@ -2,12 +2,16 @@
 
 #[path = "macro_exports/closure.rs"]
 mod closure;
+#[path = "macro_exports/closure_external.rs"]
+mod closure_external;
 #[path = "macro_exports/collect.rs"]
 mod collect;
 #[path = "macro_exports/contexts.rs"]
 mod contexts;
 #[path = "macro_exports/edges.rs"]
 mod edges;
+#[path = "macro_exports/external.rs"]
+mod external;
 #[path = "macro_exports/imports.rs"]
 mod imports;
 #[path = "macro_exports/lookup.rs"]
@@ -27,6 +31,7 @@ use super::{
     BindingVisibility, MacroDerivation, MacroOrigin, SourceInstanceId, SourceSyntax, SyntaxGuard,
     logical_modules::LogicalModule,
 };
+use external::{ExternalMacroCatalog, ExternalModule};
 use unknown::UnknownExport;
 
 const MAX_EXPORTS_PER_MODULE: usize = 512;
@@ -34,6 +39,7 @@ const MAX_EXPORTS_PER_MODULE: usize = 512;
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 struct ExportedMacro {
     origins: Vec<MacroOrigin>,
+    proc_macro: bool,
     authority_name: Option<String>,
     definition: Option<String>,
     definition_name: Option<String>,
@@ -103,11 +109,17 @@ pub(in crate::source) struct MacroExports {
     package_directories: BTreeMap<String, String>,
     package_dependencies: BTreeMap<String, Vec<crate::cargo::Dependency>>,
     package_roots: BTreeMap<String, BTreeSet<LogicalModule>>,
+    external: ExternalMacroCatalog,
 }
 
 enum ModuleResolution {
-    Local { modules: BTreeSet<LogicalModule> },
-    External(Vec<MacroOrigin>),
+    Local {
+        modules: BTreeSet<LogicalModule>,
+    },
+    External {
+        origins: Vec<MacroOrigin>,
+        module: Option<ExternalModule>,
+    },
     Missing,
     Unknown(String),
 }
@@ -132,6 +144,10 @@ impl ExportVisibility {
 
     fn private(module: &LogicalModule) -> Self {
         Self(BTreeSet::from([module.clone()]))
+    }
+
+    fn is_public(&self) -> bool {
+        self.0.is_empty()
     }
 
     fn restrict(&mut self, other: &Self) {

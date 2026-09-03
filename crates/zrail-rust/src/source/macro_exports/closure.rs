@@ -96,16 +96,26 @@ impl MacroExports {
                         .iter()
                         .filter(|exported| exported.visible_from(module))
                         .cloned()
+                        .map(|mut exported| {
+                            if exported.proc_macro
+                                && edge.visibility.is_public()
+                                && target.domain.package != module.domain.package
+                            {
+                                exported.origins = self.repository_origin(module);
+                            }
+                            exported
+                        })
                         .collect::<BTreeSet<_>>();
                     changed |= insert_named(output, edge, &visible, false);
                 }
                 changed
             }
-            ModuleResolution::External(origins) => insert_named(
+            ModuleResolution::External { origins, .. } => insert_named(
                 output,
                 edge,
                 &BTreeSet::from([ExportedMacro {
                     origins,
+                    proc_macro: false,
                     authority_name: Some(edge.target.clone()),
                     definition: None,
                     definition_name: None,
@@ -164,7 +174,11 @@ impl MacroExports {
                 }
                 changed
             }
-            ModuleResolution::External(_) => insert_unknown(
+            ModuleResolution::External {
+                origins,
+                module: Some(target),
+            } => self.apply_external_glob(module, edge, output, &origins, &target),
+            ModuleResolution::External { module: None, .. } => insert_unknown(
                 output,
                 [unknown_glob(
                     edge,

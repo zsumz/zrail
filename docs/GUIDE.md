@@ -743,6 +743,18 @@ External allowances bind to the exact
 dependency source. Built-in data macros and `include!` are handled directly,
 and included Rust remains fully analyzed.
 
+An external `use dependency::module::*` can bind exactly when Cargo.lock selects
+one registry package with a checksum and its matching `.crate` is already in the
+local Cargo registry cache. Zrail does not invoke Cargo or use the network. It
+verifies the archive bytes against Cargo.lock, applies bounded archive and source
+limits, and proves direct public named re-exports of unconditional
+`#[macro_export] macro_rules!` definitions. Names absent from that closed module
+surface do not become candidates. A missing or corrupt archive, Git source,
+conditional export, public nested glob, opaque item macro, ambiguous module, or
+unsupported source shape stays unresolved; a reviewed occurrence may use
+`resolution = "conservative"` without turning that name-only fallback into exact
+source authority.
+
 Cross-crate workspace macros can bind their observed implementation directly:
 
 ```toml
@@ -766,6 +778,11 @@ The lock stores the deterministic result as `inputs_sha256`; another package
 exporting the same macro name cannot borrow this authority. A qualified name
 alone is insufficient: repository allowances require this source or an exact
 local `definition`.
+
+A public named proc-macro re-export from another repository package is governed
+by the re-exporting package. Its content-bound implementation manifest follows
+the transitive workspace and path-dependency closure, so the underlying
+proc-macro implementation remains part of the same locked authority.
 
 `ambient_inputs = "none"` is mandatory for repository source authority. It is
 an explicit, source-bound review attestation that macro output depends only on
@@ -940,7 +957,9 @@ An optional `definition` path can narrow a `macro_rules!` allowance, but path
 spelling never establishes origin. The default `resolution = "exact"` rejects an
 allowance when the candidate origin remains unresolved. A name-only allowance
 may opt into `resolution = "conservative"` to cover only the exact spelling at the
-invocation site; it cannot claim a `source` or `definition` for that unresolved
+invocation site. The same allowance may carry a `source` or `definition` claim
+for exact occurrences; that provenance is checked at those occurrences and is
+ignored by the name-only fallback, so it makes no origin claim for the unresolved
 candidate. Repository globs are narrowed against the bounded local macro
 namespace, while ambiguous glob candidates must all be allowed. `#[macro_use]`
 imports remain unresolved because their bare namespace cannot be attributed
@@ -957,7 +976,8 @@ Macro policy names are user-spellable Rust paths. Diagnostics prefer the stable
 public path (`quote::quote`) while an exact lexical spelling (`q`) may satisfy
 the same single resolved candidate. Dependency package and source provenance
 remain separate authority in `source`; zrail never encodes provenance by
-repeating path segments. `zrail explain` lists each observed macro's written
+repeating path segments. A leading `::` bypasses lexical aliases and glob
+imports, as it does in Rust. `zrail explain` lists each observed macro's written
 spelling, preferred policy name, and resolved origin independently.
 
 Item-producing macros are a separate source-graph boundary because their output

@@ -81,16 +81,18 @@ impl MacroExports {
                 candidates.push(unknown_candidate(candidate, unknown));
             }
         }
-        for context in &active_contexts {
-            for import in &context.inherited_imports {
-                let candidate = inherited_candidate(expansion, import);
-                let resolved = self.resolve_import(&candidate, context);
-                if resolved.resolved {
-                    resolved_contexts.insert(context.clone());
-                }
-                candidates.extend(resolved.candidates);
-                if !resolved.unknown.is_empty() {
-                    candidates.push(unknown_candidate(candidate, resolved.unknown));
+        if !expansion.absolute_path {
+            for context in &active_contexts {
+                for import in &context.inherited_imports {
+                    let candidate = inherited_candidate(expansion, import);
+                    let resolved = self.resolve_import(&candidate, context);
+                    if resolved.resolved {
+                        resolved_contexts.insert(context.clone());
+                    }
+                    candidates.extend(resolved.candidates);
+                    if !resolved.unknown.is_empty() {
+                        candidates.push(unknown_candidate(candidate, resolved.unknown));
+                    }
                 }
             }
         }

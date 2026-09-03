@@ -4,7 +4,7 @@ use std::collections::BTreeSet;
 
 use crate::cargo::{CrateRootAuthority, DependencySource};
 
-use super::super::logical_modules::LogicalModule;
+use super::super::{CompilationMode, logical_modules::LogicalModule};
 use super::{MacroExports, MacroOrigin, ModuleResolution, normalize};
 
 impl MacroExports {
@@ -35,8 +35,37 @@ impl MacroExports {
                 modules: BTreeSet::from([local]),
             };
         }
+        if let Some(modules) = self.resolve_crate_under_test(start, &segments) {
+            return ModuleResolution::Local { modules };
+        }
         self.resolve_dependency(start, &segments)
             .unwrap_or(ModuleResolution::Missing)
+    }
+
+    fn resolve_crate_under_test(
+        &self,
+        start: &LogicalModule,
+        segments: &[&str],
+    ) -> Option<BTreeSet<LogicalModule>> {
+        if start.domain.mode != CompilationMode::IntegrationTest {
+            return None;
+        }
+        let mut roots = self.package_roots.get(&start.domain.package)?.clone();
+        roots.retain(|root| {
+            normalize(&root.domain.target) == segments[0]
+                && (root.domain.feature_world == start.domain.feature_world
+                    || root.domain.feature_world.is_none())
+        });
+        let modules = roots
+            .into_iter()
+            .map(|mut root| {
+                root.path
+                    .extend(segments[1..].iter().map(|segment| (*segment).to_owned()));
+                root
+            })
+            .filter(|module| self.modules.contains(module))
+            .collect::<BTreeSet<_>>();
+        (!modules.is_empty()).then_some(modules)
     }
 
     fn resolve_keyword_path(&self, start: &LogicalModule, segments: &[&str]) -> ModuleResolution {
@@ -94,7 +123,10 @@ impl MacroExports {
         }
         let dependency = matches[0];
         if dependency.crate_root_authority == CrateRootAuthority::Unresolved {
-            return Some(ModuleResolution::External(vec![MacroOrigin::Unresolved]));
+            return Some(ModuleResolution::External {
+                origins: vec![MacroOrigin::Unresolved],
+                module: None,
+            });
         }
         match &dependency.source {
             DependencySource::WorkspaceMember { .. } | DependencySource::RepositoryPath { .. } => {
@@ -126,10 +158,20 @@ impl MacroExports {
                 })
             }
             source @ (DependencySource::Registry { .. } | DependencySource::Git { .. }) => {
-                Some(ModuleResolution::External(vec![MacroOrigin::External {
-                    package: dependency.name.clone(),
-                    source: source.clone(),
-                }]))
+                Some(ModuleResolution::External {
+                    origins: vec![MacroOrigin::External {
+                        package: dependency.name.clone(),
+                        source: source.clone(),
+                    }],
+                    module: Some(super::ExternalModule {
+                        consumer: start.domain.package.clone(),
+                        crate_root: dependency.crate_root.clone(),
+                        path: segments[1..]
+                            .iter()
+                            .map(|segment| (*segment).to_owned())
+                            .collect(),
+                    }),
+                })
             }
         }
     }

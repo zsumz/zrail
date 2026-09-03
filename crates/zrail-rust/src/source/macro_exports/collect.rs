@@ -14,6 +14,7 @@ impl MacroExports {
     pub(in crate::source) fn collect(
         index: &SourceIndex,
         cargo: &crate::cargo::CargoWorkspace,
+        resolved_cargo: Option<&crate::cargo::ResolvedCargoGraph>,
         instances: &SourceInstances,
     ) -> Self {
         let inline = inline_catalog(index);
@@ -84,6 +85,8 @@ impl MacroExports {
                 &mut contexts,
             );
         }
+        let external =
+            super::external::ExternalMacroCatalog::collect(cargo, resolved_cargo, &drafts);
         let mut exports = Self {
             sets: drafts
                 .keys()
@@ -95,6 +98,7 @@ impl MacroExports {
             package_directories,
             package_dependencies,
             package_roots,
+            external,
         };
         exports.close(drafts);
         exports
@@ -157,6 +161,7 @@ fn collect_definitions(
                 package: mount.domain.package.clone(),
                 directory: directory.clone(),
             }],
+            proc_macro: definition.export == MacroDefinitionExport::ProcMacro,
             authority_name: None,
             definition: Some(file.relative.clone()),
             definition_name: Some(definition.name.clone()),

@@ -237,6 +237,14 @@ unassigned_packages = "deny"
 cycles = "deny"
 
 [[dependencies.crate_root]]
+package = "flate2"
+root = "flate2"
+reason = "The published flate2 library exposes the flate2 crate root."
+[dependencies.crate_root.source]
+kind = "registry"
+requirement = "1.1.10"
+
+[[dependencies.crate_root]]
 package = "proc-macro2"
 root = "proc_macro2"
 reason = "The published proc-macro2 library exposes the proc_macro2 crate root."
@@ -275,6 +283,14 @@ reason = "The published syn library exposes the syn crate root."
 [dependencies.crate_root.source]
 kind = "registry"
 requirement = "2.0.119"
+
+[[dependencies.crate_root]]
+package = "tar"
+root = "tar"
+reason = "The published tar library exposes the tar crate root."
+[dependencies.crate_root.source]
+kind = "registry"
+requirement = "0.4.46"
 
 [[dependencies.crate_root]]
 package = "toml"
