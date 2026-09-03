@@ -8,7 +8,10 @@ use crate::source::{
     MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin, ObservedFact,
 };
 
-use super::{MacroBindingResult, candidate_names, directly_inspected, review_without_definitions};
+use super::{
+    MacroBindingResult, allowances::AllowanceIndex, candidate_names, directly_inspected,
+    review_without_definitions,
+};
 
 #[test]
 fn local_definitions_shadow_intrinsic_shortcuts() {
@@ -42,11 +45,8 @@ fn every_conservative_canonical_identity_requires_review() {
     expansion.candidates[0].observation.quality = AnalysisQuality::Conservative;
     let async_std = allowance("async_std::select");
     let tokio = allowance("tokio::select");
-    let partial = std::collections::BTreeMap::from([("tokio::select", &tokio)]);
-    let complete = std::collections::BTreeMap::from([
-        ("async_std::select", &async_std),
-        ("tokio::select", &tokio),
-    ]);
+    let partial = AllowanceIndex::new([&tokio]);
+    let complete = AllowanceIndex::new([&async_std, &tokio]);
 
     assert!(candidate_names(&expansion, &expansion.candidates[0], &partial).is_none());
     assert_eq!(
@@ -58,7 +58,7 @@ fn every_conservative_canonical_identity_requires_review() {
 #[test]
 fn exact_allowance_cannot_bind_an_unresolved_written_macro() {
     let reviewed = allowance("reviewed");
-    let allowed = std::collections::BTreeMap::from([("reviewed", &reviewed)]);
+    let allowed = AllowanceIndex::new([&reviewed]);
     let local = unresolved("reviewed");
 
     assert!(matches!(
@@ -71,14 +71,14 @@ fn exact_allowance_cannot_bind_an_unresolved_written_macro() {
 fn conservative_bare_allowance_binds_only_the_written_name() {
     let mut reviewed = allowance("reviewed");
     reviewed.binding = MacroBindingMode::Conservative;
-    let allowed = std::collections::BTreeMap::from([("reviewed", &reviewed)]);
+    let allowed = AllowanceIndex::new([&reviewed]);
     assert!(matches!(
         review_without_definitions(&unresolved("reviewed"), &allowed),
         MacroBindingResult::Bound { .. }
     ));
 
     let qualified = allowance("support::reviewed");
-    let qualified_allowed = std::collections::BTreeMap::from([("support::reviewed", &qualified)]);
+    let qualified_allowed = AllowanceIndex::new([&qualified]);
     assert!(matches!(
         review_without_definitions(&unresolved("reviewed"), &qualified_allowed),
         MacroBindingResult::NoNameMatch
@@ -96,9 +96,8 @@ fn ambiguous_glob_candidates_all_require_allowances() {
     );
     let one = allowance("one::reviewed");
     let two = allowance("two::reviewed");
-    let partial = std::collections::BTreeMap::from([("one::reviewed", &one)]);
-    let complete =
-        std::collections::BTreeMap::from([("one::reviewed", &one), ("two::reviewed", &two)]);
+    let partial = AllowanceIndex::new([&one]);
+    let complete = AllowanceIndex::new([&one, &two]);
 
     assert!(matches!(
         review_without_definitions(&expansion, &partial),

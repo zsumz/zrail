@@ -2,7 +2,7 @@
 
 use zrail_core::{
     FindingSink, LockFile, LockedGate, LockedGateInput, LockedGeneratedSource,
-    LockedMacroImplementation, LockedRatchet,
+    LockedMacroImplementation, LockedMacroSource, LockedRatchet,
 };
 
 use super::compare_locks;
@@ -82,6 +82,23 @@ fn changed_repository_macro_package_is_stale_lock_state() {
 }
 
 #[test]
+fn same_name_macro_source_addition_is_not_hidden() {
+    let mut current = LockFile::new("0".repeat(64));
+    current
+        .macro_sources
+        .push(macro_source("derive-one", "1.0.0"));
+    let mut candidate = current.clone();
+    candidate
+        .macro_sources
+        .push(macro_source("derive-two", "2.0.0"));
+    let mut findings = FindingSink::default();
+
+    compare_locks(&current, &candidate, &mut findings);
+
+    assert!(findings.iter().any(|finding| finding.id == "LOCK-036"));
+}
+
+#[test]
 fn changed_feature_certificate_fields_are_stale_lock_state() {
     let current = LockFile::new("0".repeat(64));
     let mut candidate = current.clone();
@@ -137,5 +154,15 @@ fn implementation(digit: &str) -> LockedMacroImplementation {
         package: "fixture".into(),
         directory: ".".into(),
         inputs_sha256: digit.repeat(64),
+    }
+}
+
+fn macro_source(package: &str, version: &str) -> LockedMacroSource {
+    LockedMacroSource {
+        allowance: "derive".into(),
+        package: package.into(),
+        version: version.into(),
+        source: "path+file:///fixture".into(),
+        checksum: None,
     }
 }

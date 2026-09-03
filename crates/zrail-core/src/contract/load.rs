@@ -22,6 +22,8 @@ pub const MAX_IMPORT_DIRECTIVES: usize = 256;
 use super::{discover, hash::contract_sha256, merge::MergeState, validate::validate_contract};
 
 mod bundle;
+#[path = "load/diagnostics.rs"]
+mod diagnostics;
 #[path = "load/entry.rs"]
 mod entry;
 #[path = "load/error.rs"]
@@ -155,7 +157,11 @@ impl Loader {
             )));
         }
         let file = toml::from_str::<ContractFile>(&content).map_err(|error| {
-            ContractError::one(format!("parse {}: {error}", canonical.display()))
+            ContractError::one(format!(
+                "parse {}: {}",
+                canonical.display(),
+                diagnostics::parse_error(&error)
+            ))
         })?;
         if self.schema.is_none() {
             self.schema = file.schema;

@@ -212,7 +212,9 @@ const fn operation_kind(kind: SourceOperationKind) -> &'static str {
         SourceOperationKind::FieldReceiverCall => "field-receiver-call",
         SourceOperationKind::FieldRead => "field-read",
         SourceOperationKind::FieldWrite => "field-write",
+        SourceOperationKind::FieldProjectionWrite => "field-projection-write",
         SourceOperationKind::FieldMutableBorrow => "field-mutable-borrow",
+        SourceOperationKind::FieldProjectionMutableBorrow => "field-projection-mutable-borrow",
     }
 }
 

@@ -4,20 +4,18 @@ use std::collections::BTreeSet;
 
 use crate::contract::{
     Contract, CrateRootSource, MacroAsyncSyntax, MacroDuplicationEffect, MacroExpansionBindings,
-    MacroExpansionMode, MacroFieldMutation, MacroSourceOperations, validate_dependencies,
+    MacroFieldMutation, MacroSourceOperations, validate_dependencies,
     validate_limits::ValidationErrors, validate_paths::validate_repository_literal,
     validate_sets::require_reason,
 };
 
 use super::valid_rust_path;
 
+#[path = "macros/identity.rs"]
+mod identity;
+
 pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
-    if contract.source.rust.macros.mode == MacroExpansionMode::Allow
-        && !contract.source.rust.macros.allow.is_empty()
-    {
-        errors.push("source.rust.macros.allow requires macros.mode = \"deny-unreviewed\"".into());
-    }
-    let mut names = BTreeSet::new();
+    let mut identities = BTreeSet::new();
     for allowed in &contract.source.rust.macros.allow {
         require_reason("macro expansion", &allowed.name, &allowed.reason, errors);
         if !valid_rust_path(&allowed.name) {
@@ -26,9 +24,10 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
                 allowed.name
             ));
         }
-        if !names.insert(allowed.name.as_str()) {
+        let allowance_identity = identity::of(allowed);
+        if !identities.insert(allowance_identity) {
             errors.push(format!(
-                "duplicate macro expansion allowance {:?}",
+                "duplicate macro expansion allowance identity {:?}; repeated names require distinct source or definition provenance",
                 allowed.name
             ));
         }

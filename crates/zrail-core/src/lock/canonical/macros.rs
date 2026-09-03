@@ -59,9 +59,12 @@ fn canonicalize_sources(lock: &mut LockFile) -> Result<(), LockError> {
     }
     lock.macro_sources.sort();
     super::ensure_unique(
-        lock.macro_sources
-            .iter()
-            .map(|source| source.allowance.as_str()),
-        "locked macro source allowance",
+        lock.macro_sources.iter().map(|source| {
+            format!(
+                "{}:{}:{}:{}",
+                source.allowance, source.package, source.version, source.source
+            )
+        }),
+        "locked macro source authority",
     )
 }

@@ -192,7 +192,12 @@ fn assign(state: &mut State, pair: Pair, rest_pair: Pair, tuple: TuplePair, oute
         "other writes: {facts:#?}"
     );
     assert_eq!(
-        matching(&facts, SourceOperationKind::FieldWrite, "State::slots").len(),
+        matching(
+            &facts,
+            SourceOperationKind::FieldProjectionWrite,
+            "State::slots"
+        )
+        .len(),
         2,
         "indexed backing writes: {facts:#?}"
     );

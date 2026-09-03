@@ -63,7 +63,7 @@ fn epoch_one_migration_is_scoped_per_authority_subject() {
 
 #[test]
 fn migration_accepts_each_released_prior_epoch() {
-    for (schema, semantics) in [(1, 1), (1, 2), (2, 3), (3, 4), (3, 5)] {
+    for (schema, semantics) in [(1, 1), (1, 2), (2, 3), (3, 4), (3, 5), (3, 6)] {
         let mut old = LockFile::new("0".repeat(64));
         old.schema = schema;
         old.semantics = semantics;
@@ -75,7 +75,7 @@ fn migration_accepts_each_released_prior_epoch() {
 }
 
 #[test]
-fn epoch_five_reports_changed_allowance_binding_authority() {
+fn epoch_five_reports_exact_retired_and_new_macro_authorities() {
     let digest = "0".repeat(64);
     let mut old = LockFile::new(&digest);
     old.semantics = 5;
@@ -91,27 +91,52 @@ fn epoch_five_reports_changed_allowance_binding_authority() {
 
     let report = compare_lock_epochs(&old, &new).expect("compare epoch five");
 
-    let changed = report
+    let retired = report
         .entries
         .iter()
-        .find(|entry| entry.rail == "rust.macro-source" && entry.subject == "macro-review")
-        .expect("changed allowance binding");
+        .find(|entry| entry.rail == "rust.macro-source" && entry.subject.contains("alpha"))
+        .expect("retired allowance binding");
+    assert_eq!(retired.classification, LockMigrationClassification::Retired);
+    let added = report
+        .entries
+        .iter()
+        .find(|entry| entry.rail == "rust.macro-source" && entry.subject.contains("beta"))
+        .expect("new allowance binding");
     assert_eq!(
-        changed.classification,
-        LockMigrationClassification::ChangedInterpretation
+        added.classification,
+        LockMigrationClassification::NewlyObservable
     );
-    assert!(
-        changed
-            .before
-            .as_deref()
-            .is_some_and(|value| value.contains("alpha"))
-    );
-    assert!(
-        changed
-            .after
-            .as_deref()
-            .is_some_and(|value| value.contains("beta"))
-    );
+}
+
+#[test]
+fn epoch_six_preserves_one_same_name_source_and_reports_the_other() {
+    let digest = "0".repeat(64);
+    let mut old = LockFile::new(&digest);
+    old.semantics = 6;
+    old.analysis
+        .as_mut()
+        .expect("analysis certificate")
+        .analyzer_semantics = 6;
+    old.macro_sources
+        .push(macro_source("macro-review", "alpha", "1.0.0"));
+    let mut new = LockFile::new(digest);
+    new.macro_sources
+        .push(macro_source("macro-review", "alpha", "1.0.0"));
+    new.macro_sources
+        .push(macro_source("macro-review", "beta", "2.0.0"));
+
+    let report = compare_lock_epochs(&old, &new).expect("compare epoch six");
+
+    assert!(report.entries.iter().any(|entry| {
+        entry.rail == "rust.macro-source"
+            && entry.subject.contains("alpha")
+            && entry.classification == LockMigrationClassification::Preserved
+    }));
+    assert!(report.entries.iter().any(|entry| {
+        entry.rail == "rust.macro-source"
+            && entry.subject.contains("beta")
+            && entry.classification == LockMigrationClassification::NewlyObservable
+    }));
 }
 
 fn macro_source(allowance: &str, package: &str, version: &str) -> LockedMacroSource {

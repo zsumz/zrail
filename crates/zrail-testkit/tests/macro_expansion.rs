@@ -11,6 +11,8 @@ mod binding_opacity;
 mod definition_binding;
 #[path = "macro_expansion/intrinsic_shadow.rs"]
 mod intrinsic_shadow;
+#[path = "macro_expansion/staging.rs"]
+mod staging;
 
 #[test]
 fn local_macro_cannot_hide_unsafe_code_or_process_effects() {

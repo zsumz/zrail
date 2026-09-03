@@ -138,7 +138,11 @@ fn macros(
         )?;
     }
     for source in &lock.macro_sources {
-        insert_serialized(values, "rust.macro-source", &source.allowance, source)?;
+        let subject = format!(
+            "{} [{} {} ({})]",
+            source.allowance, source.package, source.version, source.source
+        );
+        insert_serialized(values, "rust.macro-source", &subject, source)?;
     }
     for manifest in &lock.item_macro_manifests {
         let subject = format!("{}:{}", manifest.name, manifest.invocation_path);

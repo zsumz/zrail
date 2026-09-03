@@ -72,6 +72,7 @@ impl FactVisitor<'_> {
             file_local: false,
             origin: OperationSubjectOrigin::WrittenPath,
             span: Some(super::fact::source_span(call.method.span())),
+            inference: None,
         };
         self.push_operation(
             SourceOperationKind::MethodCall,

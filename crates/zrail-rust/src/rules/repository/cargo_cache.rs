@@ -36,6 +36,14 @@ fn target_directory(context: &RuleContext<'_>, pattern: &str) -> Option<String> 
 
 fn valid_tag(path: &Path) -> bool {
     const SIGNATURE: &[u8] = b"Signature: 8a477f597d28d172789f06886806bc55";
+    let metadata = match fs::symlink_metadata(path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return true,
+        Err(_) => return false,
+    };
+    if !metadata.file_type().is_file() {
+        return false;
+    }
     let Ok(mut file) = fs::File::open(path) else {
         return false;
     };

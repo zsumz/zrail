@@ -1,21 +1,22 @@
 //! Closed macro-policy predicates shared by enforcement and coverage.
 
-use std::collections::BTreeMap;
-
 use zrail_core::{
     AnalysisQuality, MacroAsyncSyntax, MacroDuplicationEffect, MacroExpansionAllow,
-    MacroFieldMutation, MacroSourceOperations, OwnerKind,
+    MacroExpansionMode, MacroFieldMutation, MacroSourceOperations, OwnerKind,
 };
 
 use crate::source::MacroExpansionFact;
 
-use super::review::{MacroBindingResult, review, review_without_definitions};
+use super::{
+    allowances::AllowanceIndex,
+    review::{MacroBindingResult, review, review_without_definitions},
+};
 
 pub(crate) fn binds_allowance(
     expansion: &MacroExpansionFact,
     allowance: &MacroExpansionAllow,
 ) -> bool {
-    let allowed = BTreeMap::from([(allowance.name.as_str(), allowance)]);
+    let allowed = AllowanceIndex::new([allowance]);
     matches!(
         review_without_definitions(expansion, &allowed),
         MacroBindingResult::Bound { .. }
@@ -31,6 +32,9 @@ pub(crate) fn closes_async_syntax(
     if directly_inspected(expansion) {
         return true;
     }
+    if contract.source.rust.macros.mode == MacroExpansionMode::Allow {
+        return false;
+    }
     let allowed = contract
         .source
         .rust
@@ -40,8 +44,8 @@ pub(crate) fn closes_async_syntax(
         .filter(|allowed| {
             allowed.async_syntax == MacroAsyncSyntax::None && claim_provenance(expansion, allowed)
         })
-        .map(|allowed| (allowed.name.as_str(), allowed))
-        .collect::<BTreeMap<_, _>>();
+        .collect::<Vec<_>>();
+    let allowed = AllowanceIndex::new(allowed);
     matches!(
         review(source, resolved_cargo, expansion, &allowed),
         MacroBindingResult::Bound {
@@ -60,6 +64,9 @@ pub(crate) fn closes_type_duplication(
     if expansion.is_compiler_builtin() {
         return true;
     }
+    if contract.source.rust.macros.mode == MacroExpansionMode::Allow {
+        return false;
+    }
     let allowed = contract
         .source
         .rust
@@ -70,8 +77,8 @@ pub(crate) fn closes_type_duplication(
             allowed.duplication_effect == MacroDuplicationEffect::None
                 && claim_provenance(expansion, allowed)
         })
-        .map(|allowed| (allowed.name.as_str(), allowed))
-        .collect::<BTreeMap<_, _>>();
+        .collect::<Vec<_>>();
+    let allowed = AllowanceIndex::new(allowed);
     matches!(
         review(source, resolved_cargo, expansion, &allowed),
         MacroBindingResult::Bound {
@@ -90,6 +97,9 @@ pub(crate) fn closes_source_operations(
     if directly_inspected(expansion) {
         return true;
     }
+    if contract.source.rust.macros.mode == MacroExpansionMode::Allow {
+        return false;
+    }
     let allowed = contract
         .source
         .rust
@@ -100,8 +110,8 @@ pub(crate) fn closes_source_operations(
             allowed.source_operations == MacroSourceOperations::None
                 && claim_provenance(expansion, allowed)
         })
-        .map(|allowed| (allowed.name.as_str(), allowed))
-        .collect::<BTreeMap<_, _>>();
+        .collect::<Vec<_>>();
+    let allowed = AllowanceIndex::new(allowed);
     matches!(
         review(source, resolved_cargo, expansion, &allowed),
         MacroBindingResult::Bound {
@@ -127,6 +137,9 @@ pub(crate) fn closes_owned_operations(
     ) {
         return false;
     }
+    if contract.source.rust.macros.mode == MacroExpansionMode::Allow {
+        return false;
+    }
     let allowed = contract
         .source
         .rust
@@ -137,8 +150,8 @@ pub(crate) fn closes_owned_operations(
             allowed.field_mutation == MacroFieldMutation::None
                 && claim_provenance(expansion, allowed)
         })
-        .map(|allowed| (allowed.name.as_str(), allowed))
-        .collect::<BTreeMap<_, _>>();
+        .collect::<Vec<_>>();
+    let allowed = AllowanceIndex::new(allowed);
     matches!(
         review(source, resolved_cargo, expansion, &allowed),
         MacroBindingResult::Bound {
@@ -180,3 +193,7 @@ pub(super) fn directly_inspected(expansion: &MacroExpansionFact) -> bool {
             )
         })
 }
+
+#[cfg(test)]
+#[path = "policy_test.rs"]
+mod policy_test;

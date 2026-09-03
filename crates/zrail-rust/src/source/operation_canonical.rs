@@ -4,6 +4,7 @@ mod associated;
 mod identity;
 mod qualification;
 mod resolution;
+mod returns;
 mod updates;
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -48,6 +49,16 @@ pub(super) fn apply(
     for file in &index.files {
         let mut operations = file.operations.clone();
         let mut call_resolutions = Vec::new();
+        if let Err(limit) = returns::canonicalize(
+            &mut operations,
+            bindings,
+            &file.relative,
+            file.syntax,
+            &associated,
+            &mut resolver,
+        ) {
+            return vec![super::include_projection_apply::budget_exhausted(limit)];
+        }
         if let Err(limit) = identity::canonicalize(
             &mut operations,
             bindings,

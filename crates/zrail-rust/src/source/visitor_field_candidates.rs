@@ -44,6 +44,7 @@ pub(super) fn field_contexts(visitor: &FactVisitor<'_>, field: &ExprField) -> Ve
                         base_file_local: candidate.base.file_local,
                         base_origin: candidate.base.origin,
                         base_span: candidate.base.span,
+                        base_inference: candidate.base.inference,
                         fields,
                     }),
                     guard: candidate.guard,
@@ -78,6 +79,7 @@ pub(super) fn declared_field_identity(
         file_local: receiver.file_local,
         origin: receiver.origin,
         span: receiver.span,
+        inference: None,
     }
 }
 

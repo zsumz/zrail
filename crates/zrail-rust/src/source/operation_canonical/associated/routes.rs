@@ -4,7 +4,10 @@ use std::collections::BTreeMap;
 
 use zrail_core::{AnalysisQuality, SourceSpan};
 
-use super::super::{resolution, resolution::Route};
+use super::{
+    super::{resolution, resolution::Route},
+    TraitIdentity,
+};
 use crate::source::{
     AssociatedItemFact, CompilationDomain, FactNamespace, ObservedFact, SourceSyntax,
     include_bindings::{IncludeBindings, ResolvedOrigin, ResolvedTerminal},
@@ -27,6 +30,23 @@ struct ResolveKey {
 pub(super) struct TraitRoute {
     pub(super) name: String,
     pub(super) origin: ResolvedOrigin,
+}
+
+pub(super) fn trait_for_domain(
+    raw: Option<&str>,
+    routes: &BTreeMap<CompilationDomain, Vec<TraitRoute>>,
+    domain: &CompilationDomain,
+) -> (TraitIdentity, Option<ResolvedOrigin>) {
+    let Some(raw) = raw else {
+        return (TraitIdentity::Inherent, None);
+    };
+    let Some([route]) = routes.get(domain).map(Vec::as_slice) else {
+        return (TraitIdentity::Unresolved(raw.into()), None);
+    };
+    (
+        TraitIdentity::Canonical(route.name.clone()),
+        Some(route.origin),
+    )
 }
 
 pub(super) struct Resolver<'a> {
@@ -65,6 +85,25 @@ impl<'a> Resolver<'a> {
                         ResolvedOrigin::External => route.terminal == ResolvedTerminal::Unknown,
                         ResolvedOrigin::Unknown => false,
                     }
+            })
+            .collect())
+    }
+
+    pub(super) fn type_routes(
+        &mut self,
+        fact: &AssociatedItemFact,
+        path: &str,
+        file: &str,
+        syntax: SourceSyntax,
+    ) -> Result<Vec<Route>, ProjectionLimit> {
+        Ok(self
+            .resolve(fact, path, file, syntax)?
+            .routes
+            .into_iter()
+            .filter(|route| {
+                route.quality == AnalysisQuality::Exact
+                    && route.origin != ResolvedOrigin::Unknown
+                    && route.terminal == ResolvedTerminal::Type
             })
             .collect())
     }

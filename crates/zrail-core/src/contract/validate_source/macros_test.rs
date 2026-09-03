@@ -5,6 +5,24 @@ use crate::{CrateRootSource, MacroExpansionAllow, MacroExpansionBindings, MacroE
 use crate::contract::{validate::validate_contract, validate_fixture_test::minimal_contract};
 
 #[test]
+fn allow_mode_accepts_a_valid_staged_allowance() {
+    let mut contract = minimal_contract();
+    contract.source.rust.macros.mode = MacroExpansionMode::Allow;
+    contract
+        .source
+        .rust
+        .macros
+        .allow
+        .push(no_binding_allowance(Some(CrateRootSource::Registry {
+            registry: None,
+            index: None,
+            requirement: "=1.0.0".into(),
+        })));
+
+    validate_contract(&contract).expect("allow mode may stage a fully validated allowance");
+}
+
+#[test]
 fn no_binding_attestation_requires_provenance() {
     let mut contract = minimal_contract();
     contract.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;

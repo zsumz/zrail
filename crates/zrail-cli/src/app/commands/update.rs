@@ -121,9 +121,10 @@ fn refused_changes(report: &DiffReport, format: OutputFormat) -> Result<String, 
     match format {
         OutputFormat::Human => Ok(format!(
             concat!(
-                "zrail update refused gated architecture changes\n\n",
+                "zrail update refused grant, debt, or unknown architecture changes\n\n",
                 "{}\n",
-                "Rerun with `--accept-grants` to write the candidate lock.\n",
+                "After explicit human review, rerun with `--accept-grants` to write the candidate lock.\n",
+                "That flag also accepts UNKNOWN changes such as a tool version pin in a declared qualification gate.\n",
             ),
             report.human()
         )),

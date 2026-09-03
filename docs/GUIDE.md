@@ -75,9 +75,10 @@ lines and lines beginning with `#` are ignored, and `!` negation is rejected.
 Patterns are normalized, sorted, and deduplicated. An exclusion cannot hide an
 active Cargo target. Every exclusion must match inventory except the exact
 `target/**` directory of a discovered Cargo workspace or package, which may be
-declared before artifacts exist. Once that directory exists, it must contain a
-`CACHEDIR.TAG` beginning with the standard signature or the exclusion is
-rejected as stale or misdirected.
+declared before artifacts exist. A missing `CACHEDIR.TAG` remains valid after
+that exact cache directory is populated; when a tag is present, it must begin
+with the standard signature or the exclusion is rejected as stale or
+misdirected. Wildcard package paths do not receive this exception.
 
 Add `--baseline` for an atomic contract-and-lock initialization after reviewing
 the intended preset and selection:
@@ -491,8 +492,11 @@ Functional struct update reads every omitted field known from the local type
 declaration. When the declaration's field set is not locally provable, Zrail
 retains one unresolved wildcard read that fails closed against every matching
 field owner on that source type. Field and initializer `#[cfg]` predicates keep
-those implicit reads in their exact compilation worlds. Writes include
-ordinary, compound, and destructuring assignment. Mutable borrows include
+those implicit reads in their exact compilation worlds. `field-write` covers
+the field that is the direct target of ordinary, compound, or destructuring
+assignment. A containing field traversed to reach a nested or indexed target is
+a projection mutation instead: `self.leader = next` writes `Node::leader`,
+while `self.leader.ticks += 1` does not. Mutable borrows include
 `&mut value.field`, explicit `ref mut` field patterns, and implicit
 mutable-reference bindings introduced by match ergonomics. The same
 `field-mutable-borrow` authority category covers `&raw mut value.field`. Calls
@@ -515,10 +519,11 @@ allow = ["crates/kernel/src/state.rs"]
 reason = "All entry mutation stays behind the state boundary."
 ```
 
-`field-mutation` combines exact writes and mutable borrows with method calls on
-the exact field place only when the written method is in `mutating_methods`.
-The list must be sorted and unique. Zrail does not infer mutability from method
-names or hardcode methods from standard-library container types.
+`field-mutation` combines direct and projected writes and mutable borrows with
+method calls on the exact field place only when the written method is in
+`mutating_methods`. The list must be sorted and unique. Zrail does not infer
+mutability from method names or hardcode methods from standard-library
+container types.
 
 Use one aggregate owner when the same allow-list governs every form of access:
 
@@ -532,9 +537,13 @@ allow = ["crates/kernel/src/state.rs"]
 reason = "All epoch access stays behind the state boundary."
 ```
 
-`field-authority` combines the same exact read, write, and mutable-borrow facts;
-it does not broaden identity resolution. Known `self` receiver types are exact,
-while unresolved receiver candidates fail closed for exact field-owner policies.
+`field-authority` combines the same exact read, direct-write,
+projected-mutation, and mutable-borrow facts; it does not broaden identity
+resolution. Known `self` receiver types are exact. An unannotated local
+initialized by one exact associated function returning `Self` also retains that
+type, including bounded `?` unwrapping through builtin `Result` or `Option`.
+Ambiguous declarations, custom wrappers, or unresolved receiver candidates
+continue to fail closed for exact field-owner policies.
 
 ### Exact type and authority-token rails
 
@@ -723,6 +732,19 @@ With `source.rust.macros.mode = "deny-unreviewed"`, expansion boundaries that
 zrail cannot inspect are rejected unless their invocation path has a reasoned
 allowance. Ordinary Rust expressions inside standard macro inputs are still
 analyzed. Other token DSLs require the separate `inputs = "opaque"` grant.
+
+Allowances may be authored while mode remains `"allow"`. Zrail still validates
+their shape, provenance binding, and stale use, but does not use their effect
+claims or namespace attestations to close an opaque boundary. Staging entries
+and their lock evidence are neutral in semantic diffs until the mode flips to
+`"deny-unreviewed"`; the mode change remains a tightening. This supports a
+separate review commit for a large allowlist without enforcing it early.
+
+`resolution` is the canonical name for exact versus conservative binding;
+`binding` remains a legacy read alias. Do not set both in one entry. Repeated
+allowance names are valid only when each entry has distinct `source` or
+`definition` provenance. Matching, stale review, lock state, and semantic diffs
+retain those entries independently instead of collapsing them by spelling.
 
 Repository-owned macros lock a deterministic input digest of their implementing
 package, including helper macros and internal proc macros. Input capture follows

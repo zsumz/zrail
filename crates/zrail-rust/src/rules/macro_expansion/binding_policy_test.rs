@@ -119,7 +119,7 @@ fn source_operation_closure_requires_an_exact_bound_attestation() {
     ));
 }
 
-fn expansion(
+pub(in crate::rules::macro_expansion) fn expansion(
     written: &str,
     canonical: &str,
     quality: AnalysisQuality,
@@ -163,7 +163,7 @@ fn fact(name: &str, quality: AnalysisQuality) -> ObservedFact {
     }
 }
 
-fn source(expansion: MacroExpansionFact) -> SourceIndex {
+pub(in crate::rules::macro_expansion) fn source(expansion: MacroExpansionFact) -> SourceIndex {
     SourceIndex {
         files: vec![RustFileFacts {
             relative: "src/lib.rs".into(),
@@ -206,7 +206,7 @@ fn source(expansion: MacroExpansionFact) -> SourceIndex {
     }
 }
 
-fn clean_allowance(name: &str) -> MacroExpansionAllow {
+pub(in crate::rules::macro_expansion) fn clean_allowance(name: &str) -> MacroExpansionAllow {
     MacroExpansionAllow {
         name: name.into(),
         inputs: MacroInputMode::Inspect,
@@ -234,7 +234,7 @@ fn registry_source() -> DependencySource {
     }
 }
 
-fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
+pub(in crate::rules::macro_expansion) fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
     Contract {
         schema: 1,
         adapters: vec!["rust".into()],

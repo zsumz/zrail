@@ -9,16 +9,18 @@ mod receipts;
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{LockFile, LockedDependency, LockedGeneratedSource, LockedPackage};
+use crate::{Contract, LockFile, LockedDependency, LockedGeneratedSource, LockedPackage};
 
 use super::{ArchitectureChange, ChangeKind};
 
 pub(super) fn compare(
+    before_contract: &Contract,
     before: Option<&LockFile>,
+    after_contract: &Contract,
     after: Option<&LockFile>,
 ) -> Vec<ArchitectureChange> {
     match (before, after) {
-        (Some(left), Some(right)) => compare_present(left, right),
+        (Some(left), Some(right)) => compare_present(before_contract, left, after_contract, right),
         (None, Some(_)) => vec![ArchitectureChange::new(
             ChangeKind::Neutral,
             "lock",
@@ -35,7 +37,12 @@ pub(super) fn compare(
     }
 }
 
-fn compare_present(before: &LockFile, after: &LockFile) -> Vec<ArchitectureChange> {
+fn compare_present(
+    before_contract: &Contract,
+    before: &LockFile,
+    after_contract: &Contract,
+    after: &LockFile,
+) -> Vec<ArchitectureChange> {
     let mut changes = Vec::new();
     analysis::compare(before, after, &mut changes);
     compare_packages(before, after, &mut changes);
@@ -43,7 +50,7 @@ fn compare_present(before: &LockFile, after: &LockFile) -> Vec<ArchitectureChang
     compare_generated(before, after, &mut changes);
     gates::compare(before, after, &mut changes);
     receipts::compare(before, after, &mut changes);
-    macros::compare(before, after, &mut changes);
+    macros::compare(before_contract, before, after_contract, after, &mut changes);
     item_macros::compare(before, after, &mut changes);
     ratchets::compare(before, after, &mut changes);
     changes

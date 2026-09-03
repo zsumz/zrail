@@ -7,6 +7,7 @@ use super::fact::source_span;
 
 pub(super) struct PlaceExpression<'a> {
     authority_fields: Vec<&'a ExprField>,
+    direct_field: Option<&'a ExprField>,
     excluded_reads: Vec<SourceSpan>,
 }
 
@@ -14,6 +15,7 @@ impl<'a> PlaceExpression<'a> {
     pub(super) fn analyze(expression: &'a Expr) -> Self {
         let mut place = Self {
             authority_fields: Vec::new(),
+            direct_field: direct_field(expression),
             excluded_reads: Vec::new(),
         };
         place.collect(expression, true, true);
@@ -22,6 +24,11 @@ impl<'a> PlaceExpression<'a> {
 
     pub(super) fn authority_fields(&self) -> impl Iterator<Item = &'a ExprField> + '_ {
         self.authority_fields.iter().copied()
+    }
+
+    pub(super) fn is_direct(&self, field: &ExprField) -> bool {
+        self.direct_field
+            .is_some_and(|direct| std::ptr::eq(direct, field))
     }
 
     pub(super) fn excluded_reads(&self) -> impl Iterator<Item = SourceSpan> + '_ {
@@ -65,5 +72,14 @@ impl<'a> PlaceExpression<'a> {
         if exclude_reads {
             self.excluded_reads.push(source_span(member.span()));
         }
+    }
+}
+
+fn direct_field(expression: &Expr) -> Option<&ExprField> {
+    match expression {
+        Expr::Field(field) if matches!(field.member, Member::Named(_)) => Some(field),
+        Expr::Group(group) => direct_field(&group.expr),
+        Expr::Paren(paren) => direct_field(&paren.expr),
+        _ => None,
     }
 }

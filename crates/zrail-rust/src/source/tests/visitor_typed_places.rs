@@ -121,14 +121,19 @@ impl State {
         "dereferencing reads the pointer field"
     );
     assert_eq!(
-        matching(&facts, SourceOperationKind::FieldWrite, "State::entries").len(),
+        matching(
+            &facts,
+            SourceOperationKind::FieldProjectionWrite,
+            "State::entries"
+        )
+        .len(),
         1,
         "index assignment mutates the aggregate field"
     );
     assert_eq!(
         matching(
             &facts,
-            SourceOperationKind::FieldMutableBorrow,
+            SourceOperationKind::FieldProjectionMutableBorrow,
             "State::entries"
         )
         .len(),

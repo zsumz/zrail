@@ -118,6 +118,7 @@ fn locked_macro_sources(
         });
     }
     sources.sort();
+    sources.dedup();
     Ok(sources)
 }
 

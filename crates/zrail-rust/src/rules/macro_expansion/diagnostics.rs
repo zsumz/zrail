@@ -3,6 +3,7 @@
 use std::collections::BTreeSet;
 
 use zrail_core::Finding;
+use zrail_core::MacroExpansionAllow;
 
 use crate::source::{MacroExpansionFact, RustFileFacts};
 
@@ -11,7 +12,7 @@ use super::failure::MacroBindingFailure;
 pub(super) fn unbound(
     file: &RustFileFacts,
     expansion: &MacroExpansionFact,
-    attempted: &[&str],
+    attempted: &[&MacroExpansionAllow],
     reasons: &[MacroBindingFailure],
 ) -> Finding {
     let summaries = reasons
@@ -33,6 +34,9 @@ pub(super) fn unbound(
             "macro allowance(s) {} match invocation {}, but cannot bind: {summaries}",
             attempted
                 .iter()
+                .map(|allowance| allowance.name.as_str())
+                .collect::<BTreeSet<_>>()
+                .into_iter()
                 .map(|name| format!("{name:?}"))
                 .collect::<Vec<_>>()
                 .join(", "),

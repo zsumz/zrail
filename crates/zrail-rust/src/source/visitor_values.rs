@@ -15,6 +15,8 @@ use super::{
 
 #[path = "visitor_value_candidates.rs"]
 mod candidates;
+#[path = "visitor_value_inference.rs"]
+mod inference;
 #[path = "visitor_value_patterns.rs"]
 mod patterns;
 
@@ -61,7 +63,7 @@ impl FactVisitor<'_> {
             if let FnArg::Typed(argument) = argument {
                 let guard = self.syntax_guard().combine(cfg_guard(&argument.attrs));
                 let input = self.pattern_input_from_type(&argument.ty);
-                self.install_pattern(&argument.pat, Some(&argument.ty), input, &guard);
+                self.install_pattern(&argument.pat, Some(&argument.ty), None, input, &guard);
             }
         }
         visit(self);
@@ -80,7 +82,7 @@ impl FactVisitor<'_> {
             let input = ty.map_or(PatternInputMode::Unresolved, |ty| {
                 self.pattern_input_from_type(ty)
             });
-            self.install_pattern(pattern, ty, input, &guard);
+            self.install_pattern(pattern, ty, None, input, &guard);
         }
         visit(self);
         self.local_values.pop();
@@ -106,7 +108,16 @@ impl FactVisitor<'_> {
         let (pattern, ty) = typed_pattern(&local.pat);
         let guard = self.syntax_guard();
         let input = ty.map_or(input, |ty| self.pattern_input_from_type(ty));
-        self.install_pattern(pattern, ty, input, &guard);
+        let inferred = ty
+            .is_none()
+            .then(|| {
+                local
+                    .init
+                    .as_ref()
+                    .and_then(|init| inference::binding(self, &init.expr))
+            })
+            .flatten();
+        self.install_pattern(pattern, ty, inferred, input, &guard);
     }
 
     pub(in crate::source) fn value_scope_checkpoint(&self) -> usize {
@@ -122,7 +133,7 @@ impl FactVisitor<'_> {
         let (pattern, ty) = typed_pattern(pattern);
         let guard = self.syntax_guard();
         let input = ty.map_or(input, |ty| self.pattern_input_from_type(ty));
-        self.install_pattern(pattern, ty, input, &guard);
+        self.install_pattern(pattern, ty, None, input, &guard);
     }
 
     pub(in crate::source) fn restore_value_scopes(&mut self, checkpoint: usize) {
@@ -176,33 +187,25 @@ impl FactVisitor<'_> {
     }
 
     pub(in crate::source) fn lexical_value_shadows(&self) -> Vec<(String, SyntaxGuard)> {
-        let mut guards = BTreeMap::<String, Vec<CfgPredicate>>::new();
-        for scope in &self.local_values {
-            for (name, bindings) in scope {
-                let name = name.strip_prefix("r#").unwrap_or(name);
-                guards
-                    .entry(name.into())
-                    .or_default()
-                    .extend(bindings.iter().map(|binding| binding.guard.predicate()));
-            }
-        }
-        guards
-            .into_iter()
-            .map(|(name, guards)| (name, SyntaxGuard::from_predicate(CfgPredicate::any(guards))))
-            .collect()
+        candidates::lexical_shadows(&self.local_values)
     }
 
     fn install_pattern(
         &mut self,
         pattern: &Pat,
         ty: Option<&syn::Type>,
+        inferred: Option<ValueBinding>,
         input: PatternInputMode,
         guard: &SyntaxGuard,
     ) {
         let names = binding_names(pattern);
         let inputs = binding_input_modes(pattern, input);
-        let exact_name = ty.and_then(|_| simple_binding_name(pattern));
-        let exact = ty.map(|ty| binding_from_identity(self.resolve_type(ty)));
+        let exact_name = (ty.is_some() || inferred.is_some())
+            .then(|| simple_binding_name(pattern))
+            .flatten();
+        let exact = ty
+            .map(|ty| binding_from_identity(self.resolve_type(ty)))
+            .or(inferred);
         let Some(scope) = self.local_values.last_mut() else {
             return;
         };

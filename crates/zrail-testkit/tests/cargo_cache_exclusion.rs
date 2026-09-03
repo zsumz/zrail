@@ -1,4 +1,4 @@
-//! Cargo cache exclusions remain useful before artifacts exist and fail closed afterward.
+//! Exact Cargo cache exclusions accept missing tags and reject forged tags.
 
 use std::{fs, path::Path};
 
@@ -18,25 +18,32 @@ fn exact_package_target_exclusion_is_valid_before_the_cache_exists() {
 }
 
 #[test]
-fn existing_package_target_requires_the_standard_cache_tag() {
+fn existing_package_target_accepts_a_missing_or_standard_cache_tag() {
     let root = repository("tagged", "crates/member/target/**");
     let target = root.join("crates/member/target");
     fs::create_dir_all(&target).expect("create target cache");
+    fs::write(target.join("artifact"), "opaque").expect("write artifact");
+    assert_no_rep_006(&root);
+
     fs::write(target.join("CACHEDIR.TAG"), CACHE_TAG).expect("write cache tag");
     assert_no_rep_006(&root);
 
     fs::write(target.join("CACHEDIR.TAG"), "not a cache tag\n").expect("forge cache tag");
     assert_rep_006(&root);
+
+    fs::remove_file(target.join("CACHEDIR.TAG")).expect("remove forged tag");
+    fs::create_dir(target.join("CACHEDIR.TAG")).expect("create non-file tag");
+    assert_rep_006(&root);
     reset(&root);
 }
 
 #[test]
-fn untagged_populated_target_and_wildcard_target_patterns_are_rejected() {
+fn wildcard_target_patterns_remain_rejected() {
     let root = repository("untagged", "crates/member/target/**");
     let target = root.join("crates/member/target");
     fs::create_dir_all(&target).expect("create target cache");
     fs::write(target.join("artifact"), "opaque").expect("write artifact");
-    assert_rep_006(&root);
+    assert_no_rep_006(&root);
     reset(&root);
 
     let wildcard = repository("wildcard", "crates/*/target/**");

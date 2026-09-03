@@ -12,24 +12,29 @@ pub(super) fn compare(current: &LockFile, candidate: &LockFile, findings: &mut F
 fn compare_sources(current: &LockFile, candidate: &LockFile, findings: &mut FindingSink) {
     let old = sources(&current.macro_sources);
     let new = sources(&candidate.macro_sources);
-    for allowance in new.keys().filter(|allowance| !old.contains_key(*allowance)) {
-        findings.push(Finding::error(
-            "LOCK-036",
-            "lock.macro-source",
-            "lock",
-            format!("macro allowance {allowance:?} lacks locked Cargo package authority"),
-        ));
+    for allowance in old
+        .keys()
+        .chain(new.keys())
+        .copied()
+        .collect::<BTreeSet<_>>()
+    {
+        compare_source_group(
+            allowance,
+            old.get(allowance).map(Vec::as_slice).unwrap_or_default(),
+            new.get(allowance).map(Vec::as_slice).unwrap_or_default(),
+            findings,
+        );
     }
-    for allowance in old.keys().filter(|allowance| !new.contains_key(*allowance)) {
-        findings.push(Finding::error(
-            "LOCK-037",
-            "lock.macro-source",
-            "lock",
-            format!("zrail.lock retains stale macro source {allowance:?}"),
-        ));
-    }
-    for (allowance, before) in &old {
-        if let Some(after) = new.get(allowance).filter(|after| *after != before) {
+}
+
+fn compare_source_group(
+    allowance: &str,
+    old: &[&LockedMacroSource],
+    new: &[&LockedMacroSource],
+    findings: &mut FindingSink,
+) {
+    if let ([before], [after]) = (old, new) {
+        if before != after {
             findings.push(Finding::error(
                 "LOCK-038",
                 "lock.macro-source",
@@ -41,13 +46,57 @@ fn compare_sources(current: &LockFile, candidate: &LockFile, findings: &mut Find
                 ),
             ));
         }
+        return;
+    }
+    let old = source_identities(old);
+    let new = source_identities(new);
+    for identity in old.keys().chain(new.keys()).collect::<BTreeSet<_>>() {
+        let subject = format!("{allowance} [{identity}]");
+        match (old.get(identity), new.get(identity)) {
+            (None, Some(_)) => findings.push(Finding::error(
+                "LOCK-036",
+                "lock.macro-source",
+                "lock",
+                format!("macro allowance {subject:?} lacks locked Cargo package authority"),
+            )),
+            (Some(_), None) => findings.push(Finding::error(
+                "LOCK-037",
+                "lock.macro-source",
+                "lock",
+                format!("zrail.lock retains stale macro source {subject:?}"),
+            )),
+            (Some(before), Some(after)) if before != after => findings.push(Finding::error(
+                "LOCK-038",
+                "lock.macro-source",
+                "lock",
+                format!(
+                    "macro allowance {subject:?} resolved package changed from {} to {}",
+                    label(before),
+                    label(after)
+                ),
+            )),
+            _ => {}
+        }
     }
 }
 
-fn sources(values: &[LockedMacroSource]) -> BTreeMap<&str, &LockedMacroSource> {
+fn sources(values: &[LockedMacroSource]) -> BTreeMap<&str, Vec<&LockedMacroSource>> {
+    let mut sources = BTreeMap::<_, Vec<_>>::new();
+    for source in values {
+        sources
+            .entry(source.allowance.as_str())
+            .or_default()
+            .push(source);
+    }
+    sources
+}
+
+fn source_identities<'a>(
+    values: &[&'a LockedMacroSource],
+) -> BTreeMap<String, &'a LockedMacroSource> {
     values
         .iter()
-        .map(|source| (source.allowance.as_str(), source))
+        .map(|source| (label(source), *source))
         .collect()
 }
 

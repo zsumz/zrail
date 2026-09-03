@@ -2,6 +2,8 @@
 
 #[path = "associated/classification.rs"]
 mod classification;
+#[path = "associated/returns.rs"]
+mod returns;
 #[path = "associated/routes.rs"]
 mod routes;
 
@@ -17,8 +19,14 @@ use crate::source::{
 
 #[derive(Default)]
 pub(super) struct Catalog {
-    entries: BTreeMap<Key, BTreeMap<TraitIdentity, Vec<SyntaxGuard>>>,
+    entries: BTreeMap<Key, BTreeMap<TraitIdentity, Vec<Declaration>>>,
     external_self: BTreeSet<Key>,
+}
+
+#[derive(Clone)]
+struct Declaration {
+    guard: SyntaxGuard,
+    return_try_depth: Option<usize>,
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -56,7 +64,7 @@ impl Catalog {
         budget: &mut ProjectionBudget,
     ) -> Result<Self, ProjectionLimit> {
         let mut catalog = Self::default();
-        let mut defaults = BTreeMap::<DefaultKey, BTreeMap<String, Vec<SyntaxGuard>>>::new();
+        let mut defaults = BTreeMap::<DefaultKey, BTreeMap<String, Vec<Declaration>>>::new();
         let mut implementations = Vec::new();
         let mut resolver = routes::Resolver::new(bindings, budget);
         for file in &index.files {
@@ -79,14 +87,15 @@ impl Catalog {
             let Some(items) = defaults.get(&key) else {
                 continue;
             };
-            for (item, guards) in items {
-                for guard in guards {
+            for (item, declarations) in items {
+                for declaration in declarations {
                     catalog.insert(
                         implementation.domain.clone(),
                         implementation.self_type.clone(),
                         item.clone(),
                         TraitIdentity::Canonical(implementation.trait_name.clone()),
-                        implementation.guard.combine(guard.clone()),
+                        implementation.guard.combine(declaration.guard.clone()),
+                        declaration.return_try_depth,
                         implementation.external_self,
                     );
                 }
@@ -104,20 +113,31 @@ impl Catalog {
         classification::classify(self, route, context, selection);
     }
 
+    pub(super) fn returns_self(
+        &self,
+        route: &Route,
+        context: &SyntaxGuard,
+        try_depth: usize,
+    ) -> bool {
+        returns::matches(self, route, context, try_depth)
+    }
+
     fn collect_fact(
         &mut self,
         fact: &AssociatedItemFact,
         file: &str,
         syntax: SourceSyntax,
         resolver: &mut routes::Resolver<'_>,
-        defaults: &mut BTreeMap<DefaultKey, BTreeMap<String, Vec<SyntaxGuard>>>,
+        defaults: &mut BTreeMap<DefaultKey, BTreeMap<String, Vec<Declaration>>>,
         implementations: &mut Vec<DefaultImpl>,
     ) -> Result<(), ProjectionLimit> {
+        let return_depths = returns::resolve(fact, file, syntax, resolver)?;
         match &fact.kind {
             AssociatedItemKind::TraitDefault { trait_path, item } => {
                 for (domain, route) in
                     resolver.local_trait_routes(fact, trait_path, file, syntax)?
                 {
+                    let return_try_depth = return_depths.for_domain(&domain);
                     defaults
                         .entry(DefaultKey {
                             domain,
@@ -126,7 +146,10 @@ impl Catalog {
                         .or_default()
                         .entry(item.clone())
                         .or_default()
-                        .push(fact.guard.clone());
+                        .push(Declaration {
+                            guard: fact.guard.clone(),
+                            return_try_depth,
+                        });
                 }
             }
             AssociatedItemKind::Implementation {
@@ -138,7 +161,7 @@ impl Catalog {
                 let traits = resolver.trait_routes(fact, trait_path.as_deref(), file, syntax)?;
                 for route in self_routes {
                     let (identity, origin) =
-                        trait_for_domain(trait_path.as_deref(), &traits, &route.domain);
+                        routes::trait_for_domain(trait_path.as_deref(), &traits, &route.domain);
                     if route.origin == ResolvedOrigin::External
                         && origin != Some(ResolvedOrigin::CrateLocal)
                     {
@@ -146,12 +169,14 @@ impl Catalog {
                     }
                     if let Some(item) = item {
                         let external_self = route.origin == ResolvedOrigin::External;
+                        let return_try_depth = return_depths.for_domain(&route.domain);
                         self.insert(
                             route.domain,
                             route.name,
                             item.clone(),
                             identity,
                             fact.guard.clone(),
+                            return_try_depth,
                             external_self,
                         );
                     } else if let TraitIdentity::Canonical(trait_name) = identity
@@ -178,6 +203,7 @@ impl Catalog {
         item: String,
         trait_identity: TraitIdentity,
         guard: SyntaxGuard,
+        return_try_depth: Option<usize>,
         external_self: bool,
     ) {
         let key = Key {
@@ -193,23 +219,9 @@ impl Catalog {
             .or_default()
             .entry(trait_identity)
             .or_default()
-            .push(guard);
+            .push(Declaration {
+                guard,
+                return_try_depth,
+            });
     }
-}
-
-fn trait_for_domain(
-    raw: Option<&str>,
-    routes: &BTreeMap<CompilationDomain, Vec<routes::TraitRoute>>,
-    domain: &CompilationDomain,
-) -> (TraitIdentity, Option<ResolvedOrigin>) {
-    let Some(raw) = raw else {
-        return (TraitIdentity::Inherent, None);
-    };
-    let Some([route]) = routes.get(domain).map(Vec::as_slice) else {
-        return (TraitIdentity::Unresolved(raw.into()), None);
-    };
-    (
-        TraitIdentity::Canonical(route.name.clone()),
-        Some(route.origin),
-    )
 }

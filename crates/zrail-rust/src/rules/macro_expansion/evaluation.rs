@@ -1,29 +1,24 @@
 //! Macro allowance enforcement and stale-authority detection.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 use zrail_core::{Finding, FindingSink, MacroExpansionAllow, MacroExpansionMode, MacroInputMode};
 
 use super::super::RuleContext;
 use super::{
+    allowances::AllowanceIndex,
     diagnostics::{unbound, unreviewed},
     policy::directly_inspected,
     review::{MacroBindingResult, review},
 };
 
 pub(crate) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
-    if context.contract.source.rust.macros.mode == MacroExpansionMode::Allow {
+    let enforcing = context.contract.source.rust.macros.mode == MacroExpansionMode::DenyUnreviewed;
+    if !enforcing && context.contract.source.rust.macros.allow.is_empty() {
         return;
     }
-    let allowed = context
-        .contract
-        .source
-        .rust
-        .macros
-        .allow
-        .iter()
-        .map(|allowed| (allowed.name.as_str(), allowed))
-        .collect::<BTreeMap<_, _>>();
+    let allowances = &context.contract.source.rust.macros.allow;
+    let allowed = AllowanceIndex::new(allowances);
     let mut used = BTreeSet::new();
     let mut rejected = BTreeSet::new();
     let mut opaque_attempted = BTreeSet::new();
@@ -39,17 +34,23 @@ pub(crate) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
                 continue;
             }
             match review(context.source, context.resolved_cargo, expansion, &allowed) {
-                MacroBindingResult::Bound { allowances, .. } => {
-                    used.extend(allowances);
+                MacroBindingResult::Bound {
+                    allowances: matched,
+                    ..
+                } => {
+                    mark(&mut used, allowances, &matched);
                 }
                 MacroBindingResult::Rejected {
                     attempted: matched,
                     reasons,
                 } => {
-                    rejected.extend(matched.iter().copied());
+                    mark(&mut rejected, allowances, &matched);
                     findings.push(unbound(file, expansion, &matched, &reasons));
                 }
-                MacroBindingResult::NoNameMatch => findings.push(unreviewed(file, expansion)),
+                MacroBindingResult::NoNameMatch if enforcing => {
+                    findings.push(unreviewed(file, expansion));
+                }
+                MacroBindingResult::NoNameMatch => {}
             }
         }
         for input in &file.opaque_macro_inputs {
@@ -62,15 +63,15 @@ pub(crate) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
                     MacroBindingResult::Rejected {
                         attempted: matched, ..
                     } => {
-                        opaque_attempted.extend(matched);
+                        mark(&mut opaque_attempted, allowances, &matched);
                         continue;
                     }
                     MacroBindingResult::NoNameMatch => continue,
                 };
-            opaque_attempted.extend(matched.iter().copied());
+            mark(&mut opaque_attempted, allowances, &matched);
             if matched
                 .iter()
-                .any(|name| allowed[*name].inputs != MacroInputMode::Opaque)
+                .any(|allowance| allowance.inputs != MacroInputMode::Opaque)
             {
                 findings.push(
                     Finding::error(
@@ -87,13 +88,13 @@ pub(crate) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
                 );
                 continue;
             }
-            opaque_used.extend(matched);
+            mark(&mut opaque_used, allowances, &matched);
         }
     }
     let mut attempted = used;
     attempted.extend(rejected);
     stale_allowances(
-        &allowed,
+        allowances,
         &attempted,
         &opaque_attempted,
         &opaque_used,
@@ -102,39 +103,70 @@ pub(crate) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
 }
 
 fn stale_allowances(
-    allowed: &BTreeMap<&str, &MacroExpansionAllow>,
-    attempted: &BTreeSet<&str>,
-    opaque_attempted: &BTreeSet<&str>,
-    opaque_used: &BTreeSet<&str>,
+    allowed: &[MacroExpansionAllow],
+    attempted: &BTreeSet<usize>,
+    opaque_attempted: &BTreeSet<usize>,
+    opaque_used: &BTreeSet<usize>,
     findings: &mut FindingSink,
 ) {
-    for (name, allowance) in allowed {
-        if !attempted.contains(name) {
+    for (index, allowance) in allowed.iter().enumerate() {
+        let name = &allowance.name;
+        let provenance = provenance(allowance);
+        if !attempted.contains(&index) {
             findings.push(
                 Finding::error(
                     "RUST-MACRO-002",
                     "rust.macro-expansion",
                     "source",
-                    format!("allowed macro expansion {name:?} matches no reachable invocation"),
+                    format!(
+                        "allowed macro expansion {name:?} from {provenance} matches no reachable invocation"
+                    ),
                 )
                 .because(&allowance.reason)
                 .with_help("remove stale macro expansion authority"),
             );
         }
         if allowance.inputs == MacroInputMode::Opaque
-            && !opaque_attempted.contains(name)
-            && !opaque_used.contains(name)
+            && !opaque_attempted.contains(&index)
+            && !opaque_used.contains(&index)
         {
             findings.push(
                 Finding::error(
                     "RUST-MACRO-004",
                     "rust.macro-input",
                     "source",
-                    format!("opaque input authority for macro {name:?} is stale"),
+                    format!("opaque input authority for macro {name:?} from {provenance} is stale"),
                 )
                 .because(&allowance.reason)
                 .with_help("remove inputs = \"opaque\" until opaque input is actually required"),
             );
+        }
+    }
+}
+
+fn provenance(allowance: &MacroExpansionAllow) -> String {
+    allowance.definition.as_ref().map_or_else(
+        || {
+            allowance.source.as_ref().map_or_else(
+                || "unbound provenance".into(),
+                zrail_core::CrateRootSource::identity,
+            )
+        },
+        |definition| format!("definition {definition:?}"),
+    )
+}
+
+fn mark(
+    indices: &mut BTreeSet<usize>,
+    all: &[MacroExpansionAllow],
+    matched: &[&MacroExpansionAllow],
+) {
+    for allowance in matched {
+        if let Some(index) = all
+            .iter()
+            .position(|candidate| std::ptr::eq(candidate, *allowance))
+        {
+            indices.insert(index);
         }
     }
 }

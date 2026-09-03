@@ -37,7 +37,7 @@ fn repair(
     domains: Option<&BTreeSet<CompilationDomain>>,
     catalog: &Catalog,
 ) {
-    let Some(place) = &operation.place else {
+    let Some(place) = operation.place.clone() else {
         return;
     };
     let Some((last, intermediates)) = place.fields.split_last() else {
@@ -46,7 +46,14 @@ fn repair(
     let expected = available_domains(domains, &[&operation.identity.guard])
         .into_keys()
         .collect::<BTreeSet<_>>();
-    let mut candidates = base_candidates(place, paths, domains, &operation.identity.guard);
+    let mut candidates = base_candidates(&place, paths, domains, &operation.identity.guard);
+    if let Some(base) = exact_base(&candidates, &expected)
+        && let Some(place) = &mut operation.place
+    {
+        place.base_name = base;
+        place.base_quality = AnalysisQuality::Exact;
+        place.base_file_local = false;
+    }
     if candidates.is_empty() || (place.base_file_local && !has_projection(&candidates)) {
         operation.identity.quality = AnalysisQuality::Unresolved;
         return;
@@ -68,6 +75,29 @@ fn repair(
         return;
     }
     apply_candidates(operation, normalize(declaring), !unresolved.is_empty());
+}
+
+fn exact_base(candidates: &[Candidate], expected: &BTreeSet<CompilationDomain>) -> Option<String> {
+    if !missing_domains(expected, candidates).is_empty()
+        || candidates.iter().any(|candidate| {
+            candidate
+                .domains
+                .values()
+                .any(|support| support.quality != AnalysisQuality::Exact)
+        })
+    {
+        return None;
+    }
+    let names = candidates
+        .iter()
+        .map(|candidate| candidate.name.as_str())
+        .collect::<BTreeSet<_>>();
+    let mut names = names.into_iter();
+    let name = names.next()?;
+    if names.next().is_some() {
+        return None;
+    }
+    Some(name.into())
 }
 
 fn base_candidates(

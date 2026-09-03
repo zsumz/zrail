@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::{
     Contract, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect, MacroExpansionBindings,
-    MacroFieldMutation, MacroInputMode, MacroSourceOperations,
+    MacroExpansionMode, MacroFieldMutation, MacroInputMode, MacroSourceOperations,
 };
 
 use super::super::{
@@ -20,6 +20,11 @@ pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<Arc
         rank_macro_expansion(after.source.rust.macros.mode),
         changes,
     );
+    if before.source.rust.macros.mode != MacroExpansionMode::DenyUnreviewed
+        || after.source.rust.macros.mode != MacroExpansionMode::DenyUnreviewed
+    {
+        return;
+    }
     let old = allowances(before);
     let new = allowances(after);
     for name in old
@@ -28,34 +33,76 @@ pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<Arc
         .copied()
         .collect::<BTreeSet<_>>()
     {
-        match (old.get(name), new.get(name)) {
+        compare_group(
+            name,
+            old.get(name).map(Vec::as_slice).unwrap_or_default(),
+            new.get(name).map(Vec::as_slice).unwrap_or_default(),
+            changes,
+        );
+    }
+}
+
+fn allowances(contract: &Contract) -> BTreeMap<&str, Vec<&crate::MacroExpansionAllow>> {
+    let mut grouped = BTreeMap::<_, Vec<_>>::new();
+    for allowance in &contract.source.rust.macros.allow {
+        grouped
+            .entry(allowance.name.as_str())
+            .or_default()
+            .push(allowance);
+    }
+    grouped
+}
+
+fn compare_group(
+    name: &str,
+    old: &[&crate::MacroExpansionAllow],
+    new: &[&crate::MacroExpansionAllow],
+    changes: &mut Vec<ArchitectureChange>,
+) {
+    if let ([left], [right]) = (old, new) {
+        compare_existing(name, left, right, changes);
+        return;
+    }
+    let old = by_provenance(old);
+    let new = by_provenance(new);
+    for provenance in old.keys().chain(new.keys()).collect::<BTreeSet<_>>() {
+        let subject = format!("{name} [{provenance}]");
+        match (old.get(provenance), new.get(provenance)) {
             (None, Some(_)) => changes.push(ArchitectureChange::new(
                 ChangeKind::Grant,
                 "rust.macro-expansion.allow",
-                name,
-                "trusts an uninspected macro expansion",
+                subject,
+                "trusts an uninspected macro expansion from this provenance",
             )),
             (Some(_), None) => changes.push(ArchitectureChange::new(
                 ChangeKind::Revoke,
                 "rust.macro-expansion.allow",
-                name,
-                "no longer trusts an uninspected macro expansion",
+                subject,
+                "no longer trusts an uninspected macro expansion from this provenance",
             )),
-            (Some(left), Some(right)) => compare_existing(name, left, right, changes),
+            (Some(left), Some(right)) => compare_existing(&subject, left, right, changes),
             (None, None) => {}
         }
     }
 }
 
-fn allowances(contract: &Contract) -> BTreeMap<&str, &crate::MacroExpansionAllow> {
-    contract
-        .source
-        .rust
-        .macros
-        .allow
+fn by_provenance<'a>(
+    allowances: &[&'a crate::MacroExpansionAllow],
+) -> BTreeMap<String, &'a crate::MacroExpansionAllow> {
+    allowances
         .iter()
-        .map(|allowed| (allowed.name.as_str(), allowed))
+        .map(|allowance| (provenance(allowance), *allowance))
         .collect()
+}
+
+fn provenance(allowance: &crate::MacroExpansionAllow) -> String {
+    if let Some(definition) = &allowance.definition {
+        format!("definition:{definition}")
+    } else if let Some(source) = &allowance.source {
+        format!("source:{}", source.identity())
+    } else {
+        "unbound".into()
+    }
 }
 
 fn compare_existing(

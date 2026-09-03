@@ -47,6 +47,7 @@ impl FactVisitor<'_> {
             base_file_local: base.file_local,
             base_origin: base.origin,
             base_span: base.span,
+            base_inference: base.inference.clone(),
             fields: Vec::new(),
         };
         let mut identity = base;
@@ -80,6 +81,7 @@ impl FactVisitor<'_> {
             base_file_local: base.file_local,
             base_origin: base.origin,
             base_span: base.span,
+            base_inference: base.inference,
             fields: vec![member.into()],
         };
         self.push_field_operation(

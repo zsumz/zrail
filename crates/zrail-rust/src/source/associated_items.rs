@@ -1,6 +1,6 @@
 //! Associated items retain type and trait identity independently of placement.
 
-use syn::{Item, Type, spanned::Spanned};
+use syn::{GenericArgument, Item, PathArguments, ReturnType, Type, spanned::Spanned};
 use zrail_core::{AnalysisQuality, SourceSpan};
 
 use super::{
@@ -13,12 +13,18 @@ use super::{
 #[derive(Clone, Debug)]
 pub(crate) struct AssociatedItemFact {
     pub(crate) kind: AssociatedItemKind,
+    pub(crate) return_shape: Option<ReturnSelfShape>,
     pub(crate) quality: AnalysisQuality,
     pub(crate) quality_without_macros: AnalysisQuality,
     pub(crate) replacement_macros: Vec<MacroOccurrence>,
     pub(crate) guard: SyntaxGuard,
     pub(crate) lexical_scope: Vec<SourceSpan>,
     pub(crate) span: SourceSpan,
+}
+
+#[derive(Clone, Debug)]
+pub(crate) struct ReturnSelfShape {
+    pub(crate) wrappers: Vec<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -79,19 +85,22 @@ fn impl_items(
             &impl_guard,
             scope,
             source_span(self_type.path.span()),
+            None,
         ));
     }
     facts.extend(implementation.items.iter().filter_map(|associated| {
-        let (item, attributes, span) = match associated {
+        let (item, attributes, span, return_shape) = match associated {
             syn::ImplItem::Const(value) => (
                 value.ident.to_string(),
                 value.attrs.as_slice(),
                 value.ident.span(),
+                None,
             ),
             syn::ImplItem::Fn(value) => (
                 value.sig.ident.to_string(),
                 value.attrs.as_slice(),
                 value.sig.ident.span(),
+                return_self_shape(&value.sig.output),
             ),
             _ => return None,
         };
@@ -106,6 +115,7 @@ fn impl_items(
             &impl_guard,
             scope,
             source_span(span),
+            return_shape,
         ))
     }));
     facts
@@ -121,16 +131,18 @@ fn trait_defaults(
         .items
         .iter()
         .filter_map(|associated| {
-            let (item, attributes, span) = match associated {
+            let (item, attributes, span, return_shape) = match associated {
                 syn::TraitItem::Const(value) if value.default.is_some() => (
                     value.ident.to_string(),
                     value.attrs.as_slice(),
                     value.ident.span(),
+                    None,
                 ),
                 syn::TraitItem::Fn(value) if value.default.is_some() => (
                     value.sig.ident.to_string(),
                     value.attrs.as_slice(),
                     value.sig.ident.span(),
+                    return_self_shape(&value.sig.output),
                 ),
                 _ => return None,
             };
@@ -144,6 +156,7 @@ fn trait_defaults(
                 &trait_guard,
                 scope,
                 source_span(span),
+                return_shape,
             ))
         })
         .collect()
@@ -156,6 +169,7 @@ fn fact(
     outer_guard: &SyntaxGuard,
     scope: &[SourceSpan],
     span: SourceSpan,
+    return_shape: Option<ReturnSelfShape>,
 ) -> AssociatedItemFact {
     let guard = item_guard(attributes, outer_guard);
     let mut macros = replacement_macros(outer_attributes, &guard, scope);
@@ -165,6 +179,7 @@ fn fact(
     let base_quality = quality(outer_attributes).max(quality(attributes));
     AssociatedItemFact {
         kind,
+        return_shape,
         quality: if macros.is_empty() {
             base_quality
         } else {
@@ -176,4 +191,36 @@ fn fact(
         lexical_scope: scope.to_vec(),
         span,
     }
+}
+
+fn return_self_shape(output: &ReturnType) -> Option<ReturnSelfShape> {
+    let ReturnType::Type(_, ty) = output else {
+        return None;
+    };
+    let mut wrappers = Vec::new();
+    if peel_self_return(ty, &mut wrappers) {
+        Some(ReturnSelfShape { wrappers })
+    } else {
+        None
+    }
+}
+
+fn peel_self_return(ty: &Type, wrappers: &mut Vec<String>) -> bool {
+    let Type::Path(path) = ty else {
+        return false;
+    };
+    if path.qself.is_none() && path.path.is_ident("Self") {
+        return true;
+    }
+    let Some(segment) = path.path.segments.last() else {
+        return false;
+    };
+    let PathArguments::AngleBracketed(arguments) = &segment.arguments else {
+        return false;
+    };
+    let Some(GenericArgument::Type(inner)) = arguments.args.first() else {
+        return false;
+    };
+    wrappers.push(written_path(&path.path));
+    peel_self_return(inner, wrappers)
 }

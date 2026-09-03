@@ -28,6 +28,14 @@ fn field_mutation_matches_only_declared_receiver_methods() {
         &owner,
         &operation(SourceOperationKind::FieldMutableBorrow, None)
     ));
+    assert!(operation_matches(
+        &owner,
+        &operation(SourceOperationKind::FieldProjectionWrite, None)
+    ));
+    assert!(operation_matches(
+        &owner,
+        &operation(SourceOperationKind::FieldProjectionMutableBorrow, None)
+    ));
     assert!(!operation_matches(
         &owner,
         &operation(SourceOperationKind::FieldRead, None)
@@ -73,6 +81,39 @@ fn canonical_opaque_field_does_not_fall_back_to_written_root() {
     assert!(!selector_matches(&owner, &operation));
     owner.selector = "wire_model::Ticket::external_secret".into();
     assert!(selector_matches(&owner, &operation));
+}
+
+#[test]
+fn unresolved_field_on_a_known_unrelated_type_does_not_match() {
+    let owner = owner();
+    let mut operation = operation(SourceOperationKind::FieldReceiverCall, Some("clear"));
+    operation.identity.name = "crate::Input::DangerousRawConfigurationProposal::values".into();
+    operation.identity.quality = AnalysisQuality::Unresolved;
+
+    assert!(!selector_matches(&owner, &operation));
+    operation.identity.name = "<unresolved>::values".into();
+    assert!(selector_matches(&owner, &operation));
+}
+
+#[test]
+fn anchored_relative_field_on_an_unrelated_type_does_not_match() {
+    let owner = owner();
+    for base in ["super::Input::Variant", "self::Input", "::external::Input"] {
+        let mut operation = operation(SourceOperationKind::FieldMutableBorrow, None);
+        operation.identity.name = format!("{base}::values");
+        operation.identity.quality = AnalysisQuality::Unresolved;
+        assert!(!selector_matches(&owner, &operation), "{base}");
+    }
+}
+
+#[test]
+fn canonical_unrelated_base_with_the_same_type_leaf_does_not_match() {
+    let owner = owner();
+    let mut operation = operation(SourceOperationKind::FieldWrite, None);
+    operation.identity.name = "crate::other::State::values".into();
+    operation.identity.quality = AnalysisQuality::Unresolved;
+
+    assert!(!selector_matches(&owner, &operation));
 }
 
 fn owner() -> OwnerContract {

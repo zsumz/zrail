@@ -11,8 +11,8 @@ use syn::{Expr, Fields, Item, Type};
 use zrail_core::{AnalysisQuality, SourceSpan};
 
 use super::{
-    CfgPredicate, ConstructorForm, ObservedFact, SyntaxGuard, attributes::cfg_guard,
-    fact::written_path,
+    CfgPredicate, ConstructorForm, GenericRootShadow, ObservedFact, RootLookupNamespace,
+    SyntaxGuard, attributes::cfg_guard, fact::written_path,
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -23,7 +23,9 @@ pub(crate) enum SourceOperationKind {
     FieldReceiverCall,
     FieldRead,
     FieldWrite,
+    FieldProjectionWrite,
     FieldMutableBorrow,
+    FieldProjectionMutableBorrow,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -55,6 +57,16 @@ pub(super) struct TypeIdentity {
     pub(super) file_local: bool,
     pub(super) origin: OperationSubjectOrigin,
     pub(super) span: Option<SourceSpan>,
+    pub(super) inference: Option<AssociatedReturnInference>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct AssociatedReturnInference {
+    pub(crate) fact: ObservedFact,
+    pub(crate) subject_origin: OperationSubjectOrigin,
+    pub(crate) root_lookup: RootLookupNamespace,
+    pub(crate) generic_shadow: Option<GenericRootShadow>,
+    pub(crate) try_depth: usize,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -64,6 +76,7 @@ pub(crate) struct FieldPlaceFact {
     pub(crate) base_file_local: bool,
     pub(crate) base_origin: OperationSubjectOrigin,
     pub(crate) base_span: Option<SourceSpan>,
+    pub(crate) base_inference: Option<AssociatedReturnInference>,
     pub(crate) fields: Vec<String>,
 }
 
@@ -153,6 +166,7 @@ fn named_fields(fields: &Fields) -> BTreeMap<String, LocalField> {
 }
 
 pub(super) fn append(mut base: TypeIdentity, suffix: impl Iterator<Item = String>) -> TypeIdentity {
+    base.inference = None;
     for segment in suffix {
         base.name.push_str("::");
         base.name.push_str(&segment);
@@ -167,6 +181,7 @@ pub(super) fn unresolved(name: &str) -> TypeIdentity {
         file_local: false,
         origin: OperationSubjectOrigin::WrittenPath,
         span: None,
+        inference: None,
     }
 }
 

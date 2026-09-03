@@ -1,22 +1,20 @@
 //! One invocation produces one structured result across every feasible candidate.
 
-use std::collections::BTreeMap;
-
 use zrail_core::{AnalysisQuality, MacroBindingMode, MacroExpansionAllow};
 
 use crate::cargo::ResolvedCargoGraph;
 use crate::source::{MacroCandidate, MacroExpansionFact, MacroOrigin, SourceIndex};
 
-use super::{bindings, failure::MacroBindingFailure, source};
+use super::{allowances::AllowanceIndex, bindings, failure::MacroBindingFailure, source};
 
 pub(super) enum MacroBindingResult<'a> {
     Bound {
-        allowances: Vec<&'a str>,
+        allowances: Vec<&'a MacroExpansionAllow>,
         confidence: AnalysisQuality,
     },
     NoNameMatch,
     Rejected {
-        attempted: Vec<&'a str>,
+        attempted: Vec<&'a MacroExpansionAllow>,
         reasons: Vec<MacroBindingFailure>,
     },
 }
@@ -24,8 +22,8 @@ pub(super) enum MacroBindingResult<'a> {
 pub(super) fn review<'a>(
     source: &SourceIndex,
     resolved_cargo: Option<&ResolvedCargoGraph>,
-    expansion: &'a MacroExpansionFact,
-    allowed: &BTreeMap<&str, &MacroExpansionAllow>,
+    expansion: &MacroExpansionFact,
+    allowed: &AllowanceIndex<'a>,
 ) -> MacroBindingResult<'a> {
     review_with(
         expansion,
@@ -36,15 +34,15 @@ pub(super) fn review<'a>(
 }
 
 pub(super) fn review_without_definitions<'a>(
-    expansion: &'a MacroExpansionFact,
-    allowed: &BTreeMap<&str, &MacroExpansionAllow>,
+    expansion: &MacroExpansionFact,
+    allowed: &AllowanceIndex<'a>,
 ) -> MacroBindingResult<'a> {
     review_with(expansion, allowed, |_, _| Vec::new(), |_, _| None)
 }
 
 fn review_with<'a>(
-    expansion: &'a MacroExpansionFact,
-    allowed: &BTreeMap<&str, &MacroExpansionAllow>,
+    expansion: &MacroExpansionFact,
+    allowed: &AllowanceIndex<'a>,
     source_failures: impl Fn(&MacroCandidate, &MacroExpansionAllow) -> Vec<MacroBindingFailure>,
     definition_failure: impl Fn(&MacroCandidate, &MacroExpansionAllow) -> Option<MacroBindingFailure>,
 ) -> MacroBindingResult<'a> {
@@ -55,7 +53,7 @@ fn review_with<'a>(
         let candidate_attempts = candidate
             .allowance_names(&expansion.name)
             .into_iter()
-            .filter(|name| allowed.contains_key(name))
+            .flat_map(|name| allowed.get(name).into_iter().flatten().copied())
             .collect::<Vec<_>>();
         attempted.extend(candidate_attempts.iter().copied());
         let Some(names) = candidate_names(expansion, candidate, allowed) else {
@@ -64,7 +62,7 @@ fn review_with<'a>(
             }
             let mut missing = candidate
                 .policy_names()
-                .filter(|name| !allowed.contains_key(name))
+                .filter(|name| !allowed.contains(name))
                 .map(str::to_owned)
                 .collect::<Vec<_>>();
             missing.sort();
@@ -76,7 +74,9 @@ fn review_with<'a>(
             continue;
         };
         if unresolved(candidate) {
-            if !conservative_name_binding(&names, allowed) {
+            if let Some(allowances) = conservative_allowances(&names, allowed) {
+                matched.extend(allowances);
+            } else {
                 reasons.extend(unresolved_failures(candidate));
                 reasons.extend(names.iter().map(|name| {
                     MacroBindingFailure::ConfidenceNotGranted {
@@ -84,17 +84,28 @@ fn review_with<'a>(
                     }
                 }));
             }
-        } else {
-            for name in &names {
-                let allowance = allowed[name];
-                reasons.extend(source_failures(candidate, allowance));
-                reasons.extend(definition_failure(candidate, allowance));
+            continue;
+        }
+        for name in names {
+            let mut accepted = Vec::new();
+            let mut failures = Vec::new();
+            for allowance in allowed.get(name).into_iter().flatten().copied() {
+                let mut rejected = source_failures(candidate, allowance);
+                rejected.extend(definition_failure(candidate, allowance));
+                if rejected.is_empty() {
+                    accepted.push(allowance);
+                } else {
+                    failures.extend(rejected);
+                }
+            }
+            if accepted.is_empty() {
+                reasons.extend(failures);
+            } else {
+                matched.extend(accepted);
             }
         }
-        matched.extend(names);
     }
-    attempted.sort_unstable();
-    attempted.dedup();
+    dedup_allowances(&mut attempted);
     if attempted.is_empty() {
         return MacroBindingResult::NoNameMatch;
     }
@@ -103,8 +114,7 @@ fn review_with<'a>(
     if !reasons.is_empty() {
         return MacroBindingResult::Rejected { attempted, reasons };
     }
-    matched.sort_unstable();
-    matched.dedup();
+    dedup_allowances(&mut matched);
     MacroBindingResult::Bound {
         allowances: matched,
         confidence: expansion.quality,
@@ -114,17 +124,20 @@ fn review_with<'a>(
 pub(super) fn candidate_names<'a>(
     expansion: &'a MacroExpansionFact,
     candidate: &'a MacroCandidate,
-    allowed: &BTreeMap<&str, &MacroExpansionAllow>,
+    allowed: &AllowanceIndex<'_>,
 ) -> Option<Vec<&'a str>> {
     let names = candidate.policy_names().collect::<Vec<_>>();
-    let written_alias = names.len() == 1
-        && candidate.written_alias
-        && allowed.contains_key(expansion.name.as_str());
+    let written_alias =
+        names.len() == 1 && candidate.written_alias && allowed.contains(expansion.name.as_str());
     let conservative_fallback = unresolved(candidate)
         && allowed
             .get(expansion.name.as_str())
-            .is_some_and(|allowance| allowance.binding == MacroBindingMode::Conservative);
-    if names.iter().all(|name| allowed.contains_key(name)) {
+            .is_some_and(|allowances| {
+                allowances
+                    .iter()
+                    .any(|allowance| allowance.binding == MacroBindingMode::Conservative)
+            });
+    if names.iter().all(|name| allowed.contains(name)) {
         Some(names)
     } else if written_alias || conservative_fallback {
         Some(vec![expansion.name.as_str()])
@@ -186,12 +199,35 @@ fn unresolved(candidate: &MacroCandidate) -> bool {
         })
 }
 
-fn conservative_name_binding(
+fn conservative_allowances<'a>(
     names: &[&str],
-    allowed: &BTreeMap<&str, &MacroExpansionAllow>,
-) -> bool {
-    !names.is_empty()
-        && names
+    allowed: &AllowanceIndex<'a>,
+) -> Option<Vec<&'a MacroExpansionAllow>> {
+    let mut matched = Vec::new();
+    for name in names {
+        let conservative = allowed
+            .get(name)?
             .iter()
-            .all(|name| allowed[name].binding == MacroBindingMode::Conservative)
+            .filter(|allowance| allowance.binding == MacroBindingMode::Conservative)
+            .copied()
+            .collect::<Vec<_>>();
+        let [allowance] = conservative.as_slice() else {
+            return None;
+        };
+        matched.push(*allowance);
+    }
+    (!matched.is_empty()).then_some(matched)
+}
+
+fn dedup_allowances(values: &mut Vec<&MacroExpansionAllow>) {
+    let mut retained = Vec::<*const MacroExpansionAllow>::new();
+    values.retain(|allowance| {
+        let pointer = std::ptr::from_ref(*allowance);
+        if retained.contains(&pointer) {
+            false
+        } else {
+            retained.push(pointer);
+            true
+        }
+    });
 }

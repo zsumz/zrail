@@ -16,7 +16,7 @@ pub fn compare_architecture(
     after_lock: Option<&LockFile>,
 ) -> DiffReport {
     let mut changes = contract::compare(before, after);
-    changes.extend(lock::compare(before_lock, after_lock));
+    changes.extend(lock::compare(before, before_lock, after, after_lock));
     DiffReport::new(changes)
 }
 
@@ -42,7 +42,7 @@ pub fn compare_architecture_checked(
     changes.extend(before_authority);
     changes.extend(after_authority);
     if changes.iter().all(|change| change.rail != "lock.authority") {
-        changes.extend(lock::compare(before_lock, after_lock));
+        changes.extend(lock::compare(before, before_lock, after, after_lock));
     }
     DiffReport::new(changes)
 }

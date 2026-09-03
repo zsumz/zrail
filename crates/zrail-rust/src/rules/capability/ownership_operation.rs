@@ -77,7 +77,43 @@ fn selector_matches(owner: &OwnerContract, operation: &SourceOperationFact) -> b
         || path_matches(&owner.selector, fact)
         || (fact.quality != AnalysisQuality::Exact
             && fact.canonical.is_empty()
-            && last_segment(&owner.selector) == last_segment(&fact.name))
+            && unresolved_selector_matches(owner, operation))
+}
+
+fn unresolved_selector_matches(owner: &OwnerContract, operation: &SourceOperationFact) -> bool {
+    let observed = &operation.identity.name;
+    if !matches!(
+        owner.kind,
+        OwnerKind::FieldRead
+            | OwnerKind::FieldWrite
+            | OwnerKind::FieldMutableBorrow
+            | OwnerKind::FieldMutation
+            | OwnerKind::FieldAuthority
+    ) {
+        return last_segment(&owner.selector) == last_segment(observed);
+    }
+    let Some((selector_base, selector_field)) = owner.selector.rsplit_once("::") else {
+        return last_segment(&owner.selector) == last_segment(observed);
+    };
+    let Some((observed_base, observed_field)) = observed.rsplit_once("::") else {
+        return selector_field == last_segment(observed);
+    };
+    let exact_base = !observed_base.starts_with('<')
+        && (observed_base.starts_with("crate::")
+            || observed_base.starts_with("::")
+            || operation
+                .place
+                .as_ref()
+                .is_some_and(|place| place.base_quality == AnalysisQuality::Exact));
+    if exact_base {
+        return selector_field == observed_field
+            && normalized_path(selector_base) == normalized_path(observed_base);
+    }
+    if observed_base.starts_with("self::") || observed_base.starts_with("super::") {
+        return selector_field == observed_field
+            && last_segment(selector_base) == last_segment(observed_base);
+    }
+    selector_field == observed_field
 }
 
 fn opaque_field_matches(owner: &OwnerContract, operation: &SourceOperationFact) -> bool {
@@ -130,6 +166,11 @@ fn operation_matches(owner: &OwnerContract, operation: &SourceOperationFact) -> 
         | (
             OwnerKind::FieldMutableBorrow | OwnerKind::FieldAuthority | OwnerKind::FieldMutation,
             SourceOperationKind::FieldMutableBorrow,
+        )
+        | (
+            OwnerKind::FieldAuthority | OwnerKind::FieldMutation,
+            SourceOperationKind::FieldProjectionWrite
+            | SourceOperationKind::FieldProjectionMutableBorrow,
         ) => true,
         (OwnerKind::FieldMutation, SourceOperationKind::FieldReceiverCall) => operation
             .method

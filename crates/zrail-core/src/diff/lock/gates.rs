@@ -41,7 +41,7 @@ fn compare_gate(before: &LockedGate, after: &LockedGate, changes: &mut Vec<Archi
                 ChangeKind::Unknown,
                 "qualification.gate-lock",
                 &before.name,
-                "reviewed qualification gate contents changed",
+                "reviewed qualification gate contents changed, including any tool version pin; exact semantic effect requires review",
             )
             .values(value(before), value(after)),
         );

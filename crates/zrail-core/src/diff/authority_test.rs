@@ -1,8 +1,8 @@
 //! Exact content and source identities remain visible in semantic review.
 
 use crate::{
-    ChangeKind, CrateRootContract, CrateRootSource, LockedMacroImplementation, MacroBindingMode,
-    MacroExpansionAllow, MacroExpansionMode, MacroInputMode,
+    ChangeKind, CrateRootContract, CrateRootSource, LockedMacroImplementation, LockedMacroSource,
+    MacroBindingMode, MacroExpansionAllow, MacroExpansionMode, MacroInputMode,
 };
 
 use super::{compare_architecture, compare_fixture_test::contract_with_hard_limit};
@@ -44,7 +44,8 @@ fn opaque_macro_input_is_a_grant_and_local_body_change_is_unknown() {
 
 #[test]
 fn repository_macro_package_authority_adds_as_grant_and_removes_as_revoke() {
-    let contract = contract_with_hard_limit(300);
+    let mut contract = contract_with_hard_limit(300);
+    contract.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
     let empty = crate::LockFile::new("0".repeat(64));
     let mut trusted = empty.clone();
     trusted.macro_implementations.push(implementation("a"));
@@ -57,6 +58,29 @@ fn repository_macro_package_authority_adds_as_grant_and_removes_as_revoke() {
     }));
     assert!(revoked.changes.iter().any(|change| {
         change.kind == ChangeKind::Revoke && change.rail == "rust.macro-implementation"
+    }));
+}
+
+#[test]
+fn same_name_locked_macro_source_removal_is_not_hidden() {
+    let mut contract = contract_with_hard_limit(300);
+    contract.source.rust.macros.mode = MacroExpansionMode::DenyUnreviewed;
+    let mut before = crate::LockFile::new("0".repeat(64));
+    before
+        .macro_sources
+        .push(macro_source("derive-one", "1.0.0"));
+    before
+        .macro_sources
+        .push(macro_source("derive-two", "2.0.0"));
+    let mut after = before.clone();
+    after.macro_sources.pop();
+
+    let report = compare_architecture(&contract, Some(&before), &contract, Some(&after));
+
+    assert!(report.changes.iter().any(|change| {
+        change.kind == ChangeKind::Grant
+            && change.rail == "rust.macro-source"
+            && change.subject.contains("derive-two")
     }));
 }
 
@@ -164,6 +188,16 @@ fn implementation(digit: &str) -> LockedMacroImplementation {
         package: "fixture".into(),
         directory: ".".into(),
         inputs_sha256: digit.repeat(64),
+    }
+}
+
+fn macro_source(package: &str, version: &str) -> LockedMacroSource {
+    LockedMacroSource {
+        allowance: "derive".into(),
+        package: package.into(),
+        version: version.into(),
+        source: "path+file:///fixture".into(),
+        checksum: None,
     }
 }
 

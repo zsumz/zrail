@@ -36,13 +36,18 @@ pub(super) fn classify(
             if catalog.external_self.contains(&key) {
                 return;
             }
-            traits.values().flatten().collect::<Vec<_>>()
+            traits
+                .values()
+                .flatten()
+                .map(|declaration| &declaration.guard)
+                .collect::<Vec<_>>()
         }
         TraitSelection::Explicit(None) => return,
         TraitSelection::Explicit(Some(name)) => traits
             .get(&TraitIdentity::Canonical(name.into()))
             .into_iter()
             .flatten()
+            .map(|declaration| &declaration.guard)
             .collect(),
     };
     let union = SyntaxGuard::from_predicate(CfgPredicate::any(

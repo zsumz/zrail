@@ -1,7 +1,5 @@
 //! Namespace-preservation authority binds every exact candidate at one occurrence.
 
-use std::collections::BTreeMap;
-
 use zrail_core::{AnalysisQuality, Contract, MacroExpansionBindings, MacroExpansionMode};
 
 use crate::{
@@ -9,7 +7,10 @@ use crate::{
     source::{BindingMacroPolicy, SourceIndex},
 };
 
-use super::review::{MacroBindingResult, review};
+use super::{
+    allowances::AllowanceIndex,
+    review::{MacroBindingResult, review},
+};
 
 pub(crate) fn build(
     contract: &Contract,
@@ -17,16 +18,9 @@ pub(crate) fn build(
     resolved_cargo: Option<&ResolvedCargoGraph>,
 ) -> BindingMacroPolicy {
     let allowed = if contract.source.rust.macros.mode == MacroExpansionMode::Allow {
-        BTreeMap::new()
+        AllowanceIndex::new(std::iter::empty())
     } else {
-        contract
-            .source
-            .rust
-            .macros
-            .allow
-            .iter()
-            .map(|allowance| (allowance.name.as_str(), allowance))
-            .collect::<BTreeMap<_, _>>()
+        AllowanceIndex::new(&contract.source.rust.macros.allow)
     };
     let mut policy = BindingMacroPolicy::default();
     for file in source
@@ -99,15 +93,17 @@ pub(crate) fn build(
 
 fn complete_namespace_authority(
     expansion: &crate::source::MacroExpansionFact,
-    allowances: &[&str],
-    allowed: &BTreeMap<&str, &zrail_core::MacroExpansionAllow>,
+    allowances: &[&zrail_core::MacroExpansionAllow],
+    allowed: &AllowanceIndex<'_>,
 ) -> bool {
     !allowances.is_empty()
-        && allowances.iter().all(|name| clean(allowed[*name]))
+        && allowances.iter().all(|allowance| clean(allowance))
         && expansion.candidates.iter().all(|candidate| {
-            candidate
-                .policy_names()
-                .all(|name| allowed.get(name).is_some_and(|allowance| clean(allowance)))
+            candidate.policy_names().all(|name| {
+                allowed
+                    .get(name)
+                    .is_some_and(|entries| entries.iter().any(|allowance| clean(allowance)))
+            })
         })
 }
 
@@ -118,3 +114,6 @@ fn clean(allowance: &zrail_core::MacroExpansionAllow) -> bool {
 #[cfg(test)]
 #[path = "binding_policy_test.rs"]
 mod binding_policy_test;
+
+#[cfg(test)]
+pub(super) use binding_policy_test::{clean_allowance, contract, expansion, source};

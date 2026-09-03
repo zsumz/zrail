@@ -5,13 +5,14 @@ use crate::{
 };
 
 use super::compare;
+use crate::diff::compare_fixture_test::contract_with_hard_limit;
 
 #[test]
 fn changing_reviewed_gate_bytes_requires_human_review() {
     let before = lock("1");
     let after = lock("2");
 
-    let changes = compare(Some(&before), Some(&after));
+    let changes = compare_locks(Some(&before), Some(&after));
 
     assert_eq!(changes.len(), 1);
     assert_eq!(changes[0].kind, ChangeKind::Unknown);
@@ -23,7 +24,7 @@ fn removing_gate_attestation_is_a_grant() {
     let before = lock("1");
     let after = LockFile::new("0".repeat(64));
 
-    let changes = compare(Some(&before), Some(&after));
+    let changes = compare_locks(Some(&before), Some(&after));
 
     assert!(
         changes
@@ -39,18 +40,18 @@ fn execution_receipt_lock_changes_preserve_permission_direction() {
     let mut changed = LockFile::new("0".repeat(64));
     changed.execution_receipts.push(receipt("2"));
 
-    let reviewed = compare(Some(&before), Some(&changed));
+    let reviewed = compare_locks(Some(&before), Some(&changed));
     assert_eq!(reviewed.len(), 1);
     assert_eq!(reviewed[0].kind, ChangeKind::Unknown);
     assert_eq!(reviewed[0].rail, "rust.test-mirror-receipt-lock");
 
     let empty = LockFile::new("0".repeat(64));
     assert_eq!(
-        compare(Some(&empty), Some(&before))[0].kind,
+        compare_locks(Some(&empty), Some(&before))[0].kind,
         ChangeKind::Revoke
     );
     assert_eq!(
-        compare(Some(&before), Some(&empty))[0].kind,
+        compare_locks(Some(&before), Some(&empty))[0].kind,
         ChangeKind::Grant
     );
 }
@@ -59,15 +60,15 @@ fn execution_receipt_lock_changes_preserve_permission_direction() {
 fn gate_input_changes_preserve_their_permission_direction() {
     let before = lock_with_input("1");
     let after = lock_with_input("2");
-    let changed = compare(Some(&before), Some(&after));
+    let changed = compare_locks(Some(&before), Some(&after));
     assert_eq!(changed.len(), 1);
     assert_eq!(changed[0].kind, ChangeKind::Unknown);
     assert_eq!(changed[0].rail, "qualification.gate-input-lock");
 
     let without = lock("1");
-    let added = compare(Some(&without), Some(&before));
+    let added = compare_locks(Some(&without), Some(&before));
     assert_eq!(added[0].kind, ChangeKind::Revoke);
-    let removed = compare(Some(&before), Some(&without));
+    let removed = compare_locks(Some(&before), Some(&without));
     assert_eq!(removed[0].kind, ChangeKind::Grant);
 }
 
@@ -77,11 +78,11 @@ fn ratchet_selector_is_normalized_and_part_of_identity() {
     raw.ratchets.push(ratchet("r#unwrap"));
     let mut normalized = LockFile::new("0".repeat(64));
     normalized.ratchets.push(ratchet("unwrap"));
-    assert!(compare(Some(&raw), Some(&normalized)).is_empty());
+    assert!(compare_locks(Some(&raw), Some(&normalized)).is_empty());
 
     let mut changed = LockFile::new("0".repeat(64));
     changed.ratchets.push(ratchet("expect"));
-    let changes = compare(Some(&normalized), Some(&changed));
+    let changes = compare_locks(Some(&normalized), Some(&changed));
     assert_eq!(changes.len(), 2);
     assert!(
         changes
@@ -104,6 +105,14 @@ fn lock(digit: &str) -> LockFile {
         inputs: Vec::new(),
     });
     lock
+}
+
+fn compare_locks(
+    before: Option<&LockFile>,
+    after: Option<&LockFile>,
+) -> Vec<super::ArchitectureChange> {
+    let contract = contract_with_hard_limit(300);
+    compare(&contract, before, &contract, after)
 }
 
 fn lock_with_input(digit: &str) -> LockFile {

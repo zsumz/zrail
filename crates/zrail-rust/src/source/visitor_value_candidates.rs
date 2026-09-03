@@ -1,8 +1,13 @@
 //! Guarded value bindings expand into conservative receiver candidates.
 
+use std::collections::BTreeMap;
+
 use zrail_core::AnalysisQuality;
 
-use super::{GuardedValueBinding, SyntaxGuard, TypeIdentity, ValueBinding, ValueCandidate};
+use super::{
+    CfgPredicate, GuardedValueBinding, LocalValueScopes, SyntaxGuard, TypeIdentity, ValueBinding,
+    ValueCandidate,
+};
 
 pub(super) fn binding_from_identity(identity: TypeIdentity) -> ValueBinding {
     match identity.quality {
@@ -37,4 +42,21 @@ pub(super) fn expand_binding(
             }));
         }
     }
+}
+
+pub(super) fn lexical_shadows(scopes: &LocalValueScopes) -> Vec<(String, SyntaxGuard)> {
+    let mut guards = BTreeMap::<String, Vec<CfgPredicate>>::new();
+    for scope in scopes {
+        for (name, bindings) in scope {
+            let name = name.strip_prefix("r#").unwrap_or(name);
+            guards
+                .entry(name.into())
+                .or_default()
+                .extend(bindings.iter().map(|binding| binding.guard.predicate()));
+        }
+    }
+    guards
+        .into_iter()
+        .map(|(name, guards)| (name, SyntaxGuard::from_predicate(CfgPredicate::any(guards))))
+        .collect()
 }

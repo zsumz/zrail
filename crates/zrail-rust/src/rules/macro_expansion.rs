@@ -1,5 +1,6 @@
 //! Unexpanded Rust is an explicit, content-bound, reasoned trust boundary.
 
+mod allowances;
 mod binding_policy;
 mod bindings;
 mod diagnostics;

@@ -38,7 +38,12 @@ impl FactVisitor<'_> {
     ) {
         let place = PlaceExpression::analyze(expression);
         for field in place.authority_fields() {
-            self.record_field(kind, field);
+            let effective = if place.is_direct(field) {
+                kind
+            } else {
+                projection_kind(kind)
+            };
+            self.record_field(effective, field);
         }
         let checkpoint = self.field_read_exclusions.len();
         self.field_read_exclusions.extend(place.excluded_reads());
@@ -83,6 +88,7 @@ impl FactVisitor<'_> {
             base_file_local: base.file_local,
             base_origin: base.origin,
             base_span: base.span,
+            base_inference: base.inference,
             fields: vec![member.to_string()],
         };
         match access {
@@ -139,5 +145,15 @@ impl FactVisitor<'_> {
                 &context.guard,
             );
         }
+    }
+}
+
+fn projection_kind(kind: SourceOperationKind) -> SourceOperationKind {
+    match kind {
+        SourceOperationKind::FieldWrite => SourceOperationKind::FieldProjectionWrite,
+        SourceOperationKind::FieldMutableBorrow => {
+            SourceOperationKind::FieldProjectionMutableBorrow
+        }
+        _ => kind,
     }
 }

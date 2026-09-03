@@ -126,9 +126,14 @@ impl State {
         "assignment place was counted as a read: {facts:?}"
     );
     assert_eq!(
-        matching(&facts, SourceOperationKind::FieldWrite, "State::values").len(),
+        matching(
+            &facts,
+            SourceOperationKind::FieldProjectionWrite,
+            "State::values"
+        )
+        .len(),
         1,
-        "indexed backing storage had no write authority: {facts:?}"
+        "indexed backing storage had no projection authority: {facts:?}"
     );
 }
 
@@ -158,11 +163,23 @@ impl State {
     );
 
     for (kind, name, count) in [
-        (SourceOperationKind::FieldWrite, "State::values", 2),
-        (SourceOperationKind::FieldWrite, "State::outer", 1),
-        (SourceOperationKind::FieldWrite, "State::pointer", 0),
-        (SourceOperationKind::FieldWrite, "State::tuple", 1),
-        (SourceOperationKind::FieldMutableBorrow, "State::values", 1),
+        (
+            SourceOperationKind::FieldProjectionWrite,
+            "State::values",
+            2,
+        ),
+        (SourceOperationKind::FieldProjectionWrite, "State::outer", 1),
+        (
+            SourceOperationKind::FieldProjectionWrite,
+            "State::pointer",
+            0,
+        ),
+        (SourceOperationKind::FieldProjectionWrite, "State::tuple", 1),
+        (
+            SourceOperationKind::FieldProjectionMutableBorrow,
+            "State::values",
+            1,
+        ),
         (SourceOperationKind::FieldRead, "State::index", 3),
         (SourceOperationKind::FieldRead, "State::pointer", 1),
     ] {

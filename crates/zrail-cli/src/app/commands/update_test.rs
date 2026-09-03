@@ -45,7 +45,11 @@ fn update_refuses_new_dependency_without_acceptance() {
     let mut options = options(&root);
     let refused = update(&options).expect("evaluate refused update");
     assert_eq!(refused.exit_code, 1);
-    assert!(refused.text.contains("refused gated architecture changes"));
+    assert!(
+        refused
+            .text
+            .contains("refused grant, debt, or unknown architecture changes")
+    );
     assert_eq!(fs::read_to_string(&lock_path).expect("read lock"), initial);
 
     options.accept_grants = true;
@@ -116,6 +120,8 @@ fn update_refuses_changed_gate_bytes_without_acceptance() {
 
     assert_eq!(refused.exit_code, 1);
     assert!(refused.text.contains("UNKNOWN qualification.gate-lock"));
+    assert!(refused.text.contains("tool version pin"));
+    assert!(refused.text.contains("explicit human review"));
     assert_eq!(fs::read_to_string(&lock_path).expect("read lock"), initial);
 
     options.accept_grants = true;

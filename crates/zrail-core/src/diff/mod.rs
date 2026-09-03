@@ -24,6 +24,10 @@ mod authority_test;
 #[path = "compare_fixture_test.rs"]
 mod compare_fixture_test;
 
+#[cfg(test)]
+#[path = "macro_staging_test.rs"]
+mod macro_staging_test;
+
 pub use compare::{compare_architecture, compare_architecture_checked};
 pub use model::{ArchitectureChange, ChangeKind, DiffReport, DiffSummary};
 

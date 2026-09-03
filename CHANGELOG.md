@@ -4,6 +4,39 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ## [Unreleased]
 
+## [0.0.3-rc.8] - 2026-09-03
+
+### Added
+
+- Exact associated functions returning `Self`, including bounded builtin
+  `Result`/`Option` try wrappers, now provide type receipts for unannotated local
+  bindings used as field-write receivers.
+- Field ownership distinguishes direct replacement from writes and mutable
+  borrows through a projection: `field-write` and `field-mutable-borrow` are
+  direct, while `field-mutation` and `field-authority` retain projected changes.
+
+### Changed
+
+- Workspace producer and exact internal pins advance to `0.0.3-rc.8`; lock
+  semantics are epoch 7 (schema 3).
+- Reviewed macro allowances may be staged and validated while macro mode remains
+  `allow`; their policy and semantic-diff authority stays inert until
+  `deny-unreviewed` is enabled.
+- One macro spelling may carry multiple allowances when each has distinct source
+  or definition provenance; evaluation, stale review, lock identity, and diffs
+  retain each authority independently.
+- Exact Cargo `target/**` exclusions accept a missing `CACHEDIR.TAG`, including
+  populated caches, while rejecting an invalid tag when one is present.
+- Gate-content drift and refused lock updates now explain that a tool-version pin
+  is an `UNKNOWN` change requiring explicit human review.
+
+### Fixed
+
+- Same-named fields in unrelated match-arm destructures no longer over-match an
+  exact field owner, while genuinely unresolved receiver types still fail closed.
+- Macro authority parse errors now identify canonical `resolution` and legacy
+  `binding` as the two conflicting spellings.
+
 ## [0.0.3-rc.7] - 2026-09-03
 
 ### Added

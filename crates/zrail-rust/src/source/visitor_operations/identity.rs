@@ -53,6 +53,7 @@ impl FactVisitor<'_> {
             file_local: false,
             origin: OperationSubjectOrigin::WrittenPath,
             span: Some(source_span(path.span())),
+            inference: None,
         }
     }
 
@@ -81,6 +82,7 @@ impl FactVisitor<'_> {
             file_local: false,
             origin: OperationSubjectOrigin::WrittenPath,
             span: Some(source_span(path.span())),
+            inference: None,
         }
     }
 
@@ -113,6 +115,7 @@ impl FactVisitor<'_> {
                 file_local: true,
                 origin: OperationSubjectOrigin::LocalDeclaration,
                 span: Some(source_span(path.span())),
+                inference: None,
             },
             segments.map(|segment| segment.ident.to_string()),
         ))
@@ -132,6 +135,7 @@ impl FactVisitor<'_> {
             file_local: false,
             origin: OperationSubjectOrigin::WrittenPath,
             span: Some(source_span(path.span())),
+            inference: None,
         })
     }
 }
