@@ -4,6 +4,15 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ## [Unreleased]
 
+## [0.0.3-rc.8] - 2026-09-04
+
+### Changed
+
+- Workspace producer and exact internal pins advance to `0.0.3-rc.8`; lock
+  semantics remain epoch 6 (schema 3).
+- The reviewed rc.7 source is repackaged under a new immutable candidate version
+  without engine, policy, dependency, or workflow changes.
+
 ## [0.0.3-rc.7] - 2026-09-03
 
 ### Added
