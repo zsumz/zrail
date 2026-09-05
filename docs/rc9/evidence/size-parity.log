@@ -1,0 +1,10 @@
+   Compiling zrail-rust v0.0.3-rc.8 (/root/zrail-rc9/crates/zrail-rust)
+    Finished `test` profile [unoptimized] target(s) in 22.52s
+     Running unittests src/lib.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/zrail_rust-a18c36634132c20d)
+
+running 1 test
+size-only parity pass: sha256:71485d30104be0e77cb21563ea0ff28a36f6ccbb0f665e7f9f3d739abd31391b
+test rules::size::size_test::qualify_all_frozen_kafka_size_instances ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 561 filtered out; finished in 14.10s
+

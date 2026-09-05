@@ -11,10 +11,6 @@ files and opaque or invalid syntax remain explicit review work.
 
 | Assertion ID | Cause |
 | --- | --- |
-| `KD-BUDGET-FACADE` | Scoped and test-facade budgets are not implemented; ordinary test budget cannot replace facade-first precedence. |
-| `KD-BUDGET-PRECEDENCE` | Budget precedence parity fixture is not implemented. |
-| `KD-BUDGET-PRODUCTION` | Scoped and test-facade budgets are not implemented; ordinary test budget cannot replace facade-first precedence. |
-| `KD-BUDGET-TEST` | Scoped and test-facade budgets are not implemented; ordinary test budget cannot replace facade-first precedence. |
 | `KD-CAPABILITY-01-01` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
 | `KD-CAPABILITY-01-02` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
 | `KD-CAPABILITY-01-03` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
@@ -87,6 +83,14 @@ files and opaque or invalid syntax remain explicit review work.
 | `KD-TRANSPORT-METHODS` | Exact inventory predicates, authored alias restrictions, compilation-world rules, and positive/negative full selection qualification remain open. |
 | `KD-TRANSPORT-OWNERS` | Exact inventory predicates, authored alias restrictions, compilation-world rules, and positive/negative full selection qualification remain open. |
 | `KD-TRANSPORT-RENAMES` | Exact inventory predicates, authored alias restrictions, compilation-world rules, and positive/negative full selection qualification remain open. |
+| `KF-BUDGET-ALLOW-PATH` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-ALLOW-PRESENCE` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-ALLOW-UNIQUE` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-BASELINE-PATH` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-BASELINE-PRESENCE` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-BASELINE-UNIQUE` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-DECOY-FIXTURE` | Required detector input must be imported and bound; this assertion is not classified as system behavioral evidence. |
+| `KF-BUDGET-NESTED-TESTS` | Future nested path classification passes; the exact nested-decoy-manifest counterexample still needs import and complete Cargo/source qualification. |
 | `KF-FACADE-LIVE` | Predicate fixtures pass; full downstream selection and complete declarative policy qualification remain open. |
 | `KF-FETCH-ORDER-ACTIVATION` | Bounded code-order predicate is absent; its stronger code-only semantics need explicit difference evidence. An owner allowlist is insufficient. |
 | `KF-FETCH-ORDER-CONTROL` | Bounded code-order predicate is absent; its stronger code-only semantics need explicit difference evidence. An owner allowlist is insufficient. |
@@ -94,6 +98,8 @@ files and opaque or invalid syntax remain explicit review work.
 | `KF-FETCH-PRESENCE-01` | Required literal/code predicate translation and omission fixtures remain open. |
 | `KF-FETCH-PRESENCE-02` | Required literal/code predicate translation and omission fixtures remain open. |
 | `KF-FETCH-PRESENCE-03` | Required literal/code predicate translation and omission fixtures remain open. |
+| `KF-SCAN-MINIMUM` | Repository-file assertions and exact source-selection fixtures are required; passing the frozen scan does not supply a replacement guard. |
+| `KF-SCAN-ROOTS` | Native repository.roots already checks directory presence; the frozen positive/negative source-selection qualification still needs intended-diagnostic linkage. |
 | `RF-FACADE-LIVE` | Rafter permits data declarations; wiring modes would change policy. Exact raw-line or reviewed structural normalization remains open. |
 | `RF-PROCESS-ALLOWLIST` | Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified. |
 | `RF-PROCESS-CRATE-ALIASES` | Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified. |

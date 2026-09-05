@@ -5,7 +5,7 @@ incomplete. No consumer guard has been deleted and no release artifact has been
 published. The user approved retiring Rafter's private-name policy; see
 [policy decisions](DECISIONS.md).
 
-This branch implements the strict facade slice. It does **not** yet deliver rc9
+This branch implements strict facades and scoped size budgets. It does **not** yet deliver rc9
 replacement coverage. See [exact reviewed assertion blockers](BLOCKERS.md),
 [qualification commands and results](QUALIFICATION.md), and
 [conditional downstream cutovers](CUTOVERS.md).
@@ -58,7 +58,7 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 ## Machine-readable audit state
 
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **103 reviewed assertion instances**. The
+contains **274 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
 record 9,792 files and 72,155 syntax candidates. Every tracked path is included,
@@ -68,16 +68,19 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 78 | 3 | 2 |
-| Kafkars | 6,808 | 6,713 | 10 | 4 | 3 |
+| kafka-driver | 826 | 772 | 78 | 7 | 6 |
+| Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
-The five verified assertions are `KD-FACADE-FUNCTION`, `KD-FACADE-INLINE`,
-`KF-FACADE-FUNCTION`, `KF-FACADE-INLINE`, and `KF-FACADE-IMPORT`. Their disposition
-is **new engine capability**. Verified counts for every other disposition are
-zero. They prove detector predicate/diagnostic parity, not a live repository's
-selection or complete policy bundle. `KD-FACADE-LIVE` and `KF-FACADE-LIVE` remain
-unverified. No full repository has replacement qualification.
+The **170 verified assertions** comprise five facade predicates, four
+kafka-driver budget assertions, and 161 Kafkars size predicates/instances,
+including all 141 measured baselines and three hard allowances. Their disposition
+is **new engine capability**; verified counts for the other four dispositions
+remain zero. Each registry instance binds its original TOML entry and the
+independently failing helper predicate. The full size report preserves the
+individual source digest, selected budget, baseline, and mutation diagnostics.
+`KD-FACADE-LIVE` and `KF-FACADE-LIVE` remain unverified. No complete repository
+has replacement qualification; passing a size family does not close other rails.
 
 The uncompressed census SHA-256 is
 `69c6393f176df64fff2e010968f18efb4e06781385b1bd6896de013411899ba6`.
@@ -101,6 +104,9 @@ the artifact integrity check without that flag certifies only consistent data.
 - Exact, reasoned `test-facade` declarations impose structure independently of
   compilation reachability, test identities, placement, and current test budgets.
   A production mount or missing test mount fails its intended role rule.
+- Strict modes also cover newly added test `lib.rs`/`mod.rs` facades without
+  requiring an existing exact-path declaration. The older modes retain their
+  test-source selection behavior.
 - Explain output exposes the effective mode and reason. Coverage schema 6 lists
   selected facade policies and every written violation without truncating totals.
 - Mode weakening and removed or redirected facade authority remain protected.
@@ -110,13 +116,47 @@ the artifact integrity check without that flag certifies only consistent data.
 The frozen predicates are extracted byte-for-byte into the trusted Rust test
 suite. Fifty-six differential comparisons and eight integration acceptance
 tests pass. The imported Kafkars negative fixture is also byte-identical to its
-source. This is the only implemented new policy family in this branch.
+source. Two further acceptance tests cover future test-facade discovery and
+unchanged selection for existing contracts.
 
 Strict same-revision rc8 reanalysis preserves all 36 compared authority entries.
 The reviewed root lock has not been replaced or accepted. The final self-check
 has four lock/input-drift diagnostics; the ordinary diff reports two protected
 epoch-comparison unknowns. See the archived migration preview and qualification
 report before proposing any authority update.
+
+## Scoped budgets and frozen per-instance evidence
+
+Optional `source.rust.budgets` supplies package/path/role overrides, independent
+hard limits, advisory soft limits, and warning-only targets. Exactly one scoped
+override may match a physical file; same-tier competition fails checks, coverage,
+explain, and lock construction. Exact-file hard exceptions require an explicit
+bound and configurable owner/issue/tracking metadata. Authored ratchet baselines
+remain exact even after a lock update; stale baselines and exceptions fail.
+Contracts omitting this mode preserve rc8's existing ratchet interpretation.
+
+The [kafka-driver fragment](policies/kafka-driver.sizes.fragment.toml) preserves
+facade-first limits of 100/320/240. The
+[Kafkars fragment](policies/kafkars.sizes.fragment.toml) preserves actual-package
+test precedence and facade/implementation/test/auxiliary targets of 80/240/300/300,
+soft limits of 120/360/500/500, and hard limits of 180/500/700/700. The three
+Kafkars hard bounds are already implied by their existing exact baselines.
+No size normalization or new legacy allowance was approved or applied.
+
+Byte-exact frozen traversal and selector helpers agree with native inventory on
+all **772 kafka-driver and 6,280 Kafkars governed Rust files**. The trusted
+[size-only report](evidence/size-parity.json.gz) records **21,300 comparisons**,
+including every valid file, relevant target/hard excess, growth, shrinkage,
+stale baseline, and missing hard allowance. Its implementation revision is
+`767abfd0f4f26c97fa48433c300fce999f567778`, with an empty tracked diff. Generic
+stock-check fixtures separately cover 54 numeric cases and four metadata
+rejections. The unmodified frozen Kafkars and Rafter size test targets each pass
+all five tests. Those legacy executions are retained qualification evidence.
+
+These are partial policy fragments. The report deliberately makes no Cargo,
+Rust-resolution, compilation-completeness, trusted-lock, or behavioral execution
+claim. Remaining size-helper predicates and separately governed Rafter budgets
+are explicit blockers; the complete downstream contracts still need qualification.
 
 ## Findings that constrain the implementation
 

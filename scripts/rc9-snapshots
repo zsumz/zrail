@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import tomllib
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -79,7 +80,32 @@ def main():
             git(path, "checkout", "--detach", pin["commit"])
         verify(path, pin)
     verify_extractions(args.destination)
+    verify_registries(args.destination, pins)
     return 0
+
+
+def verify_registries(destination, pins):
+    ledger = json.loads((PINS.parent / "assertions.json").read_text(encoding="utf-8"))
+    roots = {pin["repository"]: destination / pin["name"] for pin in pins["consumers"]}
+    documents = {}
+    count = 0
+    for assertion in ledger["reviewed_assertions"]:
+        registry = assertion.get("policy_registry")
+        if not registry:
+            continue
+        key = (assertion["repository"], registry["path"])
+        if key not in documents:
+            source = (roots[key[0]] / key[1]).read_bytes()
+            if len(source) > 4 * 1024 * 1024 or hashlib.sha256(source).hexdigest() != registry["file_sha256"]:
+                raise ValueError(f"frozen policy registry changed: {key}")
+            documents[key] = tomllib.loads(source.decode("utf-8"))
+        selected = documents[key]
+        for component in registry["selector"]:
+            selected = selected[component]
+        if selected[registry["index"]] != registry["entry"]:
+            raise ValueError(f"registry instance differs from frozen source: {assertion['id']}")
+        count += 1
+    print(f"verified {count} exact frozen policy registry instances")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 # Reproducing the current rc9 evidence
 
-Release verdict: **blocked**. The last tested Rust implementation is commit
-`348ae5b777217f774433045da5c4431ea055c162`, based on the exact audited rc8 commit.
+Release verdict: **blocked**. The latest size-parity implementation is commit
+`767abfd0f4f26c97fa48433c300fce999f567778`, based on the exact audited rc8 commit.
 Later audit/report-only changes do not constitute final versioned-tree release
 qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
 
@@ -29,7 +29,11 @@ All consumer checkouts must be clean and match `snapshots.json`. The setup tool
 does not reset an existing checkout. Qualification mutations belong in separate
 copies. No downstream snapshot was patched in these runs.
 
-## Executed evidence
+## Historical facade qualification
+
+The following table describes implementation
+`348ae5b777217f774433045da5c4431ea055c162`. Its logs and index remain immutable
+historical evidence; the newer size-policy qualification is recorded below.
 
 | Check | Result and precise limit |
 | --- | --- |
@@ -58,7 +62,41 @@ and all test outcomes. Zrail's syn feature set additionally includes
 `extra-traits`. The harness does not claim a native downstream Cargo workspace
 build or qualification on kafka-driver's older CI toolchain.
 
-## Reproduction commands
+## Scoped-size qualification
+
+The committed size report covers 772 kafka-driver and 6,280 Kafkars source files,
+21,300 positive/negative comparisons, 141 exact baseline instances, and three
+hard allowances. Full frozen traversal and native physical inventory select the
+same sets without duplicate files. Every report row includes its source digest,
+effective policy, measurements, and intended diagnostic IDs. The report is
+strictly size-only; no partial lock or source-resolution certificate is produced.
+
+Its uncompressed SHA-256 is
+`71485d30104be0e77cb21563ea0ff28a36f6ccbb0f665e7f9f3d739abd31391b`.
+The implementation was clean when this report ran. Kafkars' and Rafter's
+unmodified frozen size targets additionally passed five tests each; receipts
+record their original source context, pinned compiler dependencies and outcomes.
+The private-name retirement did not modify any frozen input.
+
+After the same trusted prefetch and environment setup:
+
+```sh
+python3 scripts/rc9-size-policies /absolute/snapshots /absolute/rc9-size-fragments
+diff -u docs/rc9/policies/kafka-driver.sizes.fragment.toml /absolute/rc9-size-fragments/kafka-driver.sizes.fragment.toml
+diff -u docs/rc9/policies/kafkars.sizes.fragment.toml /absolute/rc9-size-fragments/kafkars.sizes.fragment.toml
+cargo test --locked --offline -p zrail-testkit --test scoped_budgets --test strict_facades --test test_facade_discovery
+export ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots
+export ZRAIL_RC9_SIZE_REPORT=/absolute/rc9-evidence/size-parity.json
+cargo test --locked --offline -p zrail-rust --lib qualify_all_frozen_kafka_size_instances -- --ignored --nocapture
+python3 scripts/rc9-legacy-kafka-driver /absolute/snapshots/kafkars /absolute/rc9-evidence/kafkars-sizes --surface kafkars-sizes
+python3 scripts/rc9-legacy-kafka-driver /absolute/snapshots/rafter /absolute/rc9-evidence/rafter-sizes --surface rafter-sizes
+```
+
+The report output must be new. Repeating the same committed tree and inputs
+produces identical bytes. Across commits the recorded implementation identity
+changes even when the measurement rows remain identical.
+
+## Other reproduction commands
 
 Run the baseline in an isolated checkout of
 `5a368379360104ca19745326cfcef48d22a6452b`, with its own target directory:

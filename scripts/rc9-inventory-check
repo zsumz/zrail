@@ -83,6 +83,12 @@ def main():
         require(file["path"] == source["path"] and file["sha256"] == source["file_sha256"], "assertion file mismatch")
         for field in ["line", "column", "function", "syntax_sha256"]:
             require(candidate[field] == source[field], f"assertion {field} mismatch")
+        if registry := assertion.get("policy_registry"):
+            registry_file = files[(assertion["repository"], registry["path"])]
+            require(registry_file["sha256"] == registry["file_sha256"], "registry source digest mismatch")
+            require(registry_file["commit"] == assertion["commit"], "registry snapshot mismatch")
+            require(registry["entry"]["path"] == source["instance"], "registry instance identity mismatch")
+            require(registry["index"] >= 0 and registry["selector"], "invalid registry entry selector")
         require(assertion["disposition"] in dispositions, "unsupported assertion disposition")
         replacement = assertion["replacement"]
         if replacement["verified"]:

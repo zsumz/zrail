@@ -18,6 +18,9 @@ Implemented in the current branch:
 - Frozen-input discovery artifacts, source-bound assertion IDs, byte-exact
   consumer facade predicates and counterexample, and reproducible trusted
   kafka-driver guard execution.
+- Size-only differential evidence over 7,052 frozen Kafka source files, including
+  all 141 Kafkars baselines and three hard allowances. Partial declarative size
+  fragments preserve the original source families and thresholds.
 
 The audited zrail rc8 source is
 `5a368379360104ca19745326cfcef48d22a6452b`; its complete canonical gate passed in
