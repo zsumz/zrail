@@ -7,9 +7,8 @@
 //!
 //! [`check_repository`] is the primary integration point. It returns both a
 //! diagnostic report and, when analysis is complete, an independently observed
-//! candidate lock. [`build_lock`] exposes that candidate directly for callers implementing an explicitly
-//! authorized lock update. Relative configuration, lock, and explained paths are
-//! interpreted beneath the supplied repository root.
+//! candidate lock. [`build_lock`] exposes it for explicitly authorized lock updates.
+//! Relative configuration, lock, and explained paths are beneath the repository root.
 //!
 //! The baseline discovery types are public initialization support for the `zrail`
 //! CLI. They describe conservative source roots and exact debt ratchets; they do
