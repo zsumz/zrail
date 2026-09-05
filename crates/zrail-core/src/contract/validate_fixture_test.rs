@@ -66,6 +66,7 @@ pub(super) fn minimal_contract() -> Contract {
                 macros: crate::MacroExpansionContract::default(),
                 duplication: crate::RustDuplicationContract::default(),
                 types: Vec::new(),
+                budgets: None,
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Allow,
                     lint_suppressions: LintSuppressionMode::Allow,

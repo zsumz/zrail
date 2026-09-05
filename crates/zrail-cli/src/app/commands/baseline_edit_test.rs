@@ -16,6 +16,7 @@ fn appends_only_missing_ratchets_without_reserializing_other_text() {
         "reason = \"Human reason.\"\n",
     );
     let existing = vec![RatchetContract {
+        baseline: None,
         rule: "rust.file-size".into(),
         selector: None,
         target: "src/old.rs".into(),
@@ -39,6 +40,7 @@ fn appends_only_missing_ratchets_without_reserializing_other_text() {
 fn no_additions_leave_contract_bytes_exactly_unchanged() {
     let source = "# deliberate trailing spaces  \nschema = 1\n";
     let existing = vec![RatchetContract {
+        baseline: None,
         rule: "rust.file-size".into(),
         selector: None,
         target: "src/lib.rs".into(),
@@ -58,6 +60,7 @@ fn no_additions_leave_contract_bytes_exactly_unchanged() {
 fn selector_ratchets_render_and_compare_by_normalized_identity() {
     let source = "schema = 1\n";
     let existing = vec![RatchetContract {
+        baseline: None,
         rule: "rust.hygiene.denied-method".into(),
         selector: Some("r#unwrap".into()),
         target: "src/lib.rs".into(),

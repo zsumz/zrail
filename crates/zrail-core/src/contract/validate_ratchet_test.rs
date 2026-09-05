@@ -73,6 +73,21 @@ fn file_size_ratchets_require_an_effective_budget() {
 }
 
 #[test]
+fn authored_baselines_are_positive_file_size_measurements_in_the_scoped_mode() {
+    let mut contract = minimal_contract();
+    contract.ratchets = vec![ratchet("rust.file-size", None)];
+    contract.ratchets[0].baseline = Some(11);
+    assert!(errors(&contract).contains("requires a positive file-size measurement"));
+    contract.source.rust.budgets = Some(crate::SizePolicyContract::default());
+    assert!(errors(&contract).is_empty());
+    contract.ratchets[0].baseline = Some(0);
+    assert!(errors(&contract).contains("requires a positive file-size measurement"));
+    contract.ratchets[0].baseline = Some(11);
+    contract.ratchets[0].rule = "rust.module-docs".into();
+    assert!(errors(&contract).contains("requires a positive file-size measurement"));
+}
+
+#[test]
 fn denied_operation_ratchets_require_a_configured_selector() {
     let mut contract = minimal_contract();
     contract.source.rust.hygiene.deny_methods = vec!["unwrap".into()];
@@ -120,6 +135,7 @@ fn selector_identity_is_normalized_and_reserved_for_selector_rules() {
 
 fn ratchet(rule: &str, selector: Option<&str>) -> RatchetContract {
     RatchetContract {
+        baseline: None,
         rule: rule.into(),
         selector: selector.map(str::to_owned),
         target: "src/lib.rs".into(),
@@ -148,6 +164,7 @@ fn rust_contract() -> RustSourceContract {
         macros: crate::MacroExpansionContract::default(),
         duplication: crate::RustDuplicationContract::default(),
         types: Vec::new(),
+        budgets: None,
         hygiene: HygieneContract {
             unsafe_code: PolicyMode::Allow,
             lint_suppressions: LintSuppressionMode::Allow,

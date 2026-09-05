@@ -120,4 +120,6 @@ impl Default for LayerDependencies { fn default() -> Self { Self { external: Ext
     #[doc = "Optional normalized denied-operation selector measured independently."] pub selector: Option<String>,
     #[doc = "Repository-relative or package target measured by the rule."] pub target: String,
     #[doc = "Human explanation of why this metric may only tighten."] pub reason: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[doc = "Optional exact authored file-size baseline, checked independently of lock updates."] pub baseline: Option<usize>,
 }

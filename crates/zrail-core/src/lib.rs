@@ -31,9 +31,10 @@ pub use contract::{
     OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode, PolicyReachability,
     ProfileContract, RatchetContract, RepositoryContract, RustDuplicationContract,
     RustFieldContract, RustSourceContract, RustTypeContract, RustTypeKind, ScopeContract,
-    SourceContract, SymbolBoundary, SymlinkMode, SyntaxBoundary, TestExecutionIdentity,
-    TestMirrorContract, TestMode, TypeProhibition, contract_imports, load_contract,
-    load_contract_with_entry, parse_evidence_reference,
+    ScopedBudgetContract, SizeExceptionContract, SizeExceptionMetadata, SizePolicyContract,
+    SizeRole, SizeTargetMode, SizeThresholds, SourceContract, SymbolBoundary, SymlinkMode,
+    SyntaxBoundary, TestExecutionIdentity, TestMirrorContract, TestMode, TypeProhibition,
+    contract_imports, load_contract, load_contract_with_entry, parse_evidence_reference,
 };
 pub use contract_edit::{ContractEditError, format_contract_source, migrate_contract_source};
 pub use diagnostic::{

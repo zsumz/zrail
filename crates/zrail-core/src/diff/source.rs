@@ -1,5 +1,6 @@
 //! Source-convention and budget permission changes.
 
+mod budgets;
 mod feature_worlds;
 mod file_roles;
 mod item_macros;
@@ -22,6 +23,7 @@ use super::{
 
 pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<ArchitectureChange>) {
     size::compare(before, after, changes);
+    budgets::compare(before, after, changes);
     file_roles::compare(before, after, changes);
     feature_worlds::compare(before, after, changes);
     compare_generated(before, after, changes);

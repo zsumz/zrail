@@ -41,8 +41,10 @@ pub use model::{
     LayerDependencies, MAX_TEST_MIRROR_INPUTS, MacroAmbientInputs, MacroExpansionAllow,
     MacroExpansionContract, OutDirSourceContract, OwnerContract, ProfileContract, RatchetContract,
     RepositoryContract, RustDuplicationContract, RustFieldContract, RustSourceContract,
-    RustTypeContract, RustTypeKind, ScopeContract, SourceContract, SymbolBoundary, SyntaxBoundary,
-    TestExecutionIdentity, TestMirrorContract, TypeProhibition,
+    RustTypeContract, RustTypeKind, ScopeContract, ScopedBudgetContract, SizeExceptionContract,
+    SizeExceptionMetadata, SizePolicyContract, SizeRole, SizeTargetMode, SizeThresholds,
+    SourceContract, SymbolBoundary, SyntaxBoundary, TestExecutionIdentity, TestMirrorContract,
+    TypeProhibition,
 };
 pub use modes::{
     AsyncSyntax, CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,

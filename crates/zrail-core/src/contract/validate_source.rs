@@ -4,6 +4,7 @@ mod feature_worlds;
 mod file_roles;
 mod item_macros;
 mod macros;
+mod size;
 mod type_identity;
 mod types;
 
@@ -18,6 +19,7 @@ const MAX_GENERATED_INPUT_SELECTORS: usize = 64;
 
 pub(super) fn validate_source_contract(contract: &Contract, errors: &mut ValidationErrors) {
     file_roles::validate(contract, errors);
+    size::validate(contract, errors);
     feature_worlds::validate(contract, errors);
     validate_generated(contract, errors);
     validate_out_dir(contract, errors);

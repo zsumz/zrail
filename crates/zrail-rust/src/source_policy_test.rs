@@ -36,6 +36,7 @@ fn generated_budget_remains_enforced_without_a_handwritten_size_policy() {
         macros: zrail_core::MacroExpansionContract::default(),
         duplication: zrail_core::RustDuplicationContract::default(),
         types: Vec::new(),
+        budgets: None,
         hygiene: HygieneContract {
             unsafe_code: PolicyMode::Allow,
             lint_suppressions: LintSuppressionMode::Allow,
@@ -116,6 +117,7 @@ fn rust_contract() -> RustSourceContract {
         macros: zrail_core::MacroExpansionContract::default(),
         duplication: zrail_core::RustDuplicationContract::default(),
         types: Vec::new(),
+        budgets: None,
         hygiene: HygieneContract {
             unsafe_code: PolicyMode::Allow,
             lint_suppressions: LintSuppressionMode::Allow,

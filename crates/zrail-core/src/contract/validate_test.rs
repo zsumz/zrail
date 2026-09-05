@@ -74,6 +74,7 @@ fn duplicate_dependency_kinds_are_rejected() {
 fn wildcard_ratchet_targets_are_rejected() {
     let mut contract = minimal_contract();
     contract.ratchets.push(RatchetContract {
+        baseline: None,
         rule: "rust.file-size".into(),
         selector: None,
         target: "crates/**/*.rs".into(),
@@ -96,6 +97,7 @@ fn adoption_ratchets_are_rejected_without_strict_policy() {
     ] {
         let mut contract = minimal_contract();
         contract.ratchets.push(RatchetContract {
+            baseline: None,
             rule: rule.into(),
             selector: None,
             target: "crates/legacy.rs".into(),

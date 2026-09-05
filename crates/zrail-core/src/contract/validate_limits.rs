@@ -69,6 +69,19 @@ fn contract_items(contract: &Contract) -> usize {
         + contract.source.rust.test_mirrors.len()
         + contract.source.rust.feature_worlds.len();
     count += contract.source.rust.macros.allow.len();
+    count += contract.source.rust.budgets.as_ref().map_or(0, |policy| {
+        policy.exceptions.len()
+            + policy
+                .overrides
+                .iter()
+                .map(|scope| {
+                    1 + scope.include.len()
+                        + scope.exclude.len()
+                        + scope.packages.len()
+                        + scope.roles.len()
+                })
+                .sum::<usize>()
+    });
     count += contract
         .source
         .rust

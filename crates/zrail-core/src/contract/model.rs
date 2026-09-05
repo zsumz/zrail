@@ -6,6 +6,7 @@ mod feature_worlds;
 mod macros;
 mod policy;
 mod repository;
+mod size;
 mod source;
 mod types;
 
@@ -29,6 +30,10 @@ pub use policy::{
 };
 pub use repository::RepositoryContract;
 use serde::{Deserialize, Serialize};
+pub use size::{
+    ScopedBudgetContract, SizeExceptionContract, SizeExceptionMetadata, SizePolicyContract,
+    SizeRole, SizeTargetMode, SizeThresholds,
+};
 pub use source::{
     FileRole, FileRoleContract, ItemMacroBinding, ItemMacroBindingKind, ItemMacroContract,
     ItemMacroManifest,
@@ -93,6 +98,8 @@ pub use types::{
     #[doc = "Unsafe-code, lint-suppression, and denied-operation policy."] pub hygiene: HygieneContract,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[doc = "Optional target and hard line budgets by Rust file role."] pub size: Option<FileSizeContract>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[doc = "Scoped thresholds and explicit above-hard exceptions; enables independent hard enforcement."] pub budgets: Option<SizePolicyContract>,
 }
 
 #[rustfmt::skip]

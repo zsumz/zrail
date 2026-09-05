@@ -11,6 +11,16 @@ use super::{
 pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
     let mut identities = BTreeSet::new();
     for ratchet in &contract.ratchets {
+        if let Some(baseline) = ratchet.baseline
+            && (baseline == 0
+                || ratchet.rule != "rust.file-size"
+                || contract.source.rust.budgets.is_none())
+        {
+            errors.push(format!(
+                    "ratchet {:?} baseline requires a positive file-size measurement and source.rust.budgets",
+                    ratchet.target
+                ));
+        }
         if !supported_rule(&ratchet.rule) {
             errors.push(format!("unsupported ratchet rule {:?}", ratchet.rule));
         }
@@ -105,6 +115,18 @@ fn selector_is_denied(rule: &str, selector: &str, rust: &RustSourceContract) -> 
 
 fn file_size_policy_applies(rust: &super::RustSourceContract, target: &str) -> bool {
     rust.size.is_some()
+        || rust.budgets.as_ref().is_some_and(|policy| {
+            policy.overrides.iter().any(|scope| {
+                scope
+                    .include
+                    .iter()
+                    .any(|pattern| crate::glob_matches(pattern, target))
+                    && !scope
+                        .exclude
+                        .iter()
+                        .any(|pattern| crate::glob_matches(pattern, target))
+            })
+        })
         || rust
             .generated
             .iter()
