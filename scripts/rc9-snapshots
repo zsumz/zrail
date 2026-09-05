@@ -50,7 +50,12 @@ def verify_extractions(destination):
             raise ValueError(f"frozen predicate extraction changed: {origin['function']}")
         if excerpt not in harness:
             raise ValueError(f"trusted harness differs from frozen predicate: {origin['function']}")
-    print("verified both frozen facade predicate extractions byte-for-byte")
+    for fixture in origins.get("fixtures", []):
+        source = (destination / fixture["repository"] / fixture["path"]).read_bytes()
+        copied = (ROOT / fixture["copy"]).read_bytes()
+        if source != copied or hashlib.sha256(source).hexdigest() != fixture["sha256"]:
+            raise ValueError(f"frozen fixture mismatch: {fixture['path']}")
+    print("verified frozen facade predicate extractions and fixture bytes")
 
 
 def main():

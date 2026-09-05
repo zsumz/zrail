@@ -19,5 +19,13 @@
       "end_line": 45,
       "extracted_sha256": "8869843a35d7e87bdedcd0649607a2c85dffe969f0d0d226cdc56c5a3efad1e3"
     }
+  ],
+  "fixtures": [
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/fixtures/facade_with_implementation/src/lib.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/kafkars-facade-invalid.rs.txt",
+      "sha256": "9dcf81cd5d691e4e589361f6f24b1be3fbf4ead789451347f5213630fde5f9cd"
+    }
   ]
 }

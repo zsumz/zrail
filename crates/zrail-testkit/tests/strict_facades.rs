@@ -85,6 +85,43 @@ fn import_modes_preserve_the_two_consumers_distinct_written_visibility_rules() {
 }
 
 #[test]
+fn frozen_kafkars_negative_fixture_reports_each_architectural_violation() {
+    let repository = Repository::new("wiring-reexports", "");
+    repository.write("src/declared.rs", "//! Vocabulary.\npub struct Declared;\n");
+    repository.write("src/lib.rs", "//! Wiring.\nmod child;\nmod declared;\n");
+    repository.lock();
+    assert_eq!(repository.check().report.status, ReportStatus::Pass);
+    repository.write(
+        "src/lib.rs",
+        include_str!("fixtures/rc9/kafkars-facade-invalid.rs.txt"),
+    );
+    // Keep the unrelated child mounted so orphan diagnostics cannot satisfy the test.
+    repository.write(
+        "src/declared.rs",
+        "//! Vocabulary.\n#[path = \"child.rs\"] mod child;\npub struct Declared;\n",
+    );
+    let result = repository.check();
+    assert!(result.report.analysis.complete);
+    let findings = result
+        .report
+        .findings
+        .iter()
+        .filter(|finding| {
+            finding.id == "RUST-FACADE-001" && finding.path.as_deref() == Some("src/lib.rs")
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(findings.len(), 4, "{:?}", result.report);
+    for kind in ["function", "inline module", "non-reexport import"] {
+        assert!(
+            findings
+                .iter()
+                .any(|finding| finding.message.ends_with(kind)),
+            "missing {kind}"
+        );
+    }
+}
+
+#[test]
 fn test_facade_structure_keeps_test_reachability_budgets_and_scenario_identity() {
     let repository = Repository::new("declarative", TEST_FACADE);
     repository.lock();
