@@ -23,7 +23,7 @@ pub struct GovernedAnalysis {
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 /// Stable audit report for all configured owner and dependency prohibitions.
 pub struct GovernedSurfaceReport {
-    /// Governed-surface report schema; currently `5`.
+    /// Governed-surface report schema; currently `6`.
     pub schema: u64,
     /// Schema of the fully merged architecture contract.
     pub contract_schema: u64,
@@ -41,6 +41,8 @@ pub struct GovernedSurfaceReport {
     pub feature_worlds: Vec<GovernedFeatureWorld>,
     /// Runtime-neutral syntax and written-import policies with exact occurrences.
     pub source_policies: Vec<GovernedSourcePolicyRail>,
+    /// Physical written facade policies, independent of compilation/test identity.
+    pub facades: Vec<super::super::GovernedFacade>,
     /// Every exact Rust type policy and its declaration and duplication observations.
     pub type_policies: Vec<super::super::GovernedTypePolicy>,
     /// Every enabled owner rule, ordered by canonical policy identity.

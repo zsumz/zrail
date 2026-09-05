@@ -143,8 +143,68 @@ fn proc_macro_entrypoints_reject_embedded_implementation() {
 
 fn violations(class: FileClass, source: &str) -> Vec<String> {
     let syntax = syn::parse_file(source).expect("parse facade fixture");
-    items(class, &syntax)
+    items(class, zrail_core::FacadeMode::Declarative, &syntax)
         .into_iter()
         .map(|fact| fact.name)
         .collect()
+}
+
+#[test]
+fn wiring_reexports_admit_only_the_reviewed_visibility_roots() {
+    let syntax = syn::parse_file(
+        r"
+        pub use crate::a;
+        pub(crate) use crate::b;
+        pub(super) use crate::c;
+        pub(in crate::parent) use crate::d;
+        pub(in super::parent) use crate::e;
+        pub(self) use crate::f;
+        pub(in self::parent) use crate::g;
+        use crate::h;
+    ",
+    )
+    .expect("parse import forms");
+    assert_eq!(
+        items(
+            FileClass::Facade,
+            zrail_core::FacadeMode::WiringReexports,
+            &syntax
+        )
+        .iter()
+        .map(|fact| fact.name.as_str())
+        .collect::<Vec<_>>(),
+        [
+            "non-reexport import",
+            "non-reexport import",
+            "non-reexport import"
+        ]
+    );
+    assert!(
+        items(
+            FileClass::Facade,
+            zrail_core::FacadeMode::WiringOnly,
+            &syntax
+        )
+        .is_empty()
+    );
+}
+
+#[test]
+fn wiring_modes_reject_even_thin_language_entrypoints() {
+    for mode in [
+        zrail_core::FacadeMode::WiringOnly,
+        zrail_core::FacadeMode::WiringReexports,
+    ] {
+        for (class, source) in [
+            (FileClass::EntryPoint, "fn main() { app::run() }"),
+            (
+                FileClass::Facade,
+                "#[proc_macro] pub fn expand(input: TokenStream) -> TokenStream { worker::run(input) }",
+            ),
+            (FileClass::Test, "#[test] fn scenario() {}"),
+        ] {
+            let syntax = syn::parse_file(source).expect("parse language entrypoint");
+            assert_eq!(items(class, mode, &syntax).len(), 1);
+        }
+    }
 }

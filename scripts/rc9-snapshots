@@ -6,6 +6,7 @@ isolated checkouts offline. Existing source is never reset or cleaned.
 """
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -36,6 +37,22 @@ def verify(path, pin):
     print(f"verified {pin['repository']} {pin['commit']} tree {pin['tree']}")
 
 
+def verify_extractions(destination):
+    origins = json.loads((PINS.parent / "facade-origins.json").read_text(encoding="utf-8"))
+    harness = (ROOT / "crates/zrail-rust/src/source/tests/facade_parity.rs").read_bytes()
+    for origin in origins["extractions"]:
+        source = (destination / origin["repository"] / origin["path"]).read_bytes()
+        if hashlib.sha256(source).hexdigest() != origin["source_sha256"]:
+            raise ValueError(f"frozen detector source changed: {origin['path']}")
+        lines = source.splitlines(keepends=True)
+        excerpt = b"".join(lines[origin["start_line"] - 1:origin["end_line"]])
+        if hashlib.sha256(excerpt).hexdigest() != origin["extracted_sha256"]:
+            raise ValueError(f"frozen predicate extraction changed: {origin['function']}")
+        if excerpt not in harness:
+            raise ValueError(f"trusted harness differs from frozen predicate: {origin['function']}")
+    print("verified both frozen facade predicate extractions byte-for-byte")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("destination", type=Path)
@@ -54,6 +71,7 @@ def main():
             git(path, "fetch", "--depth=1", f"https://github.com/{pin['repository']}.git", pin["commit"])
             git(path, "checkout", "--detach", pin["commit"])
         verify(path, pin)
+    verify_extractions(args.destination)
     return 0
 
 

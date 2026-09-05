@@ -4,6 +4,24 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ## [Unreleased]
 
+### Added
+
+- Opt-in wiring-only facades, with separate unrestricted-import and
+  public/crate/super re-export modes, plus reasoned exact-path mode selection.
+- Test-facade structure independent of compilation reachability, test placement,
+  test budgets, and execution identity.
+- Facade coverage in schema 6 and effective modes in path explanations.
+
+### Changed
+
+- Analyzer/lock semantics advance to epoch 7 (lock schema 3); migration retains
+  every previously supported epoch and adds the rc8 epoch 6 path.
+- Strict facade relaxations and removed test-facade requirements are protected
+  semantic grants. The existing declarative mode retains its rc8 meaning.
+
+The rc9 replacement audit remains blocked; these capabilities do not establish
+full downstream parity or authorize removal of any consumer guardrail.
+
 ## [0.0.3-rc.8] - 2026-09-04
 
 ### Changed

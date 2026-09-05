@@ -25,7 +25,7 @@ impl PathExplanation {
                 "item macro authorities: {}\nunsafe code: {}\n",
                 "lint suppressions: {}\nexpected sibling test: {}\ninvariants: {}\n",
                 "capability owners: {}\ncall owners: {}\nbudget: target {}, hard {}\n",
-                "declarative shape: {}\nmodule docs: {}\nsibling tests: {}\n",
+                "declarative shape: {}\nfacade mode: {}\nmodule docs: {}\nsibling tests: {}\n",
             ),
             self.path,
             self.file_class,
@@ -59,6 +59,8 @@ impl PathExplanation {
             display_optional_number(self.design_target),
             display_optional_number(self.hard_ceiling),
             display_optional_bool(self.declarative_shape),
+            self.facade_mode
+                .map_or("<none>", crate::source_policy::facade_mode_name),
             self.module_docs_required,
             self.sibling_tests_required
         )

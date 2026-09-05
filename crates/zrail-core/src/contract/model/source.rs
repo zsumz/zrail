@@ -2,7 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::contract::{CrateRootSource, MacroBindingMode};
+use crate::contract::{CrateRootSource, FacadeMode, MacroBindingMode};
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
@@ -12,6 +12,8 @@ pub enum FileRole {
     Facade,
     /// Enforce implementation size budgets without facade shape restrictions.
     Implementation,
+    /// Apply facade structure to test-only source without changing its compilation role.
+    TestFacade,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
@@ -22,6 +24,9 @@ pub struct FileRoleContract {
     pub path: String,
     /// Effective source role selected for the path.
     pub role: FileRole,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    /// Optional exact facade mode; required for a test facade and invalid for implementation.
+    pub mode: Option<FacadeMode>,
     /// Human justification for overriding the inferred source role.
     pub reason: String,
 }

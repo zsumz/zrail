@@ -141,6 +141,10 @@ pub enum FacadeMode {
     #[default]
     /// Permit wiring, type and constant declarations, and thin language entrypoints only.
     Declarative,
+    /// Permit only external module declarations and `use` items of any visibility.
+    WiringOnly,
+    /// Permit external modules and public or crate/super-rooted re-exports only.
+    WiringReexports,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Deserialize, Serialize)]

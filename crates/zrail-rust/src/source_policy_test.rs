@@ -72,6 +72,7 @@ fn exact_overrides_change_only_facade_and_implementation_roles() {
     rust.file_roles = vec![FileRoleContract {
         path: "src/api.rs".into(),
         role: FileRole::Facade,
+        mode: None,
         reason: "public module surface".into(),
     }];
 
@@ -89,6 +90,7 @@ fn exact_implementation_override_reclassifies_an_entrypoint() {
     rust.file_roles = vec![FileRoleContract {
         path: "src/main.rs".into(),
         role: FileRole::Implementation,
+        mode: None,
         reason: "single-file binary".into(),
     }];
 

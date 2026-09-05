@@ -29,6 +29,29 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
             );
             continue;
         };
+        if declared.role == FileRole::TestFacade {
+            if context
+                .source
+                .files
+                .iter()
+                .filter(|file| {
+                    file.relative == declared.path && !file.reachability.is_unreachable()
+                })
+                .any(|file| !file.reachability.is_test_only() || file.class == FileClass::Generated)
+            {
+                findings.push(
+                    Finding::error(
+                        "RUST-ROLE-002",
+                        "rust.file-role",
+                        "source-shape",
+                        "test-facade requires exclusively test-reachable handwritten source",
+                    )
+                    .at(&file.relative, None)
+                    .because(&declared.reason),
+                );
+            }
+            continue;
+        }
         let allowed = matches!(file.class, FileClass::Facade | FileClass::Implementation)
             || file.class == FileClass::EntryPoint && declared.role == FileRole::Implementation;
         if !allowed {
@@ -51,8 +74,9 @@ pub(super) fn evaluate(context: &RuleContext<'_>, findings: &mut FindingSink) {
         let declared_class = match declared.role {
             FileRole::Facade => FileClass::Facade,
             FileRole::Implementation => FileClass::Implementation,
+            FileRole::TestFacade => file.class,
         };
-        if declared_class == file.class {
+        if declared_class == file.class && declared.mode.is_none() {
             findings.push(
                 Finding::error(
                     "RUST-ROLE-003",
@@ -75,5 +99,6 @@ const fn declared_role_name(role: FileRole) -> &'static str {
     match role {
         FileRole::Facade => "facade",
         FileRole::Implementation => "implementation",
+        FileRole::TestFacade => "test-facade",
     }
 }

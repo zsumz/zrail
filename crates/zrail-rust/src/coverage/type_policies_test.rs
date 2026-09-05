@@ -5,7 +5,7 @@ use zrail_core::AnalysisQuality;
 use super::super::GovernedSurfaceReport;
 
 pub(crate) fn assert_type_policy_coverage(report: &GovernedSurfaceReport) {
-    assert_eq!(report.schema, 5);
+    assert_eq!(report.schema, 6);
     let import_policy = report
         .source_policies
         .iter()

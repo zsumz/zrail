@@ -143,7 +143,9 @@ fn analysis_limit(path: &str, message: String) -> Finding {
 
 #[cfg(test)]
 fn index_file(source_file: &crate::inventory::RustSourceFile, syntax: &syn::File) -> RustFileFacts {
-    index_file_as(source_file, source_file.class, syntax)
+    let mode = matches!(source_file.class, FileClass::Facade | FileClass::EntryPoint)
+        .then_some(zrail_core::FacadeMode::Declarative);
+    index_file_as(source_file, source_file.class, mode, syntax)
 }
 
 fn index_file_with_policy(
@@ -154,12 +156,15 @@ fn index_file_with_policy(
     let effective =
         crate::source_policy::effective_file_role(&source_file.relative, source_file.class, rust)
             .effective;
-    index_file_as(source_file, effective, syntax)
+    let mode =
+        crate::source_policy::facade_mode_for(&source_file.relative, source_file.class, rust);
+    index_file_as(source_file, effective, mode, syntax)
 }
 
 fn index_file_as(
     source_file: &crate::inventory::RustSourceFile,
     effective: FileClass,
+    mode: Option<zrail_core::FacadeMode>,
     syntax: &syn::File,
 ) -> RustFileFacts {
     let imports = ImportMap::from_file(syntax);
@@ -167,11 +172,8 @@ fn index_file_as(
     visitor.visit_file(syntax);
     let (type_policy, synthetic_paths) = super::type_policy_index::collect(syntax);
     visitor.paths.extend(synthetic_paths);
-    let facade_implementation = if matches!(effective, FileClass::Facade | FileClass::EntryPoint) {
-        facade::items(effective, syntax)
-    } else {
-        Vec::new()
-    };
+    let facade_implementation =
+        mode.map_or_else(Vec::new, |mode| facade::items(effective, mode, syntax));
     RustFileFacts {
         relative: source_file.relative.clone(),
         packages: Vec::new(),

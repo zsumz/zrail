@@ -1,6 +1,6 @@
 //! Effective source policy is shared by enforcement and agent explanations.
 
-use zrail_core::{Budget, FileRole, RustSourceContract};
+use zrail_core::{Budget, FacadeMode, FileRole, RustSourceContract};
 
 use crate::{
     inventory::{FileClass, under_root},
@@ -57,16 +57,51 @@ pub(crate) fn effective_file_role<'a>(
     }
     let declared = rust.file_roles.iter().find(|role| {
         role.path == path
+            && role.role != FileRole::TestFacade
             && (inferred != FileClass::EntryPoint || role.role == FileRole::Implementation)
     });
     let effective = declared.map_or(inferred, |declared| match declared.role {
         FileRole::Facade => FileClass::Facade,
         FileRole::Implementation => FileClass::Implementation,
+        FileRole::TestFacade => inferred,
     });
     EffectiveFileRole {
         inferred,
         effective,
         reason: declared.map(|declared| declared.reason.as_str()),
+    }
+}
+
+/// Structural policy never changes compilation reachability or test placement.
+pub(crate) fn facade_mode_for(
+    path: &str,
+    inferred: FileClass,
+    rust: &RustSourceContract,
+) -> Option<FacadeMode> {
+    let declared = rust.file_roles.iter().find(|role| role.path == path);
+    if let Some(declared) = declared {
+        if declared.role == FileRole::TestFacade {
+            return declared.mode;
+        }
+        if declared.role == FileRole::Facade
+            && matches!(inferred, FileClass::Facade | FileClass::Implementation)
+        {
+            return Some(declared.mode.unwrap_or(rust.facades));
+        }
+    }
+    match effective_file_role(path, inferred, rust).effective {
+        FileClass::Facade => Some(rust.facades),
+        FileClass::EntryPoint => Some(rust.entrypoints),
+        _ => None,
+    }
+}
+
+pub(crate) const fn facade_mode_name(mode: FacadeMode) -> &'static str {
+    match mode {
+        FacadeMode::Allow => "allow",
+        FacadeMode::Declarative => "declarative",
+        FacadeMode::WiringOnly => "wiring-only",
+        FacadeMode::WiringReexports => "wiring-reexports",
     }
 }
 

@@ -221,8 +221,8 @@ candidate it finds. It never chooses a revision automatically; rerun
 `migrate-lock` with an explicitly reviewed `--base` and `--output`.
 
 Adapters are explicit and fail closed for unknown epochs. The current engine
-can reanalyze locks from every released prior semantics epoch (`1` through `5`)
-directly into current semantics `6`; adopters do not need to delete an older
+can reanalyze locks from every released prior semantics epoch (`1` through `6`)
+directly into current semantics `7`; adopters do not need to delete an older
 lock or manufacture a lock-free base commit. Each exact old or new authority
 subject is classified as preserved, retired, newly observable, or changed
 interpretation. Macro-source subjects identify allowances whose binding changed;
@@ -350,6 +350,20 @@ statics, inline modules, and other behavioral items remain behind named module
 boundaries. A `main` function or procedural-macro entrypoint is declarative only
 when its body is empty or a single expression handoff without local statements,
 branches, loops, macros, or inline blocks.
+
+Two opt-in modes preserve stricter consumer policies. `facades = "wiring-only"`
+permits only external `mod name;` declarations and `use` items, including private
+imports. `facades = "wiring-reexports"` additionally restricts imports to `pub`
+or restricted visibility rooted at `crate` or `super`; `pub(self)` and private
+imports fail. Both modes reject data declarations, ordinary functions, impls,
+inline modules, extern crates, and item macros, including generated includes.
+They also reject thin `main` and proc-macro functions when selected for those
+files. The existing `declarative` mode retains its rc8 meaning.
+
+These are predicates over authored top-level syntax, including cfg-guarded
+items. They do not claim that macro expansions have executed or that syntax
+ordering proves runtime behavior. Macro provenance and source completeness
+remain separate rails.
 
 External crate-root attestations bind to the exact registry or Git declaration.
 Roots that no active canonical policy relies on remain unresolved rather than
@@ -681,10 +695,37 @@ reason = "Reviewed public surface; implementation belongs behind child modules."
 ```
 
 The effective role drives both declarative-shape enforcement and size budgets.
-Overrides for missing, unreachable, generated, already matching, test, or
+An optional `mode` selects exact facade structure for a `facade` declaration;
+it is invalid on an `implementation` declaration. An explicit mode makes a
+reasoned exact-path structural declaration meaningful even for an inferred
+facade. Overrides without a mode for missing, unreachable, generated, already matching, test, or
 auxiliary source fail as stale or invalid policy. An entrypoint may be
 reclassified only as `implementation`; treating it as a facade is invalid.
 `zrail explain` shows the inferred role, effective role, and override reason.
+
+Use the separate `test-facade` declaration for selected test wiring:
+
+```toml
+[[source.rust.file_roles]]
+path = "tests/scenarios.rs"
+role = "test-facade"
+mode = "wiring-only"
+reason = "Runnable scenarios belong in the declared child modules."
+```
+
+It requires an explicit enforced mode and exclusively test-reachable handwritten
+source. It does not change the file's compilation role, test identifiers,
+sibling placement, glob-import permissions, or test budget. Missing/unmounted
+source and production or mixed reachability fail. `declarative` can be selected
+where the reviewed test facade permits data declarations.
+
+Coverage schema 6 includes every physical facade's policy identity, path, mode,
+source role, test-only status, exact-path reason, and complete rejected-item
+inventory with spans and syntax quality. Explain output includes `facade_mode`.
+Relaxing either global or exact modes and removing test-facade declarations
+requires protected authority review. Analyzer semantics advance from epoch 6
+to 7; lock schema remains 3. `migrate-lock` supports rc8's epoch 6 and all earlier
+supported released epochs. A migration report still requires human acceptance.
 
 Written glob imports have a separate closed hygiene policy; name resolution
 continues to resolve globs regardless of this setting:

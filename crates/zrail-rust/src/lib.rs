@@ -54,10 +54,11 @@ mod type_shape_test;
 pub use analysis::{AnalysisIssue, AnalysisIssueKind, AnalysisMetrics, AnalysisOutcome};
 pub use coverage::{
     GovernedAnalysis, GovernedCompilationDomain, GovernedDependencyPath, GovernedDependencyRule,
-    GovernedFeaturePackage, GovernedFeatureWorld, GovernedOperationOccurrence, GovernedOwnerRule,
-    GovernedPackageIdentity, GovernedSourcePolicyOccurrence, GovernedSourcePolicyRail,
-    GovernedSurfaceReport, GovernedTestMirror, GovernedTypeField, GovernedTypeObservation,
-    GovernedTypePolicy, governed_surface_report,
+    GovernedFacade, GovernedFacadeItem, GovernedFeaturePackage, GovernedFeatureWorld,
+    GovernedOperationOccurrence, GovernedOwnerRule, GovernedPackageIdentity,
+    GovernedSourcePolicyOccurrence, GovernedSourcePolicyRail, GovernedSurfaceReport,
+    GovernedTestMirror, GovernedTypeField, GovernedTypeObservation, GovernedTypePolicy,
+    governed_surface_report,
 };
 pub use engine::{
     CheckError, CheckResult, DoctorReport, build_lock, check_repository,

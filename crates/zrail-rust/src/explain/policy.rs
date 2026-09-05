@@ -3,11 +3,14 @@
 use std::{collections::BTreeSet, path::Path};
 
 use zrail_core::{
-    Contract, Effect, ExternalDependencyMode, FacadeMode, GlobImportMode, LayerContract,
-    LintSuppressionMode, MacroExpansionMode, ModuleDocsMode, PolicyMode, ScopeContract,
+    Contract, Effect, ExternalDependencyMode, GlobImportMode, LayerContract, LintSuppressionMode,
+    MacroExpansionMode, ModuleDocsMode, PolicyMode, ScopeContract,
 };
 
 use crate::inventory::FileClass;
+
+#[cfg(test)]
+use zrail_core::FacadeMode;
 
 pub(super) fn dependency_layers(layer: Option<&LayerContract>) -> Vec<String> {
     let Some(layer) = layer else {
@@ -144,14 +147,15 @@ pub(super) fn sibling_path(path: &str) -> Option<String> {
         })
 }
 
+#[cfg(test)]
 pub(super) fn declarative_shape(
     class: FileClass,
     facades: FacadeMode,
     entrypoints: FacadeMode,
 ) -> Option<bool> {
     match class {
-        FileClass::Facade => Some(facades == FacadeMode::Declarative),
-        FileClass::EntryPoint => Some(entrypoints == FacadeMode::Declarative),
+        FileClass::Facade => Some(facades != FacadeMode::Allow),
+        FileClass::EntryPoint => Some(entrypoints != FacadeMode::Allow),
         _ => None,
     }
 }

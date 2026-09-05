@@ -1,18 +1,18 @@
 //! Facade and entrypoint facts distinguish declarations from behavior.
 
 use syn::{Expr, Item, ItemFn, Stmt, spanned::Spanned};
-use zrail_core::AnalysisQuality;
+use zrail_core::{AnalysisQuality, FacadeMode};
 
 use crate::inventory::FileClass;
 
 use super::super::{ObservedFact, fact::fact};
 
-pub(super) fn items(class: FileClass, syntax: &syn::File) -> Vec<ObservedFact> {
+pub(super) fn items(class: FileClass, mode: FacadeMode, syntax: &syn::File) -> Vec<ObservedFact> {
     syntax
         .items
         .iter()
         .filter_map(|item| {
-            if declarative(class, item) {
+            if permitted(class, mode, item) {
                 None
             } else {
                 let span = match item {
@@ -23,6 +23,29 @@ pub(super) fn items(class: FileClass, syntax: &syn::File) -> Vec<ObservedFact> {
             }
         })
         .collect()
+}
+
+fn permitted(class: FileClass, mode: FacadeMode, item: &Item) -> bool {
+    match mode {
+        FacadeMode::Allow | FacadeMode::Declarative => declarative(class, item),
+        FacadeMode::WiringOnly | FacadeMode::WiringReexports => match item {
+            Item::Mod(module) => module.content.is_none(),
+            Item::Use(import) => mode == FacadeMode::WiringOnly || reexport(&import.vis),
+            _ => false,
+        },
+    }
+}
+
+fn reexport(visibility: &syn::Visibility) -> bool {
+    match visibility {
+        syn::Visibility::Public(_) => true,
+        syn::Visibility::Restricted(restricted) => restricted
+            .path
+            .segments
+            .first()
+            .is_some_and(|segment| segment.ident == "crate" || segment.ident == "super"),
+        syn::Visibility::Inherited => false,
+    }
 }
 
 fn declarative(class: FileClass, item: &Item) -> bool {
@@ -137,6 +160,8 @@ fn kind(item: &Item) -> String {
         Item::Trait(_) => "trait".into(),
         Item::Type(_) => "type".into(),
         Item::Union(_) => "union".into(),
+        Item::Use(_) => "non-reexport import".into(),
+        Item::ExternCrate(_) => "extern crate".into(),
         Item::Mod(_) => "inline module".into(),
         _ => "item".into(),
     }
@@ -145,3 +170,7 @@ fn kind(item: &Item) -> String {
 #[cfg(test)]
 #[path = "parse_facade_test.rs"]
 mod parse_facade_test;
+
+#[cfg(test)]
+#[path = "tests/facade_parity.rs"]
+mod facade_parity;

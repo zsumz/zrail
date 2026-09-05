@@ -1,9 +1,10 @@
 //! Ballast-derived good, bad, stale, and bypass-oriented repository cases.
 
-use std::path::{Path, PathBuf};
+#[path = "fixture_support/runner.rs"]
+mod runner;
 
+use runner::{assert_rule, check};
 use zrail_core::ReportStatus;
-use zrail_rust::check_repository;
 
 #[test]
 fn known_good_repository_passes() {
@@ -275,26 +276,4 @@ fn stale_capability_owners_are_rejected() {
 #[test]
 fn stale_package_layers_are_rejected() {
     assert_rule("stale_layer", "DEP-010");
-}
-
-fn assert_rule(name: &str, rule: &str) {
-    let report = check(name);
-    assert!(
-        report.findings.iter().any(|finding| finding.id == rule),
-        "fixture {name} did not produce {rule}: {}",
-        report.human()
-    );
-}
-
-fn check(name: &str) -> zrail_core::Report {
-    let root = fixture_root(name);
-    check_repository(&root, Path::new("zrail.toml"), Path::new("zrail.lock"))
-        .unwrap_or_else(|error| panic!("check {}: {error}", root.display()))
-        .report
-}
-
-fn fixture_root(name: &str) -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/fixtures")
-        .join(name)
 }

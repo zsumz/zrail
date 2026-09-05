@@ -59,6 +59,8 @@ fn explain_model(model: &crate::engine::RepositoryModel, relative: String) -> Pa
         class,
         &model.bundle.contract.source.rust,
     );
+    let facade_mode =
+        crate::source_policy::facade_mode_for(&relative, class, &model.bundle.contract.source.rust);
     let reachability = model
         .source
         .files
@@ -119,13 +121,22 @@ fn explain_model(model: &crate::engine::RepositoryModel, relative: String) -> Pa
         .flatten();
     let macro_invocations = macro_authority::invocations(model, &relative);
     let item_macro_authorities = macro_authority::item_authorities(model, &relative);
+    let file_role_reason = model
+        .bundle
+        .contract
+        .source
+        .rust
+        .file_roles
+        .iter()
+        .find(|role| role.path == relative)
+        .map(|role| role.reason.clone());
     PathExplanation {
         schema: 2,
         path: relative,
         file_class: crate::source_policy::role_name(class).into(),
         inferred_file_role: crate::source_policy::role_name(file_role.inferred).into(),
         effective_file_role: crate::source_policy::role_name(file_role.effective).into(),
-        file_role_reason: file_role.reason.map(str::to_owned),
+        file_role_reason,
         reachability: reachability.name(),
         package: package.map(|package| package.name.clone()),
         layer: layer.map(|layer| layer.name.clone()),
@@ -206,11 +217,8 @@ fn explain_model(model: &crate::engine::RepositoryModel, relative: String) -> Pa
         call_owners,
         design_target: budget.map(|budget| budget.target),
         hard_ceiling: budget.map(|budget| budget.hard),
-        declarative_shape: policy::declarative_shape(
-            file_role.effective,
-            model.bundle.contract.source.rust.facades,
-            model.bundle.contract.source.rust.entrypoints,
-        ),
+        declarative_shape: facade_mode.map(|mode| mode != zrail_core::FacadeMode::Allow),
+        facade_mode,
         module_docs_required: policy::module_docs_required(
             class,
             model.bundle.contract.source.rust.module_docs,

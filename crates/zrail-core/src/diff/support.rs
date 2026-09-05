@@ -121,6 +121,8 @@ pub(super) const fn rank_facades(mode: FacadeMode) -> u8 {
     match mode {
         FacadeMode::Allow => 0,
         FacadeMode::Declarative => 1,
+        FacadeMode::WiringOnly => 2,
+        FacadeMode::WiringReexports => 3,
     }
 }
 

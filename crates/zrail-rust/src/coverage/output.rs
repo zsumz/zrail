@@ -66,6 +66,18 @@ impl GovernedSurfaceReport {
             );
         }
         let _ = writeln!(output, "Test mirrors: {}", self.test_mirrors.len());
+        let _ = writeln!(output, "Facade policies: {}", self.facades.len());
+        for facade in &self.facades {
+            let _ = writeln!(
+                output,
+                "  {} -> {} ({}, syntax allowed: {}, {} item violations)",
+                facade.policy_id,
+                facade.path,
+                crate::source_policy::facade_mode_name(facade.mode),
+                facade.syntax_allowed,
+                facade.violations.len()
+            );
+        }
         output
     }
 }

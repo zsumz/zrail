@@ -88,6 +88,9 @@ pub struct PathExplanation {
     pub hard_ceiling: Option<usize>,
     /// Whether a facade or entry point must remain declarative, when applicable.
     pub declarative_shape: Option<bool>,
+    /// Effective written facade structure, independent of compilation reachability.
+    #[serde(default)]
+    pub facade_mode: Option<zrail_core::FacadeMode>,
     /// Whether the path must contain module-level documentation.
     pub module_docs_required: bool,
     /// Whether production tests must use sibling test modules.

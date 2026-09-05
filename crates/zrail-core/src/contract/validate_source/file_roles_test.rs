@@ -46,6 +46,33 @@ fn generated_source_cannot_be_reclassified() {
     );
 }
 
+#[test]
+fn test_facades_require_structure_and_implementation_cannot_select_it() {
+    let mut contract = minimal_contract();
+    let mut selected = role("tests/suite.rs", "Reviewed test wiring.");
+    selected.role = FileRole::TestFacade;
+    contract.source.rust.file_roles = vec![selected];
+    assert!(errors(&contract).contains("requires an enforced facade mode"));
+    contract.source.rust.file_roles[0].mode = Some(crate::FacadeMode::Allow);
+    assert!(errors(&contract).contains("requires an enforced facade mode"));
+    contract.source.rust.file_roles[0].mode = Some(crate::FacadeMode::WiringOnly);
+    assert!(errors(&contract).is_empty());
+    contract.source.rust.file_roles[0].role = FileRole::Implementation;
+    assert!(errors(&contract).contains("cannot set facade mode"));
+}
+
+#[test]
+fn facade_modes_and_exact_role_fields_parse_strictly() {
+    for spelling in ["declarative", "wiring-only", "wiring-reexports"] {
+        let text = format!(
+            "path = 'tests/suite.rs'\nrole = 'test-facade'\nmode = '{spelling}'\nreason = 'Reviewed.'\n"
+        );
+        assert!(toml::from_str::<FileRoleContract>(&text).is_ok());
+        assert!(toml::from_str::<FileRoleContract>(&format!("{text}unknown = true\n")).is_err());
+        assert!(toml::from_str::<FileRoleContract>(&text.replace(spelling, "wiring-ish")).is_err());
+    }
+}
+
 fn errors(contract: &crate::Contract) -> String {
     let mut errors = ValidationErrors::new();
     validate(contract, &mut errors);
@@ -56,6 +83,7 @@ fn role(path: &str, reason: &str) -> FileRoleContract {
     FileRoleContract {
         path: path.into(),
         role: FileRole::Implementation,
+        mode: None,
         reason: reason.into(),
     }
 }
