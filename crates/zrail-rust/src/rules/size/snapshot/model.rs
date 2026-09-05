@@ -1,11 +1,13 @@
 //! Trusted size-only snapshot inputs reuse native physical inventory and budget facts.
 
-use std::{collections::BTreeMap, fs, path::PathBuf, process::Command};
+use std::{collections::BTreeMap, fs, path::PathBuf};
 
 use serde::Deserialize;
 use zrail_core::{Contract, RatchetContract, SourceContract, load_contract, sha256_hex};
 
 use crate::inventory::{RepositoryInventory, inventory_repository};
+
+pub(super) use super::git;
 
 #[derive(Clone, Copy, Deserialize)]
 pub(super) struct Budget {
@@ -67,24 +69,16 @@ pub(super) fn fragment(name: &str) -> (Fragment, String) {
     (fragment, sha256_hex(source.as_bytes()))
 }
 
-pub(super) fn git(root: &std::path::Path, args: &[&str]) -> String {
-    let output = Command::new("git")
-        .arg("-C")
-        .arg(root)
-        .args(args)
-        .output()
-        .expect("trusted snapshot Git inspection");
-    assert!(output.status.success(), "{:?}", output.stderr);
-    String::from_utf8(output.stdout).expect("UTF-8 Git output")
-}
-
 impl Snapshot {
     pub(super) fn load(name: &str) -> Self {
         let roots = std::env::var_os("ZRAIL_RC9_SNAPSHOTS").expect("prefetch frozen snapshots");
         let root = PathBuf::from(roots).join(name);
-        let pins: serde_json::Value = serde_json::from_str(include_str!(
-            "../../../../../zrail-testkit/tests/fixtures/rc9/snapshots.json"
-        ))
+        let pins: serde_json::Value = serde_json::from_str(
+            &fs::read_to_string(
+                project().join("crates/zrail-testkit/tests/fixtures/rc9/snapshots.json"),
+            )
+            .expect("read trusted snapshot pins"),
+        )
         .expect("parse snapshot pins");
         let pin = pins["consumers"]
             .as_array()

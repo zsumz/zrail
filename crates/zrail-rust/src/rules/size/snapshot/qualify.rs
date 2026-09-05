@@ -2,10 +2,12 @@
 
 #[path = "native.rs"]
 mod native;
+#[path = "report.rs"]
+mod report;
 
 use std::{collections::BTreeSet, fs, io::Write};
 
-use serde_json::{Value, json};
+use report::{Outcome, Report, SourceRecord, Surface};
 use zrail_core::sha256_hex;
 
 use super::{
@@ -15,21 +17,26 @@ use super::{
 
 pub(super) fn run() {
     let output = std::env::var_os("ZRAIL_RC9_SIZE_REPORT").expect("set fresh report output");
-    let reports = [qualify("kafka-driver"), qualify("kafkars")];
+    let reports = vec![qualify("kafka-driver"), qualify("kafkars")];
     let project = model::project();
-    let report = json!({
-        "schema": 1, "status": "pass", "full_repository_qualified": false,
-        "claim": "Physical Rust-file selection, line thresholds and exact size allowances only.",
-        "implementation_commit": model::git(&project, &["rev-parse", "HEAD"]).trim(),
-        "tracked_diff_sha256": sha256_hex(model::git(&project, &["diff", "HEAD", "--binary"]).as_bytes()),
-        "reports": reports,
-        "limitations": [
+    let report = Report {
+        schema: 1,
+        status: "pass",
+        full_repository_qualified: false,
+        claim: "Physical Rust-file selection, line thresholds and exact size allowances only.",
+        implementation_commit: model::git(&project, &["rev-parse", "HEAD"]).trim().into(),
+        tracked_diff_sha256: sha256_hex(
+            model::git(&project, &["diff", "HEAD", "--binary"]).as_bytes(),
+        ),
+        reports,
+        limitations: [
             "No Rust syntax, semantic resolution, compilation completeness or execution-evidence claim.",
             "No lock or source file is written; measured ratchet records are isolated evaluator inputs.",
             "Full repository contracts, approved locks and complete source analysis remain separate qualification.",
-            "Standalone soft-limit warnings add observations without changing legacy size pass/fail."
-        ]
-    });
+            "Standalone soft-limit warnings add observations without changing legacy size pass/fail.",
+        ],
+    };
+    let report = serde_json::to_value(report).expect("canonical report key order");
     let bytes = serde_json::to_vec_pretty(&report).expect("serialize deterministic size report");
     fs::OpenOptions::new()
         .write(true)
@@ -38,10 +45,12 @@ pub(super) fn run() {
         .expect("create fresh report")
         .write_all(&bytes)
         .expect("write report");
-    println!("size-only parity pass: sha256:{}", sha256_hex(&bytes));
+    std::io::stdout()
+        .write_all(format!("size-only parity pass: sha256:{}\n", sha256_hex(&bytes)).as_bytes())
+        .expect("write report identity");
 }
 
-fn qualify(name: &str) -> Value {
+fn qualify(name: &str) -> Surface {
     let snapshot = Snapshot::load(name);
     let roots = &snapshot.contract.repository.roots;
     let legacy_paths = if name == "kafka-driver" {
@@ -186,7 +195,12 @@ fn qualify(name: &str) -> Value {
             } else {
                 assert!(errors.is_empty(), "{}: {errors:?}", file.relative);
             }
-            outcomes.push(json!({"case": case, "lines": lines, "legacy_errors": old_errors, "native_error_ids": errors}));
+            outcomes.push(Outcome {
+                case,
+                lines: Some(lines),
+                legacy_errors: old_errors,
+                native_error_ids: errors,
+            });
         }
         if allowance.is_some() {
             let mut removed = budget.clone();
@@ -202,21 +216,34 @@ fn qualify(name: &str) -> Value {
             let old =
                 legacy_kafkars::violations(&file.relative, file.lines, legacy, baseline, None);
             assert!(!old.is_empty());
-            outcomes.push(json!({"case": "missing-hard-allow", "legacy_errors": old, "native_error_ids": errors}));
+            outcomes.push(Outcome {
+                case: "missing-hard-allow",
+                lines: None,
+                legacy_errors: old,
+                native_error_ids: errors,
+            });
         }
-        records.push(
-            json!({"path": file.relative, "source_sha256": sha256_hex(file.source.as_bytes()),
-            "policy": budget, "baseline": ratchet, "outcomes": outcomes}),
-        );
+        records.push(SourceRecord {
+            path: file.relative.clone(),
+            source_sha256: sha256_hex(file.source.as_bytes()),
+            policy: budget,
+            baseline: ratchet.cloned(),
+            outcomes,
+        });
     }
     assert!(!records.is_empty());
     assert_eq!(matched_baselines.len(), baselines.len());
     assert_eq!(matched_allows.len(), allows.len());
     snapshot.verify();
-    json!({"snapshot": snapshot.pin, "policy_sha256": snapshot.policy_sha256,
-        "legacy_policy_sha256": snapshot.config_sha256, "physical_files": records.len(),
-        "baseline_instances": matched_baselines.len(), "hard_allow_instances": matched_allows.len(),
-        "files": records})
+    Surface {
+        snapshot: snapshot.pin,
+        policy_sha256: snapshot.policy_sha256,
+        legacy_policy_sha256: snapshot.config_sha256,
+        physical_files: records.len(),
+        baseline_instances: matched_baselines.len(),
+        hard_allow_instances: matched_allows.len(),
+        files: records,
+    }
 }
 
 fn legacy_budget(name: &str, snapshot: &Snapshot, relative: &str) -> Budget {

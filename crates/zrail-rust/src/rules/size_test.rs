@@ -81,7 +81,67 @@ fn translated_selectors_preserve_future_paths_and_test_facade_precedence() {
 }
 
 #[test]
+fn frozen_ten_line_facade_fixture_keeps_its_smallest_ceiling() {
+    let (mut fragment, _) = model::fragment("kafka-driver");
+    let budgets = legacy_driver::Budgets {
+        facade: 10,
+        production: 20,
+        test: 30,
+    };
+    for scope in &mut fragment
+        .source
+        .rust
+        .budgets
+        .as_mut()
+        .expect("budgets")
+        .overrides
+    {
+        let value = match scope.name.as_str() {
+            "kd-facade" => 10,
+            "kd-production" => 20,
+            "kd-test" => 30,
+            _ => unreachable!(),
+        };
+        scope.budget.target = value;
+        scope.budget.hard = value;
+    }
+    let root = std::path::Path::new("/workspace");
+    for (path, expected) in [
+        ("src/lib.rs", 10),
+        ("src/ordinary.rs", 20),
+        ("tests/ordinary.rs", 30),
+    ] {
+        assert_eq!(
+            legacy_driver::limit(root, &root.join(path), budgets),
+            expected
+        );
+        let native = crate::source_budget::for_path(
+            path,
+            crate::inventory::FileClass::Test,
+            crate::source::Reachability::test(),
+            &[],
+            &fragment.source.rust,
+        )
+        .expect("selection")
+        .expect("active budget");
+        assert_eq!(native.thresholds.target, expected);
+        assert_eq!(native.hard_ceiling(), expected);
+    }
+}
+
+#[test]
 #[ignore = "requires explicitly prefetched frozen snapshots and a fresh size-report output path"]
 fn qualify_all_frozen_kafka_size_instances() {
     qualify::run();
+}
+
+fn git(root: &std::path::Path, args: &[&str]) -> String {
+    let output = std::process::Command::new("git")
+        .arg("-C")
+        .arg(root)
+        .args(args)
+        .output()
+        .expect("trusted snapshot Git inspection");
+    assert!(output.status.success(), "{:?}", output.stderr);
+    String::from_utf8(output.stdout).expect("UTF-8 Git output")
 }
