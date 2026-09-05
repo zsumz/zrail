@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "implementation_base": {
+    "repository": "zsumz/zrail",
+    "reference": "v0.0.3-rc.8",
+    "commit": "5a368379360104ca19745326cfcef48d22a6452b",
+    "tree": "f64cc5c258e1edf8e1de0d9d38a22f6100671475"
+  },
+  "consumers": [
+    {
+      "name": "kafka-driver",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+    },
+    {
+      "name": "kafkars",
+      "repository": "kafkars/kafkars",
+      "commit": "67ad7aa8d91f9639c87b00338b9e21a633f7bb4c",
+      "tree": "6abde2775e12d772d7cdc1ea01fc253e699c6a45"
+    },
+    {
+      "name": "rafter",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "tree": "b91b3ca7362219e32fdbb08a8374403c0353e745"
+    }
+  ]
+}
