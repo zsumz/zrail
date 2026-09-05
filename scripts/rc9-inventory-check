@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+"""Validate rc9 audit artifact integrity; this does not evaluate consumer architecture."""
+
+import argparse
+import collections
+import gzip
+import hashlib
+import json
+from pathlib import Path
+import sys
+
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "crates/zrail-testkit/tests/fixtures/rc9"
+MAX_BYTES = 64 * 1024 * 1024
+
+
+def unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON key: {key}")
+        result[key] = value
+    return result
+
+
+def parse(data):
+    if len(data) > MAX_BYTES:
+        raise ValueError("audit input exceeds 64 MiB")
+    return json.loads(data, object_pairs_hook=unique_object)
+
+
+def require(condition, message):
+    if not condition:
+        raise ValueError(message)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--census", type=Path, help="compare an independently repeated census")
+    parser.add_argument("--require-complete", action="store_true")
+    args = parser.parse_args()
+    with gzip.open(DATA / "census.json.gz", "rb") as stream:
+        payload = stream.read(MAX_BYTES + 1)
+    census = parse(payload)
+    summary = parse((DATA / "census-summary.json").read_bytes())
+    ledger = parse((DATA / "assertions.json").read_bytes())
+    pins = parse((DATA / "snapshots.json").read_bytes())
+    for artifact in [census, summary, ledger, pins]:
+        require(artifact["schema"] == 1, "unsupported audit schema")
+    digest = hashlib.sha256(payload).hexdigest()
+    require(digest == summary["payload_sha256"] == ledger["census_payload_sha256"], "census digest mismatch")
+    require(census["snapshots"] == pins, "census snapshot identities differ")
+    require(len(payload) == summary["payload_bytes"], "census length mismatch")
+    if args.census:
+        with args.census.open("rb") as stream:
+            repeated = stream.read(MAX_BYTES + 1)
+        require(repeated == payload, "repeated census differs byte-for-byte")
+    files = {(file["repository"], file["path"]): file for file in census["files"]}
+    require(len(files) == len(census["files"]) == summary["tracked_files"], "duplicate or missing file records")
+    candidates = {}
+    for file in files.values():
+        for candidate in file["candidates"]:
+            require(candidate["id"] not in candidates, "duplicate candidate identity")
+            candidates[candidate["id"]] = (file, candidate)
+    require(len(candidates) == census["candidate_count"] == summary["candidate_count"], "candidate count mismatch")
+    for repository in summary["repositories"]:
+        selected = [file for file in files.values() if file["repository"] == repository["repository"]]
+        counts = collections.Counter(c["kind"] for file in selected for c in file["candidates"])
+        require(len(selected) == repository["tracked_files"], "repository file count mismatch")
+        require(dict(counts) == repository["candidate_counts"], "repository candidate counts mismatch")
+    ids = set()
+    dispositions = {name: 0 for name in ["existing native rail", "declarative translation",
+                    "new engine capability", "behavioral evidence retained", "approved retirement"]}
+    implemented = 0
+    full = 0
+    for assertion in ledger["reviewed_assertions"]:
+        require(assertion["id"] not in ids, "duplicate assertion ID")
+        ids.add(assertion["id"])
+        source = assertion["source"]
+        file, candidate = candidates[source["candidate_id"]]
+        require(file["repository"] == assertion["repository"] and file["commit"] == assertion["commit"], "assertion snapshot mismatch")
+        require(file["path"] == source["path"] and file["sha256"] == source["file_sha256"], "assertion file mismatch")
+        for field in ["line", "column", "function", "syntax_sha256"]:
+            require(candidate[field] == source[field], f"assertion {field} mismatch")
+        require(assertion["disposition"] in dispositions, "unsupported assertion disposition")
+        replacement = assertion["replacement"]
+        if replacement["verified"]:
+            require(replacement["implemented"] and replacement["fixtures"], "verified assertion lacks implementation or fixtures")
+            require(not assertion["blockers"], "verified assertion retains blockers")
+            dispositions[assertion["disposition"]] += 1
+        else:
+            require(bool(assertion["blockers"]), "unverified assertion lacks a blocker")
+        implemented += replacement["implemented"]
+        full += replacement["full_snapshot_verified"]
+    expected = {"reviewed_assertion_instances": len(ids), "implemented": implemented,
+                "verified_by_disposition": dispositions, "full_repository_verified": full}
+    require(ledger["counts"] == expected, "ledger disposition counts mismatch")
+    print(f"Audit integrity: pass; {len(files)} files, {len(candidates)} discovery candidates")
+    print(f"Reviewed assertion instances: {len(ids)}; implemented: {implemented}; verified: {sum(dispositions.values())}")
+    print(f"Assertion inventory complete: {ledger['assertion_inventory_complete']}; release verdict: {ledger['release_verdict']}")
+    if args.require_complete:
+        require(ledger["assertion_inventory_complete"], "release blocked: assertion inventory is incomplete")
+        require(not ledger["open_discovery_blockers"] and not ledger["external_input_blockers"], "release blocked: audit inputs remain open")
+        require(sum(dispositions.values()) == len(ids), "release blocked: unverified assertions remain")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except (ValueError, OSError, KeyError) as error:
+        sys.exit(f"audit validation failed: {error}")

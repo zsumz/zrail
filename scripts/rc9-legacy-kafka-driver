@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+"""Run frozen kafka-driver guards as a trusted, unmodified-source minimal harness.
+
+Builds only stock zrail-rust dependencies, then compiles the frozen integration
+test directly with CARGO_MANIFEST_DIR bound to the verified snapshot. This is
+qualification tooling, never an analyzer extension or downstream replacement.
+"""
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+
+ROOT = Path(__file__).resolve().parent.parent
+PINS = ROOT / "crates/zrail-testkit/tests/fixtures/rc9/snapshots.json"
+DEPENDENCIES = {"syn": "2.0.119", "serde": "1.0.229", "toml": "0.8.23"}
+
+
+def run(arguments, **kwargs):
+    return subprocess.check_output(arguments, text=True, **kwargs).strip()
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("snapshot", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    snapshot = args.snapshot.resolve()
+    output = args.output.resolve()
+    pin = json.loads(PINS.read_text())["consumers"][0]
+    for expression, expected in [("HEAD", pin["commit"]), ("HEAD^{tree}", pin["tree"])]:
+        if run(["git", "-C", str(snapshot), "rev-parse", expression]) != expected:
+            raise ValueError(f"wrong frozen kafka-driver {expression}")
+    status = ["git", "-C", str(snapshot), "status", "--porcelain=v1", "--untracked-files=all"]
+    if run(status):
+        raise ValueError("frozen snapshot contains changes")
+    output.mkdir(parents=True, exist_ok=True)
+    build = ["cargo", "build", "--locked", "--offline", "--lib", "-p", "zrail-rust", "--message-format=json"]
+    artifacts = run(build, cwd=ROOT)
+    libraries = {}
+    for line in artifacts.splitlines():
+        artifact = json.loads(line)
+        if artifact.get("reason") != "compiler-artifact":
+            continue
+        name = artifact["target"]["name"]
+        if name not in DEPENDENCIES:
+            continue
+        if name == "syn" and not {"full", "visit"}.issubset(artifact["features"]):
+            continue
+        if not artifact["package_id"].endswith(f"#{name}@{DEPENDENCIES[name]}"):
+            raise ValueError(f"wrong frozen detector dependency: {artifact['package_id']}")
+        for filename in artifact["filenames"]:
+            if filename.endswith(".rlib"):
+                if name in libraries:
+                    raise ValueError(f"ambiguous detector dependency: {name}")
+                libraries[name] = {"path": filename, "package_id": artifact["package_id"],
+                                   "features": artifact["features"],
+                                   "sha256": hashlib.sha256(Path(filename).read_bytes()).hexdigest()}
+    if set(libraries) != set(DEPENDENCIES):
+        raise ValueError(f"missing frozen detector libraries: {set(DEPENDENCIES) - set(libraries)}")
+    binary = output / "legacy-guards"
+    command = ["rustc", "--edition=2024", "--test", str(snapshot / "tests/guardrails.rs"),
+               "-L", f"dependency={Path(libraries['syn']['path']).parent}", "-o", str(binary)]
+    for name, library in sorted(libraries.items()):
+        command.extend(["--extern", f"{name}={library['path']}"])
+    environment = os.environ.copy()
+    environment["CARGO_MANIFEST_DIR"] = str(snapshot)
+    subprocess.run(command, cwd=ROOT, env=environment, check=True)
+    inventory = run([str(binary), "--list"])
+    expected = [line.removesuffix(": test") for line in inventory.splitlines()
+                if line.endswith(": test")]
+    if len(expected) != 47 or len(set(expected)) != len(expected):
+        raise ValueError("frozen detector inventory is not 47 unique tests")
+    log_path = output / "legacy-guards.log"
+    with log_path.open("w") as log:
+        result = subprocess.run([str(binary), "--test-threads=2"], stdout=log, stderr=subprocess.STDOUT)
+    if run(status):
+        raise ValueError("legacy detector changed its frozen snapshot")
+    outcomes = re.findall(r"^test (\S+) \.\.\. (\S+)$", log_path.read_text(), re.MULTILINE)
+    if sorted(name for name, _ in outcomes) != sorted(expected):
+        raise ValueError("missing, extra, or duplicate detector outcomes")
+    if result.returncode == 0 and any(status != "ok" for _, status in outcomes):
+        raise ValueError("successful detector run includes nonpassing or ignored outcomes")
+    receipt = {"schema": 1, "snapshot": pin, "harness": "unmodified tests/guardrails.rs",
+               "implementation_commit": run(["git", "rev-parse", "HEAD"], cwd=ROOT),
+               "implementation_diff_sha256": hashlib.sha256(run(["git", "diff", "HEAD", "--"], cwd=ROOT).encode()).hexdigest(),
+               "build": build, "compile": command, "toolchain": run(["rustc", "-Vv"], cwd=ROOT),
+               "dependencies": libraries, "status": result.returncode,
+               "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
+               "tests": [{"name": name, "outcome": status} for name, status in sorted(outcomes)],
+               "log_sha256": hashlib.sha256(log_path.read_bytes()).hexdigest(),
+               "limits": "Detector qualification only; excludes runtime, smoke, and archive execution. Zrail dependency features include extra-traits on syn."}
+    (output / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
+    print(f"Frozen kafka-driver detectors: {len(outcomes)} outcomes, exit {result.returncode}")
+    print(f"Evidence: {output / 'receipt.json'}")
+    return result.returncode
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except (ValueError, OSError, subprocess.CalledProcessError) as error:
+        sys.exit(f"legacy qualification failed: {error}")

@@ -1,0 +1,44 @@
+# Frozen rc9 audit data
+
+This is a **partial assertion review**, not certified guardrail replacement.
+No downstream checker is removable on the strength of this directory.
+
+- `snapshots.json` pins the implementation base and every consumer Git tree.
+- `census.json.gz` is the deterministic syntax census of **all tracked files**,
+  including separate workspaces and invalid detector fixtures. The decompressed
+  JSON bytes are canonical; `census-summary.json` gives counts and their SHA-256.
+- `assertions.json` records 99 reviewed assertion instances, including separately
+  instantiated capability tokens and lock provenance assertions. It binds each
+  assertion to a census identity, source digest, selection, matching semantics,
+  cardinality, exceptions, disposition, and independent implementation and
+  verification states. Its 94 open assertion IDs are release blockers.
+- `facade-origins.json` binds two byte-exact extracted predicates and the imported
+  `kafkars-facade-invalid.rs.txt` fixture to the frozen sources.
+
+Candidate IDs have the form `repository:path:line:column:kind`, with one-based
+physical coordinates and a normalized syntax digest. They are stable within the
+frozen input. An assertion ID can instantiate one candidate for a specific
+registry value. A candidate linked by one assertion can still contain additional
+unreviewed helper branches or policy instances. Unlinked candidates and non-Rust
+files are pending review, never automatically classified as behavioral tests.
+
+Five detector-negative facade assertions have predicate and diagnostic evidence.
+The two live facade assertions have implemented predicates but still lack
+complete consumer-selection qualification. No full repository is qualified.
+
+The one Rust parse boundary is Kafkars' deliberately malformed
+`tests/fixtures/invariant_registry/src/invalid_test.rs`; it remains in the census.
+Its enclosing detector and expected failure still need assertion-level review.
+
+Integrity and reproducibility checks:
+
+```sh
+python3 scripts/rc9-inventory-check
+python3 scripts/rc9-inventory-check --census /path/to/repeated-census.json
+python3 scripts/rc9-inventory-check --require-complete
+```
+
+The last command **must fail** while inventory is incomplete. Integrity success
+does not establish release readiness. Reproduction commands and limitations are
+in `docs/rc9/QUALIFICATION.md`. These scripts are trusted qualification tools;
+stock zrail does not execute them or any downstream evaluator during analysis.

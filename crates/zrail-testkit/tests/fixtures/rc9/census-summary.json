@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "status": "discovery-only",
+  "assertion_inventory_complete": false,
+  "payload_sha256": "69c6393f176df64fff2e010968f18efb4e06781385b1bd6896de013411899ba6",
+  "gzip_sha256": "61777f2c83f2db46ff7734c34bf098b61159009e6427f27bf0de38aafd17e8ff",
+  "payload_bytes": 34723359,
+  "tracked_files": 9792,
+  "candidate_count": 72155,
+  "repositories": [
+    {
+      "repository": "kafkars/kafka-driver",
+      "tracked_files": 826,
+      "rust_files": 772,
+      "candidate_counts": {
+        "accumulator-candidate": 135,
+        "assertion-macro": 3473,
+        "failure-macro": 2394,
+        "helper-call-candidate": 167,
+        "macro-review-boundary": 418
+      }
+    },
+    {
+      "repository": "kafkars/kafkars",
+      "tracked_files": 6808,
+      "rust_files": 6713,
+      "candidate_counts": {
+        "accumulator-candidate": 1223,
+        "assertion-macro": 21832,
+        "failure-macro": 13075,
+        "helper-call-candidate": 1814,
+        "macro-review-boundary": 5824
+      }
+    },
+    {
+      "repository": "zsumz/rafter",
+      "tracked_files": 2158,
+      "rust_files": 1897,
+      "candidate_counts": {
+        "accumulator-candidate": 1515,
+        "assertion-macro": 10370,
+        "failure-macro": 617,
+        "helper-call-candidate": 1765,
+        "macro-review-boundary": 7533
+      }
+    }
+  ],
+  "parse_boundaries": [
+    {
+      "repository": "kafkars/kafkars",
+      "commit": "67ad7aa8d91f9639c87b00338b9e21a633f7bb4c",
+      "path": "crates/kafka-client-guardrails/tests/fixtures/invariant_registry/src/invalid_test.rs",
+      "sha256": "082131a5d94d5b6f86e10af2c76f24e464617e48e99be7b6bf537062a8fdb2a8",
+      "parse_error": "cannot parse string into token stream"
+    }
+  ]
+}
