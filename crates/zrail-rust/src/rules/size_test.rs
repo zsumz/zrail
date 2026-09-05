@@ -100,7 +100,7 @@ fn frozen_ten_line_facade_fixture_keeps_its_smallest_ceiling() {
             "kd-facade" => 10,
             "kd-production" => 20,
             "kd-test" => 30,
-            _ => unreachable!(),
+            _ => panic!("unexpected frozen size scope"),
         };
         scope.budget.target = value;
         scope.budget.hard = value;
