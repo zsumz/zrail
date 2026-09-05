@@ -92,6 +92,14 @@ pub(crate) fn facade_mode_for(
     match effective_file_role(path, inferred, rust).effective {
         FileClass::Facade => Some(rust.facades),
         FileClass::EntryPoint => Some(rust.entrypoints),
+        FileClass::Test
+            if matches!(
+                rust.facades,
+                FacadeMode::WiringOnly | FacadeMode::WiringReexports
+            ) && matches!(path.rsplit('/').next(), Some("lib.rs" | "mod.rs")) =>
+        {
+            Some(rust.facades)
+        }
         _ => None,
     }
 }
