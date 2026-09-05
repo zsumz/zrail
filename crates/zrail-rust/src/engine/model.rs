@@ -121,6 +121,8 @@ pub(crate) fn load_model_with_bundle(
     let item_macro_findings =
         source_graph::review_item_macros(&bundle.contract, &source, resolved_cargo.as_ref());
     source.findings.extend(item_macro_findings);
+    crate::source_budget::validate(&source, &bundle.contract.source.rust, &cargo)
+        .map_err(CheckError::from_message)?;
     let requires_repository_implementation =
         bundle
             .contract

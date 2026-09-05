@@ -11,6 +11,13 @@ All notable zrail changes are recorded here for reviewed release notes.
 - Test-facade structure independent of compilation reachability, test placement,
   test budgets, and execution identity.
 - Facade coverage in schema 6 and effective modes in path explanations.
+- Scoped package/path/role budgets with deterministic override rejection,
+  independent target/soft/hard thresholds, warning-only targets, and test-facade
+  limits independent of execution identity.
+- Explicit bounded hard exceptions with required accountability forms and stale
+  debt detection; optional authored baselines extend existing measured ratchets.
+- Complete effective budget/debt reporting and protected comparisons for scoped
+  limits, warning downgrades, baseline removal, and exception authority.
 
 ### Changed
 

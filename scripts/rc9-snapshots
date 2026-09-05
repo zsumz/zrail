@@ -38,24 +38,25 @@ def verify(path, pin):
 
 
 def verify_extractions(destination):
-    origins = json.loads((PINS.parent / "facade-origins.json").read_text(encoding="utf-8"))
-    harness = (ROOT / "crates/zrail-rust/src/source/tests/facade_parity.rs").read_bytes()
-    for origin in origins["extractions"]:
-        source = (destination / origin["repository"] / origin["path"]).read_bytes()
-        if hashlib.sha256(source).hexdigest() != origin["source_sha256"]:
-            raise ValueError(f"frozen detector source changed: {origin['path']}")
-        lines = source.splitlines(keepends=True)
-        excerpt = b"".join(lines[origin["start_line"] - 1:origin["end_line"]])
-        if hashlib.sha256(excerpt).hexdigest() != origin["extracted_sha256"]:
-            raise ValueError(f"frozen predicate extraction changed: {origin['function']}")
-        if excerpt not in harness:
-            raise ValueError(f"trusted harness differs from frozen predicate: {origin['function']}")
-    for fixture in origins.get("fixtures", []):
-        source = (destination / fixture["repository"] / fixture["path"]).read_bytes()
-        copied = (ROOT / fixture["copy"]).read_bytes()
-        if source != copied or hashlib.sha256(source).hexdigest() != fixture["sha256"]:
-            raise ValueError(f"frozen fixture mismatch: {fixture['path']}")
-    print("verified frozen facade predicate extractions and fixture bytes")
+    for manifest in ["facade-origins.json", "budget-origins.json"]:
+        origins = json.loads((PINS.parent / manifest).read_text(encoding="utf-8"))
+        harness = (ROOT / origins.get("harness", "crates/zrail-rust/src/source/tests/facade_parity.rs")).read_bytes()
+        for origin in origins["extractions"]:
+            source = (destination / origin["repository"] / origin["path"]).read_bytes()
+            if hashlib.sha256(source).hexdigest() != origin["source_sha256"]:
+                raise ValueError(f"frozen detector source changed: {origin['path']}")
+            lines = source.splitlines(keepends=True)
+            excerpt = b"".join(lines[origin["start_line"] - 1:origin["end_line"]])
+            if hashlib.sha256(excerpt).hexdigest() != origin["extracted_sha256"]:
+                raise ValueError(f"frozen predicate extraction changed: {origin['function']}")
+            if excerpt not in harness:
+                raise ValueError(f"trusted harness differs from frozen predicate: {origin['function']}")
+        for fixture in origins.get("fixtures", []):
+            source = (destination / fixture["repository"] / fixture["path"]).read_bytes()
+            copied = (ROOT / fixture["copy"]).read_bytes()
+            if source != copied or hashlib.sha256(source).hexdigest() != fixture["sha256"]:
+                raise ValueError(f"frozen fixture mismatch: {fixture['path']}")
+        print(f"verified frozen predicate extractions and fixture bytes: {manifest}")
 
 
 def main():

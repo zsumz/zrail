@@ -207,6 +207,21 @@ fn rust_rails(
                 .map(|role| format!("rust:size:{role}")),
         );
     }
+    if let Some(policy) = &rust.budgets {
+        rails.push("rust:size:independent-hard".into());
+        rails.extend(
+            policy
+                .overrides
+                .iter()
+                .map(|scope| format!("rust:size:scope:{}", scope.name)),
+        );
+        rails.extend(
+            policy
+                .exceptions
+                .iter()
+                .map(|exception| format!("rust:size:exception:{}", exception.path)),
+        );
+    }
 }
 
 const fn duplication_trait_name(value: zrail_core::DuplicationTrait) -> &'static str {

@@ -86,6 +86,9 @@ pub struct PathExplanation {
     pub design_target: Option<usize>,
     /// The enforced line ceiling for the source class, when configured.
     pub hard_ceiling: Option<usize>,
+    /// Complete selected thresholds, selectors, and exact exception authority.
+    #[serde(default)]
+    pub effective_budget: Option<crate::EffectiveSizeBudget>,
     /// Whether a facade or entry point must remain declarative, when applicable.
     pub declarative_shape: Option<bool>,
     /// Effective written facade structure, independent of compilation reachability.

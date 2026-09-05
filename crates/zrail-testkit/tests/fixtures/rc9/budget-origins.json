@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "harness": "crates/zrail-testkit/tests/scoped_budgets/legacy_kafkars.rs",
+  "extractions": [
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/support/size_policy.rs",
+      "source_sha256": "6b38fb27f2a5eca3bd9f2865487afa0d1d41b8eec726e61feaf98a9203212cfb",
+      "function": "check_baseline",
+      "start_line": 49,
+      "end_line": 86,
+      "extracted_sha256": "cb74d646e966637110ca87371cf9087c5b5113c4a3851e49f7ffbed298e19c74"
+    },
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/support/size_policy.rs",
+      "source_sha256": "6b38fb27f2a5eca3bd9f2865487afa0d1d41b8eec726e61feaf98a9203212cfb",
+      "function": "check_allow",
+      "start_line": 88,
+      "end_line": 109,
+      "extracted_sha256": "f18f27b84537bfa28351b8a6b13fe617b743d8b8c7d8820b09fff896cd707c78"
+    }
+  ],
+  "scope": "Exact baseline and hard-allow predicates; source selection and full Kafkars qualification remain separate.",
+  "fixtures": [
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/fixtures/oversized_file/src/oversized.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/kafkars-oversized.rs.txt",
+      "sha256": "20725b33abc7de5785d53701729b46686111b02345559e064f63369838e751fb"
+    }
+  ]
+}

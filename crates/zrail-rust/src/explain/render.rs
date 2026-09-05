@@ -25,6 +25,7 @@ impl PathExplanation {
                 "item macro authorities: {}\nunsafe code: {}\n",
                 "lint suppressions: {}\nexpected sibling test: {}\ninvariants: {}\n",
                 "capability owners: {}\ncall owners: {}\nbudget: target {}, hard {}\n",
+                "budget authority: {}\n",
                 "declarative shape: {}\nfacade mode: {}\nmodule docs: {}\nsibling tests: {}\n",
             ),
             self.path,
@@ -58,6 +59,7 @@ impl PathExplanation {
             owners::display_calls(&self.call_owners),
             display_optional_number(self.design_target),
             display_optional_number(self.hard_ceiling),
+            display_budget(self.effective_budget.as_ref()),
             display_optional_bool(self.declarative_shape),
             self.facade_mode
                 .map_or("<none>", crate::source_policy::facade_mode_name),
@@ -65,6 +67,38 @@ impl PathExplanation {
             self.sibling_tests_required
         )
     }
+}
+
+fn display_budget(budget: Option<&crate::EffectiveSizeBudget>) -> String {
+    let Some(budget) = budget else {
+        return "<none>".into();
+    };
+    let exception = budget.exception.as_ref().map_or_else(
+        || "<none>".into(),
+        |exception| {
+            format!(
+                "rust:size:exception:{} max {} ({}, owner {}, issue {}, tracking {})",
+                exception.path,
+                exception.hard,
+                exception.reason,
+                exception.owner.as_deref().unwrap_or("<none>"),
+                exception.issue.as_deref().unwrap_or("<none>"),
+                exception.tracking.as_deref().unwrap_or("<none>")
+            )
+        },
+    );
+    format!(
+        "{}; target {:?}; soft {}; independent hard {}; reason {}; exception {}",
+        budget.policy_id,
+        budget.thresholds.target_mode,
+        display_optional_number(budget.thresholds.soft),
+        budget.independent_hard,
+        budget
+            .scoped
+            .as_ref()
+            .map_or("<global default>", |scope| scope.reason.as_str()),
+        exception
+    )
 }
 
 fn display_item_macro_authorities(values: &[super::ItemMacroAuthorityExplanation]) -> String {

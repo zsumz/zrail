@@ -35,7 +35,7 @@ pub fn explain_path(
 ) -> Result<PathExplanation, CheckError> {
     let model = load_model(root, config)?;
     let relative = path_input::existing(&model, path)?;
-    Ok(explain_model(&model, relative))
+    explain_model(&model, relative)
 }
 
 /// Resolves policy for a repository-relative path that need not exist yet.
@@ -49,10 +49,13 @@ pub fn explain_hypothetical_path(
 ) -> Result<PathExplanation, CheckError> {
     let model = load_model(root, config)?;
     let relative = path_input::hypothetical(path)?;
-    Ok(explain_model(&model, relative))
+    explain_model(&model, relative)
 }
 
-fn explain_model(model: &crate::engine::RepositoryModel, relative: String) -> PathExplanation {
+fn explain_model(
+    model: &crate::engine::RepositoryModel,
+    relative: String,
+) -> Result<PathExplanation, CheckError> {
     let class = classify_path(&relative, &model.bundle.contract.source.rust.generated);
     let file_role = crate::source_policy::effective_file_role(
         &relative,
@@ -83,12 +86,7 @@ fn explain_model(model: &crate::engine::RepositoryModel, relative: String) -> Pa
                 .any(|pattern| glob_matches(pattern, &package.name))
         })
     });
-    let budget = crate::source_policy::budget_for(
-        &relative,
-        class,
-        reachability,
-        &model.bundle.contract.source.rust,
-    );
+    let budget = policy::size_budget(model, &relative, class, reachability)?;
     let matching_scopes = model
         .bundle
         .contract
@@ -130,7 +128,7 @@ fn explain_model(model: &crate::engine::RepositoryModel, relative: String) -> Pa
         .iter()
         .find(|role| role.path == relative)
         .map(|role| role.reason.clone());
-    PathExplanation {
+    Ok(PathExplanation {
         schema: 2,
         path: relative,
         file_class: crate::source_policy::role_name(class).into(),
@@ -215,8 +213,11 @@ fn explain_model(model: &crate::engine::RepositoryModel, relative: String) -> Pa
         invariants,
         capability_owners,
         call_owners,
-        design_target: budget.map(|budget| budget.target),
-        hard_ceiling: budget.map(|budget| budget.hard),
+        design_target: budget.as_ref().map(|budget| budget.thresholds.target),
+        hard_ceiling: budget
+            .as_ref()
+            .map(crate::EffectiveSizeBudget::hard_ceiling),
+        effective_budget: budget,
         declarative_shape: facade_mode.map(|mode| mode != zrail_core::FacadeMode::Allow),
         facade_mode,
         module_docs_required: policy::module_docs_required(
@@ -224,7 +225,7 @@ fn explain_model(model: &crate::engine::RepositoryModel, relative: String) -> Pa
             model.bundle.contract.source.rust.module_docs,
         ),
         sibling_tests_required,
-    }
+    })
 }
 
 #[cfg(test)]
