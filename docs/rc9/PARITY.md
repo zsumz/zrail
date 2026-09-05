@@ -1,8 +1,9 @@
 # rc9 guardrail replacement qualification
 
 Release verdict: **blocked**. Inventory review and replacement qualification are
-incomplete. No consumer guard has been deleted, no policy retirement has been
-approved, and no release artifact has been published.
+incomplete. No consumer guard has been deleted and no release artifact has been
+published. The user approved retiring Rafter's private-name policy; see
+[policy decisions](DECISIONS.md).
 
 This branch implements the strict facade slice. It does **not** yet deliver rc9
 replacement coverage. See [exact reviewed assertion blockers](BLOCKERS.md),
@@ -149,8 +150,9 @@ report before proposing any authority update.
   authored canonical spelling, and separate crate-alias and macro-token bans.
   The complete expected tuple map is recorded under `RF-PROCESS-EXACT`.
 - Rafter's private-name scan obtains its patterns outside the repository. The
-  reviewed pattern set has not been supplied (`RF-PRIVATE-NAME-PATTERNS`). Its
-  Cargo archive-coverage execution must be retained separately from text policy.
+  user approved retiring this policy in `RC9-DECISION-RF-PRIVATE-NAMES`; supplying
+  those patterns is no longer a release prerequisite. Independent package
+  construction and artifact verification remain required.
 - A normal parsed module-doc predicate does not preserve kafka-driver's literal
   leading `//!` requirement. `KD-MODULE-LEADING-DOC` records that gap explicitly.
 - Kafkars traversal has required-directory and minimum-file-count assertions in
@@ -168,7 +170,6 @@ report before proposing any authority update.
 | RC9-PARITY | Execute frozen legacy and replacement detectors with intended-diagnostic assertions and account for every difference. |
 | RC9-FULL | Complete source discovery, checks, coverage, receipts, and cutover maps on every governed workspace. |
 | RC9-RELEASE | Complete compatibility, protected semantic diff, final versioned-tree qualification, and release documentation. |
-| RF-PRIVATE-NAME-PATTERNS | Obtain the reviewed external literal pattern set and retain archive-coverage execution evidence. |
 
 These are discovery/release blockers, not a claim that assertion inventory is
 complete. [BLOCKERS.md](BLOCKERS.md) lists all **98 reviewed, unverified assertion

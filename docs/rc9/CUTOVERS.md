@@ -91,7 +91,7 @@ do not grant cross-workspace inheritance to make one root command sufficient.
 | Public API/docs, publication, CI test inventory, size, and invariant catalog guards | Complete assertion and registry-instance inventory, document predicates, exact public sets, receipt input/outcome binding, and source/test mounting evidence. |
 | `scripts/reference-source-check` | Replace only the handwritten size evaluator after preserving its separate soft/hard behavior, exceptions, and source selection. Keep formatting, lint, test, and rustdoc execution. |
 | `scripts/reference-package-boundary-check`, `scripts/verify-action-pins`, related detector tests | Inventory every static manifest/workflow/path assertion; retain actual package construction and independent artifact verification. |
-| `scripts/private-name-scan` | Obtain `RF-PRIVATE-NAME-PATTERNS`, translate literal matching and file selection, and retain independently trusted Cargo archive-coverage evidence. |
+| `scripts/private-name-scan` | Retire private-name enforcement under the user's `RC9-DECISION-RF-PRIVATE-NAMES`. Account for scan-specific detector assertions and invocations in the deletion map. Preserve independent package construction and artifact verification. |
 
 Retain TLA+ model checking and telemetry, Maelstrom workloads and history checks,
 Raft simulation/burn-in, codec/storage fixtures, reference process/package tests,

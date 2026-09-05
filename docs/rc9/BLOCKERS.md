@@ -5,8 +5,9 @@ assertion instance. It does not close the additional discovery blockers
 `RC9-INVENTORY-KD`, `RC9-INVENTORY-KF`, and `RC9-INVENTORY-RF`.
 
 All unreviewed candidate IDs are enumerated in `census.json.gz`. Non-Rust
-files and opaque or invalid syntax remain explicit review work. The external
-policy-input blocker `RF-PRIVATE-NAME-PATTERNS` also remains open.
+files and opaque or invalid syntax remain explicit review work.
+`RF-PRIVATE-NAME-PATTERNS` is closed by the user's approved retirement in
+[RC9-DECISION-RF-PRIVATE-NAMES](DECISIONS.md).
 
 | Assertion ID | Cause |
 | --- | --- |

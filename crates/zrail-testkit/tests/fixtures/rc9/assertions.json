@@ -5,7 +5,26 @@
   "candidate_census": "census.json.gz",
   "census_payload_sha256": "69c6393f176df64fff2e010968f18efb4e06781385b1bd6896de013411899ba6",
   "snapshots": "snapshots.json",
-  "approved_policy_changes": [],
+  "approved_policy_changes": [
+    {
+      "id": "RC9-DECISION-RF-PRIVATE-NAMES",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "authority": "user",
+      "date": "2026-09-05",
+      "instruction": "Just get everything needed in zrail done. Privat ename stuff will be removed from rafter.",
+      "disposition": "approved retirement",
+      "scope": "Private-name enforcement and scan-specific machinery; independent build, package and artifact verification are retained.",
+      "source": "scripts/private-name-scan",
+      "file_sha256": "3d648d3358560b6943b4cb0d48eda6f926bab84cd53bc6b88524803e05177a0b",
+      "closed_blockers": [
+        "RF-PRIVATE-NAME-PATTERNS"
+      ],
+      "assertion_expansion_complete": false,
+      "downstream_changes_performed": false,
+      "report": "docs/rc9/DECISIONS.md"
+    }
+  ],
   "reviewed_assertions": [
     {
       "id": "KD-BUDGET-FACADE",
@@ -5704,13 +5723,5 @@
     "RC9-INVENTORY-KF",
     "RC9-INVENTORY-RF"
   ],
-  "external_input_blockers": [
-    {
-      "id": "RF-PRIVATE-NAME-PATTERNS",
-      "repository": "zsumz/rafter",
-      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
-      "source": "scripts/private-name-scan",
-      "cause": "Reviewed RAFTER_PRIVATE_NAME_PATTERNS or command arguments are outside the frozen repository and have not been supplied. Archive coverage execution must also be retained."
-    }
-  ]
+  "external_input_blockers": []
 }

@@ -1875,10 +1875,11 @@
         {
           "path": "scripts/private-name-scan",
           "sha256": "3d648d3358560b6943b4cb0d48eda6f926bab84cd53bc6b88524803e05177a0b",
-          "unit": "assertions only; retain execution",
+          "unit": "approved retirement of private-name scan; separate downstream deletion",
           "reviewed_assertion_ids": [],
-          "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "remaining_candidate_ids": "Expand scan-specific predicates and detector invocations; link retirement to the user decision.",
+          "removable_now": false,
+          "decision_id": "RC9-DECISION-RF-PRIVATE-NAMES"
         },
         {
           "path": "scripts/reference-package-boundary-check",
