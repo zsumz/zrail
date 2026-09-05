@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "snapshot": {
+    "name": "kafkars",
+    "repository": "kafkars/kafkars",
+    "commit": "67ad7aa8d91f9639c87b00338b9e21a633f7bb4c",
+    "tree": "6abde2775e12d772d7cdc1ea01fc253e699c6a45"
+  },
+  "harness": "unmodified crates/kafka-client-guardrails/tests/file_size_guard.rs",
+  "surface": "kafkars-sizes",
+  "environment": {
+    "CARGO_MANIFEST_DIR": "/mnt/volume_atl1_1787847588295/zrail-rc9/snapshots/kafkars/crates/kafka-client-guardrails"
+  },
+  "implementation_commit": "76c69202ccfd16b416718f8a77a77eda9a683ebb",
+  "implementation_diff_sha256": "3a76972557792906d5e33083097f0e185ce84b2a60868e2c8b293523ecd2aaac",
+  "build": [
+    "cargo",
+    "build",
+    "--locked",
+    "--offline",
+    "--lib",
+    "-p",
+    "zrail-rust",
+    "--message-format=json"
+  ],
+  "compile": [
+    "rustc",
+    "--edition=2024",
+    "--test",
+    "/mnt/volume_atl1_1787847588295/zrail-rc9/snapshots/kafkars/crates/kafka-client-guardrails/tests/file_size_guard.rs",
+    "-L",
+    "dependency=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps",
+    "-o",
+    "/mnt/volume_atl1_1787847588295/zrail-rc9/evidence/kafkars-sizes/legacy-guards",
+    "--extern",
+    "serde=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libserde-646f796a002175b1.rlib",
+    "--extern",
+    "syn=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libsyn-9d4bf8a2b9229703.rlib",
+    "--extern",
+    "toml=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libtoml-95ad40842fbfb375.rlib"
+  ],
+  "toolchain": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.97.1\nLLVM version: 22.1.6",
+  "dependencies": {
+    "serde": {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libserde-646f796a002175b1.rlib",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
+      "features": [
+        "default",
+        "derive",
+        "serde_derive",
+        "std"
+      ],
+      "sha256": "49f5e40483a5ee925bde2bb6aceecc6e06009a30db439c59cc97202a29b2aa0c"
+    },
+    "toml": {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libtoml-95ad40842fbfb375.rlib",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#toml@0.8.23",
+      "features": [
+        "default",
+        "display",
+        "parse"
+      ],
+      "sha256": "0f016f917d5d9585af7c12ddd04b6dde4c264cb3e20f324e0f07262fab56286e"
+    },
+    "syn": {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libsyn-9d4bf8a2b9229703.rlib",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.119",
+      "features": [
+        "clone-impls",
+        "default",
+        "derive",
+        "extra-traits",
+        "full",
+        "parsing",
+        "printing",
+        "proc-macro",
+        "visit"
+      ],
+      "sha256": "2a62696000b86315a73b2fbaf7f1dd88d28cb47ffb0e4d9668d9f3452fc5ba9d"
+    }
+  },
+  "status": 0,
+  "binary_sha256": "5367a4b57de58d87d7bff4eac9d9b9236e98b22e71eb3d8932704b0d468c4209",
+  "tests": [
+    {
+      "name": "an_inflated_or_stale_baseline_is_rejected",
+      "outcome": "ok"
+    },
+    {
+      "name": "exact_reviewed_exception_is_accepted",
+      "outcome": "ok"
+    },
+    {
+      "name": "growth_above_a_design_target_is_rejected",
+      "outcome": "ok"
+    },
+    {
+      "name": "live_files_remain_within_reviewed_size_targets",
+      "outcome": "ok"
+    },
+    {
+      "name": "nested_src_tests_directory_keeps_implementation_budget",
+      "outcome": "ok"
+    }
+  ],
+  "log_sha256": "d905c91a6f7bcd0f045475f245665769d29f302881d098d6827cd3735e507282",
+  "limits": "Detector qualification only; excludes runtime, smoke, and archive execution. Zrail dependency features include extra-traits on syn."
+}

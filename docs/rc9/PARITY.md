@@ -148,7 +148,7 @@ all **772 kafka-driver and 6,280 Kafkars governed Rust files**. The trusted
 [size-only report](evidence/size-parity.json.gz) records **21,300 comparisons**,
 including every valid file, relevant target/hard excess, growth, shrinkage,
 stale baseline, and missing hard allowance. Its implementation revision is
-`767abfd0f4f26c97fa48433c300fce999f567778`, with an empty tracked diff. Generic
+`cb198bada58ef8f08bdc60bc7ac5cea0b2993a0a`, with an empty tracked diff. Generic
 stock-check fixtures separately cover 54 numeric cases and four metadata
 rejections. The unmodified frozen Kafkars and Rafter size test targets each pass
 all five tests. Those legacy executions are retained qualification evidence.

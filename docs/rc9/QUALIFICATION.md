@@ -1,7 +1,7 @@
 # Reproducing the current rc9 evidence
 
 Release verdict: **blocked**. The latest size-parity implementation is commit
-`767abfd0f4f26c97fa48433c300fce999f567778`, based on the exact audited rc8 commit.
+`cb198bada58ef8f08bdc60bc7ac5cea0b2993a0a`, based on the exact audited rc8 commit.
 Later audit/report-only changes do not constitute final versioned-tree release
 qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
 
@@ -72,11 +72,25 @@ effective policy, measurements, and intended diagnostic IDs. The report is
 strictly size-only; no partial lock or source-resolution certificate is produced.
 
 Its uncompressed SHA-256 is
-`71485d30104be0e77cb21563ea0ff28a36f6ccbb0f665e7f9f3d739abd31391b`.
+`f060ab308686ba55c1a955d7aaa8660cd3f960e495b6ce87b6ba4fb8cc39f37b`.
 The implementation was clean when this report ran. Kafkars' and Rafter's
 unmodified frozen size targets additionally passed five tests each; receipts
 record their original source context, pinned compiler dependencies and outcomes.
 The private-name retirement did not modify any frozen input.
+
+At `cb198bada58ef8f08bdc60bc7ac5cea0b2993a0a`, the canonical gate passed
+structure, formatting, strict workspace lint, **1,439 tests**, and rustdoc, then
+stopped at exactly `LOCK-008`, `LOCK-026`, `LOCK-028`, and `LOCK-030`. Self-analysis
+was complete: 886 physical Rust files, 1,426 base contexts, 1,177,203 projection
+work, and zero unresolved items. The three normal-run ignores are the existing
+advisory timing test and the two explicit-prefetch qualification tests.
+
+The final size report was repeated twice in a clean detached worktree at that
+same commit, producing identical bytes. Standalone `scripts/package-check`
+also passed there, and its checkout remained clean. Archive and cleanliness
+stages after self-hosting were not reached by the canonical gate; the separate
+archive result does not make that gate pass. See [the current evidence index](evidence/size-index.json).
+Earlier size evidence remains under `evidence/size-767abfd/`.
 
 After the same trusted prefetch and environment setup:
 

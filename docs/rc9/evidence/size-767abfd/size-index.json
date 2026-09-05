@@ -2,21 +2,18 @@
   "schema": 1,
   "release_verdict": "blocked",
   "full_repository_qualified": false,
-  "tested_size_code_commit": "cb198bada58ef8f08bdc60bc7ac5cea0b2993a0a",
-  "typed_harness_boundary_fix_commit": "7f6a2307c1e76e65ddba59898da5620f88f4295e",
-  "report_payload_sha256": "f060ab308686ba55c1a955d7aaa8660cd3f960e495b6ce87b6ba4fb8cc39f37b",
+  "tested_size_code_commit": "767abfd0f4f26c97fa48433c300fce999f567778",
+  "typed_harness_boundary_fix_commit": "7f6a230",
+  "report_payload_sha256": "71485d30104be0e77cb21563ea0ff28a36f6ccbb0f665e7f9f3d739abd31391b",
   "sources_patched": [],
   "authority_grants_accepted": [],
   "artifacts": {
-    "size-parity.json.gz": "a9b4aa0d807724146ba658b27d4dd05350235d7561a6a7df8e7734df3c71f0c1",
-    "size-parity.log": "6adc0ff62691d4cef9d6e28331dd13ed5c9491fd81d7d1e180f38237ba92a9fd",
+    "size-parity.json.gz": "00a90bae91508632deeb79bb128a8b481a01da1b1d189696403f23843e4afdbb",
+    "size-parity.log": "2c26cf43cdf585bbdcaf71528ece987eea8ff372e4f7c45238113e27b02145f9",
     "kafkars-sizes-legacy-guards.log": "d905c91a6f7bcd0f045475f245665769d29f302881d098d6827cd3735e507282",
     "kafkars-sizes-receipt.json": "1c532ff39952502a11568ed7cc48f6f21b2b4220f50bb225227b186ba44bee20",
     "rafter-sizes-legacy-guards.log": "af090cae94df72904f8c0ddfb3dfc1147bf8eb11cd34ec0076bf9a54a04ece7e",
-    "rafter-sizes-receipt.json": "5cf01893f9f27a5f04ec328420a3685cc903f0b9344bd9dbae1793cce4d7a3d2",
-    "size-parity-repeat.log": "f3fcdcff45c0b9e48be544f7a6ef664759ddf6d608a85f56313503dd3b95859f",
-    "size-canonical.log": "ab33c55ac0b7fa80e222c1be19f913dca631de2796e3c9d9bc57fb1a174cb724",
-    "size-package.log": "f7ac3739c3144fbc8016717a932989c93e190f0714df25df341226ce9376757c"
+    "rafter-sizes-receipt.json": "5cf01893f9f27a5f04ec328420a3685cc903f0b9344bd9dbae1793cce4d7a3d2"
   },
   "counts": {
     "reviewed_assertion_instances": 274,
@@ -65,32 +62,5 @@
     "No lock or source file is written; measured ratchet records are isolated evaluator inputs.",
     "Full repository contracts, approved locks and complete source analysis remain separate qualification.",
     "Standalone soft-limit warnings add observations without changing legacy size pass/fail."
-  ],
-  "repeated_byte_identical": true,
-  "canonical": {
-    "code_commit": "cb198bada58ef8f08bdc60bc7ac5cea0b2993a0a",
-    "exit": 1,
-    "passed": 1439,
-    "failed": 0,
-    "ignored": 3,
-    "diagnostics": [
-      "LOCK-008",
-      "LOCK-026",
-      "LOCK-028",
-      "LOCK-030"
-    ],
-    "analysis_complete": true,
-    "physical_rust_files": 886,
-    "base_source_contexts": 1426,
-    "projection_work": 1177203,
-    "unresolved": 0,
-    "archive_stage_reached": false,
-    "cleanliness_stage_reached": false
-  },
-  "standalone_archives": {
-    "exit": 0,
-    "isolated_worktree_clean_after_run": true,
-    "version": "0.0.3-rc.8",
-    "release_assets": false
-  }
+  ]
 }

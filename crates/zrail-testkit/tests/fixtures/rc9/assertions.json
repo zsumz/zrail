@@ -15502,7 +15502,7 @@
       "disposition": "existing native rail",
       "replacement": {
         "policy_ids": [
-          "repository:roots"
+          "repository:root:crates"
         ],
         "expected_diagnostics": [
           "REP-001"
