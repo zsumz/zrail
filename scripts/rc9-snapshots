@@ -38,10 +38,11 @@ def verify(path, pin):
 
 
 def verify_extractions(destination):
-    for manifest in ["facade-origins.json", "budget-origins.json"]:
+    for manifest in ["facade-origins.json", "budget-origins.json", "size-selection-origins.json"]:
         origins = json.loads((PINS.parent / manifest).read_text(encoding="utf-8"))
-        harness = (ROOT / origins.get("harness", "crates/zrail-rust/src/source/tests/facade_parity.rs")).read_bytes()
         for origin in origins["extractions"]:
+            harness_path = origin.get("harness", origins.get("harness", "crates/zrail-rust/src/source/tests/facade_parity.rs"))
+            harness = (ROOT / harness_path).read_bytes()
             source = (destination / origin["repository"] / origin["path"]).read_bytes()
             if hashlib.sha256(source).hexdigest() != origin["source_sha256"]:
                 raise ValueError(f"frozen detector source changed: {origin['path']}")

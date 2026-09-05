@@ -1,0 +1,26 @@
+# PARTIAL REVIEW FRAGMENT: size policy only, not a complete replacement bundle.
+# Source: kafkars/kafka-driver a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# guardrails.toml SHA-256: 099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10
+# No lock authority is accepted by this translation.
+[source.rust.budgets]
+exception_metadata = "owner-issue"
+
+[[source.rust.budgets.overrides]]
+name = "kd-facade"
+include = ["crates/kafka-driver-core/src/**/lib.rs", "crates/kafka-driver-core/src/**/mod.rs", "crates/kafka-driver-probe/src/**/lib.rs", "crates/kafka-driver-probe/src/**/mod.rs", "crates/kafka-driver-sim/src/**/lib.rs", "crates/kafka-driver-sim/src/**/mod.rs", "crates/kafka-driver-transport/src/**/lib.rs", "crates/kafka-driver-transport/src/**/mod.rs", "src/**/lib.rs", "src/**/mod.rs", "tests/**/lib.rs", "tests/**/mod.rs", "tests/guardrails.rs"]
+budget = { target = 100, hard = 100 }
+reason = "Preserve the frozen kd-facade size family."
+
+[[source.rust.budgets.overrides]]
+name = "kd-test"
+include = ["crates/kafka-driver-core/src/**/*_test.rs", "crates/kafka-driver-probe/src/**/*_test.rs", "crates/kafka-driver-sim/src/**/*_test.rs", "crates/kafka-driver-transport/src/**/*_test.rs", "src/**/*_test.rs", "tests/**/*.rs", "tests/**/*_test.rs"]
+exclude = ["crates/kafka-driver-core/src/**/lib.rs", "crates/kafka-driver-core/src/**/mod.rs", "crates/kafka-driver-probe/src/**/lib.rs", "crates/kafka-driver-probe/src/**/mod.rs", "crates/kafka-driver-sim/src/**/lib.rs", "crates/kafka-driver-sim/src/**/mod.rs", "crates/kafka-driver-transport/src/**/lib.rs", "crates/kafka-driver-transport/src/**/mod.rs", "src/**/lib.rs", "src/**/mod.rs", "tests/**/lib.rs", "tests/**/mod.rs", "tests/guardrails.rs"]
+budget = { target = 320, hard = 320 }
+reason = "Preserve the frozen kd-test size family."
+
+[[source.rust.budgets.overrides]]
+name = "kd-production"
+include = ["crates/kafka-driver-core/src/**/*.rs", "crates/kafka-driver-probe/src/**/*.rs", "crates/kafka-driver-sim/src/**/*.rs", "crates/kafka-driver-transport/src/**/*.rs", "src/**/*.rs", "tests/**/*.rs"]
+exclude = ["crates/kafka-driver-core/src/**/*_test.rs", "crates/kafka-driver-core/src/**/lib.rs", "crates/kafka-driver-core/src/**/mod.rs", "crates/kafka-driver-probe/src/**/*_test.rs", "crates/kafka-driver-probe/src/**/lib.rs", "crates/kafka-driver-probe/src/**/mod.rs", "crates/kafka-driver-sim/src/**/*_test.rs", "crates/kafka-driver-sim/src/**/lib.rs", "crates/kafka-driver-sim/src/**/mod.rs", "crates/kafka-driver-transport/src/**/*_test.rs", "crates/kafka-driver-transport/src/**/lib.rs", "crates/kafka-driver-transport/src/**/mod.rs", "src/**/*_test.rs", "src/**/lib.rs", "src/**/mod.rs", "tests/**/*.rs", "tests/**/*_test.rs", "tests/**/lib.rs", "tests/**/mod.rs", "tests/guardrails.rs"]
+budget = { target = 240, hard = 240 }
+reason = "Preserve the frozen kd-production size family."

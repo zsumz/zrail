@@ -4,6 +4,9 @@ use std::collections::{BTreeMap, BTreeSet};
 
 mod ratchet;
 mod scoped;
+#[cfg(test)]
+#[path = "size_test.rs"]
+mod size_test;
 
 use zrail_core::{Finding, FindingSink, LockedRatchet, Severity, SizeTargetMode};
 

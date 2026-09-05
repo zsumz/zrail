@@ -1,0 +1,146 @@
+{
+  "schema": 1,
+  "scope": "Byte-exact frozen path classification and numeric baseline predicates; trusted size-only qualification, not compilation or complete repository qualification.",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "function": "display_path",
+      "start_line": 102,
+      "end_line": 107,
+      "extracted_sha256": "6f847a3f2eef68a63fec9b5666a2d8173cc03c80efba1791959ed4403642a656",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_driver.rs"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "function": "is_facade",
+      "start_line": 109,
+      "end_line": 112,
+      "extracted_sha256": "4536df784359268d5659f3c25a83b620ab39685f62813dec14e592d059a3ff3c",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_driver.rs"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "function": "is_test",
+      "start_line": 114,
+      "end_line": 117,
+      "extracted_sha256": "7cf7d016d7122415c263f3dac2c2697880c7801cfc13e6ca2310c71409ce6114",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_driver.rs"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/file_size.rs",
+      "source_sha256": "13f6a57e8cffb4d21e04e8ed45aaf9810ff4c5bc6f40984bb2ba9e83f0044846",
+      "function": "limit_for",
+      "start_line": 9,
+      "end_line": 17,
+      "extracted_sha256": "ee06017fc5a9914a2dae17ed3668d210ec78f5f7495598a37bf25456a017542c",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_driver.rs"
+    },
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/support/files.rs",
+      "source_sha256": "c70705f6e57d36c1f2d36d4703111cddd311f1879e16e8e02763d7d7fcea1969",
+      "function": "display_path",
+      "start_line": 113,
+      "end_line": 118,
+      "extracted_sha256": "6f847a3f2eef68a63fec9b5666a2d8173cc03c80efba1791959ed4403642a656",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_kafkars.rs"
+    },
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/support/files.rs",
+      "source_sha256": "c70705f6e57d36c1f2d36d4703111cddd311f1879e16e8e02763d7d7fcea1969",
+      "function": "is_facade",
+      "start_line": 120,
+      "end_line": 125,
+      "extracted_sha256": "57f713d12bbab300a10af8c79fd5c0bbf8b954a36d4f4fec53a13b879d169dd4",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_kafkars.rs"
+    },
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/support/files.rs",
+      "source_sha256": "c70705f6e57d36c1f2d36d4703111cddd311f1879e16e8e02763d7d7fcea1969",
+      "function": "is_integration_test",
+      "start_line": 155,
+      "end_line": 162,
+      "extracted_sha256": "e99602fda6dd620ae0f520969ac257d7c626a174998389049096145fb6fb8844",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_kafkars.rs"
+    },
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/support/files.rs",
+      "source_sha256": "c70705f6e57d36c1f2d36d4703111cddd311f1879e16e8e02763d7d7fcea1969",
+      "function": "classify_with_package_roots",
+      "start_line": 168,
+      "end_line": 186,
+      "extracted_sha256": "b6cdc92fde166a20428ca41075fe5682e261153fd2d306915793e168e7be443e",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_kafkars.rs"
+    },
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/support/size_policy.rs",
+      "source_sha256": "6b38fb27f2a5eca3bd9f2865487afa0d1d41b8eec726e61feaf98a9203212cfb",
+      "function": "check_baseline",
+      "start_line": 49,
+      "end_line": 86,
+      "extracted_sha256": "cb74d646e966637110ca87371cf9087c5b5113c4a3851e49f7ffbed298e19c74",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_kafkars.rs"
+    },
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/support/size_policy.rs",
+      "source_sha256": "6b38fb27f2a5eca3bd9f2865487afa0d1d41b8eec726e61feaf98a9203212cfb",
+      "function": "check_allow",
+      "start_line": 88,
+      "end_line": 109,
+      "extracted_sha256": "f18f27b84537bfa28351b8a6b13fe617b743d8b8c7d8820b09fff896cd707c78",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_kafkars.rs"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/file_size.rs",
+      "source_sha256": "13f6a57e8cffb4d21e04e8ed45aaf9810ff4c5bc6f40984bb2ba9e83f0044846",
+      "function": "rust_files_stay_within_role_specific_ceilings::filter_map",
+      "start_line": 25,
+      "end_line": 34,
+      "extracted_sha256": "051361664d43a517cf976ddc0be515ccb658d29e7dfc62d081fbbc478db53af6",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_driver.rs"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "function": "collect_rust_files",
+      "start_line": 82,
+      "end_line": 100,
+      "extracted_sha256": "b2cd5030320fbd1bb6e958d71ae82fa2e0a505b9d8842144f8528450fc25388a",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_driver.rs"
+    },
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/support/files.rs",
+      "source_sha256": "c70705f6e57d36c1f2d36d4703111cddd311f1879e16e8e02763d7d7fcea1969",
+      "function": "collect_roots",
+      "start_line": 63,
+      "end_line": 89,
+      "extracted_sha256": "c1580e49e3f1219f744ec493dc8cb7ba0e4630d9fc9625ebf72da1f6a13a1261",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_kafkars.rs"
+    },
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/support/files.rs",
+      "source_sha256": "c70705f6e57d36c1f2d36d4703111cddd311f1879e16e8e02763d7d7fcea1969",
+      "function": "collect",
+      "start_line": 91,
+      "end_line": 107,
+      "extracted_sha256": "9980558b0a0b9710f876c0df1e241d287b793beb42887efa81de275c3621c579",
+      "harness": "crates/zrail-rust/src/rules/size/snapshot/legacy_kafkars.rs"
+    }
+  ]
+}

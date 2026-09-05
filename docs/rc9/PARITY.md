@@ -135,9 +135,10 @@ report before proposing any authority update.
   reason/owner/issue allowance above hard. Rafter reports target/soft excess as
   warnings and fails only above hard without a reviewed tracking allowance.
   These have different acceptance semantics.
-- Rafter's root size guard includes `fuzz` and `bench-compare`; the separately
-  governed reference workspace has its own size evaluator embedded in an actual
-  build/test/doc runner. Replacing that evaluator must preserve the runner.
+- Rafter's root size guard scans `crates` and `fuzz`. It does not scan
+  `bench-compare` or `reference`; those separately governed workspaces require
+  their own inventory and invocation. The reference size evaluator is embedded
+  in an actual build/test/doc runner, which remains intact.
 - Rafter's readability guard intentionally permits data declarations in its
   facades. Applying wiring-only policy there would be a policy change.
 - kafka-driver prohibits the text `zrail` in its current CI workflow. Its proposed
