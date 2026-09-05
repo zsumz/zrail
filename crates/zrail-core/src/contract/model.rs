@@ -3,6 +3,7 @@ mod analysis;
 mod dependencies;
 mod evidence;
 mod feature_worlds;
+mod files;
 mod macros;
 mod policy;
 mod repository;
@@ -23,6 +24,11 @@ pub use evidence::{
     TestExecutionIdentity, TestMirrorContract,
 };
 pub use feature_worlds::{CargoFeaturePackageContract, CargoFeatureWorldContract};
+pub use files::{
+    RepositoryCaseMode, RepositoryEntryMode, RepositoryFilePredicate, RepositoryFileRule,
+    RepositoryLiteralMode, RepositoryLiteralPredicate, RepositoryNameBasis, RepositoryNamePart,
+    RepositoryTextNormalization,
+};
 pub use macros::{MacroExpansionAllow, MacroExpansionContract};
 pub use policy::{
     DependencyRule, EffectBoundary, LayerContract, LayerDependencies, OwnerContract,

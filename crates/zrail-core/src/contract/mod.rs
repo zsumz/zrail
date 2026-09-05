@@ -11,6 +11,7 @@ mod modes;
 mod validate;
 mod validate_dependencies;
 mod validate_evidence;
+mod validate_files;
 mod validate_limits;
 mod validate_paths;
 mod validate_ratchet;
@@ -40,11 +41,13 @@ pub use model::{
     ItemMacroBinding, ItemMacroBindingKind, ItemMacroContract, ItemMacroManifest, LayerContract,
     LayerDependencies, MAX_TEST_MIRROR_INPUTS, MacroAmbientInputs, MacroExpansionAllow,
     MacroExpansionContract, OutDirSourceContract, OwnerContract, ProfileContract, RatchetContract,
-    RepositoryContract, RustDuplicationContract, RustFieldContract, RustSourceContract,
-    RustTypeContract, RustTypeKind, ScopeContract, ScopedBudgetContract, SizeExceptionContract,
-    SizeExceptionMetadata, SizePolicyContract, SizeRole, SizeTargetMode, SizeThresholds,
-    SourceContract, SymbolBoundary, SyntaxBoundary, TestExecutionIdentity, TestMirrorContract,
-    TypeProhibition,
+    RepositoryCaseMode, RepositoryContract, RepositoryEntryMode, RepositoryFilePredicate,
+    RepositoryFileRule, RepositoryLiteralMode, RepositoryLiteralPredicate, RepositoryNameBasis,
+    RepositoryNamePart, RepositoryTextNormalization, RustDuplicationContract, RustFieldContract,
+    RustSourceContract, RustTypeContract, RustTypeKind, ScopeContract, ScopedBudgetContract,
+    SizeExceptionContract, SizeExceptionMetadata, SizePolicyContract, SizeRole, SizeTargetMode,
+    SizeThresholds, SourceContract, SymbolBoundary, SyntaxBoundary, TestExecutionIdentity,
+    TestMirrorContract, TypeProhibition,
 };
 pub use modes::{
     AsyncSyntax, CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,

@@ -37,6 +37,7 @@ pub(super) fn minimal_contract() -> Contract {
         schema: 1,
         adapters: vec!["rust".into()],
         repository: RepositoryContract {
+            files: Vec::new(),
             roots: vec!["crates".into()],
             exclude: Vec::new(),
             workspace_members: ExactMode::Exact,

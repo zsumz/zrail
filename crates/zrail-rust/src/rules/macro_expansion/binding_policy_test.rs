@@ -239,6 +239,7 @@ fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
         schema: 1,
         adapters: vec!["rust".into()],
         repository: RepositoryContract {
+            files: Vec::new(),
             roots: vec![".".into()],
             exclude: Vec::new(),
             workspace_members: ExactMode::Exact,

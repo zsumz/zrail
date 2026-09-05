@@ -46,6 +46,11 @@ pub(crate) fn load_model_with_bundle(
     root: &Path,
     bundle: ContractBundle,
 ) -> Result<RepositoryModel, CheckError> {
+    if !bundle.contract.repository.files.is_empty() {
+        return Err(CheckError::from_message(
+            "REP-FILE-000: repository-file predicate evaluation is not yet implemented; no trusted analysis or lock can be produced",
+        ));
+    }
     let mut inventory = inventory_repository(root, &bundle.contract)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     let mut cargo = load_cargo_workspace(&inventory)

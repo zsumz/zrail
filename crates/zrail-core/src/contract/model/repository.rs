@@ -11,6 +11,8 @@ use super::super::modes::{ExactMode, PolicyMode, SymlinkMode};
     #[doc = "Repository-relative directories included in architecture analysis."] pub roots: Vec<String>,
     #[serde(default)]
     #[doc = "Repository-relative patterns excluded from analysis."] pub exclude: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[doc = "Closed path and raw-file assertions, independent of Rust source exclusions."] pub files: Vec<super::RepositoryFileRule>,
     #[doc = "Required relationship between declared and discovered workspace members."] pub workspace_members: ExactMode,
     #[doc = "Policy for nested Git repositories beneath governed roots."] pub nested_git: PolicyMode,
     #[doc = "Policy for Git submodules beneath governed roots."] pub submodules: PolicyMode,

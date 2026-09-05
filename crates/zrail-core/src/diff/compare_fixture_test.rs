@@ -14,6 +14,7 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
         schema: 1,
         adapters: vec!["rust".into()],
         repository: RepositoryContract {
+            files: Vec::new(),
             roots: vec!["crates".into()],
             exclude: Vec::new(),
             workspace_members: ExactMode::Exact,

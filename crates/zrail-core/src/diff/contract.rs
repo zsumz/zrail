@@ -19,6 +19,14 @@ pub(super) fn compare(before: &Contract, after: &Contract) -> Vec<ArchitectureCh
         &mut changes,
     );
     boundaries::compare_repository(before, after, &mut changes);
+    if before.repository.files != after.repository.files {
+        changes.push(ArchitectureChange::new(
+            ChangeKind::Unknown,
+            "repository.files",
+            "repository",
+            "repository-file policy semantics require review while the new evaluator is under development",
+        ));
+    }
     analysis::compare(before, after, &mut changes);
     source::compare(before, after, &mut changes);
     topology::compare(before, after, &mut changes);
