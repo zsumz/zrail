@@ -91,10 +91,12 @@ fn frozen_kafkars_negative_fixture_reports_each_architectural_violation() {
     repository.write("src/lib.rs", "//! Wiring.\nmod child;\nmod declared;\n");
     repository.lock();
     assert_eq!(repository.check().report.status, ReportStatus::Pass);
-    repository.write(
-        "src/lib.rs",
-        include_str!("fixtures/rc9/kafkars-facade-invalid.rs.txt"),
-    );
+    let fixture = std::fs::read_to_string(
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/fixtures/rc9/kafkars-facade-invalid.rs.txt"),
+    )
+    .expect("read frozen facade fixture");
+    repository.write("src/lib.rs", &fixture);
     // Keep the unrelated child mounted so orphan diagnostics cannot satisfy the test.
     repository.write(
         "src/declared.rs",
