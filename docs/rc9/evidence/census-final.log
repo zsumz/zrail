@@ -1,0 +1,10 @@
+   Compiling zrail-rust v0.0.3-rc.8 (/root/zrail-rc9/crates/zrail-rust)
+    Finished `test` profile [unoptimized] target(s) in 15.70s
+     Running tests/rc9_inventory.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/rc9_inventory-2cf52ca640bf3ef7)
+
+running 2 tests
+test census_distinguishes_code_assertions_helpers_and_opaque_inputs ... ok
+9792 tracked files, 72155 candidates; sha256:69c6393f176df64fff2e010968f18efb4e06781385b1bd6896de013411899ba6test write_frozen_assertion_census ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 27.06s
+

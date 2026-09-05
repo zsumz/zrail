@@ -1,0 +1,271 @@
+{
+  "schema": 1,
+  "base_commit": "5a368379360104ca19745326cfcef48d22a6452b",
+  "contract_sha256": "81b16717537fe63725367a198e8b63a12f5caf2ee4d8f9ffc29c589985426784",
+  "report_sha256": "6594cbd483844fa7246c69861c2fd7db5d105e9e11cbdde0c00644e966b81a0f",
+  "report": {
+    "schema": 1,
+    "from_semantics": 6,
+    "to_semantics": 7,
+    "summary": {
+      "preserved": 36,
+      "retired": 0,
+      "newly_observable": 0,
+      "changed_interpretation": 0
+    },
+    "entries": [
+      {
+        "classification": "preserved",
+        "rail": "analysis.cargo-features",
+        "subject": "workspace",
+        "before": "0bb9192effdb5af624afe6f0b82b528f75ad768f379ff30a87268c42d7578558",
+        "after": "0bb9192effdb5af624afe6f0b82b528f75ad768f379ff30a87268c42d7578558"
+      },
+      {
+        "classification": "preserved",
+        "rail": "analysis.cargo-lock",
+        "subject": "Cargo.lock",
+        "before": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+        "after": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e"
+      },
+      {
+        "classification": "preserved",
+        "rail": "analysis.contract-source",
+        "subject": "zrail.toml",
+        "before": "0dcac6bcaedafa103d17a31058aff40bc73e3af2d367c2b657f9bbb4d7a77f5c",
+        "after": "0dcac6bcaedafa103d17a31058aff40bc73e3af2d367c2b657f9bbb4d7a77f5c"
+      },
+      {
+        "classification": "preserved",
+        "rail": "analysis.exclusions",
+        "subject": "repository",
+        "before": "ef568a36a951491c0b26fe6b44546c6ddde12f6decb83add621e64119697e04d",
+        "after": "ef568a36a951491c0b26fe6b44546c6ddde12f6decb83add621e64119697e04d"
+      },
+      {
+        "classification": "preserved",
+        "rail": "analysis.feature-world-count",
+        "subject": "workspace",
+        "before": "1",
+        "after": "1"
+      },
+      {
+        "classification": "preserved",
+        "rail": "analysis.feature-worlds",
+        "subject": "workspace",
+        "before": "86fb12da86416b128876dd9acd57ead96deea36d3b3f51de50a2f7ef16b752d9",
+        "after": "86fb12da86416b128876dd9acd57ead96deea36d3b3f51de50a2f7ef16b752d9"
+      },
+      {
+        "classification": "preserved",
+        "rail": "analysis.inventory",
+        "subject": "repository",
+        "before": "c5e2062e6e26b6ca02865ddc450ccddc270472a5796e1f9849f0af35d7d068c6",
+        "after": "c5e2062e6e26b6ca02865ddc450ccddc270472a5796e1f9849f0af35d7d068c6"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-core:serde:serde:Normal:",
+        "before": "{\"alias\":\"serde\",\"name\":\"serde\",\"crate_root\":\"serde\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"features\":[\"derive\"],\"source\":{\"kind\":\"registry\",\"requirement\":\"=1.0.229\"}}",
+        "after": "{\"alias\":\"serde\",\"name\":\"serde\",\"crate_root\":\"serde\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"features\":[\"derive\"],\"source\":{\"kind\":\"registry\",\"requirement\":\"=1.0.229\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-core:serde_json:serde_json:Normal:",
+        "before": "{\"alias\":\"serde_json\",\"name\":\"serde_json\",\"crate_root\":\"serde_json\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.151\"}}",
+        "after": "{\"alias\":\"serde_json\",\"name\":\"serde_json\",\"crate_root\":\"serde_json\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.151\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-core:sha2:sha2:Normal:",
+        "before": "{\"alias\":\"sha2\",\"name\":\"sha2\",\"crate_root\":\"sha2\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"0.10.9\"}}",
+        "after": "{\"alias\":\"sha2\",\"name\":\"sha2\",\"crate_root\":\"sha2\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"0.10.9\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-core:toml:toml:Normal:",
+        "before": "{\"alias\":\"toml\",\"name\":\"toml\",\"crate_root\":\"toml\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"0.8.23\"}}",
+        "after": "{\"alias\":\"toml\",\"name\":\"toml\",\"crate_root\":\"toml\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"0.8.23\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-core:toml_edit:toml_edit:Normal:",
+        "before": "{\"alias\":\"toml_edit\",\"name\":\"toml_edit\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"0.22.27\"}}",
+        "after": "{\"alias\":\"toml_edit\",\"name\":\"toml_edit\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"0.22.27\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-rust:flate2:flate2:Normal:",
+        "before": "{\"alias\":\"flate2\",\"name\":\"flate2\",\"crate_root\":\"flate2\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":false,\"features\":[\"rust_backend\"],\"source\":{\"kind\":\"registry\",\"requirement\":\"1.1.10\"}}",
+        "after": "{\"alias\":\"flate2\",\"name\":\"flate2\",\"crate_root\":\"flate2\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":false,\"features\":[\"rust_backend\"],\"source\":{\"kind\":\"registry\",\"requirement\":\"1.1.10\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-rust:proc-macro2:proc-macro2:Normal:",
+        "before": "{\"alias\":\"proc-macro2\",\"name\":\"proc-macro2\",\"crate_root\":\"proc_macro2\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"features\":[\"span-locations\"],\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.107\"}}",
+        "after": "{\"alias\":\"proc-macro2\",\"name\":\"proc-macro2\",\"crate_root\":\"proc_macro2\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"features\":[\"span-locations\"],\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.107\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-rust:quote:quote:Normal:",
+        "before": "{\"alias\":\"quote\",\"name\":\"quote\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.47\"}}",
+        "after": "{\"alias\":\"quote\",\"name\":\"quote\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.47\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-rust:semver:semver:Normal:",
+        "before": "{\"alias\":\"semver\",\"name\":\"semver\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.28\"}}",
+        "after": "{\"alias\":\"semver\",\"name\":\"semver\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.28\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-rust:serde:serde:Normal:",
+        "before": "{\"alias\":\"serde\",\"name\":\"serde\",\"crate_root\":\"serde\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"features\":[\"derive\"],\"source\":{\"kind\":\"registry\",\"requirement\":\"=1.0.229\"}}",
+        "after": "{\"alias\":\"serde\",\"name\":\"serde\",\"crate_root\":\"serde\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"features\":[\"derive\"],\"source\":{\"kind\":\"registry\",\"requirement\":\"=1.0.229\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-rust:serde_json:serde_json:Normal:",
+        "before": "{\"alias\":\"serde_json\",\"name\":\"serde_json\",\"crate_root\":\"serde_json\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.151\"}}",
+        "after": "{\"alias\":\"serde_json\",\"name\":\"serde_json\",\"crate_root\":\"serde_json\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.151\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-rust:syn:syn:Normal:",
+        "before": "{\"alias\":\"syn\",\"name\":\"syn\",\"crate_root\":\"syn\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"features\":[\"extra-traits\",\"full\",\"visit\"],\"source\":{\"kind\":\"registry\",\"requirement\":\"2.0.119\"}}",
+        "after": "{\"alias\":\"syn\",\"name\":\"syn\",\"crate_root\":\"syn\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"features\":[\"extra-traits\",\"full\",\"visit\"],\"source\":{\"kind\":\"registry\",\"requirement\":\"2.0.119\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-rust:tar:tar:Normal:",
+        "before": "{\"alias\":\"tar\",\"name\":\"tar\",\"crate_root\":\"tar\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":false,\"source\":{\"kind\":\"registry\",\"requirement\":\"0.4.46\"}}",
+        "after": "{\"alias\":\"tar\",\"name\":\"tar\",\"crate_root\":\"tar\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":false,\"source\":{\"kind\":\"registry\",\"requirement\":\"0.4.46\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-rust:toml:toml:Normal:",
+        "before": "{\"alias\":\"toml\",\"name\":\"toml\",\"crate_root\":\"toml\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"0.8.23\"}}",
+        "after": "{\"alias\":\"toml\",\"name\":\"toml\",\"crate_root\":\"toml\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"0.8.23\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-rust:unicode-ident:unicode-ident:Normal:",
+        "before": "{\"alias\":\"unicode-ident\",\"name\":\"unicode-ident\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.24\"}}",
+        "after": "{\"alias\":\"unicode-ident\",\"name\":\"unicode-ident\",\"kind\":\"normal\",\"scope\":\"external\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"registry\",\"requirement\":\"1.0.24\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-rust:zrail-core:zrail-core:Normal:",
+        "before": "{\"alias\":\"zrail-core\",\"name\":\"zrail-core\",\"crate_root\":\"zrail_core\",\"kind\":\"normal\",\"scope\":\"internal\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"workspace-member\",\"directory\":\"crates/zrail-core\",\"requirement\":\"=0.0.3-rc.8\"}}",
+        "after": "{\"alias\":\"zrail-core\",\"name\":\"zrail-core\",\"crate_root\":\"zrail_core\",\"kind\":\"normal\",\"scope\":\"internal\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"workspace-member\",\"directory\":\"crates/zrail-core\",\"requirement\":\"=0.0.3-rc.8\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-testkit:zrail-core:zrail-core:Development:",
+        "before": "{\"alias\":\"zrail-core\",\"name\":\"zrail-core\",\"crate_root\":\"zrail_core\",\"kind\":\"development\",\"scope\":\"internal\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"workspace-member\",\"directory\":\"crates/zrail-core\",\"requirement\":\"=0.0.3-rc.8\"}}",
+        "after": "{\"alias\":\"zrail-core\",\"name\":\"zrail-core\",\"crate_root\":\"zrail_core\",\"kind\":\"development\",\"scope\":\"internal\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"workspace-member\",\"directory\":\"crates/zrail-core\",\"requirement\":\"=0.0.3-rc.8\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail-testkit:zrail-rust:zrail-rust:Development:",
+        "before": "{\"alias\":\"zrail-rust\",\"name\":\"zrail-rust\",\"crate_root\":\"zrail_rust\",\"kind\":\"development\",\"scope\":\"internal\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"workspace-member\",\"directory\":\"crates/zrail-rust\",\"requirement\":\"=0.0.3-rc.8\"}}",
+        "after": "{\"alias\":\"zrail-rust\",\"name\":\"zrail-rust\",\"crate_root\":\"zrail_rust\",\"kind\":\"development\",\"scope\":\"internal\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"workspace-member\",\"directory\":\"crates/zrail-rust\",\"requirement\":\"=0.0.3-rc.8\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail:zrail-core:zrail-core:Normal:",
+        "before": "{\"alias\":\"zrail-core\",\"name\":\"zrail-core\",\"crate_root\":\"zrail_core\",\"kind\":\"normal\",\"scope\":\"internal\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"workspace-member\",\"directory\":\"crates/zrail-core\",\"requirement\":\"=0.0.3-rc.8\"}}",
+        "after": "{\"alias\":\"zrail-core\",\"name\":\"zrail-core\",\"crate_root\":\"zrail_core\",\"kind\":\"normal\",\"scope\":\"internal\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"workspace-member\",\"directory\":\"crates/zrail-core\",\"requirement\":\"=0.0.3-rc.8\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "dependency.resolved-edge",
+        "subject": "zrail:zrail-rust:zrail-rust:Normal:",
+        "before": "{\"alias\":\"zrail-rust\",\"name\":\"zrail-rust\",\"crate_root\":\"zrail_rust\",\"kind\":\"normal\",\"scope\":\"internal\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"workspace-member\",\"directory\":\"crates/zrail-rust\",\"requirement\":\"=0.0.3-rc.8\"}}",
+        "after": "{\"alias\":\"zrail-rust\",\"name\":\"zrail-rust\",\"crate_root\":\"zrail_rust\",\"kind\":\"normal\",\"scope\":\"internal\",\"optional\":false,\"default_features\":true,\"source\":{\"kind\":\"workspace-member\",\"directory\":\"crates/zrail-rust\",\"requirement\":\"=0.0.3-rc.8\"}}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "gate.lock",
+        "subject": "check",
+        "before": "{\"name\":\"check\",\"path\":\"scripts/check\",\"sha256\":\"647036c5e76fc3b5a151f72e12cb05d002e251f7db2939501c227eacbc9366f5\",\"input\":[{\"path\":\".gitignore\",\"sha256\":\"7066af9c9876fc4f998a35dafa81084a22ff63dd21841e3f47ef7a3f7046db25\"},{\"path\":\"Cargo.toml\",\"sha256\":\"11d9acf35e9b1c4211981b7ecca4f515f949bbe1a6fbbe6d509e948fff275752\"},{\"path\":\"clippy.toml\",\"sha256\":\"2122f85d49f342df8bf22663c398b8b02fd39e7e520d721f000e24d757b84e32\"},{\"path\":\"crates/zrail-cli/Cargo.toml\",\"sha256\":\"88a20d40aa7341a466d45d656a8b340f7c7c0b2d906f578aa33b84c478b5b051\"},{\"path\":\"crates/zrail-core/Cargo.toml\",\"sha256\":\"59969385b5609a22b5d6be2074744834f96b50850d94fc4e4221d5cd34d8e85f\"},{\"path\":\"crates/zrail-rust/Cargo.toml\",\"sha256\":\"12cb9f54f08391b5c3ff7c086962069b649ad128d986ca5ddb6996c755ce73dd\"},{\"path\":\"crates/zrail-testkit/Cargo.toml\",\"sha256\":\"1aa81488422c00a6c527b92584557cd3453d3ca7602de2658ea27e7e04974c0b\"},{\"path\":\"rust-toolchain.toml\",\"sha256\":\"279d77167cec5426fa80f457cd066dc74a360fbe4e2816f4f3fa01487a918fdc\"},{\"path\":\"rustfmt.toml\",\"sha256\":\"45e07033c8cd89ed400ee4e96ec608e338e89822233abd6e56c85040ece66520\"},{\"path\":\"scripts/package-check\",\"sha256\":\"87728ee95d8e3812b8be46770a95fd71796034a22e4df5629af7269a04c20f6e\"},{\"path\":\"scripts/stage-crate-source.py\",\"sha256\":\"5afcd0dedebf4d7dabe6082668a0a6be38cb72213228559f0b08d5e283e2209b\"},{\"path\":\"scripts/structure-check\",\"sha256\":\"9ea105b88ae4bb547699df0ba97cac461fc8ddd99ec6323625510c8a8f3e4627\"}]}",
+        "after": "{\"name\":\"check\",\"path\":\"scripts/check\",\"sha256\":\"647036c5e76fc3b5a151f72e12cb05d002e251f7db2939501c227eacbc9366f5\",\"input\":[{\"path\":\".gitignore\",\"sha256\":\"7066af9c9876fc4f998a35dafa81084a22ff63dd21841e3f47ef7a3f7046db25\"},{\"path\":\"Cargo.toml\",\"sha256\":\"11d9acf35e9b1c4211981b7ecca4f515f949bbe1a6fbbe6d509e948fff275752\"},{\"path\":\"clippy.toml\",\"sha256\":\"2122f85d49f342df8bf22663c398b8b02fd39e7e520d721f000e24d757b84e32\"},{\"path\":\"crates/zrail-cli/Cargo.toml\",\"sha256\":\"88a20d40aa7341a466d45d656a8b340f7c7c0b2d906f578aa33b84c478b5b051\"},{\"path\":\"crates/zrail-core/Cargo.toml\",\"sha256\":\"59969385b5609a22b5d6be2074744834f96b50850d94fc4e4221d5cd34d8e85f\"},{\"path\":\"crates/zrail-rust/Cargo.toml\",\"sha256\":\"12cb9f54f08391b5c3ff7c086962069b649ad128d986ca5ddb6996c755ce73dd\"},{\"path\":\"crates/zrail-testkit/Cargo.toml\",\"sha256\":\"1aa81488422c00a6c527b92584557cd3453d3ca7602de2658ea27e7e04974c0b\"},{\"path\":\"rust-toolchain.toml\",\"sha256\":\"279d77167cec5426fa80f457cd066dc74a360fbe4e2816f4f3fa01487a918fdc\"},{\"path\":\"rustfmt.toml\",\"sha256\":\"45e07033c8cd89ed400ee4e96ec608e338e89822233abd6e56c85040ece66520\"},{\"path\":\"scripts/package-check\",\"sha256\":\"87728ee95d8e3812b8be46770a95fd71796034a22e4df5629af7269a04c20f6e\"},{\"path\":\"scripts/stage-crate-source.py\",\"sha256\":\"5afcd0dedebf4d7dabe6082668a0a6be38cb72213228559f0b08d5e283e2209b\"},{\"path\":\"scripts/structure-check\",\"sha256\":\"9ea105b88ae4bb547699df0ba97cac461fc8ddd99ec6323625510c8a8f3e4627\"}]}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "gate.lock",
+        "subject": "ci",
+        "before": "{\"name\":\"ci\",\"path\":\".github/workflows/ci.yml\",\"sha256\":\"6fc107adb9715513a64f423c98b5dee44819c6166e546f8220ff63d079444573\",\"input\":[{\"path\":\".github/actions/setup-rust/action.yml\",\"sha256\":\"e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de\"}]}",
+        "after": "{\"name\":\"ci\",\"path\":\".github/workflows/ci.yml\",\"sha256\":\"6fc107adb9715513a64f423c98b5dee44819c6166e546f8220ff63d079444573\",\"input\":[{\"path\":\".github/actions/setup-rust/action.yml\",\"sha256\":\"e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de\"}]}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "gate.lock",
+        "subject": "release",
+        "before": "{\"name\":\"release\",\"path\":\".github/workflows/release.yml\",\"sha256\":\"00606d62ff07ab9ab89ab81bd7c8f9709c18e7dfcee81dec42116d523293f2f5\",\"input\":[{\"path\":\".github/actions/setup-rust/action.yml\",\"sha256\":\"e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de\"},{\"path\":\"CHANGELOG.md\",\"sha256\":\"aad8d0b900b073afc0cc9a68e129ccdce7657925cd3f4d22044466cec4f4b8b4\"},{\"path\":\"LICENSE\",\"sha256\":\"cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30\"},{\"path\":\"README.md\",\"sha256\":\"c9841030c9a99e615614fe0aa5f56a916ff7a6dff012d6efcb213c401baadc33\"},{\"path\":\"scripts/package-release.py\",\"sha256\":\"7bca6de5113c257fd2dd0bd105be55c3ec0609d4366c396afd1932181f0465f1\"},{\"path\":\"scripts/publish-crates\",\"sha256\":\"10fd81f20d42947491b24491eb65b6523664f3c638907f69ac9637d89d5ae40b\"},{\"path\":\"scripts/release-notes.py\",\"sha256\":\"3410d00085d75c9e5da6ba5bc4f6e1da031cf76f73529808969d8ddbd71ced18\"},{\"path\":\"scripts/release-state.py\",\"sha256\":\"2d3f346c1389bedd6bad3ab5192c81ffb690b5c7e407c2925bf7b4bf336b252a\"},{\"path\":\"scripts/stage-crate-source.py\",\"sha256\":\"5afcd0dedebf4d7dabe6082668a0a6be38cb72213228559f0b08d5e283e2209b\"}]}",
+        "after": "{\"name\":\"release\",\"path\":\".github/workflows/release.yml\",\"sha256\":\"00606d62ff07ab9ab89ab81bd7c8f9709c18e7dfcee81dec42116d523293f2f5\",\"input\":[{\"path\":\".github/actions/setup-rust/action.yml\",\"sha256\":\"e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de\"},{\"path\":\"CHANGELOG.md\",\"sha256\":\"aad8d0b900b073afc0cc9a68e129ccdce7657925cd3f4d22044466cec4f4b8b4\"},{\"path\":\"LICENSE\",\"sha256\":\"cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30\"},{\"path\":\"README.md\",\"sha256\":\"c9841030c9a99e615614fe0aa5f56a916ff7a6dff012d6efcb213c401baadc33\"},{\"path\":\"scripts/package-release.py\",\"sha256\":\"7bca6de5113c257fd2dd0bd105be55c3ec0609d4366c396afd1932181f0465f1\"},{\"path\":\"scripts/publish-crates\",\"sha256\":\"10fd81f20d42947491b24491eb65b6523664f3c638907f69ac9637d89d5ae40b\"},{\"path\":\"scripts/release-notes.py\",\"sha256\":\"3410d00085d75c9e5da6ba5bc4f6e1da031cf76f73529808969d8ddbd71ced18\"},{\"path\":\"scripts/release-state.py\",\"sha256\":\"2d3f346c1389bedd6bad3ab5192c81ffb690b5c7e407c2925bf7b4bf336b252a\"},{\"path\":\"scripts/stage-crate-source.py\",\"sha256\":\"5afcd0dedebf4d7dabe6082668a0a6be38cb72213228559f0b08d5e283e2209b\"}]}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "gate.lock",
+        "subject": "security",
+        "before": "{\"name\":\"security\",\"path\":\".github/workflows/security.yml\",\"sha256\":\"4c95470b78eab4c4af54c79e987bf8ca406776a2d0813783f8ce67d69d0359d9\",\"input\":[{\"path\":\".github/actions/setup-rust/action.yml\",\"sha256\":\"e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de\"}]}",
+        "after": "{\"name\":\"security\",\"path\":\".github/workflows/security.yml\",\"sha256\":\"4c95470b78eab4c4af54c79e987bf8ca406776a2d0813783f8ce67d69d0359d9\",\"input\":[{\"path\":\".github/actions/setup-rust/action.yml\",\"sha256\":\"e260d0845a1d394b10c7b1dea7c54de8683a4d5010c2ce07a8423b58c52671de\"}]}"
+      },
+      {
+        "classification": "preserved",
+        "rail": "lock.contract",
+        "subject": "zrail.toml",
+        "before": "81b16717537fe63725367a198e8b63a12f5caf2ee4d8f9ffc29c589985426784",
+        "after": "81b16717537fe63725367a198e8b63a12f5caf2ee4d8f9ffc29c589985426784"
+      },
+      {
+        "classification": "preserved",
+        "rail": "repository.package",
+        "subject": "zrail",
+        "before": "zrail",
+        "after": "zrail"
+      },
+      {
+        "classification": "preserved",
+        "rail": "repository.package",
+        "subject": "zrail-core",
+        "before": "zrail-core",
+        "after": "zrail-core"
+      },
+      {
+        "classification": "preserved",
+        "rail": "repository.package",
+        "subject": "zrail-rust",
+        "before": "zrail-rust",
+        "after": "zrail-rust"
+      },
+      {
+        "classification": "preserved",
+        "rail": "repository.package",
+        "subject": "zrail-testkit",
+        "before": "zrail-testkit",
+        "after": "zrail-testkit"
+      }
+    ]
+  }
+}

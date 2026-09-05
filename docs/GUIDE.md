@@ -727,6 +727,11 @@ requires protected authority review. Analyzer semantics advance from epoch 6
 to 7; lock schema remains 3. `migrate-lock` supports rc8's epoch 6 and all earlier
 supported released epochs. A migration report still requires human acceptance.
 
+Existing TOML contracts need no new field to retain their meaning. Rust library
+callers constructing `FileRoleContract` directly must add `mode: None` for the
+old behavior, and exhaustive matches must handle the new `FileRole` and
+`FacadeMode` variants. Coverage consumers must recognize schema 6.
+
 Written glob imports have a separate closed hygiene policy; name resolution
 continues to resolve globs regardless of this setting:
 

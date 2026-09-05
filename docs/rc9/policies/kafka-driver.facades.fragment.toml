@@ -1,0 +1,23 @@
+# PARTIAL REVIEW FRAGMENT. Not a complete replacement contract or qualified bundle.
+# Source: kafkars/kafka-driver a45be8071e6a663cd4ae3142cc5304ece9fdf45e.
+# Closes no full-repository blocker until KD-FACADE-LIVE selection is qualified.
+[source.rust]
+facades = "wiring-only"
+
+[[source.rust.file_roles]]
+path = "tests/guardrails.rs"
+role = "test-facade"
+mode = "wiring-only"
+reason = "The frozen facade selector explicitly includes this guardrail test entrypoint."
+
+[[source.rust.file_roles]]
+path = "tests/guardrails/mod.rs"
+role = "test-facade"
+mode = "wiring-only"
+reason = "The frozen lib.rs/mod.rs predicate also governs this test module facade."
+
+[[source.rust.file_roles]]
+path = "tests/support/mod.rs"
+role = "test-facade"
+mode = "wiring-only"
+reason = "Shared test wiring retains the same external-module and import restriction."

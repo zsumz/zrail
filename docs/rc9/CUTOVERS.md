@@ -1,0 +1,111 @@
+# Downstream cutover plans
+
+Status: **blocked** for every repository. No downstream source, contract, lock,
+workflow, or guard has been changed. No complete replacement-policy bundle exists
+yet. The facade fragments in `policies/` are review material for one capability;
+they must not be installed as a repository's complete contract.
+
+`cutovers.json` in the rc9 testkit binds candidate checker paths and reviewed
+assertion links to the frozen revisions. Every candidate remains conditional:
+an unreviewed assertion in a mixed file prevents removing that file. There are
+no checkers or helper dependencies certified removable now.
+
+## kafka-driver first
+
+| Candidate evaluator | Replacement and prerequisites |
+| --- | --- |
+| `tests/guardrails/facade.rs` | `rust:facades` with `wiring-only`; exact test-facade declarations for `tests/guardrails.rs`, `tests/guardrails/mod.rs`, and `tests/support/mod.rs`. Close `KD-FACADE-LIVE` and verify full discovery. |
+| `tests/guardrails/file_size.rs` | Close `KD-BUDGET-*`: 100 facade, 240 production, 320 test; facade classification precedes test classification. |
+| `tests/guardrails/module_contract.rs` | Close `KD-MODULE-*`, including leading literal `//!` and component-stem bans. Parsed module documentation alone is insufficient. |
+| `tests/guardrails/capability.rs` | Close every `KD-CAPABILITY-*` raw-token and required-root assertion. Keep comments/string participation where authored policy requires it. |
+| `tests/guardrails/transport_authority.rs` | Close all five `KD-TRANSPORT-*` inventories and their detector fixtures. Preserve function-value `ExprPath` counts, written renames, method quantities, and exact implementing-type/trait sets. |
+| `tests/guardrails/dependency.rs`, `protocol_provenance.rs` | Preserve whole-lock bans and exact package/provenance counts (`KD-LOCK-*`), exact/subset dependency distinctions, feature ordering, optional/default features, and inheritance. Complete remaining assertion expansion. |
+| `tests/guardrails/release_graph.rs` | Preserve absent retired paths, forbidden declarations, and separate raw vocabulary predicates. |
+| `tests/guardrails/release_metadata.rs` | Preserve exact publication sets, inherited metadata, nonempty descriptions, file presence, and byte-equal license copies. |
+| `tests/guardrails/qualification.rs` | Preserve every workflow/script/text predicate and ordering requirement. Actual command execution remains separately evidenced. |
+| `tests/guardrails/test_location.rs` | Qualify sibling/test placement against the detector's actual cfg syntax. Record any stronger native reachability semantics explicitly. |
+| `tests/guardrails/support.rs`, `mod.rs`, `tests/guardrails.rs` | Remove only after every dependent assertion and detector fixture has a verified replacement. |
+
+The mission explicitly requires replacing `KD-CI-ENFORCEMENT`'s current blanket
+`!workflow.contains("zrail")` predicate. The proposed downstream change must add
+a required CI lane that verifies the protected rc9 archive/provenance, runs
+`zrail check`, reviews the contract/lock diff against a trusted base with grants
+denied, and verifies applicable execution receipts. Installing zrail is not the
+lane. A lane invoking `tests/guardrails.rs` is side-by-side evidence during the
+transition and cannot count as a stock replacement.
+
+Retain workspace behavioral tests, protocol fixtures, the deterministic simulator,
+real-broker probes, smoque scenarios, performance evidence evaluation, and the
+actual runners `scripts/check`, `scripts/qualify-packages`,
+`scripts/qualify-latest-compatible`, `scripts/prefetch-release-dependencies`, and
+`scripts/verify-release-repository`. Mixed scripts need assertion-level extraction
+before removing their static evaluator portions. Their execution cannot be
+replaced by matching text in a workflow.
+
+After all guard imports are gone, review whether `syn`, `serde`, and `toml`
+remain used elsewhere before proposing dev-dependency removal. None is certified
+removable by this audit slice.
+
+## Kafkars
+
+The candidate surface starts with
+`crates/kafka-client-guardrails/tests/`, its shared `support` modules, detector
+fixtures, `guardrails.toml`, and `contracts/invariants.toml`. It is not the whole
+inventory: source-only assertions outside that crate remain discovery blockers.
+
+The facade fragment uses `wiring-reexports`, preserving private import and
+`pub(self)` rejection. Close `KF-FACADE-LIVE` across configured roots, including
+four explicitly selected integration-test facades. Preserve the independently
+classified production/test/auxiliary size roles; no shared 300-line normalization
+is proposed.
+
+`KF-FETCH-ORDER-*` and `KF-FETCH-PRESENCE-*` remain stock-engine blockers. Keep
+their raw selection/order semantics visible while qualifying the requested
+function-scoped code predicates. Comments or unrelated nested code cannot become
+evidence for the proposed code predicates. Ownership allowlists do not cover
+these assertions.
+
+Translate ownership registries from canonical source identities, including their
+field read/write/borrow distinctions and explicit mutation-method lists. Complete
+the invariant planned/enforced, normative statement, evidence uniqueness, exact
+test reference, and gate relationship review before migrating the registry.
+
+Retain actual protocol, broker, state-machine, cancellation, bounded-resource,
+and simulation tests and all their fixtures. Retain the execution portions of
+`scripts/check`, `scripts/check-rust-lint`, and `scripts/check-rust-test`.
+`scripts/check-architecture` may become the stock enforcement invocation only
+after the ledger is complete; wrapping the guardrail crate would not replace it.
+Remove the dedicated checker crate or its parser dependencies only after every
+mixed assertion has been discharged and downstream qualification passes.
+
+## Rafter and independent workspaces
+
+Root, `reference`, `bench-compare`, and `fuzz` require explicit governance and
+invocations. Preserve the root workspace's existing completeness boundaries;
+do not grant cross-workspace inheritance to make one root command sufficient.
+
+| Candidate surface | Prerequisites |
+| --- | --- |
+| `crates/rafter/tests/readability_architecture_guard.rs` and support | Close `RF-FACADE-LIVE`, `RF-TEST-FACADE-LIVE`, and `RF-WIRE-*`; review every other assertion in this mixed file. Data declarations remain legal under its existing facade predicate. |
+| `crates/rafter/tests/invariant_tooling_architecture_guard/` and support | Close all `RF-PROCESS-*` requirements, including the exact 18 file/context/path entries; retain independent producer/verifier and intra-package domain boundaries. |
+| Public API/docs, publication, CI test inventory, size, and invariant catalog guards | Complete assertion and registry-instance inventory, document predicates, exact public sets, receipt input/outcome binding, and source/test mounting evidence. |
+| `scripts/reference-source-check` | Replace only the handwritten size evaluator after preserving its separate soft/hard behavior, exceptions, and source selection. Keep formatting, lint, test, and rustdoc execution. |
+| `scripts/reference-package-boundary-check`, `scripts/verify-action-pins`, related detector tests | Inventory every static manifest/workflow/path assertion; retain actual package construction and independent artifact verification. |
+| `scripts/private-name-scan` | Obtain `RF-PRIVATE-NAME-PATTERNS`, translate literal matching and file selection, and retain independently trusted Cargo archive-coverage evidence. |
+
+Retain TLA+ model checking and telemetry, Maelstrom workloads and history checks,
+Raft simulation/burn-in, codec/storage fixtures, reference process/package tests,
+`scripts/cargo-test-exact`, and the independent verification programs under
+`crates/rafter-invariants`. Their structural contracts are review work; their
+behavior and evidence verification must continue to execute.
+
+## Required cutover sequence
+
+1. Close all assertion discovery, unsupported predicate, and policy-input blockers.
+2. Review complete declarative bundles and any narrowly identified source changes.
+3. Qualify untouched snapshots and any separately identified patched snapshots;
+   run legacy and stock enforcement side by side with intended diagnostics.
+4. Review and accept authority only through the existing protected process.
+5. Open separately authorized downstream changes with exact deletion maps,
+   enforced CI, retained execution tools, fixture lineage, and receipt producers.
+6. Requalify each downstream revision before deleting any old evaluator.

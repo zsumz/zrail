@@ -1,0 +1,39 @@
+# rc9 release-note draft — blocked
+
+**Do not publish this as an rc9 release.** Versioning remains at rc8 because
+verified replacement coverage, full policy bundles, and downstream qualification
+are incomplete. No downstream guard has been removed.
+
+Implemented in the current branch:
+
+- Strict wiring facades with distinct import and re-export policy, preserving
+  existing declarative mode behavior.
+- Exact test-facade structure independent of test compilation and execution.
+- Effective facade modes, reasons, syntax quality, and complete violation lists
+  in explanation and coverage output; coverage schema 6.
+- Protected semantic comparison for the new modes and file roles; analyzer/lock
+  semantics 7 with schema 3 and the rc8 migration path retained.
+- Frozen-input discovery artifacts, source-bound assertion IDs, byte-exact
+  consumer facade predicates and counterexample, and reproducible trusted
+  kafka-driver guard execution.
+
+The audited zrail rc8 source is
+`5a368379360104ca19745326cfcef48d22a6452b`; its complete canonical gate passed in
+isolation. The three exact downstream source/tree identities are recorded in
+`snapshots.json`. Kafka-driver's 47 legacy guard tests passed; that is detector
+evidence, not stock replacement qualification. Kafkars and Rafter full suites
+have not been qualified by this branch.
+
+There are no applied downstream source changes, retired policies, or accepted
+authority grants. The proposed kafka-driver CI plan follows the mission's
+requirement to replace its zrail-text prohibition with real enforcement. Rafter's
+facade semantics have not been normalized to wiring-only, and consumer budgets
+have not been standardized to 300 lines.
+
+See `PARITY.md`, `BLOCKERS.md`, `QUALIFICATION.md`, and `CUTOVERS.md` for the exact
+remaining work. Scoped budgets, exact inventories, bounded Rust and document
+predicates, complete ownership/invariant translation, execution-receipt
+qualification, protected final lock review, rc9 versioning, and the complete
+final gate remain release blockers. The existing protected archive, provenance,
+and publication workflow remains the only release route after those blockers
+are closed and publishing/tagging are separately authorized.

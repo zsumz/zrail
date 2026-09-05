@@ -2452,6 +2452,52 @@
       ]
     },
     {
+      "id": "KD-CI-ENFORCEMENT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/qualification.rs",
+        "file_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/qualification.rs:35:5:assertion-macro",
+        "line": 35,
+        "column": 5,
+        "function": [
+          "ci_does_not_install_unenforced_zrail"
+        ],
+        "syntax_sha256": "184f45ec792ff345d548d4a225715d3177157caf791254818a56a1f9128b4112",
+        "instance": null
+      },
+      "intended_property": "The old workflow cannot contain an unenforced zrail installation.",
+      "selection": {
+        "path": ".github/workflows/ci.yml"
+      },
+      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "matching_semantics": {
+        "kind": "literal substring prohibition",
+        "value": "zrail",
+        "case_sensitive": true
+      },
+      "required_cardinality": {
+        "occurrences": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-CI-ENFORCEMENT",
+          "cause": "The mission explicitly requires replacing this prohibition with an enforced zrail lane. The new lane and its required policy/receipt evidence are not yet qualified."
+        }
+      ]
+    },
+    {
       "id": "KD-FACADE-FUNCTION",
       "repository": "kafkars/kafka-driver",
       "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
@@ -4978,8 +5024,116 @@
         "identity": "legacy bounded module-path normalization; import/expression contexts distinct"
       },
       "required_cardinality": {
-        "expected_keys": 18,
-        "count_per_key": 1
+        "exact_map": [
+          {
+            "file": "crates/rafter-invariants/src/provenance/source/checkout.rs",
+            "context": "Expression",
+            "path": "crate::execution::process::run_identity_command_in",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/mod.rs",
+            "context": "Import",
+            "path": "crate::execution::process::FinalizationPolicy",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/mod.rs",
+            "context": "Import",
+            "path": "crate::execution::process::TerminationPolicy",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/mod.rs",
+            "context": "Import",
+            "path": "crate::execution::process::base_environment",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/mod.rs",
+            "context": "Import",
+            "path": "crate::execution::process::duration_ms",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/evidence.rs",
+            "context": "Import",
+            "path": "crate::execution::process::BoundCommand",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/evidence.rs",
+            "context": "Import",
+            "path": "crate::execution::process::FinalizationPolicy",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/evidence.rs",
+            "context": "Import",
+            "path": "crate::execution::process::PendingProcessOutput",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/evidence.rs",
+            "context": "Import",
+            "path": "crate::execution::process::ProcessDeadlines",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/evidence.rs",
+            "context": "Import",
+            "path": "crate::execution::process::TerminationPolicy",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/runtime.rs",
+            "context": "Import",
+            "path": "crate::execution::process::capture_runtime_identities",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/output.rs",
+            "context": "Import",
+            "path": "crate::execution::process::ProcessOutput",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/adapter.rs",
+            "context": "Import",
+            "path": "crate::execution::process::ProcessDeadlines",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/producer/process/adapter.rs",
+            "context": "Expression",
+            "path": "crate::execution::process::await_next_target_stdout_prefix",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/verification/detector_replay/process.rs",
+            "context": "Import",
+            "path": "crate::execution::process::base_environment",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/verification/detector_replay/process.rs",
+            "context": "Import",
+            "path": "crate::execution::process::run_bounded",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/verification/detector_replay/process.rs",
+            "context": "Import",
+            "path": "crate::execution::process::BoundCommand",
+            "count": 1
+          },
+          {
+            "file": "crates/rafter-invariants/src/verification/detector_replay/process.rs",
+            "context": "Expression",
+            "path": "crate::execution::process::retained_diagnostics",
+            "count": 1
+          }
+        ]
       },
       "exception_semantics": "none",
       "disposition": "new engine capability",
@@ -5135,6 +5289,147 @@
         {
           "id": "RF-TEST-FACADE-LIVE",
           "cause": "Rafter permits data declarations; wiring modes would change policy. Exact raw-line or reviewed structural normalization remains open."
+        }
+      ]
+    },
+    {
+      "id": "RF-WIRE-ALIAS-ENTRY",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "source": {
+        "path": "crates/rafter/tests/readability_architecture_guard.rs",
+        "file_sha256": "dc69fa309d0d0bebde7f6eaa3f8fbcfd28dd96f071fae43d7667b9bd3c53d7f5",
+        "candidate_id": "zsumz/rafter:crates/rafter/tests/readability_architecture_guard.rs:158:5:assertion-macro",
+        "line": 158,
+        "column": 5,
+        "function": [
+          "codec_wire_tag_numbers_have_one_owner"
+        ],
+        "syntax_sha256": "7a36e5e2e3b3157f67910ee41ff68b51bafb54326e1cf1c4d8bce27588e5f6ba",
+        "instance": "constENTRY_"
+      },
+      "intended_property": "No legacy wire-tag declaration marker occurs outside the tag owner.",
+      "selection": {
+        "root": "crates/rafter-codec/src",
+        "exclude": "v1/tags.rs and legacy test-source selection"
+      },
+      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "matching_semantics": {
+        "kind": "literal substring per physical line after removing Rust char::is_whitespace characters",
+        "value": "constENTRY_",
+        "comments_and_strings": "participate"
+      },
+      "required_cardinality": {
+        "violations": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "RF-WIRE-ALIAS-ENTRY",
+          "cause": "The same final assertion combines expression-shape and raw-text checks; this independent raw-text branch also needs replacement."
+        }
+      ]
+    },
+    {
+      "id": "RF-WIRE-ALIAS-MEMBERSHIP",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "source": {
+        "path": "crates/rafter/tests/readability_architecture_guard.rs",
+        "file_sha256": "dc69fa309d0d0bebde7f6eaa3f8fbcfd28dd96f071fae43d7667b9bd3c53d7f5",
+        "candidate_id": "zsumz/rafter:crates/rafter/tests/readability_architecture_guard.rs:158:5:assertion-macro",
+        "line": 158,
+        "column": 5,
+        "function": [
+          "codec_wire_tag_numbers_have_one_owner"
+        ],
+        "syntax_sha256": "7a36e5e2e3b3157f67910ee41ff68b51bafb54326e1cf1c4d8bce27588e5f6ba",
+        "instance": "constMEMBERSHIP_"
+      },
+      "intended_property": "No legacy wire-tag declaration marker occurs outside the tag owner.",
+      "selection": {
+        "root": "crates/rafter-codec/src",
+        "exclude": "v1/tags.rs and legacy test-source selection"
+      },
+      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "matching_semantics": {
+        "kind": "literal substring per physical line after removing Rust char::is_whitespace characters",
+        "value": "constMEMBERSHIP_",
+        "comments_and_strings": "participate"
+      },
+      "required_cardinality": {
+        "violations": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "RF-WIRE-ALIAS-MEMBERSHIP",
+          "cause": "The same final assertion combines expression-shape and raw-text checks; this independent raw-text branch also needs replacement."
+        }
+      ]
+    },
+    {
+      "id": "RF-WIRE-ALIAS-MSG",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "source": {
+        "path": "crates/rafter/tests/readability_architecture_guard.rs",
+        "file_sha256": "dc69fa309d0d0bebde7f6eaa3f8fbcfd28dd96f071fae43d7667b9bd3c53d7f5",
+        "candidate_id": "zsumz/rafter:crates/rafter/tests/readability_architecture_guard.rs:158:5:assertion-macro",
+        "line": 158,
+        "column": 5,
+        "function": [
+          "codec_wire_tag_numbers_have_one_owner"
+        ],
+        "syntax_sha256": "7a36e5e2e3b3157f67910ee41ff68b51bafb54326e1cf1c4d8bce27588e5f6ba",
+        "instance": "constMSG_"
+      },
+      "intended_property": "No legacy wire-tag declaration marker occurs outside the tag owner.",
+      "selection": {
+        "root": "crates/rafter-codec/src",
+        "exclude": "v1/tags.rs and legacy test-source selection"
+      },
+      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "matching_semantics": {
+        "kind": "literal substring per physical line after removing Rust char::is_whitespace characters",
+        "value": "constMSG_",
+        "comments_and_strings": "participate"
+      },
+      "required_cardinality": {
+        "violations": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "RF-WIRE-ALIAS-MSG",
+          "cause": "The same final assertion combines expression-shape and raw-text checks; this independent raw-text branch also needs replacement."
         }
       ]
     },
@@ -5387,7 +5682,7 @@
     }
   ],
   "counts": {
-    "reviewed_assertion_instances": 99,
+    "reviewed_assertion_instances": 103,
     "implemented": 7,
     "verified_by_disposition": {
       "existing native rail": 0,
