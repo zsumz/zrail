@@ -1,7 +1,7 @@
 # Reproducing the current rc9 evidence
 
-Release verdict: **blocked**. The latest authored-method engine, canonical gate,
-and archive checkpoint is `e5f8178123658369ba8cbfbbc0ad068261be03c9`.
+Release verdict: **blocked**. The latest recorded canonical/archive checkpoint
+and exact-owner differential evidence use `faa606e33df78d4fb676338ac0c80cfb7df8d5ad`.
 Qualification-text parity retains its `7c6c01d0af8bdeee598e87c3c8fae97ce72b9a0c`
 identity, based on the exact audited rc8 commit. Whole-lock parity retains its `5251b4f056741768eb667c74d6e0949257ca843b`
 identity. Manifest-field parity retains its
@@ -838,3 +838,58 @@ cmp /fresh/expression-a.json /fresh/expression-b.json
 python3 scripts/rc9_method_evidence_test.py
 python3 scripts/rc9-inventory-check
 ```
+
+## Frozen exact-owner qualification
+
+The [owner evidence index](evidence/transport-owners-index.json) binds revision
+`faa606e33df78d4fb676338ac0c80cfb7df8d5ad`, tree
+`b17fd12ac90b9b387c75b37d8da6eb882514b1c2`, with the exact frozen Kafka-driver
+snapshot, original collector/assertions, translated policy, compiler and test
+binary. Both offline runs passed all 46 cases (15 accepts, 31 rejects) with
+identical 4,737,979-byte payloads, SHA-256
+`623558e93ecb1999fdb2298d7ae477fb81836aa117144eb6f49b7f9cb275a370`.
+
+The selected universe is 479 physical production-path files from 772 bound Rust
+inputs. The original assertion requires one owner file; native evidence also
+records its six authored path occurrences. `legacy_measure = "distinct-owner-files"`
+means each legacy map entry denotes one membership, independently of native
+occurrence quantities. Duplicate occurrences preserve owner membership; missing,
+relocated, substituted or additional owner files fail. The matrix also covers
+26 syntax contexts, the unchanged original detector, all six roots, path-based
+test exclusion, malformed files and expression-only fragments. The artifact
+validator independently checks actual quantities, all inputs and the complete
+mutation matrix; seven unittest methods reject 64 evidence mutations across the
+three verified transport families.
+
+At that same revision, `scripts/check` passed structure, artifact checks,
+formatting, strict workspace lint, 1,573 Rust tests (zero failures, 14 explicitly
+ignored), and rustdoc. Self-analysis completed with 1,024 Rust files, 1,615 base
+contexts, 1,178,356 projection work, and zero unresolved observations. The gate
+failed only on `LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028`, and `LOCK-030`.
+Its archive/cleanliness steps were not reached; separate `scripts/package-check`
+and explicit Git cleanliness checks passed. No authority was accepted. The
+initial `5efa1e2` Clippy failure remains recorded under its own revision.
+
+```sh
+# Use the pinned clean implementation checkout and prefetched frozen snapshots.
+scripts/check
+scripts/package-check
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots \
+ZRAIL_RC9_TRANSPORT_OWNERS_REPORT=/fresh/owners-a.json \
+  cargo test --locked --offline -p zrail-rust --lib \
+  qualify_all_frozen_kafka_driver_transport_owners -- --ignored
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots \
+ZRAIL_RC9_TRANSPORT_OWNERS_REPORT=/fresh/owners-b.json \
+  cargo test --locked --offline -p zrail-rust --lib \
+  qualify_all_frozen_kafka_driver_transport_owners -- --ignored
+cmp /fresh/owners-a.json /fresh/owners-b.json
+# Run these artifact checks in the later evidence commit containing the reports.
+python3 scripts/rc9_method_evidence_test.py
+python3 scripts/rc9-inventory-check
+```
+
+This verifies `KD-TRANSPORT-OWNERS` and `KD-TRANSPORT-DETECTOR-OWNERS` only.
+The import-rename capability at `b340af6` has targeted tests and strict workspace
+lint; it is not covered by this earlier checkpoint. Complete downstream policy
+bundles, Cargo/source completeness, final-release revision qualification and
+remaining transport assertions remain open.

@@ -1238,7 +1238,9 @@
           "removable_now": false,
           "replacement_policy_ids": [
             "rust:inventory:kd-transport-expression-paths",
-            "rust:inventory:kd-transport-methods"
+            "rust:inventory:kd-transport-methods",
+            "rust:inventory:kd-transport-owners",
+            "rust:inventory:kd-transport-renames"
           ],
           "assertion_review_complete": true,
           "assertion_review_notes": "All ten assertion sites and two parser-failure sites are reviewed. Complete frozen collector/helper semantics are recorded, including ExprPath function references, all syn::Path contexts, explicit source-side renames, duplicate-collapsing impl sets, and strict item parsing. Shared traversal/registry/read helpers remain separately inventoried.",
@@ -1246,16 +1248,16 @@
             "KD-TRANSPORT-ASSOCIATED",
             "KD-TRANSPORT-DETECTOR-ASSOCIATED",
             "KD-TRANSPORT-DETECTOR-METHODS",
+            "KD-TRANSPORT-DETECTOR-OWNERS",
             "KD-TRANSPORT-METHODS",
+            "KD-TRANSPORT-OWNERS",
             "KD-TRANSPORT-PARSE-FIXTURE",
             "KD-TRANSPORT-PARSE-PRODUCTION"
           ],
           "unverified_assertion_ids": [
             "KD-TRANSPORT-DETECTOR-IMPLS",
-            "KD-TRANSPORT-DETECTOR-OWNERS",
             "KD-TRANSPORT-DETECTOR-RENAMES",
             "KD-TRANSPORT-IMPLS",
-            "KD-TRANSPORT-OWNERS",
             "KD-TRANSPORT-RENAMES"
           ]
         }

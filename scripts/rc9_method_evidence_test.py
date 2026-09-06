@@ -20,6 +20,7 @@ class TransportEvidence(unittest.TestCase):
     LIVE_ID = "KD-TRANSPORT-METHODS"
     SUBJECT_KEY = "names"
     SUBJECT_VALUE = "poll_io"
+    FIXTURE_CASE = "duplicate-00"
 
     @classmethod
     def setUpClass(cls):
@@ -50,7 +51,7 @@ class TransportEvidence(unittest.TestCase):
             with self.subTest(mutation=mutation):
                 report = copy.deepcopy(self.report)
                 observed = report["observation"]
-                fixture = next(row for row in report["fixtures"] if row["case"] == "duplicate-00")
+                fixture = next(row for row in report["fixtures"] if row["case"] == self.FIXTURE_CASE)
                 if mutation == "selector":
                     observed["policy"]["exclude"].append("**/fresh.rs")
                 elif mutation == "world":
@@ -58,7 +59,11 @@ class TransportEvidence(unittest.TestCase):
                 elif mutation == "subject":
                     observed["policy"]["subject"][self.SUBJECT_KEY].remove(self.SUBJECT_VALUE)
                 elif mutation == "quantity":
-                    observed["policy"]["assertion"]["counts"][0]["count"] += 1
+                    policy_assertion = observed["policy"]["assertion"]
+                    if "counts" in policy_assertion:
+                        policy_assertion["counts"][0]["count"] += 1
+                    else:
+                        policy_assertion["owners"][0]["count"] = 1
                 elif mutation == "missing-case":
                     report["fixtures"].remove(fixture)
                 elif mutation == "duplicate-case":
@@ -74,7 +79,8 @@ class TransportEvidence(unittest.TestCase):
                 elif mutation == "wrong-count-map":
                     fixture["native"]["counts"][0]["name"] = "another_method"
                 elif mutation == "legacy-map":
-                    fixture["legacy_counts"] = report["legacy_counts"]
+                    fixture["legacy_counts"] = ({} if self.FIXTURE_CASE == "owner-duplicated"
+                                                else report["legacy_counts"])
                 elif mutation == "diagnostic":
                     fixture["diagnostic"] = "LOCK-028"
                 elif mutation == "claim":
@@ -102,6 +108,29 @@ class ExpressionEvidence(TransportEvidence):
     LIVE_ID = "KD-TRANSPORT-ASSOCIATED"
     SUBJECT_KEY = "suffixes"
     SUBJECT_VALUE = "ConnectionSet::new"
+
+
+class OwnerEvidence(TransportEvidence):
+    REPORT_FILE = "transport-owners-parity.json.gz"
+    IDS = MODULE["OWNER_IDS"]
+    EXPECTED_IDS = 2
+    LIVE_ID = "KD-TRANSPORT-OWNERS"
+    SUBJECT_VALUE = "ConnectionSet"
+    FIXTURE_CASE = "owner-duplicated"
+
+    def test_owner_membership_never_substitutes_for_actual_occurrence_quantities(self):
+        for mutation in ["measure", "quantity", "membership", "origins"]:
+            report = copy.deepcopy(self.report)
+            if mutation == "measure":
+                report["legacy_measure"] = "source-occurrences"
+            elif mutation == "quantity":
+                report["observation"]["counts"][0]["count"] = 1
+            elif mutation == "membership":
+                report["legacy_counts"] = {key: 6 for key in report["legacy_counts"]}
+            else:
+                report["fixture_origins_sha256"] = "0" * 64
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                VERIFY(self.assertions[self.LIVE_ID], report, self.assertions, self.files)
 
 
 if __name__ == "__main__":

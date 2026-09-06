@@ -22840,7 +22840,7 @@
           "RUST-INVENTORY-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_path_membership_preserves_every_written_owner_context",
@@ -22848,14 +22848,14 @@
           "rust-test:crates/zrail-testkit/tests/rust_inventories/owners_test.rs::complete_ownership_sets_reject_moved_and_additional_locations",
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_owner_assertion_rejects_missing_and_unexpected_members",
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::qualify_all_frozen_kafka_driver_transport_owners"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-OWNERS",
-          "cause": "Native written-path membership and exact owner sets are implemented with frozen syntax-context comparisons. Full frozen-scope differential fixtures and reproducible bound evidence remain required before verification."
+        ],
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-owners-parity.json.gz",
+          "payload_sha256": "623558e93ecb1999fdb2298d7ae477fb81836aa117144eb6f49b7f9cb275a370",
+          "implementation_commit": "faa606e33df78d4fb676338ac0c80cfb7df8d5ad"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-TRANSPORT-RENAMES",
@@ -50307,7 +50307,7 @@
           "RUST-INVENTORY-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_path_membership_preserves_every_written_owner_context",
@@ -50315,14 +50315,14 @@
           "rust-test:crates/zrail-testkit/tests/rust_inventories/owners_test.rs::complete_ownership_sets_reject_moved_and_additional_locations",
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_owner_assertion_rejects_missing_and_unexpected_members",
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::qualify_all_frozen_kafka_driver_transport_owners"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-DETECTOR-OWNERS",
-          "cause": "Native written-path membership and exact owner sets are implemented with frozen syntax-context comparisons. Full frozen-scope differential fixtures and reproducible bound evidence remain required before verification."
+        ],
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-owners-parity.json.gz",
+          "payload_sha256": "623558e93ecb1999fdb2298d7ae477fb81836aa117144eb6f49b7f9cb275a370",
+          "implementation_commit": "faa606e33df78d4fb676338ac0c80cfb7df8d5ad"
         }
-      ],
+      },
+      "blockers": [],
       "detector_for": [
         "KD-TRANSPORT-OWNERS"
       ]
@@ -51566,7 +51566,7 @@
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 490,
+      "new engine capability": 492,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },

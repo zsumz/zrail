@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "implementation_commit": "faa606e33df78d4fb676338ac0c80cfb7df8d5ad",
+  "implementation_tree": "b17fd12ac90b9b387c75b37d8da6eb882514b1c2",
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "70f8efd8f113352380c26157e691dffe6ce2b85de9a81607499b816bb9fc2a4e",
+  "registry_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+  "fixture_origins_sha256": "76cb64d7b072c9bb29d25e63c731752d853dea0ac446a06677cd207fa4ec9ca0",
+  "test_binary_sha256": "83a7165c7e2386bbffe1848d7ab4ebf870b2345f299380a087443fdbdaf385d4",
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "detector_source_sha256": "52931f702eed8c81c079a2aabfb4934a0f7c4388faa26ed5c425bf470232f4bc",
+  "assertion_ids": [
+    "KD-TRANSPORT-OWNERS",
+    "KD-TRANSPORT-DETECTOR-OWNERS"
+  ],
+  "canonical": {
+    "command": "scripts/check",
+    "exit_status": 1,
+    "passed": 1573,
+    "failed": 0,
+    "ignored": 14,
+    "analysis_complete": true,
+    "rust_files": 1024,
+    "base_contexts": 1615,
+    "derived_contexts": 0,
+    "projection_work": 1178356,
+    "unresolved": 0,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-016",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_step_reached": false,
+    "cleanliness_step_reached": false
+  },
+  "standalone_archive_check_passed": true,
+  "git_status_unchanged": true,
+  "lock_authority_accepted": false,
+  "full_repository_qualified": false,
+  "differential": {
+    "runs": 2,
+    "identical_payloads": true,
+    "payload_sha256": "623558e93ecb1999fdb2298d7ae477fb81836aa117144eb6f49b7f9cb275a370",
+    "payload_bytes": 4737979,
+    "all_frozen_rust_inputs": 772,
+    "selected_physical_files": 479,
+    "legacy_distinct_owner_files": 1,
+    "native_authored_path_occurrences": 6,
+    "cases": 46,
+    "accepted": 15,
+    "rejected": 31
+  },
+  "claim": "Exact authored ConnectionSet path ownership over the complete frozen physical detector selection; source occurrences remain separately counted. No Cargo, semantic identity, execution or full-repository certification.",
+  "initial_failure": "The 5efa1e2 checkpoint stopped at Clippy match_same_arms. The equivalent false-result arms were combined; no policy or assertion meaning changed. All checks and both differential runs were rerun at faa606e.",
+  "artifact_validation": {
+    "unittest_methods": 7,
+    "adversarial_mutations": 64,
+    "command": "python3 scripts/rc9_method_evidence_test.py"
+  },
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/transport-owners-parity.json.gz",
+      "implementation_commit": "faa606e33df78d4fb676338ac0c80cfb7df8d5ad",
+      "payload_sha256": "623558e93ecb1999fdb2298d7ae477fb81836aa117144eb6f49b7f9cb275a370",
+      "compressed_sha256": "f81b745ebdf96851fb26fabdbc4822e57138982c0bbeba34331c4d3a99cab6fe"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-owners-final-canonical.log.gz",
+      "implementation_commit": "faa606e33df78d4fb676338ac0c80cfb7df8d5ad",
+      "payload_sha256": "22c7d28be68b827fdab5da63b7bbef724b392f6a8603dbd431773272e8784cd1",
+      "compressed_sha256": "8254cc85322941fd944fb94edb6e1f7904217e7f8c89b652a7f8ca9f121478e9"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-owners-final-package.log.gz",
+      "implementation_commit": "faa606e33df78d4fb676338ac0c80cfb7df8d5ad",
+      "payload_sha256": "8bd1daba173912c9a0309a14e196f3739b9352274c1d4b0b099d9dd7fd55c23d",
+      "compressed_sha256": "08c96823509ef6542577b9e79a1accecb6106b0c3205b30412d6d6ab5497167a"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-owners-final-parity-a.log.gz",
+      "implementation_commit": "faa606e33df78d4fb676338ac0c80cfb7df8d5ad",
+      "payload_sha256": "a699798b2aa4f55e9ee544609941c7a101ec7bce3c41a415966b45b6c50c6a34",
+      "compressed_sha256": "c6540356516e269e03f993f9d99353502d383d29ec02f5e88cd628f4de89b9e8"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-owners-final-parity-b.log.gz",
+      "implementation_commit": "faa606e33df78d4fb676338ac0c80cfb7df8d5ad",
+      "payload_sha256": "4ba0b60a4f52227bfd7ddabe57c17f6fa5cbc7bd447fa3bcae6f7c6b5476c613",
+      "compressed_sha256": "7160ba37e3d6a95049cb6def554202ef3507208161c2991e580f7d4bf10ad5b8"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-owners-runner.json.gz",
+      "implementation_commit": "faa606e33df78d4fb676338ac0c80cfb7df8d5ad",
+      "payload_sha256": "e3f51a16cd673fce7a33597b8f171c342eec986128d046fb5cae28e93048ca9e",
+      "compressed_sha256": "cf32a5074b0fc546f622f4b530e95b9f2e839bb821cd750c0a9a796eae56550a"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-owners-initial-canonical.log.gz",
+      "implementation_commit": "5efa1e257751480ab756caaf3c70e39c50b56dda",
+      "payload_sha256": "f444b9804de479fef828665d96d0d3472aa5505a13531aaa2b679a7e9b07b59d",
+      "compressed_sha256": "a04cbf1e400c7507890a16aee92a7470cd6093e96270e04fbe66a82fddba3721"
+    }
+  ]
+}

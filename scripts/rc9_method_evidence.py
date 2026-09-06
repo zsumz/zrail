@@ -3,12 +3,14 @@
 import collections
 import hashlib
 from pathlib import Path
+import runpy
 import tomllib
 
 
 IDS = {"KD-TRANSPORT-METHODS", "KD-TRANSPORT-DETECTOR-METHODS",
        "KD-TRANSPORT-PARSE-FIXTURE", "KD-TRANSPORT-PARSE-PRODUCTION"}
 EXPRESSION_IDS = {"KD-TRANSPORT-ASSOCIATED", "KD-TRANSPORT-DETECTOR-ASSOCIATED"}
+OWNER_IDS = {"KD-TRANSPORT-OWNERS", "KD-TRANSPORT-DETECTOR-OWNERS"}
 POLICY = "rust:inventory:kd-transport-methods"
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -45,7 +47,8 @@ def production(path):
 
 def observe(report, policy, expected_inputs, expected_counts):
     claim = {"written-methods": "authored-rust-method-call-syntax",
-             "written-expression-paths": "authored-rust-expression-path-syntax"}[policy["subject"]["kind"]]
+             "written-expression-paths": "authored-rust-expression-path-syntax",
+             "written-paths-containing": "authored-rust-path-membership-syntax"}[policy["subject"]["kind"]]
     require(report["policy_id"] == "rust:inventory:" + policy["name"] and report["policy"] == policy
             and report["claim"] == claim
             and report["quality"] == "exact", "changed policy or overstated syntax claim")
@@ -72,8 +75,25 @@ def observe(report, policy, expected_inputs, expected_counts):
         sampled[f"{row['path']}:{row['name']}"] += 1
     require(all(count <= expected_counts[key] for key, count in sampled.items()),
             "samples exceed complete occurrence quantities")
-    require(report["satisfied"] == (expected_counts == count_map(policy["assertion"]["counts"])),
+    assertion = policy["assertion"]
+    if assertion["kind"] == "exact-owners":
+        accepted = set(expected_counts) == {row["path"] + ":" + row["name"] for row in assertion["owners"]}
+    else:
+        accepted = expected_counts == count_map(assertion["counts"])
+    require(report["satisfied"] == accepted,
             "incorrect exact-map acceptance")
+
+
+def bound_inputs(report, live, files, roots):
+    frozen = {path: row for (repository, path), row in files.items()
+              if repository == live["repository"] and selected(path, roots)}
+    baseline = inputs(report["all_source_inputs"])
+    require(len(baseline) == len(frozen) == 772 and baseline.keys() == frozen.keys()
+            and all(row["sha256"] == frozen[path]["sha256"] for path, row in baseline.items()),
+            "source inputs differ from frozen census")
+    require(report["registry_sha256"] == files[(live["repository"], "guardrails.toml")]["sha256"],
+            "unbound source registry")
+    return baseline
 
 
 def cases(expected, roots):
@@ -158,6 +178,9 @@ def expression_cases(expected, roots):
 
 
 def verify(assertion, report, assertions, files):
+    if assertion["id"] in OWNER_IDS:
+        verify_owners = runpy.run_path(ROOT / "scripts/rc9_owner_evidence.py")["verify"]
+        return verify_owners(assertion, report, assertions, files)
     require(assertion["id"] in IDS | EXPRESSION_IDS and report["schema"] == 1, "unsupported assertion/report")
     expression = assertion["id"] in EXPRESSION_IDS
     family = "expression-paths" if expression else "methods"
@@ -188,14 +211,7 @@ def verify(assertion, report, assertions, files):
     authored["assertion"]["counts"].sort(key=lambda row: (row["path"], row["name"]))
     require(report["policy_sha256"] == hashlib.sha256(policy_bytes).hexdigest() and authored == policy,
             "unbound translated policy bytes")
-    frozen = {path: row for (repository, path), row in files.items()
-              if repository == live["repository"] and selected(path, roots)}
-    baseline = inputs(report["all_source_inputs"])
-    require(len(baseline) == len(frozen) == 772 and baseline.keys() == frozen.keys()
-            and all(row["sha256"] == frozen[path]["sha256"] for path, row in baseline.items()),
-            "source inputs differ from frozen census")
-    require(report["registry_sha256"] == files[(live["repository"], "guardrails.toml")]["sha256"],
-            "unbound source registry")
+    baseline = bound_inputs(report, live, files, roots)
     selected_inputs = {path: row for path, row in baseline.items() if production(path)}
     require(len(selected_inputs) == 479 and report["legacy_counts"] == expected, "incomplete baseline")
     observe(report["observation"], policy, selected_inputs, expected)
