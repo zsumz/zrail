@@ -36,6 +36,8 @@ def require(condition, message):
 
 
 def registry_identity(entry, instance):
+    if not isinstance(entry, dict):
+        return type(entry) is type(instance) and json.dumps(entry, sort_keys=True) == json.dumps(instance, sort_keys=True)
     if "path" in entry:
         return entry["path"] == instance
     if "root" in entry and "forbidden" in entry:
@@ -140,7 +142,8 @@ def main():
             require(registry_file["sha256"] == registry["file_sha256"], "registry source digest mismatch")
             require(registry_file["commit"] == assertion["commit"], "registry snapshot mismatch")
             require(registry_identity(registry["entry"], source["instance"]), "registry instance identity mismatch")
-            require(registry["index"] >= 0 and registry["selector"], "invalid registry entry selector")
+            require((registry["index"] is None or type(registry["index"]) is int and registry["index"] >= 0)
+                    and registry["selector"], "invalid registry entry selector")
         require(assertion["disposition"] in dispositions, "unsupported assertion disposition")
         replacement = assertion["replacement"]
         file_evidence(assertion, file_reports)

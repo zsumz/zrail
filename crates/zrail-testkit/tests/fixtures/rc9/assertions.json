@@ -3634,6 +3634,2613 @@
       ]
     },
     {
+      "id": "KD-DEP-CI-GATE-COUNT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:256:5:assertion-macro",
+        "line": 256,
+        "column": 5,
+        "function": [
+          "ci_delegates_validation_to_the_canonical_repository_gate"
+        ],
+        "syntax_sha256": "234e8dcf4fd372da6b1bdc4c264d534b8f18bb8641500c57df2fad9ba0cd23b4",
+        "instance": null
+      },
+      "intended_property": "The CI file contains the canonical gate marker exactly once; this is text structure, not proof of execution.",
+      "selection": {
+        "paths": [
+          ".github/workflows/ci.yml"
+        ],
+        "keys": []
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "whole UTF-8 str::matches nonoverlapping count",
+        "literal": "run: scripts/check",
+        "case": "sensitive"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-CI-GATE-COUNT",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-CI-MATRIX-RUNNER",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:269:5:assertion-macro",
+        "line": 269,
+        "column": 5,
+        "function": [
+          "ci_runs_the_same_gate_on_linux_macos_and_windows"
+        ],
+        "syntax_sha256": "083c1688eeb71191bd141efc02412e8653ce708483e58373e76c109488680d39",
+        "instance": null
+      },
+      "intended_property": "Preserve the deliberately raw CI configuration marker, including comments.",
+      "selection": {
+        "paths": [
+          ".github/workflows/ci.yml"
+        ],
+        "keys": []
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "UTF-8 literal contains",
+        "literal": "runs-on: ${{ matrix.os }}",
+        "case": "sensitive"
+      },
+      "required_cardinality": {
+        "minimum": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-CI-MATRIX-RUNNER",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-CI-OS-MATRIX",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:268:5:assertion-macro",
+        "line": 268,
+        "column": 5,
+        "function": [
+          "ci_runs_the_same_gate_on_linux_macos_and_windows"
+        ],
+        "syntax_sha256": "ec4e2e56948719c28cbfbe0a5e67906ce2608cc059fb5bf1391b2fac4a4b0d8b",
+        "instance": null
+      },
+      "intended_property": "Preserve the deliberately raw CI configuration marker, including comments.",
+      "selection": {
+        "paths": [
+          ".github/workflows/ci.yml"
+        ],
+        "keys": []
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "UTF-8 literal contains",
+        "literal": "os: [ubuntu-latest, macos-latest, windows-latest]",
+        "case": "sensitive"
+      },
+      "required_cardinality": {
+        "minimum": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-CI-OS-MATRIX",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-CORE-KEYS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:200:5:assertion-macro",
+        "line": 200,
+        "column": 5,
+        "function": [
+          "deterministic_core_depends_only_on_protocol_authority"
+        ],
+        "syntax_sha256": "2487323025fc4f996f2d19a6c0edf7c0e1192209db1aa43ebc886d96e16b40c5",
+        "instance": [
+          "kafka-wire-core"
+        ]
+      },
+      "intended_property": "Preserve the authored ordinary-dependency key set and its exact-versus-subset distinction.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-core/Cargo.toml"
+        ],
+        "keys": [
+          "dependencies"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate table keys as BTreeSet",
+        "mode": "subset",
+        "allowed": [
+          "kafka-wire-core"
+        ],
+        "missing_or_non_table": "empty set",
+        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set."
+      },
+      "required_cardinality": {
+        "scope": "one manifest"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-CORE-KEYS",
+          "cause": "Exact and allowed authored key sets, including the legacy empty-set fallback, need native document predicates and frozen differential proof. Resolved package topology alone does not preserve authored aliases."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "core_allowed"
+        ],
+        "index": null,
+        "entry": [
+          "kafka-wire-core"
+        ]
+      }
+    },
+    {
+      "id": "KD-DEP-CRITICALITY-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:231:5:assertion-macro",
+        "line": 231,
+        "column": 5,
+        "function": [
+          "simulator_depends_only_on_criticality_and_the_deterministic_core"
+        ],
+        "syntax_sha256": "6949150ff8a86f7cca8bac91673f3aa3aac9e548fd300e9c8c4fe6f26d09c3f7",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "criticality"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": "=0.0.1-rc.2"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-CRITICALITY-VERSION",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-DETECTOR-EXACT-NAME",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:293:5:assertion-macro",
+        "line": 293,
+        "column": 5,
+        "function": [
+          "package_extraction_matches_exact_names_only"
+        ],
+        "syntax_sha256": "2974eaf6e4b62d2c8119fb7f4b3c883f02522cd7540827e38c7f46f12ab839a6",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact-name extraction detector counterexample.",
+      "selection": {
+        "paths": [],
+        "keys": []
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "legacy lockfile_packages BTreeSet contains",
+        "name": "tokio",
+        "present": false,
+        "fixture": "[[package]]\nname = \"tokio-util-extra\"\n[[package]]\nname = \"bytes\"\n"
+      },
+      "required_cardinality": {
+        "present": false
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-DETECTOR-EXACT-NAME",
+          "cause": "Import the exact detector fixture and execute its line-name extractor beside native line policies."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-DETECTOR-PRESENT-NAME",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:294:5:assertion-macro",
+        "line": 294,
+        "column": 5,
+        "function": [
+          "package_extraction_matches_exact_names_only"
+        ],
+        "syntax_sha256": "2a9afddbcefa70888088df8787ccc103b3df54c2d585175ad102c10b01de9d9e",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact-name extraction detector counterexample.",
+      "selection": {
+        "paths": [],
+        "keys": []
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "legacy lockfile_packages BTreeSet contains",
+        "name": "bytes",
+        "present": true,
+        "fixture": "[[package]]\nname = \"tokio-util-extra\"\n[[package]]\nname = \"bytes\"\n"
+      },
+      "required_cardinality": {
+        "present": true
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-DETECTOR-PRESENT-NAME",
+          "cause": "Import the exact detector fixture and execute its line-name extractor beside native line policies."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-DRIVER-KEYS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:128:5:assertion-macro",
+        "line": 128,
+        "column": 5,
+        "function": [
+          "driver_dependencies_are_explicitly_allowlisted"
+        ],
+        "syntax_sha256": "19df6743eb3995d19a78026bdd507afff0ffa4c9026f9ee9cf47778d4acee72f",
+        "instance": [
+          "bornera",
+          "bornera-core",
+          "bornera-rustls",
+          "bytes",
+          "calandria",
+          "calandria-mio",
+          "kafka-driver-core",
+          "kafka-driver-transport",
+          "kafka-wire",
+          "kafka-wire-core",
+          "mio",
+          "ring",
+          "rustls",
+          "sasl-scram",
+          "zeroize"
+        ]
+      },
+      "intended_property": "Preserve the authored ordinary-dependency key set and its exact-versus-subset distinction.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate table keys as BTreeSet",
+        "mode": "exact",
+        "allowed": [
+          "bornera",
+          "bornera-core",
+          "bornera-rustls",
+          "bytes",
+          "calandria",
+          "calandria-mio",
+          "kafka-driver-core",
+          "kafka-driver-transport",
+          "kafka-wire",
+          "kafka-wire-core",
+          "mio",
+          "ring",
+          "rustls",
+          "sasl-scram",
+          "zeroize"
+        ],
+        "missing_or_non_table": "empty set",
+        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set."
+      },
+      "required_cardinality": {
+        "scope": "one manifest"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-DRIVER-KEYS",
+          "cause": "Exact and allowed authored key sets, including the legacy empty-set fallback, need native document predicates and frozen differential proof. Resolved package topology alone does not preserve authored aliases."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "driver_allowed"
+        ],
+        "index": null,
+        "entry": [
+          "bornera",
+          "bornera-core",
+          "bornera-rustls",
+          "bytes",
+          "calandria",
+          "calandria-mio",
+          "kafka-driver-core",
+          "kafka-driver-transport",
+          "kafka-wire",
+          "kafka-wire-core",
+          "mio",
+          "ring",
+          "rustls",
+          "sasl-scram",
+          "zeroize"
+        ]
+      }
+    },
+    {
+      "id": "KD-DEP-DRIVER-WIRE-INHERITANCE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:51:5:assertion-macro",
+        "line": 51,
+        "column": 5,
+        "function": [
+          "kafka_wire_uses_the_exact_registry_release"
+        ],
+        "syntax_sha256": "c4b7d3f6a45239a8d84c9794403c10f8465bee8b0a8f2c378fae823cd067a0f3",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka-wire",
+          "workspace"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": true
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-DRIVER-WIRE-INHERITANCE",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-LF-ATTRIBUTES-01",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:283:9:assertion-macro",
+        "line": 283,
+        "column": 9,
+        "function": [
+          "repository_sources_and_gate_scripts_keep_unix_line_endings_on_every_runner"
+        ],
+        "syntax_sha256": "63335dc2af4147cd7dca7af7690cfb74b5124140fa772d1e64db5cf2ba385072",
+        "instance": "*.md text eol=lf"
+      },
+      "intended_property": "The attributes file has the exact required trimmed line; a comment or suffix does not satisfy it.",
+      "selection": {
+        "paths": [
+          ".gitattributes"
+        ],
+        "keys": []
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "Rust str::lines then str::trim and exact equality",
+        "literal": "*.md text eol=lf",
+        "case": "sensitive"
+      },
+      "required_cardinality": {
+        "minimum": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-LF-ATTRIBUTES-01",
+          "cause": "Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-LF-ATTRIBUTES-02",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:283:9:assertion-macro",
+        "line": 283,
+        "column": 9,
+        "function": [
+          "repository_sources_and_gate_scripts_keep_unix_line_endings_on_every_runner"
+        ],
+        "syntax_sha256": "63335dc2af4147cd7dca7af7690cfb74b5124140fa772d1e64db5cf2ba385072",
+        "instance": "*.rs text eol=lf"
+      },
+      "intended_property": "The attributes file has the exact required trimmed line; a comment or suffix does not satisfy it.",
+      "selection": {
+        "paths": [
+          ".gitattributes"
+        ],
+        "keys": []
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "Rust str::lines then str::trim and exact equality",
+        "literal": "*.rs text eol=lf",
+        "case": "sensitive"
+      },
+      "required_cardinality": {
+        "minimum": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-LF-ATTRIBUTES-02",
+          "cause": "Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-LF-ATTRIBUTES-03",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:283:9:assertion-macro",
+        "line": 283,
+        "column": 9,
+        "function": [
+          "repository_sources_and_gate_scripts_keep_unix_line_endings_on_every_runner"
+        ],
+        "syntax_sha256": "63335dc2af4147cd7dca7af7690cfb74b5124140fa772d1e64db5cf2ba385072",
+        "instance": "*.svg text eol=lf"
+      },
+      "intended_property": "The attributes file has the exact required trimmed line; a comment or suffix does not satisfy it.",
+      "selection": {
+        "paths": [
+          ".gitattributes"
+        ],
+        "keys": []
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "Rust str::lines then str::trim and exact equality",
+        "literal": "*.svg text eol=lf",
+        "case": "sensitive"
+      },
+      "required_cardinality": {
+        "minimum": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-LF-ATTRIBUTES-03",
+          "cause": "Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-LF-ATTRIBUTES-04",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:283:9:assertion-macro",
+        "line": 283,
+        "column": 9,
+        "function": [
+          "repository_sources_and_gate_scripts_keep_unix_line_endings_on_every_runner"
+        ],
+        "syntax_sha256": "63335dc2af4147cd7dca7af7690cfb74b5124140fa772d1e64db5cf2ba385072",
+        "instance": "scripts/* text eol=lf"
+      },
+      "intended_property": "The attributes file has the exact required trimmed line; a comment or suffix does not satisfy it.",
+      "selection": {
+        "paths": [
+          ".gitattributes"
+        ],
+        "keys": []
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "Rust str::lines then str::trim and exact equality",
+        "literal": "scripts/* text eol=lf",
+        "case": "sensitive"
+      },
+      "required_cardinality": {
+        "minimum": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-LF-ATTRIBUTES-04",
+          "cause": "Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-PARSE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:310:33:failure-macro",
+        "line": 310,
+        "column": 33,
+        "function": [
+          "parse_manifest"
+        ],
+        "syntax_sha256": "3091bd9196214093c4083d90f9e1bf516543165fb6e94b5e551df7b7a7425b8e",
+        "instance": null
+      },
+      "intended_property": "Every manifest read by the dependency guards is valid UTF-8 and parses as TOML.",
+      "selection": {
+        "paths": [
+          "Cargo.toml",
+          "crates/kafka-driver-core/Cargo.toml",
+          "crates/kafka-driver-transport/Cargo.toml",
+          "crates/kafka-driver-sim/Cargo.toml",
+          "crates/kafka-driver-probe/Cargo.toml"
+        ],
+        "keys": []
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "toml 0.8.23 Value parsing and shared fs::read_to_string"
+      },
+      "required_cardinality": {
+        "exact": 5
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-PARSE",
+          "cause": "Bind all five manifest input contexts and malformed/duplicate-key/encoding negatives to the native parser preconditions."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-PROBE-KEYS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:248:5:assertion-macro",
+        "line": 248,
+        "column": 5,
+        "function": [
+          "real_broker_probe_depends_only_on_public_driver_protocol_and_tls_surfaces"
+        ],
+        "syntax_sha256": "19df6743eb3995d19a78026bdd507afff0ffa4c9026f9ee9cf47778d4acee72f",
+        "instance": [
+          "kafka-driver",
+          "kafka-wire",
+          "kafka-wire-core",
+          "rustls"
+        ]
+      },
+      "intended_property": "Preserve the authored ordinary-dependency key set and its exact-versus-subset distinction.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-probe/Cargo.toml"
+        ],
+        "keys": [
+          "dependencies"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate table keys as BTreeSet",
+        "mode": "exact",
+        "allowed": [
+          "kafka-driver",
+          "kafka-wire",
+          "kafka-wire-core",
+          "rustls"
+        ],
+        "missing_or_non_table": "empty set",
+        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set."
+      },
+      "required_cardinality": {
+        "scope": "one manifest"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-PROBE-KEYS",
+          "cause": "Exact and allowed authored key sets, including the legacy empty-set fallback, need native document predicates and frozen differential proof. Resolved package topology alone does not preserve authored aliases."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "probe_allowed"
+        ],
+        "index": null,
+        "entry": [
+          "kafka-driver",
+          "kafka-wire",
+          "kafka-wire-core",
+          "rustls"
+        ]
+      }
+    },
+    {
+      "id": "KD-DEP-PROBE-WIRE-INHERITANCE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:87:5:assertion-macro",
+        "line": 87,
+        "column": 5,
+        "function": [
+          "local_and_registry_dependencies_carry_the_release_version"
+        ],
+        "syntax_sha256": "8860b7944610962b3943b1559f023cf6b3d2f54e5188cbdee3f8399c001a6899",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-probe/Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka-wire",
+          "workspace"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": true
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-PROBE-WIRE-INHERITANCE",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-RUSTLS-FEATURE-ARRAY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:142:28:failure-macro",
+        "line": 142,
+        "column": 28,
+        "function": [
+          "rustls_is_a_runtime_neutral_optional_transport_feature"
+        ],
+        "syntax_sha256": "550bbecc71fb42b751f1019621a36935d43ec94b980a79f9913f5f2631856608",
+        "instance": null
+      },
+      "intended_property": "The required authored feature selection is an array.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "rustls",
+          "features"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML array type precondition"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-RUSTLS-FEATURE-ARRAY",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-RUSTLS-FEATURES",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:147:5:assertion-macro",
+        "line": 147,
+        "column": 5,
+        "function": [
+          "rustls_is_a_runtime_neutral_optional_transport_feature"
+        ],
+        "syntax_sha256": "d0d5991b5b7fe4d8250aeaaea6838f916b5dfc0204f4a3bc72dadde410837595",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "rustls",
+          "features"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": [
+          "ring",
+          "std",
+          "tls12"
+        ]
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-RUSTLS-FEATURES",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-RUSTLS-INHERITANCE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:144:5:assertion-macro",
+        "line": 144,
+        "column": 5,
+        "function": [
+          "rustls_is_a_runtime_neutral_optional_transport_feature"
+        ],
+        "syntax_sha256": "1b21772545d92ff7ff3ede9b07f69f80bbf5b040482aa1987e303f5329e6f705",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "rustls",
+          "workspace"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": true
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-RUSTLS-INHERITANCE",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-RUSTLS-NO-DEFAULTS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:146:5:assertion-macro",
+        "line": 146,
+        "column": 5,
+        "function": [
+          "rustls_is_a_runtime_neutral_optional_transport_feature"
+        ],
+        "syntax_sha256": "831ba43f59b1b2f031d3369f35c3ddb80b4855dd9d612bb5a4b27f5ddd5cfd29",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "rustls",
+          "default-features"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": false
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-RUSTLS-NO-DEFAULTS",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-RUSTLS-OPTIONAL",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:145:5:assertion-macro",
+        "line": 145,
+        "column": 5,
+        "function": [
+          "rustls_is_a_runtime_neutral_optional_transport_feature"
+        ],
+        "syntax_sha256": "dc479bfef01a5b459668d24b0d6ea9188b7313ab26641d66478f8ff8534b19d6",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "rustls",
+          "optional"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": true
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-RUSTLS-OPTIONAL",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-SASL-FEATURE-ARRAY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:172:28:failure-macro",
+        "line": 172,
+        "column": 28,
+        "function": [
+          "sasl_scram_is_an_exact_packaged_dependency_with_both_kafka_algorithms"
+        ],
+        "syntax_sha256": "3fb145451bd48ab50e33d94a2f18731e5cab074267bcf31d603a1b9f4ac57afe",
+        "instance": null
+      },
+      "intended_property": "The required authored feature selection is an array.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "sasl-scram",
+          "features"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML array type precondition"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-SASL-FEATURE-ARRAY",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-SASL-FEATURES",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:176:5:assertion-macro",
+        "line": 176,
+        "column": 5,
+        "function": [
+          "sasl_scram_is_an_exact_packaged_dependency_with_both_kafka_algorithms"
+        ],
+        "syntax_sha256": "636f770918aec65aff0e64a368361dde99100b2557f93ef4201c96f0331cae84",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "sasl-scram",
+          "features"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": [
+          "std",
+          "sha256",
+          "sha512",
+          "saslprep"
+        ]
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-SASL-FEATURES",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-SASL-INHERITANCE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:185:5:assertion-macro",
+        "line": 185,
+        "column": 5,
+        "function": [
+          "sasl_scram_is_an_exact_packaged_dependency_with_both_kafka_algorithms"
+        ],
+        "syntax_sha256": "746bfee1f82a91f7e017a0f8e83c15cc1ea4b97fe46f609a779be7a50d98e5a9",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "sasl-scram",
+          "workspace"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": true
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-SASL-INHERITANCE",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-SASL-NO-DEFAULTS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:175:5:assertion-macro",
+        "line": 175,
+        "column": 5,
+        "function": [
+          "sasl_scram_is_an_exact_packaged_dependency_with_both_kafka_algorithms"
+        ],
+        "syntax_sha256": "831ba43f59b1b2f031d3369f35c3ddb80b4855dd9d612bb5a4b27f5ddd5cfd29",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "sasl-scram",
+          "default-features"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": false
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-SASL-NO-DEFAULTS",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-SASL-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:174:5:assertion-macro",
+        "line": 174,
+        "column": 5,
+        "function": [
+          "sasl_scram_is_an_exact_packaged_dependency_with_both_kafka_algorithms"
+        ],
+        "syntax_sha256": "bb9df304968374b7ae9bc9bf998a8cac9b8a941afa8606a12ecd2c8f0df33208",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "sasl-scram",
+          "version"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": "=0.0.1-rc.3"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-SASL-VERSION",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-SIM-KEYS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:226:5:assertion-macro",
+        "line": 226,
+        "column": 5,
+        "function": [
+          "simulator_depends_only_on_criticality_and_the_deterministic_core"
+        ],
+        "syntax_sha256": "e5d167b083dd3d223e74000f32b4e956bb50c4b887a47f3e94af75696bb169d0",
+        "instance": null
+      },
+      "intended_property": "The simulator has exactly its two ordinary dependency declarations.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-sim/Cargo.toml"
+        ],
+        "keys": [
+          "dependencies"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate table keys as BTreeSet",
+        "mode": "exact",
+        "allowed": [
+          "criticality",
+          "kafka-driver-core"
+        ],
+        "missing_or_non_table": "empty set"
+      },
+      "required_cardinality": {
+        "exact": 2
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-SIM-KEYS",
+          "cause": "Native authored key-set comparison and frozen differential proof remain open."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-SIM-NO-VERSION-STRING",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:80:5:assertion-macro",
+        "line": 80,
+        "column": 5,
+        "function": [
+          "local_and_registry_dependencies_carry_the_release_version"
+        ],
+        "syntax_sha256": "325a6e0c604a5492ad36e8bd46a03fc4a90d23b938ebfd59b1d6b2414b0f9deb",
+        "instance": null
+      },
+      "intended_property": "The simulator workspace dependency has no string-valued version field. Missing and non-string values both pass the legacy helper.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-driver-sim",
+          "version"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "get(version).and_then(Value::as_str) equals None",
+        "required_parent": "The indexed workspace dependency entry must exist; its value need not be a table."
+      },
+      "required_cardinality": {
+        "string_values": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-SIM-NO-VERSION-STRING",
+          "cause": "A plain absent-key predicate is stronger than this as_str(None) check. Preserve the typed projection and indexed-parent precondition, or record an explicit normalization with evidence."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-TLS-FEATURE-ARRAY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:139:28:failure-macro",
+        "line": 139,
+        "column": 28,
+        "function": [
+          "rustls_is_a_runtime_neutral_optional_transport_feature"
+        ],
+        "syntax_sha256": "42784edf175e74752a81c90d5f494ce3ee1aef09957e86e47f9a6edf96ade8ce",
+        "instance": null
+      },
+      "intended_property": "The required authored feature selection is an array.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "features",
+          "tls-rustls"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML array type precondition"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-TLS-FEATURE-ARRAY",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-TLS-FEATURES",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:155:5:assertion-macro",
+        "line": 155,
+        "column": 5,
+        "function": [
+          "rustls_is_a_runtime_neutral_optional_transport_feature"
+        ],
+        "syntax_sha256": "024151e0af98dabb7f981d24186ccb09392fac27419e614170bcbd6207563418",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "features",
+          "tls-rustls"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": [
+          "dep:bornera-rustls",
+          "dep:rustls"
+        ]
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-TLS-FEATURES",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-TRANSPORT-KEYS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:218:5:assertion-macro",
+        "line": 218,
+        "column": 5,
+        "function": [
+          "transport_depends_only_on_deterministic_driver_and_wire_primitives"
+        ],
+        "syntax_sha256": "19df6743eb3995d19a78026bdd507afff0ffa4c9026f9ee9cf47778d4acee72f",
+        "instance": [
+          "bytes",
+          "kafka-driver-core",
+          "kafka-wire-core"
+        ]
+      },
+      "intended_property": "Preserve the authored ordinary-dependency key set and its exact-versus-subset distinction.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-transport/Cargo.toml"
+        ],
+        "keys": [
+          "dependencies"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate table keys as BTreeSet",
+        "mode": "exact",
+        "allowed": [
+          "bytes",
+          "kafka-driver-core",
+          "kafka-wire-core"
+        ],
+        "missing_or_non_table": "empty set",
+        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set."
+      },
+      "required_cardinality": {
+        "scope": "one manifest"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-TRANSPORT-KEYS",
+          "cause": "Exact and allowed authored key sets, including the legacy empty-set fallback, need native document predicates and frozen differential proof. Resolved package topology alone does not preserve authored aliases."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "transport_allowed"
+        ],
+        "index": null,
+        "entry": [
+          "bytes",
+          "kafka-driver-core",
+          "kafka-wire-core"
+        ]
+      }
+    },
+    {
+      "id": "KD-DEP-kafka-driver-PATH-RELEASE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:66:9:assertion-macro",
+        "line": 66,
+        "column": 9,
+        "function": [
+          "local_and_registry_dependencies_carry_the_release_version"
+        ],
+        "syntax_sha256": "34a575e07883469a6029917037cd3fdf4fff9a29eefa23a1e6a7e15ffe366753",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-driver",
+          "version"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": "0.1.0-rc.5"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-PATH-RELEASE",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-PUBLIC-ARRAY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:104:32:failure-macro",
+        "line": 104,
+        "column": 32,
+        "function": [
+          "publication_policy_exposes_only_the_runtime_graph"
+        ],
+        "syntax_sha256": "9d772784d3aa75f5e0be0001073ad2f0c1208df8c29533facd9c63f580eab96b",
+        "instance": "kafka-driver"
+      },
+      "intended_property": "The publication field is an array.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML array type precondition"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-PUBLIC-ARRAY",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-PUBLIC-COUNT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:105:9:assertion-macro",
+        "line": 105,
+        "column": 9,
+        "function": [
+          "publication_policy_exposes_only_the_runtime_graph"
+        ],
+        "syntax_sha256": "7bd1d3b5eb555bafd363e30c2a3b8eb5dc0437771b881906d194235091157deb",
+        "instance": "kafka-driver"
+      },
+      "intended_property": "The publication registry array has exactly one entry.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML array length"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-PUBLIC-COUNT",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-PUBLIC-REGISTRY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:106:9:assertion-macro",
+        "line": 106,
+        "column": 9,
+        "function": [
+          "publication_policy_exposes_only_the_runtime_graph"
+        ],
+        "syntax_sha256": "28194a15d343394c0b70f9b34df0adae0f1c285f30953ae4cb1ec330ca532400",
+        "instance": "kafka-driver"
+      },
+      "intended_property": "The first publication entry is the exact registry string.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML first array entry as_str equality",
+        "value": "crates-io"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-PUBLIC-REGISTRY",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-core-PATH-RELEASE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:66:9:assertion-macro",
+        "line": 66,
+        "column": 9,
+        "function": [
+          "local_and_registry_dependencies_carry_the_release_version"
+        ],
+        "syntax_sha256": "34a575e07883469a6029917037cd3fdf4fff9a29eefa23a1e6a7e15ffe366753",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-driver-core",
+          "version"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": "0.1.0-rc.5"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-core-PATH-RELEASE",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-core-PUBLIC-ARRAY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:104:32:failure-macro",
+        "line": 104,
+        "column": 32,
+        "function": [
+          "publication_policy_exposes_only_the_runtime_graph"
+        ],
+        "syntax_sha256": "9d772784d3aa75f5e0be0001073ad2f0c1208df8c29533facd9c63f580eab96b",
+        "instance": "kafka-driver-core"
+      },
+      "intended_property": "The publication field is an array.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-core/Cargo.toml"
+        ],
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML array type precondition"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-core-PUBLIC-ARRAY",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-core-PUBLIC-COUNT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:105:9:assertion-macro",
+        "line": 105,
+        "column": 9,
+        "function": [
+          "publication_policy_exposes_only_the_runtime_graph"
+        ],
+        "syntax_sha256": "7bd1d3b5eb555bafd363e30c2a3b8eb5dc0437771b881906d194235091157deb",
+        "instance": "kafka-driver-core"
+      },
+      "intended_property": "The publication registry array has exactly one entry.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-core/Cargo.toml"
+        ],
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML array length"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-core-PUBLIC-COUNT",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-core-PUBLIC-REGISTRY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:106:9:assertion-macro",
+        "line": 106,
+        "column": 9,
+        "function": [
+          "publication_policy_exposes_only_the_runtime_graph"
+        ],
+        "syntax_sha256": "28194a15d343394c0b70f9b34df0adae0f1c285f30953ae4cb1ec330ca532400",
+        "instance": "kafka-driver-core"
+      },
+      "intended_property": "The first publication entry is the exact registry string.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-core/Cargo.toml"
+        ],
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML first array entry as_str equality",
+        "value": "crates-io"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-core-PUBLIC-REGISTRY",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-probe-PRIVATE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:113:9:assertion-macro",
+        "line": 113,
+        "column": 9,
+        "function": [
+          "publication_policy_exposes_only_the_runtime_graph"
+        ],
+        "syntax_sha256": "b0894a48aaac8c3f8a01fef768cc56f38860a2e169145b92d6859c223e61779f",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-probe/Cargo.toml"
+        ],
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": false
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-probe-PRIVATE",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-sim-PRIVATE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:113:9:assertion-macro",
+        "line": 113,
+        "column": 9,
+        "function": [
+          "publication_policy_exposes_only_the_runtime_graph"
+        ],
+        "syntax_sha256": "b0894a48aaac8c3f8a01fef768cc56f38860a2e169145b92d6859c223e61779f",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-sim/Cargo.toml"
+        ],
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": false
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-sim-PRIVATE",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-transport-PATH-RELEASE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:66:9:assertion-macro",
+        "line": 66,
+        "column": 9,
+        "function": [
+          "local_and_registry_dependencies_carry_the_release_version"
+        ],
+        "syntax_sha256": "34a575e07883469a6029917037cd3fdf4fff9a29eefa23a1e6a7e15ffe366753",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-driver-transport",
+          "version"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": "0.1.0-rc.5"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-transport-PATH-RELEASE",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-transport-PUBLIC-ARRAY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:104:32:failure-macro",
+        "line": 104,
+        "column": 32,
+        "function": [
+          "publication_policy_exposes_only_the_runtime_graph"
+        ],
+        "syntax_sha256": "9d772784d3aa75f5e0be0001073ad2f0c1208df8c29533facd9c63f580eab96b",
+        "instance": "kafka-driver-transport"
+      },
+      "intended_property": "The publication field is an array.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-transport/Cargo.toml"
+        ],
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML array type precondition"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-transport-PUBLIC-ARRAY",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-transport-PUBLIC-COUNT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:105:9:assertion-macro",
+        "line": 105,
+        "column": 9,
+        "function": [
+          "publication_policy_exposes_only_the_runtime_graph"
+        ],
+        "syntax_sha256": "7bd1d3b5eb555bafd363e30c2a3b8eb5dc0437771b881906d194235091157deb",
+        "instance": "kafka-driver-transport"
+      },
+      "intended_property": "The publication registry array has exactly one entry.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-transport/Cargo.toml"
+        ],
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML array length"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-transport-PUBLIC-COUNT",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-driver-transport-PUBLIC-REGISTRY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:106:9:assertion-macro",
+        "line": 106,
+        "column": 9,
+        "function": [
+          "publication_policy_exposes_only_the_runtime_graph"
+        ],
+        "syntax_sha256": "28194a15d343394c0b70f9b34df0adae0f1c285f30953ae4cb1ec330ca532400",
+        "instance": "kafka-driver-transport"
+      },
+      "intended_property": "The first publication entry is the exact registry string.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-transport/Cargo.toml"
+        ],
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML first array entry as_str equality",
+        "value": "crates-io"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-driver-transport-PUBLIC-REGISTRY",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-wire-REGISTRY-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:43:5:assertion-macro",
+        "line": 43,
+        "column": 5,
+        "function": [
+          "kafka_wire_uses_the_exact_registry_release"
+        ],
+        "syntax_sha256": "36a4809a66cc7302a756f513750764a1f328fc9af5cb599d766a47adaae70a2b",
+        "instance": "=0.1.0-rc.3"
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-wire"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": "=0.1.0-rc.3"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-wire-REGISTRY-VERSION",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "kafka_wire_version"
+        ],
+        "index": null,
+        "entry": "=0.1.0-rc.3"
+      }
+    },
+    {
+      "id": "KD-DEP-kafka-wire-RELEASE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:76:5:assertion-macro",
+        "line": 76,
+        "column": 5,
+        "function": [
+          "local_and_registry_dependencies_carry_the_release_version"
+        ],
+        "syntax_sha256": "c8f6e8bd7148f697d064df4cc7d4bd3828fd87f81698747db60865de3066765a",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-wire"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": "=0.1.0-rc.3"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-wire-RELEASE",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-kafka-wire-core-REGISTRY-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:47:5:assertion-macro",
+        "line": 47,
+        "column": 5,
+        "function": [
+          "kafka_wire_uses_the_exact_registry_release"
+        ],
+        "syntax_sha256": "3f3553a5338baf9126f6fd73c5e1d83c31fc738221434ca634a3940c362e0e79",
+        "instance": "=0.1.0-rc.3"
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-wire-core"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": "=0.1.0-rc.3"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-wire-core-REGISTRY-VERSION",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "kafka_wire_core_version"
+        ],
+        "index": null,
+        "entry": "=0.1.0-rc.3"
+      }
+    },
+    {
+      "id": "KD-DEP-kafka-wire-core-RELEASE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/dependency.rs",
+        "file_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/dependency.rs:72:5:assertion-macro",
+        "line": 72,
+        "column": 5,
+        "function": [
+          "local_and_registry_dependencies_carry_the_release_version"
+        ],
+        "syntax_sha256": "b2cb3f8cde775d0b4dddf0e2c283e83c5780c194063913e687142b94f1b0a589",
+        "instance": null
+      },
+      "intended_property": "Preserve the exact authored dependency value and its type.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-wire-core"
+        ]
+      },
+      "context": "Authored manifest/configuration or deliberately raw repository-file inspection. No feature activation or production/test reachability filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML typed equality",
+        "value": "=0.1.0-rc.3"
+      },
+      "required_cardinality": 1,
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-kafka-wire-core-RELEASE",
+          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        }
+      ]
+    },
+    {
       "id": "KD-FACADE-FUNCTION",
       "repository": "kafkars/kafka-driver",
       "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
@@ -3827,7 +6434,17 @@
           "id": "KD-LOCK-BAN-async-std",
           "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
         }
-      ]
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "banned"
+        ],
+        "index": 0,
+        "entry": "async-std"
+      }
     },
     {
       "id": "KD-LOCK-BAN-async-trait",
@@ -3875,7 +6492,17 @@
           "id": "KD-LOCK-BAN-async-trait",
           "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
         }
-      ]
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "banned"
+        ],
+        "index": 1,
+        "entry": "async-trait"
+      }
     },
     {
       "id": "KD-LOCK-BAN-smol",
@@ -3923,7 +6550,17 @@
           "id": "KD-LOCK-BAN-smol",
           "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
         }
-      ]
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "banned"
+        ],
+        "index": 2,
+        "entry": "smol"
+      }
     },
     {
       "id": "KD-LOCK-BAN-tokio",
@@ -3971,7 +6608,17 @@
           "id": "KD-LOCK-BAN-tokio",
           "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
         }
-      ]
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "banned"
+        ],
+        "index": 3,
+        "entry": "tokio"
+      }
     },
     {
       "id": "KD-LOCK-BAN-tokio-rustls",
@@ -4019,7 +6666,17 @@
           "id": "KD-LOCK-BAN-tokio-rustls",
           "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
         }
-      ]
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "banned"
+        ],
+        "index": 4,
+        "entry": "tokio-rustls"
+      }
     },
     {
       "id": "KD-LOCK-BAN-tokio-util",
@@ -4067,7 +6724,17 @@
           "id": "KD-LOCK-BAN-tokio-util",
           "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
         }
-      ]
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "banned"
+        ],
+        "index": 5,
+        "entry": "tokio-util"
+      }
     },
     {
       "id": "KD-LOCK-bornera-CHECKSUM",
@@ -21545,7 +24212,7 @@
     }
   ],
   "counts": {
-    "reviewed_assertion_instances": 332,
+    "reviewed_assertion_instances": 381,
     "implemented": 257,
     "verified_by_disposition": {
       "existing native rail": 0,

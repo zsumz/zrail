@@ -60,7 +60,7 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 ## Machine-readable audit state
 
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **332 reviewed assertion instances**. The
+contains **381 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
 record 9,792 files and 72,155 syntax candidates. Every tracked path is included,
@@ -70,7 +70,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 136 | 84 | 83 |
+| kafka-driver | 826 | 772 | 185 | 84 | 83 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
@@ -252,7 +252,7 @@ are explicit blockers; the complete downstream contracts still need qualificatio
 | RC9-RELEASE | Complete compatibility, protected semantic diff, final versioned-tree qualification, and release documentation. |
 
 These are discovery/release blockers, not a claim that assertion inventory is
-complete. [BLOCKERS.md](BLOCKERS.md) lists all **85 reviewed, unverified assertion
+complete. [BLOCKERS.md](BLOCKERS.md) lists all **134 reviewed, unverified assertion
 IDs and their causes**. The remaining candidate IDs are explicitly enumerated in
 the census and need review before their disposition or complete assertion
 expansion can be known. No unsupported generic assertion has been declared
@@ -280,3 +280,24 @@ Both repeated reports at `db11ebe40f3ffe969939785b34f2acf880c6b79e` are byte-ide
 The [metadata evidence index](evidence/metadata-index.json) records the same-code
 canonical gate and archive results. No complete downstream contract or execution
 claim is inferred from this authored-metadata qualification.
+
+## Dependency guard expansion
+
+All 38 assertion/failure candidates in Kafka-driver's `dependency.rs` are now
+expanded into 55 reviewed instances, including six previously reviewed bans.
+The 49 additional rows remain unverified. They preserve exact versus subset
+ordinary-dependency keys, explicit feature order and types, registry/private
+publication distinctions, parser and array preconditions, raw CI occurrence
+counts, and exact trimmed Git attributes lines. This is source/configuration
+inspection even where the function name mentions protocols or simulation.
+
+`KD-DEP-SIM-NO-VERSION-STRING` accepts absent or non-string versions in the
+legacy detector; a simple absent-key check would change that policy. The key-set
+helper maps missing/non-table dependency declarations to an empty set. These
+projection semantics remain explicit gaps, along with strict trimmed-line
+presence and whole-lock line-name extraction. Neither generic Cargo topology
+nor a permissive substring predicate is claimed to subsume them.
+
+Registry bindings now include exact scalar and whole-array values as well as
+indexed entries. The offline verifier checks 193 instantiated bindings against
+the frozen TOML bytes; `index = null` in the JSON ledger selects the whole value.
