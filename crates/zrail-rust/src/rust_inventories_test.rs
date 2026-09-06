@@ -210,8 +210,10 @@ fn qualify_all_frozen_kafka_driver_transport_methods() {
             .expect("final snapshot verification")
             .success()
     );
-    eprintln!(
+    writeln!(
+        std::io::stderr(),
         "transport method parity: 76 fixtures, 7 accepted, 69 rejected, payload {}",
         sha256_hex(&bytes)
-    );
+    )
+    .expect("write qualification summary");
 }

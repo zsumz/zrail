@@ -79,10 +79,9 @@ pub(super) fn hashes(sources: &BTreeMap<String, String>) -> Vec<RustInventoryInp
 }
 
 pub(super) fn detector_source() -> String {
-    let source = include_str!(concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/../zrail-testkit/tests/fixtures/rc9/transport_methods/transport_authority.rs"
-    ));
+    let source = include_str!(
+        "../../../../zrail-testkit/tests/fixtures/rc9/transport_methods/transport_authority.rs"
+    );
     let syntax = syn::parse_file(source).expect("exact original detector source");
     let function = syntax
         .items
