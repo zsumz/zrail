@@ -7,12 +7,14 @@ import gzip
 import hashlib
 import json
 from pathlib import Path
+import runpy
 import sys
 
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "crates/zrail-testkit/tests/fixtures/rc9"
 MAX_BYTES = 64 * 1024 * 1024
+QUALIFICATION_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_qualification_evidence.py")["verify"]
 
 
 def unique_object(pairs):
@@ -75,6 +77,8 @@ def file_evidence(assertion, cache):
     report = parity_report(assertion, "file_parity_evidence", "repository:file:", cache)
     if report is None:
         return
+    if assertion["id"].startswith("KD-QUAL-"):
+        QUALIFICATION_EVIDENCE(assertion, report)
     for policy_id in assertion["replacement"]["policy_ids"]:
         policies = [p for p in report["observations"] if p["policy_id"] == policy_id]
         require(len(policies) == 1 and policies[0]["satisfied"], "missing valid frozen file policy")

@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "implementation_commit": "7c6c01d0af8bdeee598e87c3c8fae97ce72b9a0c",
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "34426ecdceaf98edc686d095878e89a5f05fe489947dcb39a89a78e4edb922bd",
+  "payload_sha256": "2f5a621fae8b041c719bb65f42948808a2eee111e358ba9f9c4717263564ab15",
+  "compressed_sha256": "5f047e1db5508b57b2cd0451885bd2208cd77cc51bfa217b9d069fc430353a03",
+  "artifact": "docs/rc9/evidence/qualification-parity.json.gz",
+  "repeated_byte_identical": true,
+  "predicates": 125,
+  "inputs": 24,
+  "fixtures": {
+    "total": 923,
+    "accepted": 410,
+    "rejected": 513
+  },
+  "verified_assertions": 125,
+  "full_repository_qualified": false,
+  "lock_authority_accepted": false,
+  "canonical": {
+    "exit_status": 1,
+    "tests_passed": 1531,
+    "tests_failed": 0,
+    "tests_ignored": 11,
+    "summary": "Analysis: complete; 987 Rust files, 1,566 base contexts, 0 derived contexts, 1,121,116 projection work, 0 unresolved.",
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "package_check_exit_status": 0,
+    "cleanliness": "Git status remained empty on the same committed revision; canonical archive and cleanliness stages were not reached after self-hosting failed."
+  },
+  "engine_checkpoint": {
+    "implementation_commit": "6d638888e5d784dd3448842cf04ab05421ca7e04",
+    "tests_passed": 1530,
+    "tests_failed": 0,
+    "tests_ignored": 10,
+    "archive_check_run": false
+  },
+  "command": "cargo test --locked --offline -p zrail-rust qualify_all_frozen_kafka_driver_qualification_assertions -- --ignored",
+  "logs": [
+    {
+      "artifact": "qualification-parity.log.gz",
+      "payload_sha256": "15e356a57fb01d0ffae1bccbaaaa667e3d38c6e9b44212557ff7c1c185fbb64e",
+      "compressed_sha256": "0d13447aaed2e25faf11b46c29bb4b81cc28e6a8e68f98f0d86213fef0cbe480"
+    },
+    {
+      "artifact": "qualification-parity-repeat.log.gz",
+      "payload_sha256": "c1ee2a191041abc25ae4601ef7dc40acb9e164ee8038708b46174c165960c6b2",
+      "compressed_sha256": "189b98f69d260f425a78212001208fc388b6a5f245ed75987e1239479ef7607b"
+    },
+    {
+      "artifact": "qualification-parity-canonical.log.gz",
+      "payload_sha256": "a1f086863b7d3ffe5dfba5b1f37290a71c6958480835fe88cf3196317e259cae",
+      "compressed_sha256": "e9d4a4f6af9fe182b35dc8882a082198b31eb2f50fee08ce75872f4a438de441"
+    },
+    {
+      "artifact": "qualification-parity-package.log.gz",
+      "payload_sha256": "f1eb361ff6bf3654d4071f0c42384dbbe8abdef608a354610b4a4a4233e7f6bc",
+      "compressed_sha256": "cf2fb08cb6967f4583ebe01315f7b3ddd329a17b297526021f4245fe1efb4804"
+    },
+    {
+      "artifact": "raw-structure-canonical.log.gz",
+      "payload_sha256": "5f417b9d29c74c072fb1254f90e3fb248d52f412d267f8bc9fdfcc821d29b979",
+      "compressed_sha256": "95ac48ef0a8744f4b7cfeeb36f61eccc6eb2e0d5f05b18fcbb21a960f38de71c"
+    }
+  ]
+}

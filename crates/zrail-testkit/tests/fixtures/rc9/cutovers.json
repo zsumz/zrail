@@ -605,7 +605,17 @@
             "repository:file:kd-qual-228-06"
           ],
           "assertion_review_complete": true,
-          "assertion_review_notes": "All 85 assertion/failure sites are expanded, including loops, first-occurrence order, bounded byte intervals, and raw image-line selection. Read-helper instances link through read_preconditions. No whole-file behavioral exemption applies."
+          "assertion_review_notes": "All 85 assertion/failure sites are expanded, including loops, first-occurrence order, bounded byte intervals, and raw image-line selection. Read-helper instances link through read_preconditions. No whole-file behavioral exemption applies.",
+          "verified_assertion_parity_evidence": {
+            "artifact": "docs/rc9/evidence/qualification-parity.json.gz",
+            "payload_sha256": "2f5a621fae8b041c719bb65f42948808a2eee111e358ba9f9c4717263564ab15",
+            "implementation_commit": "7c6c01d0af8bdeee598e87c3c8fae97ce72b9a0c",
+            "full_repository_qualified": false
+          },
+          "required_policy_fragments": [
+            "docs/rc9/policies/kafka-driver.qualification.fragment.toml",
+            "docs/rc9/policies/kafka-driver.raw-dependency.fragment.toml"
+          ]
         },
         {
           "path": "tests/guardrails/release_graph.rs",

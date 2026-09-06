@@ -11,8 +11,8 @@ No downstream checker is removable on the strength of this directory.
   instantiated capability tokens and lock provenance assertions. It binds each
   assertion to a census identity, source digest, selection, matching semantics,
   cardinality, exceptions, disposition, and independent implementation and
-  verification states. Its 193 open assertion IDs are release blockers, alongside
-  the unfinished discovery work; 359 instances have verified replacement evidence.
+  verification states. Its 68 open assertion IDs are release blockers, alongside
+  the unfinished discovery work; 484 instances have verified replacement evidence.
 - `facade-origins.json` binds two byte-exact extracted predicates and the imported
   `kafkars-facade-invalid.rs.txt` fixture to the frozen sources.
 - The budget, size-selection, file, and metadata origin manifests bind further
@@ -60,3 +60,9 @@ stock zrail does not execute them or any downstream evaluator during analysis.
 - `raw-dependency-origins.json` binds the exact raw lock-name extractor, CI and
   attributes assertions, read helpers, and four inputs. 157 fixtures qualify
   16 assertions without interpreting Cargo, YAML, shell, or workflow execution.
+
+- `qualification-origins.json` binds ten complete frozen qualification test
+  bodies, their image constants/read helper, and 24 inputs. 923 fixtures qualify
+  125 raw-text/read assertions, including first-marker order and intervals and
+  complete image-line suffix allowlists. The unenforced-zrail prohibition remains
+  a separate cutover blocker; actual qualification and behavioral runners remain.

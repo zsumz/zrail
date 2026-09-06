@@ -1,8 +1,9 @@
 # Reproducing the current rc9 evidence
 
-Release verdict: **blocked**. The latest whole-lock parity, canonical gate, and
-archive checkpoint is `5251b4f056741768eb667c74d6e0949257ca843b`, based on the exact
-audited rc8 commit. Manifest-field parity retains its
+Release verdict: **blocked**. The latest qualification-text parity, canonical gate,
+and archive checkpoint is `7c6c01d0af8bdeee598e87c3c8fae97ce72b9a0c`, based on the exact
+audited rc8 commit. Whole-lock parity retains its `5251b4f056741768eb667c74d6e0949257ca843b`
+identity. Manifest-field parity retains its
 `c7ff4588f029169c10cce191be3bac3ceaec9e2d` identity. Earlier evidence retains its
 own implementation identity below. None constitutes final versioned-tree release
 qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
@@ -541,3 +542,54 @@ Analysis: complete; 969 Rust files, 1,544 base contexts, 0 derived contexts, 1,1
 Self-check exits 1 with exactly the four existing rc8 lock-drift diagnostics.
 The complete canonical/archive checkpoint remains the earlier `5251b4f`; this
 slice does not claim that gate was rerun on its newer revision.
+
+## Qualification text and raw structure
+
+At `7c6c01d0af8bdeee598e87c3c8fae97ce72b9a0c`, two frozen qualification-text runs
+produce byte-identical reports: 125 policies, 24 inputs, and 923 fixtures
+(410 accepted, 513 rejected). Payload SHA-256:
+`2f5a621fae8b041c719bb65f42948808a2eee111e358ba9f9c4717263564ab15`.
+The [index](evidence/qualification-parity-index.json) binds source/policy identities,
+compiler/test binary, exact extracted bodies, fixture copies, and every log.
+
+```sh
+python3 scripts/rc9-qualification-policies /absolute/snapshots /absolute/new-qualification.toml
+export ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots
+export ZRAIL_RC9_QUALIFICATION_REPORT=/absolute/evidence/qualification-a.json
+cargo test --locked --offline -p zrail-rust \
+  qualify_all_frozen_kafka_driver_qualification_assertions -- --ignored
+export ZRAIL_RC9_QUALIFICATION_REPORT=/absolute/evidence/qualification-b.json
+cargo test --locked --offline -p zrail-rust \
+  qualify_all_frozen_kafka_driver_qualification_assertions -- --ignored
+cmp /absolute/evidence/qualification-a.json /absolute/evidence/qualification-b.json
+scripts/check
+scripts/package-check
+python3 scripts/rc9-inventory-check
+python3 scripts/rc9_qualification_evidence_test.py
+```
+
+Use fresh report paths in the same evidence directory, with a clean checkout at
+the stated implementation commit to reproduce that evidence. The ledger verifier
+checks exact policy selectors and values, every required case and diagnostic,
+all 24 bound inputs, and the absence of unrelated input changes. Seven deliberate
+evidence mutations were rejected: predicate, selector, missing case, duplicate
+case, unrelated input digest, diagnostic category, and overstated analysis claim.
+
+On that same revision, `scripts/check` passes structure, format, strict lint,
+**1,531 test outcomes** (zero failures, 11 explicitly ignored qualification/advisory
+tests), and rustdoc. Self-analysis is complete: 987 Rust files, 1,566 base contexts,
+zero derived contexts, 1,121,116 projection work, and zero unresolved items.
+It exits 1 at exactly `LOCK-008`, `LOCK-026`, `LOCK-028`, and `LOCK-030` because
+the reviewed rc8 lock remains unchanged. Standalone `scripts/package-check`
+passes all three normalized archives and their offline expanded-archive checks.
+Git status remains empty. Those separate checks do not turn the interrupted
+canonical gate into a pass, and no lock authority was accepted.
+
+The engine checkpoint `6d638888e5d784dd3448842cf04ab05421ca7e04` additionally
+records 1,530 passing canonical test outcomes and the same four lock diagnostics;
+its archive stage was not run separately. New predicate tests cover schema limits,
+protected weakening, first-occurrence byte offsets, interval boundaries, complete
+line counts with bounded escaped samples, invalid UTF-8, and stale input binding.
+The new raw claims preserve comments and strings deliberately; they do not prove
+workflow structure, Rust code order, or command execution. Final versioned-tree
+release qualification and full downstream policy bundles remain open.

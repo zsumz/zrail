@@ -71,18 +71,18 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 356 | 196 | 195 |
+| kafka-driver | 826 | 772 | 356 | 321 | 320 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
-The **359 verified assertions** comprise five facade predicates, four
+The **484 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus five authored dependency key
 inventories, 35 authored dependency-field assertions and preconditions, and
 36 authored provenance assertions and parser preconditions, and 20 whole-lock
 cardinality/version/source/checksum assertions, plus 16 raw dependency/read
-assertions.
+assertions, plus 125 qualification text assertions and read preconditions.
 Size instances include
 all 141 measured baselines and three hard allowances. Their disposition
 is **new engine capability**; verified counts for the other four dispositions
@@ -431,10 +431,11 @@ Review of all assertions in frozen `tests/guardrails/qualification.rs` adds
 102 assertion instances from 84 previously unreviewed assertion/failure sites,
 plus 23 newly instantiated UTF-8 read preconditions across 24 inputs. The CI
 read reuses `KD-DEP-READ-CI`. `KD-CI-ENFORCEMENT` remains its existing separate
-policy decision and cutover blocker. All 125 new rows are unverified; no
-execution claim is inferred from the source test names or file vocabulary.
+policy decision and cutover blocker. All 125 new rows now have bound differential
+evidence; no execution claim is inferred from source test names or vocabulary.
 
-The expansion explicitly identifies these additional native gaps:
+The expansion identified these requirements, now implemented by closed native
+raw-text predicates:
 
 - `KD-QUAL-095` and `KD-QUAL-096`: strict order of the first raw fetch/gate/archive
   markers, with required marker presence.
@@ -445,8 +446,14 @@ The expansion explicitly identifies these additional native gaps:
   contain one of the two exact pinned values. Zero selected lines is legal to
   this predicate; each selected file still has an independent read requirement.
 
-The remaining 93 assertions use existing whole-file literal semantics but still
-need generated policies and frozen differential proof. They inspect CI,
+The other 93 assertions use the existing whole-file literal modes. The
+[125-policy fragment](policies/kafka-driver.qualification.fragment.toml) and
+[qualification evidence](evidence/qualification-parity-index.json) bind every
+assertion, exact input, original test body, and intended diagnostic. Two clean
+runs at `7c6c01d0af8bdeee598e87c3c8fae97ce72b9a0c` produced identical reports:
+923 fixtures, 410 accepted and 513 rejected. The audit verifier rejects changed
+selectors or predicate values, incomplete/duplicate fixture sets, unrelated
+input drift, wrong diagnostics, and overstated execution claims. These checks inspect CI,
 package metadata, scripts, compose files, and smoke sources; they do not execute
 Cargo, npm, smoque, a shell, or Kafka. The runners and behavioral scenarios remain
 in the downstream cutover plan. Raw conditions that accept comments must not be
