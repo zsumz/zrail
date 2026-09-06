@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "implementation_commit": "bd6372b91d39f59c3064a7a327b1b4349be7e28a",
+  "clean_when_started": true,
+  "command": "scripts/check",
+  "exit_code": 1,
+  "structure": "pass",
+  "format": "pass",
+  "strict_workspace_clippy": "pass",
+  "tests": {
+    "passed": 1514,
+    "failed": 0,
+    "ignored": 7
+  },
+  "rustdoc": "pass",
+  "self_analysis": {
+    "complete": true,
+    "rust_files": 956,
+    "base_contexts": 1531,
+    "derived_contexts": 0,
+    "projection_work": 1230844,
+    "unresolved": 0
+  },
+  "diagnostics": [
+    "LOCK-008",
+    "LOCK-026",
+    "LOCK-028",
+    "LOCK-030"
+  ],
+  "archive_stage": "not reached",
+  "cleanliness_stage": "not reached",
+  "standalone_package_check": {
+    "command": "scripts/package-check",
+    "exit_code": 0,
+    "same_clean_implementation": true
+  },
+  "lock_authority_accepted": false,
+  "full_repository_qualified": false,
+  "logs": {
+    "canonical": {
+      "artifact": "lock-packages-canonical.log.gz",
+      "payload_sha256": "f20be7b03cb10b983b59e99bfbd9794193354c5a868be897059fb1e218a806a6",
+      "compressed_sha256": "c737e1dc364a9158b721c34a4a25ca8d346fcf7160682b0895a97d1fa2b727a9"
+    },
+    "package": {
+      "artifact": "lock-packages-package.log.gz",
+      "payload_sha256": "2fc972a74ba842d576a65023821da6eb54d8fc3cf30825616b56f9fb1d5454a2",
+      "compressed_sha256": "bfc68429a80945864f1372b9dbf1580dcc6feb1509cea36038cd4ebf65ee258b"
+    }
+  }
+}

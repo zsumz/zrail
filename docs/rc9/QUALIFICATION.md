@@ -1,8 +1,9 @@
 # Reproducing the current rc9 evidence
 
-Release verdict: **blocked**. The latest manifest-field parity, canonical gate, and
-archive checkpoint is `c7ff4588f029169c10cce191be3bac3ceaec9e2d`, based on the
-exact audited rc8 commit. Earlier facade, size, and file evidence retains its
+Release verdict: **blocked**. The latest native whole-lock canonical gate and archive
+checkpoint is `bd6372b91d39f59c3064a7a327b1b4349be7e28a`, based on the exact
+audited rc8 commit. Manifest-field parity retains its
+`c7ff4588f029169c10cce191be3bac3ceaec9e2d` identity. Earlier evidence retains its
 own implementation identity below. None constitutes final versioned-tree release
 qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
 
@@ -429,3 +430,35 @@ Repeat with a second fresh report path on the same clean revision. The trusted
 qualification code shares existing file-analysis isolation and input binding;
 none of its legacy evaluator bodies execute during stock zrail analysis. Full
 downstream Cargo/Rust and execution qualification remains outstanding.
+
+## Native whole-lock inventory qualification
+
+At `bd6372b91d39f59c3064a7a327b1b4349be7e28a`, `scripts/check` passed
+structure, formatting, strict workspace lint, **1,514 tests** (zero failures,
+seven ignored), and rustdoc. Complete self-analysis found **956 Rust files**,
+1,531 base contexts, no derived contexts, 1,230,844 projection work, and zero
+unresolved items. Only `LOCK-008`, `LOCK-026`, `LOCK-028`, and `LOCK-030` remain.
+The canonical gate stopped before its archive and cleanliness stages.
+
+Standalone `scripts/package-check` passed on the same clean revision. The
+[index and bound logs](evidence/lock-packages-index.json) preserve both results.
+No reviewed lock was changed, and the archives still carry the development
+rc8 version; these are qualification artifacts, not release assets.
+
+The new family has six core schema/protected-diff tests and seven integration
+tests covering unreachable lock nodes, zero bans, required-node deletion,
+same-count version/source/checksum substitutions, exact local identities,
+missing/duplicate/malformed graphs, repeated selector work bounds, complete
+counts despite omitted identity samples, deterministic coverage/explanation,
+and whole-input lock drift. Reproduce with:
+
+```sh
+cargo test --locked --offline -p zrail-core lock_packages
+cargo test --locked --offline -p zrail-testkit --test lock_packages
+scripts/check
+scripts/package-check
+```
+
+Consumer provenance policy translation and frozen differential qualification
+remain separate work. This native checkpoint adds no verified assertion IDs
+and establishes no full consumer repository qualification.
