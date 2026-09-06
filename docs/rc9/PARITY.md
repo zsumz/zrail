@@ -61,7 +61,7 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 ## Machine-readable audit state
 
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **427 reviewed assertion instances**. The
+contains **552 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
 record 9,792 files and 72,155 syntax candidates. Every tracked path is included,
@@ -71,7 +71,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 231 | 196 | 195 |
+| kafka-driver | 826 | 772 | 356 | 196 | 195 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
@@ -424,3 +424,30 @@ comments or unrelated fields, as the legacy assertions do. They establish no
 workflow execution or YAML claim. Required file reads are qualified separately
 from absence bans. The two original name-extractor detector assertions remain
 open pending their own complete replacement-fixture linkage.
+
+## Qualification guard expansion
+
+Review of all assertions in frozen `tests/guardrails/qualification.rs` adds
+102 assertion instances from 84 previously unreviewed assertion/failure sites,
+plus 23 newly instantiated UTF-8 read preconditions across 24 inputs. The CI
+read reuses `KD-DEP-READ-CI`. `KD-CI-ENFORCEMENT` remains its existing separate
+policy decision and cutover blocker. All 125 new rows are unverified; no
+execution claim is inferred from the source test names or file vocabulary.
+
+The expansion explicitly identifies these additional native gaps:
+
+- `KD-QUAL-095` and `KD-QUAL-096`: strict order of the first raw fetch/gate/archive
+  markers, with required marker presence.
+- `KD-QUAL-097`: the offline marker must occur inside the first gate-to-package
+  byte interval, including its start and excluding its end. Whole-file presence
+  does not preserve this assertion.
+- `KD-QUAL-228-01` through `KD-QUAL-228-06`: every raw trimmed `image: ` line must
+  contain one of the two exact pinned values. Zero selected lines is legal to
+  this predicate; each selected file still has an independent read requirement.
+
+The remaining 93 assertions use existing whole-file literal semantics but still
+need generated policies and frozen differential proof. They inspect CI,
+package metadata, scripts, compose files, and smoke sources; they do not execute
+Cargo, npm, smoque, a shell, or Kafka. The runners and behavioral scenarios remain
+in the downstream cutover plan. Raw conditions that accept comments must not be
+presented as parsed YAML or successful execution evidence.
