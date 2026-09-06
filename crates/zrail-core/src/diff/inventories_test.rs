@@ -2,6 +2,8 @@
 
 use crate::{ChangeKind, Contract, RustInventoryRule, compare_architecture};
 
+#[path = "../../tests/rc9_inventories/file_items_diff.rs"]
+mod file_items_test;
 #[path = "../../tests/rc9_inventories/diff.rs"]
 mod impls_test;
 

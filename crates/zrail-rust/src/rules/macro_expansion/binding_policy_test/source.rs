@@ -27,6 +27,8 @@ pub(super) fn source(expansion: MacroExpansionFact) -> SourceIndex {
             authored_paths: None,
             authored_renames: None,
             authored_impls: None,
+            authored_file_modules: None,
+            authored_file_variants: None,
             operations: Vec::new(),
             macros: Vec::new(),
             macro_imports: Vec::new(),

@@ -23,6 +23,8 @@ pub(super) struct Observations<'a> {
     paths: BTreeMap<&'a str, Vec<&'a crate::source::ObservedFact>>,
     renames: BTreeMap<&'a str, Vec<&'a crate::source::ObservedFact>>,
     impls: BTreeMap<&'a str, Vec<&'a crate::source::ObservedFact>>,
+    file_modules: BTreeMap<&'a str, Vec<&'a crate::source::ObservedFact>>,
+    file_variants: BTreeMap<&'a str, Vec<&'a crate::source::ObservedFact>>,
     work: usize,
     occurrences: usize,
     inputs: BTreeMap<String, RustInventoryInput>,
@@ -36,6 +38,8 @@ impl<'a> Observations<'a> {
         let mut paths = BTreeMap::<_, Vec<_>>::new();
         let mut renames = BTreeMap::<_, Vec<_>>::new();
         let mut impls = BTreeMap::<_, Vec<_>>::new();
+        let mut file_modules = BTreeMap::<_, Vec<_>>::new();
+        let mut file_variants = BTreeMap::<_, Vec<_>>::new();
         for file in &source.files {
             if file.syntax == SourceSyntax::Items {
                 for (target, authored) in [
@@ -44,6 +48,8 @@ impl<'a> Observations<'a> {
                     (&mut paths, &file.authored_paths),
                     (&mut renames, &file.authored_renames),
                     (&mut impls, &file.authored_impls),
+                    (&mut file_modules, &file.authored_file_modules),
+                    (&mut file_variants, &file.authored_file_variants),
                 ] {
                     if let Some(authored) = authored {
                         target
@@ -65,6 +71,8 @@ impl<'a> Observations<'a> {
             paths,
             renames,
             impls,
+            file_modules,
+            file_variants,
             work: 0,
             occurrences: 0,
             inputs: BTreeMap::new(),
@@ -89,6 +97,8 @@ impl<'a> Observations<'a> {
             RustInventorySubject::WrittenPathsContaining { .. } => &self.paths,
             RustInventorySubject::WrittenImportRenames { .. } => &self.renames,
             RustInventorySubject::WrittenTraitImpls { .. } => &self.impls,
+            RustInventorySubject::WrittenFileModules { .. } => &self.file_modules,
+            RustInventorySubject::WrittenFileEnumVariants { .. } => &self.file_variants,
         };
         let mut counts = BTreeMap::<(&str, &str), usize>::new();
         for path in paths {

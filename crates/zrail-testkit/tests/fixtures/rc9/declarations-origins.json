@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_graph.rs",
+      "source_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+      "harness": "crates/zrail-rust/tests/rc9_declarations/legacy.rs",
+      "function": "original Rust parser and retired module names",
+      "start_line": 13,
+      "end_line": 22,
+      "extracted_sha256": "0ccd216dc66c40d533525e85fd0e933eb707b36289e12931f353e78f593c58fd"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_graph.rs",
+      "source_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+      "harness": "crates/zrail-rust/tests/rc9_declarations/legacy.rs",
+      "function": "original module predicate and direct item selection",
+      "start_line": 24,
+      "end_line": 31,
+      "extracted_sha256": "e763c6b0e8a54f49e6e4e62a467c792c822a138765ca343bbd3faa90d6237a56"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_graph.rs",
+      "source_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+      "harness": "crates/zrail-rust/tests/rc9_declarations/legacy.rs",
+      "function": "original module prohibition assertion",
+      "start_line": 34,
+      "end_line": 37,
+      "extracted_sha256": "b4d060dc94ccb4f4a9460cc31bb501aae65b3bc8a519aa93c62c65228cd3f479"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_graph.rs",
+      "source_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+      "harness": "crates/zrail-rust/tests/rc9_declarations/legacy.rs",
+      "function": "original backend parse precondition",
+      "start_line": 66,
+      "end_line": 67,
+      "extracted_sha256": "36b51756f2d3c4150198cade777229a9464bbcc70fdabfd5123792ca5b465f6b"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_graph.rs",
+      "source_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+      "harness": "crates/zrail-rust/tests/rc9_declarations/legacy.rs",
+      "function": "original exact enum and variant predicate",
+      "start_line": 69,
+      "end_line": 73,
+      "extracted_sha256": "5dce473ccb9032134a4994c26a412f7c7044903c7de94bd58c0b01c01fa1da3e"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_graph.rs",
+      "source_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+      "harness": "crates/zrail-rust/tests/rc9_declarations/legacy.rs",
+      "function": "original variant prohibition assertion",
+      "start_line": 75,
+      "end_line": 78,
+      "extracted_sha256": "960d62a3f352c97e0ee8cd513247c2f9cff3a3dffc3e8f0294fdba7ed82939ad"
+    }
+  ],
+  "fixtures": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_graph.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/declarations/release_graph.rs",
+      "sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff"
+    }
+  ],
+  "harness_adaptations": [
+    "File reads are injected as strings. Original parser statements, selectors and assertions remain byte-bound.",
+    "The two observed local initializers become return expressions; a Rust test compares their entire syn AST against the original initializer, including top-level traversal, quantifiers and collected shape."
+  ]
+}

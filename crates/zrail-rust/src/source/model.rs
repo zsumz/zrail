@@ -207,6 +207,8 @@ pub(crate) struct RustFileFacts {
     pub(crate) authored_paths: Option<Vec<ObservedFact>>,
     pub(crate) authored_renames: Option<Vec<ObservedFact>>,
     pub(crate) authored_impls: Option<Vec<ObservedFact>>,
+    pub(crate) authored_file_modules: Option<Vec<ObservedFact>>,
+    pub(crate) authored_file_variants: Option<Vec<ObservedFact>>,
     pub(crate) operations: Vec<super::operation_model::SourceOperationFact>,
     pub(crate) macros: Vec<ObservedFact>,
     pub(crate) macro_imports: Vec<MacroImportFact>,

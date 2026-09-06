@@ -65,7 +65,9 @@ pub(super) fn selected_names<'a>(
             }
             None
         }
-        RustInventorySubject::WrittenMethods { .. } => Some(fact.name.as_str()),
+        RustInventorySubject::WrittenMethods { .. }
+        | RustInventorySubject::WrittenFileModules { .. }
+        | RustInventorySubject::WrittenFileEnumVariants { .. } => Some(fact.name.as_str()),
         RustInventorySubject::WrittenExpressionPaths { .. } => {
             fact.written.as_deref().and_then(|written| {
                 let written = written.trim_start_matches("::");

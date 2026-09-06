@@ -45,8 +45,10 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
                 RustInventorySubject::WrittenMethods { .. }
                 | RustInventorySubject::WrittenPathsContaining { .. }
                 | RustInventorySubject::WrittenImportRenames { .. }
+                | RustInventorySubject::WrittenFileModules { .. }
                 | RustInventorySubject::WrittenTraitImpls { .. } => identifier(name),
-                RustInventorySubject::WrittenExpressionPaths { .. } => {
+                RustInventorySubject::WrittenExpressionPaths { .. }
+                | RustInventorySubject::WrittenFileEnumVariants { .. } => {
                     name.split("::").count() == 2 && name.split("::").all(identifier)
                 }
             };

@@ -84,6 +84,12 @@ pub(crate) fn analyze(
                 zrail_core::RustInventorySubject::WrittenTraitImpls { .. } => {
                     "authored-rust-path-type-trait-impl-syntax".into()
                 }
+                zrail_core::RustInventorySubject::WrittenFileModules { .. } => {
+                    "authored-rust-file-module-syntax".into()
+                }
+                zrail_core::RustInventorySubject::WrittenFileEnumVariants { .. } => {
+                    "authored-rust-file-enum-variant-syntax".into()
+                }
             },
             policy,
             quality: AnalysisQuality::Exact,

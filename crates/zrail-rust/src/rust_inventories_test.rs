@@ -19,6 +19,8 @@ mod syntax_cases;
 mod expression_mutations;
 #[path = "rust_inventories/parity/family.rs"]
 mod family;
+#[path = "../tests/rc9_declarations/file_items.rs"]
+mod file_items_test;
 #[path = "rust_inventories/parity/fixtures.rs"]
 mod fixtures;
 #[path = "rust_inventories/parity/impl_cases.rs"]

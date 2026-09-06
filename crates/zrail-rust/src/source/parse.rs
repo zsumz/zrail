@@ -2,6 +2,8 @@
 
 #[path = "authored_expressions.rs"]
 mod authored_expressions;
+#[path = "authored_file_items.rs"]
+mod authored_file_items;
 #[path = "authored_impls.rs"]
 mod authored_impls;
 #[path = "authored_methods.rs"]

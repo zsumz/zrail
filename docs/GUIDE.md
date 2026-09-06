@@ -265,7 +265,7 @@ TOML/JSON presence, absence, nonempty-string, and exact typed-value checks.
 marker-bounded literal presence, and prefixed line-value allowlists.
 [Rust inventories](RUST-INVENTORIES.md) govern authored method calls, expression
 paths, path-segment membership, explicit import renames, and path-type trait
-implementations over parsed source
+implementations, direct file-module declarations and enum variants over parsed source
 facts. Exact owner sets retain location and subject identity independently of
 per-file occurrence quantities; rename identities retain both source and alias,
 and trait-implementation identities retain both trait and implementing type.

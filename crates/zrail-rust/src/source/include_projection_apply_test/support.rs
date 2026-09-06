@@ -103,6 +103,8 @@ pub(super) fn parsed_file(relative: &str, source: &str) -> RustFileFacts {
         authored_paths: None,
         authored_renames: None,
         authored_impls: None,
+        authored_file_modules: None,
+        authored_file_variants: None,
         operations: visitor.operations,
         macros: visitor.macros,
         macro_imports: imports.macro_imports(),

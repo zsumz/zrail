@@ -187,6 +187,35 @@ The claim is `authored-rust-path-type-trait-impl-syntax`. Existing exact trait a
 type resolution remains independent. Unsupported semantic claims cannot be
 added as permissive selector fields.
 
+`written-file-modules` counts direct `mod` declarations in each selected
+physical Rust file. Inline and external modules both participate. Names inside
+nested modules, functions, expressions, imports or macro tokens do not:
+
+```toml
+subject = { kind = "written-file-modules", names = ["plaintext", "tls"] }
+assertion = { kind = "count", maximum = 0 }
+```
+
+`written-file-enum-variants` counts variants of enum declarations directly in
+each selected physical Rust file. Selection uses the complete written pair,
+independently of the variant's unit, tuple, named-field or discriminant shape:
+
+```toml
+subject = { kind = "written-file-enum-variants", variants = ["ReactorBackend::Legacy"] }
+assertion = { kind = "count", maximum = 0 }
+```
+
+`Other::Legacy`, nested enum declarations and text mentions do not satisfy that
+selector. The file's direct item list defines scope even if the file is included
+inside another module. All authored cfg branches, visibilities, duplicate
+declarations and duplicate variants participate; case and raw prefixes remain
+significant. Each selected module or variant identifier span counts once per
+physical file. Claims are `authored-rust-file-module-syntax` and
+`authored-rust-file-enum-variant-syntax`. They preserve existing mounting,
+facade, test-placement and semantic-resolution behavior. A zero predicate stays
+active when the prohibited declaration, enclosing enum, or file is absent;
+positive/exact requirements fail when their required subject disappears.
+
 Selections reuse the bounded physical repository scanner independently of
 `repository.exclude`, Cargo source filtering, and mount reachability. Every
 selected entry must be a physical `.rs` file with complete Rust *file* facts.

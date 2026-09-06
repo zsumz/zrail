@@ -3,7 +3,10 @@
 use syn::visit::Visit;
 use zrail_core::RustSourceContract;
 
-use super::{authored_expressions, authored_impls, authored_methods, authored_renames, facade};
+use super::{
+    authored_expressions, authored_file_items, authored_impls, authored_methods, authored_renames,
+    facade,
+};
 use crate::{
     inventory::FileClass,
     source::{
@@ -39,6 +42,23 @@ pub(super) fn index_file_as(
     visitor.paths.extend(synthetic_paths);
     let facade_implementation =
         mode.map_or_else(Vec::new, |mode| facade::items(effective, mode, syntax));
+    let file_modules = inventories.iter().any(|rule| {
+        matches!(
+            rule.subject,
+            zrail_core::RustInventorySubject::WrittenFileModules { .. }
+        )
+    });
+    let file_variants = inventories.iter().any(|rule| {
+        matches!(
+            rule.subject,
+            zrail_core::RustInventorySubject::WrittenFileEnumVariants { .. }
+        )
+    });
+    let (modules, variants) = if file_modules || file_variants {
+        authored_file_items::collect(syntax, file_modules, file_variants)
+    } else {
+        (Vec::new(), Vec::new())
+    };
     RustFileFacts {
         relative: source_file.relative.clone(),
         packages: Vec::new(),
@@ -47,6 +67,8 @@ pub(super) fn index_file_as(
         syntax: SourceSyntax::Items,
         lines: source_file.lines,
         module_docs: has_module_docs(&syntax.attrs),
+        authored_file_modules: file_modules.then_some(modules),
+        authored_file_variants: file_variants.then_some(variants),
         authored_expressions: inventories
             .iter()
             .any(|rule| {

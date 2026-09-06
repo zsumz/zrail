@@ -6,6 +6,9 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ### Added
 
+- Explicit file-level module and enum-variant inventories over parsed Rust items,
+  preserving nested-scope boundaries, exact written identity and active zero bans.
+
 - Authored path-type trait-implementation inventories with explicit per-trait
   type filters, exact trait/type/file identity, independent quantities, and
   protected review of selection changes; semantic resolution remains separate.

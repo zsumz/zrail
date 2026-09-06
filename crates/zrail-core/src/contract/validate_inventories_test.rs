@@ -2,6 +2,8 @@
 
 use crate::{RustInventoryAssertion, RustInventoryRule, RustInventorySubject};
 
+#[path = "../../tests/rc9_inventories/file_items.rs"]
+mod file_items_test;
 #[path = "../../tests/rc9_inventories/validation.rs"]
 mod impls_test;
 

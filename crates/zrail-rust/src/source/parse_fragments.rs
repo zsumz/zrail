@@ -127,6 +127,8 @@ fn finish(
         authored_paths: None,
         authored_renames: None,
         authored_impls: None,
+        authored_file_modules: None,
+        authored_file_variants: None,
         operations: visitor.operations,
         macros: visitor.macros,
         macro_imports: Vec::new(),

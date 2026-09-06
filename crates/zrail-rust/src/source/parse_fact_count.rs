@@ -19,6 +19,8 @@ pub(crate) fn fact_count(file: &RustFileFacts) -> usize {
         + file.authored_paths.as_ref().map_or(0, Vec::len)
         + file.authored_renames.as_ref().map_or(0, Vec::len)
         + file.authored_impls.as_ref().map_or(0, Vec::len)
+        + file.authored_file_modules.as_ref().map_or(0, Vec::len)
+        + file.authored_file_variants.as_ref().map_or(0, Vec::len)
         + file.operations.len()
         + file.macros.len()
         + file.macro_imports.len()

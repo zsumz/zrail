@@ -63,6 +63,16 @@ pub enum RustInventorySubject {
         /// Optional per-trait final implementing-type identifiers; omission selects all path types.
         implementing_types: std::collections::BTreeMap<String, Vec<String>>,
     },
+    /// Module declarations directly in the physical Rust file, both inline and external.
+    WrittenFileModules {
+        /// Exact final written module identifiers, including case and raw prefixes.
+        names: Vec<String>,
+    },
+    /// Variants of enum declarations directly in the physical Rust file.
+    WrittenFileEnumVariants {
+        /// Exact written `Enum::Variant` pairs; nested enum declarations do not participate.
+        variants: Vec<String>,
+    },
 }
 
 impl RustInventorySubject {
@@ -72,8 +82,10 @@ impl RustInventorySubject {
             Self::WrittenMethods { names }
             | Self::WrittenPathsContaining { names }
             | Self::WrittenImportRenames { names }
+            | Self::WrittenFileModules { names }
             | Self::WrittenTraitImpls { names, .. } => names,
             Self::WrittenExpressionPaths { suffixes } => suffixes,
+            Self::WrittenFileEnumVariants { variants } => variants,
         }
     }
 
@@ -82,8 +94,10 @@ impl RustInventorySubject {
         match self {
             Self::WrittenMethods { names }
             | Self::WrittenPathsContaining { names }
-            | Self::WrittenImportRenames { names } => names.sort(),
+            | Self::WrittenImportRenames { names }
+            | Self::WrittenFileModules { names } => names.sort(),
             Self::WrittenExpressionPaths { suffixes } => suffixes.sort(),
+            Self::WrittenFileEnumVariants { variants } => variants.sort(),
             Self::WrittenTraitImpls {
                 names,
                 implementing_types,

@@ -21,7 +21,7 @@ pub struct RustInventoryOccurrence {
     pub path: String,
     /// Written subject spelling.
     pub name: String,
-    /// Exact syntax span: method identifier, complete path, import rename, or complete trait impl.
+    /// Exact subject span: selected identifier, complete path, import rename, or complete trait impl.
     pub span: SourceSpan,
 }
 
