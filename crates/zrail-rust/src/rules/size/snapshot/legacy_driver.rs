@@ -81,7 +81,7 @@ fn collect_rust_files(directory: &Path, files: &mut Vec<PathBuf>) {
     }
 }
 
-pub(super) fn paths(root: &Path, roots: &[String]) -> Vec<PathBuf> {
+pub(crate) fn paths(root: &Path, roots: &[String]) -> Vec<PathBuf> {
     let mut files = Vec::new();
     for rust_root in roots {
         collect_rust_files(&root.join(rust_root), &mut files);

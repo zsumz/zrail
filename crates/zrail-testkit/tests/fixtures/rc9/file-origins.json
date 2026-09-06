@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "harness": "crates/zrail-rust/src/repository_files/parity/legacy.rs",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/module_contract.rs",
+      "source_sha256": "af526185d55e917ade96411a2b78de8cb3503c4c78a152b7aed281fd75666ea2",
+      "function": "VAGUE_MODULES",
+      "start_line": 7,
+      "end_line": 7,
+      "extracted_sha256": "f01bca4238313dd7167d1d7c78550b35ccd03541363cdfa16470f95c083f1a15"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/module_contract.rs",
+      "source_sha256": "af526185d55e917ade96411a2b78de8cb3503c4c78a152b7aed281fd75666ea2",
+      "function": "has_contract",
+      "start_line": 9,
+      "end_line": 11,
+      "extracted_sha256": "06d4d722099ed5ff8f720f7a2a5d144a71a99360fc7dd0d6c250a12f94839dbf"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/module_contract.rs",
+      "source_sha256": "af526185d55e917ade96411a2b78de8cb3503c4c78a152b7aed281fd75666ea2",
+      "function": "has_vague_name",
+      "start_line": 13,
+      "end_line": 20,
+      "extracted_sha256": "f22ebe1c7c1de46f330244d4a24adb8b5d0ccb1159421d6aefb84bba13df7e51"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/capability.rs",
+      "source_sha256": "08e1ace3a77307b537f0d4568f4eda059b2226cb3cc00cd8821dd046a3a2fe8a",
+      "function": "source_violations",
+      "start_line": 5,
+      "end_line": 11,
+      "extracted_sha256": "5ddbcc8ec596bfd78be376541dba63737bc6cfb9192d84b6629c427100454168"
+    }
+  ]
+}

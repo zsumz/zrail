@@ -79,3 +79,7 @@ pub(crate) fn analyze(
 fn incomplete(message: impl std::fmt::Display) -> String {
     format!("REP-FILE-006: incomplete repository-file analysis: {message}")
 }
+
+#[cfg(test)]
+#[path = "repository_files_test.rs"]
+mod repository_files_test;

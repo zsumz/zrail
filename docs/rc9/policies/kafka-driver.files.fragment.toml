@@ -1,0 +1,277 @@
+# Partial repository.files fragment; assemble with the single repository section.
+# No complete source, execution, or release qualification is implied.
+# Frozen source: kafkars/kafka-driver@a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# guardrails.toml SHA-256: 099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10
+
+[[repository.files]]
+name = "kd-module-leading-doc"
+include = ["crates/kafka-driver-core/src/**/*.rs", "crates/kafka-driver-probe/src/**/*.rs", "crates/kafka-driver-sim/src/**/*.rs", "crates/kafka-driver-transport/src/**/*.rs", "src/**/*.rs", "tests/**/*.rs"]
+entry = "file"
+reason = "Preserve the frozen leading raw documentation marker."
+predicate = { kind = "literal", text = "//!", mode = "starts-with", normalization = "trim-start" }
+
+[[repository.files]]
+name = "kd-module-names"
+include = ["crates/kafka-driver-core/src/**/*.rs", "crates/kafka-driver-probe/src/**/*.rs", "crates/kafka-driver-sim/src/**/*.rs", "crates/kafka-driver-transport/src/**/*.rs", "src/**/*.rs", "tests/**/*.rs"]
+entry = "file"
+reason = "Preserve the frozen absolute path-component stem restriction."
+predicate = { kind = "forbidden-names", names = ["common", "context", "helpers", "manager", "utils"], part = "component-stem", basis = "filesystem" }
+
+[[repository.files]]
+name = "kd-capability-root-01"
+include = ["crates/kafka-driver-core/src"]
+entry = "directory"
+reason = "Preserve the capability root's independent directory-presence requirement."
+predicate = { kind = "count", minimum = 1, maximum = 1 }
+
+[[repository.files]]
+name = "kd-capability-01-01"
+include = ["crates/kafka-driver-core/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "mio", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-01-02"
+include = ["crates/kafka-driver-core/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "rustls", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-01-03"
+include = ["crates/kafka-driver-core/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::fs", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-01-04"
+include = ["crates/kafka-driver-core/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::net", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-01-05"
+include = ["crates/kafka-driver-core/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::process", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-01-06"
+include = ["crates/kafka-driver-core/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::thread", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-01-07"
+include = ["crates/kafka-driver-core/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::time::Instant", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-01-08"
+include = ["crates/kafka-driver-core/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::time::SystemTime", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-root-02"
+include = ["crates/kafka-driver-sim/src"]
+entry = "directory"
+reason = "Preserve the capability root's independent directory-presence requirement."
+predicate = { kind = "count", minimum = 1, maximum = 1 }
+
+[[repository.files]]
+name = "kd-capability-02-01"
+include = ["crates/kafka-driver-sim/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "kafka_wire", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-02-02"
+include = ["crates/kafka-driver-sim/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "mio", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-02-03"
+include = ["crates/kafka-driver-sim/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "rustls", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-02-04"
+include = ["crates/kafka-driver-sim/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::fs", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-02-05"
+include = ["crates/kafka-driver-sim/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::net", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-02-06"
+include = ["crates/kafka-driver-sim/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::process", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-02-07"
+include = ["crates/kafka-driver-sim/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::thread", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-02-08"
+include = ["crates/kafka-driver-sim/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::time::Instant", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-02-09"
+include = ["crates/kafka-driver-sim/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::time::SystemTime", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-root-03"
+include = ["crates/kafka-driver-transport/src"]
+entry = "directory"
+reason = "Preserve the capability root's independent directory-presence requirement."
+predicate = { kind = "count", minimum = 1, maximum = 1 }
+
+[[repository.files]]
+name = "kd-capability-03-01"
+include = ["crates/kafka-driver-transport/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "mio", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-03-02"
+include = ["crates/kafka-driver-transport/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "rustls", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-03-03"
+include = ["crates/kafka-driver-transport/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::fs", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-03-04"
+include = ["crates/kafka-driver-transport/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::net", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-03-05"
+include = ["crates/kafka-driver-transport/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::process", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-03-06"
+include = ["crates/kafka-driver-transport/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::thread", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-03-07"
+include = ["crates/kafka-driver-transport/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::time::Instant", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-03-08"
+include = ["crates/kafka-driver-transport/src/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::time::SystemTime", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-root-04"
+include = ["src/negotiation"]
+entry = "directory"
+reason = "Preserve the capability root's independent directory-presence requirement."
+predicate = { kind = "count", minimum = 1, maximum = 1 }
+
+[[repository.files]]
+name = "kd-capability-04-01"
+include = ["src/negotiation/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "mio", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-04-02"
+include = ["src/negotiation/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "rustls", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-04-03"
+include = ["src/negotiation/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::fs", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-04-04"
+include = ["src/negotiation/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::net", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-04-05"
+include = ["src/negotiation/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::process", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-04-06"
+include = ["src/negotiation/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::thread", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-04-07"
+include = ["src/negotiation/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::time::Instant", mode = "absent" }
+
+[[repository.files]]
+name = "kd-capability-04-08"
+include = ["src/negotiation/**/*.rs"]
+entry = "file"
+reason = "Preserve the authored capability-token ban, including comments and strings."
+predicate = { kind = "literal", text = "std::time::SystemTime", mode = "absent" }

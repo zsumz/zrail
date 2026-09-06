@@ -7,6 +7,8 @@ mod scoped;
 #[cfg(test)]
 #[path = "size_test.rs"]
 mod size_test;
+#[cfg(test)]
+pub(crate) use size_test::legacy_driver_paths;
 
 use zrail_core::{Finding, FindingSink, LockedRatchet, Severity, SizeTargetMode};
 

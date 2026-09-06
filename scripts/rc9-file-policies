@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""Emit pinned Kafka-driver file-policy data; never an analyzer or execution gate.
+
+This trusted migration tool verifies frozen inputs and emits a partial fragment
+for review. Complete source, dependency, evidence, and release policy is separate.
+"""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import tomllib
+
+
+ROOT = Path(__file__).resolve().parent.parent
+PINS = ROOT / "crates/zrail-testkit/tests/fixtures/rc9/snapshots.json"
+
+
+def literal(value):
+    return json.dumps(value, ensure_ascii=False)
+
+
+def rule(name, include, predicate, reason, entry="file"):
+    fields = ", ".join(f"{key} = {literal(value)}" for key, value in predicate.items())
+    return ["", "[[repository.files]]", f"name = {literal(name)}",
+            f"include = {literal(sorted(include))}", f"entry = {literal(entry)}",
+            f"reason = {literal(reason)}", f"predicate = {{ {fields} }}"]
+
+
+def translate(config):
+    roots = config["paths"]["rust_roots"]
+    lines = rule("kd-module-leading-doc", [f"{root}/**/*.rs" for root in roots],
+                 {"kind": "literal", "text": "//!", "mode": "starts-with", "normalization": "trim-start"},
+                 "Preserve the frozen leading raw documentation marker.")
+    lines += rule("kd-module-names", [f"{root}/**/*.rs" for root in roots],
+                  {"kind": "forbidden-names", "names": ["common", "context", "helpers", "manager", "utils"],
+                   "part": "component-stem", "basis": "filesystem"},
+                  "Preserve the frozen absolute path-component stem restriction.")
+    for index, capability in enumerate(config["capabilities"], 1):
+        root = capability["root"]
+        if not any(root == scope or root.startswith(scope + "/") for scope in roots):
+            raise ValueError(f"capability root falls outside the frozen Rust selection: {root}")
+        lines += rule(f"kd-capability-root-{index:02}", [root],
+                      {"kind": "count", "minimum": 1, "maximum": 1},
+                      "Preserve the capability root's independent directory-presence requirement.", "directory")
+        for token_index, token in enumerate(capability["forbidden"], 1):
+            lines += rule(f"kd-capability-{index:02}-{token_index:02}", [f"{root}/**/*.rs"],
+                          {"kind": "literal", "text": token, "mode": "absent"},
+                          "Preserve the authored capability-token ban, including comments and strings.")
+    return lines
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("snapshots", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
+    pins = json.loads(PINS.read_text(encoding="utf-8"))
+    pin = next(pin for pin in pins["consumers"] if pin["name"] == "kafka-driver")
+    source = (args.snapshots / "kafka-driver/guardrails.toml").read_bytes()
+    if len(source) > 4 * 1024 * 1024:
+        raise ValueError("legacy registry exceeds 4 MiB")
+    config = tomllib.loads(source.decode("utf-8"))
+    if config["schema"] != 1:
+        raise ValueError("unexpected legacy schema")
+    lines = ["# Partial repository.files fragment; assemble with the single repository section.",
+             "# No complete source, execution, or release qualification is implied.",
+             f"# Frozen source: {pin['repository']}@{pin['commit']}",
+             f"# guardrails.toml SHA-256: {hashlib.sha256(source).hexdigest()}"]
+    lines += translate(config)
+    args.output.mkdir(parents=True, exist_ok=True)
+    destination = args.output / "kafka-driver.files.fragment.toml"
+    destination.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"wrote {destination}; 39 raw/path predicates for review")
+
+
+if __name__ == "__main__":
+    main()

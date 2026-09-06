@@ -16,6 +16,8 @@ mod hygiene;
 mod macro_expansion;
 mod repository;
 mod size;
+#[cfg(test)]
+pub(crate) use size::legacy_driver_paths;
 pub(crate) mod source_graph;
 mod source_shape;
 mod test_placement;

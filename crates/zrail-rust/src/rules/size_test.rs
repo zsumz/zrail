@@ -9,6 +9,7 @@ mod model;
 #[path = "size/snapshot/qualify.rs"]
 mod qualify;
 
+pub(crate) use legacy_driver::paths as legacy_driver_paths;
 use model::{Budget, BudgetAllow, BudgetBaseline};
 
 #[test]
