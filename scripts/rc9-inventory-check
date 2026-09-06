@@ -137,6 +137,14 @@ def main():
         require(file["path"] == source["path"] and file["sha256"] == source["file_sha256"], "assertion file mismatch")
         for field in ["line", "column", "function", "syntax_sha256"]:
             require(candidate[field] == source[field], f"assertion {field} mismatch")
+        invocations = assertion.get("invocations", [])
+        require(isinstance(invocations, list) and len(invocations) <= 1024
+                and len(invocations) == len(set(invocations)), "invalid helper invocation identities")
+        for invocation in invocations:
+            caller_file, caller = candidates[invocation]
+            require(caller_file["repository"] == assertion["repository"]
+                    and caller_file["commit"] == assertion["commit"]
+                    and caller["kind"] == "helper-call-candidate", "helper invocation snapshot/kind mismatch")
         if registry := assertion.get("policy_registry"):
             registry_file = files[(assertion["repository"], registry["path"])]
             require(registry_file["sha256"] == registry["file_sha256"], "registry source digest mismatch")

@@ -25,9 +25,9 @@ files and opaque or invalid syntax remain explicit review work.
 | `KD-LOCK-BAN-async-std` | Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient. |
 | `KD-LOCK-BAN-async-trait` | Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient. |
 | `KD-LOCK-BAN-smol` | Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient. |
-| `KD-LOCK-BAN-tokio` | Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient. |
 | `KD-LOCK-BAN-tokio-rustls` | Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient. |
 | `KD-LOCK-BAN-tokio-util` | Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient. |
+| `KD-LOCK-BAN-tokio` | Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient. |
 | `KD-LOCK-bornera-CHECKSUM` | Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified. |
 | `KD-LOCK-bornera-COUNT` | Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified. |
 | `KD-LOCK-bornera-SOURCE` | Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified. |
@@ -49,6 +49,49 @@ files and opaque or invalid syntax remain explicit review work.
 | `KD-LOCK-kafka-wire-core-SOURCE` | Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified. |
 | `KD-LOCK-kafka-wire-core-VERSION` | Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified. |
 | `KD-METADATA-PARENT` | Record the path-precondition proof and bind the exact translated license paths before closing this helper assertion. |
+| `KD-PROVENANCE-LOCK-PACKAGE-ARRAY` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-LOCK-PACKAGE-NAMES` | Account for the implicit all-entry name-index precondition. Existing Cargo parsing rejects non-string names more strictly; qualify this distinction and preserve complete lock scope. |
+| `KD-PROVENANCE-PARSE` | Bind all three complete provenance inputs and malformed/duplicate-key/UTF-8 negatives to native parser diagnostics. |
+| `KD-PROVENANCE-bornera-TYPE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-bornera-VERSION-PREFIX` | Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority. |
+| `KD-PROVENANCE-bornera-VERSION` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-bornera-core-TYPE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-bornera-core-VERSION-PREFIX` | Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority. |
+| `KD-PROVENANCE-bornera-core-VERSION` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-bornera-rustls-TYPE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-bornera-rustls-VERSION-PREFIX` | Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority. |
+| `KD-PROVENANCE-bornera-rustls-VERSION` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-NO-PATCH` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-NO-REPLACE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-NO-TARGET` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-bornera-COUNT` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-bornera-INHERITANCE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-bornera-TABLE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-bornera-core-COUNT` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-bornera-core-INHERITANCE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-bornera-core-TABLE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-bornera-rustls-COUNT` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-bornera-rustls-INHERITANCE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-bornera-rustls-OPTIONAL` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-bornera-rustls-TABLE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-wire-COUNT` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-wire-INHERITANCE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-wire-TABLE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-wire-core-COUNT` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-wire-core-INHERITANCE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-driver-wire-core-TABLE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-kafka-wire-TYPE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-kafka-wire-VERSION-PREFIX` | Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority. |
+| `KD-PROVENANCE-kafka-wire-VERSION` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-kafka-wire-core-TYPE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-kafka-wire-core-VERSION-PREFIX` | Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority. |
+| `KD-PROVENANCE-kafka-wire-core-VERSION` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-probe-NO-PATCH` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-probe-NO-REPLACE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-probe-NO-TARGET` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-probe-wire-COUNT` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-probe-wire-INHERITANCE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
+| `KD-PROVENANCE-probe-wire-TABLE` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
 | `KD-RETIRED-BACKEND-VARIANT` | Bounded Rust enum-variant predicate and cfg/omission/duplicate fixtures remain open. |
 | `KD-RETIRED-CONSTRUCTION-LegacyBackend` | Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify. |
 | `KD-RETIRED-CONSTRUCTION-new_legacy` | Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify. |

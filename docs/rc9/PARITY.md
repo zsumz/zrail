@@ -60,7 +60,7 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 ## Machine-readable audit state
 
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **381 reviewed assertion instances**. The
+contains **424 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
 record 9,792 files and 72,155 syntax candidates. Every tracked path is included,
@@ -70,7 +70,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 185 | 124 | 123 |
+| kafka-driver | 826 | 772 | 228 | 124 | 123 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
@@ -346,3 +346,22 @@ versions/types, missing parents/files, and malformed inputs all exercise their
 intended native policies. No source patch or authority grant was applied.
 Whole-lock/provenance, CI/line checks, source guards, and complete downstream
 qualification remain separate open work.
+
+## Protocol provenance inventory expansion
+
+The frozen `protocol_provenance.rs` now has 43 further reviewed instances,
+covering all 30 census candidates when helper-call links are included. These
+include five exact workspace version/type pairs, five exact-version prefixes,
+five ordinary inheritance table/type/count conjunctions, the optional TLS
+conjunction, root/probe `patch`/`replace`/`target` prohibitions, and lock/parser
+preconditions. The previously reviewed 20 lock identity assertions now bind
+their exact original version/checksum registry entries and helper invocations.
+
+The review also identified an implicit predicate in the lock filter: every
+array entry must have a name key, even when unrelated to the selected package.
+A present non-string name is ignored by the old filter. Native Cargo parsing
+rejects that malformed lock shape more strictly; this distinction is recorded
+as `KD-PROVENANCE-LOCK-PACKAGE-NAMES` and requires explicit qualification.
+Whole-lock checks cannot be replaced solely by reachable dependency policies.
+These 43 new rows are unimplemented/unverified translation work, not new parity
+claims. Complete repository inventory remains open.

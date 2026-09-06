@@ -9726,7 +9726,7 @@
           "assert_locked"
         ],
         "syntax_sha256": "aa691766a63e8ae3eb4e8a3986ba18f423dfc1d1d8f7a946cc0343cf19efb13d",
-        "instance": "bornera"
+        "instance": "5cb9b37b34c2be2c5131277760464022d46be96dfb96f53b5baf184eca08960f"
       },
       "intended_property": "The unique Cargo.lock bornera entry has the exact reviewed checksum.",
       "selection": {
@@ -9739,7 +9739,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "checksum"
+        "field": "checksum",
+        "value": "5cb9b37b34c2be2c5131277760464022d46be96dfb96f53b5baf184eca08960f",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "5cb9b37b34c2be2c5131277760464022d46be96dfb96f53b5baf184eca08960f"
@@ -9759,7 +9761,20 @@
           "id": "KD-LOCK-bornera-CHECKSUM",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
-      ]
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:27:5:helper-call-candidate"
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_checksum"
+        ],
+        "index": null,
+        "entry": "5cb9b37b34c2be2c5131277760464022d46be96dfb96f53b5baf184eca08960f"
+      }
     },
     {
       "id": "KD-LOCK-bornera-COUNT",
@@ -9788,7 +9803,8 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "count"
+        "field": "count",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": 1
@@ -9808,6 +9824,9 @@
           "id": "KD-LOCK-bornera-COUNT",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:27:5:helper-call-candidate"
       ]
     },
     {
@@ -9837,7 +9856,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "source"
+        "field": "source",
+        "value": "registry+https://github.com/rust-lang/crates.io-index",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "registry+https://github.com/rust-lang/crates.io-index"
@@ -9857,6 +9878,9 @@
           "id": "KD-LOCK-bornera-SOURCE",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:27:5:helper-call-candidate"
       ]
     },
     {
@@ -9873,7 +9897,7 @@
           "assert_locked"
         ],
         "syntax_sha256": "2b5ea76c8882e9d99569d0cbbfe7047d6a45d27b40a6f731afcfd2e775697367",
-        "instance": "bornera"
+        "instance": "=0.0.1-rc.3"
       },
       "intended_property": "The unique Cargo.lock bornera entry has the exact reviewed version.",
       "selection": {
@@ -9886,7 +9910,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "version"
+        "field": "version",
+        "value": "0.0.1-rc.3",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "0.0.1-rc.3"
@@ -9906,7 +9932,20 @@
           "id": "KD-LOCK-bornera-VERSION",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
-      ]
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:27:5:helper-call-candidate"
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_version"
+        ],
+        "index": null,
+        "entry": "=0.0.1-rc.3"
+      }
     },
     {
       "id": "KD-LOCK-bornera-core-CHECKSUM",
@@ -9922,7 +9961,7 @@
           "assert_locked"
         ],
         "syntax_sha256": "aa691766a63e8ae3eb4e8a3986ba18f423dfc1d1d8f7a946cc0343cf19efb13d",
-        "instance": "bornera-core"
+        "instance": "31b50b618633b9cdc95fc3b37461b6c303218baefe14d7958c1cddf3c71c87a1"
       },
       "intended_property": "The unique Cargo.lock bornera-core entry has the exact reviewed checksum.",
       "selection": {
@@ -9935,7 +9974,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "checksum"
+        "field": "checksum",
+        "value": "31b50b618633b9cdc95fc3b37461b6c303218baefe14d7958c1cddf3c71c87a1",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "31b50b618633b9cdc95fc3b37461b6c303218baefe14d7958c1cddf3c71c87a1"
@@ -9955,7 +9996,20 @@
           "id": "KD-LOCK-bornera-core-CHECKSUM",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
-      ]
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:33:5:helper-call-candidate"
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_core_checksum"
+        ],
+        "index": null,
+        "entry": "31b50b618633b9cdc95fc3b37461b6c303218baefe14d7958c1cddf3c71c87a1"
+      }
     },
     {
       "id": "KD-LOCK-bornera-core-COUNT",
@@ -9984,7 +10038,8 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "count"
+        "field": "count",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": 1
@@ -10004,6 +10059,9 @@
           "id": "KD-LOCK-bornera-core-COUNT",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:33:5:helper-call-candidate"
       ]
     },
     {
@@ -10033,7 +10091,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "source"
+        "field": "source",
+        "value": "registry+https://github.com/rust-lang/crates.io-index",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "registry+https://github.com/rust-lang/crates.io-index"
@@ -10053,6 +10113,9 @@
           "id": "KD-LOCK-bornera-core-SOURCE",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:33:5:helper-call-candidate"
       ]
     },
     {
@@ -10069,7 +10132,7 @@
           "assert_locked"
         ],
         "syntax_sha256": "2b5ea76c8882e9d99569d0cbbfe7047d6a45d27b40a6f731afcfd2e775697367",
-        "instance": "bornera-core"
+        "instance": "=0.0.1-rc.3"
       },
       "intended_property": "The unique Cargo.lock bornera-core entry has the exact reviewed version.",
       "selection": {
@@ -10082,7 +10145,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "version"
+        "field": "version",
+        "value": "0.0.1-rc.3",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "0.0.1-rc.3"
@@ -10102,7 +10167,20 @@
           "id": "KD-LOCK-bornera-core-VERSION",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
-      ]
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:33:5:helper-call-candidate"
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_core_version"
+        ],
+        "index": null,
+        "entry": "=0.0.1-rc.3"
+      }
     },
     {
       "id": "KD-LOCK-bornera-rustls-CHECKSUM",
@@ -10118,7 +10196,7 @@
           "assert_locked"
         ],
         "syntax_sha256": "aa691766a63e8ae3eb4e8a3986ba18f423dfc1d1d8f7a946cc0343cf19efb13d",
-        "instance": "bornera-rustls"
+        "instance": "51d5c22e456b51a2f135f7050c7415aa1dd8359e0e2749db3263541f613a07a9"
       },
       "intended_property": "The unique Cargo.lock bornera-rustls entry has the exact reviewed checksum.",
       "selection": {
@@ -10131,7 +10209,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "checksum"
+        "field": "checksum",
+        "value": "51d5c22e456b51a2f135f7050c7415aa1dd8359e0e2749db3263541f613a07a9",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "51d5c22e456b51a2f135f7050c7415aa1dd8359e0e2749db3263541f613a07a9"
@@ -10151,7 +10231,20 @@
           "id": "KD-LOCK-bornera-rustls-CHECKSUM",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
-      ]
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:39:5:helper-call-candidate"
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_rustls_checksum"
+        ],
+        "index": null,
+        "entry": "51d5c22e456b51a2f135f7050c7415aa1dd8359e0e2749db3263541f613a07a9"
+      }
     },
     {
       "id": "KD-LOCK-bornera-rustls-COUNT",
@@ -10180,7 +10273,8 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "count"
+        "field": "count",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": 1
@@ -10200,6 +10294,9 @@
           "id": "KD-LOCK-bornera-rustls-COUNT",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:39:5:helper-call-candidate"
       ]
     },
     {
@@ -10229,7 +10326,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "source"
+        "field": "source",
+        "value": "registry+https://github.com/rust-lang/crates.io-index",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "registry+https://github.com/rust-lang/crates.io-index"
@@ -10249,6 +10348,9 @@
           "id": "KD-LOCK-bornera-rustls-SOURCE",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:39:5:helper-call-candidate"
       ]
     },
     {
@@ -10265,7 +10367,7 @@
           "assert_locked"
         ],
         "syntax_sha256": "2b5ea76c8882e9d99569d0cbbfe7047d6a45d27b40a6f731afcfd2e775697367",
-        "instance": "bornera-rustls"
+        "instance": "=0.0.1-rc.3"
       },
       "intended_property": "The unique Cargo.lock bornera-rustls entry has the exact reviewed version.",
       "selection": {
@@ -10278,7 +10380,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "version"
+        "field": "version",
+        "value": "0.0.1-rc.3",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "0.0.1-rc.3"
@@ -10298,7 +10402,20 @@
           "id": "KD-LOCK-bornera-rustls-VERSION",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
-      ]
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:39:5:helper-call-candidate"
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_rustls_version"
+        ],
+        "index": null,
+        "entry": "=0.0.1-rc.3"
+      }
     },
     {
       "id": "KD-LOCK-kafka-wire-CHECKSUM",
@@ -10314,7 +10431,7 @@
           "assert_locked"
         ],
         "syntax_sha256": "aa691766a63e8ae3eb4e8a3986ba18f423dfc1d1d8f7a946cc0343cf19efb13d",
-        "instance": "kafka-wire"
+        "instance": "ef04e07a7f2f73a4d00e3341b60504e0f2baf91491ce55e023f2bdfa5ea60b32"
       },
       "intended_property": "The unique Cargo.lock kafka-wire entry has the exact reviewed checksum.",
       "selection": {
@@ -10327,7 +10444,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "checksum"
+        "field": "checksum",
+        "value": "ef04e07a7f2f73a4d00e3341b60504e0f2baf91491ce55e023f2bdfa5ea60b32",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "ef04e07a7f2f73a4d00e3341b60504e0f2baf91491ce55e023f2bdfa5ea60b32"
@@ -10347,7 +10466,20 @@
           "id": "KD-LOCK-kafka-wire-CHECKSUM",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
-      ]
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate"
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "kafka_wire_checksum"
+        ],
+        "index": null,
+        "entry": "ef04e07a7f2f73a4d00e3341b60504e0f2baf91491ce55e023f2bdfa5ea60b32"
+      }
     },
     {
       "id": "KD-LOCK-kafka-wire-COUNT",
@@ -10376,7 +10508,8 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "count"
+        "field": "count",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": 1
@@ -10396,6 +10529,9 @@
           "id": "KD-LOCK-kafka-wire-COUNT",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate"
       ]
     },
     {
@@ -10425,7 +10561,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "source"
+        "field": "source",
+        "value": "registry+https://github.com/rust-lang/crates.io-index",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "registry+https://github.com/rust-lang/crates.io-index"
@@ -10445,6 +10583,9 @@
           "id": "KD-LOCK-kafka-wire-SOURCE",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate"
       ]
     },
     {
@@ -10461,7 +10602,7 @@
           "assert_locked"
         ],
         "syntax_sha256": "2b5ea76c8882e9d99569d0cbbfe7047d6a45d27b40a6f731afcfd2e775697367",
-        "instance": "kafka-wire"
+        "instance": "=0.1.0-rc.3"
       },
       "intended_property": "The unique Cargo.lock kafka-wire entry has the exact reviewed version.",
       "selection": {
@@ -10474,7 +10615,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "version"
+        "field": "version",
+        "value": "0.1.0-rc.3",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "0.1.0-rc.3"
@@ -10494,7 +10637,20 @@
           "id": "KD-LOCK-kafka-wire-VERSION",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
-      ]
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate"
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "kafka_wire_version"
+        ],
+        "index": null,
+        "entry": "=0.1.0-rc.3"
+      }
     },
     {
       "id": "KD-LOCK-kafka-wire-core-CHECKSUM",
@@ -10510,7 +10666,7 @@
           "assert_locked"
         ],
         "syntax_sha256": "aa691766a63e8ae3eb4e8a3986ba18f423dfc1d1d8f7a946cc0343cf19efb13d",
-        "instance": "kafka-wire-core"
+        "instance": "ac4f6d455c6371e95044818fbbdc816d35fa0fff3f5bbc7669ce8c83ccf1c6a4"
       },
       "intended_property": "The unique Cargo.lock kafka-wire-core entry has the exact reviewed checksum.",
       "selection": {
@@ -10523,7 +10679,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "checksum"
+        "field": "checksum",
+        "value": "ac4f6d455c6371e95044818fbbdc816d35fa0fff3f5bbc7669ce8c83ccf1c6a4",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "ac4f6d455c6371e95044818fbbdc816d35fa0fff3f5bbc7669ce8c83ccf1c6a4"
@@ -10543,7 +10701,20 @@
           "id": "KD-LOCK-kafka-wire-core-CHECKSUM",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
-      ]
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate"
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "kafka_wire_core_checksum"
+        ],
+        "index": null,
+        "entry": "ac4f6d455c6371e95044818fbbdc816d35fa0fff3f5bbc7669ce8c83ccf1c6a4"
+      }
     },
     {
       "id": "KD-LOCK-kafka-wire-core-COUNT",
@@ -10572,7 +10743,8 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "count"
+        "field": "count",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": 1
@@ -10592,6 +10764,9 @@
           "id": "KD-LOCK-kafka-wire-core-COUNT",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate"
       ]
     },
     {
@@ -10621,7 +10796,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "source"
+        "field": "source",
+        "value": "registry+https://github.com/rust-lang/crates.io-index",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "registry+https://github.com/rust-lang/crates.io-index"
@@ -10641,6 +10818,9 @@
           "id": "KD-LOCK-kafka-wire-core-SOURCE",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate"
       ]
     },
     {
@@ -10657,7 +10837,7 @@
           "assert_locked"
         ],
         "syntax_sha256": "2b5ea76c8882e9d99569d0cbbfe7047d6a45d27b40a6f731afcfd2e775697367",
-        "instance": "kafka-wire-core"
+        "instance": "=0.1.0-rc.3"
       },
       "intended_property": "The unique Cargo.lock kafka-wire-core entry has the exact reviewed version.",
       "selection": {
@@ -10670,7 +10850,9 @@
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "structured TOML exact value",
-        "field": "version"
+        "field": "version",
+        "value": "0.1.0-rc.3",
+        "selection": "Traverse every lock package, require each name key, then match exact string names; no reachability filter."
       },
       "required_cardinality": {
         "exact": "0.1.0-rc.3"
@@ -10690,7 +10872,20 @@
           "id": "KD-LOCK-kafka-wire-core-VERSION",
           "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
         }
-      ]
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate"
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "kafka_wire_core_version"
+        ],
+        "index": null,
+        "entry": "=0.1.0-rc.3"
+      }
     },
     {
       "id": "KD-METADATA-PACKAGE-REPOSITORY",
@@ -14036,6 +14231,2418 @@
         }
       },
       "blockers": []
+    },
+    {
+      "id": "KD-PROVENANCE-LOCK-PACKAGE-ARRAY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:147:28:failure-macro",
+        "line": 147,
+        "column": 28,
+        "function": [
+          "assert_locked"
+        ],
+        "syntax_sha256": "49c50a609f542b294e89d5ff5849771f81930e24d9dfb05b1a0a73890fb4be22",
+        "instance": null
+      },
+      "intended_property": "The required lock package key is an array before whole-lock selection.",
+      "selection": {
+        "paths": [
+          "Cargo.lock"
+        ],
+        "keys": [
+          "package"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML array type precondition",
+        "empty_array": "accepted by this precondition; required package counts reject it"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-LOCK-PACKAGE-ARRAY",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate",
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate",
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:27:5:helper-call-candidate",
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:33:5:helper-call-candidate",
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:39:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-LOCK-PACKAGE-NAMES",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate",
+        "line": 15,
+        "column": 5,
+        "function": [
+          "protocol_lock_entries_match_the_audited_registry_artifacts"
+        ],
+        "syntax_sha256": "000d08ec719cc2e46aa7073c510b98954ce361103c6e6c1ad04c09e9af322b0c",
+        "instance": null
+      },
+      "intended_property": "Every traversed lock-array entry has a name key before its typed selection is tested.",
+      "selection": {
+        "paths": [
+          "Cargo.lock"
+        ],
+        "keys": [
+          "package",
+          "each entry",
+          "name"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML indexing precondition inside whole-array filter",
+        "source_expression": "package[\"name\"].as_str() == Some(name)",
+        "helper_line": 150,
+        "missing_name": "panics even on an otherwise unrelated node",
+        "present_non_string_name": "ignored by name matching"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-LOCK-PACKAGE-NAMES",
+          "cause": "Account for the implicit all-entry name-index precondition. Existing Cargo parsing rejects non-string names more strictly; qualify this distinction and preserve complete lock scope."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate",
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate",
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:27:5:helper-call-candidate",
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:33:5:helper-call-candidate",
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:39:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-PARSE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:161:56:failure-macro",
+        "line": 161,
+        "column": 56,
+        "function": [
+          "parse"
+        ],
+        "syntax_sha256": "3091bd9196214093c4083d90f9e1bf516543165fb6e94b5e551df7b7a7425b8e",
+        "instance": null
+      },
+      "intended_property": "All provenance input files exist, decode as UTF-8, and parse as TOML.",
+      "selection": {
+        "paths": [
+          "Cargo.lock",
+          "Cargo.toml",
+          "crates/kafka-driver-probe/Cargo.toml"
+        ],
+        "keys": []
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "toml::from_str and shared read_to_string",
+        "parser": "toml 0.8.23",
+        "duplicates": "rejected"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-PARSE",
+          "cause": "Bind all three complete provenance inputs and malformed/duplicate-key/UTF-8 negatives to native parser diagnostics."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-bornera-TYPE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:74:9:assertion-macro",
+        "line": 74,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "242676e73a0b2e96660e2674a58c4b36d026e2aa3cea6f0664477b62b4cefba9",
+        "instance": "bornera"
+      },
+      "intended_property": "The workspace declaration is the exact reviewed registry version string.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "bornera"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML string type",
+        "expected": "string"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-bornera-TYPE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-bornera-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:78:9:assertion-macro",
+        "line": 78,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "7ac51845809427630e0bbd2df824da6c3d9d5c32d58b12988e8efb0d0962220c",
+        "instance": "=0.0.1-rc.3"
+      },
+      "intended_property": "The workspace declaration is the exact reviewed registry version string.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "bornera"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML exact string",
+        "value": "=0.0.1-rc.3"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-bornera-VERSION",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_version"
+        ],
+        "index": null,
+        "entry": "=0.0.1-rc.3"
+      }
+    },
+    {
+      "id": "KD-PROVENANCE-bornera-VERSION-PREFIX",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:144:28:failure-macro",
+        "line": 144,
+        "column": 28,
+        "function": [
+          "assert_locked"
+        ],
+        "syntax_sha256": "600ca7106ce77e9d9b11128d9664dae69b51ec2e9826749d6b82d19130ef96ef",
+        "instance": "=0.0.1-rc.3"
+      },
+      "intended_property": "The reviewed guardrail version explicitly uses the exact-version prefix.",
+      "selection": {
+        "paths": [
+          "guardrails.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera_version"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "UTF-8 str::strip_prefix",
+        "prefix": "=",
+        "remaining_text_used_as_exact_lock_version": true
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-bornera-VERSION-PREFIX",
+          "cause": "Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_version"
+        ],
+        "index": null,
+        "entry": "=0.0.1-rc.3"
+      },
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:27:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-bornera-core-TYPE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:74:9:assertion-macro",
+        "line": 74,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "242676e73a0b2e96660e2674a58c4b36d026e2aa3cea6f0664477b62b4cefba9",
+        "instance": "bornera-core"
+      },
+      "intended_property": "The workspace declaration is the exact reviewed registry version string.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "bornera-core"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML string type",
+        "expected": "string"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-bornera-core-TYPE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-bornera-core-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:78:9:assertion-macro",
+        "line": 78,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "7ac51845809427630e0bbd2df824da6c3d9d5c32d58b12988e8efb0d0962220c",
+        "instance": "=0.0.1-rc.3"
+      },
+      "intended_property": "The workspace declaration is the exact reviewed registry version string.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "bornera-core"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML exact string",
+        "value": "=0.0.1-rc.3"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-bornera-core-VERSION",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_core_version"
+        ],
+        "index": null,
+        "entry": "=0.0.1-rc.3"
+      }
+    },
+    {
+      "id": "KD-PROVENANCE-bornera-core-VERSION-PREFIX",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:144:28:failure-macro",
+        "line": 144,
+        "column": 28,
+        "function": [
+          "assert_locked"
+        ],
+        "syntax_sha256": "600ca7106ce77e9d9b11128d9664dae69b51ec2e9826749d6b82d19130ef96ef",
+        "instance": "=0.0.1-rc.3"
+      },
+      "intended_property": "The reviewed guardrail version explicitly uses the exact-version prefix.",
+      "selection": {
+        "paths": [
+          "guardrails.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera_core_version"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "UTF-8 str::strip_prefix",
+        "prefix": "=",
+        "remaining_text_used_as_exact_lock_version": true
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-bornera-core-VERSION-PREFIX",
+          "cause": "Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_core_version"
+        ],
+        "index": null,
+        "entry": "=0.0.1-rc.3"
+      },
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:33:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-bornera-rustls-TYPE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:74:9:assertion-macro",
+        "line": 74,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "242676e73a0b2e96660e2674a58c4b36d026e2aa3cea6f0664477b62b4cefba9",
+        "instance": "bornera-rustls"
+      },
+      "intended_property": "The workspace declaration is the exact reviewed registry version string.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "bornera-rustls"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML string type",
+        "expected": "string"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-bornera-rustls-TYPE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-bornera-rustls-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:78:9:assertion-macro",
+        "line": 78,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "7ac51845809427630e0bbd2df824da6c3d9d5c32d58b12988e8efb0d0962220c",
+        "instance": "=0.0.1-rc.3"
+      },
+      "intended_property": "The workspace declaration is the exact reviewed registry version string.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "bornera-rustls"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML exact string",
+        "value": "=0.0.1-rc.3"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-bornera-rustls-VERSION",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_rustls_version"
+        ],
+        "index": null,
+        "entry": "=0.0.1-rc.3"
+      }
+    },
+    {
+      "id": "KD-PROVENANCE-bornera-rustls-VERSION-PREFIX",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:144:28:failure-macro",
+        "line": 144,
+        "column": 28,
+        "function": [
+          "assert_locked"
+        ],
+        "syntax_sha256": "600ca7106ce77e9d9b11128d9664dae69b51ec2e9826749d6b82d19130ef96ef",
+        "instance": "=0.0.1-rc.3"
+      },
+      "intended_property": "The reviewed guardrail version explicitly uses the exact-version prefix.",
+      "selection": {
+        "paths": [
+          "guardrails.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera_rustls_version"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "UTF-8 str::strip_prefix",
+        "prefix": "=",
+        "remaining_text_used_as_exact_lock_version": true
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-bornera-rustls-VERSION-PREFIX",
+          "cause": "Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "bornera_rustls_version"
+        ],
+        "index": null,
+        "entry": "=0.0.1-rc.3"
+      },
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:39:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-NO-PATCH",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:92:9:assertion-macro",
+        "line": 92,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "d17a893157767c8c7019e99d463fac6db1c6cb3739b7f910e7d8b66c8ea4ccd6",
+        "instance": "driver"
+      },
+      "intended_property": "No top-level source override or target-specific redeclaration table is authored in this manifest.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "patch"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate get absence",
+        "any_present_value_fails": true,
+        "scope": "entire root key, not only protocol packages or reachable nodes"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-NO-PATCH",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-NO-REPLACE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:96:9:assertion-macro",
+        "line": 96,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "1f2ecdb12e9bfa74ef3d328f8716ece9c2601af27e1ab17eed393b3faafd7d84",
+        "instance": "driver"
+      },
+      "intended_property": "No top-level source override or target-specific redeclaration table is authored in this manifest.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "replace"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate get absence",
+        "any_present_value_fails": true,
+        "scope": "entire root key, not only protocol packages or reachable nodes"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-NO-REPLACE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-NO-TARGET",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:100:9:assertion-macro",
+        "line": 100,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "2ec179ddfec7378d7df434c9a0e83a9e5e87a3663c6f3bd9ccaee8cd53f31b28",
+        "instance": "driver"
+      },
+      "intended_property": "No top-level source override or target-specific redeclaration table is authored in this manifest.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "target"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate get absence",
+        "any_present_value_fails": true,
+        "scope": "entire root key, not only protocol packages or reachable nodes"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-NO-TARGET",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-bornera-COUNT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:130:5:assertion-macro",
+        "line": 130,
+        "column": 5,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "83b6b3f2fdc5cbde09478bee643eb500fd868bd3a74df03ec349f7182fcb99f3",
+        "instance": "driver-bornera"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate table length"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-bornera-COUNT",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:87:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-bornera-INHERITANCE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:135:5:assertion-macro",
+        "line": 135,
+        "column": 5,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "6944777277f050bb4a0ecbd649c35b41f5ac745496a21635132db00e24527aa2",
+        "instance": "driver-bornera"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera",
+          "workspace"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML get/as_bool exact equality",
+        "value": true,
+        "missing": "failure",
+        "wrong_type": "failure"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-bornera-INHERITANCE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:87:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-bornera-TABLE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:129:28:failure-macro",
+        "line": 129,
+        "column": 28,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "e9f277e69ba093034908b5869f514733a2c3c0513fa5d835f1db2c1f15457990",
+        "instance": "driver-bornera"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML table type",
+        "expected": "table"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-bornera-TABLE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:87:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-bornera-core-COUNT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:130:5:assertion-macro",
+        "line": 130,
+        "column": 5,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "83b6b3f2fdc5cbde09478bee643eb500fd868bd3a74df03ec349f7182fcb99f3",
+        "instance": "driver-bornera-core"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera-core"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate table length"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-bornera-core-COUNT",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:88:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-bornera-core-INHERITANCE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:135:5:assertion-macro",
+        "line": 135,
+        "column": 5,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "6944777277f050bb4a0ecbd649c35b41f5ac745496a21635132db00e24527aa2",
+        "instance": "driver-bornera-core"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera-core",
+          "workspace"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML get/as_bool exact equality",
+        "value": true,
+        "missing": "failure",
+        "wrong_type": "failure"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-bornera-core-INHERITANCE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:88:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-bornera-core-TABLE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:129:28:failure-macro",
+        "line": 129,
+        "column": 28,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "e9f277e69ba093034908b5869f514733a2c3c0513fa5d835f1db2c1f15457990",
+        "instance": "driver-bornera-core"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera-core"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML table type",
+        "expected": "table"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-bornera-core-TABLE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:88:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-bornera-rustls-COUNT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:111:5:assertion-macro",
+        "line": 111,
+        "column": 5,
+        "function": [
+          "assert_optional_workspace_reference"
+        ],
+        "syntax_sha256": "8a49bb4e04404d5820369b018927d3427d2bed9aca7a93425cfd3e2606374708",
+        "instance": "driver-bornera-rustls"
+      },
+      "intended_property": "The optional protocol dependency adds only its true optional flag to true workspace inheritance.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera-rustls"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate table length"
+      },
+      "required_cardinality": {
+        "exact": 2
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-bornera-rustls-COUNT",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:89:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-bornera-rustls-INHERITANCE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:116:5:assertion-macro",
+        "line": 116,
+        "column": 5,
+        "function": [
+          "assert_optional_workspace_reference"
+        ],
+        "syntax_sha256": "6944777277f050bb4a0ecbd649c35b41f5ac745496a21635132db00e24527aa2",
+        "instance": "driver-bornera-rustls"
+      },
+      "intended_property": "The optional protocol dependency adds only its true optional flag to true workspace inheritance.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera-rustls",
+          "workspace"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML get/as_bool exact equality",
+        "value": true,
+        "missing": "failure",
+        "wrong_type": "failure"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-bornera-rustls-INHERITANCE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:89:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-bornera-rustls-OPTIONAL",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:120:5:assertion-macro",
+        "line": 120,
+        "column": 5,
+        "function": [
+          "assert_optional_workspace_reference"
+        ],
+        "syntax_sha256": "671df6924974cbd4bfcac273c1774efc8e229bbd1edd58263d68a449fd7cf9c9",
+        "instance": "driver-bornera-rustls"
+      },
+      "intended_property": "The optional protocol dependency adds only its true optional flag to true workspace inheritance.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera-rustls",
+          "optional"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML get/as_bool exact equality",
+        "value": true,
+        "missing": "failure",
+        "wrong_type": "failure"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-bornera-rustls-OPTIONAL",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:89:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-bornera-rustls-TABLE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:110:28:failure-macro",
+        "line": 110,
+        "column": 28,
+        "function": [
+          "assert_optional_workspace_reference"
+        ],
+        "syntax_sha256": "e27e503aad92be294758c76d9f15bea27bce3ad642e157eb686d85f1d4ebf9f0",
+        "instance": "driver-bornera-rustls"
+      },
+      "intended_property": "The optional protocol dependency adds only its true optional flag to true workspace inheritance.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "bornera-rustls"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML table type",
+        "expected": "table"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-bornera-rustls-TABLE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:89:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-wire-COUNT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:130:5:assertion-macro",
+        "line": 130,
+        "column": 5,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "83b6b3f2fdc5cbde09478bee643eb500fd868bd3a74df03ec349f7182fcb99f3",
+        "instance": "driver-wire"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka-wire"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate table length"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-wire-COUNT",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:84:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-wire-INHERITANCE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:135:5:assertion-macro",
+        "line": 135,
+        "column": 5,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "6944777277f050bb4a0ecbd649c35b41f5ac745496a21635132db00e24527aa2",
+        "instance": "driver-wire"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka-wire",
+          "workspace"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML get/as_bool exact equality",
+        "value": true,
+        "missing": "failure",
+        "wrong_type": "failure"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-wire-INHERITANCE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:84:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-wire-TABLE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:129:28:failure-macro",
+        "line": 129,
+        "column": 28,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "e9f277e69ba093034908b5869f514733a2c3c0513fa5d835f1db2c1f15457990",
+        "instance": "driver-wire"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka-wire"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML table type",
+        "expected": "table"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-wire-TABLE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:84:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-wire-core-COUNT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:130:5:assertion-macro",
+        "line": 130,
+        "column": 5,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "83b6b3f2fdc5cbde09478bee643eb500fd868bd3a74df03ec349f7182fcb99f3",
+        "instance": "driver-wire-core"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka-wire-core"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate table length"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-wire-core-COUNT",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:85:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-wire-core-INHERITANCE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:135:5:assertion-macro",
+        "line": 135,
+        "column": 5,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "6944777277f050bb4a0ecbd649c35b41f5ac745496a21635132db00e24527aa2",
+        "instance": "driver-wire-core"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka-wire-core",
+          "workspace"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML get/as_bool exact equality",
+        "value": true,
+        "missing": "failure",
+        "wrong_type": "failure"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-wire-core-INHERITANCE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:85:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-driver-wire-core-TABLE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:129:28:failure-macro",
+        "line": 129,
+        "column": 28,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "e9f277e69ba093034908b5869f514733a2c3c0513fa5d835f1db2c1f15457990",
+        "instance": "driver-wire-core"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka-wire-core"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML table type",
+        "expected": "table"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-driver-wire-core-TABLE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:85:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-kafka-wire-TYPE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:74:9:assertion-macro",
+        "line": 74,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "242676e73a0b2e96660e2674a58c4b36d026e2aa3cea6f0664477b62b4cefba9",
+        "instance": "kafka-wire"
+      },
+      "intended_property": "The workspace declaration is the exact reviewed registry version string.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-wire"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML string type",
+        "expected": "string"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-kafka-wire-TYPE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-kafka-wire-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:78:9:assertion-macro",
+        "line": 78,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "7ac51845809427630e0bbd2df824da6c3d9d5c32d58b12988e8efb0d0962220c",
+        "instance": "=0.1.0-rc.3"
+      },
+      "intended_property": "The workspace declaration is the exact reviewed registry version string.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-wire"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML exact string",
+        "value": "=0.1.0-rc.3"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-kafka-wire-VERSION",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "kafka_wire_version"
+        ],
+        "index": null,
+        "entry": "=0.1.0-rc.3"
+      }
+    },
+    {
+      "id": "KD-PROVENANCE-kafka-wire-VERSION-PREFIX",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:144:28:failure-macro",
+        "line": 144,
+        "column": 28,
+        "function": [
+          "assert_locked"
+        ],
+        "syntax_sha256": "600ca7106ce77e9d9b11128d9664dae69b51ec2e9826749d6b82d19130ef96ef",
+        "instance": "=0.1.0-rc.3"
+      },
+      "intended_property": "The reviewed guardrail version explicitly uses the exact-version prefix.",
+      "selection": {
+        "paths": [
+          "guardrails.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka_wire_version"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "UTF-8 str::strip_prefix",
+        "prefix": "=",
+        "remaining_text_used_as_exact_lock_version": true
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-kafka-wire-VERSION-PREFIX",
+          "cause": "Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "kafka_wire_version"
+        ],
+        "index": null,
+        "entry": "=0.1.0-rc.3"
+      },
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-kafka-wire-core-TYPE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:74:9:assertion-macro",
+        "line": 74,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "242676e73a0b2e96660e2674a58c4b36d026e2aa3cea6f0664477b62b4cefba9",
+        "instance": "kafka-wire-core"
+      },
+      "intended_property": "The workspace declaration is the exact reviewed registry version string.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-wire-core"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML string type",
+        "expected": "string"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-kafka-wire-core-TYPE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-kafka-wire-core-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:78:9:assertion-macro",
+        "line": 78,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "7ac51845809427630e0bbd2df824da6c3d9d5c32d58b12988e8efb0d0962220c",
+        "instance": "=0.1.0-rc.3"
+      },
+      "intended_property": "The workspace declaration is the exact reviewed registry version string.",
+      "selection": {
+        "paths": [
+          "Cargo.toml"
+        ],
+        "keys": [
+          "workspace",
+          "dependencies",
+          "kafka-wire-core"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML exact string",
+        "value": "=0.1.0-rc.3"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-kafka-wire-core-VERSION",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "kafka_wire_core_version"
+        ],
+        "index": null,
+        "entry": "=0.1.0-rc.3"
+      }
+    },
+    {
+      "id": "KD-PROVENANCE-kafka-wire-core-VERSION-PREFIX",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:144:28:failure-macro",
+        "line": 144,
+        "column": 28,
+        "function": [
+          "assert_locked"
+        ],
+        "syntax_sha256": "600ca7106ce77e9d9b11128d9664dae69b51ec2e9826749d6b82d19130ef96ef",
+        "instance": "=0.1.0-rc.3"
+      },
+      "intended_property": "The reviewed guardrail version explicitly uses the exact-version prefix.",
+      "selection": {
+        "paths": [
+          "guardrails.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka_wire_core_version"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "UTF-8 str::strip_prefix",
+        "prefix": "=",
+        "remaining_text_used_as_exact_lock_version": true
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-kafka-wire-core-VERSION-PREFIX",
+          "cause": "Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority."
+        }
+      ],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "dependencies",
+          "kafka_wire_core_version"
+        ],
+        "index": null,
+        "entry": "=0.1.0-rc.3"
+      },
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-probe-NO-PATCH",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:92:9:assertion-macro",
+        "line": 92,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "d17a893157767c8c7019e99d463fac6db1c6cb3739b7f910e7d8b66c8ea4ccd6",
+        "instance": "probe"
+      },
+      "intended_property": "No top-level source override or target-specific redeclaration table is authored in this manifest.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-probe/Cargo.toml"
+        ],
+        "keys": [
+          "patch"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate get absence",
+        "any_present_value_fails": true,
+        "scope": "entire root key, not only protocol packages or reachable nodes"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-probe-NO-PATCH",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-probe-NO-REPLACE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:96:9:assertion-macro",
+        "line": 96,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "1f2ecdb12e9bfa74ef3d328f8716ece9c2601af27e1ab17eed393b3faafd7d84",
+        "instance": "probe"
+      },
+      "intended_property": "No top-level source override or target-specific redeclaration table is authored in this manifest.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-probe/Cargo.toml"
+        ],
+        "keys": [
+          "replace"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate get absence",
+        "any_present_value_fails": true,
+        "scope": "entire root key, not only protocol packages or reachable nodes"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-probe-NO-REPLACE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-probe-NO-TARGET",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:100:9:assertion-macro",
+        "line": 100,
+        "column": 9,
+        "function": [
+          "protocol_dependencies_have_no_source_override_escape_hatch"
+        ],
+        "syntax_sha256": "2ec179ddfec7378d7df434c9a0e83a9e5e87a3663c6f3bd9ccaee8cd53f31b28",
+        "instance": "probe"
+      },
+      "intended_property": "No top-level source override or target-specific redeclaration table is authored in this manifest.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-probe/Cargo.toml"
+        ],
+        "keys": [
+          "target"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate get absence",
+        "any_present_value_fails": true,
+        "scope": "entire root key, not only protocol packages or reachable nodes"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-probe-NO-TARGET",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-probe-wire-COUNT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:130:5:assertion-macro",
+        "line": 130,
+        "column": 5,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "83b6b3f2fdc5cbde09478bee643eb500fd868bd3a74df03ec349f7182fcb99f3",
+        "instance": "probe-wire"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-probe/Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka-wire"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML immediate table length"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-probe-wire-COUNT",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:86:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-probe-wire-INHERITANCE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:135:5:assertion-macro",
+        "line": 135,
+        "column": 5,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "6944777277f050bb4a0ecbd649c35b41f5ac745496a21635132db00e24527aa2",
+        "instance": "probe-wire"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-probe/Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka-wire",
+          "workspace"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML get/as_bool exact equality",
+        "value": true,
+        "missing": "failure",
+        "wrong_type": "failure"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-probe-wire-INHERITANCE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:86:5:helper-call-candidate"
+      ]
+    },
+    {
+      "id": "KD-PROVENANCE-probe-wire-TABLE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/protocol_provenance.rs",
+        "file_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:129:28:failure-macro",
+        "line": 129,
+        "column": 28,
+        "function": [
+          "assert_workspace_reference"
+        ],
+        "syntax_sha256": "e9f277e69ba093034908b5869f514733a2c3c0513fa5d835f1db2c1f15457990",
+        "instance": "probe-wire"
+      },
+      "intended_property": "A protocol consumer contains only its explicit workspace inheritance declaration.",
+      "selection": {
+        "paths": [
+          "crates/kafka-driver-probe/Cargo.toml"
+        ],
+        "keys": [
+          "dependencies",
+          "kafka-wire"
+        ]
+      },
+      "context": "Authored TOML configuration and complete Cargo.lock traversal; no Cargo feature, target, production/test, or reachable-node filtering applies.",
+      "matching_semantics": {
+        "kind": "TOML table type",
+        "expected": "table"
+      },
+      "required_cardinality": {
+        "scope": "each selected authored input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-PROVENANCE-probe-wire-TABLE",
+          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        }
+      ],
+      "invocations": [
+        "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:86:5:helper-call-candidate"
+      ]
     },
     {
       "id": "KD-RETIRED-BACKEND-VARIANT",
@@ -27188,7 +29795,7 @@
     }
   ],
   "counts": {
-    "reviewed_assertion_instances": 381,
+    "reviewed_assertion_instances": 424,
     "implemented": 297,
     "verified_by_disposition": {
       "existing native rail": 0,
