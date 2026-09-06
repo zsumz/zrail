@@ -193,6 +193,34 @@ fn document_key_sets_reject_duplicates_and_bound_all_expected_names() {
     }
 }
 
+#[test]
+fn field_projections_require_one_literal_bounded_key_without_optional_parent_permissions() {
+    let rule = with_predicate(
+        "{ kind = 'document', format = 'toml', path = ['dependency'], assertion = { op = 'field-not-string', field = 'version' } }",
+    );
+    assert!(errors(&rule).is_empty());
+    assert!(
+        errors(&rule.replace(
+            "field = 'version'",
+            &format!("field = '{}'", "x".repeat(1025))
+        ))
+        .contains("1024")
+    );
+    for invalid in [
+        "field = ['version']",
+        "field = 1",
+        "field = 'version', optional_subject = true",
+        "unknown = 'version'",
+    ] {
+        assert!(
+            toml::from_str::<crate::RepositoryFileRule>(
+                &rule.replace("field = 'version'", invalid)
+            )
+            .is_err()
+        );
+    }
+}
+
 fn with_predicate(predicate: &str) -> String {
     format!(
         "{}predicate = {predicate}\n",

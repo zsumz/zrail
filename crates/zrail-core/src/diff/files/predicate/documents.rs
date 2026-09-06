@@ -34,6 +34,7 @@ pub(super) fn compare(
         (
             Assertion::Equals { .. }
             | Assertion::NonemptyString
+            | Assertion::FieldNotString { .. }
             | Assertion::KeysExact { .. }
             | Assertion::KeysAllowed { .. },
             Assertion::Present,
@@ -42,6 +43,7 @@ pub(super) fn compare(
             Assertion::Present,
             Assertion::Equals { .. }
             | Assertion::NonemptyString
+            | Assertion::FieldNotString { .. }
             | Assertion::KeysExact { .. }
             | Assertion::KeysAllowed { .. },
         ) => vec![ChangeKind::Revoke],

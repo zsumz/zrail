@@ -44,6 +44,7 @@ fn inspect(
         value_omitted: false,
         selection_error: None,
         keys: None,
+        field_type: None,
     };
     let selected = match root.select(&policy.path) {
         Ok(selected) => selected,
@@ -61,6 +62,11 @@ fn inspect(
         Assertion::NonemptyString => selected
             .and_then(Node::string)
             .is_some_and(|value| !value.trim().is_empty()),
+        Assertion::FieldNotString { field } => selected.is_some_and(|parent| {
+            let child = parent.field(field);
+            observation.field_type = child.map(|node| node.kind().into());
+            child.and_then(Node::string).is_none()
+        }),
         Assertion::Equals { value: expected } => value.as_ref() == Some(expected),
         Assertion::KeysExact {
             keys: expected,

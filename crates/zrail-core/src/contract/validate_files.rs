@@ -146,6 +146,11 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
 }
 
 fn validate_document(document: &RepositoryDocumentPredicate, errors: &mut ValidationErrors) {
+    if let RepositoryDocumentAssertion::FieldNotString { field } = &document.assertion
+        && field.len() > 1_024
+    {
+        errors.push("document field projections permit at most 1024 key bytes".into());
+    }
     if document.path.len() > 32 || document.path.iter().any(|key| key.len() > 1_024) {
         errors.push(
             "document paths permit at most 32 literal keys of at most 1024 bytes each".into(),

@@ -32,6 +32,8 @@ All notable zrail changes are recorded here for reviewed release notes.
 - Immediate exact/allowed document key sets with explicit legacy non-table
   projection, required subject presence, complete counts, bounded key samples,
   and protected comparisons of accepted identities and type permissions.
+- Typed immediate-field string prohibitions that preserve explicit legacy
+  get/as_str projections while retaining required parent presence and input binding.
 
 ### Changed
 

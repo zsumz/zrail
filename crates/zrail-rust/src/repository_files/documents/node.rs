@@ -9,6 +9,13 @@ pub(super) enum Node<'a> {
 }
 
 impl<'a> Node<'a> {
+    pub(super) fn field(self, key: &str) -> Option<Self> {
+        match self {
+            Self::Toml(value) => value.get(key).map(Self::Toml),
+            Self::Json(value) => value.get(key).map(Self::Json),
+        }
+    }
+
     pub(super) fn keys(self) -> Option<Vec<&'a str>> {
         match self {
             Self::Toml(toml::Value::Table(table)) => {

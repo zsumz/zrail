@@ -38,6 +38,7 @@ value of the wrong type fails the assertion, including `absent` assertions.
 | `present` | The selected key exists. JSON null is present. |
 | `absent` | The selected key does not exist. An empty physical file selection remains a valid prohibition. |
 | `nonempty-string` | A string with at least one character after Rust's Unicode-aware `str::trim`. |
+| `field-not-string` | The selected subject exists; its immediate literal `field` is absent or has a non-string type. |
 | `equals` | Exact string, boolean, signed 64-bit integer, or complete ordered string array. Types, array order, duplicates, and cardinality matter. |
 | `keys-exact` | Immediate object/table keys equal the complete `keys` set. Both missing and unexpected keys fail. |
 | `keys-allowed` | Every immediate object/table key belongs to `keys`. Unused allowed keys are valid. |
@@ -65,6 +66,16 @@ include = ["Cargo.toml"]
 reason = "Preserve the reviewed authored dependency names."
 predicate = { kind = "document", format = "toml", path = ["dependencies"], assertion = { op = "keys-exact", keys = ["driver-core", "transport"] } }
 ```
+
+`field-not-string` preserves the inventoried `get(field).and_then(as_str)`
+projection. An object/table with no such field passes, as does an existing
+field of a non-string type. A present non-object subject has no field and also
+passes. The selected subject itself must exist, and wrong intermediate path
+types still fail. Empty strings are strings and fail this predicate. This is
+distinct from requiring field absence or declaring a valid Cargo dependency.
+Its literal field name permits at most 1,024 bytes. Coverage exposes the
+observed child type in `field_type`, independently of the parent selection.
+Removing this constraint is a grant; redirecting its field stays protected.
 
 TOML uses the existing TOML 1.0 parser with duplicate-key rejection and its
 parser recursion guard. JSON additionally uses a bounded visitor that rejects

@@ -135,3 +135,15 @@ fn document_key_sets_compare_accepted_sets_and_explicit_type_permissions() {
         protected(&before, &after);
     }
 }
+
+#[test]
+fn removing_or_redirecting_a_typed_field_prohibition_stays_protected() {
+    let before = document("op = 'field-not-string', field = 'version'");
+    let after = document("op = 'present'");
+    assert_eq!(kinds(&before, &after), [ChangeKind::Grant]);
+    assert_eq!(kinds(&after, &before), [ChangeKind::Revoke]);
+    protected(&before, &after);
+    let redirected = document("op = 'field-not-string', field = 'elsewhere'");
+    assert_eq!(kinds(&before, &redirected), [ChangeKind::Unknown]);
+    protected(&before, &redirected);
+}
