@@ -1,0 +1,99 @@
+# Partial raw-file fragment; complete repository qualification remains required.
+# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# Detector SHA-256: fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f
+
+[[repository.files]]
+name = "kd-dep-ci-gate-count"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "literal", text = "run: scripts/check", mode = "exact-count", count = 1 }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-dep-ci-matrix-runner"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "literal", text = "runs-on: ${{ matrix.os }}", mode = "contains" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-dep-ci-os-matrix"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "literal", text = "os: [ubuntu-latest, macos-latest, windows-latest]", mode = "contains" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-dep-lf-attributes-01"
+include = [".gitattributes"]
+predicate = { kind = "literal", text = "*.md text eol=lf", mode = "line-present", normalization = "trim" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-dep-lf-attributes-02"
+include = [".gitattributes"]
+predicate = { kind = "literal", text = "*.rs text eol=lf", mode = "line-present", normalization = "trim" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-dep-lf-attributes-03"
+include = [".gitattributes"]
+predicate = { kind = "literal", text = "*.svg text eol=lf", mode = "line-present", normalization = "trim" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-dep-lf-attributes-04"
+include = [".gitattributes"]
+predicate = { kind = "literal", text = "scripts/* text eol=lf", mode = "line-present", normalization = "trim" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-dep-read-attributes"
+include = [".gitattributes"]
+predicate = { kind = "bytes-equal", other = ".gitattributes", utf8 = true }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-dep-read-ci"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "bytes-equal", other = ".github/workflows/ci.yml", utf8 = true }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-dep-read-lock"
+include = ["Cargo.lock"]
+predicate = { kind = "bytes-equal", other = "Cargo.lock", utf8 = true }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-lock-ban-async-std"
+include = ["Cargo.lock"]
+predicate = { kind = "literal", text = "name = \"async-std\"", mode = "line-absent", normalization = "trim" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-lock-ban-async-trait"
+include = ["Cargo.lock"]
+predicate = { kind = "literal", text = "name = \"async-trait\"", mode = "line-absent", normalization = "trim" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-lock-ban-smol"
+include = ["Cargo.lock"]
+predicate = { kind = "literal", text = "name = \"smol\"", mode = "line-absent", normalization = "trim" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-lock-ban-tokio"
+include = ["Cargo.lock"]
+predicate = { kind = "literal", text = "name = \"tokio\"", mode = "line-absent", normalization = "trim" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-lock-ban-tokio-rustls"
+include = ["Cargo.lock"]
+predicate = { kind = "literal", text = "name = \"tokio-rustls\"", mode = "line-absent", normalization = "trim" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."
+
+[[repository.files]]
+name = "kd-lock-ban-tokio-util"
+include = ["Cargo.lock"]
+predicate = { kind = "literal", text = "name = \"tokio-util\"", mode = "line-absent", normalization = "trim" }
+reason = "Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."

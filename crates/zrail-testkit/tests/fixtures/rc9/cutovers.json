@@ -177,6 +177,9 @@
             "repository:file:kd-dep-00-parse-kafka-driver-probe",
             "repository:file:kd-dep-00-parse-kafka-driver-sim",
             "repository:file:kd-dep-00-parse-kafka-driver-transport",
+            "repository:file:kd-dep-ci-gate-count",
+            "repository:file:kd-dep-ci-matrix-runner",
+            "repository:file:kd-dep-ci-os-matrix",
             "repository:file:kd-dep-core-keys",
             "repository:file:kd-dep-criticality-version",
             "repository:file:kd-dep-driver-keys",
@@ -193,6 +196,10 @@
             "repository:file:kd-dep-kafka-wire-core-release",
             "repository:file:kd-dep-kafka-wire-registry-version",
             "repository:file:kd-dep-kafka-wire-release",
+            "repository:file:kd-dep-lf-attributes-01",
+            "repository:file:kd-dep-lf-attributes-02",
+            "repository:file:kd-dep-lf-attributes-03",
+            "repository:file:kd-dep-lf-attributes-04",
             "repository:file:kd-dep-probe-keys",
             "repository:file:kd-dep-probe-wire-inheritance",
             "repository:file:kd-dep-rustls-features",
@@ -206,7 +213,13 @@
             "repository:file:kd-dep-sim-keys",
             "repository:file:kd-dep-sim-no-version-string",
             "repository:file:kd-dep-tls-features",
-            "repository:file:kd-dep-transport-keys"
+            "repository:file:kd-dep-transport-keys",
+            "repository:file:kd-lock-ban-async-std",
+            "repository:file:kd-lock-ban-async-trait",
+            "repository:file:kd-lock-ban-smol",
+            "repository:file:kd-lock-ban-tokio",
+            "repository:file:kd-lock-ban-tokio-rustls",
+            "repository:file:kd-lock-ban-tokio-util"
           ]
         },
         {
@@ -500,10 +513,18 @@
           "path": "tests/guardrails/support.rs",
           "sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
           "unit": "conditional checker/helper candidate",
-          "reviewed_assertion_ids": [],
+          "reviewed_assertion_ids": [
+            "KD-DEP-READ-ATTRIBUTES",
+            "KD-DEP-READ-CI",
+            "KD-DEP-READ-LOCK"
+          ],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
           "removable_now": false,
-          "replacement_policy_ids": []
+          "replacement_policy_ids": [
+            "repository:file:kd-dep-read-attributes",
+            "repository:file:kd-dep-read-ci",
+            "repository:file:kd-dep-read-lock"
+          ]
         },
         {
           "path": "tests/guardrails/test_location.rs",

@@ -61,7 +61,7 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 ## Machine-readable audit state
 
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **424 reviewed assertion instances**. The
+contains **427 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
 record 9,792 files and 72,155 syntax candidates. Every tracked path is included,
@@ -71,7 +71,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 228 | 180 | 179 |
+| kafka-driver | 826 | 772 | 231 | 196 | 179 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
@@ -400,3 +400,12 @@ nodes; selection does not depend on reachability. Extra unrelated valid nodes
 and qualified incoming edges remain legal. The six lexical `KD-LOCK-BAN-*`
 assertions and seven registry-prefix/lock-shape preconditions remain separate.
 No source-analysis certificate or downstream lock was produced by this slice.
+
+## Raw dependency read preconditions
+
+Review expanded the shared `read` helper into `KD-DEP-READ-LOCK`,
+`KD-DEP-READ-CI`, and `KD-DEP-READ-ATTRIBUTES`. These require physical readable
+UTF-8 inputs independently of absent-marker rules. The three new rows and
+thirteen translated raw predicates remain unverified pending their frozen
+differential fixtures. The raw lock bans retain line spelling and deliberately
+do not claim parsed Cargo identity. CI literal checks do not prove execution.

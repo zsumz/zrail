@@ -3668,9 +3668,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-dep-ci-gate-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -3678,7 +3682,7 @@
       "blockers": [
         {
           "id": "KD-DEP-CI-GATE-COUNT",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ]
     },
@@ -3717,9 +3721,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-dep-ci-matrix-runner"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -3727,7 +3735,7 @@
       "blockers": [
         {
           "id": "KD-DEP-CI-MATRIX-RUNNER",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ]
     },
@@ -3766,9 +3774,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-dep-ci-os-matrix"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -3776,7 +3788,7 @@
       "blockers": [
         {
           "id": "KD-DEP-CI-OS-MATRIX",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ]
     },
@@ -4791,9 +4803,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-dep-lf-attributes-01"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -4801,7 +4817,7 @@
       "blockers": [
         {
           "id": "KD-DEP-LF-ATTRIBUTES-01",
-          "cause": "Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ]
     },
@@ -4840,9 +4856,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-dep-lf-attributes-02"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -4850,7 +4870,7 @@
       "blockers": [
         {
           "id": "KD-DEP-LF-ATTRIBUTES-02",
-          "cause": "Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ]
     },
@@ -4889,9 +4909,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-dep-lf-attributes-03"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -4899,7 +4923,7 @@
       "blockers": [
         {
           "id": "KD-DEP-LF-ATTRIBUTES-03",
-          "cause": "Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ]
     },
@@ -4938,9 +4962,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-dep-lf-attributes-04"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -4948,7 +4976,7 @@
       "blockers": [
         {
           "id": "KD-DEP-LF-ATTRIBUTES-04",
-          "cause": "Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ]
     },
@@ -9380,7 +9408,7 @@
         "syntax_sha256": "2fa7dc60b7390595c4669c88f766e05c31355242d08e9e2fd1f106e8d4493948",
         "instance": "async-std"
       },
-      "intended_property": "Forbidden package name is absent from the entire Cargo.lock, including unreachable nodes.",
+      "intended_property": "The prohibited exact name line is absent from the entire raw Cargo.lock text, including unrelated locations; no TOML or reachable-node interpretation applies.",
       "selection": {
         "path": "Cargo.lock",
         "scope": "whole file"
@@ -9398,9 +9426,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-lock-ban-async-std"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -9408,7 +9440,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-BAN-async-std",
-          "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ],
       "policy_registry": {
@@ -9438,7 +9470,7 @@
         "syntax_sha256": "2fa7dc60b7390595c4669c88f766e05c31355242d08e9e2fd1f106e8d4493948",
         "instance": "async-trait"
       },
-      "intended_property": "Forbidden package name is absent from the entire Cargo.lock, including unreachable nodes.",
+      "intended_property": "The prohibited exact name line is absent from the entire raw Cargo.lock text, including unrelated locations; no TOML or reachable-node interpretation applies.",
       "selection": {
         "path": "Cargo.lock",
         "scope": "whole file"
@@ -9456,9 +9488,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-lock-ban-async-trait"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -9466,7 +9502,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-BAN-async-trait",
-          "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ],
       "policy_registry": {
@@ -9496,7 +9532,7 @@
         "syntax_sha256": "2fa7dc60b7390595c4669c88f766e05c31355242d08e9e2fd1f106e8d4493948",
         "instance": "smol"
       },
-      "intended_property": "Forbidden package name is absent from the entire Cargo.lock, including unreachable nodes.",
+      "intended_property": "The prohibited exact name line is absent from the entire raw Cargo.lock text, including unrelated locations; no TOML or reachable-node interpretation applies.",
       "selection": {
         "path": "Cargo.lock",
         "scope": "whole file"
@@ -9514,9 +9550,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-lock-ban-smol"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -9524,7 +9564,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-BAN-smol",
-          "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ],
       "policy_registry": {
@@ -9554,7 +9594,7 @@
         "syntax_sha256": "2fa7dc60b7390595c4669c88f766e05c31355242d08e9e2fd1f106e8d4493948",
         "instance": "tokio"
       },
-      "intended_property": "Forbidden package name is absent from the entire Cargo.lock, including unreachable nodes.",
+      "intended_property": "The prohibited exact name line is absent from the entire raw Cargo.lock text, including unrelated locations; no TOML or reachable-node interpretation applies.",
       "selection": {
         "path": "Cargo.lock",
         "scope": "whole file"
@@ -9572,9 +9612,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-lock-ban-tokio"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -9582,7 +9626,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-BAN-tokio",
-          "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ],
       "policy_registry": {
@@ -9612,7 +9656,7 @@
         "syntax_sha256": "2fa7dc60b7390595c4669c88f766e05c31355242d08e9e2fd1f106e8d4493948",
         "instance": "tokio-rustls"
       },
-      "intended_property": "Forbidden package name is absent from the entire Cargo.lock, including unreachable nodes.",
+      "intended_property": "The prohibited exact name line is absent from the entire raw Cargo.lock text, including unrelated locations; no TOML or reachable-node interpretation applies.",
       "selection": {
         "path": "Cargo.lock",
         "scope": "whole file"
@@ -9630,9 +9674,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-lock-ban-tokio-rustls"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -9640,7 +9688,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-BAN-tokio-rustls",
-          "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ],
       "policy_registry": {
@@ -9670,7 +9718,7 @@
         "syntax_sha256": "2fa7dc60b7390595c4669c88f766e05c31355242d08e9e2fd1f106e8d4493948",
         "instance": "tokio-util"
       },
-      "intended_property": "Forbidden package name is absent from the entire Cargo.lock, including unreachable nodes.",
+      "intended_property": "The prohibited exact name line is absent from the entire raw Cargo.lock text, including unrelated locations; no TOML or reachable-node interpretation applies.",
       "selection": {
         "path": "Cargo.lock",
         "scope": "whole file"
@@ -9688,9 +9736,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-lock-ban-tokio-util"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -9698,7 +9750,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-BAN-tokio-util",
-          "cause": "Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient."
+          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
         }
       ],
       "policy_registry": {
@@ -33614,11 +33666,170 @@
           "cause": "Call-argument shapes and exact exception parity are not implemented; ownership does not subsume this requirement."
         }
       ]
+    },
+    {
+      "id": "KD-DEP-READ-LOCK",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/support.rs",
+        "file_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/support.rs:69:53:failure-macro",
+        "instance": "Cargo.lock",
+        "line": 69,
+        "column": 53,
+        "function": [
+          "read"
+        ],
+        "syntax_sha256": "ac2892efde9c46ea8bb3f1f43e0bed67bf8d591097a48209baaea4d3e4969185"
+      },
+      "intended_property": "The frozen raw dependency checks require this physical input to be readable UTF-8, even when its forbidden marker is absent.",
+      "selection": {
+        "paths": [
+          "Cargo.lock"
+        ]
+      },
+      "context": "Authored file bytes read by the dependency guard; independent of Cargo resolution, source reachability, or execution evidence.",
+      "matching_semantics": {
+        "kind": "Rust fs::read_to_string precondition",
+        "missing": "failure",
+        "invalid_utf8": "failure",
+        "empty": "allowed by the read helper"
+      },
+      "required_cardinality": {
+        "exact_files": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-dep-read-lock"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-005"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-READ-LOCK",
+          "cause": "Newly expanded UTF-8 read precondition; frozen missing-input, wrong-kind, and invalid-byte differential fixtures remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-READ-CI",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/support.rs",
+        "file_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/support.rs:69:53:failure-macro",
+        "instance": ".github/workflows/ci.yml",
+        "line": 69,
+        "column": 53,
+        "function": [
+          "read"
+        ],
+        "syntax_sha256": "ac2892efde9c46ea8bb3f1f43e0bed67bf8d591097a48209baaea4d3e4969185"
+      },
+      "intended_property": "The frozen raw dependency checks require this physical input to be readable UTF-8, even when its forbidden marker is absent.",
+      "selection": {
+        "paths": [
+          ".github/workflows/ci.yml"
+        ]
+      },
+      "context": "Authored file bytes read by the dependency guard; independent of Cargo resolution, source reachability, or execution evidence.",
+      "matching_semantics": {
+        "kind": "Rust fs::read_to_string precondition",
+        "missing": "failure",
+        "invalid_utf8": "failure",
+        "empty": "allowed by the read helper"
+      },
+      "required_cardinality": {
+        "exact_files": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-dep-read-ci"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-005"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-READ-CI",
+          "cause": "Newly expanded UTF-8 read precondition; frozen missing-input, wrong-kind, and invalid-byte differential fixtures remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-DEP-READ-ATTRIBUTES",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/support.rs",
+        "file_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/support.rs:69:53:failure-macro",
+        "instance": ".gitattributes",
+        "line": 69,
+        "column": 53,
+        "function": [
+          "read"
+        ],
+        "syntax_sha256": "ac2892efde9c46ea8bb3f1f43e0bed67bf8d591097a48209baaea4d3e4969185"
+      },
+      "intended_property": "The frozen raw dependency checks require this physical input to be readable UTF-8, even when its forbidden marker is absent.",
+      "selection": {
+        "paths": [
+          ".gitattributes"
+        ]
+      },
+      "context": "Authored file bytes read by the dependency guard; independent of Cargo resolution, source reachability, or execution evidence.",
+      "matching_semantics": {
+        "kind": "Rust fs::read_to_string precondition",
+        "missing": "failure",
+        "invalid_utf8": "failure",
+        "empty": "allowed by the read helper"
+      },
+      "required_cardinality": {
+        "exact_files": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-dep-read-attributes"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-005"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-DEP-READ-ATTRIBUTES",
+          "cause": "Newly expanded UTF-8 read precondition; frozen missing-input, wrong-kind, and invalid-byte differential fixtures remain to qualify."
+        }
+      ]
     }
   ],
   "counts": {
-    "reviewed_assertion_instances": 424,
-    "implemented": 353,
+    "reviewed_assertion_instances": 427,
+    "implemented": 369,
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,

@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""Translate frozen raw dependency checks; trusted setup, outside stock analysis."""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import tomllib
+
+
+ROOT = Path(__file__).resolve().parent.parent
+SOURCE_SHA = "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f"
+REGISTRY_SHA = "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10"
+
+
+def literal(value):
+    if isinstance(value, dict):
+        return "{ " + ", ".join(f"{key} = {literal(item)}" for key, item in value.items()) + " }"
+    return json.dumps(value, ensure_ascii=False)
+
+
+def policies(rows):
+    rules = []
+    for row in rows:
+        name = row["id"]
+        semantics = row["matching_semantics"]
+        if name.startswith("KD-DEP-READ-"):
+            path = row["selection"]["paths"][0]
+            predicate = dict(kind="bytes-equal", other=path, utf8=True)
+        elif row["source"]["file_sha256"] != SOURCE_SHA:
+            continue
+        elif name.startswith("KD-LOCK-BAN-"):
+            path = "Cargo.lock"
+            predicate = dict(kind="literal", text='name = "' + semantics["exact_name"] + '"',
+                             mode="line-absent", normalization="trim")
+        elif name.startswith("KD-DEP-LF-ATTRIBUTES-"):
+            path = row["selection"]["paths"][0]
+            predicate = dict(kind="literal", text=semantics["literal"], mode="line-present", normalization="trim")
+        elif name.startswith("KD-DEP-CI-"):
+            path = row["selection"]["paths"][0]
+            predicate = dict(kind="literal", text=semantics["literal"], mode="contains")
+            if name.endswith("GATE-COUNT"):
+                predicate.update(mode="exact-count", count=row["required_cardinality"]["exact"])
+        else:
+            continue
+        rules.append(dict(name=name.lower(), include=[path], predicate=predicate,
+                          reason="Preserve the frozen literal/read predicate with its authored matching scope; no Cargo, YAML, or execution inference."))
+    if len(rules) != 16:
+        raise ValueError("incomplete raw dependency translation")
+    return sorted(rules, key=lambda rule: rule["name"])
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("snapshots", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
+    root = args.snapshots / "kafka-driver"
+    for path, digest in [("tests/guardrails/dependency.rs", SOURCE_SHA), ("guardrails.toml", REGISTRY_SHA)]:
+        if hashlib.sha256((root / path).read_bytes()).hexdigest() != digest:
+            raise ValueError("frozen raw dependency authority changed")
+    rows = json.loads((ROOT / "crates/zrail-testkit/tests/fixtures/rc9/assertions.json").read_text())["reviewed_assertions"]
+    rules = policies(rows)
+    lines = ["# Partial raw-file fragment; complete repository qualification remains required.",
+             "# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e", "# Detector SHA-256: " + SOURCE_SHA]
+    for rule in rules:
+        lines += ["", "[[repository.files]]"] + [f"{key} = {literal(value)}" for key, value in rule.items()]
+    text = "\n".join(lines) + "\n"
+    tomllib.loads(text)
+    with args.output.open("x", encoding="utf-8", newline="\n") as output:
+        output.write(text)
+    print(f"raw dependency translation: {len(rules)} policies")
+
+
+if __name__ == "__main__":
+    main()
