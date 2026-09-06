@@ -36,6 +36,7 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
             unique(patterns, "file assertion selectors", errors);
             for pattern in patterns {
                 validate_repository_pattern(pattern, errors);
+                exact(pattern, errors);
                 if pattern.contains('\0') || pattern.split('/').any(str::is_empty) {
                     errors.push(format!(
                         "file assertion path pattern is not canonical: {pattern:?}"

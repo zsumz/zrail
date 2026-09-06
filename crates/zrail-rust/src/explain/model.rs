@@ -82,6 +82,9 @@ pub struct PathExplanation {
     pub capability_owners: Vec<CapabilityOwnerExplanation>,
     /// Call-owner rules whose declared boundary contains the path.
     pub call_owners: Vec<CallOwnerExplanation>,
+    /// Matching repository-file predicates and their actual physical observations.
+    #[serde(default)]
+    pub repository_files: Vec<super::RepositoryFileExplanation>,
     /// The advisory line target for the source class, when configured.
     pub design_target: Option<usize>,
     /// The enforced line ceiling for the source class, when configured.

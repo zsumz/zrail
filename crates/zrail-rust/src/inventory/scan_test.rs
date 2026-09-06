@@ -4,15 +4,15 @@ use std::{collections::BTreeMap, fs, path::PathBuf};
 
 use zrail_core::{
     AnalysisContract, Budget, Contract, CycleMode, DependenciesContract, DependencyMode, ExactMode,
-    FacadeMode, FileSizeContract, HygieneContract, LintSuppressionMode, ModuleDocsMode, PolicyMode,
-    RepositoryContract, RustSourceContract, SourceContract, SymlinkMode, TestMode,
+    FacadeMode, FileSizeContract, HygieneContract, LintSuppressionMode, MAX_DIRECTORY_DEPTH,
+    ModuleDocsMode, PolicyMode, RepositoryContract, RustSourceContract, SourceContract,
+    SymlinkMode, TestMode,
 };
 
 use crate::inventory::exclusions::excluded_subtree;
 
 use super::{
-    MAX_DIRECTORY_DEPTH, MAX_RUST_SOURCE_BYTES, MAX_TOTAL_RUST_SOURCE_BYTES, add_source_bytes,
-    inventory_repository,
+    MAX_RUST_SOURCE_BYTES, MAX_TOTAL_RUST_SOURCE_BYTES, add_source_bytes, inventory_repository,
 };
 
 #[test]

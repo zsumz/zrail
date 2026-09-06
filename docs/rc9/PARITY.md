@@ -5,7 +5,8 @@ incomplete. No consumer guard has been deleted and no release artifact has been
 published. The user approved retiring Rafter's private-name policy; see
 [policy decisions](DECISIONS.md).
 
-This branch implements strict facades and scoped size budgets. It does **not** yet deliver rc9
+This branch implements strict facades, scoped size budgets, and bounded physical
+file/raw-text predicates. It does **not** yet deliver rc9
 replacement coverage. See [exact reviewed assertion blockers](BLOCKERS.md),
 [qualification commands and results](QUALIFICATION.md), and
 [conditional downstream cutovers](CUTOVERS.md).

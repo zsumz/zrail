@@ -43,6 +43,8 @@ pub struct GovernedSurfaceReport {
     pub source_policies: Vec<GovernedSourcePolicyRail>,
     /// Physical written facade policies, independent of compilation/test identity.
     pub facades: Vec<super::super::GovernedFacade>,
+    /// Complete physical path and raw-file predicates, including zero-match prohibitions.
+    pub repository_files: Vec<crate::GovernedRepositoryFile>,
     /// Full scoped selectors and exceptions, including policies with zero current matches.
     pub size_policy: Option<zrail_core::SizePolicyContract>,
     /// Complete physical line measurements, effective thresholds, and active debt.

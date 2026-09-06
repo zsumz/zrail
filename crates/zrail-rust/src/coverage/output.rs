@@ -78,6 +78,23 @@ impl GovernedSurfaceReport {
                 facade.violations.len()
             );
         }
+        let _ = writeln!(
+            output,
+            "Repository-file policies: {}",
+            self.repository_files.len()
+        );
+        for policy in &self.repository_files {
+            let _ = writeln!(
+                output,
+                "  {} -> {:?} ({}, {} selected entries, satisfied: {}, checkout: {:?})",
+                policy.policy_id,
+                policy.policy.predicate,
+                policy.claim,
+                policy.entries.len(),
+                policy.satisfied,
+                policy.checkout_path,
+            );
+        }
         output
     }
 }

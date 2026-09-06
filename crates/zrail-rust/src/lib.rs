@@ -12,6 +12,7 @@ mod mirror_execution;
 mod mirror_inputs;
 mod mirrors;
 mod onboarding;
+mod repository_files;
 mod rules;
 mod source;
 mod source_budget;
@@ -53,7 +54,8 @@ pub use engine::{
 };
 pub use explain::{
     CallOwnerExplanation, CapabilityOwnerExplanation, ItemMacroAuthorityExplanation,
-    MacroInvocationExplanation, PathExplanation, explain_hypothetical_path, explain_path,
+    MacroInvocationExplanation, PathExplanation, RepositoryFileExplanation,
+    explain_hypothetical_path, explain_path,
 };
 pub use mirrors::{
     MirrorExecutionResult, MirrorPlan, MirrorReceiptBundle, MirrorResultSet, MirrorTestResult,
@@ -65,4 +67,5 @@ pub use onboarding::{
     discover_baseline, discover_baseline_rules, discover_source_roots,
     discover_source_roots_with_selection,
 };
+pub use repository_files::{GovernedRepositoryFile, GovernedRepositoryFileEntry};
 pub use source_budget::EffectiveSizeBudget;

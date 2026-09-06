@@ -48,6 +48,10 @@ fn file_assertions_validate_selection_cardinality_identity_and_literals() {
             "not canonical",
         ),
         (
+            RULE.replace("crates/**/*.rs", "crates/./*.rs"),
+            "not canonical",
+        ),
+        (
             RULE.replace("crates/**/*.rs", "../src/*.rs"),
             "not canonical",
         ),

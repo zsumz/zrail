@@ -1,6 +1,8 @@
 //! Path-scoped architecture guidance for humans and coding agents.
 
 mod evidence;
+mod files;
+pub use files::RepositoryFileExplanation;
 mod macro_authority;
 mod model;
 mod owners;
@@ -130,6 +132,7 @@ fn explain_model(
         .map(|role| role.reason.clone());
     Ok(PathExplanation {
         schema: 2,
+        repository_files: files::for_path(model, &relative),
         path: relative,
         file_class: crate::source_policy::role_name(class).into(),
         inferred_file_role: crate::source_policy::role_name(file_role.inferred).into(),

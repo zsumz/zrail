@@ -3,6 +3,7 @@
 mod classify;
 mod exclusions;
 mod scan;
+mod traverse;
 mod types;
 
 pub(crate) use classify::{FileClass, classify_path, under_root};
@@ -11,4 +12,5 @@ pub(crate) use scan::inventory_cargo_repository;
 pub(crate) use scan::{
     inventory_repository, inventory_selected_cargo_repository, load_referenced_source,
 };
+pub(crate) use traverse::{scan_file_entries, skip_directory};
 pub(crate) use types::{RepositoryEntry, RepositoryEntryKind, RepositoryInventory, RustSourceFile};

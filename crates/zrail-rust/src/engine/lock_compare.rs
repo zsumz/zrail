@@ -92,6 +92,7 @@ fn compare_locks(current: &LockFile, candidate: &LockFile, findings: &mut Findin
 
 pub(super) fn requires_lock(contract: &Contract) -> bool {
     contract.dependencies.mode == DependencyMode::Locked
+        || !contract.repository.files.is_empty()
         || !contract.source.rust.generated.is_empty()
         || !contract.gates.is_empty()
         || !contract.source.rust.test_mirrors.is_empty()

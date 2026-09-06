@@ -31,6 +31,7 @@ pub(crate) struct RepositoryModel {
     pub(crate) feature_worlds: Vec<ResolvedFeatureWorld>,
     pub(crate) resolved_cargo: Option<ResolvedCargoGraph>,
     pub(crate) source: SourceIndex,
+    pub(crate) repository_files: crate::repository_files::RepositoryFileAnalysis,
     pub(crate) item_macro_manifests: Vec<zrail_core::LockedItemMacroManifest>,
     pub(crate) compilation_domains: BTreeMap<String, BTreeSet<CompilationDomain>>,
     pub(crate) module_edges: Vec<ResolvedModuleEdge>,
@@ -46,13 +47,11 @@ pub(crate) fn load_model_with_bundle(
     root: &Path,
     bundle: ContractBundle,
 ) -> Result<RepositoryModel, CheckError> {
-    if !bundle.contract.repository.files.is_empty() {
-        return Err(CheckError::from_message(
-            "REP-FILE-000: repository-file predicate evaluation is not yet implemented; no trusted analysis or lock can be produced",
-        ));
-    }
     let mut inventory = inventory_repository(root, &bundle.contract)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
+    let repository_files =
+        crate::repository_files::analyze(&inventory.root, &bundle.contract.repository.files)
+            .map_err(CheckError::from_message)?;
     let mut cargo = load_cargo_workspace(&inventory)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     let resolved_cargo = ResolvedCargoGraph::load(&inventory.root, &cargo.packages)
@@ -169,6 +168,7 @@ pub(crate) fn load_model_with_bundle(
         resolved_cargo,
         source,
         item_macro_manifests,
+        repository_files,
         compilation_domains: graph.compilation_domains,
         module_edges: graph.module_edges,
     })

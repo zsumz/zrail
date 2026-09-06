@@ -103,6 +103,7 @@ pub fn governed_surface_report(
         feature_worlds,
         source_policies,
         facades: facades::report(&model),
+        repository_files: model.repository_files.policies.clone(),
         size_policy: model.bundle.contract.source.rust.budgets.clone(),
         size_budgets: budgets::report(&model).map_err(CheckError::from_message)?,
         type_policies,

@@ -255,6 +255,11 @@ entry is rejected under `submodules = "deny"`, even without `.gitmodules` or
 outside source roots. Allowed gitlinks are opaque, untraversed boundaries;
 their object identities remain bound by the target commit and change manifest.
 
+Repository paths and deliberately raw text can also be governed by closed
+[`repository.files` predicates](REPOSITORY-FILES.md). These preserve required
+and forbidden paths, exact file inventories, literal naming/text policies, and
+byte equality, separately from Rust syntax and execution evidence.
+
 ### Contract schema and fragments
 
 Schema 2 uses exact fragment paths so large policy registries stay reviewable
@@ -1399,6 +1404,9 @@ every applicable compilation domain.
 Schema 6 adds physical facade and size-policy coverage. Size records retain every
 effective threshold, matched override, exact exception, authored baseline, and
 measured excess; the full policy also exposes selectors with no current match.
+It also includes `repository_files`: complete selected physical paths, raw
+predicates, content hashes, reference inputs, quantities, and results. Empty
+selections remain visible, and sampled text offsets never truncate totals.
 
 Coverage is an audit artifact, not partial best-effort discovery. It fails when
 source analysis is incomplete, when a governed dependency cannot be mapped to

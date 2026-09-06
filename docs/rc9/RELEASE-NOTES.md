@@ -9,6 +9,9 @@ Implemented in the current branch:
 - Strict wiring facades with distinct import and re-export policy, preserving
   existing declarative mode behavior.
 - Exact test-facade structure independent of test compilation and execution.
+- Required/forbidden paths, exact file sets, explicit name restrictions, raw-text
+  predicates, and byte equality with independent selection and bound inputs.
+  Downstream differential linkage for this family is still outstanding.
 - Scoped budgets, advisory soft thresholds, warning-only targets, bounded hard
   exceptions with required metadata, and exact authored baseline ratchets.
 - Effective facade modes, reasons, syntax quality, and complete violation lists

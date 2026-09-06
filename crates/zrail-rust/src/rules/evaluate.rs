@@ -22,6 +22,7 @@ pub(crate) struct RuleContext<'a> {
     pub(crate) cargo: &'a CargoWorkspace,
     pub(crate) resolved_cargo: Option<&'a ResolvedCargoGraph>,
     pub(crate) source: &'a SourceIndex,
+    pub(crate) repository_files: &'a crate::repository_files::RepositoryFileAnalysis,
     pub(crate) module_edges: &'a [ResolvedModuleEdge],
     pub(crate) compilation_domains: &'a BTreeMap<String, BTreeSet<CompilationDomain>>,
     pub(crate) feature_worlds: &'a [ResolvedFeatureWorld],
@@ -31,6 +32,9 @@ pub(crate) fn evaluate(context: &RuleContext<'_>, limit: DiagnosticLimit) -> Fin
     let mut findings =
         FindingSink::from_findings_with_limit(context.source.findings.clone(), limit);
     repository::evaluate(context, &mut findings);
+    for finding in &context.repository_files.findings {
+        findings.push(finding.clone());
+    }
     cargo_override::evaluate(context, &mut findings);
     cargo_identity::evaluate(context, &mut findings);
     generated::evaluate(context, &mut findings);

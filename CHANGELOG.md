@@ -18,6 +18,9 @@ All notable zrail changes are recorded here for reviewed release notes.
   debt detection; optional authored baselines extend existing measured ratchets.
 - Complete effective budget/debt reporting and protected comparisons for scoped
   limits, warning downgrades, baseline removal, and exception authority.
+- Closed repository-file count/set, name, raw-text, and byte-equality assertions,
+  with independent physical selection, bounded contained reads, complete coverage,
+  path explanations, lock input binding, and protected semantic comparisons.
 
 ### Changed
 

@@ -139,6 +139,7 @@ fn finish_check(
             cargo: &model.cargo,
             resolved_cargo: model.resolved_cargo.as_ref(),
             source: &model.source,
+            repository_files: &model.repository_files,
             module_edges: &model.module_edges,
             compilation_domains: &model.compilation_domains,
             feature_worlds: &model.feature_worlds,
