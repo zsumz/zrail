@@ -39,40 +39,7 @@ files and opaque or invalid syntax remain explicit review work.
 | `KD-LOCK-kafka-wire-core-COUNT` | Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified. |
 | `KD-LOCK-kafka-wire-core-SOURCE` | Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified. |
 | `KD-LOCK-kafka-wire-core-VERSION` | Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified. |
-| `KD-METADATA-PACKAGE-REPOSITORY` | Raw file predicates exist; exact policy and frozen differential evidence remain to qualify. |
 | `KD-METADATA-PARENT` | Record the path-precondition proof and bind the exact translated license paths before closing this helper assertion. |
-| `KD-METADATA-PARSE` | Document parser preconditions must be exercised by malformed, duplicate-key, and invalid-encoding fixtures. |
-| `KD-METADATA-README` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-REQUIRED-KAFKA-DRIVER-LOGO-SVG` | Native file presence exists; the exact metadata policy and frozen positive/negative linkage remain to qualify. |
-| `KD-METADATA-REQUIRED-LICENSE` | Native file presence exists; the exact metadata policy and frozen positive/negative linkage remain to qualify. |
-| `KD-METADATA-REQUIRED-README-MD` | Native file presence exists; the exact metadata policy and frozen positive/negative linkage remain to qualify. |
-| `KD-METADATA-VERIFY-HTTP-FAIL` | Raw file predicates exist; exact policy and frozen differential evidence remain to qualify. |
-| `KD-METADATA-VERIFY-REPOSITORY` | Raw file predicates exist; exact policy and frozen differential evidence remain to qualify. |
-| `KD-METADATA-WORKFLOW-VERIFY` | Raw file predicates exist; exact policy and frozen differential evidence remain to qualify. |
-| `KD-METADATA-WORKSPACE-LICENSE` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-WORKSPACE-REPOSITORY` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-WORKSPACE-VERSION` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-DESCRIPTION` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-LICENSE` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-LICENSE-COPY` | UTF-8 byte equality is implemented; the pinned metadata translation and differential fixtures remain to qualify. |
-| `KD-METADATA-kafka-driver-NAME` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-PUBLISH` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-REPOSITORY` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-VERSION` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-core-DESCRIPTION` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-core-LICENSE` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-core-LICENSE-COPY` | UTF-8 byte equality is implemented; the pinned metadata translation and differential fixtures remain to qualify. |
-| `KD-METADATA-kafka-driver-core-NAME` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-core-PUBLISH` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-core-REPOSITORY` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-core-VERSION` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-transport-DESCRIPTION` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-transport-LICENSE` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-transport-LICENSE-COPY` | UTF-8 byte equality is implemented; the pinned metadata translation and differential fixtures remain to qualify. |
-| `KD-METADATA-kafka-driver-transport-NAME` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-transport-PUBLISH` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-transport-REPOSITORY` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
-| `KD-METADATA-kafka-driver-transport-VERSION` | Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax. |
 | `KD-RETIRED-BACKEND-VARIANT` | Bounded Rust enum-variant predicate and cfg/omission/duplicate fixtures remain open. |
 | `KD-RETIRED-CONSTRUCTION-LegacyBackend` | Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify. |
 | `KD-RETIRED-CONSTRUCTION-new_legacy` | Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify. |

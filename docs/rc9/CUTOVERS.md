@@ -2,7 +2,7 @@
 
 Status: **blocked** for every repository. No downstream source, contract, lock,
 workflow, or guard has been changed. No complete replacement-policy bundle exists
-yet. The facade, size, and file fragments in `policies/` are review material for
+yet. The facade, size, file, and metadata fragments in `policies/` are review material for
 individual capabilities;
 they must not be installed as a repository's complete contract.
 
@@ -22,7 +22,7 @@ no checkers or helper dependencies certified removable now.
 | `tests/guardrails/transport_authority.rs` | Close all five `KD-TRANSPORT-*` inventories and their detector fixtures. Preserve function-value `ExprPath` counts, written renames, method quantities, and exact implementing-type/trait sets. |
 | `tests/guardrails/dependency.rs`, `protocol_provenance.rs` | Preserve whole-lock bans and exact package/provenance counts (`KD-LOCK-*`), exact/subset dependency distinctions, feature ordering, optional/default features, and inheritance. Complete remaining assertion expansion. |
 | `tests/guardrails/release_graph.rs` | Preserve absent retired paths, forbidden declarations, and separate raw vocabulary predicates. |
-| `tests/guardrails/release_metadata.rs` | Preserve exact publication sets, inherited metadata, nonempty descriptions, file presence, and byte-equal license copies. |
+| `tests/guardrails/release_metadata.rs` | `kafka-driver.metadata.fragment.toml` supplies 35 native policies with 33 assertion IDs verified, including authored inheritance, ordered publication lists, UTF-8 license equality, required files, and deliberate raw markers. Close the parent-path helper proof and full repository qualification before removal. |
 | `tests/guardrails/qualification.rs` | Preserve every workflow/script/text predicate and ordering requirement. Actual command execution remains separately evidenced. |
 | `tests/guardrails/test_location.rs` | Qualify sibling/test placement against the detector's actual cfg syntax. Record any stronger native reachability semantics explicitly. |
 | `tests/guardrails/support.rs`, `mod.rs`, `tests/guardrails.rs` | Remove only after every dependent assertion and detector fixture has a verified replacement. |

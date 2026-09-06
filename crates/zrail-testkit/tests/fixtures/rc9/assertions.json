@@ -5081,19 +5081,40 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-package-repository"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-PACKAGE-REPOSITORY",
-          "cause": "Raw file predicates exist; exact policy and frozen differential evidence remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-package-repository",
+            "path": "scripts/qualify-packages",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "93ca5d9fcf5aa7b5e73339581990bf8d31e5fea43e460eca35ff7e6ce0c13b04"
+          },
+          {
+            "case": "missing-marker",
+            "policy_id": "repository:file:kd-metadata-package-repository",
+            "path": "scripts/qualify-packages",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "f3c0bd00fa967fd45775845ce96a588e15e6b798133499bcecfd441f2d2ae999"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-PARENT",
@@ -5204,19 +5225,147 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-00-parse-kafka-driver",
+          "repository:file:kd-metadata-00-parse-kafka-driver-core",
+          "repository:file:kd-metadata-00-parse-kafka-driver-transport"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-006",
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-PARSE",
-          "cause": "Document parser preconditions must be exercised by malformed, duplicate-key, and invalid-encoding fixtures."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "malformed-input",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "af035063bb96e3848cd647faef081c579c0648bae24a80f9ae2a633935da83c2"
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "017ddd2f556e1ba2f42eefd0a6d7b7d473275c4cb16fba6db7770938b87a0b70"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver-core",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver-core",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "malformed-input",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver-core",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "af035063bb96e3848cd647faef081c579c0648bae24a80f9ae2a633935da83c2"
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver-core",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "017ddd2f556e1ba2f42eefd0a6d7b7d473275c4cb16fba6db7770938b87a0b70"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver-core",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver-transport",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver-transport",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "malformed-input",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver-transport",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "af035063bb96e3848cd647faef081c579c0648bae24a80f9ae2a633935da83c2"
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver-transport",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "017ddd2f556e1ba2f42eefd0a6d7b7d473275c4cb16fba6db7770938b87a0b70"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-metadata-00-parse-kafka-driver-transport",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-README",
@@ -5253,19 +5402,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-readme"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-README",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-readme",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-readme",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f4416409a188b3615a159aad26f96e2120de7cdb35ade4143001268beee30f5a"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-readme",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "09b1f6dda98c8b2014807c9646655cbf98a36b10e8d5440b08edfa46b90f600c"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-readme",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ac097ecfe4093f90749b0a6fd0792eb785cc5d7e3b9cad2bdb34ecfc8d55d98c"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-REQUIRED-KAFKA-DRIVER-LOGO-SVG",
@@ -5297,19 +5483,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-required-kafka-driver-logo-svg"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-REQUIRED-KAFKA-DRIVER-LOGO-SVG",
-          "cause": "Native file presence exists; the exact metadata policy and frozen positive/negative linkage remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-required-kafka-driver-logo-svg",
+            "path": "kafka-driver-logo.svg",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "f0abcd140a73b2a1c6cd52979cfbabec34793525d061289b8b0547c9b50efb09"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-metadata-required-kafka-driver-logo-svg",
+            "path": "kafka-driver-logo.svg",
+            "accepted": false,
+            "diagnostic": "REP-FILE-001",
+            "source_sha256": null
+          },
+          {
+            "case": "wrong-entry-kind",
+            "policy_id": "repository:file:kd-metadata-required-kafka-driver-logo-svg",
+            "path": "kafka-driver-logo.svg",
+            "accepted": false,
+            "diagnostic": "REP-FILE-001",
+            "source_sha256": null
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-REQUIRED-LICENSE",
@@ -5341,19 +5556,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-required-license"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-REQUIRED-LICENSE",
-          "cause": "Native file presence exists; the exact metadata policy and frozen positive/negative linkage remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-required-license",
+            "path": "LICENSE",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-metadata-required-license",
+            "path": "LICENSE",
+            "accepted": false,
+            "diagnostic": "REP-FILE-001",
+            "source_sha256": null
+          },
+          {
+            "case": "wrong-entry-kind",
+            "policy_id": "repository:file:kd-metadata-required-license",
+            "path": "LICENSE",
+            "accepted": false,
+            "diagnostic": "REP-FILE-001",
+            "source_sha256": null
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-REQUIRED-README-MD",
@@ -5385,19 +5629,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-required-readme-md"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-REQUIRED-README-MD",
-          "cause": "Native file presence exists; the exact metadata policy and frozen positive/negative linkage remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-required-readme-md",
+            "path": "README.md",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "6575365e288d9c8cfc996e846b4d0a7cd67def21abbb002551f9f225813a18c6"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-metadata-required-readme-md",
+            "path": "README.md",
+            "accepted": false,
+            "diagnostic": "REP-FILE-001",
+            "source_sha256": null
+          },
+          {
+            "case": "wrong-entry-kind",
+            "policy_id": "repository:file:kd-metadata-required-readme-md",
+            "path": "README.md",
+            "accepted": false,
+            "diagnostic": "REP-FILE-001",
+            "source_sha256": null
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-VERIFY-HTTP-FAIL",
@@ -5431,19 +5704,40 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-verify-http-fail"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-VERIFY-HTTP-FAIL",
-          "cause": "Raw file predicates exist; exact policy and frozen differential evidence remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-verify-http-fail",
+            "path": "scripts/verify-release-repository",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "3c1396e6d8d4c813a67d73b3dd3b980f76860e8a252f8cf29fa012926f02981e"
+          },
+          {
+            "case": "missing-marker",
+            "policy_id": "repository:file:kd-metadata-verify-http-fail",
+            "path": "scripts/verify-release-repository",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "618892454973d5034487a926d7bd86e5b9b2d0508739283761a4419bc4524e67"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-VERIFY-REPOSITORY",
@@ -5477,19 +5771,40 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-verify-repository"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-VERIFY-REPOSITORY",
-          "cause": "Raw file predicates exist; exact policy and frozen differential evidence remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-verify-repository",
+            "path": "scripts/verify-release-repository",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "3c1396e6d8d4c813a67d73b3dd3b980f76860e8a252f8cf29fa012926f02981e"
+          },
+          {
+            "case": "missing-marker",
+            "policy_id": "repository:file:kd-metadata-verify-repository",
+            "path": "scripts/verify-release-repository",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "fbb63309b68890f9c9d19cbb5f1530947ed8f8fbc4b6296eb500765ed958bd22"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-WORKFLOW-VERIFY",
@@ -5523,19 +5838,40 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-workflow-verify"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-WORKFLOW-VERIFY",
-          "cause": "Raw file predicates exist; exact policy and frozen differential evidence remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-workflow-verify",
+            "path": ".github/workflows/qualification.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "d87e3d3b6021c51b934b862fbb1b19972ed197fea122eb76c0f35e245832c868"
+          },
+          {
+            "case": "missing-marker",
+            "policy_id": "repository:file:kd-metadata-workflow-verify",
+            "path": ".github/workflows/qualification.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "0823102b14420cd2552fcf54f8f7fb7081d3f39ffd110bc94145d923e2dce2b0"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-WORKSPACE-LICENSE",
@@ -5573,19 +5909,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-workspace-license"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-WORKSPACE-LICENSE",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-workspace-license",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-workspace-license",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3ae1370ff24a0ac6eccf7631d8026fa86100534320d7e4afd928148aefe657f2"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-workspace-license",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "830337ed2044555d7e03d3e2845c814c2ee905fbdd90bd938799a0e3197ce1b6"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-workspace-license",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1738d8bacfa4106e095ebde4a7f9828d61bc4b6daf4096c7c78b28b179744562"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-WORKSPACE-REPOSITORY",
@@ -5623,19 +5996,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-workspace-repository"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-WORKSPACE-REPOSITORY",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-workspace-repository",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-workspace-repository",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5d4c3fcf08ceb8f43b2643c7043bcb71555aef3d4519a9cf18b1be04207db9a9"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-workspace-repository",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d02d21d9a0d23741280c68e9adfdb68cf9862534c6856352b587ae21d2d76027"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-workspace-repository",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "51f3def7f1e93cd93882231a91c278407ae93dedce12cba2b9290d6288a878cf"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-WORKSPACE-VERSION",
@@ -5673,19 +6083,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-workspace-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-WORKSPACE-VERSION",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-workspace-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-workspace-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ea5eb963242da409c873b71092f2eedaf32af846c649c0257cdb9d1f56591796"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-workspace-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "072d51e7a236ce3cc4773bde8eb08076cbaa680c1147a6a27557b8a0412b10a8"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-workspace-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "7cee3218be2d48ed9bed83a885c2033ad05afc77e9491a5dea711bbdf6978f03"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-DESCRIPTION",
@@ -5725,19 +6172,64 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-description"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-DESCRIPTION",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-description",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "empty",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-description",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ba556607c759d70ece37ab5fb4f9572cb8eeac46519c7dba81ffd98bfd43904b"
+          },
+          {
+            "case": "unicode-whitespace",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-description",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d765e7c4878eb0a9a93cc9ad1355137c625d6bb72e0b43c64ecc02842346cd45"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-description",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c2cde688006265c2e1c9cbcc2aca8612741a91d505a5385b34858ffbfaabaddd"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-description",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8bfb345aa0bbc438d08bcda082617eb2046482815beffef4023d7665ee8f8092"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-LICENSE",
@@ -5778,19 +6270,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-license"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-LICENSE",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-license",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-license",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0ff26bc52d17c2bf24f4b2fc6b3c176ba636a4e56f2f36009a428600e08d9986"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-license",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b61ed4abb6e2d47a4397c56b4166c7ab177bef46727b92393e24286c8ae5b768"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-license",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4d1f6d3d39c2063fec2f3d43466dd1359a415832733354bd4356712ad0fae486"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-LICENSE-COPY",
@@ -5828,19 +6357,40 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-license-copy"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-005"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-LICENSE-COPY",
-          "cause": "UTF-8 byte equality is implemented; the pinned metadata translation and differential fixtures remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-license-copy",
+            "path": "LICENSE",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-license-copy",
+            "path": "LICENSE",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-NAME",
@@ -5880,19 +6430,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-name"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-NAME",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-name",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-name",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ba37a5c819b1b1d1da8abb429ab37e1b5f0d7627e60efb7d817bd5374e122e33"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-name",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "168b5e8cf8375d17d4a2a100704c1f7fff672b4174ebf857fa75b8697362eada"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-name",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b22a4163e7b2bc506d0b9d61f0a1c7e8e6c04742e1f09388d0f403f09461ca2a"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-PUBLISH",
@@ -5935,19 +6522,64 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-publish"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-PUBLISH",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-publish",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-publish",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0dc150381ea51b254cfc8d33aefbd8e5649681c60733d463f1a2ffc21570ea47"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-publish",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5d50f2db21516c3a752149f3b821e348f3ecf4894e4214c56c0491b8277bbbe7"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-publish",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "51fca25b5359bf5cd6e4d98e57e764c9511ee28416468daa1c43c77aecb40908"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-publish",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2b42ee518e28194ff57a1cd1eb16cc196c19f948ca24392107f3d66e0ac704f5"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-REPOSITORY",
@@ -5988,19 +6620,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-repository"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-REPOSITORY",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-repository",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-repository",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0d945e9e794d0d399e328501b6c71528658875d8bf7e768680c9a447db961e9f"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-repository",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ba974c1ec2012cf17898ea248d65dd83f66e5e6f63101d7f9200568b3f5d0426"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-repository",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8ba52fd1a1357ef998ce454f346caffc38e595830d7080ff0f6b9397b5ae4c58"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-VERSION",
@@ -6041,19 +6710,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-VERSION",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9bce4462fc3501195a0cf89b0f5c434ffb9c204a8217cd19452c77609c51d7d8"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fd90ec18b66914d2f6f1e90dc4ab2001b32585fbe22a2fab27a5f7da894ff2e1"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "14d50b5058354f185f52b0c9da2f96eb4c4dee22b52c1308519fc5a358c40281"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-core-DESCRIPTION",
@@ -6093,19 +6799,64 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-core-description"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-core-DESCRIPTION",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-description",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "empty",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-description",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8c4898a54ae809d9d1e4e456ca1e69ac776d9ea309c8179e4a4cd86a72979db1"
+          },
+          {
+            "case": "unicode-whitespace",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-description",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "35b0087db7cd7b0d631a440882eeed115177ab672180dc5c27152ca4dd3c3459"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-description",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "078e0ce9ae877a2123b7f2d9751f18a2b66ed2b1abf5864ae7bb3cd8d0b130f5"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-description",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "afbd18a839a11a91f756261eb6a4a0a85116406514c38c68bc090d182d47f599"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-core-LICENSE",
@@ -6146,19 +6897,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-core-license"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-core-LICENSE",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-license",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-license",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "26a40631643452d7dc4f8e3863f0f96a21a92a203e7057bda308694a65c53d25"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-license",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f65bf600608998b5b5cabd3e5f8f38f7f065def98a778eff0b74ecbd1f1785a4"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-license",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bc4eb93ca196d75a96cef607b6aa82fef45d74a870c78b25312b81fb9394120b"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-core-LICENSE-COPY",
@@ -6196,19 +6984,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-core-license-copy"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-005"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-core-LICENSE-COPY",
-          "cause": "UTF-8 byte equality is implemented; the pinned metadata translation and differential fixtures remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-license-copy",
+            "path": "crates/kafka-driver-core/LICENSE",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-license-copy",
+            "path": "crates/kafka-driver-core/LICENSE",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "different-valid-text",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-license-copy",
+            "path": "crates/kafka-driver-core/LICENSE",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": "8d2eff0cc094f53a90982d8e010a3aaa81abba4537ef4c2b6b32eaf89654371a"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-core-NAME",
@@ -6248,19 +7065,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-core-name"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-core-NAME",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-name",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-name",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1f7babdaa9fbd94ab57d3efd6f8beba5be877ecebdbdfe847c0fe83dad21f9c0"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-name",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8e7b8892fcf7f6839f03eb97c4ad68e25c58941d650075f4c644bb6485b14753"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-name",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "01ad1c20dd01156b6c0318dd3df3c76bf540d098bb89bc7e5d80307dc6f156a1"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-core-PUBLISH",
@@ -6303,19 +7157,64 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-core-publish"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-core-PUBLISH",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-publish",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-publish",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bd9518725368fe74c75dc0eb7d919ebfd017bb89cf4e07d3c585f9305883f156"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-publish",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5b2a197422b82653071b433ebd1a08ef00e7c274240407fb943a211f0eb7ba2a"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-publish",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6bde3ce25c3769796a13ac766c3bb5d8c6638d09e83392c337faef99ddfa7415"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-publish",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fe385c30fd0af1eb6be77740cff30604f7bd55d48870e746ce560555b4f6e0d2"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-core-REPOSITORY",
@@ -6356,19 +7255,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-core-repository"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-core-REPOSITORY",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-repository",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-repository",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b39e8c7fcc18fe13139bee6ca190cefe252a1fae122e972e7403e20bff9afdf9"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-repository",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ccffa9f28ee9964eef6bd988625f2daa1f9e1d91442936d51a666eb701751c4c"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-repository",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "56d4d1d4e129a11e098273eb792dc58b07e8a5078f57030e231627491404fc89"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-core-VERSION",
@@ -6409,19 +7345,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-core-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-core-VERSION",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-version",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-version",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "33a51c5a491ce13a04027f3f2eb82c5d2fc15771a178628feedc02feb6bc3e1f"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-version",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0ce17fc180d4908faddab6da4f66cccabd315e61ebd3bd73c23669709aaa84a5"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-core-version",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "cec86083fa0464bbbd8ea4f9b9b3daf3e6aa22e0e6341893cc96ed00733f568b"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-transport-DESCRIPTION",
@@ -6461,19 +7434,64 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-transport-description"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-transport-DESCRIPTION",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-description",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "empty",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-description",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a3121177fb7aa64713a7b6b7c444ec39642e785d788594deabfa82cd4f086e1f"
+          },
+          {
+            "case": "unicode-whitespace",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-description",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "610b866a8f24ffe12ab11ace15b9179865986018bb0fa383e575b5038d05cfa1"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-description",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "07c1f3d67bd609aebdabfdc0b1c59febbf3d3c769a23cc5deddf838c9b78d8f8"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-description",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "efcdcca8e29a33f735b817ee4eaecb4cc96b77342e92eabf01a94f01913a1ce2"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-transport-LICENSE",
@@ -6514,19 +7532,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-transport-license"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-transport-LICENSE",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-license",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-license",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9fa6bea7734a467e868827336c59798979c0beb1055a4fc5750d6675c5b2a9c9"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-license",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "85413be7989537b66570895fbe963c605ee77149a1487a70e3491bd29cc95814"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-license",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "05f91522c2b23fac24d49bb616a6eff01754386b7092f03a027c866d0ce71312"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-transport-LICENSE-COPY",
@@ -6564,19 +7619,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-transport-license-copy"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-005"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-transport-LICENSE-COPY",
-          "cause": "UTF-8 byte equality is implemented; the pinned metadata translation and differential fixtures remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-license-copy",
+            "path": "crates/kafka-driver-transport/LICENSE",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-license-copy",
+            "path": "crates/kafka-driver-transport/LICENSE",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "different-valid-text",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-license-copy",
+            "path": "crates/kafka-driver-transport/LICENSE",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": "8d2eff0cc094f53a90982d8e010a3aaa81abba4537ef4c2b6b32eaf89654371a"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-transport-NAME",
@@ -6616,19 +7700,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-transport-name"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-transport-NAME",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-name",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-name",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "098a1f9d17a711d472881f06a817f1d490705416945e0ed42171ab9dd9a2265f"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-name",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4f6cf737da0d8393bf2c70866dc8092147c2c3fb8508c7604bc0e828f4e65e2d"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-name",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ea742d53e5a0164988b7e837562672c056de72a29299c8641a16f6ec9790451a"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-transport-PUBLISH",
@@ -6671,19 +7792,64 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-transport-publish"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-transport-PUBLISH",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-publish",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-publish",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1a0308bd645e073fccb07e6894acd8efb4fbd7eef11aba1444b0809914113c0d"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-publish",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "69f2c6ba295520a806c296a69838901713fac044e6d822dc0f62d52d4302376f"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-publish",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "171d7292d8770426bc6a2041a50d311b3280e266f409bc6a12aca5561cb9f438"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-publish",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3d65754e7a2af237fa2229483aa5845c1b508cd31da9e30b9da110ee0a51242c"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-transport-REPOSITORY",
@@ -6724,19 +7890,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-transport-repository"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-transport-REPOSITORY",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-repository",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-repository",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c45022079c51ac2df2fd73d93800909a9db0973bda7b372a8bb2b57b35a25fa3"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-repository",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5ecfc2c8468be6841da99aa2bc6038f05a656842f6bfcf42ed49d6dd8aea1c42"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-repository",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a383dc49b2f1dedf12867aaa2826b5924abde8b91825a37949d719640f7ef6c9"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-kafka-driver-transport-VERSION",
@@ -6777,19 +7980,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-transport-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-kafka-driver-transport-VERSION",
-          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-version",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-version",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "869a81ef1ad8538940849b137dd87ea431177ea28e5291eb8764a10c314bf82f"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-version",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "dce0807a56e3b7f8c5eaf9fc29ec656e0c848f60ed133c87a7e1001aa04956fa"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-metadata-kafka-driver-transport-version",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "50ed1cd9ce46dd692ca717db8a03128a54788f021a74423305dd220a73bb2d19"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parity.json.gz",
+          "payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+          "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-MODULE-DOC-DETECTOR-ACCEPT",
@@ -20306,11 +21546,11 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 332,
-    "implemented": 224,
+    "implemented": 257,
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 214,
+      "new engine capability": 247,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },

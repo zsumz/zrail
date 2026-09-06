@@ -14,6 +14,11 @@ Implemented in the current branch:
   Kafka-driver has 39 translated physical/raw predicates with 3,468 frozen path
   observations and 194 adversarial fixtures, linking 44 verified assertion IDs.
   Complete downstream Cargo/Rust and execution qualification is still outstanding.
+- Bounded authored TOML/JSON presence, absence, nonempty-string, and exact typed
+  field/ordered-array predicates, plus UTF-8 license equality. Kafka-driver
+  metadata has 35 translated policies over 11 frozen inputs and 134 physical
+  fixtures, linking 33 more verified assertion IDs. YAML, selected inventories,
+  cross-field relations, and full downstream qualification remain open.
 - Scoped budgets, advisory soft thresholds, warning-only targets, bounded hard
   exceptions with required metadata, and exact authored baseline ratchets.
 - Effective facade modes, reasons, syntax quality, and complete violation lists

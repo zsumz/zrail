@@ -7,13 +7,17 @@ No downstream checker is removable on the strength of this directory.
 - `census.json.gz` is the deterministic syntax census of **all tracked files**,
   including separate workspaces and invalid detector fixtures. The decompressed
   JSON bytes are canonical; `census-summary.json` gives counts and their SHA-256.
-- `assertions.json` records 103 reviewed assertion instances, including separately
+- `assertions.json` records 332 reviewed assertion instances, including separately
   instantiated capability tokens and lock provenance assertions. It binds each
   assertion to a census identity, source digest, selection, matching semantics,
   cardinality, exceptions, disposition, and independent implementation and
-  verification states. Its 98 open assertion IDs are release blockers.
+  verification states. Its 85 open assertion IDs are release blockers, alongside
+  the unfinished discovery work; 247 instances have verified replacement evidence.
 - `facade-origins.json` binds two byte-exact extracted predicates and the imported
   `kafkars-facade-invalid.rs.txt` fixture to the frozen sources.
+- The budget, size-selection, file, and metadata origin manifests bind further
+  byte-exact predicates and input copies. Metadata includes the complete original
+  assertion body, read/parse helpers, and all 11 physical fixture inputs.
 
 Candidate IDs have the form `repository:path:line:column:kind`, with one-based
 physical coordinates and a normalized syntax digest. They are stable within the

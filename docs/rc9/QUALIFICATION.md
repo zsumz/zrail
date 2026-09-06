@@ -1,9 +1,10 @@
 # Reproducing the current rc9 evidence
 
-Release verdict: **blocked**. The latest size-parity implementation is commit
-`cb198bada58ef8f08bdc60bc7ac5cea0b2993a0a`, based on the exact audited rc8 commit.
-The newer file-policy engine qualification is recorded below. Neither run
-constitutes final versioned-tree release qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
+Release verdict: **blocked**. The latest metadata parity, canonical gate, and
+archive checkpoint is `db11ebe40f3ffe969939785b34f2acf880c6b79e`, based on the
+exact audited rc8 commit. Earlier facade, size, and file evidence retains its
+own implementation identity below. None constitutes final versioned-tree release
+qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
 
 ## Environment and trusted setup
 
@@ -266,3 +267,50 @@ order, weakened predicates, removed guards, and unproven selector changes.
 A strict-schema test rejects unsupported formats, values, expressions, and
 oversized expectations. These engine results do not close downstream assertions
 until their individual frozen differential evidence is linked.
+
+## Frozen metadata parity and canonical checkpoint
+
+At clean commit `db11ebe40f3ffe969939785b34f2acf880c6b79e`, two frozen metadata
+runs produced byte-identical reports with SHA-256
+`9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485`.
+They cover 35 policies, 11 frozen inputs, and 134 physical cases: 35 accepted
+and 99 rejected through the intended policy diagnostics. Thirty-three assertion
+IDs now bind this evidence. The parent-path helper's proof linkage remains open.
+
+The original metadata assertion body and helpers execute in trusted
+qualification; only the workspace root is supplied from an isolated input path.
+Every negative case changes one selected input, preserves all other input
+bytes, and checks the original guard plus the intended native rule. Malformed,
+duplicate-key, and invalid-UTF-8 cases require explicit incomplete-analysis
+failure. The report includes all fixture input hashes, entry kinds, original
+failure messages, source/policy/code/compiler identities, and complete native
+observations. See the [metadata index](evidence/metadata-index.json).
+
+The same clean commit passed structure, formatting, strict workspace lint,
+**1,485 tests** (zero failures, five explicit ignores), and rustdoc. Self-analysis
+was complete: 930 Rust files, 1,496 base contexts, 1,213,212 projection work, and
+zero unresolved items. The canonical gate stopped at `LOCK-008`, `LOCK-026`,
+`LOCK-028`, and `LOCK-030`; archive and cleanliness stages were not reached.
+Standalone `scripts/package-check` subsequently passed on that same clean tree.
+Its rc8-version archives are experimental qualification outputs, not rc9 assets.
+
+After the trusted prefetch and environment setup described above:
+
+```sh
+python3 scripts/rc9-metadata-policies /absolute/snapshots /absolute/new-metadata.fragment.toml
+diff -u docs/rc9/policies/kafka-driver.metadata.fragment.toml /absolute/new-metadata.fragment.toml
+cargo test --locked --offline -p zrail-testkit --test repository_documents --test repository_files
+cargo test --locked --offline -p zrail-core --lib files
+cargo test --locked --offline -p zrail-rust --lib frozen_metadata_assertions_agree
+export ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots
+export ZRAIL_RC9_METADATA_REPORT=/absolute/evidence/new-metadata-parity.json
+cargo test --locked --offline -p zrail-rust --lib qualify_all_frozen_kafka_driver_metadata_assertions -- --ignored
+python3 scripts/rc9-inventory-check
+```
+
+The generated fragment and report outputs must be new. Repeat the metadata qualification command
+with a second fresh report path on the same clean commit to compare canonical
+JSON bytes. The regular unit suite runs the portable 134-case matrix without
+prefetch; the explicitly ignored runner additionally qualifies the full frozen
+metadata selection and immutable source identities. Neither claims complete
+Cargo/Rust analysis, downstream execution, or full-repository replacement.
