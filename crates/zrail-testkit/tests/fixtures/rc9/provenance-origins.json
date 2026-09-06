@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "context": "The entire no-override assertion body and reference/read/parse helpers are byte-exact. Only workspace_root is supplied from the isolated path. Unused registry fields and lock-entry assertions remain separate qualification.",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/protocol_provenance.rs",
+      "source_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+      "function": "protocol_dependencies_have_no_source_override_escape_hatch body",
+      "harness": "crates/zrail-rust/src/repository_files/provenance/legacy.rs",
+      "start_line": 49,
+      "end_line": 104,
+      "extracted_sha256": "eb5a31c184c61958c695b3e1d0062b2c99ba2758d67d250e0af7c34091e7f919"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/protocol_provenance.rs",
+      "source_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+      "function": "workspace reference helpers",
+      "harness": "crates/zrail-rust/src/repository_files/provenance/legacy.rs",
+      "start_line": 107,
+      "end_line": 139,
+      "extracted_sha256": "c03c969f3b38d9b76cc41fd6fae1cdb20a84cd6397cf3457777f9bf86968819a"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/protocol_provenance.rs",
+      "source_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+      "function": "parse",
+      "harness": "crates/zrail-rust/src/repository_files/provenance/legacy.rs",
+      "start_line": 160,
+      "end_line": 162,
+      "extracted_sha256": "16c01cd1a50b766b83d57ed33ee175ec06fc3d243ee981f410b1e39b6a8c2092"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "function": "load_guardrails and read",
+      "harness": "crates/zrail-rust/src/repository_files/provenance/legacy.rs",
+      "start_line": 60,
+      "end_line": 70,
+      "extracted_sha256": "5e4e9d3bbb4429be23f042b28ed30f365559daf1fcfccab1ca817a4118b7c6e2"
+    }
+  ],
+  "fixtures": [
+    {
+      "repository": "kafka-driver",
+      "path": "Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/provenance/valid/Cargo.toml",
+      "sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "Cargo.lock",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/provenance/valid/Cargo.lock",
+      "sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "guardrails.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/provenance/valid/guardrails.toml",
+      "sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-probe/Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/provenance/valid/crates/kafka-driver-probe/Cargo.toml",
+      "sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+    }
+  ]
+}

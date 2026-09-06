@@ -14,6 +14,8 @@ mod legacy;
 mod metadata;
 #[path = "repository_files/parity/model.rs"]
 mod model;
+#[path = "repository_files/provenance/qualification.rs"]
+mod provenance;
 
 use std::{
     fs,

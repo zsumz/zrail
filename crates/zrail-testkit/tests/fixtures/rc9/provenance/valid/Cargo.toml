@@ -1,0 +1,112 @@
+[workspace]
+members = [
+  "crates/kafka-driver-core",
+  "crates/kafka-driver-probe",
+  "crates/kafka-driver-sim",
+  "crates/kafka-driver-transport",
+]
+default-members = [
+  ".",
+  "crates/kafka-driver-core",
+  "crates/kafka-driver-probe",
+  "crates/kafka-driver-sim",
+  "crates/kafka-driver-transport",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0-rc.5"
+edition = "2024"
+rust-version = "1.88"
+license = "Apache-2.0"
+repository = "https://github.com/kafkars/kafka-driver"
+
+[workspace.dependencies]
+bytes = "1.10"
+bornera = "=0.0.1-rc.3"
+bornera-core = "=0.0.1-rc.3"
+bornera-rustls = "=0.0.1-rc.3"
+calandria = "=0.0.1-rc.2"
+calandria-mio = "=0.0.1-rc.2"
+calandria-sim = "=0.0.1-rc.2"
+criticality = "=0.0.1-rc.2"
+kafka-driver = { version = "0.1.0-rc.5", path = "." }
+kafka-driver-core = { version = "0.1.0-rc.5", path = "crates/kafka-driver-core" }
+kafka-driver-sim = { path = "crates/kafka-driver-sim" }
+kafka-driver-transport = { version = "0.1.0-rc.5", path = "crates/kafka-driver-transport" }
+kafka-wire = "=0.1.0-rc.3"
+kafka-wire-core = "=0.1.0-rc.3"
+mio = { version = "1.2", default-features = false, features = ["net", "os-poll"] }
+ring = "0.17.14"
+rustls = { version = "=0.23.43", default-features = false, features = ["ring", "std", "tls12"] }
+sasl-scram = { version = "=0.0.1-rc.3", default-features = false, features = ["std", "sha256", "sha512", "saslprep"] }
+serde = { version = "1.0", features = ["derive"] }
+syn = { version = "2.0", features = ["full", "visit"] }
+toml = "0.8"
+zeroize = "1.9"
+
+[package]
+name = "kafka-driver"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "A deterministic, runtime-neutral Kafka broker and cluster RPC engine"
+publish = ["crates-io"]
+readme = "README.md"
+keywords = ["kafka", "client", "runtime-neutral", "networking"]
+categories = ["network-programming"]
+
+[features]
+default = ["tls-rustls"]
+tls-rustls = ["dep:bornera-rustls", "dep:rustls"]
+
+[dependencies]
+bytes.workspace = true
+bornera.workspace = true
+bornera-core.workspace = true
+bornera-rustls = { workspace = true, optional = true }
+calandria.workspace = true
+calandria-mio.workspace = true
+kafka-driver-core.workspace = true
+kafka-driver-transport.workspace = true
+kafka-wire.workspace = true
+kafka-wire-core.workspace = true
+mio.workspace = true
+ring.workspace = true
+rustls = { workspace = true, optional = true }
+sasl-scram.workspace = true
+zeroize.workspace = true
+
+[dev-dependencies]
+base64 = "0.22.1"
+calandria-sim.workspace = true
+kafka-driver-sim.workspace = true
+serde.workspace = true
+syn.workspace = true
+toml.workspace = true
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_debug_implementations = "warn"
+missing_docs = "warn"
+unreachable_pub = "warn"
+unused_lifetimes = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+dbg_macro = "deny"
+expect_used = "deny"
+todo = "deny"
+unimplemented = "deny"
+unwrap_used = "deny"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+similar_names = "allow"
+
+[lints]
+workspace = true
