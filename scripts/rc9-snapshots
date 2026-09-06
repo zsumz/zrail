@@ -39,7 +39,7 @@ def verify(path, pin):
 
 
 def verify_extractions(destination):
-    for manifest in ["facade-origins.json", "budget-origins.json", "size-selection-origins.json", "file-origins.json", "metadata-origins.json", "key-sets-origins.json", "dependency-fields-origins.json", "provenance-origins.json", "lock-packages-origins.json"]:
+    for manifest in ["facade-origins.json", "budget-origins.json", "size-selection-origins.json", "file-origins.json", "metadata-origins.json", "key-sets-origins.json", "dependency-fields-origins.json", "provenance-origins.json", "lock-packages-origins.json", "raw-dependency-origins.json"]:
         origins = json.loads((PINS.parent / manifest).read_text(encoding="utf-8"))
         for origin in origins["extractions"]:
             harness_path = origin.get("harness", origins.get("harness", "crates/zrail-rust/src/source/tests/facade_parity.rs"))

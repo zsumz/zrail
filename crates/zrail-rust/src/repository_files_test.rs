@@ -16,6 +16,8 @@ mod metadata;
 mod model;
 #[path = "repository_files/provenance/qualification.rs"]
 mod provenance;
+#[path = "repository_files/raw_dependency/qualification.rs"]
+mod raw_dependency;
 
 use std::{
     fs,
