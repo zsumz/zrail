@@ -21,7 +21,7 @@ mod fixtures;
 mod model;
 #[path = "rust_inventories/parity/mutations.rs"]
 mod mutations;
-#[path = "rust_inventories/parity/qualification.rs"]
+#[path = "../tests/rc9_transport/qualification.rs"]
 mod qualification;
 
 #[test]
