@@ -36,9 +36,15 @@ pub(super) fn project() -> PathBuf {
 }
 
 pub(super) fn policy() -> (RustInventoryRule, String) {
-    let bytes =
-        fs::read(project().join("docs/rc9/policies/kafka-driver.transport-methods.fragment.toml"))
-            .expect("reviewed transport policy");
+    policy_for(super::family::Family::Methods)
+}
+
+pub(super) fn policy_for(family: super::family::Family) -> (RustInventoryRule, String) {
+    let bytes = fs::read(project().join(format!(
+        "docs/rc9/policies/kafka-driver.transport-{}.fragment.toml",
+        family.name()
+    )))
+    .expect("reviewed transport policy");
     let mut fragment: Fragment = toml::from_str(std::str::from_utf8(&bytes).expect("UTF-8 policy"))
         .expect("strict typed policy fragment");
     assert_eq!(fragment.source.rust.inventories.len(), 1);

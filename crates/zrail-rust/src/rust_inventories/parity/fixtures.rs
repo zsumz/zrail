@@ -5,9 +5,9 @@ use std::{collections::BTreeMap, fs, path::Path};
 use zrail_core::{FindingSink, RustInventoryRule};
 
 use super::{
-    legacy,
+    family::Family,
     model::{self, Fixture},
-    mutations, native,
+    native,
 };
 
 pub(super) fn qualify(
@@ -16,6 +16,17 @@ pub(super) fn qualify(
     sources: &BTreeMap<String, String>,
     policy: &RustInventoryRule,
 ) -> Vec<Fixture> {
+    qualify_family(root, roots, sources, policy, Family::Methods)
+}
+
+pub(super) fn qualify_family(
+    root: &Path,
+    roots: &[String],
+    sources: &BTreeMap<String, String>,
+    policy: &RustInventoryRule,
+    family: Family,
+) -> Vec<Fixture> {
+    let policy_id = format!("rust:inventory:kd-transport-{}", family.name());
     assert!(
         !root.exists(),
         "never overwrite an existing qualification directory"
@@ -27,7 +38,7 @@ pub(super) fn qualify(
         write(root, path, source);
     }
     let mut results = Vec::new();
-    for mutation in mutations::cases(sources, roots) {
+    for mutation in family.cases(sources, roots) {
         let mut inputs = sources.clone();
         for (path, source) in &mutation.changes {
             if let Some(source) = source {
@@ -45,14 +56,14 @@ pub(super) fn qualify(
                 source.as_ref().map(|source| {
                     (
                         path.clone(),
-                        std::panic::catch_unwind(|| legacy::observed(path, source)).is_ok(),
+                        std::panic::catch_unwind(|| family.observed(path, source)).is_ok(),
                     )
                 })
             })
             .collect();
-        let legacy_counts = std::panic::catch_unwind(|| legacy::repository(root, roots)).ok();
+        let legacy_counts = std::panic::catch_unwind(|| family.repository(root, roots)).ok();
         let legacy_accepted = legacy_counts.as_ref().is_some_and(|counts| {
-            std::panic::catch_unwind(|| legacy::check_selector_methods(counts.clone())).is_ok()
+            std::panic::catch_unwind(|| family.check(counts.clone())).is_ok()
         });
         let observed = native::analyze(root, &inputs, policy);
         let native_accepted = observed.as_ref().is_ok_and(|report| report.satisfied);
@@ -83,7 +94,7 @@ pub(super) fn qualify(
             } else {
                 assert_eq!(findings.len(), 1);
                 assert_eq!(findings[0].id, "RUST-INVENTORY-001");
-                assert_eq!(findings[0].rule, "rust:inventory:kd-transport-methods");
+                assert_eq!(findings[0].rule, policy_id);
                 Some(findings[0].id.clone())
             }
         } else {
@@ -94,10 +105,7 @@ pub(super) fn qualify(
             );
             let error = observed.as_ref().expect_err("incomplete");
             assert!(error.contains("RUST-INVENTORY-002"), "{error}");
-            assert!(
-                error.contains("rust:inventory:kd-transport-methods"),
-                "{error}"
-            );
+            assert!(error.contains(&policy_id), "{error}");
             Some("RUST-INVENTORY-002".into())
         };
         let changed = mutation
@@ -109,7 +117,7 @@ pub(super) fn qualify(
             .collect();
         results.push(Fixture {
             case: mutation.name,
-            policy_id: "rust:inventory:kd-transport-methods".into(),
+            policy_id: policy_id.clone(),
             changed_inputs: model::hashes(&changed),
             removed_inputs: mutation
                 .changes

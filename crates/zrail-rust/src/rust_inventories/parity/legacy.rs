@@ -2,7 +2,10 @@
 
 #[path = "legacy_api.rs"]
 mod api;
-pub(super) use api::{associated, expected, observed};
+pub(super) use api::{
+    associated, check_associated, check_detector_associated, expected, expected_associated,
+    observed, repository_associated,
+};
 
 use super::selection::{display_path, is_test, read};
 use std::collections::{BTreeMap, BTreeSet};

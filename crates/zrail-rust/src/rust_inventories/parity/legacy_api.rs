@@ -2,7 +2,9 @@
 
 use std::collections::BTreeMap;
 
-use super::{expected_selector_methods, source_inventory};
+use super::{
+    AuthorityInventory, counts, expected_selector_methods, repository_inventory, source_inventory,
+};
 
 pub(in super::super) fn observed(path: &str, source: &str) -> BTreeMap<String, usize> {
     source_inventory(path, source).selector_methods
@@ -14,4 +16,57 @@ pub(in super::super) fn expected() -> BTreeMap<String, usize> {
 
 pub(in super::super) fn associated(path: &str, source: &str) -> BTreeMap<String, usize> {
     source_inventory(path, source).associated_calls
+}
+
+const SET_OWNER: &str = "src/reactor/direct_plaintext/set_owner.rs";
+const RUSTLS_ADAPTER: &str = "src/reactor/direct_plaintext/rustls_transport.rs";
+
+fn expected_associated_calls() -> BTreeMap<String, usize> {
+    counts(&[
+        (&format!("{SET_OWNER}:ConnectionSet::new"), 1),
+        (&format!("{SET_OWNER}:ConnectionSet::turn_component"), 1),
+        (&format!("{SET_OWNER}:ConnectionSet::poll_io"), 1),
+        (&format!("{SET_OWNER}:ConnectionSet::wake_handle"), 1),
+        (&format!("{SET_OWNER}:ConnectionSet::pulse_handle"), 1),
+        (&format!("{RUSTLS_ADAPTER}:Source::register"), 1),
+        (&format!("{RUSTLS_ADAPTER}:Source::reregister"), 1),
+        (&format!("{RUSTLS_ADAPTER}:Source::deregister"), 1),
+    ])
+}
+
+pub(in super::super) fn expected_associated() -> BTreeMap<String, usize> {
+    expected_associated_calls()
+}
+
+pub(in super::super) fn repository_associated(
+    root: &std::path::Path,
+    roots: &[String],
+) -> BTreeMap<String, usize> {
+    repository_inventory(root, roots).associated_calls
+}
+
+pub(in super::super) fn check_associated(associated_calls: BTreeMap<String, usize>) {
+    let actual = AuthorityInventory {
+        associated_calls,
+        ..AuthorityInventory::default()
+    };
+    assert_eq!(actual.associated_calls, expected_associated_calls());
+}
+
+pub(in super::super) fn check_detector_associated(associated_calls: BTreeMap<String, usize>) {
+    let actual = AuthorityInventory {
+        associated_calls,
+        ..AuthorityInventory::default()
+    };
+    assert_eq!(
+        actual.associated_calls,
+        counts(&[
+            ("src/reactor/rogue.rs:ConnectionSet::new", 1),
+            ("src/reactor/rogue.rs:DirectSet::new", 1),
+            ("src/reactor/rogue.rs:DirectSet::poll_io", 1),
+            ("src/reactor/rogue.rs:DirectSet::turn_component", 1),
+            ("src/reactor/rogue.rs:DirectSet::wake_handle", 1),
+            ("src/reactor/rogue.rs:DirectSet::pulse_handle", 1),
+        ])
+    );
 }

@@ -94,7 +94,7 @@ pub(super) fn cases(sources: &BTreeMap<String, String>, roots: &[String]) -> Vec
     cases
 }
 
-fn one(name: &str, path: &str, source: Option<String>) -> Mutation {
+pub(super) fn one(name: &str, path: &str, source: Option<String>) -> Mutation {
     Mutation {
         name: name.into(),
         changes: BTreeMap::from([(path.into(), source)]),
