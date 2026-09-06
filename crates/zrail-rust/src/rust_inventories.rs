@@ -40,8 +40,10 @@ pub(crate) fn analyze(
         policy.include.sort();
         policy.exclude.sort();
         policy.subject.canonicalize();
-        if let RustInventoryAssertion::ExactCounts { counts } = &mut policy.assertion {
-            counts.sort();
+        match &mut policy.assertion {
+            RustInventoryAssertion::Count { .. } => {}
+            RustInventoryAssertion::ExactCounts { counts } => counts.sort(),
+            RustInventoryAssertion::ExactOwners { owners } => owners.sort(),
         }
         let selected = selection
             .select(
@@ -91,6 +93,10 @@ pub(crate) fn analyze(
                     && maximum.is_none_or(|max| report.observed_count <= max)
             }
             RustInventoryAssertion::ExactCounts { counts } => *counts == report.counts,
+            RustInventoryAssertion::ExactOwners { owners } => owners
+                .iter()
+                .map(|owner| (&owner.path, &owner.name))
+                .eq(report.counts.iter().map(|count| (&count.path, &count.name))),
         };
         analysis.policies.push(report);
     }

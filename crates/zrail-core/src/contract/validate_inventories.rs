@@ -3,7 +3,7 @@
 use std::collections::BTreeSet;
 
 use super::{
-    Contract, RustInventoryAssertion, RustInventorySubject,
+    Contract, RustInventoryAssertion, RustInventoryRule, RustInventorySubject,
     validate_limits::ValidationErrors,
     validate_paths::{validate_repository_literal, validate_repository_pattern},
     validate_sets::require_reason,
@@ -65,46 +65,67 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
                 }
             }
             RustInventoryAssertion::ExactCounts { counts } => {
-                let mut pairs = BTreeSet::new();
-                let mut total = 0_usize;
-                for count in counts {
-                    validate_repository_literal(&count.path, errors);
-                    canonical(&count.path, errors);
-                    if std::path::Path::new(&count.path).extension()
-                        != Some(std::ffi::OsStr::new("rs"))
-                        || !names.contains(&count.name)
-                        || !rule
-                            .include
-                            .iter()
-                            .any(|p| crate::glob_matches(p, &count.path))
-                        || rule
-                            .exclude
-                            .iter()
-                            .any(|p| crate::glob_matches(p, &count.path))
-                    {
-                        errors.push(format!(
-                            "Rust inventory pair {:?} falls outside its subject or file selection",
-                            (&count.path, &count.name)
-                        ));
-                    }
-                    if !pairs.insert((&count.path, &count.name)) {
-                        errors.push("Rust inventory contains duplicate file/subject pairs".into());
-                    }
-                    total = total.saturating_add(count.count);
-                    if count.count == 0 {
-                        errors.push(
-                            "exact Rust inventory entries require positive counts; omit zero pairs"
-                                .into(),
-                        );
-                    }
-                }
-                if counts.len() > 4_096 || total > 50_000 {
-                    errors.push(
-                        "exact Rust inventory exceeds 4096 pairs or 50000 occurrences".into(),
-                    );
-                }
+                validate_pairs(
+                    rule,
+                    counts
+                        .iter()
+                        .map(|count| (count.path.as_str(), count.name.as_str(), count.count)),
+                    errors,
+                );
+            }
+            RustInventoryAssertion::ExactOwners { owners } => {
+                validate_pairs(
+                    rule,
+                    owners
+                        .iter()
+                        .map(|owner| (owner.path.as_str(), owner.name.as_str(), 1)),
+                    errors,
+                );
             }
         }
+    }
+}
+
+fn validate_pairs<'a>(
+    rule: &RustInventoryRule,
+    entries: impl Iterator<Item = (&'a str, &'a str, usize)>,
+    errors: &mut ValidationErrors,
+) {
+    let mut pairs = BTreeSet::new();
+    let mut total = 0_usize;
+    let mut length = 0;
+    for (path, name, count) in entries {
+        length += 1;
+        validate_repository_literal(path, errors);
+        canonical(path, errors);
+        if std::path::Path::new(path).extension() != Some(std::ffi::OsStr::new("rs"))
+            || !rule.subject.names().iter().any(|subject| subject == name)
+            || !rule
+                .include
+                .iter()
+                .any(|pattern| crate::glob_matches(pattern, path))
+            || rule
+                .exclude
+                .iter()
+                .any(|pattern| crate::glob_matches(pattern, path))
+        {
+            errors.push(format!(
+                "Rust inventory pair {:?} falls outside its subject or file selection",
+                (path, name)
+            ));
+        }
+        if !pairs.insert((path, name)) {
+            errors.push("Rust inventory contains duplicate file/subject pairs".into());
+        }
+        total = total.saturating_add(count);
+        if count == 0 {
+            errors.push(
+                "exact Rust inventory entries require positive counts; omit zero pairs".into(),
+            );
+        }
+    }
+    if length > 4_096 || total > 50_000 {
+        errors.push("exact Rust inventory exceeds 4096 pairs or 50000 occurrences".into());
     }
 }
 
@@ -147,6 +168,7 @@ pub(super) fn item_count(contract: &Contract) -> usize {
                 + match &rule.assertion {
                     RustInventoryAssertion::Count { .. } => 1,
                     RustInventoryAssertion::ExactCounts { counts } => counts.len(),
+                    RustInventoryAssertion::ExactOwners { owners } => owners.len(),
                 }
         })
         .sum()

@@ -37,8 +37,8 @@ pub use files::{
     RepositoryTextNormalization,
 };
 pub use inventories::{
-    RustInventoryAssertion, RustInventoryCount, RustInventoryRule, RustInventorySubject,
-    RustInventoryWorld,
+    RustInventoryAssertion, RustInventoryCount, RustInventoryOwner, RustInventoryRule,
+    RustInventorySubject, RustInventoryWorld,
 };
 pub use lock_packages::{LockPackageAssertion, LockPackageIdentity, LockPackageRule};
 pub use macros::{MacroExpansionAllow, MacroExpansionContract};

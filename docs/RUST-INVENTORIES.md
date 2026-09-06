@@ -32,6 +32,23 @@ subject or selected files are absent. A positive requirement fails when its
 subject disappears, including when every selected file disappears. An exact
 single-file selector gives a per-file quantity without a separate language.
 
+Use `exact-owners` when a reviewed assertion requires distinct ownership
+locations without fixing the number of occurrences at each location:
+
+```toml
+assertion = { kind = "exact-owners", owners = [
+  { path = "src/backend.rs", name = "wake_handle" },
+] }
+```
+
+Every listed `(path, name)` pair must occur at least once, and every unlisted pair
+must have zero occurrences. Repeated occurrences at a listed pair preserve its
+membership; deleting its last occurrence or moving it to another file fails.
+An empty `owners` array remains an active prohibition. Entries must be unique,
+selected exact Rust paths and subjects; quantity fields are rejected. The same
+4,096-pair limit applies. Coverage retains every actual count, input digest and
+sampled span independently of the ownership-set decision.
+
 ## Claim boundary
 
 The only supported world is explicit `authored`. The `written-methods` subject
@@ -123,10 +140,13 @@ Input digests are reused. Existing parser, source, contract, and traversal limit
 also apply. Exceeding a bound is incomplete analysis, never a truncated pass.
 
 Protected review recognizes removed guards, loosened bounds, replacing exact
-maps with totals, and narrower prohibited scopes as grants. Changing an exact
+counts with owner sets or totals, and narrower prohibited scopes as grants. Changing an exact
 count in either direction changes accepted states and records both grant and
 revocation. Expanding positive-presence scope weakens its requirement; expanding
 an exact map's scope adds zero-count requirements for newly selected pairs.
+Changing a required owner set records both grant and revocation; removing a
+member removes its presence requirement and adds a prohibition. Exact empty
+counts, exact empty owner sets, and a zero upper bound have the same meaning.
 Changing subject kinds and unproved selector changes remain protected unknowns. Declaration ordering is
 irrelevant; reason changes remain protected unknowns.
 

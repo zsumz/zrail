@@ -22,6 +22,12 @@ pub(crate) fn evaluate(policies: &[GovernedRustInventory], findings: &mut Findin
             RustInventoryAssertion::ExactCounts { counts } => {
                 format!("the exact {} file/subject quantities", counts.len())
             }
+            RustInventoryAssertion::ExactOwners { owners } => {
+                format!(
+                    "the exact {} file/subject owners regardless of quantity",
+                    owners.len()
+                )
+            }
         };
         findings.push(Finding::error(
             "RUST-INVENTORY-001", &policy.policy_id, "source",

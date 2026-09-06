@@ -18,6 +18,7 @@ fn validate(rule: RustInventoryRule) -> Result<(), crate::ContractError> {
 fn exact_empty_inventories_and_absent_zero_bans_remain_valid() {
     for assertion in [
         "kind='exact-counts',counts=[]",
+        "kind='exact-owners',owners=[]",
         "kind='count',maximum=0",
         "kind='count',minimum=1",
     ] {
@@ -34,6 +35,41 @@ fn exact_empty_inventories_and_absent_zero_bans_remain_valid() {
             .inventories
             .is_empty()
     );
+}
+
+#[test]
+fn exact_owners_require_unique_selected_locations_without_quantity_fields() {
+    let valid = "kind='exact-owners',owners=[{path='src/lib.rs',name='poll'}]";
+    validate(rule(valid)).expect("required owner");
+    for invalid in [
+        valid.replace("poll", "unknown"),
+        valid.replace("src/lib.rs", "other/lib.rs"),
+        valid.replace("src/lib.rs", "src/../lib.rs"),
+        valid.replace("src/lib.rs", "src/*.rs"),
+        "kind='exact-owners',owners=[{path='src/lib.rs',name='poll'},{path='src/lib.rs',name='poll'}]".into(),
+    ] {
+        assert!(validate(rule(&invalid)).is_err(), "{invalid}");
+    }
+    let serialized = toml::to_string(&rule(valid)).expect("owner contract");
+    for invalid in [
+        serialized.replace("path =", "count = 1\npath ="),
+        serialized.replace("owners", "counts"),
+    ] {
+        assert!(toml::from_str::<RustInventoryRule>(&invalid).is_err());
+    }
+    let mut excluded = rule(valid);
+    excluded.exclude.push("src/lib.rs".into());
+    assert!(validate(excluded).is_err());
+    let mut oversized = rule("kind='exact-owners',owners=[]");
+    oversized.assertion = RustInventoryAssertion::ExactOwners {
+        owners: (0..4097)
+            .map(|index| crate::RustInventoryOwner {
+                path: format!("src/owner_{index}.rs"),
+                name: "poll".into(),
+            })
+            .collect(),
+    };
+    assert!(validate(oversized).is_err());
 }
 
 #[test]

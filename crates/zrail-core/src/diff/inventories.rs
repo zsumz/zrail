@@ -105,7 +105,8 @@ fn selection_change(left: &RustInventoryRule, right: &RustInventoryRule) -> Opti
     }
     let expansion_tightens = match &left.assertion {
         RustInventoryAssertion::Count { minimum: 0, .. }
-        | RustInventoryAssertion::ExactCounts { .. } => true,
+        | RustInventoryAssertion::ExactCounts { .. }
+        | RustInventoryAssertion::ExactOwners { .. } => true,
         RustInventoryAssertion::Count { maximum: None, .. } => false,
         RustInventoryAssertion::Count { .. } => return Some(ChangeKind::Unknown),
     };
@@ -117,7 +118,7 @@ fn selection_change(left: &RustInventoryRule, right: &RustInventoryRule) -> Opti
 }
 
 fn implies(left: &RustInventoryAssertion, right: &RustInventoryAssertion) -> bool {
-    use RustInventoryAssertion::{Count, ExactCounts};
+    use RustInventoryAssertion::{Count, ExactCounts, ExactOwners};
     match (left, right) {
         (
             Count {
@@ -146,6 +147,31 @@ fn implies(left: &RustInventoryAssertion, right: &RustInventoryAssertion) -> boo
         (ExactCounts { counts: left }, ExactCounts { counts: right }) => {
             left.iter().collect::<BTreeSet<_>>() == right.iter().collect::<BTreeSet<_>>()
         }
+        (ExactOwners { owners: left }, ExactOwners { owners: right }) => {
+            left.iter().collect::<BTreeSet<_>>() == right.iter().collect::<BTreeSet<_>>()
+        }
+        (ExactCounts { counts }, ExactOwners { owners }) => {
+            counts
+                .iter()
+                .map(|count| (&count.path, &count.name))
+                .collect::<BTreeSet<_>>()
+                == owners
+                    .iter()
+                    .map(|owner| (&owner.path, &owner.name))
+                    .collect::<BTreeSet<_>>()
+        }
+        (ExactOwners { owners }, ExactCounts { counts }) => owners.is_empty() && counts.is_empty(),
+        (ExactOwners { owners }, Count { minimum, maximum }) => {
+            owners.len() >= *minimum && (maximum.is_none() || owners.is_empty())
+        }
+        (
+            Count {
+                minimum: 0,
+                maximum: Some(0),
+            },
+            ExactOwners { owners },
+        ) => owners.is_empty(),
+        (Count { .. }, ExactOwners { .. }) => false,
     }
 }
 

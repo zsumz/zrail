@@ -48,6 +48,9 @@ All notable zrail changes are recorded here for reviewed release notes.
 - Explicit written expression-path suffix inventories, including direct callees,
   function-value acquisition and path patterns, with distinct syntax claims and
   unchanged rc8 invocation authority. Qualification reuses the frozen collector.
+- Exact file/subject owner sets independent of occurrence quantities, with
+  required presence, persistent prohibitions, full count evidence, and protected
+  comparisons against bounds and exact counts.
 
 ### Changed
 

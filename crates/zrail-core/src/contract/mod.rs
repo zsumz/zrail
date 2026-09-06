@@ -48,11 +48,12 @@ pub use model::{
     RepositoryDocumentPredicate, RepositoryDocumentValue, RepositoryEntryMode,
     RepositoryFilePredicate, RepositoryFileRule, RepositoryLiteralMode, RepositoryLiteralPredicate,
     RepositoryNameBasis, RepositoryNamePart, RepositoryTextNormalization, RustDuplicationContract,
-    RustFieldContract, RustInventoryAssertion, RustInventoryCount, RustInventoryRule,
-    RustInventorySubject, RustInventoryWorld, RustSourceContract, RustTypeContract, RustTypeKind,
-    ScopeContract, ScopedBudgetContract, SizeExceptionContract, SizeExceptionMetadata,
-    SizePolicyContract, SizeRole, SizeTargetMode, SizeThresholds, SourceContract, SymbolBoundary,
-    SyntaxBoundary, TestExecutionIdentity, TestMirrorContract, TypeProhibition,
+    RustFieldContract, RustInventoryAssertion, RustInventoryCount, RustInventoryOwner,
+    RustInventoryRule, RustInventorySubject, RustInventoryWorld, RustSourceContract,
+    RustTypeContract, RustTypeKind, ScopeContract, ScopedBudgetContract, SizeExceptionContract,
+    SizeExceptionMetadata, SizePolicyContract, SizeRole, SizeTargetMode, SizeThresholds,
+    SourceContract, SymbolBoundary, SyntaxBoundary, TestExecutionIdentity, TestMirrorContract,
+    TypeProhibition,
 };
 pub use modes::{
     AsyncSyntax, CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,

@@ -70,6 +70,7 @@ fn bounds_removal_and_scope_expansion_follow_the_required_quantifier() {
         ("kind='count',minimum=1", ChangeKind::Grant),
         ("kind='count',maximum=0", ChangeKind::Revoke),
         ("kind='exact-counts',counts=[]", ChangeKind::Revoke),
+        ("kind='exact-owners',owners=[]", ChangeKind::Revoke),
         ("kind='count',minimum=1,maximum=1", ChangeKind::Unknown),
     ] {
         let before = contract(assertion);
@@ -83,6 +84,77 @@ fn bounds_removal_and_scope_expansion_follow_the_required_quantifier() {
     removed.source.rust.inventories.clear();
     assert_eq!(kinds(&before, &removed), [ChangeKind::Grant]);
     assert_eq!(kinds(&removed, &before), [ChangeKind::Revoke]);
+}
+
+#[test]
+fn ownership_and_quantity_review_matches_independent_accepted_states() {
+    type Acceptance = fn(usize, usize) -> bool;
+    let cases: &[(&str, Acceptance)] = &[
+        ("kind='count',maximum=0", |a, b| a + b == 0),
+        ("kind='count',minimum=1", |a, b| a + b >= 1),
+        ("kind='count',minimum=1,maximum=2", |a, b| {
+            (1..=2).contains(&(a + b))
+        }),
+        ("kind='exact-counts',counts=[]", |a, b| a == 0 && b == 0),
+        (
+            "kind='exact-counts',counts=[{path='src/lib.rs',name='poll',count=1}]",
+            |a, b| a == 1 && b == 0,
+        ),
+        (
+            "kind='exact-counts',counts=[{path='src/lib.rs',name='poll',count=2}]",
+            |a, b| a == 2 && b == 0,
+        ),
+        ("kind='exact-owners',owners=[]", |a, b| a == 0 && b == 0),
+        (
+            "kind='exact-owners',owners=[{path='src/lib.rs',name='poll'}]",
+            |a, b| a > 0 && b == 0,
+        ),
+        (
+            "kind='exact-owners',owners=[{path='src/child.rs',name='wake'}]",
+            |a, b| a == 0 && b > 0,
+        ),
+        (
+            "kind='exact-owners',owners=[{path='src/lib.rs',name='poll'},{path='src/child.rs',name='wake'}]",
+            |a, b| a > 0 && b > 0,
+        ),
+    ];
+    for (before, old_accepts) in cases {
+        for (after, new_accepts) in cases {
+            let changes = kinds(&contract(before), &contract(after));
+            let states = || (0..=3).flat_map(|a| (0..=3).map(move |b| (a, b)));
+            assert_eq!(
+                changes.contains(&ChangeKind::Grant),
+                states().any(|(a, b)| new_accepts(a, b) && !old_accepts(a, b)),
+                "grant: {before} -> {after}"
+            );
+            assert_eq!(
+                changes.contains(&ChangeKind::Revoke),
+                states().any(|(a, b)| old_accepts(a, b) && !new_accepts(a, b)),
+                "revoke: {before} -> {after}"
+            );
+        }
+    }
+}
+
+#[test]
+fn exact_owner_order_is_neutral_but_removal_and_scope_narrowing_are_protected() {
+    let before = contract(
+        "kind='exact-owners',owners=[{path='src/lib.rs',name='poll'},{path='src/child.rs',name='wake'}]",
+    );
+    let mut after = before.clone();
+    let crate::RustInventoryAssertion::ExactOwners { owners } =
+        &mut after.source.rust.inventories[0].assertion
+    else {
+        panic!("owners")
+    };
+    owners.reverse();
+    assert!(kinds(&before, &after).is_empty());
+    after.source.rust.inventories[0]
+        .exclude
+        .push("src/unused.rs".into());
+    assert_eq!(kinds(&before, &after), [ChangeKind::Grant]);
+    after.source.rust.inventories.clear();
+    assert_eq!(kinds(&before, &after), [ChangeKind::Grant]);
 }
 
 #[test]

@@ -19,7 +19,7 @@ pub struct RustInventoryRule {
     pub world: RustInventoryWorld,
     /// Closed source relationship and its written subject selection.
     pub subject: RustInventorySubject,
-    /// Required selected-scope quantity or complete per-file quantity map.
+    /// Required quantity or complete per-file ownership set.
     pub assertion: RustInventoryAssertion,
 }
 
@@ -83,6 +83,21 @@ pub enum RustInventoryAssertion {
         /// Unique positive counts; an empty map prohibits all selected occurrences.
         counts: Vec<RustInventoryCount>,
     },
+    /// Complete file/subject set; duplicates at an existing owner do not change membership.
+    ExactOwners {
+        /// Every listed pair must occur; unlisted pairs are forbidden. Empty prohibits all.
+        owners: Vec<RustInventoryOwner>,
+    },
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+/// A required ownership location, independent of occurrence quantity at that location.
+pub struct RustInventoryOwner {
+    /// Exact normalized repository-relative Rust file.
+    pub path: String,
+    /// Exact written subject selector.
+    pub name: String,
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Deserialize, Serialize)]
