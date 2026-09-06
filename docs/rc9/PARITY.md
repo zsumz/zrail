@@ -59,7 +59,7 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 ## Machine-readable audit state
 
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **274 reviewed assertion instances**. The
+contains **279 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
 record 9,792 files and 72,155 syntax candidates. Every tracked path is included,
@@ -69,13 +69,14 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 78 | 7 | 6 |
+| kafka-driver | 826 | 772 | 83 | 51 | 50 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
-The **170 verified assertions** comprise five facade predicates, four
-kafka-driver budget assertions, and 161 Kafkars size predicates/instances,
-including all 141 measured baselines and three hard allowances. Their disposition
+The **214 verified assertions** comprise five facade predicates, four
+kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
+kafka-driver raw/path assertions and detector fixtures. Size instances include
+all 141 measured baselines and three hard allowances. Their disposition
 is **new engine capability**; verified counts for the other four dispositions
 remain zero. Each registry instance binds its original TOML entry and the
 independently failing helper predicate. The full size report preserves the
@@ -138,10 +139,28 @@ respects quantifier direction and exact identities. See
 [the file-policy contract](../REPOSITORY-FILES.md) and
 [the qualified implementation evidence](evidence/files-index.json).
 
-The engine fixtures do not establish frozen consumer assertion parity. Individual
-ledger entries remain unverified until differential evidence and translated
-selection are linked. Structured TOML/JSON/YAML predicates, execution evidence,
-and the remaining bounded Rust predicates remain release blockers.
+The [Kafka-driver file fragment](policies/kafka-driver.files.fragment.toml) now
+has differential evidence for all 39 named predicates: 33 authored capability
+tokens, four directory roots, a leading raw module marker, and absolute
+component-stem restrictions. It compares 3,468 frozen path observations across
+772 Rust files and 194 physical adversarial fixtures (66 accepts, 128 rejects).
+The ledger also records five previously unexpanded detector assertions; all 44
+associated assertion IDs link to the exact policy and expected diagnostics.
+The byte-exact legacy helpers and registry entries are independently verified.
+
+The [file parity index](evidence/file-parity-index.json) binds implementation
+`ba7a52337ec435285e23a8ee1d64a095e90ab8e2`, source/policy/compiler/fixture identities,
+and repeated byte-identical evidence. Its payload SHA-256 is
+`edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63`.
+Comments, strings, written aliases, qualification whitespace, every banned name,
+directory stems, missing roots, and wrong entry kinds exercise native predicates.
+The positive module marker requires a nonempty selection as the mission requires;
+this is explicitly stronger than the old aggregate loop's vacuous empty result.
+
+This is a complete demonstration of those physical/raw predicate surfaces, not
+full Cargo/Rust source, semantic identity, lock, or execution qualification.
+Structured TOML/JSON/YAML predicates, execution evidence, and the remaining
+bounded Rust predicates remain release blockers.
 
 ## Scoped budgets and frozen per-instance evidence
 

@@ -311,19 +311,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-01-01"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-01-01",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 0,
+        "entry": {
+          "root": "crates/kafka-driver-core/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-01-02",
@@ -373,19 +401,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-01-02"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-01-02",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 0,
+        "entry": {
+          "root": "crates/kafka-driver-core/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-01-03",
@@ -435,19 +491,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-01-03"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-01-03",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 0,
+        "entry": {
+          "root": "crates/kafka-driver-core/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-01-04",
@@ -497,19 +581,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-01-04"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-01-04",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 0,
+        "entry": {
+          "root": "crates/kafka-driver-core/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-01-05",
@@ -559,19 +671,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-01-05"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-01-05",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 0,
+        "entry": {
+          "root": "crates/kafka-driver-core/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-01-06",
@@ -621,19 +761,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-01-06"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-01-06",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 0,
+        "entry": {
+          "root": "crates/kafka-driver-core/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-01-07",
@@ -683,19 +851,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-01-07"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-01-07",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 0,
+        "entry": {
+          "root": "crates/kafka-driver-core/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-01-08",
@@ -745,19 +941,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-01-08"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-01-08",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 0,
+        "entry": {
+          "root": "crates/kafka-driver-core/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-02-01",
@@ -807,19 +1031,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-02-01"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-02-01",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 1,
+        "entry": {
+          "root": "crates/kafka-driver-sim/src",
+          "forbidden": [
+            "kafka_wire",
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-02-02",
@@ -869,19 +1122,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-02-02"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-02-02",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 1,
+        "entry": {
+          "root": "crates/kafka-driver-sim/src",
+          "forbidden": [
+            "kafka_wire",
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-02-03",
@@ -931,19 +1213,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-02-03"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-02-03",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 1,
+        "entry": {
+          "root": "crates/kafka-driver-sim/src",
+          "forbidden": [
+            "kafka_wire",
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-02-04",
@@ -993,19 +1304,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-02-04"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-02-04",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 1,
+        "entry": {
+          "root": "crates/kafka-driver-sim/src",
+          "forbidden": [
+            "kafka_wire",
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-02-05",
@@ -1055,19 +1395,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-02-05"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-02-05",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 1,
+        "entry": {
+          "root": "crates/kafka-driver-sim/src",
+          "forbidden": [
+            "kafka_wire",
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-02-06",
@@ -1117,19 +1486,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-02-06"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-02-06",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 1,
+        "entry": {
+          "root": "crates/kafka-driver-sim/src",
+          "forbidden": [
+            "kafka_wire",
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-02-07",
@@ -1179,19 +1577,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-02-07"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-02-07",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 1,
+        "entry": {
+          "root": "crates/kafka-driver-sim/src",
+          "forbidden": [
+            "kafka_wire",
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-02-08",
@@ -1241,19 +1668,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-02-08"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-02-08",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 1,
+        "entry": {
+          "root": "crates/kafka-driver-sim/src",
+          "forbidden": [
+            "kafka_wire",
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-02-09",
@@ -1303,19 +1759,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-02-09"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-02-09",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 1,
+        "entry": {
+          "root": "crates/kafka-driver-sim/src",
+          "forbidden": [
+            "kafka_wire",
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-03-01",
@@ -1365,19 +1850,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-03-01"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-03-01",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 2,
+        "entry": {
+          "root": "crates/kafka-driver-transport/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-03-02",
@@ -1427,19 +1940,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-03-02"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-03-02",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 2,
+        "entry": {
+          "root": "crates/kafka-driver-transport/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-03-03",
@@ -1489,19 +2030,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-03-03"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-03-03",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 2,
+        "entry": {
+          "root": "crates/kafka-driver-transport/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-03-04",
@@ -1551,19 +2120,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-03-04"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-03-04",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 2,
+        "entry": {
+          "root": "crates/kafka-driver-transport/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-03-05",
@@ -1613,19 +2210,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-03-05"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-03-05",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 2,
+        "entry": {
+          "root": "crates/kafka-driver-transport/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-03-06",
@@ -1675,19 +2300,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-03-06"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-03-06",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 2,
+        "entry": {
+          "root": "crates/kafka-driver-transport/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-03-07",
@@ -1737,19 +2390,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-03-07"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-03-07",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 2,
+        "entry": {
+          "root": "crates/kafka-driver-transport/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-03-08",
@@ -1799,19 +2480,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-03-08"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-03-08",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 2,
+        "entry": {
+          "root": "crates/kafka-driver-transport/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-04-01",
@@ -1861,19 +2570,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-04-01"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-04-01",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 3,
+        "entry": {
+          "root": "src/negotiation",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-04-02",
@@ -1923,19 +2660,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-04-02"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-04-02",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 3,
+        "entry": {
+          "root": "src/negotiation",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-04-03",
@@ -1985,19 +2750,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-04-03"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-04-03",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 3,
+        "entry": {
+          "root": "src/negotiation",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-04-04",
@@ -2047,19 +2840,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-04-04"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-04-04",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 3,
+        "entry": {
+          "root": "src/negotiation",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-04-05",
@@ -2109,19 +2930,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-04-05"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-04-05",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 3,
+        "entry": {
+          "root": "src/negotiation",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-04-06",
@@ -2171,19 +3020,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-04-06"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-04-06",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 3,
+        "entry": {
+          "root": "src/negotiation",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-04-07",
@@ -2233,19 +3110,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-04-07"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-04-07",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 3,
+        "entry": {
+          "root": "src/negotiation",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-04-08",
@@ -2295,18 +3200,102 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-04-08"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-04-08",
-          "cause": "Semantic capability owners do not replace this deliberate raw-text prohibition."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 3,
+        "entry": {
+          "root": "src/negotiation",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
+    },
+    {
+      "id": "KD-CAPABILITY-DETECTOR-SOCKET",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/capability.rs",
+        "file_sha256": "08e1ace3a77307b537f0d4568f4eda059b2226cb3cc00cd8821dd046a3a2fe8a",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/capability.rs:49:5:assertion-macro",
+        "line": 49,
+        "column": 5,
+        "function": [
+          "a_socket_import_is_rejected_by_the_detector"
+        ],
+        "syntax_sha256": "7ea0912a797b7909846aac9fbd04d435206169055960d49c94d8c402f092de1a",
+        "instance": null
+      },
+      "intended_property": "The detector rejects use std::net::TcpStream; and identifies the source and forbidden token; stock diagnostics use the canonical policy ID and REP-FILE-004.",
+      "selection": {
+        "kind": "exact frozen detector fixture",
+        "context": "trusted detector execution; raw/file predicate scope is qualified separately"
+      },
+      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "matching_semantics": {
+        "kind": "detector fixture assertion",
+        "replacement_diagnostic_semantics": "canonical stock policy ID and diagnostic category; legacy prose is not a new native diagnostic format"
+      },
+      "required_cardinality": {
+        "expected_fixture_outcome": "reject"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-capability-01-04"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
+        }
+      },
+      "blockers": [],
+      "qualifies_assertions": [
+        "KD-CAPABILITY-01-04"
       ]
     },
     {
@@ -2339,19 +3328,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-root-01"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-ROOT-01",
-          "cause": "Required repository directory predicate is not implemented."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 0,
+        "entry": {
+          "root": "crates/kafka-driver-core/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-ROOT-02",
@@ -2383,19 +3400,48 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-root-02"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-ROOT-02",
-          "cause": "Required repository directory predicate is not implemented."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 1,
+        "entry": {
+          "root": "crates/kafka-driver-sim/src",
+          "forbidden": [
+            "kafka_wire",
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-ROOT-03",
@@ -2427,19 +3473,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-root-03"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-ROOT-03",
-          "cause": "Required repository directory predicate is not implemented."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 2,
+        "entry": {
+          "root": "crates/kafka-driver-transport/src",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CAPABILITY-ROOT-04",
@@ -2471,19 +3545,47 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-capability-root-04"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-CAPABILITY-ROOT-04",
-          "cause": "Required repository directory predicate is not implemented."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": [],
+      "policy_registry": {
+        "path": "guardrails.toml",
+        "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+        "selector": [
+          "capabilities"
+        ],
+        "index": 3,
+        "entry": {
+          "root": "src/negotiation",
+          "forbidden": [
+            "mio",
+            "rustls",
+            "std::fs",
+            "std::net",
+            "std::process",
+            "std::thread",
+            "std::time::Instant",
+            "std::time::SystemTime"
+          ]
+        }
+      }
     },
     {
       "id": "KD-CI-ENFORCEMENT",
@@ -3948,6 +5050,118 @@
       ]
     },
     {
+      "id": "KD-MODULE-DOC-DETECTOR-ACCEPT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/module_contract.rs",
+        "file_sha256": "af526185d55e917ade96411a2b78de8cb3503c4c78a152b7aed281fd75666ea2",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/module_contract.rs:57:5:assertion-macro",
+        "line": 57,
+        "column": 5,
+        "function": [
+          "code_without_a_contract_is_rejected_by_the_detector"
+        ],
+        "syntax_sha256": "94c7960ff3d6a1b51579289b9fcbd4b7303b313ccc1ebe322ca95631e0faaf93",
+        "instance": null
+      },
+      "intended_property": "The detector accepts the exact documented Owned source fixture.",
+      "selection": {
+        "kind": "exact frozen detector fixture",
+        "context": "trusted detector execution; raw/file predicate scope is qualified separately"
+      },
+      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "matching_semantics": {
+        "kind": "detector fixture assertion",
+        "replacement_diagnostic_semantics": "canonical stock policy ID and diagnostic category; legacy prose is not a new native diagnostic format"
+      },
+      "required_cardinality": {
+        "expected_fixture_outcome": "accept"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-module-leading-doc"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
+        }
+      },
+      "blockers": [],
+      "qualifies_assertions": [
+        "KD-MODULE-LEADING-DOC"
+      ]
+    },
+    {
+      "id": "KD-MODULE-DOC-DETECTOR-REJECT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/module_contract.rs",
+        "file_sha256": "af526185d55e917ade96411a2b78de8cb3503c4c78a152b7aed281fd75666ea2",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/module_contract.rs:56:5:assertion-macro",
+        "line": 56,
+        "column": 5,
+        "function": [
+          "code_without_a_contract_is_rejected_by_the_detector"
+        ],
+        "syntax_sha256": "733c00bf8a7b211dddbc2273055078f63ae694b4f600917273a883a158eb79fe",
+        "instance": null
+      },
+      "intended_property": "The detector rejects the exact source pub struct Unowned; without a leading module marker.",
+      "selection": {
+        "kind": "exact frozen detector fixture",
+        "context": "trusted detector execution; raw/file predicate scope is qualified separately"
+      },
+      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "matching_semantics": {
+        "kind": "detector fixture assertion",
+        "replacement_diagnostic_semantics": "canonical stock policy ID and diagnostic category; legacy prose is not a new native diagnostic format"
+      },
+      "required_cardinality": {
+        "expected_fixture_outcome": "reject"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-module-leading-doc"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
+        }
+      },
+      "blockers": [],
+      "qualifies_assertions": [
+        "KD-MODULE-LEADING-DOC"
+      ]
+    },
+    {
       "id": "KD-MODULE-LEADING-DOC",
       "repository": "kafkars/kafka-driver",
       "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
@@ -3989,18 +5203,144 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-module-leading-doc"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-MODULE-LEADING-DOC",
-          "cause": "Native module_docs accepts parsed documentation attributes; exact leading literal semantics remain unsupported."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
+      },
+      "blockers": [],
+      "behavioral_differences": [
+        {
+          "kind": "intentionally stronger",
+          "basis": "The mission explicitly requires positive requirements to fail when their subjects disappear.",
+          "detail": "The new positive raw predicate requires a nonempty selected file set; the old aggregate loop could be vacuous with no Rust files. No frozen source outcome changes."
+        }
+      ]
+    },
+    {
+      "id": "KD-MODULE-NAME-DETECTOR-ACCEPT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/module_contract.rs",
+        "file_sha256": "af526185d55e917ade96411a2b78de8cb3503c4c78a152b7aed281fd75666ea2",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/module_contract.rs:63:5:assertion-macro",
+        "line": 63,
+        "column": 5,
+        "function": [
+          "a_vague_directory_name_is_rejected_by_the_detector"
+        ],
+        "syntax_sha256": "08f30a9ad74d990429cbea523a93ff5dbd178c2a6bdd3a9d2f7135647e5d60b3",
+        "instance": null
+      },
+      "intended_property": "The detector accepts the src/identity/mod.rs path fixture.",
+      "selection": {
+        "kind": "exact frozen detector fixture",
+        "context": "trusted detector execution; raw/file predicate scope is qualified separately"
+      },
+      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "matching_semantics": {
+        "kind": "detector fixture assertion",
+        "replacement_diagnostic_semantics": "canonical stock policy ID and diagnostic category; legacy prose is not a new native diagnostic format"
+      },
+      "required_cardinality": {
+        "expected_fixture_outcome": "accept"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-module-names"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-003"
+        ],
+        "implemented": true,
+        "verified": true,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
+        }
+      },
+      "blockers": [],
+      "qualifies_assertions": [
+        "KD-MODULE-NAMES"
+      ]
+    },
+    {
+      "id": "KD-MODULE-NAME-DETECTOR-REJECT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/module_contract.rs",
+        "file_sha256": "af526185d55e917ade96411a2b78de8cb3503c4c78a152b7aed281fd75666ea2",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/module_contract.rs:62:5:assertion-macro",
+        "line": 62,
+        "column": 5,
+        "function": [
+          "a_vague_directory_name_is_rejected_by_the_detector"
+        ],
+        "syntax_sha256": "5e120f542d052d73f202fb0d90c1fb40cbb6f5c01ea901307b448baade43298f",
+        "instance": null
+      },
+      "intended_property": "The detector rejects the src/helpers/mod.rs path fixture.",
+      "selection": {
+        "kind": "exact frozen detector fixture",
+        "context": "trusted detector execution; raw/file predicate scope is qualified separately"
+      },
+      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "matching_semantics": {
+        "kind": "detector fixture assertion",
+        "replacement_diagnostic_semantics": "canonical stock policy ID and diagnostic category; legacy prose is not a new native diagnostic format"
+      },
+      "required_cardinality": {
+        "expected_fixture_outcome": "reject"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-module-names"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-003"
+        ],
+        "implemented": true,
+        "verified": true,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
+        }
+      },
+      "blockers": [],
+      "qualifies_assertions": [
+        "KD-MODULE-NAMES"
       ]
     },
     {
@@ -4042,7 +5382,8 @@
           "manager",
           "utils"
         ],
-        "case_sensitive": true
+        "case_sensitive": true,
+        "path_basis": "actual absolute checkout path, including its directory prefix"
       },
       "required_cardinality": {
         "violating_paths": 0
@@ -4050,19 +5391,26 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-module-names"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-003"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-MODULE-NAMES",
-          "cause": "Closed path-component predicates and detector fixtures remain unimplemented."
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures",
+          "rust-test:crates/zrail-rust/src/repository_files_test.rs::qualify_all_frozen_kafka_driver_file_predicates"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/file-parity.json.gz",
+          "payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+          "implementation_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-TRANSPORT-ASSOCIATED",
@@ -16345,12 +17693,12 @@
     }
   ],
   "counts": {
-    "reviewed_assertion_instances": 274,
-    "implemented": 180,
+    "reviewed_assertion_instances": 279,
+    "implemented": 224,
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 170,
+      "new engine capability": 214,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },

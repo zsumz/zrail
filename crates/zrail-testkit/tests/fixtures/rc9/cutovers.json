@@ -59,6 +59,7 @@
             "KD-CAPABILITY-04-06",
             "KD-CAPABILITY-04-07",
             "KD-CAPABILITY-04-08",
+            "KD-CAPABILITY-DETECTOR-SOCKET",
             "KD-CAPABILITY-ROOT-01",
             "KD-CAPABILITY-ROOT-02",
             "KD-CAPABILITY-ROOT-03",
@@ -66,7 +67,45 @@
           ],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
           "removable_now": false,
-          "replacement_policy_ids": []
+          "replacement_policy_ids": [
+            "repository:file:kd-capability-01-01",
+            "repository:file:kd-capability-01-02",
+            "repository:file:kd-capability-01-03",
+            "repository:file:kd-capability-01-04",
+            "repository:file:kd-capability-01-05",
+            "repository:file:kd-capability-01-06",
+            "repository:file:kd-capability-01-07",
+            "repository:file:kd-capability-01-08",
+            "repository:file:kd-capability-02-01",
+            "repository:file:kd-capability-02-02",
+            "repository:file:kd-capability-02-03",
+            "repository:file:kd-capability-02-04",
+            "repository:file:kd-capability-02-05",
+            "repository:file:kd-capability-02-06",
+            "repository:file:kd-capability-02-07",
+            "repository:file:kd-capability-02-08",
+            "repository:file:kd-capability-02-09",
+            "repository:file:kd-capability-03-01",
+            "repository:file:kd-capability-03-02",
+            "repository:file:kd-capability-03-03",
+            "repository:file:kd-capability-03-04",
+            "repository:file:kd-capability-03-05",
+            "repository:file:kd-capability-03-06",
+            "repository:file:kd-capability-03-07",
+            "repository:file:kd-capability-03-08",
+            "repository:file:kd-capability-04-01",
+            "repository:file:kd-capability-04-02",
+            "repository:file:kd-capability-04-03",
+            "repository:file:kd-capability-04-04",
+            "repository:file:kd-capability-04-05",
+            "repository:file:kd-capability-04-06",
+            "repository:file:kd-capability-04-07",
+            "repository:file:kd-capability-04-08",
+            "repository:file:kd-capability-root-01",
+            "repository:file:kd-capability-root-02",
+            "repository:file:kd-capability-root-03",
+            "repository:file:kd-capability-root-04"
+          ]
         },
         {
           "path": "tests/guardrails/dependency.rs",
@@ -130,12 +169,19 @@
           "sha256": "af526185d55e917ade96411a2b78de8cb3503c4c78a152b7aed281fd75666ea2",
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [
+            "KD-MODULE-DOC-DETECTOR-ACCEPT",
+            "KD-MODULE-DOC-DETECTOR-REJECT",
             "KD-MODULE-LEADING-DOC",
+            "KD-MODULE-NAME-DETECTOR-ACCEPT",
+            "KD-MODULE-NAME-DETECTOR-REJECT",
             "KD-MODULE-NAMES"
           ],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
           "removable_now": false,
-          "replacement_policy_ids": []
+          "replacement_policy_ids": [
+            "repository:file:kd-module-leading-doc",
+            "repository:file:kd-module-names"
+          ]
         },
         {
           "path": "tests/guardrails/protocol_provenance.rs",
@@ -1380,6 +1426,7 @@
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
           "removable_now": false,
           "replacement_policy_ids": [
+            "repository:root:crates",
             "rust:size:scope:kf-auxiliary",
             "rust:size:scope:kf-facade",
             "rust:size:scope:kf-implementation",

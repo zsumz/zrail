@@ -35,6 +35,57 @@ def require(condition, message):
         raise ValueError(message)
 
 
+def registry_identity(entry, instance):
+    if "path" in entry:
+        return entry["path"] == instance
+    if "root" in entry and "forbidden" in entry:
+        if isinstance(instance, str):
+            return entry["root"] == instance
+        return (set(instance) == {"root", "token"} and instance["root"] == entry["root"]
+                and entry["forbidden"].count(instance["token"]) == 1)
+    return False
+
+
+def file_evidence(assertion, cache):
+    evidence = assertion["replacement"].get("file_parity_evidence")
+    if not evidence:
+        require(not (assertion["replacement"]["verified"] and any(
+            policy.startswith("repository:file:") for policy in assertion["replacement"]["policy_ids"])),
+            "verified repository-file assertions require bound differential evidence")
+        return
+    artifact = evidence["artifact"]
+    require(artifact.startswith("docs/rc9/evidence/") and ".." not in Path(artifact).parts,
+            "file parity evidence must be a repository audit artifact")
+    if artifact not in cache:
+        with gzip.open(ROOT / artifact, "rb") as stream:
+            payload = stream.read(MAX_BYTES + 1)
+        cache[artifact] = (hashlib.sha256(payload).hexdigest(), parse(payload))
+    digest, report = cache[artifact]
+    require(digest == evidence["payload_sha256"], "file parity payload mismatch")
+    require(report["snapshot"]["repository"] == assertion["repository"]
+            and report["snapshot"]["commit"] == assertion["commit"], "file parity snapshot mismatch")
+    require(report["implementation_commit"] == evidence["implementation_commit"], "file parity code mismatch")
+    require(not report["full_repository_qualified"], "file-only evidence cannot claim full qualification")
+    for policy_id in assertion["replacement"]["policy_ids"]:
+        policies = [p for p in report["observations"] if p["policy_id"] == policy_id]
+        require(len(policies) == 1 and policies[0]["satisfied"], "missing valid frozen file policy")
+        paths = [entry["path"] for entry in policies[0]["entries"]]
+        legacy = [row for row in report["legacy"] if row["policy_id"] == policy_id]
+        require(len(paths) == len(set(paths)) == len(legacy)
+                and set(paths) == {row["path"] for row in legacy}
+                and all(row["accepted"] for row in legacy), "incomplete frozen file comparison")
+        rows = [row for row in report["fixtures"] if row["policy_id"] == policy_id]
+        require(any(row["native_accepted"] for row in rows), "missing positive file fixture")
+        require(any(not row["native_accepted"] and row["diagnostic"] in
+                    assertion["replacement"]["expected_diagnostics"] for row in rows),
+                "missing intended file-policy negative diagnostic")
+        require(all(row["native_accepted"] == row["legacy_accepted"] for row in rows),
+                "unexplained file-policy protection difference")
+        require(all(row["diagnostic"] is None if row["native_accepted"] else
+                    row["diagnostic"] in assertion["replacement"]["expected_diagnostics"] for row in rows),
+                "file fixture failed through an unrelated diagnostic")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--census", type=Path, help="compare an independently repeated census")
@@ -74,6 +125,7 @@ def main():
                     "new engine capability", "behavioral evidence retained", "approved retirement"]}
     implemented = 0
     full = 0
+    file_reports = {}
     for assertion in ledger["reviewed_assertions"]:
         require(assertion["id"] not in ids, "duplicate assertion ID")
         ids.add(assertion["id"])
@@ -87,10 +139,11 @@ def main():
             registry_file = files[(assertion["repository"], registry["path"])]
             require(registry_file["sha256"] == registry["file_sha256"], "registry source digest mismatch")
             require(registry_file["commit"] == assertion["commit"], "registry snapshot mismatch")
-            require(registry["entry"]["path"] == source["instance"], "registry instance identity mismatch")
+            require(registry_identity(registry["entry"], source["instance"]), "registry instance identity mismatch")
             require(registry["index"] >= 0 and registry["selector"], "invalid registry entry selector")
         require(assertion["disposition"] in dispositions, "unsupported assertion disposition")
         replacement = assertion["replacement"]
+        file_evidence(assertion, file_reports)
         if replacement["verified"]:
             require(replacement["implemented"] and replacement["fixtures"], "verified assertion lacks implementation or fixtures")
             require(not assertion["blockers"], "verified assertion retains blockers")

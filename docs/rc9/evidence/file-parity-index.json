@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "release_verdict": "blocked",
+  "tested_file_parity_code_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2",
+  "report_payload_sha256": "edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63",
+  "repeated_byte_identical": true,
+  "source_snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "legacy_policy_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+  "policy_sha256": "2da5caf100eb34e458fa6a4ab9f09ef4b66534fa18a55028e9e1dbdc127a5455",
+  "policies": 39,
+  "frozen_path_observations": 3468,
+  "fixture_outcomes": 194,
+  "positive_fixture_outcomes": 66,
+  "verified_assertion_instances": 44,
+  "full_repository_qualified": false,
+  "sources_patched": [],
+  "authority_grants_accepted": [],
+  "artifacts": {
+    "file-parity.json.gz": "d25850082ac33af565e5bacb77879b95a2062d4b2eb324c5523677a35215de1a",
+    "file-parity.log": "845a00588ad6c8a3023cc1d974bab1186afc843093d49ab57891f26ca510b095",
+    "file-parity-repeat.log": "41248d56e298d3214c337f0e08978071c555343ddae5807e1164f289f9fa70fe"
+  },
+  "counts": {
+    "reviewed_assertion_instances": 279,
+    "implemented": 224,
+    "verified_by_disposition": {
+      "existing native rail": 0,
+      "declarative translation": 0,
+      "new engine capability": 214,
+      "behavioral evidence retained": 0,
+      "approved retirement": 0
+    },
+    "full_repository_verified": 0
+  },
+  "limitations": [
+    "Only physical path and raw UTF-8 predicates are qualified; no Rust resolution, compilation, lock, or execution claim.",
+    "Positive text predicates require a nonempty selection; the mission explicitly requires absent positive subjects to fail.",
+    "Unread subtrees and escaping/unresolved file links fail closed; no directory-link or cache exclusions were added to the frozen policy."
+  ]
+}

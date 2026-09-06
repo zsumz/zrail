@@ -2,7 +2,8 @@
 
 Status: **blocked** for every repository. No downstream source, contract, lock,
 workflow, or guard has been changed. No complete replacement-policy bundle exists
-yet. The facade fragments in `policies/` are review material for one capability;
+yet. The facade, size, and file fragments in `policies/` are review material for
+individual capabilities;
 they must not be installed as a repository's complete contract.
 
 `cutovers.json` in the rc9 testkit binds candidate checker paths and reviewed
@@ -15,9 +16,9 @@ no checkers or helper dependencies certified removable now.
 | Candidate evaluator | Replacement and prerequisites |
 | --- | --- |
 | `tests/guardrails/facade.rs` | `rust:facades` with `wiring-only`; exact test-facade declarations for `tests/guardrails.rs`, `tests/guardrails/mod.rs`, and `tests/support/mod.rs`. Close `KD-FACADE-LIVE` and verify full discovery. |
-| `tests/guardrails/file_size.rs` | Close `KD-BUDGET-*`: 100 facade, 240 production, 320 test; facade classification precedes test classification. |
-| `tests/guardrails/module_contract.rs` | Close `KD-MODULE-*`, including leading literal `//!` and component-stem bans. Parsed module documentation alone is insufficient. |
-| `tests/guardrails/capability.rs` | Close every `KD-CAPABILITY-*` raw-token and required-root assertion. Keep comments/string participation where authored policy requires it. |
+| `tests/guardrails/file_size.rs` | Verified `KD-BUDGET-*`: 100 facade, 240 production, 320 test with facade-first selection; assemble with the remaining complete policy bundle. |
+| `tests/guardrails/module_contract.rs` | Verified `repository:file:kd-module-leading-doc` and `repository:file:kd-module-names`, including all four original detector assertions. Preserve raw marker semantics and the bound absolute checkout prefix; complete repository qualification remains required. |
+| `tests/guardrails/capability.rs` | Verified `repository:file:kd-capability-01-01` through the four frozen token groups and `repository:file:kd-capability-root-01..04`, with exact mapping in the ledger. Comments and strings retain their original participation; complete repository qualification remains required. |
 | `tests/guardrails/transport_authority.rs` | Close all five `KD-TRANSPORT-*` inventories and their detector fixtures. Preserve function-value `ExprPath` counts, written renames, method quantities, and exact implementing-type/trait sets. |
 | `tests/guardrails/dependency.rs`, `protocol_provenance.rs` | Preserve whole-lock bans and exact package/provenance counts (`KD-LOCK-*`), exact/subset dependency distinctions, feature ordering, optional/default features, and inheritance. Complete remaining assertion expansion. |
 | `tests/guardrails/release_graph.rs` | Preserve absent retired paths, forbidden declarations, and separate raw vocabulary predicates. |

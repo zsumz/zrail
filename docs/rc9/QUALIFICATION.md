@@ -136,6 +136,42 @@ cargo test --locked --offline -p zrail-core diff::files
 cargo test --locked --offline -p zrail-core path::
 ```
 
+## Frozen Kafka-driver file-predicate parity
+
+Implementation `ba7a52337ec435285e23a8ee1d64a095e90ab8e2` compares 39 complete
+physical/raw policy selections and 3,468 frozen path outcomes, then evaluates
+194 independent physical fixtures with the stock file analyzer and frozen raw
+helpers. Every policy has positive and negative cases, with the intended policy
+ID and diagnostic required. Directory counterexamples execute the legacy
+`is_dir` predicate. Source and registry pins, extraction bytes, implementation
+commit, compiler version, test-binary hash, Cargo.lock hash, and fixture contexts
+are bound in the report. Both source and implementation must remain clean.
+
+Run from the committed implementation, with the external build environment above:
+
+```sh
+python3 scripts/rc9-file-policies /absolute/snapshots /absolute/policy-preview
+export ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots
+export ZRAIL_RC9_FILE_REPORT=/absolute/rc9-evidence/file-parity-a.json
+cargo test --locked --offline -p zrail-rust \
+  qualify_all_frozen_kafka_driver_file_predicates -- --include-ignored --nocapture
+export ZRAIL_RC9_FILE_REPORT=/absolute/rc9-evidence/file-parity-b.json
+cargo test --locked --offline -p zrail-rust \
+  qualify_all_frozen_kafka_driver_file_predicates -- --include-ignored --nocapture
+cmp /absolute/rc9-evidence/file-parity-a.json /absolute/rc9-evidence/file-parity-b.json
+```
+
+Use fresh report paths in the same external directory; the fixture context stays
+identical and is removed after each case. Outputs inside implementation or
+snapshot repositories are rejected. The recorded repeated payload is
+`edf2b1d64d99176a7cf53695fe0abfd8c9e3d186a146ffdf2a490e9a4cfaec63`.
+[`file-parity-index.json`](evidence/file-parity-index.json) links the compressed
+report and logs. The inventory integrity gate verifies each of the 44 linked
+assertion instances against report identity and positive/negative outcomes.
+The new explicitly prefetched test is ignored by default, so ordinary workspace
+qualification now leaves four tests ignored; release qualification must execute
+all applicable prefetched suites separately.
+
 ## Other reproduction commands
 
 Run the baseline in an isolated checkout of

@@ -11,43 +11,6 @@ files and opaque or invalid syntax remain explicit review work.
 
 | Assertion ID | Cause |
 | --- | --- |
-| `KD-CAPABILITY-01-01` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-01-02` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-01-03` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-01-04` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-01-05` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-01-06` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-01-07` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-01-08` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-02-01` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-02-02` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-02-03` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-02-04` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-02-05` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-02-06` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-02-07` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-02-08` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-02-09` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-03-01` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-03-02` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-03-03` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-03-04` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-03-05` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-03-06` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-03-07` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-03-08` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-04-01` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-04-02` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-04-03` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-04-04` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-04-05` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-04-06` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-04-07` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-04-08` | Semantic capability owners do not replace this deliberate raw-text prohibition. |
-| `KD-CAPABILITY-ROOT-01` | Required repository directory predicate is not implemented. |
-| `KD-CAPABILITY-ROOT-02` | Required repository directory predicate is not implemented. |
-| `KD-CAPABILITY-ROOT-03` | Required repository directory predicate is not implemented. |
-| `KD-CAPABILITY-ROOT-04` | Required repository directory predicate is not implemented. |
 | `KD-CI-ENFORCEMENT` | The mission explicitly requires replacing this prohibition with an enforced zrail lane. The new lane and its required policy/receipt evidence are not yet qualified. |
 | `KD-FACADE-LIVE` | Predicate fixtures pass; full downstream selection and complete declarative policy qualification remain open. |
 | `KD-LOCK-BAN-async-std` | Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient. |
@@ -76,8 +39,6 @@ files and opaque or invalid syntax remain explicit review work.
 | `KD-LOCK-kafka-wire-core-COUNT` | Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified. |
 | `KD-LOCK-kafka-wire-core-SOURCE` | Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified. |
 | `KD-LOCK-kafka-wire-core-VERSION` | Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified. |
-| `KD-MODULE-LEADING-DOC` | Native module_docs accepts parsed documentation attributes; exact leading literal semantics remain unsupported. |
-| `KD-MODULE-NAMES` | Closed path-component predicates and detector fixtures remain unimplemented. |
 | `KD-TRANSPORT-ASSOCIATED` | Exact inventory predicates, authored alias restrictions, compilation-world rules, and positive/negative full selection qualification remain open. |
 | `KD-TRANSPORT-IMPLS` | Exact inventory predicates, authored alias restrictions, compilation-world rules, and positive/negative full selection qualification remain open. |
 | `KD-TRANSPORT-METHODS` | Exact inventory predicates, authored alias restrictions, compilation-world rules, and positive/negative full selection qualification remain open. |

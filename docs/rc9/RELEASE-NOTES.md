@@ -11,7 +11,9 @@ Implemented in the current branch:
 - Exact test-facade structure independent of test compilation and execution.
 - Required/forbidden paths, exact file sets, explicit name restrictions, raw-text
   predicates, and byte equality with independent selection and bound inputs.
-  Downstream differential linkage for this family is still outstanding.
+  Kafka-driver has 39 translated physical/raw predicates with 3,468 frozen path
+  observations and 194 adversarial fixtures, linking 44 verified assertion IDs.
+  Complete downstream Cargo/Rust and execution qualification is still outstanding.
 - Scoped budgets, advisory soft thresholds, warning-only targets, bounded hard
   exceptions with required metadata, and exact authored baseline ratchets.
 - Effective facade modes, reasons, syntax quality, and complete violation lists
