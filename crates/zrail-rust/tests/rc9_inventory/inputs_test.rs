@@ -3,12 +3,19 @@
 use super::{inputs::AdditionalInputs, snapshot::FileRecord};
 
 fn fixture() -> serde_json::Value {
-    serde_json::json!({"schema": 1, "inputs": [{
-        "repository": "fixture/repository", "commit": "a".repeat(40),
-        "path": "tests/helper.inc", "sha256": "b".repeat(64), "syntax": "items",
+    let mut value: serde_json::Value = serde_json::from_str(
+        r#"{"schema": 1, "inputs": [{
+        "repository": "fixture/repository", "commit": "",
+        "path": "tests/helper.inc", "sha256": "", "syntax": "items",
         "reason": "Reviewed Rust fixture input.",
-        "review_sources": [{"path": "tests/owner.rs", "sha256": "c".repeat(64)}]
-    }]})
+        "review_sources": [{"path": "tests/owner.rs", "sha256": ""}]
+    }]}"#,
+    )
+    .expect("fixture registry");
+    value["inputs"][0]["commit"] = "a".repeat(40).into();
+    value["inputs"][0]["sha256"] = "b".repeat(64).into();
+    value["inputs"][0]["review_sources"][0]["sha256"] = "c".repeat(64).into();
+    value
 }
 
 fn parse(value: &serde_json::Value) -> AdditionalInputs {
@@ -100,12 +107,12 @@ fn extra_fragment_registry_rejects_ambiguous_or_unreviewed_authority() {
             "absolute" => value["inputs"][0]["path"] = "/helper.inc".into(),
             "glob" => value["inputs"][0]["path"] = "tests/*.inc".into(),
             "ordinary-rust" => value["inputs"][0]["path"] = "tests/helper.rs".into(),
-            "missing-review" => value["inputs"][0]["review_sources"] = serde_json::json!([]),
+            "missing-review" => value["inputs"][0]["review_sources"] = Vec::<String>::new().into(),
             "duplicate-review" => value["inputs"][0]["review_sources"]
                 .as_array_mut()
                 .expect("sources")
                 .push(entry["review_sources"][0].clone()),
-            _ => unreachable!(),
+            _ => panic!("unknown registry mutation"),
         }
         assert!(
             std::panic::catch_unwind(|| parse(&value)).is_err(),
