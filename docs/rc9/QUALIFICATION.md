@@ -314,3 +314,20 @@ JSON bytes. The regular unit suite runs the portable 134-case matrix without
 prefetch; the explicitly ignored runner additionally qualifies the full frozen
 metadata selection and immutable source identities. Neither claims complete
 Cargo/Rust analysis, downstream execution, or full-repository replacement.
+
+## Exact line engine qualification
+
+At clean commit `f058429466c1bc6349c422e1d207140502b84ad4`, `scripts/check`
+passed structure, formatting, strict workspace lint, **1,490 tests** (zero
+failures, five explicit ignores), and rustdoc. Complete self-analysis covered
+931 Rust files, 1,497 base contexts, 1,215,507 projection work, and zero unresolved
+items. Only `LOCK-008`, `LOCK-026`, `LOCK-028`, and `LOCK-030` stopped the gate.
+Archive and cleanliness stages were not reached. The
+[line evidence index](evidence/lines-index.json) binds the full compressed log.
+
+Three new integration tests cover exact line boundaries, Unicode trimming,
+LF/CRLF handling, duplicate-line quantities, display omission, persistent bans,
+and missing positive inputs. Strict validation rejects impossible normalized
+line literals; protected comparisons distinguish exact-line identity changes
+from weakened whole-file substring checks. These engine tests do not yet
+close the corresponding frozen dependency/attributes assertions.

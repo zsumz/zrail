@@ -4203,7 +4203,7 @@
       "blockers": [
         {
           "id": "KD-DEP-LF-ATTRIBUTES-01",
-          "cause": "Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures."
+          "cause": "Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify."
         }
       ]
     },
@@ -4252,7 +4252,7 @@
       "blockers": [
         {
           "id": "KD-DEP-LF-ATTRIBUTES-02",
-          "cause": "Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures."
+          "cause": "Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify."
         }
       ]
     },
@@ -4301,7 +4301,7 @@
       "blockers": [
         {
           "id": "KD-DEP-LF-ATTRIBUTES-03",
-          "cause": "Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures."
+          "cause": "Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify."
         }
       ]
     },
@@ -4350,7 +4350,7 @@
       "blockers": [
         {
           "id": "KD-DEP-LF-ATTRIBUTES-04",
-          "cause": "Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures."
+          "cause": "Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify."
         }
       ]
     },

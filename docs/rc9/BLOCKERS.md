@@ -21,10 +21,10 @@ files and opaque or invalid syntax remain explicit review work.
 | `KD-DEP-DETECTOR-PRESENT-NAME` | Import the exact detector fixture and execute its line-name extractor beside native line policies. |
 | `KD-DEP-DRIVER-KEYS` | Exact and allowed authored key sets, including the legacy empty-set fallback, need native document predicates and frozen differential proof. Resolved package topology alone does not preserve authored aliases. |
 | `KD-DEP-DRIVER-WIRE-INHERITANCE` | The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify. |
-| `KD-DEP-LF-ATTRIBUTES-01` | Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures. |
-| `KD-DEP-LF-ATTRIBUTES-02` | Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures. |
-| `KD-DEP-LF-ATTRIBUTES-03` | Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures. |
-| `KD-DEP-LF-ATTRIBUTES-04` | Exact trimmed-line presence is not a substring predicate; it needs a closed native line mode and byte-exact legacy fixtures. |
+| `KD-DEP-LF-ATTRIBUTES-01` | Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify. |
+| `KD-DEP-LF-ATTRIBUTES-02` | Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify. |
+| `KD-DEP-LF-ATTRIBUTES-03` | Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify. |
+| `KD-DEP-LF-ATTRIBUTES-04` | Exact native trimmed-line modes are implemented; the pinned attributes policy and byte-exact frozen differential fixtures remain to qualify. |
 | `KD-DEP-PARSE` | Bind all five manifest input contexts and malformed/duplicate-key/encoding negatives to the native parser preconditions. |
 | `KD-DEP-PROBE-KEYS` | Exact and allowed authored key sets, including the legacy empty-set fallback, need native document predicates and frozen differential proof. Resolved package topology alone does not preserve authored aliases. |
 | `KD-DEP-PROBE-WIRE-INHERITANCE` | The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify. |
