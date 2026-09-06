@@ -62,6 +62,8 @@ class TransportEvidence(unittest.TestCase):
                     policy_assertion = observed["policy"]["assertion"]
                     if "counts" in policy_assertion:
                         policy_assertion["counts"][0]["count"] += 1
+                    elif not policy_assertion["owners"]:
+                        policy_assertion["owners"].append({"path": "src/rogue.rs", "name": "Source as Alias"})
                     else:
                         policy_assertion["owners"][0]["count"] = 1
                 elif mutation == "missing-case":
@@ -88,7 +90,8 @@ class TransportEvidence(unittest.TestCase):
                 elif mutation == "omitted-quantity":
                     observed["occurrences_omitted"] += 1
                 elif mutation == "sample-outside-scope":
-                    observed["occurrence_sample"][0]["path"] = "elsewhere.rs"
+                    sample = observed["occurrence_sample"] or fixture["native"]["occurrence_sample"]
+                    sample[0]["path"] = "elsewhere.rs"
                 elif mutation == "detector-input":
                     report["detector_source_sha256"] = "0" * 64
                 elif mutation == "partial-parse":
@@ -127,6 +130,32 @@ class OwnerEvidence(TransportEvidence):
                 report["observation"]["counts"][0]["count"] = 1
             elif mutation == "membership":
                 report["legacy_counts"] = {key: 6 for key in report["legacy_counts"]}
+            else:
+                report["fixture_origins_sha256"] = "0" * 64
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                VERIFY(self.assertions[self.LIVE_ID], report, self.assertions, self.files)
+
+
+class RenameEvidence(TransportEvidence):
+    REPORT_FILE = "transport-renames-parity.json.gz"
+    IDS = MODULE["RENAME_IDS"]
+    EXPECTED_IDS = 2
+    LIVE_ID = "KD-TRANSPORT-RENAMES"
+    SUBJECT_VALUE = "Source"
+    FIXTURE_CASE = "duplicate-Source"
+
+    def test_alias_identity_and_duplicate_occurrence_evidence_are_independent(self):
+        for mutation in ["measure", "quantity", "membership", "alias", "origins"]:
+            report = copy.deepcopy(self.report)
+            fixture = next(row for row in report["fixtures"] if row["case"] == self.FIXTURE_CASE)
+            if mutation == "measure":
+                report["legacy_measure"] = "distinct-owner-files"
+            elif mutation == "quantity":
+                fixture["native"]["counts"][0]["count"] = 1
+            elif mutation == "membership":
+                fixture["legacy_counts"] = {key: 2 for key in fixture["legacy_counts"]}
+            elif mutation == "alias":
+                fixture["native"]["counts"][0]["name"] = "Source as Other"
             else:
                 report["fixture_origins_sha256"] = "0" * 64
             with self.subTest(mutation=mutation), self.assertRaises(ValueError):

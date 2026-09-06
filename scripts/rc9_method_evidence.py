@@ -11,6 +11,7 @@ IDS = {"KD-TRANSPORT-METHODS", "KD-TRANSPORT-DETECTOR-METHODS",
        "KD-TRANSPORT-PARSE-FIXTURE", "KD-TRANSPORT-PARSE-PRODUCTION"}
 EXPRESSION_IDS = {"KD-TRANSPORT-ASSOCIATED", "KD-TRANSPORT-DETECTOR-ASSOCIATED"}
 OWNER_IDS = {"KD-TRANSPORT-OWNERS", "KD-TRANSPORT-DETECTOR-OWNERS"}
+RENAME_IDS = {"KD-TRANSPORT-RENAMES", "KD-TRANSPORT-DETECTOR-RENAMES"}
 POLICY = "rust:inventory:kd-transport-methods"
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -48,7 +49,8 @@ def production(path):
 def observe(report, policy, expected_inputs, expected_counts):
     claim = {"written-methods": "authored-rust-method-call-syntax",
              "written-expression-paths": "authored-rust-expression-path-syntax",
-             "written-paths-containing": "authored-rust-path-membership-syntax"}[policy["subject"]["kind"]]
+             "written-paths-containing": "authored-rust-path-membership-syntax",
+             "written-import-renames": "authored-rust-import-rename-syntax"}[policy["subject"]["kind"]]
     require(report["policy_id"] == "rust:inventory:" + policy["name"] and report["policy"] == policy
             and report["claim"] == claim
             and report["quality"] == "exact", "changed policy or overstated syntax claim")
@@ -178,6 +180,9 @@ def expression_cases(expected, roots):
 
 
 def verify(assertion, report, assertions, files):
+    if assertion["id"] in RENAME_IDS:
+        verify_renames = runpy.run_path(ROOT / "scripts/rc9_rename_evidence.py")["verify"]
+        return verify_renames(assertion, report, assertions, files)
     if assertion["id"] in OWNER_IDS:
         verify_owners = runpy.run_path(ROOT / "scripts/rc9_owner_evidence.py")["verify"]
         return verify_owners(assertion, report, assertions, files)

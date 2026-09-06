@@ -1250,16 +1250,16 @@
             "KD-TRANSPORT-DETECTOR-ASSOCIATED",
             "KD-TRANSPORT-DETECTOR-METHODS",
             "KD-TRANSPORT-DETECTOR-OWNERS",
+            "KD-TRANSPORT-DETECTOR-RENAMES",
             "KD-TRANSPORT-METHODS",
             "KD-TRANSPORT-OWNERS",
             "KD-TRANSPORT-PARSE-FIXTURE",
-            "KD-TRANSPORT-PARSE-PRODUCTION"
+            "KD-TRANSPORT-PARSE-PRODUCTION",
+            "KD-TRANSPORT-RENAMES"
           ],
           "unverified_assertion_ids": [
             "KD-TRANSPORT-DETECTOR-IMPLS",
-            "KD-TRANSPORT-DETECTOR-RENAMES",
-            "KD-TRANSPORT-IMPLS",
-            "KD-TRANSPORT-RENAMES"
+            "KD-TRANSPORT-IMPLS"
           ]
         }
       ],

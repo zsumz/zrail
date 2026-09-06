@@ -22927,7 +22927,7 @@
           "RUST-INVENTORY-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_import_renames_preserve_complete_source_and_alias_identity",
@@ -22935,14 +22935,14 @@
           "rust-test:crates/zrail-testkit/tests/rust_inventories/renames_test.rs::renamed_owner_sets_deduplicate_members_but_keep_every_physical_occurrence",
           "rust-test:crates/zrail-rust/tests/rc9_transport/renames_test.rs::frozen_rename_assertion_preserves_zero_bans_and_exact_alias_identities",
           "rust-test:crates/zrail-rust/tests/rc9_transport/renames_test.rs::qualify_all_frozen_kafka_driver_transport_renames"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-RENAMES",
-          "cause": "Native explicit-import-rename inventories preserve source and alias identities, quantities and exact owner sets. Full frozen-scope positive/negative differential evidence remains required before verification."
+        ],
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-renames-parity.json.gz",
+          "payload_sha256": "21a200cf3b2d3192495456eb6efde9f519aed0a45b9e349cf0ae7b0a3b4c0863",
+          "implementation_commit": "405fe5674f77b8a31bd5aea01b190da55c7dcbcf"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KF-BUDGET-ALLOW-ISSUE",
@@ -50404,7 +50404,7 @@
           "RUST-INVENTORY-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_import_renames_preserve_complete_source_and_alias_identity",
@@ -50412,14 +50412,14 @@
           "rust-test:crates/zrail-testkit/tests/rust_inventories/renames_test.rs::renamed_owner_sets_deduplicate_members_but_keep_every_physical_occurrence",
           "rust-test:crates/zrail-rust/tests/rc9_transport/renames_test.rs::frozen_rename_assertion_preserves_zero_bans_and_exact_alias_identities",
           "rust-test:crates/zrail-rust/tests/rc9_transport/renames_test.rs::qualify_all_frozen_kafka_driver_transport_renames"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-DETECTOR-RENAMES",
-          "cause": "Native explicit-import-rename inventories preserve source and alias identities, quantities and exact owner sets. Full frozen-scope positive/negative differential evidence remains required before verification."
+        ],
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-renames-parity.json.gz",
+          "payload_sha256": "21a200cf3b2d3192495456eb6efde9f519aed0a45b9e349cf0ae7b0a3b4c0863",
+          "implementation_commit": "405fe5674f77b8a31bd5aea01b190da55c7dcbcf"
         }
-      ],
+      },
+      "blockers": [],
       "detector_for": [
         "KD-TRANSPORT-RENAMES"
       ]
@@ -51590,7 +51590,7 @@
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 492,
+      "new engine capability": 494,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },

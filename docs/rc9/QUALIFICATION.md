@@ -1,7 +1,7 @@
 # Reproducing the current rc9 evidence
 
 Release verdict: **blocked**. The latest recorded canonical/archive checkpoint
-and exact-owner differential evidence use `faa606e33df78d4fb676338ac0c80cfb7df8d5ad`.
+and import-rename differential evidence use `405fe5674f77b8a31bd5aea01b190da55c7dcbcf`.
 Qualification-text parity retains its `7c6c01d0af8bdeee598e87c3c8fae97ce72b9a0c`
 identity, based on the exact audited rc8 commit. Whole-lock parity retains its `5251b4f056741768eb667c74d6e0949257ca843b`
 identity. Manifest-field parity retains its
@@ -893,3 +893,35 @@ The import-rename capability at `b340af6` has targeted tests and strict workspac
 lint; it is not covered by this earlier checkpoint. Complete downstream policy
 bundles, Cargo/source completeness, final-release revision qualification and
 remaining transport assertions remain open.
+
+## Import-rename qualification
+
+The clean isolated checkpoint `405fe5674f77b8a31bd5aea01b190da55c7dcbcf`, tree
+`249a9080f851eee3579187eed463e3f46ab6cbaf`, passed 1,580 Rust tests (15 explicitly
+ignored), artifact validation, seven Python unittest methods, formatting, Clippy
+and rustdoc. `scripts/check` stopped at the same five pending protected-lock
+diagnostics: `LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028`, `LOCK-030`.
+Self-analysis was complete: 1,030 files, 1,622 contexts, 1,182,150 work, zero
+unresolved. Standalone `scripts/package-check` passed and Git status stayed clean.
+This is not a passing canonical release gate; no lock authority was accepted.
+
+With the environment above and a clean checkout at that exact commit, run:
+
+```sh
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots \
+ZRAIL_RC9_TRANSPORT_RENAMES_REPORT=/absolute/evidence/rename-a.json \
+cargo test --locked --offline -p zrail-rust --lib \
+  qualify_all_frozen_kafka_driver_transport_renames -- --ignored
+# Repeat with rename-b.json in the same evidence directory, then compare bytes.
+cmp /absolute/evidence/rename-a.json /absolute/evidence/rename-b.json
+python3 scripts/rc9_method_evidence_test.py
+python3 scripts/rc9-inventory-check
+```
+
+Both differential runs passed 79 cases (23 accepted, 56 rejected) with identical
+8,000,231-byte payloads. The [index](evidence/transport-renames-index.json) binds
+all reports, logs and exact identities. The evidence validates authored syntax
+over the complete frozen detector selection; it does not certify Cargo resolution,
+full downstream policy, execution receipts, or removal of the old scanner.
+The later artifact validator passes ten unittest methods and 89 adversarial
+mutations; that later validation is distinct from the pinned checkpoint's tests.

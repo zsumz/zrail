@@ -75,11 +75,11 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 372 | 335 | 328 |
+| kafka-driver | 826 | 772 | 372 | 335 | 330 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 22 | 0 | 0 |
 
-The **492 verified assertions** comprise five facade predicates, four
+The **494 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus five authored dependency key
@@ -87,7 +87,7 @@ inventories, 35 authored dependency-field assertions and preconditions, and
 36 authored provenance assertions and parser preconditions, and 20 whole-lock
 cardinality/version/source/checksum assertions, plus 16 raw dependency/read
 assertions, plus 125 qualification text assertions and read preconditions, and four transport
-method/parser assertions, two expression-path assertions, and two exact-owner assertions.
+method/parser assertions, two expression-path assertions, two exact-owner assertions, and two rename assertions.
 Size instances include
 all 141 measured baselines and three hard allowances. Their disposition
 is **new engine capability**; verified counts for the other four dispositions
@@ -697,3 +697,22 @@ type, as the original collector does. These are bounded syntax claims, with no
 semantic alias identity or impl-polarity claim. `KD-TRANSPORT-IMPLS` and
 `KD-TRANSPORT-DETECTOR-IMPLS` remain unverified until full frozen-scope evidence
 has run and been bound to this ledger.
+
+## Verified import-rename coverage
+
+`KD-TRANSPORT-RENAMES` and `KD-TRANSPORT-DETECTOR-RENAMES` are verified at
+`405fe5674f77b8a31bd5aea01b190da55c7dcbcf`, tree
+`249a9080f851eee3579187eed463e3f46ab6cbaf`. Two full frozen-scope differential
+runs produce identical evidence: 79 cases, 23 accepted and 56 rejected, over
+772 bound Rust inputs and the exact 479 selected physical files. The native
+policy retains the empty set prohibition across five written source identifiers.
+The original detector's five source/alias identities match exactly; duplicate
+renames retain one legacy membership and multiple native occurrences.
+
+[The evidence index](evidence/transport-renames-index.json) binds policy, source,
+fixture, binary and toolchain identities. The report is 8,000,231 bytes with
+SHA-256 `21a200cf3b2d3192495456eb6efde9f519aed0a45b9e349cf0ae7b0a3b4c0863`.
+Artifact verification independently checks all quantities, identities, parsed
+inputs and intended diagnostics; ten unittest methods exercise 89 tamper cases
+across the four committed transport families. Full repository qualification,
+assembled policy bundles and downstream deletion remain outstanding.
