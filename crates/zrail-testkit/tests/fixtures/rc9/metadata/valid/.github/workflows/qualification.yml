@@ -1,0 +1,82 @@
+name: Release qualification
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 7 * * 1"
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qualification-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+
+jobs:
+  real-kafka:
+    name: pinned Kafka and performance policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash
+        working-directory: kafka-driver
+    steps:
+      - name: Check out kafka-driver
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: kafka-driver
+
+      - name: Verify canonical release repository
+        run: scripts/verify-release-repository
+
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.88.0 --profile minimal --component clippy,rustfmt
+          rustup default 1.88.0
+
+      - name: Install pinned Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22.18.0
+          cache: npm
+          cache-dependency-path: kafka-driver/package-lock.json
+
+      - name: Install qualification harness
+        run: npm ci
+
+      - name: Fetch the locked dependency graph
+        run: cargo fetch --locked
+
+      - name: Run the canonical repository gate
+        run: scripts/check
+        env:
+          CARGO_NET_OFFLINE: "true"
+
+      - name: Fetch exact public protocol dependencies
+        run: scripts/prefetch-release-dependencies
+
+      - name: Qualify publishable crate archives
+        run: scripts/qualify-packages
+        env:
+          CARGO_NET_OFFLINE: "true"
+
+      - name: Qualify latest-compatible public dependency graph
+        run: scripts/qualify-latest-compatible
+
+      - name: Retain qualified crate archives
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: qualified-crates-${{ github.sha }}-${{ github.run_attempt }}
+          path: kafka-driver/target/package/*.crate
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Run managed real-broker qualification
+        run: npm run qualify:real-kafka

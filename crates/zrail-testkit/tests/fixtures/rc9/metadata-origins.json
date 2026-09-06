@@ -1,0 +1,111 @@
+{
+  "schema": 1,
+  "harness": "crates/zrail-rust/src/repository_files/metadata/legacy.rs",
+  "context": "The original assertion body is unchanged. Only workspace_root is supplied as a closure over an isolated input path; no predicate is replaced.",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_metadata.rs",
+      "source_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+      "function": "metadata constants",
+      "start_line": 9,
+      "end_line": 18,
+      "extracted_sha256": "6a6e5750eae7667062dcfdcb6da4534e0ad04d5d32eed986778498ab94903582"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_metadata.rs",
+      "source_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+      "function": "public_package_metadata_is_complete body",
+      "start_line": 22,
+      "end_line": 84,
+      "extracted_sha256": "56558c41b9910d1a49cd048d35eec22e37554528741bcc933b45ef6350768c1d"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_metadata.rs",
+      "source_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+      "function": "parse",
+      "start_line": 87,
+      "end_line": 91,
+      "extracted_sha256": "671bd0af5690e393492386898fbe70054cf50ba0059c94d03630279bcb39e66a"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "function": "read",
+      "start_line": 68,
+      "end_line": 70,
+      "extracted_sha256": "2a13b1b1bff5dbc2e48c9b97eb29e7edc2099cda36466eed757f37727542fa60"
+    }
+  ],
+  "fixtures": [
+    {
+      "repository": "kafka-driver",
+      "path": ".github/workflows/qualification.yml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/metadata/valid/.github/workflows/qualification.yml",
+      "sha256": "d87e3d3b6021c51b934b862fbb1b19972ed197fea122eb76c0f35e245832c868"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/metadata/valid/Cargo.toml",
+      "sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "LICENSE",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/metadata/valid/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "README.md",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/metadata/valid/README.md",
+      "sha256": "6575365e288d9c8cfc996e846b4d0a7cd67def21abbb002551f9f225813a18c6"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-core/Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/metadata/valid/crates/kafka-driver-core/Cargo.toml",
+      "sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-core/LICENSE",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/metadata/valid/crates/kafka-driver-core/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-transport/Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/metadata/valid/crates/kafka-driver-transport/Cargo.toml",
+      "sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-transport/LICENSE",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/metadata/valid/crates/kafka-driver-transport/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "kafka-driver-logo.svg",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/metadata/valid/kafka-driver-logo.svg",
+      "sha256": "f0abcd140a73b2a1c6cd52979cfbabec34793525d061289b8b0547c9b50efb09"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "scripts/qualify-packages",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/metadata/valid/scripts/qualify-packages",
+      "sha256": "93ca5d9fcf5aa7b5e73339581990bf8d31e5fea43e460eca35ff7e6ce0c13b04"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "scripts/verify-release-repository",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/metadata/valid/scripts/verify-release-repository",
+      "sha256": "3c1396e6d8d4c813a67d73b3dd3b980f76860e8a252f8cf29fa012926f02981e"
+    }
+  ]
+}

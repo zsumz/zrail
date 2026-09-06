@@ -6,6 +6,8 @@ mod baseline;
 mod fixtures;
 #[path = "repository_files/parity/legacy.rs"]
 mod legacy;
+#[path = "repository_files/metadata/qualification.rs"]
+mod metadata;
 #[path = "repository_files/parity/model.rs"]
 mod model;
 

@@ -1,0 +1,213 @@
+# Partial metadata fragment; assemble the complete repository section before adoption.
+# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# Detector SHA-256: 336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c
+
+[[repository.files]]
+name = "kd-metadata-00-parse-kafka-driver"
+include = ["Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = [], assertion = { op = "present" } }
+
+[[repository.files]]
+name = "kd-metadata-00-parse-kafka-driver-core"
+include = ["crates/kafka-driver-core/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = [], assertion = { op = "present" } }
+
+[[repository.files]]
+name = "kd-metadata-00-parse-kafka-driver-transport"
+include = ["crates/kafka-driver-transport/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = [], assertion = { op = "present" } }
+
+[[repository.files]]
+name = "kd-metadata-workspace-version"
+include = ["Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["workspace", "package", "version"], assertion = { op = "equals", value = "0.1.0-rc.5" } }
+
+[[repository.files]]
+name = "kd-metadata-workspace-license"
+include = ["Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["workspace", "package", "license"], assertion = { op = "equals", value = "Apache-2.0" } }
+
+[[repository.files]]
+name = "kd-metadata-workspace-repository"
+include = ["Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["workspace", "package", "repository"], assertion = { op = "equals", value = "https://github.com/kafkars/kafka-driver" } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-name"
+include = ["Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "name"], assertion = { op = "equals", value = "kafka-driver" } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-version"
+include = ["Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "version", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-license"
+include = ["Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "license", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-repository"
+include = ["Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "repository", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-publish"
+include = ["Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "publish"], assertion = { op = "equals", value = ["crates-io"] } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-description"
+include = ["Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "description"], assertion = { op = "nonempty-string" } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-license-copy"
+include = ["LICENSE"]
+reason = "Both license inputs must decode as UTF-8 and remain byte-identical."
+predicate = { kind = "bytes-equal", other = "LICENSE", utf8 = true }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-core-name"
+include = ["crates/kafka-driver-core/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "name"], assertion = { op = "equals", value = "kafka-driver-core" } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-core-version"
+include = ["crates/kafka-driver-core/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "version", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-core-license"
+include = ["crates/kafka-driver-core/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "license", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-core-repository"
+include = ["crates/kafka-driver-core/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "repository", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-core-publish"
+include = ["crates/kafka-driver-core/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "publish"], assertion = { op = "equals", value = ["crates-io"] } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-core-description"
+include = ["crates/kafka-driver-core/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "description"], assertion = { op = "nonempty-string" } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-core-license-copy"
+include = ["crates/kafka-driver-core/LICENSE"]
+reason = "Both license inputs must decode as UTF-8 and remain byte-identical."
+predicate = { kind = "bytes-equal", other = "LICENSE", utf8 = true }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-transport-name"
+include = ["crates/kafka-driver-transport/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "name"], assertion = { op = "equals", value = "kafka-driver-transport" } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-transport-version"
+include = ["crates/kafka-driver-transport/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "version", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-transport-license"
+include = ["crates/kafka-driver-transport/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "license", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-transport-repository"
+include = ["crates/kafka-driver-transport/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "repository", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-transport-publish"
+include = ["crates/kafka-driver-transport/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "publish"], assertion = { op = "equals", value = ["crates-io"] } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-transport-description"
+include = ["crates/kafka-driver-transport/Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "description"], assertion = { op = "nonempty-string" } }
+
+[[repository.files]]
+name = "kd-metadata-kafka-driver-transport-license-copy"
+include = ["crates/kafka-driver-transport/LICENSE"]
+reason = "Both license inputs must decode as UTF-8 and remain byte-identical."
+predicate = { kind = "bytes-equal", other = "LICENSE", utf8 = true }
+
+[[repository.files]]
+name = "kd-metadata-required-license"
+include = ["LICENSE"]
+reason = "Preserve the required regular release file."
+predicate = { kind = "count", minimum = 1, maximum = 1 }
+
+[[repository.files]]
+name = "kd-metadata-required-readme-md"
+include = ["README.md"]
+reason = "Preserve the required regular release file."
+predicate = { kind = "count", minimum = 1, maximum = 1 }
+
+[[repository.files]]
+name = "kd-metadata-required-kafka-driver-logo-svg"
+include = ["kafka-driver-logo.svg"]
+reason = "Preserve the required regular release file."
+predicate = { kind = "count", minimum = 1, maximum = 1 }
+
+[[repository.files]]
+name = "kd-metadata-readme"
+include = ["Cargo.toml"]
+reason = "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence."
+predicate = { kind = "document", format = "toml", path = ["package", "readme"], assertion = { op = "equals", value = "README.md" } }
+
+[[repository.files]]
+name = "kd-metadata-package-repository"
+include = ["scripts/qualify-packages"]
+reason = "Preserve the deliberately raw marker, including comments; it does not prove execution."
+predicate = { kind = "literal", text = "https://github.com/kafkars/kafka-driver", mode = "contains" }
+
+[[repository.files]]
+name = "kd-metadata-verify-repository"
+include = ["scripts/verify-release-repository"]
+reason = "Preserve the deliberately raw marker, including comments; it does not prove execution."
+predicate = { kind = "literal", text = "repository_url=https://github.com/kafkars/kafka-driver", mode = "contains" }
+
+[[repository.files]]
+name = "kd-metadata-verify-http-fail"
+include = ["scripts/verify-release-repository"]
+reason = "Preserve the deliberately raw marker, including comments; it does not prove execution."
+predicate = { kind = "literal", text = "--fail", mode = "contains" }
+
+[[repository.files]]
+name = "kd-metadata-workflow-verify"
+include = [".github/workflows/qualification.yml"]
+reason = "Preserve the deliberately raw marker, including comments; it does not prove execution."
+predicate = { kind = "literal", text = "run: scripts/verify-release-repository", mode = "contains" }
