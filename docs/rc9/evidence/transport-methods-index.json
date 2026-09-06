@@ -1,0 +1,153 @@
+{
+  "schema": 1,
+  "implementation_commit": "151270ffa2285800833f2295abcfc61aa689d9ca",
+  "implementation_tree": "cc0beffaef20c26cc0c292b9dd6a3cde0f86ffe9",
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "499efcbedcf45bdafbd2aa57a1383cdb91cb7680da4befdc503a4f75443fb027",
+  "registry_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+  "fixture_origins_sha256": "d3a8fb562a4ae2f6455338bbcef8037ef3b2d9cb5d62a7327338341346b97b11",
+  "test_binary_sha256": "56f2ebd00a7f731e52473df5d92da83ee91fcaa30fc3f1f4b8b8a1898639ecb9",
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "detector_source_sha256": "52931f702eed8c81c079a2aabfb4934a0f7c4388faa26ed5c425bf470232f4bc",
+  "full_repository_qualified": false,
+  "lock_authority_accepted": false,
+  "claim": "Exact frozen authored method quantities and strict file-parser preconditions; no complete repository or execution claim.",
+  "assertion_ids": [
+    "KD-TRANSPORT-DETECTOR-METHODS",
+    "KD-TRANSPORT-METHODS",
+    "KD-TRANSPORT-PARSE-FIXTURE",
+    "KD-TRANSPORT-PARSE-PRODUCTION"
+  ],
+  "frozen_rust_inputs": 772,
+  "selected_physical_files": 479,
+  "exact_map_entries": 11,
+  "occurrences": 20,
+  "fixtures": 76,
+  "accepted": 7,
+  "rejected": 69,
+  "repeat_identical": true,
+  "payload_sha256": "431fb863939196180696673b66350ab81538867595e35f8b1d6d846e55d15bf7",
+  "canonical": {
+    "exit_status": 1,
+    "passed": 1551,
+    "failed": 0,
+    "ignored": 12,
+    "analysis_complete": true,
+    "rust_files": 1010,
+    "base_contexts": 1599,
+    "derived_contexts": 0,
+    "projection_work": 1168340,
+    "unresolved": 0,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_step_reached": false,
+    "cleanliness_step_reached": false
+  },
+  "standalone_archive_check_passed": true,
+  "git_status_unchanged": true,
+  "corrected_qualification_failures": [
+    "Initial comparison used different PathBuf and normalized-string orderings for the same 479 selected files; canonical normalized ordering now compares exact vectors.",
+    "The first canonical run rejected computed include_str and eprintln. Literal include_str still attempted to import excluded fixture source. The trusted fixture reader now hashes runtime-read frozen bytes before extracting the original detector.",
+    "The first runtime-reader revision failed formatting before tests. The final pinned tree passed formatting and requalified all tests, archives, and both parity runs."
+  ],
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/transport-methods-parity.json.gz",
+      "implementation_commit": "151270ffa2285800833f2295abcfc61aa689d9ca",
+      "role": "complete frozen method and parser differential evidence",
+      "payload_sha256": "431fb863939196180696673b66350ab81538867595e35f8b1d6d846e55d15bf7",
+      "payload_bytes": 8295955,
+      "compressed_sha256": "c69cbe023bd509f1029cf46818b854177ab00f6db09ba22972a2abd59cc23723"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-methods-final-canonical.log.gz",
+      "implementation_commit": "151270ffa2285800833f2295abcfc61aa689d9ca",
+      "role": "canonical",
+      "payload_sha256": "b669c4048b958cfc21833616a45a412caea1336efa952e61d5ce7c2da049f886",
+      "payload_bytes": 185018,
+      "compressed_sha256": "694c2d55e874ac69c0118e0c5bd58423efd3a652e9a335343a0c8b4e660f251f",
+      "exit_status": 1
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-methods-final-package.log.gz",
+      "implementation_commit": "151270ffa2285800833f2295abcfc61aa689d9ca",
+      "role": "package",
+      "payload_sha256": "458c22d1124f366903908d823c436650302e399a000fa160a92fd04aef0f62c3",
+      "payload_bytes": 10767,
+      "compressed_sha256": "15fc968662e597b2f5a16d845b9170b7e614cc2a60e65d12041f2df4226745cb",
+      "exit_status": 0
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-methods-final-parity-a.log.gz",
+      "implementation_commit": "151270ffa2285800833f2295abcfc61aa689d9ca",
+      "role": "parity-a",
+      "payload_sha256": "93fdb00f023f3d958346c794fbbf1da6f67f639551388db2e78a49aa3cc9f039",
+      "payload_bytes": 3984,
+      "compressed_sha256": "f3a2bb4628244e9efdf387d5f7889811f1956bf914d8b053297649af5656fedc",
+      "exit_status": 0
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-methods-final-parity-b.log.gz",
+      "implementation_commit": "151270ffa2285800833f2295abcfc61aa689d9ca",
+      "role": "parity-b",
+      "payload_sha256": "cd16195cf8300c0496399d33f8375c16ef8980eed91c89615c36de469da7bfe5",
+      "payload_bytes": 3984,
+      "compressed_sha256": "a4909b1e240c132bdc98d160c87e6daac394dc05e0f0bee223a8ccb4fea071d4",
+      "exit_status": 0
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-methods-runner.json.gz",
+      "implementation_commit": "151270ffa2285800833f2295abcfc61aa689d9ca",
+      "role": "trusted runner statuses",
+      "payload_sha256": "f0aa6e104d60be3c25ade3604070e24839d925944172a1ec80cfa7a1e3f840a4",
+      "payload_bytes": 1134,
+      "compressed_sha256": "b83a3f91d79d413cad5df3601333b4f70944d970577e665c1c58058855b99885"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-methods-initial-parity.log.gz",
+      "implementation_commit": "b90f34646664255231a06297cca8a1f572c18362",
+      "role": "initial-parity",
+      "payload_sha256": "82582e1b4f8e7fcf565cca15b0f196d883f910e878af7cb0f58767648a7ed962",
+      "payload_bytes": 45133,
+      "compressed_sha256": "1f4f4f3f43a1f3555658c9de97d48c84f8161307f5245741cd67b6af8b90b337",
+      "exit_status": 101
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-methods-initial-canonical.log.gz",
+      "implementation_commit": "298e4b4c39d571232d91393b9bf9d809ab6e1e1d",
+      "role": "initial-canonical",
+      "payload_sha256": "2a2a9ef9c8efcacd8df860cce8d6bf233ab26eaeed83ea966225e49f46bd9a6f",
+      "payload_bytes": 181833,
+      "compressed_sha256": "e461b565b7be77c7264116a6e4e46d4ffcf9559a0b8e92cce5f3f8bb270b596b",
+      "exit_status": 1
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-methods-literal-include-canonical.log.gz",
+      "implementation_commit": "faef8f1fe81a489aef240e3afdda9124b5e433ed",
+      "role": "literal-include-canonical",
+      "payload_sha256": "a387c6381981ee138c44713b7f4a3631940de291838445b3d6aa1557546173b6",
+      "payload_bytes": 186114,
+      "compressed_sha256": "5e462147e9e8c76a3cd0350021f26816f80224bd07aacbe5da6d5a6e40d77c65",
+      "exit_status": 1
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-methods-runtime-reader-format.log.gz",
+      "implementation_commit": "eb320f6d58668c429dfb3c5bc62c0e89f8b472fb",
+      "role": "runtime-reader-format",
+      "payload_sha256": "2d5fbef0ed53fd87bc3b8323c4d11188118924c4fd5232e332bed5096d3efab9",
+      "payload_bytes": 620,
+      "compressed_sha256": "f429e0a8ad4b2ce889f8023425f963e2901924768a8a1bd5c554818b31f2ee63",
+      "exit_status": 1
+    }
+  ]
+}

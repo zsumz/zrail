@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "crates/zrail-testkit/tests/fixtures/rc9"
 MAX_BYTES = 64 * 1024 * 1024
 QUALIFICATION_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_qualification_evidence.py")["verify"]
+METHOD_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_method_evidence.py")["verify"]
 
 
 def unique_object(pairs):
@@ -227,6 +228,9 @@ def main():
                     "verified assertion depends on an unverified read precondition")
         file_evidence(assertion, file_reports)
         lock_evidence(assertion, file_reports)
+        method_report = parity_report(assertion, "rust_inventory_parity_evidence", "rust:inventory:", file_reports)
+        if method_report is not None:
+            METHOD_EVIDENCE(assertion, method_report, assertions_by_id, files)
         if replacement["verified"]:
             require(replacement["implemented"] and replacement["fixtures"], "verified assertion lacks implementation or fixtures")
             require(not assertion["blockers"], "verified assertion retains blockers")

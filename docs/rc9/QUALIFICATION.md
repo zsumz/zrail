@@ -662,3 +662,53 @@ ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots ZRAIL_RC9_CENSUS=/fresh/census-b.json \
 cmp /fresh/census-a.json /fresh/census-b.json
 python3 scripts/rc9-inventory-check --census /fresh/census-a.json
 ```
+
+
+## Frozen transport method and parser qualification
+
+The [final transport index](evidence/transport-methods-index.json) binds clean
+revision `151270ffa2285800833f2295abcfc61aa689d9ca`, tree
+`cc0beffaef20c26cc0c292b9dd6a3cde0f86ffe9`, compiler, test binary, Cargo lock,
+policy, original registry/collector/fixture identities, and every source input.
+The untouched kafka-driver snapshot is
+`a45be8071e6a663cd4ae3142cc5304ece9fdf45e`. Both offline runs passed all
+76 fixtures (seven accepts, 69 rejects), with identical payload SHA-256
+`431fb863939196180696673b66350ab81538867595e35f8b1d6d846e55d15bf7`.
+
+At that same revision, `scripts/check` passed structure, formatting, strict
+workspace lint, **1,551 tests** (zero failures, twelve ignored), and rustdoc.
+Self-analysis completed with 1,010 Rust files, 1,599 base contexts, zero derived
+contexts, 1,168,340 projection work, and zero unresolved items. The canonical
+gate **failed** with only `LOCK-008`, `LOCK-026`, `LOCK-028`, and `LOCK-030`;
+its archive and cleanliness steps were not reached. Separately invoked
+`scripts/package-check` passed all three normalized archives and offline expanded
+checks, and Git status remained empty. No reviewed authority was accepted.
+
+The index retains earlier qualification failures under their own revisions:
+the initial comparison used a different path sort order for an identical file
+set; subsequent self-checks rejected computed/literal inclusion of excluded
+fixture source and unreviewed `eprintln`; the first runtime-reader revision
+stopped at formatting. The final reader hashes frozen bytes at runtime in the
+trusted test harness, and the corrected revision was completely rerun.
+
+```sh
+# Use a clean checkout at the pinned implementation revision and prefetched snapshots.
+scripts/check
+scripts/package-check
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots \
+ZRAIL_RC9_TRANSPORT_METHODS_REPORT=/fresh/transport-a.json \
+  cargo test --locked --offline -p zrail-rust qualify_all_frozen_kafka_driver_transport_methods -- --ignored
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots \
+ZRAIL_RC9_TRANSPORT_METHODS_REPORT=/fresh/transport-b.json \
+  cargo test --locked --offline -p zrail-rust qualify_all_frozen_kafka_driver_transport_methods -- --ignored
+cmp /fresh/transport-a.json /fresh/transport-b.json
+# Run these binding checks from the later evidence-bearing checkout.
+python3 scripts/rc9_method_evidence_test.py
+python3 scripts/rc9-inventory-check
+```
+
+The artifact-only validator independently checks the typed mutation matrix,
+full count maps, original parser outcomes, frozen input identities, policy
+selectors, quality, complete totals, and intended diagnostics. Its two tests
+include twenty evidence-tampering variants. This closes four assertion IDs,
+without claiming full consumer Cargo/source, lock, or execution qualification.

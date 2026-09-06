@@ -22758,21 +22758,22 @@
           "RUST-INVENTORY-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_methods_match_every_parsed_expression_context",
           "rust-test:crates/zrail-testkit/tests/rust_inventories.rs::exact_map_rejects_duplicates_deletions_and_same_count_location_or_name_changes",
-          "rust-test:crates/zrail-testkit/tests/rust_inventories/boundary_test.rs::source_exclusions_and_malformed_or_expression_only_files_cannot_hide_selected_code"
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/boundary_test.rs::source_exclusions_and_malformed_or_expression_only_files_cannot_hide_selected_code",
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::qualify_all_frozen_kafka_driver_transport_methods"
         ],
-        "implementation_evidence": "docs/rc9/evidence/method-inventory-index.json"
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-METHODS",
-          "cause": "Native authored inventories and strict file-parse requirements are implemented; bind the exact original detector fixture and complete frozen production selection to reproducible differential evidence before marking assertion parity verified."
+        "implementation_evidence": "docs/rc9/evidence/method-inventory-index.json",
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-methods-parity.json.gz",
+          "payload_sha256": "431fb863939196180696673b66350ab81538867595e35f8b1d6d846e55d15bf7",
+          "implementation_commit": "151270ffa2285800833f2295abcfc61aa689d9ca"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-TRANSPORT-OWNERS",
@@ -50204,21 +50205,22 @@
           "RUST-INVENTORY-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_methods_match_every_parsed_expression_context",
           "rust-test:crates/zrail-testkit/tests/rust_inventories.rs::exact_map_rejects_duplicates_deletions_and_same_count_location_or_name_changes",
-          "rust-test:crates/zrail-testkit/tests/rust_inventories/boundary_test.rs::source_exclusions_and_malformed_or_expression_only_files_cannot_hide_selected_code"
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/boundary_test.rs::source_exclusions_and_malformed_or_expression_only_files_cannot_hide_selected_code",
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::qualify_all_frozen_kafka_driver_transport_methods"
         ],
-        "implementation_evidence": "docs/rc9/evidence/method-inventory-index.json"
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-DETECTOR-METHODS",
-          "cause": "Native authored inventories and strict file-parse requirements are implemented; bind the exact original detector fixture and complete frozen production selection to reproducible differential evidence before marking assertion parity verified."
+        "implementation_evidence": "docs/rc9/evidence/method-inventory-index.json",
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-methods-parity.json.gz",
+          "payload_sha256": "431fb863939196180696673b66350ab81538867595e35f8b1d6d846e55d15bf7",
+          "implementation_commit": "151270ffa2285800833f2295abcfc61aa689d9ca"
         }
-      ],
+      },
+      "blockers": [],
       "detector_for": [
         "KD-TRANSPORT-METHODS"
       ]
@@ -50383,21 +50385,22 @@
           "RUST-INVENTORY-002"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_methods_match_every_parsed_expression_context",
           "rust-test:crates/zrail-testkit/tests/rust_inventories.rs::exact_map_rejects_duplicates_deletions_and_same_count_location_or_name_changes",
-          "rust-test:crates/zrail-testkit/tests/rust_inventories/boundary_test.rs::source_exclusions_and_malformed_or_expression_only_files_cannot_hide_selected_code"
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/boundary_test.rs::source_exclusions_and_malformed_or_expression_only_files_cannot_hide_selected_code",
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::qualify_all_frozen_kafka_driver_transport_methods"
         ],
-        "implementation_evidence": "docs/rc9/evidence/method-inventory-index.json"
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-PARSE-FIXTURE",
-          "cause": "Native authored inventories and strict file-parse requirements are implemented; bind the exact original detector fixture and complete frozen production selection to reproducible differential evidence before marking assertion parity verified."
+        "implementation_evidence": "docs/rc9/evidence/method-inventory-index.json",
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-methods-parity.json.gz",
+          "payload_sha256": "431fb863939196180696673b66350ab81538867595e35f8b1d6d846e55d15bf7",
+          "implementation_commit": "151270ffa2285800833f2295abcfc61aa689d9ca"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-TRANSPORT-PARSE-PRODUCTION",
@@ -50451,21 +50454,22 @@
           "RUST-INVENTORY-002"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_methods_match_every_parsed_expression_context",
           "rust-test:crates/zrail-testkit/tests/rust_inventories.rs::exact_map_rejects_duplicates_deletions_and_same_count_location_or_name_changes",
-          "rust-test:crates/zrail-testkit/tests/rust_inventories/boundary_test.rs::source_exclusions_and_malformed_or_expression_only_files_cannot_hide_selected_code"
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/boundary_test.rs::source_exclusions_and_malformed_or_expression_only_files_cannot_hide_selected_code",
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::qualify_all_frozen_kafka_driver_transport_methods"
         ],
-        "implementation_evidence": "docs/rc9/evidence/method-inventory-index.json"
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-PARSE-PRODUCTION",
-          "cause": "Native authored inventories and strict file-parse requirements are implemented; bind the exact original detector fixture and complete frozen production selection to reproducible differential evidence before marking assertion parity verified."
+        "implementation_evidence": "docs/rc9/evidence/method-inventory-index.json",
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-methods-parity.json.gz",
+          "payload_sha256": "431fb863939196180696673b66350ab81538867595e35f8b1d6d846e55d15bf7",
+          "implementation_commit": "151270ffa2285800833f2295abcfc61aa689d9ca"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-FACADE-PARSE",
@@ -51506,7 +51510,7 @@
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 484,
+      "new engine capability": 488,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },

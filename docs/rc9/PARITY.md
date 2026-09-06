@@ -71,18 +71,19 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 372 | 327 | 320 |
+| kafka-driver | 826 | 772 | 372 | 327 | 324 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 22 | 0 | 0 |
 
-The **484 verified assertions** comprise five facade predicates, four
+The **488 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus five authored dependency key
 inventories, 35 authored dependency-field assertions and preconditions, and
 36 authored provenance assertions and parser preconditions, and 20 whole-lock
 cardinality/version/source/checksum assertions, plus 16 raw dependency/read
-assertions, plus 125 qualification text assertions and read preconditions.
+assertions, plus 125 qualification text assertions and read preconditions, and four transport
+method/parser assertions.
 Size instances include
 all 141 measured baselines and three hard allowances. Their disposition
 is **new engine capability**; verified counts for the other four dispositions
@@ -465,8 +466,8 @@ All ten assertion sites and both parser-failure sites in frozen
 `tests/guardrails/transport_authority.rs` are reviewed. The five live boundaries
 remain `KD-TRANSPORT-*`; five new `KD-TRANSPORT-DETECTOR-*` IDs bind the exact
 adversarial inventory expectations, and `KD-TRANSPORT-PARSE-PRODUCTION` /
-`KD-TRANSPORT-PARSE-FIXTURE` preserve strict item-file parsing. These twelve
-assertions remain unverified stock-engine blockers.
+`KD-TRANSPORT-PARSE-FIXTURE` preserve strict item-file parsing. At this review checkpoint all twelve were unverified; the four method/parser
+assertions are now qualified below. Eight transport assertions remain open.
 
 The associated inventory counts every selected `ExprPath`, including function
 references, by physical file and final two identifier segments. It selects
@@ -494,8 +495,8 @@ authored cfg branches and physical occurrence identity independently of semantic
 receiver resolution. Twenty source-bound synthetic collector comparisons and
 ten integration tests pass. The [method policy fragment](policies/kafka-driver.transport-methods.fragment.toml)
 preserves eleven exact map entries and twenty occurrences. Full frozen selection
-and original detector-fixture parity remain open; all four assertions stay
-unverified. At that native-method checkpoint, the ledger recorded 498 implemented and 484
+and original detector-fixture parity were still open at that implementation
+checkpoint; the completed evidence is recorded below. At that native-method checkpoint, the ledger recorded 498 implemented and 484
 verified assertions out of 559 reviewed instances.
 
 
@@ -527,7 +528,7 @@ visible failure/assertion sites does not complete the repository inventory.
 
 Six additional `RF-PROCESS-*` records identify the strict parser precondition,
 two normalization expectations, and three crate-alias/macro/import detector
-assertions. The ledger now has 574 reviewed assertions, 500 implemented, and
+assertions. At that review checkpoint the ledger had 574 reviewed assertions, 500 implemented, and
 484 verified. Rafter's five existing live predicates now describe the exact
 collector and bind its helper source hashes. The eighteen required tuples remain
 unchanged, and all eleven raw-process assertions remain blockers.
@@ -563,7 +564,33 @@ comments, literals, opaque boundaries and default trait helper context.
 
 `RC9-INVENTORY-FALLIBLE-CALLS` is closed as a discovery defect.
 `RF-PROCESS-DETECTOR-PARSE` now identifies the newly discoverable fixture parse
-precondition. The ledger has 575 reviewed, 500 implemented and 484 verified
+precondition. At that census checkpoint the ledger had 575 reviewed, 500 implemented and 484 verified
 assertions; it remains incomplete. New candidates still require individual
 review, including behavioral preconditions and custom methods with matching
 names. Included fragments and opaque macro bodies remain explicit review work.
+
+
+## Verified frozen transport method and parser parity
+
+At `151270ffa2285800833f2295abcfc61aa689d9ca`, two complete frozen-scope
+method runs produced byte-identical reports. All 772 original Rust inputs are
+bound by hash; the original traversal and native selectors agree on 479
+non-test physical files. The exact eleven-entry map contains twenty occurrences.
+All 76 fixtures agree: seven accepted and 69 rejected, including duplicate,
+missing, relocated and substituted occurrences, all six roots, test exclusions,
+qualified and nested syntax, opaque macro boundaries, and both strict parser
+failures. The original detector fixture and parser execute in trusted tests.
+
+`KD-TRANSPORT-METHODS`, `KD-TRANSPORT-DETECTOR-METHODS`,
+`KD-TRANSPORT-PARSE-FIXTURE`, and `KD-TRANSPORT-PARSE-PRODUCTION` now bind this
+[report and qualification index](evidence/transport-methods-index.json). Their
+intended diagnostics are `RUST-INVENTORY-001` for quantities and
+`RUST-INVENTORY-002` for incomplete file parsing. The payload SHA-256 is
+`431fb863939196180696673b66350ab81538867595e35f8b1d6d846e55d15bf7`.
+The evidence validator checks every original input and complete per-fixture map;
+twenty tampering cases cannot substitute unrelated failures or partial counts.
+
+The ledger is now **575 reviewed / 500 implemented / 488 verified**. These are
+authored syntax assertions, with no receiver identity, Cargo compilation, lock,
+execution, or complete repository claim. The other eight transport assertions
+remain blockers, and the downstream file cannot yet be removed.

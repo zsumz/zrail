@@ -17,6 +17,9 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 scripts/structure-check
+python3 scripts/rc9-inventory-check
+python3 scripts/rc9_qualification_evidence_test.py
+python3 scripts/rc9_method_evidence_test.py
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --all-features --locked --offline -- -D warnings
 cargo test --workspace --all-features --locked --offline
