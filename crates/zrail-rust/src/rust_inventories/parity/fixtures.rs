@@ -38,6 +38,18 @@ pub(super) fn qualify(
                 fs::remove_file(root.join(path)).expect("remove fixture input");
             }
         }
+        let legacy_fixture_parses = mutation
+            .changes
+            .iter()
+            .filter_map(|(path, source)| {
+                source.as_ref().map(|source| {
+                    (
+                        path.clone(),
+                        std::panic::catch_unwind(|| legacy::observed(path, source)).is_ok(),
+                    )
+                })
+            })
+            .collect();
         let legacy_counts = std::panic::catch_unwind(|| legacy::repository(root, roots)).ok();
         let legacy_accepted = legacy_counts.as_ref().is_some_and(|counts| {
             std::panic::catch_unwind(|| legacy::check_selector_methods(counts.clone())).is_ok()
@@ -105,6 +117,7 @@ pub(super) fn qualify(
                 .filter(|(_, source)| source.is_none())
                 .map(|(path, _)| path.clone())
                 .collect(),
+            legacy_fixture_parses,
             legacy_counts,
             native: observed.ok(),
             legacy_accepted,

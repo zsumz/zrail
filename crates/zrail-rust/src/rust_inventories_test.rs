@@ -126,11 +126,12 @@ fn qualify_all_frozen_kafka_driver_transport_methods() {
     let (policy, policy_sha256) = model::policy();
     let observation = native::analyze(&source, &inputs, &policy).expect("complete selected syntax");
     assert!(observation.satisfied);
-    let selected = crate::rules::legacy_driver_paths(&source, &roots)
+    let mut selected = crate::rules::legacy_driver_paths(&source, &roots)
         .into_iter()
         .filter(|path| !selection::is_test(&source, path))
         .map(|path| selection::display_path(&source, &path))
         .collect::<Vec<_>>();
+    selected.sort();
     assert_eq!(
         selected,
         observation

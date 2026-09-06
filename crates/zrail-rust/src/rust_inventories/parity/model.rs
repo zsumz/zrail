@@ -144,6 +144,7 @@ pub(super) struct Fixture {
     pub(super) policy_id: String,
     pub(super) changed_inputs: Vec<RustInventoryInput>,
     pub(super) removed_inputs: Vec<String>,
+    pub(super) legacy_fixture_parses: BTreeMap<String, bool>,
     pub(super) legacy_counts: Option<BTreeMap<String, usize>>,
     pub(super) native: Option<GovernedRustInventory>,
     pub(super) legacy_accepted: bool,
