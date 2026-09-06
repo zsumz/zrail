@@ -2,8 +2,8 @@
 
 Release verdict: **blocked**. The latest size-parity implementation is commit
 `cb198bada58ef8f08bdc60bc7ac5cea0b2993a0a`, based on the exact audited rc8 commit.
-Later audit/report-only changes do not constitute final versioned-tree release
-qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
+The newer file-policy engine qualification is recorded below. Neither run
+constitutes final versioned-tree release qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
 
 ## Environment and trusted setup
 
@@ -109,6 +109,32 @@ python3 scripts/rc9-legacy-kafka-driver /absolute/snapshots/rafter /absolute/rc9
 The report output must be new. Repeating the same committed tree and inputs
 produces identical bytes. Across commits the recorded implementation identity
 changes even when the measurement rows remain identical.
+
+## Repository-file engine qualification
+
+At `b32ee44d4dabf854977e42de98d0bcb5d8d8ca30`, `scripts/check` passed
+structure, formatting, strict workspace lint, **1,469 tests** (zero failures,
+three explicit ignored tests), and rustdoc. Complete self-analysis recorded
+910 Rust files, 1,469 base contexts, 1,202,401 projection work, and zero unresolved
+items. The gate stopped at the same four protected lock diagnostics:
+`LOCK-008`, `LOCK-026`, `LOCK-028`, and `LOCK-030`. No source violation remained.
+The standalone `scripts/package-check` subsequently passed on that clean tree.
+The archives retain the rc8 version and are not release-qualified assets.
+
+The 14 file-policy integration tests exercise every predicate, intended policy
+identities/diagnostics, changed-but-still-valid input binding, exact-set exchanges,
+missing positive subjects, persistent prohibitions, raw matching positions,
+non-overlapping quantities, excluded sources, bounded reads, and symlink/pruning
+completeness. Nine protected-diff tests and three new glob-prefix proof tests
+also passed in the canonical run. These are engine tests; frozen consumer file
+assertions are not yet marked verified on their basis. See
+[`files-index.json`](evidence/files-index.json) for code identity and log hashes.
+
+```sh
+cargo test --locked --offline -p zrail-testkit --test repository_files
+cargo test --locked --offline -p zrail-core diff::files
+cargo test --locked --offline -p zrail-core path::
+```
 
 ## Other reproduction commands
 

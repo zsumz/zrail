@@ -126,6 +126,23 @@ has four lock/input-drift diagnostics; the ordinary diff reports two protected
 epoch-comparison unknowns. See the archived migration preview and qualification
 report before proposing any authority update.
 
+## Bounded physical file predicates
+
+`repository.files` now supports required/forbidden counts, exact path sets,
+explicit name-component/stem restrictions, deliberately raw UTF-8 predicates,
+and byte equality. Selection is independent of source exclusions and compilation
+worlds; unresolved directory/link boundaries and oversized/malformed inputs fail
+closed. Coverage and explain expose the effective policy, quantities and inputs;
+lock binding covers inspected bytes and physical selection. Protected comparison
+respects quantifier direction and exact identities. See
+[the file-policy contract](../REPOSITORY-FILES.md) and
+[the qualified implementation evidence](evidence/files-index.json).
+
+The engine fixtures do not establish frozen consumer assertion parity. Individual
+ledger entries remain unverified until differential evidence and translated
+selection are linked. Structured TOML/JSON/YAML predicates, execution evidence,
+and the remaining bounded Rust predicates remain release blockers.
+
 ## Scoped budgets and frozen per-instance evidence
 
 Optional `source.rust.budgets` supplies package/path/role overrides, independent
