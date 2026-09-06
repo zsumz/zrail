@@ -45,6 +45,9 @@ All notable zrail changes are recorded here for reviewed release notes.
   every previously supported epoch and adds the rc8 epoch 6 path.
 - Strict facade relaxations and removed test-facade requirements are protected
   semantic grants. The existing declarative mode retains its rc8 meaning.
+- Repeated immutable lexical-scope boundary queries reuse completed work within
+  each source instance. Exhausted queries remain retryable and every analysis
+  pass clears its cache; the self-hosted work ceiling is unchanged.
 
 The rc9 replacement audit remains blocked; these capabilities do not establish
 full downstream parity or authorize removal of any consumer guardrail.

@@ -37,6 +37,7 @@ pub(super) struct IncludeBindings {
     pub(super) prelude_directives: BTreeMap<SourceInstanceId, Vec<super::model::PreludeDirective>>,
     pub(super) instances: SourceInstances,
     pub(super) module_cache: super::include_module_identity::ModuleIdentityCache,
+    pub(super) lexical_floor_cache: super::include_module_identity::LexicalFloorCache,
     extern_roots: BTreeMap<String, BTreeSet<String>>,
 }
 
@@ -139,6 +140,7 @@ impl IncludeBindings {
             prelude_directives: catalogs.prelude_directives,
             instances,
             module_cache: super::include_module_identity::ModuleIdentityCache::default(),
+            lexical_floor_cache: super::include_module_identity::LexicalFloorCache::default(),
             extern_roots,
         }
     }

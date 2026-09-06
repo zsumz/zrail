@@ -93,7 +93,7 @@ impl IncludeBindings {
                 )?);
             }
         }
-        if self.lexical_floor(instance, scope, budget)? == 0
+        if floor == 0
             && let (Some(parent), SourceEntry::Include(edge)) =
                 (source.parent, &source.entered_from)
         {

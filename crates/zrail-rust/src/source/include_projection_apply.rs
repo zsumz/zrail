@@ -62,6 +62,7 @@ impl IncludeBindings {
     ) -> Vec<Finding> {
         // Each pass accounts for its own unique transitions, independent of prior calls.
         self.module_cache.borrow_mut().clear();
+        self.lexical_floor_cache.borrow_mut().clear();
         let context_metrics = self.instances.metrics();
         index.analysis_metrics.base_contexts = context_metrics.base_contexts;
         index.analysis_metrics.derived_contexts = context_metrics.derived_contexts;
