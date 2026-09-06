@@ -7,9 +7,9 @@ published. The user approved retiring Rafter's private-name policy; see
 
 This branch implements strict facades, scoped size budgets, and bounded physical
 file/raw-text predicates, UTF-8 equality, and bounded authored TOML/JSON field
-assertions, and whole-Cargo.lock package count/identity inventories. It does
-**not** yet deliver rc9
-replacement coverage. See [exact reviewed assertion blockers](BLOCKERS.md),
+assertions, whole-Cargo.lock package count/identity inventories, and exact authored
+Rust method-call quantities. Verified rc9 replacement coverage remains incomplete.
+See [exact reviewed assertion blockers](BLOCKERS.md),
 [qualification commands and results](QUALIFICATION.md), and
 [conditional downstream cutovers](CUTOVERS.md).
 
@@ -71,7 +71,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 363 | 321 | 320 |
+| kafka-driver | 826 | 772 | 363 | 325 | 320 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
@@ -486,3 +486,14 @@ claims must remain distinct from resolved identity, expanded source, and
 compilation-world quantities. Existing call-owner invocation semantics remain
 unchanged. Strict item-file parser preconditions cannot be replaced silently by
 zrail's separately supported expression-fragment parsing.
+
+Authored method quantities and strict file parsing are now implemented for
+`KD-TRANSPORT-METHODS`, `KD-TRANSPORT-DETECTOR-METHODS`, and the two transport parse
+preconditions. The [native inventory contract](../RUST-INVENTORIES.md) preserves
+authored cfg branches and physical occurrence identity independently of semantic
+receiver resolution. Twenty source-bound synthetic collector comparisons and
+ten integration tests pass. The [method policy fragment](policies/kafka-driver.transport-methods.fragment.toml)
+preserves eleven exact map entries and twenty occurrences. Full frozen selection
+and original detector-fixture parity remain open; all four assertions stay
+unverified. The ledger therefore records 498 implemented and 484 verified
+assertions out of 559 reviewed instances.

@@ -1,8 +1,9 @@
 # Reproducing the current rc9 evidence
 
-Release verdict: **blocked**. The latest qualification-text parity, canonical gate,
-and archive checkpoint is `7c6c01d0af8bdeee598e87c3c8fae97ce72b9a0c`, based on the exact
-audited rc8 commit. Whole-lock parity retains its `5251b4f056741768eb667c74d6e0949257ca843b`
+Release verdict: **blocked**. The latest authored-method engine, canonical gate,
+and archive checkpoint is `e5f8178123658369ba8cbfbbc0ad068261be03c9`.
+Qualification-text parity retains its `7c6c01d0af8bdeee598e87c3c8fae97ce72b9a0c`
+identity, based on the exact audited rc8 commit. Whole-lock parity retains its `5251b4f056741768eb667c74d6e0949257ca843b`
 identity. Manifest-field parity retains its
 `c7ff4588f029169c10cce191be3bac3ceaec9e2d` identity. Earlier evidence retains its
 own implementation identity below. None constitutes final versioned-tree release
@@ -593,3 +594,51 @@ line counts with bounded escaped samples, invalid UTF-8, and stale input binding
 The new raw claims preserve comments and strings deliberately; they do not prove
 workflow structure, Rust code order, or command execution. Final versioned-tree
 release qualification and full downstream policy bundles remain open.
+
+## Authored method inventory checkpoint
+
+At `e5f8178123658369ba8cbfbbc0ad068261be03c9`, `scripts/check` passes structure,
+formatting, strict workspace lint, **1,548 tests**, and rustdoc, then stops at
+exactly `LOCK-008`, `LOCK-026`, `LOCK-028`, and `LOCK-030`. Source analysis is
+complete: 1,005 physical Rust files, 1,594 base contexts, zero derived contexts,
+1,166,682 projection work, and zero unresolved items. Eleven qualification/timing
+tests require separate trusted invocations and remain ignored in the ordinary
+gate. Standalone `scripts/package-check` passes all three normalized archives and
+offline expanded checks at the same revision; Git status remains empty. The
+canonical archive and cleanliness steps are not reached, and the gate remains
+failed pending protected lock review.
+
+The [machine-readable checkpoint](evidence/method-inventory-index.json) binds
+both canonical logs and the archive log. The earlier `523bfd1` canonical run
+identified five additional self-hosting diagnostics. They were corrected by
+splitting the public export facade, placing the authored index under the parser,
+sharing the explanation's macro policy reference, and moving test-only process
+identity to its actual test file. Neither the reviewed contract nor lock changed.
+
+```sh
+cargo test --locked --offline -p zrail-core inventories
+cargo test --locked --offline -p zrail-testkit --test rust_inventories
+cargo test --locked --offline -p zrail-rust frozen_transport_methods_match
+python3 scripts/rc9-snapshots /absolute/snapshot-directory
+python3 scripts/rc9-transport-method-policies /absolute/snapshot-directory /fresh/policy.toml
+scripts/check
+scripts/package-check
+```
+
+Six schema/diff tests, ten integration tests, and twenty synthetic syntax cases
+exercise quantities, exact maps, receiver-independent spelling, qualified const
+generics, attributes, macro boundaries, cfg branches, repeated includes, excluded
+sources, missing subjects, malformed files, expression-only fragments, and bound
+input changes. The complete original transport collector is extracted byte for
+byte, with its parser and expected map, and compared against native observations.
+An initial mismatch demonstrated why macro-token observations cannot substitute
+for authored AST membership. Existing macro-aware facts remain unchanged; the
+optional authored index reuses ordinary facts and supplies otherwise unvisited
+expression contexts from the same parse.
+
+The translated method fragment preserves 11 `(file, method)` entries totaling
+20 occurrences. Its SHA-256 is
+`499efcbedcf45bdafbd2aa57a1383cdb91cb7680da4befdc503a4f75443fb027`.
+It remains a partial policy. Complete frozen production selection and the exact
+original detector fixture still require differential qualification. No new
+assertion is marked verified at this checkpoint.

@@ -818,7 +818,9 @@
           ],
           "remaining_candidate_ids": [],
           "removable_now": false,
-          "replacement_policy_ids": [],
+          "replacement_policy_ids": [
+            "rust:inventory:kd-transport-methods"
+          ],
           "assertion_review_complete": true,
           "assertion_review_notes": "All ten assertion sites and two parser-failure sites are reviewed. Complete frozen collector/helper semantics are recorded, including ExprPath function references, all syn::Path contexts, explicit source-side renames, duplicate-collapsing impl sets, and strict item parsing. Shared traversal/registry/read helpers remain separately inventoried."
         }
