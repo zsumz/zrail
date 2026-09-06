@@ -50281,11 +50281,535 @@
           "cause": "Native authored inventories and strict file-parse requirements are implemented; bind the exact original detector fixture and complete frozen production selection to reproducible differential evidence before marking assertion parity verified."
         }
       ]
+    },
+    {
+      "id": "KD-FACADE-PARSE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/facade.rs",
+        "file_sha256": "b22293ec6b8bb269a81ffd98264e6d393ea9985a12843b12cd810a8b042be850",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/facade.rs:8:65:failure-macro",
+        "instance": null,
+        "line": 8,
+        "column": 65,
+        "function": [
+          "implementation_items"
+        ],
+        "syntax_sha256": "fa3d19e0470ef69df12c486699279717dce1a0aae286b72f7dda213bb89d3161"
+      },
+      "intended_property": "Every selected facade or detector input must parse as a complete Rust file.",
+      "selection": {
+        "roots": [
+          "src",
+          "tests",
+          "crates/kafka-driver-core/src",
+          "crates/kafka-driver-probe/src",
+          "crates/kafka-driver-sim/src",
+          "crates/kafka-driver-transport/src"
+        ],
+        "extension": ".rs",
+        "world": "physical authored source; all cfg branches; original traversal does not deduplicate overlapping roots",
+        "facades": "file name lib.rs or mod.rs, or exact tests/guardrails.rs; also in-memory detector arguments"
+      },
+      "context": "Trusted source/configuration detector precondition; no driver protocol or runtime behavior executes.",
+      "matching_semantics": {
+        "kind": "syn::parse_file required success",
+        "expression_fallback": "forbidden"
+      },
+      "required_cardinality": {
+        "successful_parse": "every selected facade and detector source"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [
+          "rust.facades"
+        ],
+        "expected_diagnostics": [
+          "RUST-FACADE-002",
+          "RUST-PARSE-001"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-FACADE-PARSE",
+          "cause": "Stock wiring-only and test-facade policies already reject non-item fragments through RUST-FACADE-002, and malformed source fails parsing. Bind every frozen facade and the exact original implementation_items helper to positive/negative differential fixtures; preserve rc8 declarative fragment behavior."
+        }
+      ]
+    },
+    {
+      "id": "KD-REGISTRY-PARSE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/support.rs",
+        "file_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/support.rs:63:33:failure-macro",
+        "instance": null,
+        "line": 63,
+        "column": 33,
+        "function": [
+          "load_guardrails"
+        ],
+        "syntax_sha256": "a022b26e993a9814ee13426c2e629abf6af36d809599ff4d22c29c3a2413ee87"
+      },
+      "intended_property": "Guardrail configuration is UTF-8 TOML deserializable to the complete original typed Guardrails structure.",
+      "selection": {
+        "paths": [
+          "guardrails.toml"
+        ],
+        "consumers": "every load_guardrails and rust_files invocation"
+      },
+      "context": "Trusted source/configuration detector precondition; no driver protocol or runtime behavior executes.",
+      "matching_semantics": {
+        "kind": "typed TOML deserialization",
+        "unknown_fields": "ignored by original serde structures",
+        "duplicate_keys": "TOML parser rejects",
+        "required_fields": {
+          "schema": "u32",
+          "paths.rust_roots": "array<string>",
+          "budgets.facade": "usize",
+          "budgets.production": "usize",
+          "budgets.test": "usize",
+          "capabilities": "array<{root:string,forbidden:array<string>}>",
+          "dependencies.banned": "array<string>",
+          "dependencies.core_allowed": "array<string>",
+          "dependencies.driver_allowed": "array<string>",
+          "dependencies.probe_allowed": "array<string>",
+          "dependencies.transport_allowed": "array<string>",
+          "dependencies.kafka_wire_version": "string",
+          "dependencies.kafka_wire_checksum": "string",
+          "dependencies.kafka_wire_core_version": "string",
+          "dependencies.kafka_wire_core_checksum": "string",
+          "dependencies.bornera_version": "string",
+          "dependencies.bornera_checksum": "string",
+          "dependencies.bornera_core_version": "string",
+          "dependencies.bornera_core_checksum": "string",
+          "dependencies.bornera_rustls_version": "string",
+          "dependencies.bornera_rustls_checksum": "string"
+        },
+        "empty_arrays": "accepted by deserialization; live constraints remain separately governed"
+      },
+      "required_cardinality": {
+        "successful_parse": "the complete original registry"
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-REGISTRY-PARSE",
+          "cause": "Complete the typed registry-to-zrail conversion and schema compatibility evidence. Do not retain an unexecuted legacy registry as proof of translated policy; source registry read and type failures need explicit fixture bindings."
+        }
+      ]
+    },
+    {
+      "id": "KD-REGISTRY-SCHEMA",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/support.rs",
+        "file_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/support.rs:64:5:assertion-macro",
+        "instance": null,
+        "line": 64,
+        "column": 5,
+        "function": [
+          "load_guardrails"
+        ],
+        "syntax_sha256": "ea7342f720c8324e75e0bb3a0239618ef60a18d5c88a615c03cffb3996539306"
+      },
+      "intended_property": "The interpreted legacy guardrail registry has the supported schema identity.",
+      "selection": {
+        "paths": [
+          "guardrails.toml"
+        ],
+        "selector": [
+          "schema"
+        ]
+      },
+      "context": "Trusted source/configuration detector precondition; no driver protocol or runtime behavior executes.",
+      "matching_semantics": {
+        "kind": "u32 equality",
+        "expected": 1
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-REGISTRY-SCHEMA",
+          "cause": "Bind the supported source schema to the trusted conversion and resulting strict zrail contract schema; malformed, absent and unsupported versions need original/native comparison."
+        }
+      ]
+    },
+    {
+      "id": "KD-TRAVERSAL-DIRECTORY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/support.rs",
+        "file_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/support.rs:84:33:failure-macro",
+        "instance": null,
+        "line": 84,
+        "column": 33,
+        "function": [
+          "collect_rust_files"
+        ],
+        "syntax_sha256": "facdb3d1cd2c04f70e29796cb02fa0a6d9fdb65b894facef629a3d3e2354f4eb"
+      },
+      "intended_property": "Source discovery cannot silently omit an unreadable selected directory or entry.",
+      "selection": {
+        "roots": [
+          "src",
+          "tests",
+          "crates/kafka-driver-core/src",
+          "crates/kafka-driver-probe/src",
+          "crates/kafka-driver-sim/src",
+          "crates/kafka-driver-transport/src"
+        ],
+        "extension": ".rs",
+        "world": "physical authored source; all cfg branches; original traversal does not deduplicate overlapping roots",
+        "selection": "each configured source root and recursively visited directory, including directories with zero Rust files"
+      },
+      "context": "Trusted source/configuration detector precondition; no driver protocol or runtime behavior executes.",
+      "matching_semantics": {
+        "kind": "fallible filesystem traversal",
+        "operation": "fs::read_dir succeeds",
+        "ordering": "entries sorted by file_name; final paths sorted as PathBuf",
+        "directory_symlinks": "not recursed; non-directory paths with .rs extension are selected"
+      },
+      "required_cardinality": {
+        "successful_observations": "every attempted operation"
+      },
+      "exception_semantics": "none",
+      "disposition": "existing native rail",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TRAVERSAL-DIRECTORY",
+          "cause": "Qualify complete selected-root traversal and original I/O failure behavior, including missing and empty roots, unreadable directories, entry inspection failure, and symlink differences. Bind the intended completeness diagnostic before claiming parity."
+        }
+      ]
+    },
+    {
+      "id": "KD-TRAVERSAL-ENTRY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/support.rs",
+        "file_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/support.rs:85:51:failure-macro",
+        "instance": null,
+        "line": 85,
+        "column": 51,
+        "function": [
+          "collect_rust_files"
+        ],
+        "syntax_sha256": "8b3ec6865674ba30abcffbe6c09c0def34dcc61b95f1713571905ac7e8ba3344"
+      },
+      "intended_property": "Source discovery cannot silently omit an unreadable selected directory or entry.",
+      "selection": {
+        "roots": [
+          "src",
+          "tests",
+          "crates/kafka-driver-core/src",
+          "crates/kafka-driver-probe/src",
+          "crates/kafka-driver-sim/src",
+          "crates/kafka-driver-transport/src"
+        ],
+        "extension": ".rs",
+        "world": "physical authored source; all cfg branches; original traversal does not deduplicate overlapping roots",
+        "selection": "each configured source root and recursively visited directory, including directories with zero Rust files"
+      },
+      "context": "Trusted source/configuration detector precondition; no driver protocol or runtime behavior executes.",
+      "matching_semantics": {
+        "kind": "fallible filesystem traversal",
+        "operation": "every read_dir entry result succeeds",
+        "ordering": "entries sorted by file_name; final paths sorted as PathBuf",
+        "directory_symlinks": "not recursed; non-directory paths with .rs extension are selected"
+      },
+      "required_cardinality": {
+        "successful_observations": "every attempted operation"
+      },
+      "exception_semantics": "none",
+      "disposition": "existing native rail",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TRAVERSAL-ENTRY",
+          "cause": "Qualify complete selected-root traversal and original I/O failure behavior, including missing and empty roots, unreadable directories, entry inspection failure, and symlink differences. Bind the intended completeness diagnostic before claiming parity."
+        }
+      ]
+    },
+    {
+      "id": "KD-TRAVERSAL-TYPE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/support.rs",
+        "file_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/support.rs:93:37:failure-macro",
+        "instance": null,
+        "line": 93,
+        "column": 37,
+        "function": [
+          "collect_rust_files"
+        ],
+        "syntax_sha256": "664d0f72aa769993592ac7287fb829b6624dec95b6c9e669ba657132424f8706"
+      },
+      "intended_property": "Source discovery cannot silently omit an unreadable selected directory or entry.",
+      "selection": {
+        "roots": [
+          "src",
+          "tests",
+          "crates/kafka-driver-core/src",
+          "crates/kafka-driver-probe/src",
+          "crates/kafka-driver-sim/src",
+          "crates/kafka-driver-transport/src"
+        ],
+        "extension": ".rs",
+        "world": "physical authored source; all cfg branches; original traversal does not deduplicate overlapping roots",
+        "selection": "each configured source root and recursively visited directory, including directories with zero Rust files"
+      },
+      "context": "Trusted source/configuration detector precondition; no driver protocol or runtime behavior executes.",
+      "matching_semantics": {
+        "kind": "fallible filesystem traversal",
+        "operation": "every DirEntry::file_type succeeds",
+        "ordering": "entries sorted by file_name; final paths sorted as PathBuf",
+        "directory_symlinks": "not recursed; non-directory paths with .rs extension are selected"
+      },
+      "required_cardinality": {
+        "successful_observations": "every attempted operation"
+      },
+      "exception_semantics": "none",
+      "disposition": "existing native rail",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TRAVERSAL-TYPE",
+          "cause": "Qualify complete selected-root traversal and original I/O failure behavior, including missing and empty roots, unreadable directories, entry inspection failure, and symlink differences. Bind the intended completeness diagnostic before claiming parity."
+        }
+      ]
+    },
+    {
+      "id": "KD-TEST-PLACEMENT-PARSE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/test_location.rs",
+        "file_sha256": "a68c16120999ee4866fb67f0f3a0abfd540e23e354e4f12942efc1986da4db1a",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/test_location.rs:20:65:failure-macro",
+        "instance": null,
+        "line": 20,
+        "column": 65,
+        "function": [
+          "test_body_kinds"
+        ],
+        "syntax_sha256": "ff6629e65ee811351ad7ccdc47a0f675aef424dc018570e6d992594e71c55306"
+      },
+      "intended_property": "Every selected production source and detector input parses as a complete Rust file.",
+      "selection": {
+        "roots": [
+          "src",
+          "tests",
+          "crates/kafka-driver-core/src",
+          "crates/kafka-driver-probe/src",
+          "crates/kafka-driver-sim/src",
+          "crates/kafka-driver-transport/src"
+        ],
+        "extension": ".rs",
+        "world": "physical authored source; all cfg branches; original traversal does not deduplicate overlapping roots",
+        "exclude": "tests/** and *_test.rs",
+        "fixture": "test_body_kinds arguments"
+      },
+      "context": "Trusted source/configuration detector precondition; no driver protocol or runtime behavior executes.",
+      "matching_semantics": {
+        "kind": "syn::parse_file required success",
+        "expression_fallback": "forbidden"
+      },
+      "required_cardinality": {
+        "successful_parse": "every selected source input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [
+          "rust:inventory:kd-transport-methods"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-002"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TEST-PLACEMENT-PARSE",
+          "cause": "The authored inventory already requires strict file syntax over the same frozen production path selection. Bind the original test_body_kinds helper and its exact detector source to differential parser fixtures before claiming this separate assertion verified."
+        }
+      ]
+    },
+    {
+      "id": "KD-TEST-PLACEMENT-LIVE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/test_location.rs",
+        "file_sha256": "a68c16120999ee4866fb67f0f3a0abfd540e23e354e4f12942efc1986da4db1a",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/test_location.rs:52:5:assertion-macro",
+        "instance": null,
+        "line": 52,
+        "column": 5,
+        "function": [
+          "production_modules_contain_no_test_bodies"
+        ],
+        "syntax_sha256": "36ebdd39a41d14f5b0c02508127ae073c18120b5f985f0689ab8771e19c9d709"
+      },
+      "intended_property": "Production paths contain neither directly authored top-level test functions nor selected inline modules.",
+      "selection": {
+        "roots": [
+          "src",
+          "tests",
+          "crates/kafka-driver-core/src",
+          "crates/kafka-driver-probe/src",
+          "crates/kafka-driver-sim/src",
+          "crates/kafka-driver-transport/src"
+        ],
+        "extension": ".rs",
+        "world": "physical authored source; all cfg branches; original traversal does not deduplicate overlapping roots",
+        "exclude": "tests/** and *_test.rs"
+      },
+      "context": "Trusted source/configuration detector precondition; no driver protocol or runtime behavior executes.",
+      "matching_semantics": {
+        "kind": "top-level Rust item selection",
+        "function": "Item::Fn with an exact unqualified #[test] path",
+        "inline_module": "Item::Mod with content and a cfg list whose TokenStream::to_string contains case-sensitive literal test",
+        "nested_items": "not inspected independently",
+        "macros": "token contents are not parsed"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TEST-PLACEMENT-LIVE",
+          "cause": "Preserve the top-level selection and intentional raw cfg-token predicate, or obtain a separately approved normalization. Semantic cfg(test) detection alone permits legacy-forbidden cfg(not(test)) and feature=\"latest\" inline modules; nested detection also differs. No policy/diagnostic fixtures yet."
+        }
+      ]
+    },
+    {
+      "id": "KD-TEST-PLACEMENT-DETECTOR",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/test_location.rs",
+        "file_sha256": "a68c16120999ee4866fb67f0f3a0abfd540e23e354e4f12942efc1986da4db1a",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/test_location.rs:65:5:assertion-macro",
+        "instance": null,
+        "line": 65,
+        "column": 5,
+        "function": [
+          "inline_and_direct_tests_are_rejected_by_the_detector"
+        ],
+        "syntax_sha256": "5a677e2091425f8819d14030513ee065fcd525ff56394b29e7b5ff7b9d701cf1"
+      },
+      "intended_property": "The frozen fixture detects the direct test and inline test module in source order.",
+      "selection": {
+        "in_memory_source": "#[test] fn direct() {} #[cfg(test)] mod tests { #[test] fn nested() {} }",
+        "world": "all authored top-level syntax"
+      },
+      "context": "Trusted source/configuration detector precondition; no driver protocol or runtime behavior executes.",
+      "matching_semantics": {
+        "kind": "top-level Rust item selection",
+        "function": "Item::Fn with an exact unqualified #[test] path",
+        "inline_module": "Item::Mod with content and a cfg list whose TokenStream::to_string contains case-sensitive literal test",
+        "nested_items": "not inspected independently",
+        "macros": "token contents are not parsed"
+      },
+      "required_cardinality": {
+        "exact_ordered": [
+          "test function",
+          "inline test module"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TEST-PLACEMENT-DETECTOR",
+          "cause": "Execute the exact frozen detector fixture and compare the structural observations, including original order and cardinality; a generic nonzero zrail status is insufficient."
+        }
+      ]
     }
   ],
   "counts": {
-    "reviewed_assertion_instances": 559,
-    "implemented": 498,
+    "reviewed_assertion_instances": 568,
+    "implemented": 500,
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,

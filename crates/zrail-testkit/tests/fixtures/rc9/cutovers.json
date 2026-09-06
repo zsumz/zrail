@@ -229,11 +229,13 @@
           "reviewed_assertion_ids": [
             "KD-FACADE-FUNCTION",
             "KD-FACADE-INLINE",
-            "KD-FACADE-LIVE"
+            "KD-FACADE-LIVE",
+            "KD-FACADE-PARSE"
           ],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
           "removable_now": false,
           "replacement_policy_ids": [
+            "rust.facades",
             "rust:facades"
           ]
         },
@@ -756,7 +758,12 @@
             "KD-QUAL-READ-21",
             "KD-QUAL-READ-22",
             "KD-QUAL-READ-23",
-            "KD-QUAL-READ-24"
+            "KD-QUAL-READ-24",
+            "KD-REGISTRY-PARSE",
+            "KD-REGISTRY-SCHEMA",
+            "KD-TRAVERSAL-DIRECTORY",
+            "KD-TRAVERSAL-ENTRY",
+            "KD-TRAVERSAL-TYPE"
           ],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
           "removable_now": false,
@@ -793,10 +800,18 @@
           "path": "tests/guardrails/test_location.rs",
           "sha256": "a68c16120999ee4866fb67f0f3a0abfd540e23e354e4f12942efc1986da4db1a",
           "unit": "conditional checker/helper candidate",
-          "reviewed_assertion_ids": [],
-          "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
+          "reviewed_assertion_ids": [
+            "KD-TEST-PLACEMENT-DETECTOR",
+            "KD-TEST-PLACEMENT-LIVE",
+            "KD-TEST-PLACEMENT-PARSE"
+          ],
+          "remaining_candidate_ids": [],
           "removable_now": false,
-          "replacement_policy_ids": []
+          "replacement_policy_ids": [
+            "rust:inventory:kd-transport-methods"
+          ],
+          "assertion_review_complete": true,
+          "assertion_review_notes": "Both structural assertions and the strict parser precondition are reviewed. The original cfg token substring, top-level selection, ordered detector outputs, and fixture are preserved in the ledger. Shared traversal/configuration/read helpers remain separate review work."
         },
         {
           "path": "tests/guardrails/transport_authority.rs",

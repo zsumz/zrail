@@ -15,6 +15,7 @@ files and opaque or invalid syntax remain explicit review work.
 | `KD-DEP-DETECTOR-EXACT-NAME` | Import the exact detector fixture and execute its line-name extractor beside native line policies. |
 | `KD-DEP-DETECTOR-PRESENT-NAME` | Import the exact detector fixture and execute its line-name extractor beside native line policies. |
 | `KD-FACADE-LIVE` | Predicate fixtures pass; full downstream selection and complete declarative policy qualification remain open. |
+| `KD-FACADE-PARSE` | Stock wiring-only and test-facade policies already reject non-item fragments through RUST-FACADE-002, and malformed source fails parsing. Bind every frozen facade and the exact original implementation_items helper to positive/negative differential fixtures; preserve rc8 declarative fragment behavior. |
 | `KD-METADATA-PARENT` | Record the path-precondition proof and bind the exact translated license paths before closing this helper assertion. |
 | `KD-PROVENANCE-LOCK-PACKAGE-ARRAY` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
 | `KD-PROVENANCE-LOCK-PACKAGE-NAMES` | Account for the implicit all-entry name-index precondition. Existing Cargo parsing rejects non-string names more strictly; qualify this distinction and preserve complete lock scope. |
@@ -23,6 +24,8 @@ files and opaque or invalid syntax remain explicit review work.
 | `KD-PROVENANCE-bornera-rustls-VERSION-PREFIX` | Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority. |
 | `KD-PROVENANCE-kafka-wire-VERSION-PREFIX` | Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority. |
 | `KD-PROVENANCE-kafka-wire-core-VERSION-PREFIX` | Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority. |
+| `KD-REGISTRY-PARSE` | Complete the typed registry-to-zrail conversion and schema compatibility evidence. Do not retain an unexecuted legacy registry as proof of translated policy; source registry read and type failures need explicit fixture bindings. |
+| `KD-REGISTRY-SCHEMA` | Bind the supported source schema to the trusted conversion and resulting strict zrail contract schema; malformed, absent and unsupported versions need original/native comparison. |
 | `KD-RETIRED-BACKEND-VARIANT` | Bounded Rust enum-variant predicate and cfg/omission/duplicate fixtures remain open. |
 | `KD-RETIRED-CONSTRUCTION-LegacyBackend` | Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify. |
 | `KD-RETIRED-CONSTRUCTION-new_legacy` | Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify. |
@@ -42,6 +45,9 @@ files and opaque or invalid syntax remain explicit review work.
 | `KD-RETIRED-TREE-tcp` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
 | `KD-RETIRED-TREE-timer` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
 | `KD-RETIRED-TREE-tls` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
+| `KD-TEST-PLACEMENT-DETECTOR` | Execute the exact frozen detector fixture and compare the structural observations, including original order and cardinality; a generic nonzero zrail status is insufficient. |
+| `KD-TEST-PLACEMENT-LIVE` | Preserve the top-level selection and intentional raw cfg-token predicate, or obtain a separately approved normalization. Semantic cfg(test) detection alone permits legacy-forbidden cfg(not(test)) and feature="latest" inline modules; nested detection also differs. No policy/diagnostic fixtures yet. |
+| `KD-TEST-PLACEMENT-PARSE` | The authored inventory already requires strict file syntax over the same frozen production path selection. Bind the original test_body_kinds helper and its exact detector source to differential parser fixtures before claiming this separate assertion verified. |
 | `KD-TRANSPORT-ASSOCIATED` | Preserve the exact authored occurrence context, identity/set/count semantics and full physical selection with native inventories; qualify original detector outputs, aliases, cfg branches, macros and all unexpected/missing members. |
 | `KD-TRANSPORT-DETECTOR-ASSOCIATED` | Import the exact adversarial source and compare complete native observations with this original detector assertion; reject its architectural violations through the linked live inventory policies. |
 | `KD-TRANSPORT-DETECTOR-IMPLS` | Import the exact adversarial source and compare complete native observations with this original detector assertion; reject its architectural violations through the linked live inventory policies. |
@@ -54,6 +60,9 @@ files and opaque or invalid syntax remain explicit review work.
 | `KD-TRANSPORT-PARSE-FIXTURE` | Native authored quantities and strict file parsing are implemented; exact frozen production selection and the original detector fixture still need bound differential qualification. |
 | `KD-TRANSPORT-PARSE-PRODUCTION` | Native authored quantities and strict file parsing are implemented; exact frozen production selection and the original detector fixture still need bound differential qualification. |
 | `KD-TRANSPORT-RENAMES` | Preserve the exact authored occurrence context, identity/set/count semantics and full physical selection with native inventories; qualify original detector outputs, aliases, cfg branches, macros and all unexpected/missing members. |
+| `KD-TRAVERSAL-DIRECTORY` | Qualify complete selected-root traversal and original I/O failure behavior, including missing and empty roots, unreadable directories, entry inspection failure, and symlink differences. Bind the intended completeness diagnostic before claiming parity. |
+| `KD-TRAVERSAL-ENTRY` | Qualify complete selected-root traversal and original I/O failure behavior, including missing and empty roots, unreadable directories, entry inspection failure, and symlink differences. Bind the intended completeness diagnostic before claiming parity. |
+| `KD-TRAVERSAL-TYPE` | Qualify complete selected-root traversal and original I/O failure behavior, including missing and empty roots, unreadable directories, entry inspection failure, and symlink differences. Bind the intended completeness diagnostic before claiming parity. |
 | `KF-BUDGET-ALLOW-PATH` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
 | `KF-BUDGET-ALLOW-PRESENCE` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
 | `KF-BUDGET-ALLOW-UNIQUE` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |

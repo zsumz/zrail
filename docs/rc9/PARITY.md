@@ -61,7 +61,7 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 ## Machine-readable audit state
 
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **559 reviewed assertion instances**. The
+contains **568 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
 record 9,792 files and 72,155 syntax candidates. Every tracked path is included,
@@ -71,7 +71,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 363 | 325 | 320 |
+| kafka-driver | 826 | 772 | 372 | 327 | 320 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
@@ -495,5 +495,29 @@ receiver resolution. Twenty source-bound synthetic collector comparisons and
 ten integration tests pass. The [method policy fragment](policies/kafka-driver.transport-methods.fragment.toml)
 preserves eleven exact map entries and twenty occurrences. Full frozen selection
 and original detector-fixture parity remain open; all four assertions stay
-unverified. The ledger therefore records 498 implemented and 484 verified
-assertions out of 559 reviewed instances.
+unverified. At that native-method checkpoint, the ledger recorded 498 implemented and 484
+verified assertions out of 559 reviewed instances.
+
+
+## Remaining driver helper and placement assertions
+
+Nine additional assertion sites now have stable IDs: `KD-FACADE-PARSE`,
+`KD-REGISTRY-PARSE`, `KD-REGISTRY-SCHEMA`, the three `KD-TRAVERSAL-*` I/O
+preconditions, and the three `KD-TEST-PLACEMENT-*` assertions. This brings the
+ledger to 568 reviewed instances, 500 implemented predicates, and 484 verified
+assertions. All nine new assertions remain verification blockers. Existing strict
+facade and authored-inventory parsing cover two implementation requirements;
+they are reused rather than replaced with another parser.
+
+The frozen test-placement guard examines top-level items only. Its inline-module
+condition looks for the case-sensitive literal `test` in the rendered `cfg`
+token list. It therefore selects `cfg(not(test))` and `cfg(feature = "latest")`
+as well as `cfg(test)`. Nested items, qualified test attributes, and opaque macro
+bodies have different original behavior. The detector's exact ordered two-item
+result is a separate assertion. Semantic test reachability alone does not
+preserve these source predicates, and no normalization has been approved.
+
+The shared helper's required typed TOML fields, supported schema, and every
+fallible directory/entry/type observation are recorded separately. Its remaining
+invocation expansion and the wider non-Rust review stay open; accounting for the
+visible failure/assertion sites does not complete the repository inventory.
