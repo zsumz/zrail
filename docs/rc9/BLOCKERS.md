@@ -12,25 +12,9 @@ files and opaque or invalid syntax remain explicit review work.
 | Assertion ID | Cause |
 | --- | --- |
 | `KD-CI-ENFORCEMENT` | The mission explicitly requires replacing this prohibition with an enforced zrail lane. The new lane and its required policy/receipt evidence are not yet qualified. |
-| `KD-DEP-CI-GATE-COUNT` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
-| `KD-DEP-CI-MATRIX-RUNNER` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
-| `KD-DEP-CI-OS-MATRIX` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
 | `KD-DEP-DETECTOR-EXACT-NAME` | Import the exact detector fixture and execute its line-name extractor beside native line policies. |
 | `KD-DEP-DETECTOR-PRESENT-NAME` | Import the exact detector fixture and execute its line-name extractor beside native line policies. |
-| `KD-DEP-LF-ATTRIBUTES-01` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
-| `KD-DEP-LF-ATTRIBUTES-02` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
-| `KD-DEP-LF-ATTRIBUTES-03` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
-| `KD-DEP-LF-ATTRIBUTES-04` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
-| `KD-DEP-READ-ATTRIBUTES` | Newly expanded UTF-8 read precondition; frozen missing-input, wrong-kind, and invalid-byte differential fixtures remain to qualify. |
-| `KD-DEP-READ-CI` | Newly expanded UTF-8 read precondition; frozen missing-input, wrong-kind, and invalid-byte differential fixtures remain to qualify. |
-| `KD-DEP-READ-LOCK` | Newly expanded UTF-8 read precondition; frozen missing-input, wrong-kind, and invalid-byte differential fixtures remain to qualify. |
 | `KD-FACADE-LIVE` | Predicate fixtures pass; full downstream selection and complete declarative policy qualification remain open. |
-| `KD-LOCK-BAN-async-std` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
-| `KD-LOCK-BAN-async-trait` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
-| `KD-LOCK-BAN-smol` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
-| `KD-LOCK-BAN-tokio-rustls` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
-| `KD-LOCK-BAN-tokio-util` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
-| `KD-LOCK-BAN-tokio` | The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open. |
 | `KD-METADATA-PARENT` | Record the path-precondition proof and bind the exact translated license paths before closing this helper assertion. |
 | `KD-PROVENANCE-LOCK-PACKAGE-ARRAY` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
 | `KD-PROVENANCE-LOCK-PACKAGE-NAMES` | Account for the implicit all-entry name-index precondition. Existing Cargo parsing rejects non-string names more strictly; qualify this distinction and preserve complete lock scope. |

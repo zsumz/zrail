@@ -518,3 +518,26 @@ canonical runs: `43b1ddc37932b5e48ddc878399572287b6a4f7e9` exceeded the unchange
 Completed lexical-boundary caching repaired the workload; typed report records
 removed the macro violations. No ceiling or macro authority was broadened.
 The 141 focused resolver tests and strict workspace lint also pass.
+
+## Raw dependency differential qualification
+
+Two clean runs at `58e5835c82915144ebd1f147e536a9cbcb0af170` produced
+byte-identical reports for 16 policies and four frozen inputs: 157 fixture
+outcomes, 85 accepted and 72 rejected. Payload SHA-256:
+`81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194`. The [index](evidence/raw-dependency-index.json)
+binds the source, policy, fixture origins, compiler, test binary, and logs.
+
+```sh
+export ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots
+export ZRAIL_RC9_RAW_DEPENDENCY_REPORT=/absolute/evidence/raw-dependency.json
+cargo test --locked --offline -p zrail-rust \
+  qualify_all_frozen_kafka_driver_raw_dependency_assertions -- --ignored
+python3 scripts/rc9-raw-dependency-policies /absolute/snapshots /absolute/new-raw-policy.toml
+```
+
+Structure, format, strict workspace lint, the focused suite, and both frozen
+runs pass. The same committed tree has complete self-analysis:
+Analysis: complete; 969 Rust files, 1,544 base contexts, 0 derived contexts, 1,115,586 projection work, 0 unresolved.
+Self-check exits 1 with exactly the four existing rc8 lock-drift diagnostics.
+The complete canonical/archive checkpoint remains the earlier `5251b4f`; this
+slice does not claim that gate was rerun on its newer revision.

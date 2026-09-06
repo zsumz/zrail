@@ -3675,16 +3675,81 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-CI-GATE-COUNT",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-ci-gate-count",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b9e8ecefa03ae085602d915200924bfad7b866f639653834cf7a8afbbf8866eb"
+          },
+          {
+            "case": "missing-marker",
+            "policy_id": "repository:file:kd-dep-ci-gate-count",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "cc4a04ff279a502ea643bd7833a59a4ac819da1bdf611533d9b1aca12fca0e80"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-dep-ci-gate-count",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "cb10fa58ace414cb026b57c8db9a2527b610b2bcb397e39b7a5e758b8b14c6cd"
+          },
+          {
+            "case": "different-spacing",
+            "policy_id": "repository:file:kd-dep-ci-gate-count",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "538dcb19115b95361f1b1da65e5845a96ff72aa7466df005d6c390bef615a13f"
+          },
+          {
+            "case": "comments-only-workflow",
+            "policy_id": "repository:file:kd-dep-ci-gate-count",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "cb7e11d72cf7fa9ae684a2615079ee62be44b803db4657a712c04defb752982a"
+          },
+          {
+            "case": "duplicate-marker",
+            "policy_id": "repository:file:kd-dep-ci-gate-count",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "278f16c16cc34c7311c451d2a98ab29c31b637df68e0ef18ded8346d246404d7"
+          },
+          {
+            "case": "adjacent-markers",
+            "policy_id": "repository:file:kd-dep-ci-gate-count",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "d9a44bd81b81e5918a4238fb2c3620b6217d816ab74de409390ffea602566e49"
+          },
+          {
+            "case": "longer-command-with-same-marker",
+            "policy_id": "repository:file:kd-dep-ci-gate-count",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "075af4f83baa732717130f9da4ffa58e010b427c9a5fe14aa47813e0573ea659"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-CI-MATRIX-RUNNER",
@@ -3728,16 +3793,81 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-CI-MATRIX-RUNNER",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-ci-matrix-runner",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b9e8ecefa03ae085602d915200924bfad7b866f639653834cf7a8afbbf8866eb"
+          },
+          {
+            "case": "missing-marker",
+            "policy_id": "repository:file:kd-dep-ci-matrix-runner",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "372818d4a628939cec10f4f650cf07bb24bc72184b16b3d5070070dbc78c7910"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-dep-ci-matrix-runner",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "02cd106b535770ead92768b98a3ae071ff652666344f8313c28fd6de00466c17"
+          },
+          {
+            "case": "different-spacing",
+            "policy_id": "repository:file:kd-dep-ci-matrix-runner",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "448154e52c83cd1c7635f5a48c78de6bd478a0ea0a46e7eb81b13787c542f0cf"
+          },
+          {
+            "case": "comments-only-workflow",
+            "policy_id": "repository:file:kd-dep-ci-matrix-runner",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "cb7e11d72cf7fa9ae684a2615079ee62be44b803db4657a712c04defb752982a"
+          },
+          {
+            "case": "duplicate-marker",
+            "policy_id": "repository:file:kd-dep-ci-matrix-runner",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "9af5865cbfbc5a720329e480bf7728900efdcdac728f84452fa1f671a6b39e80"
+          },
+          {
+            "case": "split-marker",
+            "policy_id": "repository:file:kd-dep-ci-matrix-runner",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "de2548beb9c064151dbf7bcfdb457e3e463db70d29866efbbe1964b78d5051c2"
+          },
+          {
+            "case": "marker-in-unrelated-field",
+            "policy_id": "repository:file:kd-dep-ci-matrix-runner",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "a950957c2d1e4776fabea9940354894bc7d2196ba55879843d17e03faccf5ab8"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-CI-OS-MATRIX",
@@ -3781,16 +3911,81 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-CI-OS-MATRIX",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-ci-os-matrix",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b9e8ecefa03ae085602d915200924bfad7b866f639653834cf7a8afbbf8866eb"
+          },
+          {
+            "case": "missing-marker",
+            "policy_id": "repository:file:kd-dep-ci-os-matrix",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "96683df8be5a7cd3099a853e94e9a71a8bae9d34dca30799a1c34540f9f9d335"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-dep-ci-os-matrix",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "c902547eab90111ce1909830b4ea2ef1173c605a1a829976e46e0ee1621d1aeb"
+          },
+          {
+            "case": "different-spacing",
+            "policy_id": "repository:file:kd-dep-ci-os-matrix",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "a706c50be832758b0d00fecd8dd7c79a6e4289a05e2f09534d4c0a0cc5313559"
+          },
+          {
+            "case": "comments-only-workflow",
+            "policy_id": "repository:file:kd-dep-ci-os-matrix",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "cb7e11d72cf7fa9ae684a2615079ee62be44b803db4657a712c04defb752982a"
+          },
+          {
+            "case": "duplicate-marker",
+            "policy_id": "repository:file:kd-dep-ci-os-matrix",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "49c34654094848b3f7f422b0202a7f1a95d809c276d131b9966dadffafb53478"
+          },
+          {
+            "case": "split-marker",
+            "policy_id": "repository:file:kd-dep-ci-os-matrix",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "babb68e00e83d121abbdc380f13e713b47317d191dfbfa188cf67ff9746228a2"
+          },
+          {
+            "case": "marker-in-unrelated-field",
+            "policy_id": "repository:file:kd-dep-ci-os-matrix",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "66d8485ac9ae3ee02b39a4eccbe0e2a8cb647b2b2385127aef52cae9c2888c80"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-CORE-KEYS",
@@ -4810,16 +5005,97 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-LF-ATTRIBUTES-01",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-lf-attributes-01",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "9a0cfa004901ef93979ecaf57b434f884de24008e2bf7a8aac2f5aeb1440856b"
+          },
+          {
+            "case": "missing-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-01",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "88c9bb82d4d2e157c5288ed7b6e933d0a358c43095a7b101b3b981e6779bfd0f"
+          },
+          {
+            "case": "comment-only",
+            "policy_id": "repository:file:kd-dep-lf-attributes-01",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "d3cf6ab3a0fb242ae29740efb322f26fe8945cd7d73f3b0f119da753747256b3"
+          },
+          {
+            "case": "line-suffix",
+            "policy_id": "repository:file:kd-dep-lf-attributes-01",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "b445cd4fe751371f0ea9032c83052f75ac10adcf497635b74ac20e3bb476e0a5"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-dep-lf-attributes-01",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "331d3068fb71c75fbd568bffa0662a51d3971450bc2fa3d03c749eb73b15eea1"
+          },
+          {
+            "case": "internal-whitespace",
+            "policy_id": "repository:file:kd-dep-lf-attributes-01",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "2371e754e133229ebf4bcf7857d00ac1246c3af2656f0ac65ffb21e891cfdcdb"
+          },
+          {
+            "case": "padded-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-01",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "12261fe69b51a85d9af9ff491e5ea779879725b8d28a43b1247d97b8f5fe3997"
+          },
+          {
+            "case": "crlf",
+            "policy_id": "repository:file:kd-dep-lf-attributes-01",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "4f322c1420015313005b32729816063e669b37d715d51957ca9f529fb0e3378a"
+          },
+          {
+            "case": "duplicate-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-01",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "696419ec58b43200f254d95d7b0a191c58c8b4dc9eadb2eaad59bbcc3c8fddb2"
+          },
+          {
+            "case": "no-final-newline",
+            "policy_id": "repository:file:kd-dep-lf-attributes-01",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "6461868be2fb9779b45fa2e35d99cacad14820910d51fdacbfc72bd420ce0a67"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-LF-ATTRIBUTES-02",
@@ -4863,16 +5139,97 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-LF-ATTRIBUTES-02",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-lf-attributes-02",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "9a0cfa004901ef93979ecaf57b434f884de24008e2bf7a8aac2f5aeb1440856b"
+          },
+          {
+            "case": "missing-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-02",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "6f0e3ba7d1d6aa0da4392a42152a734b9f09ffcb990b05783b4bb5677fcd4adb"
+          },
+          {
+            "case": "comment-only",
+            "policy_id": "repository:file:kd-dep-lf-attributes-02",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "17311a9c72e386760ef5f8ff479ca3b39be8463aa8604301ed913217f6b4fdce"
+          },
+          {
+            "case": "line-suffix",
+            "policy_id": "repository:file:kd-dep-lf-attributes-02",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "2bdf171391f2ccfdc29db7d6a21fb985bce6594fc9cd70092d26e2e7e0b05f0a"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-dep-lf-attributes-02",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "5cbf6e7139d07868e39e5fa2f0dd662c6cd8587ef8b075db2b5e85869f7968aa"
+          },
+          {
+            "case": "internal-whitespace",
+            "policy_id": "repository:file:kd-dep-lf-attributes-02",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "44ae4289b34b319d64363df7145592eefbfd2c9b100a475ddb9207b380e4de00"
+          },
+          {
+            "case": "padded-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-02",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "8e63f105d2701071d0b136f8a8ceae98a4dcc219e8a9f3246c46130d822ac5f6"
+          },
+          {
+            "case": "crlf",
+            "policy_id": "repository:file:kd-dep-lf-attributes-02",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "4f322c1420015313005b32729816063e669b37d715d51957ca9f529fb0e3378a"
+          },
+          {
+            "case": "duplicate-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-02",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "f23513f4cf045686c946ed3771f00478f064e6946c884ebc4f45891ce4fd1d7a"
+          },
+          {
+            "case": "no-final-newline",
+            "policy_id": "repository:file:kd-dep-lf-attributes-02",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "6461868be2fb9779b45fa2e35d99cacad14820910d51fdacbfc72bd420ce0a67"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-LF-ATTRIBUTES-03",
@@ -4916,16 +5273,97 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-LF-ATTRIBUTES-03",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-lf-attributes-03",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "9a0cfa004901ef93979ecaf57b434f884de24008e2bf7a8aac2f5aeb1440856b"
+          },
+          {
+            "case": "missing-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-03",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "cae132c8a6d94b2d7ddfbd5b90cb877c23b0f33511638433eea83de619822bca"
+          },
+          {
+            "case": "comment-only",
+            "policy_id": "repository:file:kd-dep-lf-attributes-03",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "4b5b2a6d37a47b3bb2b98c5d305dabb75a6ba33ea6c1305d34839a7e76f27b3a"
+          },
+          {
+            "case": "line-suffix",
+            "policy_id": "repository:file:kd-dep-lf-attributes-03",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "388609103f3e8abd457329d832110ae971e2b73245d4206ab9780ce76ec7749a"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-dep-lf-attributes-03",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "5a05c11cc3f3ed1dcabfaf1a37a0257bcd5a67253726f5dc4935fda8aa6ba292"
+          },
+          {
+            "case": "internal-whitespace",
+            "policy_id": "repository:file:kd-dep-lf-attributes-03",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "77544630f7df72205753922701550083096eab41429864f69a335ae3c823e52c"
+          },
+          {
+            "case": "padded-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-03",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "c9a98783d5eee91b9f85e8283111a40be1785472210bf7a9e2dc4f3c745fb593"
+          },
+          {
+            "case": "crlf",
+            "policy_id": "repository:file:kd-dep-lf-attributes-03",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "4f322c1420015313005b32729816063e669b37d715d51957ca9f529fb0e3378a"
+          },
+          {
+            "case": "duplicate-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-03",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "eaeed17ec37c53bdcc18c9f74b23c6b7e09d76e3a257ccfc63ce65896b4c43cf"
+          },
+          {
+            "case": "no-final-newline",
+            "policy_id": "repository:file:kd-dep-lf-attributes-03",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "6461868be2fb9779b45fa2e35d99cacad14820910d51fdacbfc72bd420ce0a67"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-LF-ATTRIBUTES-04",
@@ -4969,16 +5407,97 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-LF-ATTRIBUTES-04",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-lf-attributes-04",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "9a0cfa004901ef93979ecaf57b434f884de24008e2bf7a8aac2f5aeb1440856b"
+          },
+          {
+            "case": "missing-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-04",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "8aeaf88efc2285f57ef3d10daddacb8bbb1dbc9149a56a1eff919684d8b53b42"
+          },
+          {
+            "case": "comment-only",
+            "policy_id": "repository:file:kd-dep-lf-attributes-04",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "cc19f94c61d4addd7828fa8e7044399edd30c82e8432c8952e50d6d59a004874"
+          },
+          {
+            "case": "line-suffix",
+            "policy_id": "repository:file:kd-dep-lf-attributes-04",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "bc881137f989a710bd91ee526f4851026209249810b4c3e7118dc513d4bea48c"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-dep-lf-attributes-04",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "2a20eb69e578721ec7ee92473914834473ee597fe0e31f2aa58f26896c6b86e8"
+          },
+          {
+            "case": "internal-whitespace",
+            "policy_id": "repository:file:kd-dep-lf-attributes-04",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "4a47c1fa49453f879a5c510905e69c6a06084a8b79f1be7c970e459234c81492"
+          },
+          {
+            "case": "padded-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-04",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "1857601daa5fb91be6127a6572013d0a0f2c1e8bfdd1f79e4623c2f171fbd26c"
+          },
+          {
+            "case": "crlf",
+            "policy_id": "repository:file:kd-dep-lf-attributes-04",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "4f322c1420015313005b32729816063e669b37d715d51957ca9f529fb0e3378a"
+          },
+          {
+            "case": "duplicate-line",
+            "policy_id": "repository:file:kd-dep-lf-attributes-04",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "a42b9165a317752b1958c59c588674dc056a2e617a547aeca4e6188a82b0732e"
+          },
+          {
+            "case": "no-final-newline",
+            "policy_id": "repository:file:kd-dep-lf-attributes-04",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "6461868be2fb9779b45fa2e35d99cacad14820910d51fdacbfc72bd420ce0a67"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-PARSE",
@@ -9433,16 +9952,121 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-LOCK-BAN-async-std",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "a1625448a083909073e738172a2875e2064cb17dd8a126eb8200d467d758cce2"
+          },
+          {
+            "case": "duplicate-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "65f094f2f132310f5358779655b94fa5621086bffa7432c65fc2303166aa2542"
+          },
+          {
+            "case": "padded-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "be9b56a14cc13bafc7e278a546326e00c32ce358961f439ef4cf142b51de31e5"
+          },
+          {
+            "case": "unrelated-section",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "757fdb0ebafcf5696f104ff06ab03cb0bff4762ba0d60a1be78cae74f603274e"
+          },
+          {
+            "case": "multiline-string",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "ff6aed1ee2fe57af0e2b0ed4b07b1a930a457b512914773c9b431652a7878029"
+          },
+          {
+            "case": "similar-name",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "f2b41b2cbec96c409f8eee03553c256a63327e4c8812f48945fb8277e40a0a10"
+          },
+          {
+            "case": "commented-line",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e1ee5bbd981ce713d81f318a5fb0504e89ccb370c5dca68825fc2ce17f612973"
+          },
+          {
+            "case": "trailing-comment",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "67292cd7502fe8740076ee200ff5430736e85223a85f395d646ecdac0627fb23"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "f5fbfa840b235dcfc8d8c4d4efa886e5354ae9349905ed0b07e3343c26459b88"
+          },
+          {
+            "case": "nonmatching-spacing",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b716eb303544deda4ecbc0845d78809d59f81bda627f3f932e24087ce5a4f8f9"
+          },
+          {
+            "case": "empty-input",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "case": "original-detector-fixture",
+            "policy_id": "repository:file:kd-lock-ban-async-std",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "075cfe19c1b50be97a1101939f5fea61ad83b1e33ce11eeed87e51711007dddb"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -9495,16 +10119,121 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-LOCK-BAN-async-trait",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "9bb11f7cd4a84ee4c0f96b65bda10ea8b8fd5d4cf65533a037e15c629ebdbfc0"
+          },
+          {
+            "case": "duplicate-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "ca740d67e9f0f3682b80328ca5da94b144f0dc2396560ccc4e22185597506fdb"
+          },
+          {
+            "case": "padded-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "b912991ee4e9b71b3109c1389affc37898df8f5bb2d3b0f4e982507c072f2249"
+          },
+          {
+            "case": "unrelated-section",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "a1bda3ad07c6e3005b5195fa67b2fec657edb778fa9e2865e708bc1b109bfe9c"
+          },
+          {
+            "case": "multiline-string",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "be2933896d57efa9ef75a0403d426f010eb260d80ea8080a352051c774653016"
+          },
+          {
+            "case": "similar-name",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "fa6291d600d89b364ff280a4ca556fc8610109eb517d07a9ddd282946eba175d"
+          },
+          {
+            "case": "commented-line",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "4268900347f3145d53d7238323ea8d8c5542abba34dadfc4db00acc44c7156d8"
+          },
+          {
+            "case": "trailing-comment",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "d3a3dd4de8c1e01e1e18ef7f5ebe3975167441d21d9ea9a5d7e9bd19f0f3fe14"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "862645629b6651b6398d6d49ca44a172ee6a1841d5516f00c3f8be072e3bd05f"
+          },
+          {
+            "case": "nonmatching-spacing",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "a35c6b6542519bdec69cafee4d912761e76e22f82f31af3fe0d2dccc433b4475"
+          },
+          {
+            "case": "empty-input",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "case": "original-detector-fixture",
+            "policy_id": "repository:file:kd-lock-ban-async-trait",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "075cfe19c1b50be97a1101939f5fea61ad83b1e33ce11eeed87e51711007dddb"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -9557,16 +10286,121 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-LOCK-BAN-smol",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "327db303168e40c88a250e25664d20245d3799955947718dfc74b599f626f62f"
+          },
+          {
+            "case": "duplicate-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "aecfc7ed6a519f5960a30a805af3ba1be9887d16b68b734bb0503a461945f563"
+          },
+          {
+            "case": "padded-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "bd308a28f6e97faa9a037c6bb02f6f6cf0973b8a953c8a6534cfdafb2a5bc972"
+          },
+          {
+            "case": "unrelated-section",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "9ac05cc4bc269e47f587dcc789d1c62cf4fd5469e484dca076fa7665842aa93f"
+          },
+          {
+            "case": "multiline-string",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "33771c298b1858d3bf1af2d8da6159105bbe950d281076ece706589d89f901f1"
+          },
+          {
+            "case": "similar-name",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "1456cd2dba2d930321f74f15af47943e95634afaddbf0e8d53326c1d3db50e08"
+          },
+          {
+            "case": "commented-line",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "3714c175a25effab2bef2c8b9f75de6f8ad9b4681737af7fa77d8d9a83f21c51"
+          },
+          {
+            "case": "trailing-comment",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "973da59bc47b537b2c689c77180a6c383c931414295ce322f4a95a0a33a2e1dd"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "abf944984dac2147ae9b70c7c7c6afc70498d24dc2d646520b53283e45d7e736"
+          },
+          {
+            "case": "nonmatching-spacing",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "d4ea0fa50322d8ccd2a6b7bb9114b184928eed3cdd6debb7b3c6689f6902579c"
+          },
+          {
+            "case": "empty-input",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "case": "original-detector-fixture",
+            "policy_id": "repository:file:kd-lock-ban-smol",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "075cfe19c1b50be97a1101939f5fea61ad83b1e33ce11eeed87e51711007dddb"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -9619,16 +10453,121 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-LOCK-BAN-tokio",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "7064da79c5302b17627c5229a2b3c063dea32604e8bf29af41e892ad904b93ce"
+          },
+          {
+            "case": "duplicate-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "bf2eb867e5fd5bf3ca40bc90cd2dcc808f54a4e54b1e01e7c7821fa1bd1faf0d"
+          },
+          {
+            "case": "padded-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "dc0ec26f4408dfbc7128458c148774a2334faeba74ca89bd90f7e54d61481134"
+          },
+          {
+            "case": "unrelated-section",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "a5908aef7508daaefe4bf18651e848b2df41470ac25968997df6ebdbd3712593"
+          },
+          {
+            "case": "multiline-string",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "07009d94028409c87742ee6feccaff6dfcb2fdfba6d7e02a110319d5097c7504"
+          },
+          {
+            "case": "similar-name",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "dfc467e9128b57510015891bc8e6d8237a0238cede057afb9edf1dd1b1e3ce51"
+          },
+          {
+            "case": "commented-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "bb069b82fe5e17d304276317b7aabc9857eec4e53410bfb71546f8610021f604"
+          },
+          {
+            "case": "trailing-comment",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15198a55e7f64bc1ccd0a530a337d7c9e48aa8455caebc01db0a9e9c5bc33761"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "f954024016f1b0fbbd5b5806a95d4ff5a32ecf4349db53695714e1d5553bcb1f"
+          },
+          {
+            "case": "nonmatching-spacing",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "725ae7a710f195db95bccf0195cae88fd0f620a257595c8038dce4c97ed2b0e1"
+          },
+          {
+            "case": "empty-input",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "case": "original-detector-fixture",
+            "policy_id": "repository:file:kd-lock-ban-tokio",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "075cfe19c1b50be97a1101939f5fea61ad83b1e33ce11eeed87e51711007dddb"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -9681,16 +10620,121 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-LOCK-BAN-tokio-rustls",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "f1d13f5836da8fbf4e41395a61896ed26d2653b122bf189aae4cf61b6d2d79e6"
+          },
+          {
+            "case": "duplicate-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "723f6530132d221d35365bf66ae487ba2a451f2ca3670173950d13c6461cbfe6"
+          },
+          {
+            "case": "padded-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "040a5bea2010847b32d1886b5d86185f940bad30109c0447d20cf368d9bf21d1"
+          },
+          {
+            "case": "unrelated-section",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "a5dd1bb2236ee4c44a5e1c306a53bfe457e930a4f7d41792dd3e43c8724cf80e"
+          },
+          {
+            "case": "multiline-string",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "a5af39b792b8494cd708a861cfe937c9e9e5533599da2bd248f21adbd115cf00"
+          },
+          {
+            "case": "similar-name",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "065cb623b0cd216325e571a0eba88e365dd7579a8bfdaac95308782361ff36c5"
+          },
+          {
+            "case": "commented-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "7fc7ec2e7f734b0a9141f68e505210a6c222e558c807731c1fe89b9b2e7647d3"
+          },
+          {
+            "case": "trailing-comment",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "69da2560d2b8468c8cb0ad88aa0336dc88b4cb8ee084ffdd07f5d5275f254811"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "04bfcdcae9c56d42ee5c0ed6518391215c72ee00559acc622eec90f558dfd25e"
+          },
+          {
+            "case": "nonmatching-spacing",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "8576dbf29aa7aff1ed1c808e2b668e49591a4226b30c5ed3f5587c0442e8ebb5"
+          },
+          {
+            "case": "empty-input",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "case": "original-detector-fixture",
+            "policy_id": "repository:file:kd-lock-ban-tokio-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "075cfe19c1b50be97a1101939f5fea61ad83b1e33ce11eeed87e51711007dddb"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -9743,16 +10787,121 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-LOCK-BAN-tokio-util",
-          "cause": "The frozen literal policy is translated; differential qualification of its exact raw matching semantics remains open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "f525e9f3cd36ab4fa5a6886398dd04ea2b25656e63552fee13d827958ae16d92"
+          },
+          {
+            "case": "duplicate-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "aa7f9b7b9b81cb3646c119838012ff85e503e9ddfa9165cb733f2f7336ecb076"
+          },
+          {
+            "case": "padded-forbidden-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "2572d26057331b41374d84d94da16200c31e1abf9fca3634e77efb9c30e324b5"
+          },
+          {
+            "case": "unrelated-section",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "ba5379dd3291f3fd39ce771d7e6a1b5982e20af9943e0fb8f713fa10b85ce457"
+          },
+          {
+            "case": "multiline-string",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-004",
+            "source_sha256": "318a9e0cb218b71a88cca1db6c8997c85c35d6c884a7c39732bfe13c18a4b1a2"
+          },
+          {
+            "case": "similar-name",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "f3b8ebbe28f3df2374630a795d6f10b21842da3c22147664ac96fe43a5152ae5"
+          },
+          {
+            "case": "commented-line",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e7c6ad6f06e390fab10916f2c9966a1e1637d783ae96f12470458c38779490b2"
+          },
+          {
+            "case": "trailing-comment",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "6ead0b56ade8564ff128d83000a2ed805af4915c4f73af1d35d4491a1249a1c1"
+          },
+          {
+            "case": "changed-case",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "668eb67b8bba868b8938c0cd8edb923fb20e3b3012834801824a8a4aaf52a3cf"
+          },
+          {
+            "case": "nonmatching-spacing",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "cd1a9672e4eb5177aaa369ad8c5267d3bd1ae1947752636d4fb3890782a306af"
+          },
+          {
+            "case": "empty-input",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "case": "original-detector-fixture",
+            "policy_id": "repository:file:kd-lock-ban-tokio-util",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "075cfe19c1b50be97a1101939f5fea61ad83b1e33ce11eeed87e51711007dddb"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -33709,16 +34858,57 @@
           "REP-FILE-005"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-READ-LOCK",
-          "cause": "Newly expanded UTF-8 read precondition; frozen missing-input, wrong-kind, and invalid-byte differential fixtures remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-read-lock",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-read-lock",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-read-lock",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": null
+          },
+          {
+            "case": "wrong-entry-kind",
+            "policy_id": "repository:file:kd-dep-read-lock",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": null
+          },
+          {
+            "case": "empty-readable-input",
+            "policy_id": "repository:file:kd-dep-read-lock",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-READ-CI",
@@ -33762,16 +34952,57 @@
           "REP-FILE-005"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-READ-CI",
-          "cause": "Newly expanded UTF-8 read precondition; frozen missing-input, wrong-kind, and invalid-byte differential fixtures remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-read-ci",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b9e8ecefa03ae085602d915200924bfad7b866f639653834cf7a8afbbf8866eb"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-read-ci",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-read-ci",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": null
+          },
+          {
+            "case": "wrong-entry-kind",
+            "policy_id": "repository:file:kd-dep-read-ci",
+            "path": ".github/workflows/ci.yml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": null
+          },
+          {
+            "case": "empty-readable-input",
+            "policy_id": "repository:file:kd-dep-read-ci",
+            "path": ".github/workflows/ci.yml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-READ-ATTRIBUTES",
@@ -33815,16 +35046,57 @@
           "REP-FILE-005"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-READ-ATTRIBUTES",
-          "cause": "Newly expanded UTF-8 read precondition; frozen missing-input, wrong-kind, and invalid-byte differential fixtures remain to qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-read-attributes",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "9a0cfa004901ef93979ecaf57b434f884de24008e2bf7a8aac2f5aeb1440856b"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-read-attributes",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-read-attributes",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": null
+          },
+          {
+            "case": "wrong-entry-kind",
+            "policy_id": "repository:file:kd-dep-read-attributes",
+            "path": ".gitattributes",
+            "accepted": false,
+            "diagnostic": "REP-FILE-005",
+            "source_sha256": null
+          },
+          {
+            "case": "empty-readable-input",
+            "policy_id": "repository:file:kd-dep-read-attributes",
+            "path": ".gitattributes",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/raw-dependency-parity.json.gz",
+          "payload_sha256": "81ec3aaece0c9952bca02d517c5a016cfe22d08a9aa78c44270f0d7a66715194",
+          "implementation_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170"
         }
-      ]
+      },
+      "blockers": []
     }
   ],
   "counts": {
@@ -33833,7 +35105,7 @@
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 343,
+      "new engine capability": 359,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },

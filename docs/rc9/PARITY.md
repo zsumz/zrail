@@ -71,17 +71,18 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 231 | 196 | 179 |
+| kafka-driver | 826 | 772 | 231 | 196 | 195 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
-The **343 verified assertions** comprise five facade predicates, four
+The **359 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus five authored dependency key
 inventories, 35 authored dependency-field assertions and preconditions, and
 36 authored provenance assertions and parser preconditions, and 20 whole-lock
-cardinality/version/source/checksum assertions.
+cardinality/version/source/checksum assertions, plus 16 raw dependency/read
+assertions.
 Size instances include
 all 141 measured baselines and three hard allowances. Their disposition
 is **new engine capability**; verified counts for the other four dispositions
@@ -406,6 +407,20 @@ No source-analysis certificate or downstream lock was produced by this slice.
 Review expanded the shared `read` helper into `KD-DEP-READ-LOCK`,
 `KD-DEP-READ-CI`, and `KD-DEP-READ-ATTRIBUTES`. These require physical readable
 UTF-8 inputs independently of absent-marker rules. The three new rows and
-thirteen translated raw predicates remain unverified pending their frozen
-differential fixtures. The raw lock bans retain line spelling and deliberately
+thirteen raw predicates now have verified frozen differential evidence. The raw lock bans retain line spelling and deliberately
 do not claim parsed Cargo identity. CI literal checks do not prove execution.
+
+## Raw dependency differential parity
+
+At `58e5835c82915144ebd1f147e536a9cbcb0af170`, all 16 policies
+accepted the frozen inputs. Two byte-identical runs cover 157 fixtures:
+85 accepted and 72 rejected through `REP-FILE-004` or `REP-FILE-005` for the
+intended policy. See the [bound evidence](evidence/raw-dependency-index.json).
+
+The original raw lock extractor and complete CI/attributes bodies execute
+unchanged. Full-line matching preserves exact names, Unicode trimming, CRLF,
+comments, and suffix behavior. Raw CI checks still accept markers inside
+comments or unrelated fields, as the legacy assertions do. They establish no
+workflow execution or YAML claim. Required file reads are qualified separately
+from absence bans. The two original name-extractor detector assertions remain
+open pending their own complete replacement-fixture linkage.
