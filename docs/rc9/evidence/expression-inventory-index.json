@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "implementation_commit": "b763cebc431f6f2449c32025e88a68323d08da63",
+  "implementation_tree": "ecd75a21a811255c66cd060e62721136a5477973",
+  "steps": [
+    {
+      "step": "canonical",
+      "command": [
+        "scripts/check"
+      ],
+      "exit_status": 1
+    },
+    {
+      "step": "package",
+      "command": [
+        "scripts/package-check"
+      ],
+      "exit_status": 0
+    }
+  ],
+  "git_status_unchanged": true,
+  "lock_authority_accepted": false,
+  "full_repository_qualified": false,
+  "claim": "Native authored expression-path inventory with frozen synthetic collector parity; complete frozen-scope differential qualification remains pending.",
+  "canonical": {
+    "exit_status": 1,
+    "passed": 1557,
+    "failed": 0,
+    "ignored": 12,
+    "analysis_complete": true,
+    "rust_files": 1015,
+    "base_contexts": 1606,
+    "derived_contexts": 0,
+    "projection_work": 1172598,
+    "unresolved": 0,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-016",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_step_reached": false,
+    "cleanliness_step_reached": false
+  },
+  "gate_drift": "LOCK-016 binds the intentional addition of the rc9 assertion ledger and artifact-evidence validation tests to scripts/check. The reviewed root contract and lock are unchanged; this is pending authority review, not a source-analysis failure.",
+  "standalone_archive_check_passed": true,
+  "core_schema_and_diff_tests": 8,
+  "adversarial_integration_tests": 13,
+  "frozen_collector_expression_syntax_cases": 22,
+  "new_verified_assertions": 0,
+  "policy_sha256": "4eff9ae08134fb802fcd4abffdc7bfc63ce79f03d40f648ee44afb6d76fe7a58",
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/expression-inventory-canonical.log.gz",
+      "implementation_commit": "b763cebc431f6f2449c32025e88a68323d08da63",
+      "exit_status": 1,
+      "payload_sha256": "021ac4a83b917da1a4f6d794d0556325f9a4cb1a2c4d9a2346e76cbf2962176d",
+      "compressed_sha256": "e59ac451de0aee683b0bd0c2d36b2cdba1b62719862a8f22d2e9b5054ce556d4"
+    },
+    {
+      "artifact": "docs/rc9/evidence/expression-inventory-package.log.gz",
+      "implementation_commit": "b763cebc431f6f2449c32025e88a68323d08da63",
+      "exit_status": 0,
+      "payload_sha256": "7be4c788051b26acbd8603e1f9de52bd89ecea8f2c0995fd5ebd20975077a775",
+      "compressed_sha256": "9ba04807cab5e6425ca4e62e9807afe13533b7ff4b669ffa02118e6579725e45"
+    }
+  ]
+}

@@ -712,3 +712,30 @@ full count maps, original parser outcomes, frozen input identities, policy
 selectors, quality, complete totals, and intended diagnostics. Its two tests
 include twenty evidence-tampering variants. This closes four assertion IDs,
 without claiming full consumer Cargo/source, lock, or execution qualification.
+
+
+## Expression-path implementation checkpoint
+
+At clean `b763cebc431f6f2449c32025e88a68323d08da63`, the canonical gate passed
+structure, formatting, strict workspace lint, the assertion ledger and four
+artifact-validator tests, **1,557 Rust tests** (zero failures, twelve ignored),
+and rustdoc. Source analysis completed over 1,015 Rust files and 1,606 base
+contexts with 1,172,598 projection work, zero derived contexts and zero unresolved
+items. [The checkpoint index](evidence/expression-inventory-index.json) binds
+that revision, tree, policy and both logs. The gate remains **failed** on
+`LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028` and `LOCK-030`.
+
+`LOCK-016` is the reviewed check-runner digest changing when the new parity
+evidence validation was added to `scripts/check`. The stronger gate is retained;
+no root contract or lock was changed and no authority was accepted. The trusted
+runner initially flagged this extra diagnostic for inspection; the source-bound
+gate digest explains it. Standalone archive verification passed all three
+normalized archives and expanded offline checks, with a clean pinned checkout.
+The canonical archive and cleanliness steps were not reached.
+
+Eight core schema/diff tests, thirteen source integration tests and twenty-two
+frozen expression-path syntax comparisons pass. The partial expression-path
+policy SHA-256 is
+`4eff9ae08134fb802fcd4abffdc7bfc63ce79f03d40f648ee44afb6d76fe7a58`.
+Full frozen-source and original detector qualification remain pending at this
+checkpoint; no further assertion is marked verified.
