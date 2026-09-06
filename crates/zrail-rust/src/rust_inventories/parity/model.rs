@@ -79,10 +79,17 @@ pub(super) fn hashes(sources: &BTreeMap<String, String>) -> Vec<RustInventoryInp
 }
 
 pub(super) fn detector_source() -> String {
-    let source = include_str!(
-        "../../../../zrail-testkit/tests/fixtures/rc9/transport_methods/transport_authority.rs"
+    let source =
+        fs::read_to_string(project().join(
+            "crates/zrail-testkit/tests/fixtures/rc9/transport_methods/transport_authority.rs",
+    ))
+    .expect("bound original detector source");
+    assert_eq!(
+        sha256_hex(source.as_bytes()),
+        "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+        "parse only the exact frozen detector bytes",
     );
-    let syntax = syn::parse_file(source).expect("exact original detector source");
+    let syntax = syn::parse_file(&source).expect("exact original detector source");
     let function = syntax
         .items
         .iter()
