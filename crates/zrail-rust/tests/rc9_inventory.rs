@@ -2,6 +2,10 @@
 
 #[path = "rc9_inventory/collector.rs"]
 mod collector;
+#[path = "rc9_inventory/inputs.rs"]
+mod inputs;
+#[path = "rc9_inventory/inputs_test.rs"]
+mod inputs_test;
 #[path = "rc9_inventory/snapshot.rs"]
 mod snapshot;
 
@@ -14,6 +18,7 @@ struct Census<'a> {
     status: &'static str,
     assertion_inventory_complete: bool,
     snapshots: serde_json::Value,
+    additional_rust_inputs_sha256: String,
     candidate_count: usize,
     files: &'a [snapshot::FileRecord],
     limitations: [&'static str; 4],
@@ -124,11 +129,13 @@ fn write_frozen_assertion_census() {
         serde_json::from_slice(&fs::read(testkit.join("snapshots.json")).expect("read pins"))
             .expect("parse pins");
     assert_eq!(manifest["schema"], 1);
+    let (additional, additional_rust_inputs_sha256) = inputs::AdditionalInputs::read(&testkit);
     let mut files = Vec::new();
     for pin in manifest["consumers"].as_array().expect("consumer pins") {
         let root = Path::new(&roots).join(pin["name"].as_str().expect("snapshot directory"));
-        files.extend(snapshot::inspect(&root, pin));
+        files.extend(snapshot::inspect(&root, pin, &additional));
     }
+    additional.verify(&files);
     let mut ids = BTreeSet::new();
     for candidate in files.iter().flat_map(|file| &file.candidates) {
         assert!(
@@ -138,7 +145,7 @@ fn write_frozen_assertion_census() {
     }
     let census = serde_json::to_value(Census {
         schema: 1, status: "discovery-only", assertion_inventory_complete: false,
-        snapshots: manifest, candidate_count: ids.len(), files: &files,
+        snapshots: manifest, additional_rust_inputs_sha256, candidate_count: ids.len(), files: &files,
         limitations: [
             "Every candidate and non-Rust file requires assertion-level review.",
             "Helper results, registry instantiations, raw-text predicates, and failure branches require manual expansion.",

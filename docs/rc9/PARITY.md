@@ -615,3 +615,21 @@ preserves thirteen suffixes and eight exact per-file quantities.
 `KD-TRANSPORT-ASSOCIATED` and `KD-TRANSPORT-DETECTOR-ASSOCIATED` are implemented
 but remain unverified pending complete frozen-source and exact detector parity.
 The ledger is **575 reviewed / 502 implemented / 488 verified**.
+
+
+## Nonstandard Rust fragment discovery gap
+
+`RC9-INVENTORY-FRAGMENTS` identifies seven already-hashed `.inc` inputs that the
+`.rs`-only census did not parse: one Kafkars imported-macro bypass fixture and six
+Rafter artifact/Maelstrom verifier fragments. The
+[explicit input registry](../../crates/zrail-testkit/tests/fixtures/rc9/additional-rust-inputs.json)
+binds their frozen repository, revision, exact path and bytes, plus the reviewed
+including/fixture source identities. This supplies discovery input only; it does
+not attest macro authority or classify independent verification as a generic
+architecture policy.
+
+The trusted census now supports these reviewed item fragments without guessing
+from arbitrary extensions. Five census tests pass, including stale source/review
+identities, duplicate registrations, unsupported syntax and path selectors. The
+committed census still needs regeneration before the discovery gap can close;
+new candidates will require assertion-level review.

@@ -51543,7 +51543,8 @@
   "open_discovery_blockers": [
     "RC9-INVENTORY-KD",
     "RC9-INVENTORY-KF",
-    "RC9-INVENTORY-RF"
+    "RC9-INVENTORY-RF",
+    "RC9-INVENTORY-FRAGMENTS"
   ],
   "external_input_blockers": [],
   "closed_discovery_findings": [
@@ -51551,6 +51552,13 @@
       "id": "RC9-INVENTORY-FALLIBLE-CALLS",
       "evidence": "docs/rc9/evidence/census-fallible-index.json",
       "resolution": "Added 7794 parsed fallible-call candidates with unique call-identifier locations. All prior candidates and frozen file identities are unchanged; new candidates still require assertion-level review."
+    }
+  ],
+  "open_discovery_findings": [
+    {
+      "id": "RC9-INVENTORY-FRAGMENTS",
+      "cause": "Seven explicitly reviewed Rust .inc fragments have frozen byte identities in the census but no parsed candidate discovery. Regenerate the census using additional-rust-inputs.json; review the added candidates before claiming assertion completeness.",
+      "inputs": "additional-rust-inputs.json"
     }
   ]
 }

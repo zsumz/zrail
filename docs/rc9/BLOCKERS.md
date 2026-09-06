@@ -4,7 +4,9 @@ Release verdict: **blocked**. This list names each reviewed but unverified
 assertion instance. It does not close the additional discovery blockers
 `RC9-INVENTORY-KD`, `RC9-INVENTORY-KF`, and `RC9-INVENTORY-RF`.
 The fallible-call discovery gap is closed by the expanded census; its new
-candidates still require review.
+candidates still require review. `RC9-INVENTORY-FRAGMENTS` records seven Rust
+`.inc` inputs whose candidate discovery must be regenerated from the bound
+`additional-rust-inputs.json` registry.
 
 All unreviewed candidate IDs are enumerated in `census.json.gz`. Non-Rust
 files and opaque or invalid syntax remain explicit review work.

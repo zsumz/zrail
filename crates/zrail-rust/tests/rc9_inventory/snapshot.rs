@@ -36,7 +36,11 @@ fn git(root: &Path, args: &[&str]) -> String {
     String::from_utf8(output.stdout).expect("UTF-8 snapshot paths")
 }
 
-pub(super) fn inspect(root: &Path, pin: &serde_json::Value) -> Vec<FileRecord> {
+pub(super) fn inspect(
+    root: &Path,
+    pin: &serde_json::Value,
+    additional: &super::inputs::AdditionalInputs,
+) -> Vec<FileRecord> {
     let repository = pin["repository"].as_str().expect("repository pin");
     let commit = pin["commit"].as_str().expect("commit pin");
     assert_eq!(git(root, &["rev-parse", "HEAD"]).trim(), commit);
@@ -83,9 +87,16 @@ pub(super) fn inspect(root: &Path, pin: &serde_json::Value) -> Vec<FileRecord> {
         );
         let bytes = fs::read(&full).expect("read frozen file");
         record.sha256 = Some(zrail_core::sha256_hex(&bytes));
-        if Path::new(path)
-            .extension()
-            .is_some_and(|value| value == "rs")
+        let explicit = additional.selected(
+            repository,
+            commit,
+            path,
+            record.sha256.as_deref().expect("regular input hash"),
+        );
+        if explicit
+            || Path::new(path)
+                .extension()
+                .is_some_and(|value| value == "rs")
         {
             let source = String::from_utf8(bytes).expect("UTF-8 Rust input");
             match syn::parse_file(&source) {
