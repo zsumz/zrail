@@ -739,3 +739,33 @@ policy SHA-256 is
 `4eff9ae08134fb802fcd4abffdc7bfc63ce79f03d40f648ee44afb6d76fe7a58`.
 Full frozen-source and original detector qualification remain pending at this
 checkpoint; no further assertion is marked verified.
+
+
+## Explicit Rust fragment census
+
+[The fragment census index](evidence/census-fragments-index.json) binds clean
+`951941ff2d8964ac8a6f61aef2e6bd7f5403cef7`, tree
+`9e6bccbf6a7da51a88f520adf6c708a3eb7fc397`, the seven-input registry, compiler,
+test binary and both successful offline logs. Five focused census tests and
+strict census-target lint passed. The two regenerated payloads are byte-identical
+and preserve every prior candidate object and frozen file identity.
+
+```sh
+cargo test --locked --offline -p zrail-rust --test rc9_inventory
+cargo clippy --locked --offline -p zrail-rust --test rc9_inventory -- -D warnings
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots ZRAIL_RC9_CENSUS=/fresh/fragments-a.json \
+  cargo test --locked --offline -p zrail-rust --test rc9_inventory write_frozen_assertion_census -- --ignored
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots ZRAIL_RC9_CENSUS=/fresh/fragments-b.json \
+  cargo test --locked --offline -p zrail-rust --test rc9_inventory write_frozen_assertion_census -- --ignored
+cmp /fresh/fragments-a.json /fresh/fragments-b.json
+# Run from the later evidence-bearing checkout.
+python3 scripts/rc9-inventory-check --census /fresh/fragments-a.json
+```
+
+The inventory validator requires the exact fragment-registry digest, source
+revisions/hashes, reviewed including/fixture source hashes and complete registry
+counts. Two artifact-validator tests include ten rebound-registry tampering
+cases; these tests are also part of `scripts/check`. The census contains 80,135 candidates; its new SHA-256 is
+`308d9fcb3b237d706f35b51069cb336b0ed6dd225f589af22e5c05554749a7c5`.
+The discovery fix adds 186 unreviewed candidates and closes no replacement
+assertion. Canonical final-tree and complete consumer qualification remain open.

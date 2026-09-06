@@ -64,7 +64,8 @@ The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.
 contains **575 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
-record 9,792 files and 79,949 syntax candidates. Every tracked path is included,
+record 9,792 files and 80,135 syntax candidates, including seven explicitly
+reviewed Rust fragments with nonstandard filenames. Every tracked path is included,
 including nested workspaces, sources outside `src/`, helper code, and malformed
 detector fixtures. Non-Rust file contents, helper expansion, registries, and
 opaque syntax still require review; this is not a completed assertion inventory.
@@ -94,7 +95,7 @@ individual source digest, selected budget, baseline, and mutation diagnostics.
 has replacement qualification; passing a size family does not close other rails.
 
 The uncompressed census SHA-256 is
-`f90b74831614e4a660fdc8d1c008eb9f036fd81350f931478322af1378cab161`.
+`308d9fcb3b237d706f35b51069cb336b0ed6dd225f589af22e5c05554749a7c5`.
 Two independent runs produced identical bytes. Candidate IDs bind repository,
 physical path, source coordinates, candidate kind, and normalized syntax digest.
 The one parse boundary is the deliberately invalid Kafkars invariant-registry
@@ -630,6 +631,22 @@ architecture policy.
 
 The trusted census now supports these reviewed item fragments without guessing
 from arbitrary extensions. Five census tests pass, including stale source/review
-identities, duplicate registrations, unsupported syntax and path selectors. The
-committed census still needs regeneration before the discovery gap can close;
-new candidates will require assertion-level review.
+identities, duplicate registrations, unsupported syntax and path selectors. At that implementation checkpoint, the
+committed census still needed regeneration; the completed evidence follows.
+
+
+The fragment census is now bound at
+`951941ff2d8964ac8a6f61aef2e6bd7f5403cef7`. Two offline runs produced identical
+37,670,708-byte payloads with SHA-256
+`308d9fcb3b237d706f35b51069cb336b0ed6dd225f589af22e5c05554749a7c5`.
+All 79,949 prior candidate objects and every frozen file identity are unchanged.
+The six Rafter fragments add 186 candidates: 62 assertion macros, 58 fallible
+calls, 60 opaque-macro review boundaries, three accumulators and three helper
+calls. The Kafkars fragment parses successfully and contains no assertion
+candidates. [The evidence index](evidence/census-fragments-index.json) binds the
+code/tree, registry, compiler, binary and repeated logs.
+
+`RC9-INVENTORY-FRAGMENTS` is closed as a discovery defect. None of the 186 new
+candidates receives an automatic disposition, and reviewed/implemented/verified
+assertion counts remain **575 / 502 / 488**. The three repository inventory
+blockers and complete replacement qualification remain open.

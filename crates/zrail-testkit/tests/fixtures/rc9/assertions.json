@@ -3,7 +3,7 @@
   "release_verdict": "blocked",
   "assertion_inventory_complete": false,
   "candidate_census": "census.json.gz",
-  "census_payload_sha256": "f90b74831614e4a660fdc8d1c008eb9f036fd81350f931478322af1378cab161",
+  "census_payload_sha256": "308d9fcb3b237d706f35b51069cb336b0ed6dd225f589af22e5c05554749a7c5",
   "snapshots": "snapshots.json",
   "approved_policy_changes": [
     {
@@ -51543,8 +51543,7 @@
   "open_discovery_blockers": [
     "RC9-INVENTORY-KD",
     "RC9-INVENTORY-KF",
-    "RC9-INVENTORY-RF",
-    "RC9-INVENTORY-FRAGMENTS"
+    "RC9-INVENTORY-RF"
   ],
   "external_input_blockers": [],
   "closed_discovery_findings": [
@@ -51552,13 +51551,12 @@
       "id": "RC9-INVENTORY-FALLIBLE-CALLS",
       "evidence": "docs/rc9/evidence/census-fallible-index.json",
       "resolution": "Added 7794 parsed fallible-call candidates with unique call-identifier locations. All prior candidates and frozen file identities are unchanged; new candidates still require assertion-level review."
-    }
-  ],
-  "open_discovery_findings": [
+    },
     {
       "id": "RC9-INVENTORY-FRAGMENTS",
-      "cause": "Seven explicitly reviewed Rust .inc fragments have frozen byte identities in the census but no parsed candidate discovery. Regenerate the census using additional-rust-inputs.json; review the added candidates before claiming assertion completeness.",
-      "inputs": "additional-rust-inputs.json"
+      "evidence": "docs/rc9/evidence/census-fragments-index.json",
+      "resolution": "Parsed seven explicitly bound Rust item fragments and discovered 186 additional candidates. Every prior candidate and frozen file identity is unchanged; the new candidates remain unreviewed."
     }
-  ]
+  ],
+  "open_discovery_findings": []
 }

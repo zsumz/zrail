@@ -18,6 +18,7 @@ fi
 
 scripts/structure-check
 python3 scripts/rc9-inventory-check
+python3 scripts/rc9_census_evidence_test.py
 python3 scripts/rc9_qualification_evidence_test.py
 python3 scripts/rc9_method_evidence_test.py
 cargo fmt --all -- --check

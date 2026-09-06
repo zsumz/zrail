@@ -51,6 +51,35 @@ def registry_identity(entry, instance):
     return False
 
 
+def fragment_inputs(census, summary, files):
+    payload = (DATA / "additional-rust-inputs.json").read_bytes()
+    require(len(payload) <= 1024 * 1024, "fragment registry exceeds 1 MiB")
+    registry = parse(payload)
+    require(set(registry) == {"schema", "inputs"} and registry["schema"] == 1,
+            "unsupported fragment registry")
+    require(hashlib.sha256(payload).hexdigest() == census["additional_rust_inputs_sha256"]
+            == summary["additional_rust_inputs_sha256"], "unbound Rust fragment discovery inputs")
+    inputs = registry["inputs"]
+    keys = [(row["repository"], row["path"]) for row in inputs]
+    require(len(inputs) == len(set(keys)) == summary["additional_rust_inputs"] <= 64,
+            "duplicate or missing Rust fragment inputs")
+    for row in inputs:
+        require(set(row) == {"repository", "commit", "path", "sha256", "syntax", "reason", "review_sources"}
+                and row["syntax"] == "items" and row["reason"].strip(), "invalid reviewed Rust fragment")
+        file = files[(row["repository"], row["path"])]
+        require(file["commit"] == row["commit"] and file["sha256"] == row["sha256"]
+                and file["mode"] in ["100644", "100755"], "fragment snapshot or bytes changed")
+        sources = row["review_sources"]
+        require(0 < len(sources) == len({s["path"] for s in sources}) <= 32, "ambiguous review sources")
+        for source in sources:
+            reviewed = files[(row["repository"], source["path"])]
+            require(set(source) == {"path", "sha256"} and reviewed["commit"] == row["commit"]
+                    and reviewed["sha256"] == source["sha256"], "fragment review source changed")
+    for repository in summary["repositories"]:
+        require(repository["additional_rust_inputs"] == sum(row["repository"] == repository["repository"]
+                for row in inputs), "fragment repository count mismatch")
+
+
 def parity_report(assertion, field, prefix, cache):
     evidence = assertion["replacement"].get(field)
     if not evidence:
@@ -170,6 +199,7 @@ def main():
         require(repeated == payload, "repeated census differs byte-for-byte")
     files = {(file["repository"], file["path"]): file for file in census["files"]}
     require(len(files) == len(census["files"]) == summary["tracked_files"], "duplicate or missing file records")
+    fragment_inputs(census, summary, files)
     candidates = {}
     for file in files.values():
         for candidate in file["candidates"]:
