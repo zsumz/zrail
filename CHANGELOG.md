@@ -6,6 +6,10 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ### Added
 
+- Authored path-type trait-implementation inventories with explicit per-trait
+  type filters, exact trait/type/file identity, independent quantities, and
+  protected review of selection changes; semantic resolution remains separate.
+
 - Opt-in wiring-only facades, with separate unrestricted-import and
   public/crate/super re-export modes, plus reasoned exact-path mode selection.
 - Test-facade structure independent of compilation reachability, test placement,

@@ -6,6 +6,8 @@ mod boundary_test;
 mod expression_test;
 #[path = "strict_facades/fixture.rs"]
 mod fixture;
+#[path = "rust_inventories/impls_test.rs"]
+mod impls_test;
 #[path = "rust_inventories/owners_test.rs"]
 mod owners_test;
 #[path = "rust_inventories/paths_test.rs"]

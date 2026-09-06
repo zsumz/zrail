@@ -44,13 +44,31 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
             let valid = match rule.subject {
                 RustInventorySubject::WrittenMethods { .. }
                 | RustInventorySubject::WrittenPathsContaining { .. }
-                | RustInventorySubject::WrittenImportRenames { .. } => identifier(name),
+                | RustInventorySubject::WrittenImportRenames { .. }
+                | RustInventorySubject::WrittenTraitImpls { .. } => identifier(name),
                 RustInventorySubject::WrittenExpressionPaths { .. } => {
                     name.split("::").count() == 2 && name.split("::").all(identifier)
                 }
             };
             if !valid {
                 errors.push(format!("unsupported written inventory subject {name:?}"));
+            }
+        }
+        if let RustInventorySubject::WrittenTraitImpls {
+            implementing_types, ..
+        } = &rule.subject
+        {
+            if implementing_types.values().map(Vec::len).sum::<usize>() > 128 {
+                errors.push("trait impl inventories exceed 128 implementing-type selectors".into());
+            }
+            for (name, types) in implementing_types {
+                if !names.contains(name)
+                    || types.is_empty()
+                    || !types.iter().all(|name| identifier(name))
+                {
+                    errors.push("trait impl type filters require selected traits and nonempty exact identifiers".into());
+                }
+                unique(types, "trait impl type selectors", errors);
             }
         }
         match &rule.assertion {
@@ -140,6 +158,21 @@ fn selected_identity(subject: &RustInventorySubject, identity: &str) -> bool {
             return false;
         }
         source
+    } else if let RustInventorySubject::WrittenTraitImpls {
+        implementing_types, ..
+    } = subject
+    {
+        let Some((trait_name, type_name)) = identity.split_once(" for ") else {
+            return false;
+        };
+        if !identifier(type_name)
+            || implementing_types
+                .get(trait_name)
+                .is_some_and(|types| !types.iter().any(|name| name == type_name))
+        {
+            return false;
+        }
+        trait_name
     } else {
         identity
     };
@@ -182,6 +215,15 @@ pub(super) fn item_count(contract: &Contract) -> usize {
             1 + rule.include.len()
                 + rule.exclude.len()
                 + rule.subject.names().len()
+                + match &rule.subject {
+                    RustInventorySubject::WrittenTraitImpls {
+                        implementing_types, ..
+                    } => implementing_types
+                        .values()
+                        .map(|types| 1 + types.len())
+                        .sum::<usize>(),
+                    _ => 0,
+                }
                 + match &rule.assertion {
                     RustInventoryAssertion::Count { .. } => 1,
                     RustInventoryAssertion::ExactCounts { counts } => counts.len(),

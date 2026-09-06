@@ -264,9 +264,11 @@ TOML/JSON presence, absence, nonempty-string, and exact typed-value checks.
 [Raw structure predicates](RAW-STRUCTURE.md) preserve first-marker order,
 marker-bounded literal presence, and prefixed line-value allowlists.
 [Rust inventories](RUST-INVENTORIES.md) govern authored method calls, expression
-paths, path-segment membership, and explicit import renames over parsed source
+paths, path-segment membership, explicit import renames, and path-type trait
+implementations over parsed source
 facts. Exact owner sets retain location and subject identity independently of
-per-file occurrence quantities; rename identities retain both source and alias.
+per-file occurrence quantities; rename identities retain both source and alias,
+and trait-implementation identities retain both trait and implementing type.
 Their explicit authored world and syntax claim remain separate from semantic
 identity, compilation reachability, and execution.
 

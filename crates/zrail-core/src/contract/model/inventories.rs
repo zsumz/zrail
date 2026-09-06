@@ -55,6 +55,14 @@ pub enum RustInventorySubject {
         /// Exact source identifiers; alias destinations do not select an occurrence.
         names: Vec<String>,
     },
+    /// Authored trait impls whose implementing type is a Rust path.
+    WrittenTraitImpls {
+        /// Exact final written trait identifiers, independent of qualification and generics.
+        names: Vec<String>,
+        #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+        /// Optional per-trait final implementing-type identifiers; omission selects all path types.
+        implementing_types: std::collections::BTreeMap<String, Vec<String>>,
+    },
 }
 
 impl RustInventorySubject {
@@ -63,7 +71,8 @@ impl RustInventorySubject {
         match self {
             Self::WrittenMethods { names }
             | Self::WrittenPathsContaining { names }
-            | Self::WrittenImportRenames { names } => names,
+            | Self::WrittenImportRenames { names }
+            | Self::WrittenTraitImpls { names, .. } => names,
             Self::WrittenExpressionPaths { suffixes } => suffixes,
         }
     }
@@ -75,6 +84,15 @@ impl RustInventorySubject {
             | Self::WrittenPathsContaining { names }
             | Self::WrittenImportRenames { names } => names.sort(),
             Self::WrittenExpressionPaths { suffixes } => suffixes.sort(),
+            Self::WrittenTraitImpls {
+                names,
+                implementing_types,
+            } => {
+                names.sort();
+                for types in implementing_types.values_mut() {
+                    types.sort();
+                }
+            }
         }
     }
 }
@@ -110,7 +128,7 @@ pub enum RustInventoryAssertion {
 pub struct RustInventoryOwner {
     /// Exact normalized repository-relative Rust file.
     pub path: String,
-    /// Exact written identity: the selector, or `source as alias` for an import rename.
+    /// Exact written identity: selector, `source as alias`, or `Trait for Type`.
     pub name: String,
 }
 
@@ -120,7 +138,7 @@ pub struct RustInventoryOwner {
 pub struct RustInventoryCount {
     /// Exact normalized repository-relative Rust file.
     pub path: String,
-    /// Exact written identity: the selector, or `source as alias` for an import rename.
+    /// Exact written identity: selector, `source as alias`, or `Trait for Type`.
     pub name: String,
     /// Positive number of distinct physical syntax occurrences.
     pub count: usize,

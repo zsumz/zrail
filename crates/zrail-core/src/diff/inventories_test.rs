@@ -2,6 +2,9 @@
 
 use crate::{ChangeKind, Contract, RustInventoryRule, compare_architecture};
 
+#[path = "inventory_impls_test.rs"]
+mod impls_test;
+
 fn contract(assertion: &str) -> Contract {
     let mut contract = super::super::compare_fixture_test::contract_with_hard_limit(300);
     contract.source.rust.inventories.push(toml::from_str::<RustInventoryRule>(&format!(

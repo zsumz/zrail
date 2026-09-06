@@ -3,6 +3,7 @@
 mod model;
 mod observe;
 mod output;
+mod select;
 
 use zrail_core::{
     AnalysisQuality, RepositoryEntryMode, RustInventoryAssertion, RustInventoryRule, sha256_hex,
@@ -79,6 +80,9 @@ pub(crate) fn analyze(
                 }
                 zrail_core::RustInventorySubject::WrittenImportRenames { .. } => {
                     "authored-rust-import-rename-syntax".into()
+                }
+                zrail_core::RustInventorySubject::WrittenTraitImpls { .. } => {
+                    "authored-rust-path-type-trait-impl-syntax".into()
                 }
             },
             policy,

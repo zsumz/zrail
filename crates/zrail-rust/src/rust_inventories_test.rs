@@ -21,6 +21,10 @@ mod expression_mutations;
 mod family;
 #[path = "rust_inventories/parity/fixtures.rs"]
 mod fixtures;
+#[path = "rust_inventories/parity/impl_cases.rs"]
+mod impl_cases;
+#[path = "../tests/rc9_transport/impls_test.rs"]
+mod impls_test;
 #[path = "rust_inventories/parity/model.rs"]
 mod model;
 #[path = "rust_inventories/parity/mutations.rs"]

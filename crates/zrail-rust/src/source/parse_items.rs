@@ -3,7 +3,7 @@
 use syn::visit::Visit;
 use zrail_core::RustSourceContract;
 
-use super::{authored_expressions, authored_methods, authored_renames, facade};
+use super::{authored_expressions, authored_impls, authored_methods, authored_renames, facade};
 use crate::{
     inventory::FileClass,
     source::{
@@ -103,6 +103,15 @@ pub(super) fn index_file_as(
         lint_suppressions: visitor.lint_suppressions,
         unsafe_constructs: visitor.unsafe_constructs,
         async_syntax: visitor.async_syntax,
+        authored_impls: inventories
+            .iter()
+            .any(|rule| {
+                matches!(
+                    rule.subject,
+                    zrail_core::RustInventorySubject::WrittenTraitImpls { .. }
+                )
+            })
+            .then(|| authored_impls::collect(syntax, &type_policy)),
         type_policy,
         tests: visitor.tests,
         modules: module_declarations(syntax),

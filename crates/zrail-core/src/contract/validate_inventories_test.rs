@@ -2,6 +2,9 @@
 
 use crate::{RustInventoryAssertion, RustInventoryRule, RustInventorySubject};
 
+#[path = "validate_inventory_impls_test.rs"]
+mod impls_test;
+
 fn rule(assertion: &str) -> RustInventoryRule {
     toml::from_str(&format!(
         "name='methods'\nreason='Reviewed written authority.'\ninclude=['src/**/*.rs']\nworld='authored'\nsubject={{kind='written-methods',names=['poll']}}\nassertion={{{assertion}}}"

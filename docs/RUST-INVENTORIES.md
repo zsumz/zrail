@@ -153,6 +153,40 @@ memberships. Each sampled span covers the complete `source as alias` leaf.
 The claim is `authored-rust-import-rename-syntax`, independent of semantic alias
 resolution. Existing binding facts retain their earlier meaning.
 
+The `written-trait-impls` subject selects authored trait implementations whose
+implementing type is a Rust path. Both the final written trait identifier and
+the final written type identifier belong to the observed identity:
+
+```toml
+subject = { kind = "written-trait-impls", names = ["RegisteredTransport", "Source"], implementing_types = { Source = ["DirectRustlsTransport"] } }
+assertion = { kind = "exact-owners", owners = [
+  { path = "src/transport.rs", name = "RegisteredTransport for DirectRustlsTransport" },
+  { path = "src/transport.rs", name = "Source for DirectRustlsTransport" },
+] }
+```
+
+Optional `implementing_types` filters apply only to their named traits. Omission
+for a trait selects every path type. Each filter is a nonempty set of exact
+bounded identifiers; keys must be selected traits. There may be at most 128
+implementing-type selectors across a rule. A same-count substitution of either
+trait or implementing type changes an exact identity. Exact owners require each
+listed file/trait/type triple and prohibit every unlisted selected triple.
+
+Qualification and generic arguments do not affect these written suffixes.
+Raw prefixes and case remain significant. A qualified-self path such as
+`<T as Container>::State` has the suffix `State`; references, tuples, parenthesized
+types, pointers, slices and inferred types are outside this explicit path-type
+subject. Inherent impls and trait/type aliases do not supply resolved identities.
+Positive, negative and unsafe impl syntax participates; this subject does not
+claim polarity, compiler validity or semantic identity. All authored cfg branches
+and nested parsed item contexts participate; opaque macro tokens do not.
+
+Each physical `(file, Trait for Type, complete impl span)` counts once. Exact
+owner sets discard duplicate membership while coverage preserves quantities.
+The claim is `authored-rust-path-type-trait-impl-syntax`. Existing exact trait and
+type resolution remains independent. Unsupported semantic claims cannot be
+added as permissive selector fields.
+
 Selections reuse the bounded physical repository scanner independently of
 `repository.exclude`, Cargo source filtering, and mount reachability. Every
 selected entry must be a physical `.rs` file with complete Rust *file* facts.
@@ -171,7 +205,7 @@ digest, every file/subject count, complete occurrence totals, sixteen sampled
 locations, and an explicit omitted-location count. Explain reports the matching
 policy and complete scope quantities. Display sampling never affects decisions.
 
-The parser reuses located method/path/call facts and indexes membership in the
+The parser reuses located method/path/call/trait-impl facts and indexes membership in the
 original AST. It supplies missing syntax observations in contexts outside semantic
 traversal and excludes macro-token observations. Existing macro-aware facts
 remain unchanged, and this additional index is absent in contracts without
@@ -200,6 +234,9 @@ member removes its presence requirement and adds a prohibition. Exact empty
 counts, exact empty owner sets, and a zero upper bound have the same meaning.
 Changing subject kinds and unproved selector changes remain protected unknowns. Declaration ordering is
 irrelevant; reason changes remain protected unknowns.
+Per-trait type filters follow the same quantifier rules: narrowing a forbidden
+selection grants permission, while narrowing a positive-presence selection
+tightens its requirement. Incomparable filter changes remain protected unknowns.
 
 Other relationships, semantic identities, and compilation-world inventories
 remain explicit rc9 replacement blockers until implemented and qualified.

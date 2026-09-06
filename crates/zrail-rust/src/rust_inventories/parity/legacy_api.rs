@@ -18,6 +18,21 @@ pub(in super::super) fn renames(path: &str, source: &str) -> BTreeSet<String> {
     source_inventory(path, source).renamed_authorities
 }
 
+pub(in super::super) fn impls(path: &str, source: &str) -> BTreeSet<String> {
+    source_inventory(path, source).transport_impls
+}
+
+pub(in super::super) fn check_detector_impls(transport_impls: BTreeSet<String>) {
+    let actual = AuthorityInventory {
+        transport_impls,
+        ..AuthorityInventory::default()
+    };
+    assert_eq!(
+        actual.transport_impls,
+        BTreeSet::from(["src/reactor/rogue.rs:Rogue:RegisteredTransport".into()])
+    );
+}
+
 pub(in super::super) fn repository_renames(
     root: &std::path::Path,
     roots: &[String],

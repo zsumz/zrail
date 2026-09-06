@@ -77,19 +77,11 @@ fn selection_change(left: &RustInventoryRule, right: &RustInventoryRule) -> Opti
     if std::mem::discriminant(&left.subject) != std::mem::discriminant(&right.subject) {
         return Some(ChangeKind::Unknown);
     }
-    let (li, le, ln) = (
-        set(&left.include),
-        set(&left.exclude),
-        set(left.subject.names()),
-    );
-    let (ri, re, rn) = (
-        set(&right.include),
-        set(&right.exclude),
-        set(right.subject.names()),
-    );
-    if (li.clone(), le.clone(), ln.clone(), left.world)
-        == (ri.clone(), re.clone(), rn.clone(), right.world)
-    {
+    let (li, le) = (set(&left.include), set(&left.exclude));
+    let (ri, re) = (set(&right.include), set(&right.exclude));
+    let subject_expanded = subject_subset(&left.subject, &right.subject);
+    let subject_narrowed = subject_subset(&right.subject, &left.subject);
+    if li == ri && le == re && left.world == right.world && subject_expanded && subject_narrowed {
         return None;
     }
     if left.world != right.world
@@ -98,8 +90,8 @@ fn selection_change(left: &RustInventoryRule, right: &RustInventoryRule) -> Opti
     {
         return Some(ChangeKind::Unknown);
     }
-    let expanded = li.is_subset(&ri) && re.is_subset(&le) && ln.is_subset(&rn);
-    let narrowed = ri.is_subset(&li) && le.is_subset(&re) && rn.is_subset(&ln);
+    let expanded = li.is_subset(&ri) && re.is_subset(&le) && subject_expanded;
+    let narrowed = ri.is_subset(&li) && le.is_subset(&re) && subject_narrowed;
     if !expanded && !narrowed {
         return Some(ChangeKind::Unknown);
     }
@@ -115,6 +107,33 @@ fn selection_change(left: &RustInventoryRule, right: &RustInventoryRule) -> Opti
     } else {
         ChangeKind::Grant
     })
+}
+
+fn subject_subset(left: &crate::RustInventorySubject, right: &crate::RustInventorySubject) -> bool {
+    if !set(left.names()).is_subset(&set(right.names())) {
+        return false;
+    }
+    if let (
+        crate::RustInventorySubject::WrittenTraitImpls {
+            implementing_types: old,
+            ..
+        },
+        crate::RustInventorySubject::WrittenTraitImpls {
+            implementing_types: new,
+            ..
+        },
+    ) = (left, right)
+    {
+        left.names()
+            .iter()
+            .all(|name| match (old.get(name), new.get(name)) {
+                (_, None) => true,
+                (None, Some(_)) => false,
+                (Some(before), Some(after)) => set(before).is_subset(&set(after)),
+            })
+    } else {
+        true
+    }
 }
 
 fn implies(left: &RustInventoryAssertion, right: &RustInventoryAssertion) -> bool {
