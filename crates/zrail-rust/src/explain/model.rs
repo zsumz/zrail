@@ -85,6 +85,9 @@ pub struct PathExplanation {
     /// Matching repository-file predicates and their actual physical observations.
     #[serde(default)]
     pub repository_files: Vec<super::RepositoryFileExplanation>,
+    /// Whole-lock inventory policy and observed identities when explaining `Cargo.lock`.
+    #[serde(default)]
+    pub lock_packages: Vec<crate::GovernedLockPackage>,
     /// The advisory line target for the source class, when configured.
     pub design_target: Option<usize>,
     /// The enforced line ceiling for the source class, when configured.

@@ -66,6 +66,11 @@ impl GovernedSurfaceReport {
             );
         }
         let _ = writeln!(output, "Test mirrors: {}", self.test_mirrors.len());
+        let _ = writeln!(
+            output,
+            "Whole-lock inventories: {}",
+            crate::lock_packages::display(&self.lock_packages)
+        );
         let _ = writeln!(output, "Facade policies: {}", self.facades.len());
         for facade in &self.facades {
             let _ = writeln!(

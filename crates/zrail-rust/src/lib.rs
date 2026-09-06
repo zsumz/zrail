@@ -8,6 +8,7 @@ mod coverage;
 mod engine;
 mod explain;
 mod inventory;
+mod lock_packages;
 mod mirror_execution;
 mod mirror_inputs;
 mod mirrors;
@@ -57,6 +58,7 @@ pub use explain::{
     MacroInvocationExplanation, PathExplanation, RepositoryFileExplanation,
     explain_hypothetical_path, explain_path,
 };
+pub use lock_packages::{GovernedLockPackage, LockPackageDifference};
 pub use mirrors::{
     MirrorExecutionResult, MirrorPlan, MirrorReceiptBundle, MirrorResultSet, MirrorTestResult,
     MirrorVerification, PlannedTestMirror, RenderedMirrorReceipt, render_test_mirror_receipts,

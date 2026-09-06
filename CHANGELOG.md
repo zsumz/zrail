@@ -34,6 +34,10 @@ All notable zrail changes are recorded here for reviewed release notes.
   and protected comparisons of accepted identities and type permissions.
 - Typed immediate-field string prohibitions that preserve explicit legacy
   get/as_str projections while retaining required parent presence and input binding.
+- Whole-Cargo.lock package counts and exact version/source/checksum inventories
+  over the existing complete resolver, including unreachable nodes, persistent
+  zero bans, bounded identity samples, coverage/explanation, lock binding, and
+  protected comparisons that distinguish exact quantities from upper limits.
 
 ### Changed
 

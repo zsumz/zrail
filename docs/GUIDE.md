@@ -1350,6 +1350,11 @@ on downstream `Cargo.lock` edges, so `kinds` honestly selects only the first
 edge leaving `from`; the remainder of the path is resolved without an invented
 kind. Transitive policy requires a checked-in lock file.
 
+[Whole-lock package inventories](LOCK-PACKAGE-INVENTORIES.md) govern all locked
+nodes with a selected package name, including unreachable nodes. They require
+exact quantities or complete version/source/checksum sets, with persistent
+zero-count bans and protected comparison of changed identity requirements.
+
 An immutable external macro authority may select one resolved lock node. Add
 `version` or `source` whenever the package name alone is not unique:
 
@@ -1409,6 +1414,9 @@ measured excess; the full policy also exposes selectors with no current match.
 It also includes `repository_files`: complete selected physical paths, raw
 predicates, content hashes, reference inputs, quantities, and results. Empty
 selections remain visible, and sampled text offsets never truncate totals.
+The `lock_packages` records expose complete whole-lock inventory counts,
+expected identities, missing identities, bounded observed/unexpected samples,
+explicit omitted totals, exact input digests, and satisfied zero-count bans.
 
 Coverage is an audit artifact, not partial best-effort discovery. It fails when
 source analysis is incomplete, when a governed dependency cannot be mapped to

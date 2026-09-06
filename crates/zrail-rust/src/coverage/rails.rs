@@ -95,6 +95,12 @@ pub(super) fn report(
     );
     rails.extend(dependencies.iter().map(|rule| rule.policy_id.clone()));
     rails.extend(
+        model
+            .lock_packages
+            .iter()
+            .map(|rule| rule.policy_id.clone()),
+    );
+    rails.extend(
         contract
             .scopes
             .iter()

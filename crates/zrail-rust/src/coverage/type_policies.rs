@@ -85,6 +85,7 @@ fn context(model: &RepositoryModel) -> RuleContext<'_> {
         resolved_cargo: model.resolved_cargo.as_ref(),
         source: &model.source,
         repository_files: &model.repository_files,
+        lock_packages: &model.lock_packages,
         module_edges: &model.module_edges,
         compilation_domains: &model.compilation_domains,
         feature_worlds: &model.feature_worlds,

@@ -32,6 +32,7 @@ pub(crate) struct RepositoryModel {
     pub(crate) resolved_cargo: Option<ResolvedCargoGraph>,
     pub(crate) source: SourceIndex,
     pub(crate) repository_files: crate::repository_files::RepositoryFileAnalysis,
+    pub(crate) lock_packages: Vec<crate::GovernedLockPackage>,
     pub(crate) item_macro_manifests: Vec<zrail_core::LockedItemMacroManifest>,
     pub(crate) compilation_domains: BTreeMap<String, BTreeSet<CompilationDomain>>,
     pub(crate) module_edges: Vec<ResolvedModuleEdge>,
@@ -58,6 +59,11 @@ pub(crate) fn load_model_with_bundle(
         .map_err(|error| CheckError::from_message(error.to_string()))?;
     validate_resolved_sources(resolved_cargo.as_ref(), &bundle.contract)
         .map_err(|error| CheckError::from_message(error.to_string()))?;
+    let lock_packages = crate::lock_packages::analyze(
+        resolved_cargo.as_ref(),
+        &bundle.contract.dependencies.lock_packages,
+    )
+    .map_err(CheckError::from_message)?;
     apply_attestations(&mut cargo, &bundle.contract.dependencies.crate_roots);
     let feature_world_specs = bundle
         .contract
@@ -169,6 +175,7 @@ pub(crate) fn load_model_with_bundle(
         source,
         item_macro_manifests,
         repository_files,
+        lock_packages,
         compilation_domains: graph.compilation_domains,
         module_edges: graph.module_edges,
     })
