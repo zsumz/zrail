@@ -188,6 +188,22 @@ fn uncertain_transformations_and_changed_byte_references_require_review() {
 }
 
 #[test]
+fn dropping_utf8_equality_is_a_grant_and_defaults_retain_binary_authority() {
+    let binary = configured("kind = 'bytes-equal', other = 'LICENSE'");
+    let explicit = configured("kind = 'bytes-equal', other = 'LICENSE', utf8 = false");
+    assert_eq!(binary, explicit);
+    assert!(
+        !toml::to_string(&binary.repository.files[0])
+            .expect("serialize")
+            .contains("utf8")
+    );
+    let text = configured("kind = 'bytes-equal', other = 'LICENSE', utf8 = true");
+    assert_eq!(kinds(&binary, &text), [ChangeKind::Revoke]);
+    assert_eq!(kinds(&text, &binary), [ChangeKind::Grant]);
+    protected(&text, &binary);
+}
+
+#[test]
 fn name_checks_preserve_each_authorized_component_case_and_checkout_boundary() {
     let before = configured(
         "kind = 'forbidden-names', names = ['bad', 'vague'], part = 'component-stem', case = 'ascii-insensitive', basis = 'filesystem'",

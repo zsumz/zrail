@@ -23,7 +23,7 @@ predicate = { kind = "exact-paths", paths = [] }
 name = "license-copies"
 include = ["crates/*/LICENSE"]
 reason = "Package licenses must exactly match the repository license."
-predicate = { kind = "bytes-equal", other = "LICENSE" }
+predicate = { kind = "bytes-equal", other = "LICENSE", utf8 = true }
 
 [[repository.files]]
 name = "leading-source-contract"
@@ -71,7 +71,7 @@ The existing repository-wide symlink policy remains independently enforced.
 | `exact-paths` | Complete unordered `paths` set. Missing and unexpected paths fail independently of the total count. An empty set is a persistent prohibition. |
 | `forbidden-names` | Literal `names`, with `part` selecting `component`, `component-stem`, `file-name`, or `file-stem`. Component stems use Rust `Path::file_stem` for directories too. |
 | `literal` | Per-file raw text predicate with explicit `text`, `mode`, `normalization`, and `case`. |
-| `bytes-equal` | At least one selected regular file, every file byte-for-byte equal to the required regular reference `other`. Binary data is supported. |
+| `bytes-equal` | At least one selected regular file, every file byte-for-byte equal to the required regular reference `other`. Binary data is supported by default. `utf8 = true` additionally requires both sides to decode as UTF-8, without normalizing line endings or whitespace. |
 
 Name predicates default to `basis = "repository"`. The explicit `filesystem`
 basis additionally inspects the canonical checkout prefix, exposes it in
@@ -106,6 +106,9 @@ and analysis quality. Explain includes matching policies and actual observations
 alongside complete scope counts; hypothetical paths do not fabricate evidence.
 Literal coverage reports the full count and at most sixteen transformed-text
 byte offsets, with the omitted count explicit. Samples never decide pass/fail.
+UTF-8 equality exposes `utf8-file-bytes` as its claim and `valid_utf8` for each
+inspected input. Invalid encoding is a decidable `REP-FILE-005` failure, with
+the exact inspected bytes still bound. Removing the UTF-8 requirement is a grant.
 
 Diagnostics `REP-FILE-001` through `005` identify count, exact-set, name, literal,
 and byte-equality failures. `REP-FILE-006` means incomplete analysis: checks,

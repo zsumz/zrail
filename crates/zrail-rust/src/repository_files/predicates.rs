@@ -67,7 +67,7 @@ pub(super) fn evaluate(
                 "REP-FILE-004",
             )
         }
-        RepositoryFilePredicate::BytesEqual { other } => {
+        RepositoryFilePredicate::BytesEqual { other, utf8 } => {
             observed.reference = boundary::probe(root, other)?
                 .map(|entry| boundary::observe(root, &entry, RepositoryEntryMode::File))
                 .transpose()?
@@ -75,16 +75,31 @@ pub(super) fn evaluate(
             let reference = observed
                 .reference
                 .as_mut()
-                .map(|entry| inputs.read(root, entry))
+                .map(|entry| {
+                    let bytes = inputs.read(root, entry)?;
+                    if *utf8 {
+                        entry.valid_utf8 = Some(std::str::from_utf8(&bytes).is_ok());
+                        entry.satisfied = entry.valid_utf8 == Some(true);
+                    }
+                    Ok::<_, String>(bytes)
+                })
                 .transpose()?;
             for entry in &mut observed.entries {
                 let bytes = inputs.read(root, entry)?;
+                if *utf8 {
+                    entry.valid_utf8 = Some(std::str::from_utf8(&bytes).is_ok());
+                }
                 entry.satisfied = reference
                     .as_ref()
-                    .is_some_and(|expected| **expected == *bytes);
+                    .is_some_and(|expected| **expected == *bytes)
+                    && entry.valid_utf8 != Some(false);
             }
             (
-                reference.is_some() && !observed.entries.is_empty(),
+                observed
+                    .reference
+                    .as_ref()
+                    .is_some_and(|entry| entry.satisfied)
+                    && !observed.entries.is_empty(),
                 "REP-FILE-005",
             )
         }

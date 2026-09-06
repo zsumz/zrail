@@ -2,6 +2,8 @@
 
 #[path = "repository_files/boundary_test.rs"]
 mod boundary_test;
+#[path = "repository_files/encoding_test.rs"]
+mod encoding_test;
 #[path = "strict_facades/fixture.rs"]
 mod fixture;
 #[path = "repository_files/support.rs"]

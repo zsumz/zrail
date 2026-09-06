@@ -32,7 +32,7 @@ pub(super) fn for_path(model: &RepositoryModel, path: &str) -> Vec<RepositoryFil
         let rule = &observed.policy;
         let selected = rule.include.iter().any(|pattern| glob_matches(pattern, path))
             && !rule.exclude.iter().any(|pattern| glob_matches(pattern, path));
-        let is_reference = matches!(&rule.predicate, RepositoryFilePredicate::BytesEqual { other } if other == path);
+        let is_reference = matches!(&rule.predicate, RepositoryFilePredicate::BytesEqual { other, .. } if other == path);
         (selected || is_reference).then(|| RepositoryFileExplanation {
             policy_id: observed.policy_id.clone(),
             policy: rule.clone(),

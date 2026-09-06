@@ -37,6 +37,7 @@ pub(crate) fn analyze(
             policy: rule.clone(),
             claim: match rule.predicate {
                 RepositoryFilePredicate::Literal(_) => "raw-utf8-text",
+                RepositoryFilePredicate::BytesEqual { utf8: true, .. } => "utf8-file-bytes",
                 RepositoryFilePredicate::BytesEqual { .. } => "file-bytes",
                 _ => "physical-paths",
             }

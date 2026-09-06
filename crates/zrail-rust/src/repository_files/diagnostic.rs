@@ -61,9 +61,13 @@ pub(super) fn finding(observed: &GovernedRepositoryFile, diagnostic: &str) -> Fi
             literal.normalization,
             literal.case,
         ),
-        RepositoryFilePredicate::BytesEqual { other } => format!(
-            "byte equality with {other:?} failed: reference present {}, {} selected files, {failed} unequal files",
+        RepositoryFilePredicate::BytesEqual { other, utf8 } => format!(
+            "byte equality with {other:?} failed: reference present {}, UTF-8 required {utf8}, reference valid UTF-8 {:?}, {} selected files, {failed} unsatisfied files",
             observed.reference.is_some(),
+            observed
+                .reference
+                .as_ref()
+                .and_then(|entry| entry.valid_utf8),
             observed.entries.len(),
         ),
     };

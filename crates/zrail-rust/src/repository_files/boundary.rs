@@ -75,6 +75,7 @@ pub(super) fn observe(
         resolved_path: (target != entry.relative).then_some(target),
         sha256: None,
         bytes: None,
+        valid_utf8: None,
         satisfied: true,
         literal_count: None,
         literal_offsets: Vec::new(),

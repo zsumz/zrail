@@ -24,6 +24,13 @@ pub(super) fn compare(
             },
         ) => interval((*a, *b), (*c, *d)),
         (ExactPaths { paths: a }, ExactPaths { paths: b }) if set(a) == set(b) => Vec::new(),
+        (BytesEqual { other: a, utf8: au }, BytesEqual { other: b, utf8: bu }) if a == b => {
+            match (au, bu) {
+                (true, false) => vec![ChangeKind::Grant],
+                (false, true) => vec![ChangeKind::Revoke],
+                _ => Vec::new(),
+            }
+        }
         (ExactPaths { .. }, ExactPaths { .. }) | (BytesEqual { .. }, BytesEqual { .. }) => {
             // Changing an exact subject both allows a previously disallowed state
             // and rejects a formerly accepted one. Neither direction subsumes it.

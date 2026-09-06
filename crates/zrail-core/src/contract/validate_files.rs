@@ -105,7 +105,7 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
                     );
                 }
             }
-            RepositoryFilePredicate::BytesEqual { other } => {
+            RepositoryFilePredicate::BytesEqual { other, .. } => {
                 regular(rule.entry, &rule.name, errors);
                 validate_repository_literal(other, errors);
                 exact(other, errors);

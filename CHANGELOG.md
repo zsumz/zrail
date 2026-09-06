@@ -21,6 +21,8 @@ All notable zrail changes are recorded here for reviewed release notes.
 - Closed repository-file count/set, name, raw-text, and byte-equality assertions,
   with independent physical selection, bounded contained reads, complete coverage,
   path explanations, lock input binding, and protected semantic comparisons.
+- Explicit UTF-8 validity for byte-equality policies, preserving legacy text-read
+  preconditions while retaining binary equality by default.
 
 ### Changed
 

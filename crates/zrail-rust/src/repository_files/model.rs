@@ -39,6 +39,9 @@ pub struct GovernedRepositoryFileEntry {
     pub sha256: Option<String>,
     /// Exact byte length when contents were inspected.
     pub bytes: Option<usize>,
+    /// Whether inspected bytes are valid UTF-8, only when the predicate requires it.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub valid_utf8: Option<bool>,
     /// Per-entry result; scope cardinality is reported on the containing policy.
     pub satisfied: bool,
     /// Total non-overlapping occurrences in the transformed UTF-8 text.

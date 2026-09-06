@@ -71,6 +71,9 @@ pub enum RepositoryFilePredicate {
     BytesEqual {
         /// Exact repository-relative regular-file reference, also bound as an input.
         other: String,
+        /// Additionally require valid UTF-8 on both sides; binary equality is the default.
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        utf8: bool,
     },
 }
 
