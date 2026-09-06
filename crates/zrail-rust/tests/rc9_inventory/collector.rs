@@ -76,6 +76,12 @@ impl<'ast> Visit<'ast> for Collector {
         self.stack.pop();
     }
 
+    fn visit_trait_item_fn(&mut self, node: &'ast syn::TraitItemFn) {
+        self.enter(&node.sig.ident, &node.attrs);
+        syn::visit::visit_trait_item_fn(self, node);
+        self.stack.pop();
+    }
+
     fn visit_macro(&mut self, node: &'ast syn::Macro) {
         let name = node
             .path
@@ -107,6 +113,10 @@ impl<'ast> Visit<'ast> for Collector {
             {
                 self.record("helper-call-candidate", node.span(), node);
             }
+            if fallible_call(&name) {
+                let identifier = &path.path.segments.last().expect("named call path").ident;
+                self.record("fallible-call-candidate", identifier.span(), node);
+            }
         }
         syn::visit::visit_expr_call(self, node);
     }
@@ -115,6 +125,18 @@ impl<'ast> Visit<'ast> for Collector {
         if node.method == "push" || node.method == "extend" {
             self.record("accumulator-candidate", node.span(), node);
         }
+        if fallible_call(&node.method.to_string()) {
+            // A chained receiver has the same start span at each call. The method
+            // identifier gives every independent precondition a stable location.
+            self.record("fallible-call-candidate", node.method.span(), node);
+        }
         syn::visit::visit_expr_method_call(self, node);
     }
+}
+
+fn fallible_call(name: &str) -> bool {
+    matches!(
+        name.strip_prefix("r#").unwrap_or(name),
+        "expect" | "expect_err" | "unwrap" | "unwrap_err"
+    )
 }

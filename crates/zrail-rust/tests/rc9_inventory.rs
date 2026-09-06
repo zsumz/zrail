@@ -57,6 +57,61 @@ fn census_distinguishes_code_assertions_helpers_and_opaque_inputs() {
 }
 
 #[test]
+fn census_locates_each_chained_failure_and_qualified_invocation() {
+    let source = r#"
+        fn guard(value: Value) {
+            value.unwrap().expect("inner").unwrap_err().expect_err("outer");
+            Option::unwrap(value);
+            <Result<T, E>>::expect(value, "required");
+            value.r#unwrap();
+            let reference = Option::unwrap;
+            let text = "value.expect(\"ignored\")";
+            // value.unwrap();
+            opaque! { value.unwrap() }
+        }
+    "#;
+    let mut collector = collector::Collector::default();
+    collector.prefix = "fixture:src/guard.rs".into();
+    collector.visit_file(&syn::parse_file(source).expect("parse census fixture"));
+    let failures = collector
+        .candidates
+        .iter()
+        .filter(|candidate| candidate.kind == "fallible-call-candidate")
+        .collect::<Vec<_>>();
+    assert_eq!(failures.len(), 7);
+    assert_eq!(
+        failures
+            .iter()
+            .map(|candidate| &candidate.id)
+            .collect::<BTreeSet<_>>()
+            .len(),
+        7,
+    );
+    let lines = source.lines().collect::<Vec<_>>();
+    for candidate in failures {
+        let identifier = &lines[candidate.line - 1][candidate.column - 1..candidate.end_column - 1];
+        assert!(matches!(
+            identifier,
+            "unwrap" | "expect" | "unwrap_err" | "expect_err" | "r#unwrap"
+        ));
+        assert_eq!(candidate.function, ["guard"]);
+    }
+    assert_eq!(collector.candidates.len(), 8);
+}
+
+#[test]
+fn census_binds_failure_preconditions_to_default_trait_functions() {
+    let source = "trait Detector { fn validate(&self) { self.input().unwrap(); } }";
+    let mut collector = collector::Collector::default();
+    collector.visit_file(&syn::parse_file(source).expect("parse default helper"));
+    assert_eq!(collector.functions.len(), 1);
+    assert_eq!(collector.functions[0].name, "validate");
+    assert_eq!(collector.candidates.len(), 1);
+    assert_eq!(collector.candidates[0].kind, "fallible-call-candidate");
+    assert_eq!(collector.candidates[0].function, ["validate"]);
+}
+
+#[test]
 #[ignore = "requires explicitly prefetched frozen consumer checkouts and an output path"]
 fn write_frozen_assertion_census() {
     let roots = std::env::var_os("ZRAIL_RC9_SNAPSHOTS").expect("set ZRAIL_RC9_SNAPSHOTS");
@@ -92,6 +147,10 @@ fn write_frozen_assertion_census() {
         ]
     }).expect("normalize census field order");
     let bytes = serde_json::to_vec(&census).expect("serialize census");
+    assert!(
+        bytes.len() <= 64 * 1024 * 1024,
+        "census exceeds the 64 MiB audit input bound"
+    );
     std::io::stdout()
         .write_all(
             format!(
@@ -103,5 +162,11 @@ fn write_frozen_assertion_census() {
             .as_bytes(),
         )
         .expect("write census summary");
-    fs::write(output, bytes).expect("write trusted discovery evidence");
+    fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(output)
+        .expect("fresh census output")
+        .write_all(&bytes)
+        .expect("write trusted discovery evidence");
 }
