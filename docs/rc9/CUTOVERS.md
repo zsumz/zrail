@@ -2,7 +2,7 @@
 
 Status: **blocked** for every repository. No downstream source, contract, lock,
 workflow, or guard has been changed. No complete replacement-policy bundle exists
-yet. The facade, size, file, and metadata fragments in `policies/` are review material for
+yet. The facade, size, file, metadata, and key-set fragments in `policies/` are review material for
 individual capabilities;
 they must not be installed as a repository's complete contract.
 
@@ -20,7 +20,7 @@ no checkers or helper dependencies certified removable now.
 | `tests/guardrails/module_contract.rs` | Verified `repository:file:kd-module-leading-doc` and `repository:file:kd-module-names`, including all four original detector assertions. Preserve raw marker semantics and the bound absolute checkout prefix; complete repository qualification remains required. |
 | `tests/guardrails/capability.rs` | Verified `repository:file:kd-capability-01-01` through the four frozen token groups and `repository:file:kd-capability-root-01..04`, with exact mapping in the ledger. Comments and strings retain their original participation; complete repository qualification remains required. |
 | `tests/guardrails/transport_authority.rs` | Close all five `KD-TRANSPORT-*` inventories and their detector fixtures. Preserve function-value `ExprPath` counts, written renames, method quantities, and exact implementing-type/trait sets. |
-| `tests/guardrails/dependency.rs`, `protocol_provenance.rs` | Preserve whole-lock bans and exact package/provenance counts (`KD-LOCK-*`), exact/subset dependency distinctions, feature ordering, optional/default features, and inheritance. Complete remaining assertion expansion. |
+| `tests/guardrails/dependency.rs`, `protocol_provenance.rs` | Preserve whole-lock bans and exact package/provenance counts (`KD-LOCK-*`), the five verified `repository:file:kd-dep-*-keys` inventories, feature ordering, optional/default features, and inheritance. Complete remaining assertion expansion. |
 | `tests/guardrails/release_graph.rs` | Preserve absent retired paths, forbidden declarations, and separate raw vocabulary predicates. |
 | `tests/guardrails/release_metadata.rs` | `kafka-driver.metadata.fragment.toml` supplies 35 native policies with 33 assertion IDs verified, including authored inheritance, ordered publication lists, UTF-8 license equality, required files, and deliberate raw markers. Close the parent-path helper proof and full repository qualification before removal. |
 | `tests/guardrails/qualification.rs` | Preserve every workflow/script/text predicate and ordering requirement. Actual command execution remains separately evidenced. |

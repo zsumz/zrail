@@ -11,13 +11,15 @@ No downstream checker is removable on the strength of this directory.
   instantiated capability tokens and lock provenance assertions. It binds each
   assertion to a census identity, source digest, selection, matching semantics,
   cardinality, exceptions, disposition, and independent implementation and
-  verification states. Its 134 open assertion IDs are release blockers, alongside
-  the unfinished discovery work; 247 instances have verified replacement evidence.
+  verification states. Its 129 open assertion IDs are release blockers, alongside
+  the unfinished discovery work; 252 instances have verified replacement evidence.
 - `facade-origins.json` binds two byte-exact extracted predicates and the imported
   `kafkars-facade-invalid.rs.txt` fixture to the frozen sources.
 - The budget, size-selection, file, and metadata origin manifests bind further
   byte-exact predicates and input copies. Metadata includes the complete original
-  assertion body, read/parse helpers, and all 11 physical fixture inputs.
+  assertion body, read/parse helpers, and all 11 physical fixture inputs. `key-sets-origins.json` binds five unchanged
+  dependency assertion bodies, their manifest readers, and six immutable inputs;
+  130 differential fixtures qualify the exact/subset and type-projection semantics.
 
 Candidate IDs have the form `repository:path:line:column:kind`, with one-based
 physical coordinates and a normalized syntax digest. They are stable within the

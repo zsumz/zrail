@@ -1,0 +1,20 @@
+   Compiling zrail-rust v0.0.3-rc.8 (/root/zrail-rc9/crates/zrail-rust)
+    Finished `test` profile [unoptimized] target(s) in 20.19s
+     Running unittests src/lib.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/zrail_rust-a18c36634132c20d)
+
+running 1 test
+verified kafkars/kafka-driver a45be8071e6a663cd4ae3142cc5304ece9fdf45e tree 5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b
+verified kafkars/kafkars 67ad7aa8d91f9639c87b00338b9e21a633f7bb4c tree 6abde2775e12d772d7cdc1ea01fc253e699c6a45
+verified zsumz/rafter e99b43c1b3fb3c94dd626effccee8420016594f2 tree b91b3ca7362219e32fdbb08a8374403c0353e745
+verified frozen predicate extractions and fixture bytes: facade-origins.json
+verified frozen predicate extractions and fixture bytes: budget-origins.json
+verified frozen predicate extractions and fixture bytes: size-selection-origins.json
+verified frozen predicate extractions and fixture bytes: file-origins.json
+verified frozen predicate extractions and fixture bytes: metadata-origins.json
+verified frozen predicate extractions and fixture bytes: key-sets-origins.json
+verified 193 exact frozen policy registry instances
+key-sets parity: 5 policies, 6 frozen inputs, 130 fixtures; sha256 09651c2e17559c8f0e445a5f79f29781858898bbae4f9bf0c2b7130ee1466d6b
+test repository_files::repository_files_test::key_sets::qualification_test::qualify_all_frozen_kafka_driver_dependency_key_sets ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 568 filtered out; finished in 2.41s
+

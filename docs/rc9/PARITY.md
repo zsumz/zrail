@@ -70,14 +70,15 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 185 | 84 | 83 |
+| kafka-driver | 826 | 772 | 185 | 89 | 88 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
-The **247 verified assertions** comprise five facade predicates, four
+The **252 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
-metadata assertions and parser preconditions. Size instances include
+metadata assertions and parser preconditions, plus five authored dependency key
+inventories. Size instances include
 all 141 measured baselines and three hard allowances. Their disposition
 is **new engine capability**; verified counts for the other four dispositions
 remain zero. Each registry instance binds its original TOML entry and the
@@ -303,3 +304,22 @@ nor a permissive substring predicate is claimed to subsume them.
 Registry bindings now include exact scalar and whole-array values as well as
 indexed entries. The offline verifier checks 193 instantiated bindings against
 the frozen TOML bytes; `index = null` in the JSON ledger selects the whole value.
+
+## Verified authored dependency key inventories
+
+`KD-DEP-DRIVER-KEYS`, `KD-DEP-CORE-KEYS`, `KD-DEP-TRANSPORT-KEYS`,
+`KD-DEP-SIM-KEYS`, and `KD-DEP-PROBE-KEYS` now link to five native policies in
+[`kafka-driver.key-sets.fragment.toml`](policies/kafka-driver.key-sets.fragment.toml).
+Four require exact authored names; the deterministic core preserves its subset
+rule. Present non-table values project to empty sets exactly as in the frozen
+helper, while missing subjects still fail. These policies do not infer Cargo
+identity or absorb dev/build/target dependencies.
+
+Two frozen runs at `c86f5173c90e564b204420789faf2d16ef17807a` produced identical
+reports: five baseline observations over six immutable inputs, plus 130 fixture
+outcomes (22 accepted, 108 rejected). All 25 original keys were separately
+deleted and aliased; malformed documents, unrelated tables, wrong types,
+missing inputs, case changes, and undisplayed unexpected names exercise the
+intended policies. The [bound evidence](evidence/key-sets-parity-index.json)
+records exact source, policy, fixture, code, compiler, and input identities.
+The complete dependency file still has other unverified assertions.

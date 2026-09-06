@@ -19,6 +19,10 @@ Implemented in the current branch:
   metadata has 35 translated policies over 11 frozen inputs and 134 physical
   fixtures, linking 33 more verified assertion IDs. YAML, selected inventories,
   cross-field relations, and full downstream qualification remain open.
+- Exact/allowed authored document key sets with explicit non-table projection,
+  required subjects, complete quantities, and protected permission comparisons.
+  Five Kafka-driver inventories have 130 differential fixtures (22 accepted,
+  108 rejected), with byte-identical repeated frozen reports.
 - Scoped budgets, advisory soft thresholds, warning-only targets, bounded hard
   exceptions with required metadata, and exact authored baseline ratchets.
 - Effective facade modes, reasons, syntax quality, and complete violation lists

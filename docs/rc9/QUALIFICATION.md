@@ -349,3 +349,40 @@ equal-count substitutions, missing subjects, explicit present-non-table empty
 projections, bounded display samples, and deterministic observations. Protected
 diffs compare actual accepted sets and type permissions. These engine tests
 do not by themselves close frozen dependency assertion IDs.
+
+## Frozen authored dependency key parity
+
+At clean commit `c86f5173c90e564b204420789faf2d16ef17807a`, two independent
+trusted runs produced byte-identical JSON with SHA-256
+`09651c2e17559c8f0e445a5f79f29781858898bbae4f9bf0c2b7130ee1466d6b`.
+Five native policies accept all five frozen manifests, with the original registry
+also bound. The 130 fixtures comprise 22 accepted and 108 rejected outcomes;
+every original dependency key is independently removed and aliased. Native
+violations use the intended policy and `REP-FILE-007`; malformed/duplicate/UTF-8
+inputs fail through `REP-FILE-006`. Every old/new acceptance outcome agrees.
+
+The same clean commit passed structure, formatting, strict workspace lint,
+**1,496 tests** (zero failures, six explicit ignores), and rustdoc. Complete
+self-analysis covered 937 Rust files, 1,504 base contexts, 1,219,301 projection
+work, and zero unresolved items. Only `LOCK-008`, `LOCK-026`, `LOCK-028`, and
+`LOCK-030` stopped the gate; archive and cleanliness stages were not reached.
+See the [key parity index](evidence/key-sets-parity-index.json).
+
+After the prefetched snapshot and external build setup above:
+
+```sh
+python3 scripts/rc9-key-set-policies /absolute/snapshots /absolute/new-keys.fragment.toml
+diff -u docs/rc9/policies/kafka-driver.key-sets.fragment.toml /absolute/new-keys.fragment.toml
+cargo test --locked --offline -p zrail-rust --lib frozen_dependency_key_sets_agree
+export ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots
+export ZRAIL_RC9_KEY_SETS_REPORT=/absolute/evidence/new-key-sets-parity.json
+cargo test --locked --offline -p zrail-rust --lib qualify_all_frozen_kafka_driver_dependency_key_sets -- --ignored
+python3 scripts/rc9-inventory-check
+```
+
+Repeat with a second fresh report path on the same clean revision. The trusted
+runner reuses metadata parity input binding and isolation; its callbacks exist
+only in zrail's own compiled tests. Runtime analysis executes no legacy checker.
+The minimal registry projection is fixed by six bound inputs and does not claim
+replacement of the separate registry-parser assertions. No consumer source or
+reviewed authority changed, and this is not full repository qualification.

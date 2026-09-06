@@ -171,7 +171,13 @@
           ],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
           "removable_now": false,
-          "replacement_policy_ids": []
+          "replacement_policy_ids": [
+            "repository:file:kd-dep-core-keys",
+            "repository:file:kd-dep-driver-keys",
+            "repository:file:kd-dep-probe-keys",
+            "repository:file:kd-dep-sim-keys",
+            "repository:file:kd-dep-transport-keys"
+          ]
         },
         {
           "path": "tests/guardrails/facade.rs",

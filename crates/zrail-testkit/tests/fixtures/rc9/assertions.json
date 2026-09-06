@@ -3824,19 +3824,169 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-core-keys"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-006",
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-CORE-KEYS",
-          "cause": "Exact and allowed authored key sets, including the legacy empty-set fallback, need native document predicates and frozen differential proof. Resolved package topology alone does not preserve authored aliases."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "0fae133de05cb3758282bc14e0aa6d3afecd02936ef08f060e937ec3dac3d9ba"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "49d108a96389713ed3bb637ff54bd4b502eb9de7a19b6fa12ab4acb93653be9b"
+          },
+          {
+            "case": "deleted-kafka-wire-core",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "912c6ce08c1dc9b5b407d18c8a8abb35046d7e66991d4eb14a7a8a4fd532aff0"
+          },
+          {
+            "case": "aliased-kafka-wire-core",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "abcb8241f23dbcafd66883cabf415bd94b76c13fc4f4048f5229ced9c7ec98ba"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "912c6ce08c1dc9b5b407d18c8a8abb35046d7e66991d4eb14a7a8a4fd532aff0"
+          },
+          {
+            "case": "present-boolean",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "0e2cbbe28c87e5a66ac96aea69e4938bd51112e9fcf7a36ebdd62f5bb68e14e6"
+          },
+          {
+            "case": "present-integer",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "f5877983430be42af5876a22dd5e8efc8533977da1f14c18c475015573332115"
+          },
+          {
+            "case": "present-string",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "99bfeda244f65619e7db191a95db917c598019a3768e1c9b5f82071c1b691874"
+          },
+          {
+            "case": "present-array",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "3461338fe82145bfa3e8293b5bb6aade950a52fde996466f5d963ba322237d8b"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e2936481f966a01314a9fc1d8c9afedca5fc759afda9dcf1cc7489dab89658d3"
+          },
+          {
+            "case": "matching-keys-in-wrong-table",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "6b07cf6e1fd8f1758f7b6387944efe2201327fd552890ae13ac22540d6e723d6"
+          },
+          {
+            "case": "values-do-not-change-authored-names",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "a65bcb116b7f81f4fd86d4d61a52cc479a00857435e0aeeb1b14d144d6e369e7"
+          },
+          {
+            "case": "unrelated-field",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "10b3b2dbc99beac56e949adef93668bd441b8ce406024320a2a85c03c6be2276"
+          },
+          {
+            "case": "case-changed-key",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "96cc97811cb88ad95c15ed66af7a3d739774e4339b850ab9c60a0a60154c7e05"
+          },
+          {
+            "case": "undisplayed-unexpected-key",
+            "policy_id": "repository:file:kd-dep-core-keys",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "14a770149bfb8da011eb17043798a862ce38bcb13d12e9f66d51af333c314029"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/key-sets-parity.json.gz",
+          "payload_sha256": "09651c2e17559c8f0e445a5f79f29781858898bbae4f9bf0c2b7130ee1466d6b",
+          "implementation_commit": "c86f5173c90e564b204420789faf2d16ef17807a"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -4068,19 +4218,393 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-driver-keys"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-006",
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-DRIVER-KEYS",
-          "cause": "Exact and allowed authored key sets, including the legacy empty-set fallback, need native document predicates and frozen differential proof. Resolved package topology alone does not preserve authored aliases."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "7c9b5402e4d4483991c57a9cab6cfc435e39165246e4337553f17938af86779d"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "7ee49775c9c6b5b2c978381e419b2141a8c2cf27ed90ff8f88c708e678a779c1"
+          },
+          {
+            "case": "deleted-bornera",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "283d76cd2ed9f51e18fa649d9ad422a32286e09ffe671b6791e411efcc9d54f1"
+          },
+          {
+            "case": "aliased-bornera",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ce9619e34207eb9d3aff36bd365de9482f4332b7669b24f295ffc74993095854"
+          },
+          {
+            "case": "deleted-bornera-core",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9b00f5a38b8cbdb4b2affb75e509a4735fd6888b6e896174f84e954bfa77b2d5"
+          },
+          {
+            "case": "aliased-bornera-core",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b0b657f7a374405a0da0ff9fff0b7b7937c4b06126e998e2f6c63a3d339b813f"
+          },
+          {
+            "case": "deleted-bornera-rustls",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c4a6195922e2a8c98366ad4dbe94930f45ad90419cfc5e7fe21caf494aa50972"
+          },
+          {
+            "case": "aliased-bornera-rustls",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "54c26e7bec3188bb166bf9f8f3ebedc15af52b997cff094fcfb0a940aa2da556"
+          },
+          {
+            "case": "deleted-bytes",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "de96b68e4b0a367d4e961fc942c6843d251aaa5505200ce1f3eb75aec56e8ca5"
+          },
+          {
+            "case": "aliased-bytes",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "202ebe46f2a152242920da57bcb77ff961769fd197bb89650e5e5f109528e1cb"
+          },
+          {
+            "case": "deleted-calandria",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "dbb343e06d78392be58a07e44c322761fc4d40d64ee7b1d26fd8165f23d4fab1"
+          },
+          {
+            "case": "aliased-calandria",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "08ab85d32d7b8a753f43d36e39c2e03a32af3c43dcce384d889f778eab54d881"
+          },
+          {
+            "case": "deleted-calandria-mio",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d52bc3bdbc933d44b9fd163f03d8a9c261f1b8779189c2b98e1fe89bf32367b0"
+          },
+          {
+            "case": "aliased-calandria-mio",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "711402dc0e83e61b4f37b8be3507eb4160a653706eb1e55d6f5b0d6f1f5a3d32"
+          },
+          {
+            "case": "deleted-kafka-driver-core",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "790028a6672f558f1ae2a7cf37996a414a47cb32c7f1278cf93ee52679cbe5c0"
+          },
+          {
+            "case": "aliased-kafka-driver-core",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3c4708b1970e766987905b7e5461b98aa96c12762da0f16ba83866dec88c58d8"
+          },
+          {
+            "case": "deleted-kafka-driver-transport",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0a486ffe0ebc2089fbdd07d64be6ebb9f7ef4c75dff3ad5bfd81213a9bd625b4"
+          },
+          {
+            "case": "aliased-kafka-driver-transport",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d9cb885f7a6244bb2900b1d313acd5cb91ebca6f765905134c515279b9b65662"
+          },
+          {
+            "case": "deleted-kafka-wire",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "abb17aca8155f8848efb0fa799300a9f57bc2f0cef93e98ec034327e0e843f09"
+          },
+          {
+            "case": "aliased-kafka-wire",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fb236bcd88da844ba54b8be43ef71a763b11900369cbe3a1acc37546c9a67735"
+          },
+          {
+            "case": "deleted-kafka-wire-core",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "97e0e154ff3ec8f4e6e5be92e11c2bcab46602e7e0409653871306a407070742"
+          },
+          {
+            "case": "aliased-kafka-wire-core",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1f2584f718835637c8b608600db5b672843db7bf2789ab941ad9c81bcba7529e"
+          },
+          {
+            "case": "deleted-mio",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "915edf470499a45250d674181ca3af3ceb6738954463021c107dd81e3a02d736"
+          },
+          {
+            "case": "aliased-mio",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e44632b31f7ba3bec58e98419a8a0c86dab926f0a52504a5e30aa80fb5b9d448"
+          },
+          {
+            "case": "deleted-ring",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f1d8ffb083824ce45047b2d3b06eb7cb4022993bb0f503408014cd2a03bb92c4"
+          },
+          {
+            "case": "aliased-ring",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e72d30bcf6844bf30a6c645aa2fe1407601c83b6a91a4abe085c515ec2ebd0b9"
+          },
+          {
+            "case": "deleted-rustls",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fc7068039e7b20819fbf456d271bb819926daab4f698ee28d8fcf6d395d18960"
+          },
+          {
+            "case": "aliased-rustls",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "aede748c49050e0287fc6928d953c26c90143cdeba36bfd7243ce69ae7c292dc"
+          },
+          {
+            "case": "deleted-sasl-scram",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ba2c29afd153103d0a99fbba228bb5bf3f2d763c803c4ab22ce189a9b2dbd8a4"
+          },
+          {
+            "case": "aliased-sasl-scram",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b8d4abcda658e54b0c401a43a04c405114475481edc6c9b5d836a7232c5960a3"
+          },
+          {
+            "case": "deleted-zeroize",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "cf9c03d315fa2852e41163af225888a3225e78bb5cefa651ac15d5feed5368ea"
+          },
+          {
+            "case": "aliased-zeroize",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d83969a1e23a68d537bbb0334ce0f1d31fedfdd0d0b384605ac537ef8de4ef86"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e310a59782117a54cec6509e0285abf40f50c7b626ab873cd44b68833aab94f1"
+          },
+          {
+            "case": "present-boolean",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8834f342f378b5a9bcc7da8a7c65c7fa9f83c56f9b31a5e542c7517c225195b6"
+          },
+          {
+            "case": "present-integer",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c33b9bed434a3dff238b1fd2fc3b33525829883ec52e4936d52a4eb93a9d7923"
+          },
+          {
+            "case": "present-string",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8eaa3b134407cb58d7873bb3b75c7a75f9a7585d9e4603eb4e696609cbee6c8b"
+          },
+          {
+            "case": "present-array",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6e21960b76b1d76be0121097c0413683787bee503e0b5cea7f7bd90049920180"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5f456957b6b54257a61abca1e76129ac618950dfe3268ad0fa0c542b12d5bd99"
+          },
+          {
+            "case": "matching-keys-in-wrong-table",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f80af479eb09bedd0c0513f9615b68cff86981a30223e662134e5810575fc074"
+          },
+          {
+            "case": "values-do-not-change-authored-names",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e69a9680cd31c589ca72d80979076389263d6d094679df16c93d8d63eeb049a6"
+          },
+          {
+            "case": "unrelated-field",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "0d7a24df9bb788b59288a559e1168196e32df1d1f7d3c9b2f9e4a84b55f1a300"
+          },
+          {
+            "case": "case-changed-key",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "7c4388b306c2ab538f5dfde0b30da05b8bf8f15f715eed97b3a057c9980b345c"
+          },
+          {
+            "case": "undisplayed-unexpected-key",
+            "policy_id": "repository:file:kd-dep-driver-keys",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "77392a71d14288ef75106c3925f8228cd0e2f197b771f62e2ba5c6541ab03693"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/key-sets-parity.json.gz",
+          "payload_sha256": "09651c2e17559c8f0e445a5f79f29781858898bbae4f9bf0c2b7130ee1466d6b",
+          "implementation_commit": "c86f5173c90e564b204420789faf2d16ef17807a"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -4455,19 +4979,217 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-probe-keys"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-006",
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-PROBE-KEYS",
-          "cause": "Exact and allowed authored key sets, including the legacy empty-set fallback, need native document predicates and frozen differential proof. Resolved package topology alone does not preserve authored aliases."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "462dc1410b7574b960c5cfc9d113d0b4ad05b854da0c7bc266bf7796e2e540bb"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c2279698982eb6e41d8e10b52c34449de6d09907303fee61ba961fe9926f5557"
+          },
+          {
+            "case": "deleted-kafka-driver",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "473ed3268af6ee9a8d58433aacac5f4db209d3c47ef0af4294a3fa1637d2e1b4"
+          },
+          {
+            "case": "aliased-kafka-driver",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "43351350950463fae322bea68a8adba565cff3f48113e420e32067bc3234a39e"
+          },
+          {
+            "case": "deleted-kafka-wire",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d1e597f8489f294c176bce66da6aed911b9b2f3c6be49d7d51b0ff1f8f39efdd"
+          },
+          {
+            "case": "aliased-kafka-wire",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "62afe5c19a3051d9b5e31b95a1ff785534bae39fd2736ce4db970284f1a9319d"
+          },
+          {
+            "case": "deleted-kafka-wire-core",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "419d20186da52ebb7ca2a874cc5f81bdd36a5e59fdbbb1623944d9b571a70ad8"
+          },
+          {
+            "case": "aliased-kafka-wire-core",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4ee557638959e06b156d8e953df4ab6ce2de5aea2981b8436e7735c0a37b490c"
+          },
+          {
+            "case": "deleted-rustls",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "436a8b8f59075137aa89b5469c0c07cd73ed75daad7f3e2c7bb462743603d7ec"
+          },
+          {
+            "case": "aliased-rustls",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8bfed026950d96890275b1b1f03c65136d2a2e1fd6f7759018668d9e446c05a8"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d581b811f4048aaecd1a0ff5856e3c9249ac1cd558ae97a61d95e30407b52288"
+          },
+          {
+            "case": "present-boolean",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "eece701a17b58d1f4577d7835cf872b8ada9e88e8179a7ca33d58ec4a7cdca55"
+          },
+          {
+            "case": "present-integer",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8ff226f7b0f34d40873bda964b1e2162dbd94c3eb3fffdb56d4cf2d434720841"
+          },
+          {
+            "case": "present-string",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "19e9d7b0cfcb331fa2373fa851fb5b73e15a958329c4c5ccc9cef368482d5398"
+          },
+          {
+            "case": "present-array",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d960d244de82c9f18cf0404ad48e6d890a8f9c5d92bbcc03991f4de40265582b"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "7e6518faf43434c8b85b1180f2afa57d38c300b17f58b7fdebb490c33ed8dbb6"
+          },
+          {
+            "case": "matching-keys-in-wrong-table",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3ec56587f41c9dd30c5d3b5668bdbf4759bf4fb901acb6be4ebb1d38009734be"
+          },
+          {
+            "case": "values-do-not-change-authored-names",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b611359fb7291ff787cfcc162d9f17c7d5e5bd6d6ed60bef0c0240d805d9194f"
+          },
+          {
+            "case": "unrelated-field",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "8dd86d5ff6b59e0a35d4aa8b0c76eac974319647e28cdf61a9e9419140015864"
+          },
+          {
+            "case": "case-changed-key",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b0463bbc933d8cc3b209332d6beda810b6c792215868b07c650dd4052b5936df"
+          },
+          {
+            "case": "undisplayed-unexpected-key",
+            "policy_id": "repository:file:kd-dep-probe-keys",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "7e818ff2f94820a15794cbf18c3ee9d7973ef9c8e3a41d80544bf1a86dc0040a"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/key-sets-parity.json.gz",
+          "payload_sha256": "09651c2e17559c8f0e445a5f79f29781858898bbae4f9bf0c2b7130ee1466d6b",
+          "implementation_commit": "c86f5173c90e564b204420789faf2d16ef17807a"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -5090,19 +5812,185 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-sim-keys"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-006",
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-SIM-KEYS",
-          "cause": "Native authored key-set comparison and frozen differential proof remain open."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "0c6e1d53bd243f7184967ac6a80aed24e984e4f2112c45bfd93a701116e4e8f1"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "059e62292ac351bbfcef1805b6300eb26abfd56a6e8b96605fc342621dec708b"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ff8e3038525bbcb14247eaa43321f9c4b8ada168a48c2ddf50cee6662b48fc2a"
+          },
+          {
+            "case": "deleted-criticality",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9713ed909f6cc34f8af4358e83ec52f8be520d653f1640be4ce48ca0700db379"
+          },
+          {
+            "case": "aliased-criticality",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "92b589c6994e2bd9a6d4e345da1a6d04fe3840aaf6373c9cc61718cd2cfec7c0"
+          },
+          {
+            "case": "deleted-kafka-driver-core",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a0e68281bb8ec6721857331c4ddcc59ab2ac7a90324c84272fd0cad02bfba66d"
+          },
+          {
+            "case": "aliased-kafka-driver-core",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3ab2cbfd641ac3f04965acd317be41dde16082eb6d1c7136afc7f4cb3905d8cb"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f77986fbfca2f427129fc0e7ade6c274c313e0161a0e88a62cfe7aadcb93b3a9"
+          },
+          {
+            "case": "present-boolean",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1ce22264704d0de0d14ee89b838076ad0b98143a3d44773e5077c0c191eb1874"
+          },
+          {
+            "case": "present-integer",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "66725772ca72ffee4d70cd44e08ef45b770ce36b7d6eab82f33191e8d047e856"
+          },
+          {
+            "case": "present-string",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "60c54af26ebd8c99159bbd11dd5020f4c95346c59dc20d80543b2af6125b6657"
+          },
+          {
+            "case": "present-array",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0b2a504e67b4aa9cf6e87ebcfd0cfc2ba758298415dc67f4107ed165c3064bd0"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "55b8db7b7464483d23aa75ef15c156480996b63c80c830488ad7d596f9c475fd"
+          },
+          {
+            "case": "matching-keys-in-wrong-table",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b0c6a0d9a33a1f2b0f155761fe7b4cda95b823ecc1333e8bc153cec2fcaa798d"
+          },
+          {
+            "case": "values-do-not-change-authored-names",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "7d7a254551fca03469e2462bdeefd9097eeb2b8ff7fdad122f53b50e1585c887"
+          },
+          {
+            "case": "unrelated-field",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "53b105089618974cb534f4b60cfe511b806d33f71315f259073b15e6475199dd"
+          },
+          {
+            "case": "case-changed-key",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8f084661a835fee3e6f8b538f784b2bd4c0ad2c44789bf7b615068f8bdf8d6b2"
+          },
+          {
+            "case": "undisplayed-unexpected-key",
+            "policy_id": "repository:file:kd-dep-sim-keys",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0d7f35cda940ed3377240ca8071dab18c27b4c147a2d8eaf6219f6f7db0b4961"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/key-sets-parity.json.gz",
+          "payload_sha256": "09651c2e17559c8f0e445a5f79f29781858898bbae4f9bf0c2b7130ee1466d6b",
+          "implementation_commit": "c86f5173c90e564b204420789faf2d16ef17807a"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-SIM-NO-VERSION-STRING",
@@ -5305,19 +6193,201 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-transport-keys"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-006",
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-TRANSPORT-KEYS",
-          "cause": "Exact and allowed authored key sets, including the legacy empty-set fallback, need native document predicates and frozen differential proof. Resolved package topology alone does not preserve authored aliases."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "1ca93986cc1c15a1dfed6300181d4639551394931b85c7942edeeeedb943bcd1"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fe0c162a9f3bcb7fd161b19e35cc57f02fe3609f3f322b0de0d7f8c20ad9b8e6"
+          },
+          {
+            "case": "deleted-bytes",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c5eace9d2fe87a971e5e5ab97df447c6f82447cedc1554bf14e2f6ccefab684e"
+          },
+          {
+            "case": "aliased-bytes",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6df6cf648e4d29a62200edc3334b70ee1cd505e0c88da65d39609d706d7a3606"
+          },
+          {
+            "case": "deleted-kafka-driver-core",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8370679cc41ed8b2d4b4a0457db796ebbefb3a899976180a69b829697c9f6c2b"
+          },
+          {
+            "case": "aliased-kafka-driver-core",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1b9e3dcdb551988830595639cd8e9a064d1afcd4a759e6f44a747b12664c776d"
+          },
+          {
+            "case": "deleted-kafka-wire-core",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "098286fe831f6a048ba84bf76fd98c2d2bc3c56145d941275efe06f9872678ff"
+          },
+          {
+            "case": "aliased-kafka-wire-core",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5aa733e81f90e9b914e3e20bef5aa027279242572ff64a1e830fc097a42f9f08"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "89959fbe333488cb6bfe757a1f9a479cddd5b251577daaca04b35d902d6095ef"
+          },
+          {
+            "case": "present-boolean",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "be7c7c5599992c8093797b337e46f336996489ef95d8cd583a59476c0bca9643"
+          },
+          {
+            "case": "present-integer",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "11bb5153d662ebd48642fdd0ffc93c2e8898c3b01f11dbef9821e93e5b7d2d64"
+          },
+          {
+            "case": "present-string",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "928871bf50f2d71cf5848c1c8bc0c8f063a3a121b07ae47a84e6b4d5eb66fc2d"
+          },
+          {
+            "case": "present-array",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "31d7759c492a042d3c21599d2bf455cd4d7cd860799337e33dd4a9034dcb0f00"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "afffbeb13b74ea7a1a5300b032ff0768b62a01bef5256bdc520ffc524f31bdcb"
+          },
+          {
+            "case": "matching-keys-in-wrong-table",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3d89a51580b33fbcd27251a9b5a6734398dff10e9c0214336f17bbbf6425c7f1"
+          },
+          {
+            "case": "values-do-not-change-authored-names",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "7239fe149564b9370a18a719853a08f21c77cb6e21b3ce1ae4c821749e9ac74b"
+          },
+          {
+            "case": "unrelated-field",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "289af8b9b65301a105292ee985a18a80736684936bae1e8c05ca7e907164d626"
+          },
+          {
+            "case": "case-changed-key",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8fc98df8e734e809f70b17b6db283146c74ce047c2519af2603f4751bc2ebc7e"
+          },
+          {
+            "case": "undisplayed-unexpected-key",
+            "policy_id": "repository:file:kd-dep-transport-keys",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "611325d61431126f48211bb822a82141d80b876e2d59e4b8641a237c5d6354b9"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/key-sets-parity.json.gz",
+          "payload_sha256": "09651c2e17559c8f0e445a5f79f29781858898bbae4f9bf0c2b7130ee1466d6b",
+          "implementation_commit": "c86f5173c90e564b204420789faf2d16ef17807a"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -24218,11 +25288,11 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 381,
-    "implemented": 257,
+    "implemented": 262,
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 247,
+      "new engine capability": 252,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },
