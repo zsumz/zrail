@@ -2,7 +2,7 @@
 
 use crate::{ChangeKind, Contract, RustInventoryRule, compare_architecture};
 
-#[path = "inventory_impls_test.rs"]
+#[path = "../../tests/rc9_inventories/diff.rs"]
 mod impls_test;
 
 fn contract(assertion: &str) -> Contract {

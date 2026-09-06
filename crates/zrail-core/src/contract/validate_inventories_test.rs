@@ -2,7 +2,7 @@
 
 use crate::{RustInventoryAssertion, RustInventoryRule, RustInventorySubject};
 
-#[path = "validate_inventory_impls_test.rs"]
+#[path = "../../tests/rc9_inventories/validation.rs"]
 mod impls_test;
 
 fn rule(assertion: &str) -> RustInventoryRule {
