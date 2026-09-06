@@ -12,7 +12,7 @@ pub(in super::super) struct Mutation {
     pub(in super::super) diagnostic: Option<&'static str>,
 }
 
-pub(super) fn cases(rule: &RepositoryFileRule, original: &[u8]) -> Vec<Mutation> {
+pub(in super::super) fn cases(rule: &RepositoryFileRule, original: &[u8]) -> Vec<Mutation> {
     let mutation = |name: &str, bytes, diagnostic| Mutation {
         name: name.into(),
         bytes,
@@ -129,7 +129,11 @@ pub(super) fn cases(rule: &RepositoryFileRule, original: &[u8]) -> Vec<Mutation>
     }
 }
 
-fn field(original: &[u8], path: &[String], replacement: Option<toml::Value>) -> Vec<u8> {
+pub(in super::super) fn field(
+    original: &[u8],
+    path: &[String],
+    replacement: Option<toml::Value>,
+) -> Vec<u8> {
     let mut document = std::str::from_utf8(original)
         .expect("UTF-8 TOML")
         .parse::<toml::Value>()

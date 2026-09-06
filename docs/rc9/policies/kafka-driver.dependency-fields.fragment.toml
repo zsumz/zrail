@@ -1,0 +1,184 @@
+# Partial dependency-field fragment; assemble the complete repository section before adoption.
+# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# Detector SHA-256: fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f
+# Publication equality preserves the conjunction of array type, length one, and first registry.
+
+[[repository.files]]
+name = "kd-dep-00-parse-driver"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = [], assertion = { op = "present" } }
+
+[[repository.files]]
+name = "kd-dep-00-parse-kafka-driver-core"
+include = ["crates/kafka-driver-core/Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = [], assertion = { op = "present" } }
+
+[[repository.files]]
+name = "kd-dep-00-parse-kafka-driver-probe"
+include = ["crates/kafka-driver-probe/Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = [], assertion = { op = "present" } }
+
+[[repository.files]]
+name = "kd-dep-00-parse-kafka-driver-sim"
+include = ["crates/kafka-driver-sim/Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = [], assertion = { op = "present" } }
+
+[[repository.files]]
+name = "kd-dep-00-parse-kafka-driver-transport"
+include = ["crates/kafka-driver-transport/Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = [], assertion = { op = "present" } }
+
+[[repository.files]]
+name = "kd-dep-criticality-version"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "criticality"], assertion = { op = "equals", value = "=0.0.1-rc.2" } }
+
+[[repository.files]]
+name = "kd-dep-driver-wire-inheritance"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "kafka-wire", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-dep-kafka-driver-core-path-release"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "kafka-driver-core", "version"], assertion = { op = "equals", value = "0.1.0-rc.5" } }
+
+[[repository.files]]
+name = "kd-dep-kafka-driver-core-public-registry"
+include = ["crates/kafka-driver-core/Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["package", "publish"], assertion = { op = "equals", value = ["crates-io"] } }
+
+[[repository.files]]
+name = "kd-dep-kafka-driver-path-release"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "kafka-driver", "version"], assertion = { op = "equals", value = "0.1.0-rc.5" } }
+
+[[repository.files]]
+name = "kd-dep-kafka-driver-probe-private"
+include = ["crates/kafka-driver-probe/Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["package", "publish"], assertion = { op = "equals", value = false } }
+
+[[repository.files]]
+name = "kd-dep-kafka-driver-public-registry"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["package", "publish"], assertion = { op = "equals", value = ["crates-io"] } }
+
+[[repository.files]]
+name = "kd-dep-kafka-driver-sim-private"
+include = ["crates/kafka-driver-sim/Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["package", "publish"], assertion = { op = "equals", value = false } }
+
+[[repository.files]]
+name = "kd-dep-kafka-driver-transport-path-release"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "kafka-driver-transport", "version"], assertion = { op = "equals", value = "0.1.0-rc.5" } }
+
+[[repository.files]]
+name = "kd-dep-kafka-driver-transport-public-registry"
+include = ["crates/kafka-driver-transport/Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["package", "publish"], assertion = { op = "equals", value = ["crates-io"] } }
+
+[[repository.files]]
+name = "kd-dep-kafka-wire-core-registry-version"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "kafka-wire-core"], assertion = { op = "equals", value = "=0.1.0-rc.3" } }
+
+[[repository.files]]
+name = "kd-dep-kafka-wire-core-release"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "kafka-wire-core"], assertion = { op = "equals", value = "=0.1.0-rc.3" } }
+
+[[repository.files]]
+name = "kd-dep-kafka-wire-registry-version"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "kafka-wire"], assertion = { op = "equals", value = "=0.1.0-rc.3" } }
+
+[[repository.files]]
+name = "kd-dep-kafka-wire-release"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "kafka-wire"], assertion = { op = "equals", value = "=0.1.0-rc.3" } }
+
+[[repository.files]]
+name = "kd-dep-probe-wire-inheritance"
+include = ["crates/kafka-driver-probe/Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "kafka-wire", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-dep-rustls-features"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "rustls", "features"], assertion = { op = "equals", value = ["ring", "std", "tls12"] } }
+
+[[repository.files]]
+name = "kd-dep-rustls-inheritance"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "rustls", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-dep-rustls-no-defaults"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "rustls", "default-features"], assertion = { op = "equals", value = false } }
+
+[[repository.files]]
+name = "kd-dep-rustls-optional"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "rustls", "optional"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-dep-sasl-features"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "sasl-scram", "features"], assertion = { op = "equals", value = ["std", "sha256", "sha512", "saslprep"] } }
+
+[[repository.files]]
+name = "kd-dep-sasl-inheritance"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "sasl-scram", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-dep-sasl-no-defaults"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "sasl-scram", "default-features"], assertion = { op = "equals", value = false } }
+
+[[repository.files]]
+name = "kd-dep-sasl-version"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "sasl-scram", "version"], assertion = { op = "equals", value = "=0.0.1-rc.3" } }
+
+[[repository.files]]
+name = "kd-dep-sim-no-version-string"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "kafka-driver-sim"], assertion = { op = "field-not-string", field = "version" } }
+
+[[repository.files]]
+name = "kd-dep-tls-features"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts."
+predicate = { kind = "document", format = "toml", path = ["features", "tls-rustls"], assertion = { op = "equals", value = ["dep:bornera-rustls", "dep:rustls"] } }

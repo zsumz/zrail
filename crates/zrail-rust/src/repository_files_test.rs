@@ -2,6 +2,8 @@
 
 #[path = "repository_files/parity/baseline.rs"]
 mod baseline;
+#[path = "repository_files/dependency_fields/qualification.rs"]
+mod dependency_fields;
 #[path = "repository_files/parity/fixtures.rs"]
 mod fixtures;
 #[path = "repository_files/key_sets/qualification.rs"]

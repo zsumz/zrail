@@ -1,4 +1,4 @@
-//! Typed get/as_str projections retain absent fields without granting absent required parents.
+//! Typed `get/as_str` projections retain absent fields without granting absent required parents.
 
 use super::{document, pass};
 use crate::support::{coverage, violation};

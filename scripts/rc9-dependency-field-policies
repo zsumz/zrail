@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""Emit reviewed frozen dependency-field assertions as stock declarative policy."""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+
+
+ROOT = Path(__file__).resolve().parent.parent
+SOURCE_SHA256 = "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f"
+
+
+def literal(value):
+    if isinstance(value, dict):
+        return "{ " + ", ".join(f"{key} = {literal(item)}" for key, item in value.items()) + " }"
+    return json.dumps(value, ensure_ascii=False)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("snapshots", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
+    source = (args.snapshots / "kafka-driver/tests/guardrails/dependency.rs").read_bytes()
+    if hashlib.sha256(source).hexdigest() != SOURCE_SHA256:
+        raise ValueError("dependency detector differs from the frozen audit")
+    ledger = json.loads((ROOT / "crates/zrail-testkit/tests/fixtures/rc9/assertions.json").read_text())
+    rules = []
+
+    def field(name, path, keys, assertion):
+        rules.append(dict(name=name, include=[path],
+                          reason="Preserve the reviewed authored dependency assertion; Cargo resolution and execution remain separate contracts.",
+                          predicate=dict(kind="document", format="toml", path=keys, assertion=assertion)))
+
+    for row in ledger["reviewed_assertions"]:
+        if not row["id"].startswith("KD-DEP-"):
+            continue
+        semantics = row["matching_semantics"]
+        keys = row["selection"]["keys"]
+        if semantics["kind"] == "TOML typed equality":
+            assertion = dict(op="equals", value=semantics["value"])
+        elif row["id"].endswith("PUBLIC-REGISTRY"):
+            # This equals predicate proves the original array/type/count/first-item conjunction.
+            assertion = dict(op="equals", value=[semantics["value"]])
+        elif row["id"] == "KD-DEP-SIM-NO-VERSION-STRING":
+            keys = keys[:-1]
+            assertion = dict(op="field-not-string", field="version")
+        elif row["id"] == "KD-DEP-PARSE":
+            for path in row["selection"]["paths"]:
+                name = "driver" if path == "Cargo.toml" else Path(path).parent.name
+                field("kd-dep-00-parse-" + name, path, [], dict(op="present"))
+            continue
+        else:
+            continue
+        if row["source"]["file_sha256"] != SOURCE_SHA256 or len(row["selection"]["paths"]) != 1:
+            raise ValueError("unexpected reviewed dependency identity")
+        field(row["id"].lower(), row["selection"]["paths"][0], keys, assertion)
+    if len(rules) != 30 or len({rule["name"] for rule in rules}) != 30:
+        raise ValueError("incomplete or duplicate reviewed field translation")
+    lines = ["# Partial dependency-field fragment; assemble the complete repository section before adoption.",
+             "# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+             "# Detector SHA-256: " + SOURCE_SHA256,
+             "# Publication equality preserves the conjunction of array type, length one, and first registry."]
+    for rule in sorted(rules, key=lambda rule: rule["name"]):
+        lines += ["", "[[repository.files]]"] + [f"{key} = {literal(value)}" for key, value in rule.items()]
+    with args.output.open("x", encoding="utf-8", newline="\n") as output:
+        output.write("\n".join(lines) + "\n")
+    print("dependency field translation: 30 policies")
+
+
+if __name__ == "__main__":
+    main()
