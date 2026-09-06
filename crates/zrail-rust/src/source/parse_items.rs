@@ -56,6 +56,15 @@ pub(super) fn index_file_as(
                 )
             })
             .then(|| authored_expressions::collect(syntax, &visitor.paths, &visitor.calls)),
+        authored_paths: inventories
+            .iter()
+            .any(|rule| {
+                matches!(
+                    rule.subject,
+                    zrail_core::RustInventorySubject::WrittenPathsContaining { .. }
+                )
+            })
+            .then(|| authored_expressions::collect_all(syntax, &visitor.paths, &visitor.calls)),
         paths: visitor.paths,
         calls: visitor.calls,
         call_resolutions: visitor.call_resolutions,

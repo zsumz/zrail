@@ -102,6 +102,32 @@ Each physical `(path, suffix, complete path span)` counts once. The claim is
 Changing a direct call into a function-value acquisition preserves this quantity;
 rc8 direct-call owner restrictions retain their independent meaning.
 
+The `written-paths-containing` subject matches every authored `syn::Path`
+containing a configured exact identifier segment:
+
+```toml
+subject = { kind = "written-paths-containing", names = ["ConnectionSet"] }
+assertion = { kind = "exact-owners", owners = [
+  { path = "src/set_owner.rs", name = "ConnectionSet" },
+] }
+```
+
+Type, expression, trait, attribute-name, restricted-visibility, macro-name,
+pattern, generic-argument and qualified-self paths participate. Import `UseTree`
+leaves and opaque token contents are separate syntax and do not participate.
+A declaration named `ConnectionSet` is not itself a path. An unqualified pattern
+parsed as a binding is not a path; a qualified path pattern is. Attribute
+name-value expressions participate, while token payloads do not. All authored
+cfg branches participate, and case and raw prefixes remain significant.
+
+Each physical `(file, selected name, complete path span)` counts once. Repeating
+the same name inside one path does not duplicate that pair. A path containing
+two different selected names contributes one match to each subject; the total
+is the number of path/subject matches. Nested paths in generic arguments or
+qualified-self types are separate nodes. Owner sets discard only quantity when
+deciding membership; coverage retains all quantities. The explicit claim is
+`authored-rust-path-membership-syntax`, independent of resolved identity.
+
 Selections reuse the bounded physical repository scanner independently of
 `repository.exclude`, Cargo source filtering, and mount reachability. Every
 selected entry must be a physical `.rs` file with complete Rust *file* facts.
@@ -134,7 +160,7 @@ unreleased rc9 semantics epoch 7 and coverage schema 6.
 Limits are 1,024 rules, 64 selectors per rule, 128 subjects per rule, 4,096 exact
 pairs per rule, and 50,000 declared occurrences per rule. Across one analysis,
 physical selection allows 8,000,000 queries and 250,000 selected entries;
-inventory observation allows 64 Mi fact comparisons, 256 MiB unique source
+inventory observation allows 64 Mi fact and written-segment comparisons, 256 MiB unique source
 bytes, and 50,000 matched occurrences including repeated policy observations.
 Input digests are reused. Existing parser, source, contract, and traversal limits
 also apply. Exceeding a bound is incomplete analysis, never a truncated pass.

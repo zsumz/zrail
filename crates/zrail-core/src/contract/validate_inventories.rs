@@ -42,7 +42,8 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
         unique(names, "Rust inventory subject selectors", errors);
         for name in names {
             let valid = match rule.subject {
-                RustInventorySubject::WrittenMethods { .. } => identifier(name),
+                RustInventorySubject::WrittenMethods { .. }
+                | RustInventorySubject::WrittenPathsContaining { .. } => identifier(name),
                 RustInventorySubject::WrittenExpressionPaths { .. } => {
                     name.split("::").count() == 2 && name.split("::").all(identifier)
                 }

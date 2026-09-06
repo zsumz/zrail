@@ -6,6 +6,8 @@ mod expression_cases;
 mod legacy;
 #[path = "rust_inventories/parity/native.rs"]
 mod native;
+#[path = "rust_inventories/parity/path_cases.rs"]
+mod path_cases;
 #[path = "rust_inventories/parity/selection.rs"]
 mod selection;
 #[path = "rust_inventories/parity/syntax_cases.rs"]
@@ -108,6 +110,40 @@ fn frozen_transport_expression_paths_preserve_authored_contexts_and_quantities()
             "{source}"
         );
     }
+}
+
+#[test]
+fn frozen_transport_path_membership_preserves_every_written_owner_context() {
+    let root = std::env::temp_dir().join(format!(
+        "zrail-path-parity-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    for (source, count) in path_cases::CASES {
+        let expected = legacy::owners("src/sample.rs", source);
+        assert_eq!(
+            !expected.is_empty(),
+            count > 0,
+            "frozen semantics: {source}"
+        );
+        let actual = native::observed_with_subject(&root, source, path_cases::SUBJECT);
+        assert_eq!(actual.values().sum::<usize>(), count, "{source}");
+        let owners = actual
+            .keys()
+            .map(|key| key.split_once(':').expect("owner").0.to_owned())
+            .collect::<std::collections::BTreeSet<_>>();
+        assert_eq!(owners, expected, "{source}");
+    }
+    legacy::check_owners(legacy::owners(
+        "src/reactor/direct_plaintext/set_owner.rs",
+        "fn f(x: ConnectionSet) {}",
+    ));
+    let detector = model::detector_source();
+    legacy::check_detector_owners(legacy::owners("src/reactor/rogue.rs", &detector));
+    assert_eq!(
+        native::observed_with_subject(&root, &detector, path_cases::SUBJECT),
+        std::collections::BTreeMap::from([("src/sample.rs:ConnectionSet".into(), 1)])
+    );
 }
 
 #[test]

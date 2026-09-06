@@ -45,13 +45,18 @@ pub enum RustInventorySubject {
         /// Exact final two written identifiers; qualification and generic arguments are ignored.
         suffixes: Vec<String>,
     },
+    /// Each authored Rust path containing a selected written identifier segment.
+    WrittenPathsContaining {
+        /// Exact case-sensitive segments, including raw prefixes; each path/name pair counts once.
+        names: Vec<String>,
+    },
 }
 
 impl RustInventorySubject {
     /// Exact authored subject selectors, without semantic identity resolution.
     pub fn names(&self) -> &[String] {
         match self {
-            Self::WrittenMethods { names } => names,
+            Self::WrittenMethods { names } | Self::WrittenPathsContaining { names } => names,
             Self::WrittenExpressionPaths { suffixes } => suffixes,
         }
     }
@@ -59,7 +64,7 @@ impl RustInventorySubject {
     /// Canonicalize unordered selectors without changing their authored spelling.
     pub fn canonicalize(&mut self) {
         match self {
-            Self::WrittenMethods { names } => names.sort(),
+            Self::WrittenMethods { names } | Self::WrittenPathsContaining { names } => names.sort(),
             Self::WrittenExpressionPaths { suffixes } => suffixes.sort(),
         }
     }

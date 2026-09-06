@@ -124,6 +124,7 @@ fn finish(
         methods: visitor.methods,
         authored_methods: None,
         authored_expressions: None,
+        authored_paths: None,
         operations: visitor.operations,
         macros: visitor.macros,
         macro_imports: Vec::new(),

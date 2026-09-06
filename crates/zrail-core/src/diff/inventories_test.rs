@@ -213,3 +213,30 @@ fn expression_path_scope_quantities_and_kind_changes_remain_protected() {
         [ChangeKind::Grant, ChangeKind::Revoke]
     );
 }
+
+#[test]
+fn written_path_membership_is_distinct_authority_with_reviewed_scope_semantics() {
+    for (assertion, expanded) in [
+        ("kind='count',maximum=0", ChangeKind::Revoke),
+        ("kind='count',minimum=1", ChangeKind::Grant),
+        ("kind='exact-owners',owners=[]", ChangeKind::Revoke),
+    ] {
+        let before = contract(assertion);
+        let mut after = before.clone();
+        after.source.rust.inventories[0].subject =
+            crate::RustInventorySubject::WrittenPathsContaining {
+                names: vec!["ConnectionSet".into()],
+            };
+        assert_eq!(kinds(&before, &after), [ChangeKind::Unknown]);
+        assert_eq!(kinds(&after, &before), [ChangeKind::Unknown]);
+        let before = after.clone();
+        after.source.rust.inventories[0].subject =
+            crate::RustInventorySubject::WrittenPathsContaining {
+                names: vec!["ConnectionSet".into(), "Alias".into()],
+            };
+        assert_eq!(kinds(&before, &after), [expanded]);
+        let mut reordered = after.clone();
+        reordered.source.rust.inventories[0].subject.canonicalize();
+        assert!(kinds(&after, &reordered).is_empty());
+    }
+}

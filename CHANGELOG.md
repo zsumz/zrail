@@ -51,6 +51,8 @@ All notable zrail changes are recorded here for reviewed release notes.
 - Exact file/subject owner sets independent of occurrence quantities, with
   required presence, persistent prohibitions, full count evidence, and protected
   comparisons against bounds and exact counts.
+- Written path-segment membership across all authored Rust path contexts,
+  reusing parsed path facts with exact physical owner sets and separate counts.
 
 ### Changed
 

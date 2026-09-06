@@ -26,7 +26,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("snapshots", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--subject", choices=["methods", "expression-paths"], default="methods")
+    parser.add_argument("--subject", choices=["methods", "expression-paths", "owners"], default="methods")
     args = parser.parse_args()
     subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
     consumer = args.snapshots / "kafka-driver"
@@ -36,27 +36,40 @@ def main():
             raise ValueError("frozen transport policy input changed")
     ledger = json.loads((ROOT / "crates/zrail-testkit/tests/fixtures/rc9/assertions.json").read_text())
     methods = args.subject == "methods"
-    identity = "KD-TRANSPORT-METHODS" if methods else "KD-TRANSPORT-ASSOCIATED"
+    identity = {"methods": "KD-TRANSPORT-METHODS", "expression-paths": "KD-TRANSPORT-ASSOCIATED",
+                "owners": "KD-TRANSPORT-OWNERS"}[args.subject]
     rows = [row for row in ledger["reviewed_assertions"] if row["id"] == identity]
     row, = rows
     roots = tomllib.loads((consumer / "guardrails.toml").read_text())["paths"]["rust_roots"]
     if roots != row["selection"]["roots"]["roots"] or row["source"]["file_sha256"] != SOURCE_SHA:
         raise ValueError("reviewed source selection differs from the frozen registry")
-    expected = row["required_cardinality"]["exact_map"]
-    counts = [dict(path=key.split(":", 1)[0], name=key.split(":", 1)[1], count=count)
-              for key, count in sorted(expected.items())]
-    pairs, total = (11, 20) if methods else (8, 8)
-    if len(counts) != pairs or sum(expected.values()) != total:
-        raise ValueError("reviewed selector inventory changed")
+    if args.subject == "owners":
+        expected = row["required_cardinality"]["exact_set"]
+        if expected != ["src/reactor/direct_plaintext/set_owner.rs"]:
+            raise ValueError("reviewed owner inventory changed")
+        subject = dict(kind="written-paths-containing", names=[row["matching_semantics"]["value"]])
+        assertion = dict(kind="exact-owners", owners=[dict(path=path, name=subject["names"][0])
+                                                    for path in expected])
+        summary = "1 exact owner; occurrence quantities remain independent"
+    else:
+        expected = row["required_cardinality"]["exact_map"]
+        counts = [dict(path=key.split(":", 1)[0], name=key.split(":", 1)[1], count=count)
+                  for key, count in sorted(expected.items())]
+        pairs, total = (11, 20) if methods else (8, 8)
+        if len(counts) != pairs or sum(expected.values()) != total:
+            raise ValueError("reviewed selector inventory changed")
+        subject = (dict(kind="written-methods", names=row["matching_semantics"]["methods"]) if methods else
+                   dict(kind="written-expression-paths", suffixes=row["matching_semantics"]["selected_suffixes"]))
+        assertion = dict(kind="exact-counts", counts=counts)
+        summary = f"{pairs} exact pairs, {total} occurrences"
     rule = dict(
-        name="kd-transport-methods" if methods else "kd-transport-expression-paths",
+        name="kd-transport-" + args.subject,
         reason=("Preserve the exact frozen per-file written selector method quantities; receiver identities and execution are separate claims." if methods else
-                "Preserve every frozen authored ExprPath quantity, including function values and path patterns, by physical file and final two written identifiers."),
+                "Preserve every frozen authored ExprPath quantity, including function values and path patterns, by physical file and final two written identifiers." if args.subject == "expression-paths" else
+                "Preserve the exact physical files containing a written ConnectionSet path segment across every original syntax context, independent of occurrence quantity or resolved identity."),
         include=[root + "/**/*.rs" for root in roots],
         exclude=["tests/**", "**/*_test.rs"], world="authored",
-        subject=(dict(kind="written-methods", names=row["matching_semantics"]["methods"]) if methods else
-                 dict(kind="written-expression-paths", suffixes=row["matching_semantics"]["selected_suffixes"])),
-        assertion=dict(kind="exact-counts", counts=counts),
+        subject=subject, assertion=assertion,
     )
     lines = ["# Partial authored syntax policy; full downstream qualification remains required.",
              "# Kafka-driver " + row["commit"], "# Transport detector SHA-256: " + SOURCE_SHA,
@@ -66,7 +79,7 @@ def main():
         raise ValueError("translated policy failed round-trip validation")
     with args.output.open("x", encoding="utf-8", newline="\n") as output:
         output.write(text)
-    print(f"transport {args.subject} translation: 1 policy, {pairs} exact pairs, {total} occurrences")
+    print(f"transport {args.subject} translation: 1 policy, {summary}")
 
 
 if __name__ == "__main__":

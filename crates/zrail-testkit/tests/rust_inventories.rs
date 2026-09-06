@@ -8,6 +8,8 @@ mod expression_test;
 mod fixture;
 #[path = "rust_inventories/owners_test.rs"]
 mod owners_test;
+#[path = "rust_inventories/paths_test.rs"]
+mod paths_test;
 #[path = "rust_inventories/support.rs"]
 mod support;
 

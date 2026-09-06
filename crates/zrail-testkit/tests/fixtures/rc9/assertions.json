@@ -22833,17 +22833,25 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "rust:inventory:kd-transport-owners"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_path_membership_preserves_every_written_owner_context",
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/paths_test.rs::path_owners_bind_exact_authored_spelling_and_all_occurrence_evidence",
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/owners_test.rs::complete_ownership_sets_reject_moved_and_additional_locations"
+        ]
       },
       "blockers": [
         {
           "id": "KD-TRANSPORT-OWNERS",
-          "cause": "Preserve the exact authored occurrence context, identity/set/count semantics and full physical selection with native inventories; qualify original detector outputs, aliases, cfg branches, macros and all unexpected/missing members."
+          "cause": "Native written-path membership and exact owner sets are implemented with frozen syntax-context comparisons. Full frozen-scope differential fixtures and reproducible bound evidence remain required before verification."
         }
       ]
     },
@@ -50282,17 +50290,25 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "rust:inventory:kd-transport-owners"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_path_membership_preserves_every_written_owner_context",
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/paths_test.rs::path_owners_bind_exact_authored_spelling_and_all_occurrence_evidence",
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/owners_test.rs::complete_ownership_sets_reject_moved_and_additional_locations"
+        ]
       },
       "blockers": [
         {
           "id": "KD-TRANSPORT-DETECTOR-OWNERS",
-          "cause": "Import the exact adversarial source and compare complete native observations with this original detector assertion; reject its architectural violations through the linked live inventory policies."
+          "cause": "Native written-path membership and exact owner sets are implemented with frozen syntax-context comparisons. Full frozen-scope differential fixtures and reproducible bound evidence remain required before verification."
         }
       ],
       "detector_for": [
@@ -51526,7 +51542,7 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 575,
-    "implemented": 502,
+    "implemented": 504,
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,

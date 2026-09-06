@@ -74,6 +74,9 @@ pub(crate) fn analyze(
                 zrail_core::RustInventorySubject::WrittenExpressionPaths { .. } => {
                     "authored-rust-expression-path-syntax".into()
                 }
+                zrail_core::RustInventorySubject::WrittenPathsContaining { .. } => {
+                    "authored-rust-path-membership-syntax".into()
+                }
             },
             policy,
             quality: AnalysisQuality::Exact,

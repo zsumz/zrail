@@ -3,8 +3,8 @@
 #[path = "legacy_api.rs"]
 mod api;
 pub(super) use api::{
-    associated, check_associated, check_detector_associated, expected, expected_associated,
-    observed, repository_associated,
+    associated, check_associated, check_detector_associated, check_detector_owners, check_owners,
+    expected, expected_associated, observed, owners, repository_associated,
 };
 
 use super::selection::{display_path, is_test, read};

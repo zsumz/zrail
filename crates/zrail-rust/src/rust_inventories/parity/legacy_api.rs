@@ -1,6 +1,6 @@
 //! Trusted access to the unchanged frozen collector quantities.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use super::{
     AuthorityInventory, counts, expected_selector_methods, repository_inventory, source_inventory,
@@ -8,6 +8,32 @@ use super::{
 
 pub(in super::super) fn observed(path: &str, source: &str) -> BTreeMap<String, usize> {
     source_inventory(path, source).selector_methods
+}
+
+pub(in super::super) fn owners(path: &str, source: &str) -> BTreeSet<String> {
+    source_inventory(path, source).connection_set_files
+}
+
+pub(in super::super) fn check_owners(connection_set_files: BTreeSet<String>) {
+    let actual = AuthorityInventory {
+        connection_set_files,
+        ..AuthorityInventory::default()
+    };
+    assert_eq!(
+        actual.connection_set_files,
+        BTreeSet::from([SET_OWNER.into()])
+    );
+}
+
+pub(in super::super) fn check_detector_owners(connection_set_files: BTreeSet<String>) {
+    let actual = AuthorityInventory {
+        connection_set_files,
+        ..AuthorityInventory::default()
+    };
+    assert_eq!(
+        actual.connection_set_files,
+        BTreeSet::from(["src/reactor/rogue.rs".into()])
+    );
 }
 
 pub(in super::super) fn expected() -> BTreeMap<String, usize> {

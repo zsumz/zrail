@@ -158,3 +158,26 @@ fn expression_path_subjects_require_two_exact_written_segments() {
     };
     assert!(validate(selected).is_err());
 }
+
+#[test]
+fn path_membership_requires_exact_identifiers_and_preserves_explicit_spelling() {
+    for name in ["ConnectionSet", "r#ConnectionSet", "_State2"] {
+        let mut selected = rule("kind='exact-owners',owners=[]");
+        selected.subject = RustInventorySubject::WrittenPathsContaining {
+            names: vec![name.into()],
+        };
+        validate(selected).expect("written path identifier");
+    }
+    for name in ["", "*", "crate::State", "State<T>", "State ", "_"] {
+        let mut selected = rule("kind='count',maximum=0");
+        selected.subject = RustInventorySubject::WrittenPathsContaining {
+            names: vec![name.into()],
+        };
+        assert!(validate(selected).is_err(), "{name}");
+    }
+    let mut selected = rule("kind='count',maximum=0");
+    selected.subject = RustInventorySubject::WrittenPathsContaining {
+        names: vec!["State".into(); 2],
+    };
+    assert!(validate(selected).is_err());
+}

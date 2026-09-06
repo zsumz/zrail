@@ -8,7 +8,8 @@ published. The user approved retiring Rafter's private-name policy; see
 This branch implements strict facades, scoped size budgets, and bounded physical
 file/raw-text predicates, UTF-8 equality, and bounded authored TOML/JSON field
 assertions, whole-Cargo.lock package count/identity inventories, and exact authored
-Rust method-call quantities. Verified rc9 replacement coverage remains incomplete.
+Rust method-call and expression-path quantities, exact file/subject owner sets,
+and authored path-segment membership. Verified rc9 replacement coverage remains incomplete.
 See [exact reviewed assertion blockers](BLOCKERS.md),
 [qualification commands and results](QUALIFICATION.md), and
 [conditional downstream cutovers](CUTOVERS.md).
@@ -72,7 +73,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 372 | 329 | 326 |
+| kafka-driver | 826 | 772 | 372 | 331 | 326 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 22 | 0 | 0 |
 

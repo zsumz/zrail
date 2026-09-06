@@ -11,6 +11,7 @@ pub(crate) fn evaluate(policies: &[GovernedRustInventory], findings: &mut Findin
         let subject = match policy.policy.subject {
             RustInventorySubject::WrittenMethods { .. } => "authored method-call",
             RustInventorySubject::WrittenExpressionPaths { .. } => "authored expression-path",
+            RustInventorySubject::WrittenPathsContaining { .. } => "authored path/subject",
         };
         let expected = match &policy.policy.assertion {
             RustInventoryAssertion::Count { minimum, maximum } => {

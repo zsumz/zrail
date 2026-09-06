@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy.rs",
+      "function": "authority constants and observations",
+      "start_line": 14,
+      "end_line": 45,
+      "extracted_sha256": "fff0aa3622b9e94779313343b6a62cfd9b3780a4b02889c5d66f7bb06ef0884a"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy.rs",
+      "function": "complete frozen parser and collector",
+      "start_line": 144,
+      "end_line": 272,
+      "extracted_sha256": "dc221f8326929b5e248d43a6676137e416b3739000beec674484fcc5ff27572e"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy.rs",
+      "function": "reviewed selector counts",
+      "start_line": 287,
+      "end_line": 307,
+      "extracted_sha256": "fb3ca144af8d31ee8880683451faab88a5a37ef696e84337dfac7c25f9474ad7"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/selection.rs",
+      "function": "read",
+      "start_line": 68,
+      "end_line": 70,
+      "extracted_sha256": "2a13b1b1bff5dbc2e48c9b97eb29e7edc2099cda36466eed757f37727542fa60"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/selection.rs",
+      "function": "display_path",
+      "start_line": 102,
+      "end_line": 107,
+      "extracted_sha256": "6f847a3f2eef68a63fec9b5666a2d8173cc03c80efba1791959ed4403642a656"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/selection.rs",
+      "function": "is_test",
+      "start_line": 114,
+      "end_line": 117,
+      "extracted_sha256": "7cf7d016d7122415c263f3dac2c2697880c7801cfc13e6ca2310c71409ce6114"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy.rs",
+      "function": "complete repository inventory body with injected root and original traversal",
+      "start_line": 129,
+      "end_line": 141,
+      "extracted_sha256": "b08eac073d6dc949cc50fbf944897be2c01f9fcebeb8a300a579573022435231"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy.rs",
+      "function": "live selector quantity assertion",
+      "start_line": 56,
+      "end_line": 56,
+      "extracted_sha256": "6af97b195dcd85f46cb2a5c34a7869375505ebfc72fc05f70303d149c35d780b"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy.rs",
+      "function": "original detector method quantity assertion",
+      "start_line": 118,
+      "end_line": 121,
+      "extracted_sha256": "955411ef1e2bb8c95b1aeea084e1c6d6666a743154ab9738e30919cabd24e64f"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy_api.rs",
+      "function": "exact source family constants",
+      "start_line": 12,
+      "end_line": 13,
+      "extracted_sha256": "0d46710b4d9f3aac024e550119c95e6204a15eba6135060875a280f0bb3308a3"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy_api.rs",
+      "function": "reviewed expression path quantities",
+      "start_line": 274,
+      "end_line": 285,
+      "extracted_sha256": "a93db6254fed291ed9f26932f51ae43ecff116c8ecc687a7185bd2e1fd117026"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy_api.rs",
+      "function": "live expression path quantity assertion",
+      "start_line": 54,
+      "end_line": 54,
+      "extracted_sha256": "bc4cf141048dd12c6af9fe8d8e4a094489a5a8ebd5ad3c7cb0a262f73fb334c7"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy_api.rs",
+      "function": "original detector expression path assertion",
+      "start_line": 94,
+      "end_line": 104,
+      "extracted_sha256": "e9ffbd474e484aafdf47a4a928b73822349fe5db1e2e690ac808b0b7b9b7d3bf"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy_api.rs",
+      "function": "live exact owner assertion",
+      "start_line": 50,
+      "end_line": 53,
+      "extracted_sha256": "bfe16a9a48d9237b48668ec2ac4af53a36a1ba7cf97fdd9a42630f534199a365"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "source_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+      "harness": "crates/zrail-rust/src/rust_inventories/parity/legacy_api.rs",
+      "function": "original detector owner assertion",
+      "start_line": 90,
+      "end_line": 93,
+      "extracted_sha256": "e71d22ed095fe6ee0bb1dbb343c6f26c1826ecf6bcfe00611c4b1c126ad06f22"
+    }
+  ],
+  "fixtures": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/transport_authority.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/transport_methods/transport_authority.rs",
+      "sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed"
+    }
+  ]
+}
