@@ -81,7 +81,7 @@ impl KeySet<'_> {
         }
         match (self.exact, other.exact) {
             (true, true) => self.keys == other.keys,
-            (true, false) | (false, false) => self.keys.is_subset(&other.keys),
+            (_, false) => self.keys.is_subset(&other.keys),
             // An empty allowlist accepts only the empty table, just like exact [].
             (false, true) => self.keys.is_empty() && other.keys.is_empty(),
         }
