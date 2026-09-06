@@ -8,6 +8,7 @@ import tomllib
 
 IDS = {"KD-TRANSPORT-METHODS", "KD-TRANSPORT-DETECTOR-METHODS",
        "KD-TRANSPORT-PARSE-FIXTURE", "KD-TRANSPORT-PARSE-PRODUCTION"}
+EXPRESSION_IDS = {"KD-TRANSPORT-ASSOCIATED", "KD-TRANSPORT-DETECTOR-ASSOCIATED"}
 POLICY = "rust:inventory:kd-transport-methods"
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -43,8 +44,10 @@ def production(path):
 
 
 def observe(report, policy, expected_inputs, expected_counts):
-    require(report["policy_id"] == POLICY and report["policy"] == policy
-            and report["claim"] == "authored-rust-method-call-syntax"
+    claim = {"written-methods": "authored-rust-method-call-syntax",
+             "written-expression-paths": "authored-rust-expression-path-syntax"}[policy["subject"]["kind"]]
+    require(report["policy_id"] == "rust:inventory:" + policy["name"] and report["policy"] == policy
+            and report["claim"] == claim
             and report["quality"] == "exact", "changed policy or overstated syntax claim")
     require(inputs(report["inputs"]) == expected_inputs, "unbound selected physical inputs")
     require(count_map(report["counts"]) == expected_counts, "wrong exact occurrence map")
@@ -112,29 +115,76 @@ def cases(expected, roots):
     return result
 
 
+
+def expression_cases(expected, roots):
+    require(len(expected) == 8 and set(expected.values()) == {1}, "changed frozen expression inventory")
+    result = {"valid": (dict(expected), {}, [])}
+    syntax = [{"ConnectionSet::new": 2}, {"ConnectionSet::new": 1}, {"Source::register": 1},
+              {}, {}, {}, {}, {"ConnectionSet::new": 1}, {}, {"ConnectionSet::new": 1},
+              {"Source::register": 1}, {"ConnectionSet::new": 1, "Source::register": 1},
+              {"ConnectionSet::new": 1}, {"Source::register": 1, "DirectSet::new": 1},
+              {"DirectSet::new": 1}, {"ConnectionSet::new": 1, "Source::register": 1},
+              {"Source::register": 3}, {}, {}, {}, {"ConnectionSet::new": 1, "DirectSet::poll_io": 1},
+              {"ConnectionSet::new": 1}]
+    for index, counts in enumerate(syntax):
+        result[f"syntax-{index:02}"] = (expected | {"src/rc9_adversary.rs:" + k: n for k, n in counts.items()},
+                                       {"src/rc9_adversary.rs": True}, [])
+    detector = {"src/reactor/rogue.rs:" + suffix: 1 for suffix in
+                ["ConnectionSet::new", "DirectSet::new", "DirectSet::poll_io",
+                 "DirectSet::turn_component", "DirectSet::wake_handle", "DirectSet::pulse_handle"]}
+    result["original-detector"] = (expected | detector, {"src/reactor/rogue.rs": True}, [])
+    for index, key in enumerate(sorted(expected)):
+        path, suffix = key.split(":", 1)
+        removed = {k: n for k, n in expected.items() if k != key}
+        result[f"remove-{index:02}"] = (removed, {path: True}, [])
+        result[f"duplicate-{index:02}"] = (expected | {key: 2}, {path: True}, [])
+        other = "Source::register" if suffix.startswith("ConnectionSet::") else "ConnectionSet::new"
+        result[f"same-count-substitution-{index:02}"] = (removed | {path + ":" + other: 1}, {path: True}, [])
+        result[f"same-count-relocation-{index:02}"] = (removed | {"src/rc9_moved.rs:" + suffix: 1},
+                                                     {path: True, "src/rc9_moved.rs": True}, [])
+        for case in ["call-to-reference", "qualified"]:
+            result[f"{case}-{index:02}"] = (dict(expected), {path: True}, [])
+    for root in roots:
+        path = root + "/rc9_fresh.rs"
+        result["new-file-" + root] = (expected | ({path + ":ConnectionSet::new": 1} if production(path) else {}),
+                                    {path: True}, [])
+    result["test-path-exclusion"] = (dict(expected), {"src/rc9_test.rs": True}, [])
+    for case in ["parse-malformed", "parse-expression-fragment"]:
+        result[case] = (None, {"src/rc9_adversary.rs": False}, [])
+    for path in {key.split(":", 1)[0] for key in expected}:
+        result["required-file-deleted-" + path] = ({k: n for k, n in expected.items() if not k.startswith(path + ":")}, {}, [path])
+    require(len(result) == 83, "incomplete typed expression mutation matrix")
+    return result
+
+
 def verify(assertion, report, assertions, files):
-    require(assertion["id"] in IDS and report["schema"] == 1, "unsupported assertion/report")
-    require(assertion["replacement"]["policy_ids"] == [POLICY]
+    require(assertion["id"] in IDS | EXPRESSION_IDS and report["schema"] == 1, "unsupported assertion/report")
+    expression = assertion["id"] in EXPRESSION_IDS
+    family = "expression-paths" if expression else "methods"
+    policy_id = "rust:inventory:kd-transport-" + family
+    require(assertion["replacement"]["policy_ids"] == [policy_id]
             and assertion["replacement"]["expected_diagnostics"] ==
             ["RUST-INVENTORY-002" if "PARSE-" in assertion["id"] else "RUST-INVENTORY-001"],
             "wrong assertion policy or diagnostic")
-    live = assertions["KD-TRANSPORT-METHODS"]
+    live = assertions["KD-TRANSPORT-ASSOCIATED" if expression else "KD-TRANSPORT-METHODS"]
     require(live["repository"] == assertion["repository"] and live["commit"] == assertion["commit"],
             "mixed source snapshots")
     roots = live["selection"]["roots"]["roots"]
     expected = live["required_cardinality"]["exact_map"]
     policy = report["observation"]["policy"]
-    require(policy["name"] == "kd-transport-methods" and policy["reason"].strip()
+    subject_key = "suffixes" if expression else "names"
+    subjects = live["matching_semantics"]["selected_suffixes" if expression else "methods"]
+    require(policy["name"] == "kd-transport-" + family and policy["reason"].strip()
             and policy["include"] == sorted(root + "/**/*.rs" for root in roots)
             and policy["exclude"] == ["**/*_test.rs", "tests/**"] and policy["world"] == "authored"
-            and policy["subject"] == {"kind": "written-methods", "names": sorted(live["matching_semantics"]["methods"])}
+            and policy["subject"] == {"kind": "written-" + family, subject_key: sorted(subjects)}
             and policy["assertion"]["kind"] == "exact-counts"
             and count_map(policy["assertion"]["counts"]) == expected, "policy differs from frozen assertion")
-    policy_bytes = (ROOT / "docs/rc9/policies/kafka-driver.transport-methods.fragment.toml").read_bytes()
+    policy_bytes = (ROOT / f"docs/rc9/policies/kafka-driver.transport-{family}.fragment.toml").read_bytes()
     authored, = tomllib.loads(policy_bytes.decode())["source"]["rust"]["inventories"]
     for key in ["include", "exclude"]:
         authored[key].sort()
-    authored["subject"]["names"].sort()
+    authored["subject"][subject_key].sort()
     authored["assertion"]["counts"].sort(key=lambda row: (row["path"], row["name"]))
     require(report["policy_sha256"] == hashlib.sha256(policy_bytes).hexdigest() and authored == policy,
             "unbound translated policy bytes")
@@ -149,17 +199,20 @@ def verify(assertion, report, assertions, files):
     selected_inputs = {path: row for path, row in baseline.items() if production(path)}
     require(len(selected_inputs) == 479 and report["legacy_counts"] == expected, "incomplete baseline")
     observe(report["observation"], policy, selected_inputs, expected)
-    detector = assertions["KD-TRANSPORT-DETECTOR-METHODS"]["required_cardinality"]["exact_map"]
-    require(report["detector_counts"] == detector == {"src/reactor/rogue.rs:poll_io": 1},
+    detector_id = "KD-TRANSPORT-DETECTOR-ASSOCIATED" if expression else "KD-TRANSPORT-DETECTOR-METHODS"
+    detector = assertions[detector_id]["required_cardinality"]["exact_map"]
+    required_detector = ({"src/reactor/rogue.rs:" + suffix: 1 for suffix in ["ConnectionSet::new", "DirectSet::new", "DirectSet::poll_io", "DirectSet::turn_component", "DirectSet::wake_handle", "DirectSet::pulse_handle"]}
+                         if expression else {"src/reactor/rogue.rs:poll_io": 1})
+    require(report["detector_counts"] == detector == required_detector,
             "original detector quantity mismatch")
-    expected_cases = cases(expected, roots)
+    expected_cases = expression_cases(expected, roots) if expression else cases(expected, roots)
     rows = report["fixtures"]
     require(len(rows) == len(expected_cases) and {r["case"] for r in rows} == set(expected_cases),
             "missing, extra, or duplicate transport fixture")
     for row in rows:
         counts, parsed, removed = expected_cases[row["case"]]
         changed = inputs(row["changed_inputs"])
-        require(row["policy_id"] == POLICY and changed.keys() == parsed.keys()
+        require(row["policy_id"] == policy_id and changed.keys() == parsed.keys()
                 and row["legacy_fixture_parses"] == parsed and row["removed_inputs"] == removed,
                 "wrong source mutation or original parser outcome")
         require(all(path not in baseline or value != baseline[path] for path, value in changed.items()),

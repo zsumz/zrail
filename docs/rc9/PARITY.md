@@ -72,11 +72,11 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 372 | 329 | 324 |
+| kafka-driver | 826 | 772 | 372 | 329 | 326 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 22 | 0 | 0 |
 
-The **488 verified assertions** comprise five facade predicates, four
+The **490 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus five authored dependency key
@@ -84,7 +84,7 @@ inventories, 35 authored dependency-field assertions and preconditions, and
 36 authored provenance assertions and parser preconditions, and 20 whole-lock
 cardinality/version/source/checksum assertions, plus 16 raw dependency/read
 assertions, plus 125 qualification text assertions and read preconditions, and four transport
-method/parser assertions.
+method/parser assertions and two expression-path assertions.
 Size instances include
 all 141 measured baselines and three hard allowances. Their disposition
 is **new engine capability**; verified counts for the other four dispositions
@@ -613,8 +613,8 @@ branches, nested items, path patterns, same-count substitutions, repeated mounts
 source-byte binding, coverage and explain. Eight core inventory schema/diff tests
 pass. The [partial expression-path policy](policies/kafka-driver.transport-expression-paths.fragment.toml)
 preserves thirteen suffixes and eight exact per-file quantities.
-`KD-TRANSPORT-ASSOCIATED` and `KD-TRANSPORT-DETECTOR-ASSOCIATED` are implemented
-but remain unverified pending complete frozen-source and exact detector parity.
+`KD-TRANSPORT-ASSOCIATED` and `KD-TRANSPORT-DETECTOR-ASSOCIATED` were implemented
+but unverified at that checkpoint; their completed frozen evidence follows below.
 The ledger is **575 reviewed / 502 implemented / 488 verified**.
 
 
@@ -650,3 +650,28 @@ code/tree, registry, compiler, binary and repeated logs.
 candidates receives an automatic disposition, and reviewed/implemented/verified
 assertion counts remain **575 / 502 / 488**. The three repository inventory
 blockers and complete replacement qualification remain open.
+
+
+## Verified frozen expression-path quantities
+
+At `f2db6e496f763224b2ffeec41dd0fa1450b4b80f`, two runs over all 772 original
+Rust inputs and 479 selected non-test files produced identical evidence. All
+83 fixtures agreed with the byte-exact original collector and live/detector
+assertions: 27 accepted and 56 rejected. The eight exact file/suffix quantities
+remain fixed while fixtures delete, duplicate, substitute, relocate, qualify and
+convert each call to a function value. Twenty-two authored syntax cases include
+path patterns, cfg branches, generic/qualified-self syntax and opaque boundaries.
+
+`KD-TRANSPORT-ASSOCIATED` and `KD-TRANSPORT-DETECTOR-ASSOCIATED` now bind the
+[full frozen expression-path report](evidence/transport-expression-paths-index.json),
+with payload SHA-256
+`126e64df5112d09775d6542392da6bb3883f75a7cb65cffbab88e1fad67a702f`.
+The validator checks all 83 complete maps and original parser outcomes, and its
+combined method/expression tests reject forty evidence-tampering variants.
+
+The ledger is **575 reviewed / 502 implemented / 490 verified**. Six transport
+assertions remain: the live and detector owner-file, rename and type/trait sets.
+No whole guard file, complete repository bundle or release is qualified. A later
+wording correction makes human expression violations name their own syntax kind;
+this report's claims, counts, decisions and diagnostic IDs were already explicit.
+Final release-revision qualification remains outstanding.

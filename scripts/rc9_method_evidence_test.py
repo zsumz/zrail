@@ -14,6 +14,13 @@ VERIFY = MODULE["verify"]
 
 
 class TransportEvidence(unittest.TestCase):
+    REPORT_FILE = "transport-methods-parity.json.gz"
+    IDS = MODULE["IDS"]
+    EXPECTED_IDS = 4
+    LIVE_ID = "KD-TRANSPORT-METHODS"
+    SUBJECT_KEY = "names"
+    SUBJECT_VALUE = "poll_io"
+
     @classmethod
     def setUpClass(cls):
         data = ROOT / "crates/zrail-testkit/tests/fixtures/rc9"
@@ -22,19 +29,19 @@ class TransportEvidence(unittest.TestCase):
         with gzip.open(data / "census.json.gz", "rb") as stream:
             census = json.loads(stream.read(64 * 1024 * 1024 + 1))
         cls.files = {(row["repository"], row["path"]): row for row in census["files"]}
-        with gzip.open(ROOT / "docs/rc9/evidence/transport-methods-parity.json.gz", "rb") as stream:
+        with gzip.open(ROOT / "docs/rc9/evidence" / cls.REPORT_FILE, "rb") as stream:
             payload = stream.read(64 * 1024 * 1024 + 1)
         if len(payload) > 64 * 1024 * 1024:
             raise ValueError("oversized test report")
         cls.report = json.loads(payload)
 
-    def test_all_four_assertions_bind_original_quantities_and_parsers(self):
-        self.assertEqual(len(MODULE["IDS"]), 4)
-        for identity in MODULE["IDS"]:
+    def test_assertions_bind_original_quantities_and_parsers(self):
+        self.assertEqual(len(self.IDS), self.EXPECTED_IDS)
+        for identity in self.IDS:
             VERIFY(self.assertions[identity], self.report, self.assertions, self.files)
 
     def test_changed_policy_inputs_quantities_parser_and_outcomes_fail(self):
-        assertion = self.assertions["KD-TRANSPORT-METHODS"]
+        assertion = self.assertions[self.LIVE_ID]
         mutations = ["selector", "world", "subject", "quantity", "missing-case", "duplicate-case",
                      "frozen-input", "unrelated-input", "missing-input", "parser-outcome",
                      "wrong-count-map", "legacy-map", "diagnostic", "claim", "omitted-quantity",
@@ -49,7 +56,7 @@ class TransportEvidence(unittest.TestCase):
                 elif mutation == "world":
                     observed["policy"]["world"] = "production"
                 elif mutation == "subject":
-                    observed["policy"]["subject"]["names"].remove("poll_io")
+                    observed["policy"]["subject"][self.SUBJECT_KEY].remove(self.SUBJECT_VALUE)
                 elif mutation == "quantity":
                     observed["policy"]["assertion"]["counts"][0]["count"] += 1
                 elif mutation == "missing-case":
@@ -73,7 +80,7 @@ class TransportEvidence(unittest.TestCase):
                 elif mutation == "claim":
                     observed["claim"] = "semantic-receiver-identity"
                 elif mutation == "omitted-quantity":
-                    observed["occurrences_omitted"] = 0
+                    observed["occurrences_omitted"] += 1
                 elif mutation == "sample-outside-scope":
                     observed["occurrence_sample"][0]["path"] = "elsewhere.rs"
                 elif mutation == "detector-input":
@@ -86,6 +93,15 @@ class TransportEvidence(unittest.TestCase):
                     report["policy_sha256"] = "0" * 64
                 with self.assertRaises(ValueError):
                     VERIFY(assertion, report, self.assertions, self.files)
+
+
+class ExpressionEvidence(TransportEvidence):
+    REPORT_FILE = "transport-expression-paths-parity.json.gz"
+    IDS = MODULE["EXPRESSION_IDS"]
+    EXPECTED_IDS = 2
+    LIVE_ID = "KD-TRANSPORT-ASSOCIATED"
+    SUBJECT_KEY = "suffixes"
+    SUBJECT_VALUE = "ConnectionSet::new"
 
 
 if __name__ == "__main__":

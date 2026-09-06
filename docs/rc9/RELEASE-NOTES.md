@@ -13,8 +13,8 @@ Implemented in the current branch:
   fixtures, linking four verified method/parser assertions. The other transport
   predicates and full consumer qualification remain open.
 - Written expression-path suffix quantities with explicit call/reference/pattern
-  semantics; twenty-two frozen-collector syntax cases pass. Complete frozen
-  selection and original detector assertion qualification are still pending.
+  semantics. Two complete frozen runs agree across 83 cases, linking two more
+  verified assertions. Owner-file, rename and type/trait set predicates remain open.
 - Strict wiring facades with distinct import and re-export policy, preserving
   existing declarative mode behavior.
 - Exact test-facade structure independent of test compilation and execution.

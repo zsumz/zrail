@@ -22617,20 +22617,21 @@
           "RUST-INVENTORY-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_expression_paths_preserve_authored_contexts_and_quantities",
           "rust-test:crates/zrail-testkit/tests/rust_inventories/expression_test.rs::calls_and_function_values_share_expression_quantities_without_resolving_aliases",
-          "rust-test:crates/zrail-testkit/tests/rust_inventories/expression_test.rs::physical_expression_inputs_bind_coverage_explain_and_lock_with_no_mount_duplication"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-ASSOCIATED",
-          "cause": "Native written-expression-path quantities and 22 frozen-collector syntax comparisons are implemented. Bind all frozen selected files, the exact original detector assertion and complete positive/negative count maps to reproducible differential evidence."
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/expression_test.rs::physical_expression_inputs_bind_coverage_explain_and_lock_with_no_mount_duplication",
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::qualify_all_frozen_kafka_driver_transport_expression_paths"
+        ],
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-expression-paths-parity.json.gz",
+          "payload_sha256": "126e64df5112d09775d6542392da6bb3883f75a7cb65cffbab88e1fad67a702f",
+          "implementation_commit": "f2db6e496f763224b2ffeec41dd0fa1450b4b80f"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-TRANSPORT-IMPLS",
@@ -50101,20 +50102,21 @@
           "RUST-INVENTORY-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_expression_paths_preserve_authored_contexts_and_quantities",
           "rust-test:crates/zrail-testkit/tests/rust_inventories/expression_test.rs::calls_and_function_values_share_expression_quantities_without_resolving_aliases",
-          "rust-test:crates/zrail-testkit/tests/rust_inventories/expression_test.rs::physical_expression_inputs_bind_coverage_explain_and_lock_with_no_mount_duplication"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-DETECTOR-ASSOCIATED",
-          "cause": "Native written-expression-path quantities and 22 frozen-collector syntax comparisons are implemented. Bind all frozen selected files, the exact original detector assertion and complete positive/negative count maps to reproducible differential evidence."
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/expression_test.rs::physical_expression_inputs_bind_coverage_explain_and_lock_with_no_mount_duplication",
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::qualify_all_frozen_kafka_driver_transport_expression_paths"
+        ],
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-expression-paths-parity.json.gz",
+          "payload_sha256": "126e64df5112d09775d6542392da6bb3883f75a7cb65cffbab88e1fad67a702f",
+          "implementation_commit": "f2db6e496f763224b2ffeec41dd0fa1450b4b80f"
         }
-      ],
+      },
+      "blockers": [],
       "detector_for": [
         "KD-TRANSPORT-ASSOCIATED"
       ]
@@ -51528,7 +51530,7 @@
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 488,
+      "new engine capability": 490,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },

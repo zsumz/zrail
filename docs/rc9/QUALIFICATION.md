@@ -769,3 +769,51 @@ cases; these tests are also part of `scripts/check`. The census contains 80,135 
 `308d9fcb3b237d706f35b51069cb336b0ed6dd225f589af22e5c05554749a7c5`.
 The discovery fix adds 186 unreviewed candidates and closes no replacement
 assertion. Canonical final-tree and complete consumer qualification remain open.
+
+
+## Frozen expression-path differential qualification
+
+[The expression-path index](evidence/transport-expression-paths-index.json) binds
+`f2db6e496f763224b2ffeec41dd0fa1450b4b80f`, tree
+`5806fdef6f45fadc066b281b8d8304ca980ec5cf`, compiler, binary, Cargo lock, policy,
+original registry/collector/assertion/fixture identities and all source inputs.
+Both offline runs passed 83 fixtures (27 accepts, 56 rejects) and produced
+identical payload SHA-256
+`126e64df5112d09775d6542392da6bb3883f75a7cb65cffbab88e1fad67a702f`.
+This closes the two expression-path assertion IDs with intended native
+`RUST-INVENTORY-001` diagnostics and no unexplained protection differences.
+
+At that same revision, `scripts/check` passed structure, formatting, strict
+workspace lint, artifact integrity and four Python validator tests, **1,558 Rust
+tests** (zero failures, thirteen ignored), and rustdoc. Source analysis completed
+over 1,018 Rust files and 1,609 base contexts with 1,173,947 projection work, zero
+derived contexts and zero unresolved items. The gate **failed** only on the five
+inspected lock diagnostics: `LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028` and
+`LOCK-030`. Standalone verification passed all three normalized archives and
+expanded offline checks, with clean Git status. Canonical archive/cleanliness
+steps were not reached and no authority was accepted.
+
+The initial `d2b2772` gate also rejected eight `CAP-001` occurrences because the
+shared trusted runner had been moved beneath analyzer source. The corrected
+revision places process execution in `tests/rc9_transport`; it preserves the
+existing non-execution boundary without a policy grant. Both logs retain their
+own code identities. At `756d51d`, a human diagnostic wording fix distinguishes
+expression paths from method calls; thirteen integration tests passed, and the
+report's existing count/claim/diagnostic-ID evidence remains accurately scoped
+to its earlier revision. Final versioned-tree qualification is still required.
+
+```sh
+# Clean checkout at the indexed implementation revision; prefetched snapshots.
+scripts/check
+scripts/package-check
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots \
+ZRAIL_RC9_TRANSPORT_EXPRESSION_PATHS_REPORT=/fresh/expression-a.json \
+  cargo test --locked --offline -p zrail-rust qualify_all_frozen_kafka_driver_transport_expression_paths -- --ignored
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots \
+ZRAIL_RC9_TRANSPORT_EXPRESSION_PATHS_REPORT=/fresh/expression-b.json \
+  cargo test --locked --offline -p zrail-rust qualify_all_frozen_kafka_driver_transport_expression_paths -- --ignored
+cmp /fresh/expression-a.json /fresh/expression-b.json
+# Later evidence-bearing checkout: four tests, forty tampering cases.
+python3 scripts/rc9_method_evidence_test.py
+python3 scripts/rc9-inventory-check
+```

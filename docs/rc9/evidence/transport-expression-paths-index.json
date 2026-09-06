@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "implementation_commit": "f2db6e496f763224b2ffeec41dd0fa1450b4b80f",
+  "implementation_tree": "5806fdef6f45fadc066b281b8d8304ca980ec5cf",
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "4eff9ae08134fb802fcd4abffdc7bfc63ce79f03d40f648ee44afb6d76fe7a58",
+  "registry_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+  "fixture_origins_sha256": "cf8e32ec84a508747c65da4d6bd6a734b0a6ee54fdf287dea844d2e76d6f105e",
+  "test_binary_sha256": "241a149bcac437017875d9c2b1ac49384acd00481b4259d7a527aca243f8d510",
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "detector_source_sha256": "52931f702eed8c81c079a2aabfb4934a0f7c4388faa26ed5c425bf470232f4bc",
+  "full_repository_qualified": false,
+  "lock_authority_accepted": false,
+  "claim": "Exact frozen authored expression-path quantities, including callees, references and path patterns; no semantic identity or execution claim.",
+  "assertion_ids": [
+    "KD-TRANSPORT-ASSOCIATED",
+    "KD-TRANSPORT-DETECTOR-ASSOCIATED"
+  ],
+  "frozen_rust_inputs": 772,
+  "selected_physical_files": 479,
+  "exact_map_entries": 8,
+  "occurrences": 8,
+  "fixtures": 83,
+  "accepted": 27,
+  "rejected": 56,
+  "repeat_identical": true,
+  "payload_sha256": "126e64df5112d09775d6542392da6bb3883f75a7cb65cffbab88e1fad67a702f",
+  "canonical": {
+    "exit_status": 1,
+    "passed": 1558,
+    "failed": 0,
+    "ignored": 13,
+    "analysis_complete": true,
+    "rust_files": 1018,
+    "base_contexts": 1609,
+    "derived_contexts": 0,
+    "projection_work": 1173947,
+    "unresolved": 0,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-016",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_step_reached": false,
+    "cleanliness_step_reached": false
+  },
+  "standalone_archive_check_passed": true,
+  "git_status_unchanged": true,
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/transport-expression-paths-parity.json.gz",
+      "implementation_commit": "f2db6e496f763224b2ffeec41dd0fa1450b4b80f",
+      "role": "complete frozen expression-path quantity evidence",
+      "payload_sha256": "126e64df5112d09775d6542392da6bb3883f75a7cb65cffbab88e1fad67a702f",
+      "payload_bytes": 8873304,
+      "compressed_sha256": "fefbffd5d9796707f6ddb2c84f24d1dd9f022d942fb8f61450b1786ee0082658"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-expression-paths-final-canonical.log.gz",
+      "implementation_commit": "f2db6e496f763224b2ffeec41dd0fa1450b4b80f",
+      "role": "canonical",
+      "payload_sha256": "4915ace61729ad4c6b42345588a17b83c54e1daff23cac02ceb6307bbec9f35d",
+      "payload_bytes": 186709,
+      "compressed_sha256": "2c289af4aaffe26dad31cb473d672af204682e173a53b841e7a2c18d881f6254",
+      "exit_status": 1
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-expression-paths-final-package.log.gz",
+      "implementation_commit": "f2db6e496f763224b2ffeec41dd0fa1450b4b80f",
+      "role": "package",
+      "payload_sha256": "8f31f566d6001bc8856cfe01a93235109ba43d856a4c058e3078560b59a5973c",
+      "payload_bytes": 10791,
+      "compressed_sha256": "1d96943de9a071a750ebe8003c455918447bf2ebd63a72e5a3ae98d15e84b6f2",
+      "exit_status": 0
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-expression-paths-final-parity-a.log.gz",
+      "implementation_commit": "f2db6e496f763224b2ffeec41dd0fa1450b4b80f",
+      "role": "parity-a",
+      "payload_sha256": "33c17e456dee02cfa4fe4fd9f85b0951c6c6f15142e9317e979b79e1409e8605",
+      "payload_bytes": 4207,
+      "compressed_sha256": "8877184851b04cf1034e068a73d458a99bd5587fa362327c4c549821e920c39a",
+      "exit_status": 0
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-expression-paths-final-parity-b.log.gz",
+      "implementation_commit": "f2db6e496f763224b2ffeec41dd0fa1450b4b80f",
+      "role": "parity-b",
+      "payload_sha256": "da07c578c94f754528b2f73b5ba4a48bbce017c957de1cffb777f6fbe26eb1b7",
+      "payload_bytes": 4207,
+      "compressed_sha256": "4fa582111ca1308f655ac2103f17d1bfbb38f9104dc35c9266eba1e30972825a",
+      "exit_status": 0
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-expression-paths-runner.json.gz",
+      "implementation_commit": "f2db6e496f763224b2ffeec41dd0fa1450b4b80f",
+      "role": "trusted execution statuses",
+      "payload_sha256": "37f344214c29ebdffd0bb508506e24187d6bce45ab676b0b62a3738d7ac4dc70",
+      "payload_bytes": 1167,
+      "compressed_sha256": "ecbfcb4353b3dbbc4f924f0c93edcab5f624e52bef82e99b3ad69e9ecda3f1b7"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-expression-paths-initial-canonical.log.gz",
+      "implementation_commit": "d2b2772a628f3cbfd5985b51c3aa25c8b7723482",
+      "role": "initial canonical rejection of process execution in analyzer source",
+      "payload_sha256": "5c81269474688826a55f5abd8bc11b0da134b54dc2fbc2b918698b48f5e9e1f2",
+      "payload_bytes": 189570,
+      "compressed_sha256": "686b3e4494bf850774f73463841fffabae3b358dff3b3aee522407e7e9f9e168",
+      "exit_status": 1
+    }
+  ],
+  "corrected_qualification_failure": "The shared trusted runner initially spawned processes from under the analyzer source directory. Moving it to tests/rc9_transport preserved the reviewed non-execution boundary and removed all eight CAP-001 diagnostics without policy changes.",
+  "later_diagnostic_correction": {
+    "implementation_commit": "756d51d84359e52ac3fa79a9d9b1bfa12651d704",
+    "claim": "Human violation messages now say authored expression-path occurrences; these report claims, quantities, decisions and diagnostic IDs were already correct. Thirteen inventory integration tests passed after the wording fix. Final release-revision qualification remains pending."
+  }
+}
