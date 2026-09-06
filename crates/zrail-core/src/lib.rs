@@ -29,14 +29,16 @@ pub use contract::{
     MacroDuplicationEffect, MacroExpansionAllow, MacroExpansionBindings, MacroExpansionContract,
     MacroExpansionMode, MacroFieldMutation, MacroInputMode, MacroSourceOperations, ModuleDocsMode,
     OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode, PolicyReachability,
-    ProfileContract, RatchetContract, RepositoryCaseMode, RepositoryContract, RepositoryEntryMode,
-    RepositoryFilePredicate, RepositoryFileRule, RepositoryLiteralMode, RepositoryLiteralPredicate,
-    RepositoryNameBasis, RepositoryNamePart, RepositoryTextNormalization, RustDuplicationContract,
-    RustFieldContract, RustSourceContract, RustTypeContract, RustTypeKind, ScopeContract,
-    ScopedBudgetContract, SizeExceptionContract, SizeExceptionMetadata, SizePolicyContract,
-    SizeRole, SizeTargetMode, SizeThresholds, SourceContract, SymbolBoundary, SymlinkMode,
-    SyntaxBoundary, TestExecutionIdentity, TestMirrorContract, TestMode, TypeProhibition,
-    contract_imports, load_contract, load_contract_with_entry, parse_evidence_reference,
+    ProfileContract, RatchetContract, RepositoryCaseMode, RepositoryContract,
+    RepositoryDocumentAssertion, RepositoryDocumentFormat, RepositoryDocumentPredicate,
+    RepositoryDocumentValue, RepositoryEntryMode, RepositoryFilePredicate, RepositoryFileRule,
+    RepositoryLiteralMode, RepositoryLiteralPredicate, RepositoryNameBasis, RepositoryNamePart,
+    RepositoryTextNormalization, RustDuplicationContract, RustFieldContract, RustSourceContract,
+    RustTypeContract, RustTypeKind, ScopeContract, ScopedBudgetContract, SizeExceptionContract,
+    SizeExceptionMetadata, SizePolicyContract, SizeRole, SizeTargetMode, SizeThresholds,
+    SourceContract, SymbolBoundary, SymlinkMode, SyntaxBoundary, TestExecutionIdentity,
+    TestMirrorContract, TestMode, TypeProhibition, contract_imports, load_contract,
+    load_contract_with_entry, parse_evidence_reference,
 };
 pub use contract_edit::{ContractEditError, format_contract_source, migrate_contract_source};
 pub use diagnostic::{
@@ -73,7 +75,6 @@ pub use receipt::{
     test_mirror_input_sha256, validate_execution_receipt, versioned_producer,
 };
 pub use report::{Report, ReportAnalysis, ReportGroup, ReportStatus, ReportSummary};
-
 #[cfg(test)]
 #[path = "lock_analysis_test.rs"]
 mod lock_analysis_test;

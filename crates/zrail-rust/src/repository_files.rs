@@ -2,6 +2,7 @@
 
 mod boundary;
 mod diagnostic;
+mod documents;
 mod input;
 mod literal;
 mod model;
@@ -15,7 +16,9 @@ use zrail_core::{
 };
 
 pub(crate) use model::RepositoryFileAnalysis;
-pub use model::{GovernedRepositoryFile, GovernedRepositoryFileEntry};
+pub use model::{
+    GovernedRepositoryFile, GovernedRepositoryFileEntry, RepositoryDocumentObservation,
+};
 
 pub(crate) fn analyze(
     root: &Path,
@@ -37,6 +40,7 @@ pub(crate) fn analyze(
             policy: rule.clone(),
             claim: match rule.predicate {
                 RepositoryFilePredicate::Literal(_) => "raw-utf8-text",
+                RepositoryFilePredicate::Document(_) => "authored-document",
                 RepositoryFilePredicate::BytesEqual { utf8: true, .. } => "utf8-file-bytes",
                 RepositoryFilePredicate::BytesEqual { .. } => "file-bytes",
                 _ => "physical-paths",

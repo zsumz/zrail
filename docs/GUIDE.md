@@ -259,6 +259,8 @@ Repository paths and deliberately raw text can also be governed by closed
 [`repository.files` predicates](REPOSITORY-FILES.md). These preserve required
 and forbidden paths, exact file inventories, literal naming/text policies, and
 byte equality, separately from Rust syntax and execution evidence.
+[Authored document predicates](REPOSITORY-DOCUMENTS.md) add bounded literal-key
+TOML/JSON presence, absence, nonempty-string, and exact typed-value checks.
 
 ### Contract schema and fragments
 

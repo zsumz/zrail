@@ -4,6 +4,8 @@ use crate::{RepositoryCaseMode, RepositoryFilePredicate, RepositoryNameBasis, Re
 
 use super::{ChangeKind, interval, literal, set};
 
+mod documents;
+
 pub(super) fn compare(
     left: &RepositoryFilePredicate,
     right: &RepositoryFilePredicate,
@@ -37,6 +39,9 @@ pub(super) fn compare(
             vec![ChangeKind::Grant, ChangeKind::Revoke]
         }
         (Literal(a), Literal(b)) => literal::compare(a, b),
+        (RepositoryFilePredicate::Document(a), RepositoryFilePredicate::Document(b)) => {
+            documents::compare(a, b)
+        }
         (
             ForbiddenNames {
                 names: a,

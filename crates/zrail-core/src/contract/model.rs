@@ -1,6 +1,7 @@
 //! Typed public schema for `zrail.toml`.
 mod analysis;
 mod dependencies;
+mod documents;
 mod evidence;
 mod feature_worlds;
 mod files;
@@ -18,6 +19,10 @@ pub use analysis::{AnalysisContract, AnalysisLimits};
 pub use dependencies::{
     CrateRootContract, CrateRootSource, DependenciesContract, DependencyEdgeKind,
     DependencyReachability, MacroAmbientInputs,
+};
+pub use documents::{
+    RepositoryDocumentAssertion, RepositoryDocumentFormat, RepositoryDocumentPredicate,
+    RepositoryDocumentValue,
 };
 pub use evidence::{
     GateContract, GateKind, InvariantContract, InvariantStatus, MAX_TEST_MIRROR_INPUTS,

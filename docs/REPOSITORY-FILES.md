@@ -1,9 +1,10 @@
 # Repository-file assertions
 
 Unreleased rc9 adds closed `[[repository.files]]` predicates. These inspect
-physical paths, raw UTF-8 text, or file bytes. They do not parse Rust expressions,
-interpret shell or workflow commands, or prove execution. Structured document
-predicates are still a separate rc9 blocker.
+physical paths, raw UTF-8 text, file bytes, or authored document fields. They do
+not parse Rust expressions, interpret shell or workflow commands, or prove
+execution. The bounded [document subset](REPOSITORY-DOCUMENTS.md) supports
+literal-key TOML/JSON checks; other structured predicates remain explicit work.
 
 ```toml
 [[repository.files]]
@@ -71,6 +72,7 @@ The existing repository-wide symlink policy remains independently enforced.
 | `exact-paths` | Complete unordered `paths` set. Missing and unexpected paths fail independently of the total count. An empty set is a persistent prohibition. |
 | `forbidden-names` | Literal `names`, with `part` selecting `component`, `component-stem`, `file-name`, or `file-stem`. Component stems use Rust `Path::file_stem` for directories too. |
 | `literal` | Per-file raw text predicate with explicit `text`, `mode`, `normalization`, and `case`. |
+| `document` | Per-file typed TOML/JSON assertion at a literal key path; see [authored documents](REPOSITORY-DOCUMENTS.md). |
 | `bytes-equal` | At least one selected regular file, every file byte-for-byte equal to the required regular reference `other`. Binary data is supported by default. `utf8 = true` additionally requires both sides to decode as UTF-8, without normalizing line endings or whitespace. |
 
 Name predicates default to `basis = "repository"`. The explicit `filesystem`
@@ -111,7 +113,8 @@ inspected input. Invalid encoding is a decidable `REP-FILE-005` failure, with
 the exact inspected bytes still bound. Removing the UTF-8 requirement is a grant.
 
 Diagnostics `REP-FILE-001` through `005` identify count, exact-set, name, literal,
-and byte-equality failures. `REP-FILE-006` means incomplete analysis: checks,
+and byte-equality failures; `007` identifies document field failures.
+`REP-FILE-006` means incomplete analysis: checks,
 coverage, and lock construction fail instead of returning trusted partial data.
 Reads are limited to 2 MiB per file, 64 MiB unique bytes, and 256 MiB cumulative
 content work. Selection permits 8,000,000 bounded glob queries and 250,000

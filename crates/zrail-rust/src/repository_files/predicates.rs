@@ -7,7 +7,7 @@ use zrail_core::{
     RepositoryNamePart,
 };
 
-use super::{boundary, input::Inputs, literal, model::GovernedRepositoryFile};
+use super::{boundary, documents, input::Inputs, literal, model::GovernedRepositoryFile};
 
 pub(super) fn evaluate(
     root: &Path,
@@ -101,6 +101,17 @@ pub(super) fn evaluate(
                     .is_some_and(|entry| entry.satisfied)
                     && !observed.entries.is_empty(),
                 "REP-FILE-005",
+            )
+        }
+        RepositoryFilePredicate::Document(policy) => {
+            for entry in &mut observed.entries {
+                let bytes = inputs.read(root, entry)?;
+                documents::evaluate(policy, &bytes, entry)?;
+            }
+            (
+                policy.assertion == zrail_core::RepositoryDocumentAssertion::Absent
+                    || !observed.entries.is_empty(),
+                "REP-FILE-007",
             )
         }
     };

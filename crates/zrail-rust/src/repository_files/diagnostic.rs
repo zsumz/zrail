@@ -70,6 +70,18 @@ pub(super) fn finding(observed: &GovernedRepositoryFile, diagnostic: &str) -> Fi
                 .and_then(|entry| entry.valid_utf8),
             observed.entries.len(),
         ),
+        RepositoryFilePredicate::Document(document) => format!(
+            "authored {:?} document predicate {:?} at literal keys {:?} failed: {} selected files, {failed} unsatisfied files; first selection {:?}",
+            document.format,
+            document.assertion,
+            document.path,
+            observed.entries.len(),
+            observed
+                .entries
+                .iter()
+                .find(|entry| !entry.satisfied)
+                .and_then(|entry| entry.document.as_ref()),
+        ),
     };
     let mut finding = Finding::error(diagnostic, &observed.policy_id, "repository-files", message)
         .because(&observed.policy.reason)

@@ -1,5 +1,6 @@
 //! Closed repository path and raw-file predicates, separate from Rust and execution claims.
 
+use super::RepositoryDocumentPredicate;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
@@ -67,6 +68,8 @@ pub enum RepositoryFilePredicate {
     },
     /// Require each selected file to satisfy an explicitly raw UTF-8 text predicate.
     Literal(RepositoryLiteralPredicate),
+    /// Parse a bounded authored document and inspect one literal key path.
+    Document(RepositoryDocumentPredicate),
     /// Require at least one selected file and exact bytes equal to the reference.
     BytesEqual {
         /// Exact repository-relative regular-file reference, also bound as an input.

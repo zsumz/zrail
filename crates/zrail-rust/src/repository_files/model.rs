@@ -1,7 +1,7 @@
 //! Auditable physical-entry and raw-content observations, separate from Rust identity.
 
 use serde::{Deserialize, Serialize};
-use zrail_core::{AnalysisQuality, Finding, RepositoryFileRule};
+use zrail_core::{AnalysisQuality, Finding, RepositoryDocumentValue, RepositoryFileRule};
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -42,6 +42,9 @@ pub struct GovernedRepositoryFileEntry {
     /// Whether inspected bytes are valid UTF-8, only when the predicate requires it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub valid_utf8: Option<bool>,
+    /// Authored-document selection, only for structural document predicates.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub document: Option<RepositoryDocumentObservation>,
     /// Per-entry result; scope cardinality is reported on the containing policy.
     pub satisfied: bool,
     /// Total non-overlapping occurrences in the transformed UTF-8 text.
@@ -52,6 +55,21 @@ pub struct GovernedRepositoryFileEntry {
     pub omitted_literal_offsets: usize,
     /// Exact disallowed written names observed in this path, in canonical order.
     pub forbidden_names: Vec<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+/// One exact literal-key selection; display omission never alters predicate evaluation.
+pub struct RepositoryDocumentObservation {
+    /// Exact authored type, or absent when the selected key does not exist.
+    pub selected_type: Option<String>,
+    /// Selected scalar/string array, displayed when its JSON encoding fits 16 KiB.
+    pub value: Option<RepositoryDocumentValue>,
+    /// True when the present value is oversized or outside the display value subset.
+    /// The containing input hash always binds the complete document.
+    pub value_omitted: bool,
+    /// An intermediate key had a wrong structural type; this is never treated as absence.
+    pub selection_error: Option<String>,
 }
 
 #[derive(Debug, Default)]

@@ -1,5 +1,8 @@
 //! Protected review accounts for counts, exact identities, quantified scopes, and raw modes.
 
+#[path = "files/documents_test.rs"]
+mod documents_test;
+
 use crate::diff::compare_fixture_test::contract_with_hard_limit;
 use crate::{ChangeKind, Contract, RepositoryEntryMode, RepositoryFileRule, compare_architecture};
 

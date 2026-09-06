@@ -114,6 +114,35 @@ fn old_repository_contract_serialization_omits_the_new_empty_family() {
     );
 }
 
+#[test]
+fn document_policy_is_typed_bounded_and_has_no_expression_or_parser_fallback() {
+    let valid = with_predicate(
+        "{ kind = 'document', format = 'toml', path = ['package', 'publish'], assertion = { op = 'equals', value = ['crates-io'] } }",
+    );
+    assert!(errors(&valid).is_empty());
+    for invalid in [
+        valid.replace("format = 'toml'", "format = 'yaml'"),
+        valid.replace("path = ['package', 'publish']", "path = '$..publish'"),
+        valid.replace("value = ['crates-io']", "value = [true]"),
+        valid.replace("value = ['crates-io']", "value = 1.0"),
+        valid.replace("value = ['crates-io']", "value = { arbitrary = true }"),
+        valid.replace("op = 'equals'", "op = 'expression'"),
+        valid.replace("op = 'equals'", "op = 'equals', unknown = true"),
+    ] {
+        assert!(
+            toml::from_str::<crate::RepositoryFileRule>(&invalid).is_err(),
+            "{invalid}"
+        );
+    }
+    let long_path = format!("path = [{}'last']", "'key',".repeat(32));
+    assert!(
+        errors(&valid.replace("path = ['package', 'publish']", &long_path))
+            .contains("32 literal keys")
+    );
+    let large_value = format!("value = '{}'", "x".repeat(16 * 1024 + 1));
+    assert!(errors(&valid.replace("value = ['crates-io']", &large_value)).contains("16384"));
+}
+
 fn with_predicate(predicate: &str) -> String {
     format!(
         "{}predicate = {predicate}\n",

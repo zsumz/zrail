@@ -76,6 +76,7 @@ pub(super) fn observe(
         sha256: None,
         bytes: None,
         valid_utf8: None,
+        document: None,
         satisfied: true,
         literal_count: None,
         literal_offsets: Vec::new(),

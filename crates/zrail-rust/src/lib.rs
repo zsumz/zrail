@@ -67,5 +67,7 @@ pub use onboarding::{
     discover_baseline, discover_baseline_rules, discover_source_roots,
     discover_source_roots_with_selection,
 };
-pub use repository_files::{GovernedRepositoryFile, GovernedRepositoryFileEntry};
+pub use repository_files::{
+    GovernedRepositoryFile, GovernedRepositoryFileEntry, RepositoryDocumentObservation,
+};
 pub use source_budget::EffectiveSizeBudget;
