@@ -5,6 +5,7 @@ mod boundaries;
 mod compare;
 mod contract;
 mod evidence;
+mod files;
 mod lock;
 mod model;
 mod source;
