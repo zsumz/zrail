@@ -1,0 +1,12 @@
+# Partial authored syntax policy; full downstream qualification remains required.
+# Kafka-driver a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# Transport detector SHA-256: 6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed
+
+[[source.rust.inventories]]
+name = "kd-transport-methods"
+reason = "Preserve the exact frozen per-file written selector method quantities; receiver identities and execution are separate claims."
+include = ["src/**/*.rs", "tests/**/*.rs", "crates/kafka-driver-core/src/**/*.rs", "crates/kafka-driver-probe/src/**/*.rs", "crates/kafka-driver-sim/src/**/*.rs", "crates/kafka-driver-transport/src/**/*.rs"]
+exclude = ["tests/**", "**/*_test.rs"]
+world = "authored"
+subject = { kind = "written-methods", names = ["turn_component", "poll_io", "wake_handle", "pulse_handle"] }
+assertion = { kind = "exact-counts", counts = [{ path = "src/reactor/backend.rs", name = "pulse_handle", count = 2 }, { path = "src/reactor/backend.rs", name = "wake_handle", count = 2 }, { path = "src/reactor/direct_plaintext/backend.rs", name = "pulse_handle", count = 3 }, { path = "src/reactor/direct_plaintext/backend.rs", name = "wake_handle", count = 3 }, { path = "src/reactor/direct_plaintext/cluster_runtime/backend.rs", name = "pulse_handle", count = 2 }, { path = "src/reactor/direct_plaintext/cluster_runtime/backend.rs", name = "wake_handle", count = 2 }, { path = "src/reactor/direct_plaintext/runtime.rs", name = "pulse_handle", count = 1 }, { path = "src/reactor/direct_plaintext/runtime.rs", name = "wake_handle", count = 1 }, { path = "src/reactor/host.rs", name = "wake_handle", count = 1 }, { path = "src/reactor/host/construction.rs", name = "pulse_handle", count = 2 }, { path = "src/reactor/host/construction.rs", name = "wake_handle", count = 1 }] }
