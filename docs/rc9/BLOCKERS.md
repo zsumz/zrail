@@ -28,26 +28,6 @@ files and opaque or invalid syntax remain explicit review work.
 | `KD-LOCK-BAN-tokio-rustls` | Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient. |
 | `KD-LOCK-BAN-tokio-util` | Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient. |
 | `KD-LOCK-BAN-tokio` | Whole-lock scope must be preserved; reachable transitive dependency bans alone are insufficient. |
-| `KD-LOCK-bornera-CHECKSUM` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-bornera-COUNT` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-bornera-SOURCE` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-bornera-VERSION` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-bornera-core-CHECKSUM` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-bornera-core-COUNT` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-bornera-core-SOURCE` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-bornera-core-VERSION` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-bornera-rustls-CHECKSUM` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-bornera-rustls-COUNT` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-bornera-rustls-SOURCE` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-bornera-rustls-VERSION` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-kafka-wire-CHECKSUM` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-kafka-wire-COUNT` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-kafka-wire-SOURCE` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-kafka-wire-VERSION` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-kafka-wire-core-CHECKSUM` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-kafka-wire-core-COUNT` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-kafka-wire-core-SOURCE` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
-| `KD-LOCK-kafka-wire-core-VERSION` | Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify. |
 | `KD-METADATA-PARENT` | Record the path-precondition proof and bind the exact translated license paths before closing this helper assertion. |
 | `KD-PROVENANCE-LOCK-PACKAGE-ARRAY` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
 | `KD-PROVENANCE-LOCK-PACKAGE-NAMES` | Account for the implicit all-entry name-index precondition. Existing Cargo parsing rejects non-string names more strictly; qualify this distinction and preserve complete lock scope. |

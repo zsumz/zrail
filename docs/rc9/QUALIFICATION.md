@@ -1,7 +1,7 @@
 # Reproducing the current rc9 evidence
 
-Release verdict: **blocked**. The latest native whole-lock canonical gate and archive
-checkpoint is `bd6372b91d39f59c3064a7a327b1b4349be7e28a`, based on the exact
+Release verdict: **blocked**. The latest whole-lock parity, canonical gate, and
+archive checkpoint is `5251b4f056741768eb667c74d6e0949257ca843b`, based on the exact
 audited rc8 commit. Manifest-field parity retains its
 `c7ff4588f029169c10cce191be3bac3ceaec9e2d` identity. Earlier evidence retains its
 own implementation identity below. None constitutes final versioned-tree release
@@ -484,5 +484,37 @@ python3 scripts/rc9-provenance-policies /absolute/snapshots lock /absolute/new-l
 ```
 
 Use a fresh report path for each run. Generated fragments remain partial
-bundles; the lock fragment has native engine acceptance tests but does not yet
-have its own frozen differential report.
+bundles; the lock fragment now has its separate frozen differential report below.
+
+## Whole-lock differential and resolver regression qualification
+
+At `5251b4f056741768eb667c74d6e0949257ca843b`, `scripts/check` passed structure,
+formatting, strict lint, 1,518 test outcomes (zero failures, 9 explicitly
+ignored qualification/advisory tests), and rustdoc. Self-analysis is complete:
+965 Rust files, 1,540 base contexts, no derived contexts, 1,114,966 projection
+work, and no unresolved items. It exits 1 at exactly `LOCK-008`, `LOCK-026`,
+`LOCK-028`, and `LOCK-030`. The reviewed rc8 lock remains unchanged.
+Standalone `scripts/package-check` passes on that same clean revision; the
+canonical gate therefore remains interrupted rather than being reported green.
+
+The same revision passed two byte-identical whole-lock differential runs:
+5 policies, 12 bound inputs, 50 fixtures (20 accepted, 30 rejected). Payload
+SHA-256: `ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca`. The [index](evidence/lock-parity-index.json)
+binds every log, source/policy identity, original assertion body, and outcome.
+
+```sh
+export ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots
+export ZRAIL_RC9_LOCK_PACKAGES_REPORT=/absolute/evidence/whole-lock.json
+cargo test --locked --offline -p zrail-rust \
+  qualify_all_frozen_kafka_driver_lock_inventories -- --ignored
+scripts/check
+scripts/package-check
+```
+
+Use fresh output paths. The index also preserves two failed intermediate
+canonical runs: `43b1ddc37932b5e48ddc878399572287b6a4f7e9` exceeded the unchanged
+1,232,039 work ceiling with 1,233,366 queries, and
+`365406305a9731c8feae86fc920b63c42fd553d6` exposed two unapproved JSON macro uses.
+Completed lexical-boundary caching repaired the workload; typed report records
+removed the macro violations. No ceiling or macro authority was broadened.
+The 141 focused resolver tests and strict workspace lint also pass.

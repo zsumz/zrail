@@ -71,16 +71,17 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 228 | 180 | 159 |
+| kafka-driver | 826 | 772 | 228 | 180 | 179 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
-The **323 verified assertions** comprise five facade predicates, four
+The **343 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus five authored dependency key
 inventories, 35 authored dependency-field assertions and preconditions, and
-36 authored provenance assertions and parser preconditions.
+36 authored provenance assertions and parser preconditions, and 20 whole-lock
+cardinality/version/source/checksum assertions.
 Size instances include
 all 141 measured baselines and three hard allowances. Their disposition
 is **new engine capability**; verified counts for the other four dispositions
@@ -380,6 +381,22 @@ conjunctions and the root/probe bans on any `patch`, `replace`, or `target` key.
 The parser policies retain required file presence alongside absent-key rules.
 
 See [bound provenance evidence](evidence/provenance-index.json). The five
-generated whole-lock policies implement the 20 reviewed version/source/checksum
-and cardinality assertions, but their frozen differential verification remains
-open. No package-node claim is inferred from successful document parsing.
+generated whole-lock policies now have their own 20-assertion frozen
+differential qualification, recorded below. No package-node claim is inferred from successful document parsing.
+
+## Whole-lock protocol identity parity
+
+At `5251b4f056741768eb667c74d6e0949257ca843b`, all five whole-lock policies accepted
+the frozen kafka-driver graph. Fifty differential fixtures produced 20 accepts
+and 30 intended `DEP-LOCK-001` rejections, with no old/new disagreement. This
+verifies the 20 `KD-LOCK-<package>-{COUNT,VERSION,SOURCE,CHECKSUM}` assertion IDs.
+Deletion, duplicated names, and same-count identity substitutions remain
+resolvable graphs, so unrelated Cargo parsing failures cannot satisfy parity.
+
+The [evidence index](evidence/lock-parity-index.json) binds both identical runs,
+the five native workspace identities, twelve unchanged source inputs, extracted
+legacy bodies, policy, toolchain, and test binary. The complete lock has 83
+nodes; selection does not depend on reachability. Extra unrelated valid nodes
+and qualified incoming edges remain legal. The six lexical `KD-LOCK-BAN-*`
+assertions and seven registry-prefix/lock-shape preconditions remain separate.
+No source-analysis certificate or downstream lock was produced by this slice.

@@ -9756,16 +9756,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "b460769e31b61c8879625cc33f5b379aa82869c77c7fb3032def3150c05d914b"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "c358670e807fd0cb0675268e45e1a3f49efaead855310510b92f0256e6845289"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2be557373bfc0e66c12eb6c92685b853647916f5a2538f377f868cc248946192"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "8e52df3dd2da7d74e7a5d7957fe4874d485677978c596892034fe0f5f4b42806"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "37870099adde4892d3f9a399df08810ccd605222fb2368a9fb1f35e43ef99dcc"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "3ee50b0b634a55a4cbcecaf9ca6cb3b059d37c3c61b7e4c56e9791128ed53199"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "cbb0aa9ccfda3ead19b0243285243946c1f7591a574dd98c55632c2b3ea637b5"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "d9f34f7984107d1bce4750b906618e0d6d9d982184a6bfe603c48320eae94bf0"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-CHECKSUM",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:27:5:helper-call-candidate"
       ],
@@ -9823,16 +9905,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "b460769e31b61c8879625cc33f5b379aa82869c77c7fb3032def3150c05d914b"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "c358670e807fd0cb0675268e45e1a3f49efaead855310510b92f0256e6845289"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2be557373bfc0e66c12eb6c92685b853647916f5a2538f377f868cc248946192"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "8e52df3dd2da7d74e7a5d7957fe4874d485677978c596892034fe0f5f4b42806"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "37870099adde4892d3f9a399df08810ccd605222fb2368a9fb1f35e43ef99dcc"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "3ee50b0b634a55a4cbcecaf9ca6cb3b059d37c3c61b7e4c56e9791128ed53199"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "cbb0aa9ccfda3ead19b0243285243946c1f7591a574dd98c55632c2b3ea637b5"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "d9f34f7984107d1bce4750b906618e0d6d9d982184a6bfe603c48320eae94bf0"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-COUNT",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:27:5:helper-call-candidate"
       ]
@@ -9881,16 +10045,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "b460769e31b61c8879625cc33f5b379aa82869c77c7fb3032def3150c05d914b"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "c358670e807fd0cb0675268e45e1a3f49efaead855310510b92f0256e6845289"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2be557373bfc0e66c12eb6c92685b853647916f5a2538f377f868cc248946192"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "8e52df3dd2da7d74e7a5d7957fe4874d485677978c596892034fe0f5f4b42806"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "37870099adde4892d3f9a399df08810ccd605222fb2368a9fb1f35e43ef99dcc"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "3ee50b0b634a55a4cbcecaf9ca6cb3b059d37c3c61b7e4c56e9791128ed53199"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "cbb0aa9ccfda3ead19b0243285243946c1f7591a574dd98c55632c2b3ea637b5"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "d9f34f7984107d1bce4750b906618e0d6d9d982184a6bfe603c48320eae94bf0"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-SOURCE",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:27:5:helper-call-candidate"
       ]
@@ -9939,16 +10185,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "b460769e31b61c8879625cc33f5b379aa82869c77c7fb3032def3150c05d914b"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "c358670e807fd0cb0675268e45e1a3f49efaead855310510b92f0256e6845289"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2be557373bfc0e66c12eb6c92685b853647916f5a2538f377f868cc248946192"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "8e52df3dd2da7d74e7a5d7957fe4874d485677978c596892034fe0f5f4b42806"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "37870099adde4892d3f9a399df08810ccd605222fb2368a9fb1f35e43ef99dcc"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "3ee50b0b634a55a4cbcecaf9ca6cb3b059d37c3c61b7e4c56e9791128ed53199"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "cbb0aa9ccfda3ead19b0243285243946c1f7591a574dd98c55632c2b3ea637b5"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "d9f34f7984107d1bce4750b906618e0d6d9d982184a6bfe603c48320eae94bf0"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-VERSION",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:27:5:helper-call-candidate"
       ],
@@ -10007,16 +10335,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "a031fa4d201c593c19700eddb728313c96d175519da2f9c24dbfa6ff4f43fb36"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "69cdd6a4845ea27c7dd43fd7b19c187bf741985ef73b3fe37f3c72b659a2f293"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "6dd29b65c53e22e7502ee5dff6c6fccab3f21d4e90bb184f09dbaa20bb729dc3"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58e4566b2af3ba240d08833fb19a163ec28fe48014c2b17f8dc573c3b9066f27"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "94c2884ef229e0dd696aa0c21bdfee1c86f5471b7b380aac2611d146eaa2e209"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "68187ee84ca8c9bf142de9502e9bd2adfd621972e5119e920455c7b2c0e4b891"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "306b94ef1c45afdf8022d7551bb22e1c8b96d2b7b2c5766f637870f0cbfe0353"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "715089de73c35fb92401944225abe33ae9ec16e388a49b7bb36ccfef668e76e1"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-core-CHECKSUM",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:33:5:helper-call-candidate"
       ],
@@ -10074,16 +10484,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "a031fa4d201c593c19700eddb728313c96d175519da2f9c24dbfa6ff4f43fb36"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "69cdd6a4845ea27c7dd43fd7b19c187bf741985ef73b3fe37f3c72b659a2f293"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "6dd29b65c53e22e7502ee5dff6c6fccab3f21d4e90bb184f09dbaa20bb729dc3"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58e4566b2af3ba240d08833fb19a163ec28fe48014c2b17f8dc573c3b9066f27"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "94c2884ef229e0dd696aa0c21bdfee1c86f5471b7b380aac2611d146eaa2e209"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "68187ee84ca8c9bf142de9502e9bd2adfd621972e5119e920455c7b2c0e4b891"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "306b94ef1c45afdf8022d7551bb22e1c8b96d2b7b2c5766f637870f0cbfe0353"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "715089de73c35fb92401944225abe33ae9ec16e388a49b7bb36ccfef668e76e1"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-core-COUNT",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:33:5:helper-call-candidate"
       ]
@@ -10132,16 +10624,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "a031fa4d201c593c19700eddb728313c96d175519da2f9c24dbfa6ff4f43fb36"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "69cdd6a4845ea27c7dd43fd7b19c187bf741985ef73b3fe37f3c72b659a2f293"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "6dd29b65c53e22e7502ee5dff6c6fccab3f21d4e90bb184f09dbaa20bb729dc3"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58e4566b2af3ba240d08833fb19a163ec28fe48014c2b17f8dc573c3b9066f27"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "94c2884ef229e0dd696aa0c21bdfee1c86f5471b7b380aac2611d146eaa2e209"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "68187ee84ca8c9bf142de9502e9bd2adfd621972e5119e920455c7b2c0e4b891"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "306b94ef1c45afdf8022d7551bb22e1c8b96d2b7b2c5766f637870f0cbfe0353"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "715089de73c35fb92401944225abe33ae9ec16e388a49b7bb36ccfef668e76e1"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-core-SOURCE",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:33:5:helper-call-candidate"
       ]
@@ -10190,16 +10764,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "a031fa4d201c593c19700eddb728313c96d175519da2f9c24dbfa6ff4f43fb36"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "69cdd6a4845ea27c7dd43fd7b19c187bf741985ef73b3fe37f3c72b659a2f293"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "6dd29b65c53e22e7502ee5dff6c6fccab3f21d4e90bb184f09dbaa20bb729dc3"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58e4566b2af3ba240d08833fb19a163ec28fe48014c2b17f8dc573c3b9066f27"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "94c2884ef229e0dd696aa0c21bdfee1c86f5471b7b380aac2611d146eaa2e209"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "68187ee84ca8c9bf142de9502e9bd2adfd621972e5119e920455c7b2c0e4b891"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "306b94ef1c45afdf8022d7551bb22e1c8b96d2b7b2c5766f637870f0cbfe0353"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "715089de73c35fb92401944225abe33ae9ec16e388a49b7bb36ccfef668e76e1"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-core-VERSION",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:33:5:helper-call-candidate"
       ],
@@ -10258,16 +10914,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "641814fff53bfbd964e71dc474665b73671e3a275f24fad6107b11a2e8f47c5f"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "74bc4a31d7c213ababe87cd17f29eb88d50f6038d0d3ed914ed8ced088b7d4aa"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "796c414fd453f994a14868f0137a5c13a3cb9d502fe953c839330ff90fe82b54"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "b42b86ce00cba3e00f3f7abb316d4ea1fa085949bfd6c36cd41bf5f5ec763ff7"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "62ec3d4a4039b8b1c8cb8a58808e476756a84a42809496175523e6f952395679"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "10d659e8fd188319992c82bcb7a99e0d69fe143b54a2d4b8baf8ecb030ea6757"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "17c6bb76f38323fd6b56ac0bd2a166fb76d858ff06f9cc031f0baa22f617676e"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b00e539c9b9da81034c39d20b051ea1d4335b61d17eb038a1c50128913900b1c"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-rustls-CHECKSUM",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:39:5:helper-call-candidate"
       ],
@@ -10325,16 +11063,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "641814fff53bfbd964e71dc474665b73671e3a275f24fad6107b11a2e8f47c5f"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "74bc4a31d7c213ababe87cd17f29eb88d50f6038d0d3ed914ed8ced088b7d4aa"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "796c414fd453f994a14868f0137a5c13a3cb9d502fe953c839330ff90fe82b54"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "b42b86ce00cba3e00f3f7abb316d4ea1fa085949bfd6c36cd41bf5f5ec763ff7"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "62ec3d4a4039b8b1c8cb8a58808e476756a84a42809496175523e6f952395679"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "10d659e8fd188319992c82bcb7a99e0d69fe143b54a2d4b8baf8ecb030ea6757"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "17c6bb76f38323fd6b56ac0bd2a166fb76d858ff06f9cc031f0baa22f617676e"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b00e539c9b9da81034c39d20b051ea1d4335b61d17eb038a1c50128913900b1c"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-rustls-COUNT",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:39:5:helper-call-candidate"
       ]
@@ -10383,16 +11203,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "641814fff53bfbd964e71dc474665b73671e3a275f24fad6107b11a2e8f47c5f"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "74bc4a31d7c213ababe87cd17f29eb88d50f6038d0d3ed914ed8ced088b7d4aa"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "796c414fd453f994a14868f0137a5c13a3cb9d502fe953c839330ff90fe82b54"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "b42b86ce00cba3e00f3f7abb316d4ea1fa085949bfd6c36cd41bf5f5ec763ff7"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "62ec3d4a4039b8b1c8cb8a58808e476756a84a42809496175523e6f952395679"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "10d659e8fd188319992c82bcb7a99e0d69fe143b54a2d4b8baf8ecb030ea6757"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "17c6bb76f38323fd6b56ac0bd2a166fb76d858ff06f9cc031f0baa22f617676e"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b00e539c9b9da81034c39d20b051ea1d4335b61d17eb038a1c50128913900b1c"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-rustls-SOURCE",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:39:5:helper-call-candidate"
       ]
@@ -10441,16 +11343,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "641814fff53bfbd964e71dc474665b73671e3a275f24fad6107b11a2e8f47c5f"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "74bc4a31d7c213ababe87cd17f29eb88d50f6038d0d3ed914ed8ced088b7d4aa"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "796c414fd453f994a14868f0137a5c13a3cb9d502fe953c839330ff90fe82b54"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "b42b86ce00cba3e00f3f7abb316d4ea1fa085949bfd6c36cd41bf5f5ec763ff7"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "62ec3d4a4039b8b1c8cb8a58808e476756a84a42809496175523e6f952395679"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "10d659e8fd188319992c82bcb7a99e0d69fe143b54a2d4b8baf8ecb030ea6757"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "17c6bb76f38323fd6b56ac0bd2a166fb76d858ff06f9cc031f0baa22f617676e"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-bornera-rustls",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b00e539c9b9da81034c39d20b051ea1d4335b61d17eb038a1c50128913900b1c"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-bornera-rustls-VERSION",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:39:5:helper-call-candidate"
       ],
@@ -10509,16 +11493,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "3d690785e8368c95415b0970ef9322b1f9818d9d48f1b0558a87c0914d6555bc"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "42da6b42f0d6aa3b81da8850eede9d548204da4fcecae4b256b95d4121c59214"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "9b816e3d73231d272b8c25732c1567ff8a6bd8a607e57f9a4e45d71481176415"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "25cb82d56097bb685dc7759e48f16f1083845002cd347fc5868de74d43aac444"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "a292813ffbd6d59fc09a147b1dcdca731cd6ca514cce489e78b944cb74991b8a"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "c46ebd17650bcee73b7027822525ef88b2cc63bc36fabde9349ee8a24660619d"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "510b85df27a96c8e1e3e2bbf9f0e6781eee6c259dcc3b8e4e9fedf2720e01d8a"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e8ab6dd88097ea467a1f9fc7db27395405e5e397561054814e92f82390a9b10d"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-kafka-wire-CHECKSUM",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate"
       ],
@@ -10576,16 +11642,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "3d690785e8368c95415b0970ef9322b1f9818d9d48f1b0558a87c0914d6555bc"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "42da6b42f0d6aa3b81da8850eede9d548204da4fcecae4b256b95d4121c59214"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "9b816e3d73231d272b8c25732c1567ff8a6bd8a607e57f9a4e45d71481176415"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "25cb82d56097bb685dc7759e48f16f1083845002cd347fc5868de74d43aac444"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "a292813ffbd6d59fc09a147b1dcdca731cd6ca514cce489e78b944cb74991b8a"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "c46ebd17650bcee73b7027822525ef88b2cc63bc36fabde9349ee8a24660619d"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "510b85df27a96c8e1e3e2bbf9f0e6781eee6c259dcc3b8e4e9fedf2720e01d8a"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e8ab6dd88097ea467a1f9fc7db27395405e5e397561054814e92f82390a9b10d"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-kafka-wire-COUNT",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate"
       ]
@@ -10634,16 +11782,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "3d690785e8368c95415b0970ef9322b1f9818d9d48f1b0558a87c0914d6555bc"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "42da6b42f0d6aa3b81da8850eede9d548204da4fcecae4b256b95d4121c59214"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "9b816e3d73231d272b8c25732c1567ff8a6bd8a607e57f9a4e45d71481176415"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "25cb82d56097bb685dc7759e48f16f1083845002cd347fc5868de74d43aac444"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "a292813ffbd6d59fc09a147b1dcdca731cd6ca514cce489e78b944cb74991b8a"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "c46ebd17650bcee73b7027822525ef88b2cc63bc36fabde9349ee8a24660619d"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "510b85df27a96c8e1e3e2bbf9f0e6781eee6c259dcc3b8e4e9fedf2720e01d8a"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e8ab6dd88097ea467a1f9fc7db27395405e5e397561054814e92f82390a9b10d"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-kafka-wire-SOURCE",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate"
       ]
@@ -10692,16 +11922,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "3d690785e8368c95415b0970ef9322b1f9818d9d48f1b0558a87c0914d6555bc"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "42da6b42f0d6aa3b81da8850eede9d548204da4fcecae4b256b95d4121c59214"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "9b816e3d73231d272b8c25732c1567ff8a6bd8a607e57f9a4e45d71481176415"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "25cb82d56097bb685dc7759e48f16f1083845002cd347fc5868de74d43aac444"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "a292813ffbd6d59fc09a147b1dcdca731cd6ca514cce489e78b944cb74991b8a"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "c46ebd17650bcee73b7027822525ef88b2cc63bc36fabde9349ee8a24660619d"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "510b85df27a96c8e1e3e2bbf9f0e6781eee6c259dcc3b8e4e9fedf2720e01d8a"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "e8ab6dd88097ea467a1f9fc7db27395405e5e397561054814e92f82390a9b10d"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-kafka-wire-VERSION",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate"
       ],
@@ -10760,16 +12072,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "28cdf8030e24499cac91858af62ec207acdeb374da52f277e875617f42be0f15"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2b6c5c13b25637954133a9b1f4f16fa9458fb7f471ac1bf3c39b73773745492e"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58d5b0d57e0ff03b621437f7006811ea6b10632be1236944fef29fd23b341017"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2b22b0b77589048dcb69f2dbe36da0e807fa2ce3a8116f122d38eb165cda628d"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "359f7f61a18ab07915f6af4984f8f38134ec607002429860f7423e854a3c16db"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58a5d322b1121d62446eedbe865f38312bb0252ab464c4baf6f5b41b6356d8f9"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "0b5934683a439ecc6c44fc8df7f5d738a6bd9aa396e2be5336f8bc5efd0b2c4f"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "a3512e8e089e791579f155fdac0187a373d5fca3e8b8696aa478b6569fc2fb7e"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-kafka-wire-core-CHECKSUM",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate"
       ],
@@ -10827,16 +12221,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "28cdf8030e24499cac91858af62ec207acdeb374da52f277e875617f42be0f15"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2b6c5c13b25637954133a9b1f4f16fa9458fb7f471ac1bf3c39b73773745492e"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58d5b0d57e0ff03b621437f7006811ea6b10632be1236944fef29fd23b341017"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2b22b0b77589048dcb69f2dbe36da0e807fa2ce3a8116f122d38eb165cda628d"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "359f7f61a18ab07915f6af4984f8f38134ec607002429860f7423e854a3c16db"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58a5d322b1121d62446eedbe865f38312bb0252ab464c4baf6f5b41b6356d8f9"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "0b5934683a439ecc6c44fc8df7f5d738a6bd9aa396e2be5336f8bc5efd0b2c4f"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "a3512e8e089e791579f155fdac0187a373d5fca3e8b8696aa478b6569fc2fb7e"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-kafka-wire-core-COUNT",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate"
       ]
@@ -10885,16 +12361,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "28cdf8030e24499cac91858af62ec207acdeb374da52f277e875617f42be0f15"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2b6c5c13b25637954133a9b1f4f16fa9458fb7f471ac1bf3c39b73773745492e"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58d5b0d57e0ff03b621437f7006811ea6b10632be1236944fef29fd23b341017"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2b22b0b77589048dcb69f2dbe36da0e807fa2ce3a8116f122d38eb165cda628d"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "359f7f61a18ab07915f6af4984f8f38134ec607002429860f7423e854a3c16db"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58a5d322b1121d62446eedbe865f38312bb0252ab464c4baf6f5b41b6356d8f9"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "0b5934683a439ecc6c44fc8df7f5d738a6bd9aa396e2be5336f8bc5efd0b2c4f"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "a3512e8e089e791579f155fdac0187a373d5fca3e8b8696aa478b6569fc2fb7e"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-kafka-wire-core-SOURCE",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate"
       ]
@@ -10943,16 +12501,98 @@
           "DEP-LOCK-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "required-node-removed-with-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "28cdf8030e24499cac91858af62ec207acdeb374da52f277e875617f42be0f15"
+          },
+          {
+            "case": "same-count-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2b6c5c13b25637954133a9b1f4f16fa9458fb7f471ac1bf3c39b73773745492e"
+          },
+          {
+            "case": "same-count-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58d5b0d57e0ff03b621437f7006811ea6b10632be1236944fef29fd23b341017"
+          },
+          {
+            "case": "same-count-checksum",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "2b22b0b77589048dcb69f2dbe36da0e807fa2ce3a8116f122d38eb165cda628d"
+          },
+          {
+            "case": "duplicate-name-new-version",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "359f7f61a18ab07915f6af4984f8f38134ec607002429860f7423e854a3c16db"
+          },
+          {
+            "case": "duplicate-name-new-source",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "DEP-LOCK-001",
+            "source_sha256": "58a5d322b1121d62446eedbe865f38312bb0252ab464c4baf6f5b41b6356d8f9"
+          },
+          {
+            "case": "reordered-nodes",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "15be65480cbda27939f02fac6a2ece1fb78b156c56c8f7e31622573fc5fbb95c"
+          },
+          {
+            "case": "unselected-valid-node",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "0b5934683a439ecc6c44fc8df7f5d738a6bd9aa396e2be5336f8bc5efd0b2c4f"
+          },
+          {
+            "case": "qualified-incoming-edges",
+            "policy_id": "dependency:lock-package:kd-lock-kafka-wire-core",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "a3512e8e089e791579f155fdac0187a373d5fca3e8b8696aa478b6569fc2fb7e"
+          }
+        ],
+        "lock_parity_evidence": {
+          "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+          "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+          "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b"
+        },
+        "conjunction_proof": "One exact version/source/checksum identity preserves the original unique-package cardinality and all three independently checked fields. Every negative fixture retains a fully resolvable Cargo graph and reaches the intended whole-lock policy. Registry-prefix and lock-array/name preconditions remain separate unverified assertions."
       },
-      "blockers": [
-        {
-          "id": "KD-LOCK-kafka-wire-core-VERSION",
-          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate"
       ],
@@ -31982,7 +33622,7 @@
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 323,
+      "new engine capability": 343,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },

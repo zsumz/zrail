@@ -48,26 +48,33 @@ def registry_identity(entry, instance):
     return False
 
 
-def file_evidence(assertion, cache):
-    evidence = assertion["replacement"].get("file_parity_evidence")
+def parity_report(assertion, field, prefix, cache):
+    evidence = assertion["replacement"].get(field)
     if not evidence:
         require(not (assertion["replacement"]["verified"] and any(
-            policy.startswith("repository:file:") for policy in assertion["replacement"]["policy_ids"])),
-            "verified repository-file assertions require bound differential evidence")
+            policy.startswith(prefix) for policy in assertion["replacement"]["policy_ids"])),
+            f"verified {prefix} assertions require bound differential evidence")
         return
     artifact = evidence["artifact"]
     require(artifact.startswith("docs/rc9/evidence/") and ".." not in Path(artifact).parts,
-            "file parity evidence must be a repository audit artifact")
+            "parity evidence must be a repository audit artifact")
     if artifact not in cache:
         with gzip.open(ROOT / artifact, "rb") as stream:
             payload = stream.read(MAX_BYTES + 1)
         cache[artifact] = (hashlib.sha256(payload).hexdigest(), parse(payload))
     digest, report = cache[artifact]
-    require(digest == evidence["payload_sha256"], "file parity payload mismatch")
+    require(digest == evidence["payload_sha256"], "parity payload mismatch")
     require(report["snapshot"]["repository"] == assertion["repository"]
-            and report["snapshot"]["commit"] == assertion["commit"], "file parity snapshot mismatch")
-    require(report["implementation_commit"] == evidence["implementation_commit"], "file parity code mismatch")
-    require(not report["full_repository_qualified"], "file-only evidence cannot claim full qualification")
+            and report["snapshot"]["commit"] == assertion["commit"], "parity snapshot mismatch")
+    require(report["implementation_commit"] == evidence["implementation_commit"], "parity code mismatch")
+    require(not report["full_repository_qualified"], "slice evidence cannot claim full qualification")
+    return report
+
+
+def file_evidence(assertion, cache):
+    report = parity_report(assertion, "file_parity_evidence", "repository:file:", cache)
+    if report is None:
+        return
     for policy_id in assertion["replacement"]["policy_ids"]:
         policies = [p for p in report["observations"] if p["policy_id"] == policy_id]
         require(len(policies) == 1 and policies[0]["satisfied"], "missing valid frozen file policy")
@@ -86,6 +93,53 @@ def file_evidence(assertion, cache):
         require(all(row["diagnostic"] is None if row["native_accepted"] else
                     row["diagnostic"] in assertion["replacement"]["expected_diagnostics"] for row in rows),
                 "file fixture failed through an unrelated diagnostic")
+
+
+def lock_evidence(assertion, cache):
+    report = parity_report(assertion, "lock_parity_evidence", "dependency:lock-package:", cache)
+    if report is None:
+        return
+    require(assertion["replacement"]["expected_diagnostics"] == ["DEP-LOCK-001"],
+            "whole-lock evidence requires its intended diagnostic category")
+    require(report["cargo_inventory_roots"] == ["."] and len(report["workspace_packages"]) == 5
+            and len(report["inputs"]) == 12, "incomplete frozen Cargo projection inputs")
+    field = assertion["matching_semantics"]["field"]
+    negative_cases = (["required-node-removed-with-edges", "duplicate-name-new-version",
+                       "duplicate-name-new-source"] if field == "count" else ["same-count-" + field])
+    for policy_id in assertion["replacement"]["policy_ids"]:
+        policies = [p for p in report["observations"] if p["policy_id"] == policy_id]
+        require(len(policies) == 1 and policies[0]["satisfied"], "missing valid frozen lock policy")
+        observed = policies[0]
+        policy = observed["policy"]
+        require(observed["scope"] == "whole-cargo-lock" and observed["quality"] == "exact"
+                and observed["lock_sha256"] == report["inputs"]["Cargo.lock"], "inexact whole-lock scope")
+        require(policy["package"] == assertion["selection"]["select"]["name"]
+                and policy["assertion"]["kind"] == "exact", "lock package identity mismatch")
+        identities = policy["assertion"]["identities"]
+        require(len(identities) == observed["observed_count"] == 1, "invalid unique lock conjunction")
+        expected = len(identities) if field == "count" else identities[0][field]
+        require(expected == assertion["required_cardinality"]["exact"], "lock assertion value mismatch")
+        legacy = [r for r in report["legacy"] if r["policy_id"] == policy_id]
+        require(len(legacy) == 1 and legacy[0]["accepted"] and legacy[0]["path"] == "Cargo.lock",
+                "missing original frozen lock acceptance")
+        rows = [r for r in report["fixtures"] if r["policy_id"] == policy_id]
+        require(len(rows) == len({r["case"] for r in rows}) and any(r["native_accepted"] for r in rows),
+                "duplicate or missing positive lock fixture")
+        require(all(any(r["case"] == case and not r["native_accepted"] for r in rows)
+                    for case in negative_cases), "missing assertion-specific lock negative fixture")
+        for row in rows:
+            require(row["native_accepted"] == row["legacy_accepted"], "unexplained lock protection difference")
+            require(row["diagnostic"] is None if row["native_accepted"] else
+                    row["diagnostic"] == "DEP-LOCK-001", "unrelated lock fixture diagnostic")
+            require(row["observed"]["policy"] == policy and row["observed"]["policy_id"] == policy_id
+                    and row["observed"]["scope"] == "whole-cargo-lock"
+                    and row["observed"]["quality"] == "exact"
+                    and row["observed"]["satisfied"] == row["native_accepted"], "inexact lock fixture observation")
+            require(set(row["inputs"]) == set(report["inputs"])
+                    and all(path == "Cargo.lock" or digest == report["inputs"][path]
+                            for path, digest in row["inputs"].items()), "unbound lock fixture inputs")
+            require(row["path"] == "Cargo.lock" and row["source_sha256"] == row["inputs"]["Cargo.lock"]
+                    == row["observed"]["lock_sha256"], "lock fixture bytes mismatch")
 
 
 def main():
@@ -155,6 +209,7 @@ def main():
         require(assertion["disposition"] in dispositions, "unsupported assertion disposition")
         replacement = assertion["replacement"]
         file_evidence(assertion, file_reports)
+        lock_evidence(assertion, file_reports)
         if replacement["verified"]:
             require(replacement["implemented"] and replacement["fixtures"], "verified assertion lacks implementation or fixtures")
             require(not assertion["blockers"], "verified assertion retains blockers")
