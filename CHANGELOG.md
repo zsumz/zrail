@@ -53,6 +53,9 @@ All notable zrail changes are recorded here for reviewed release notes.
   comparisons against bounds and exact counts.
 - Written path-segment membership across all authored Rust path contexts,
   reusing parsed path facts with exact physical owner sets and separate counts.
+- Explicit authored import-rename inventories selected by source identifier,
+  retaining alias destinations, same-name and underscore forms, exact sets,
+  independent quantities, complete input binding, and protected review.
 
 ### Changed
 

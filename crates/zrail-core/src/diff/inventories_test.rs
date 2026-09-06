@@ -240,3 +240,37 @@ fn written_path_membership_is_distinct_authority_with_reviewed_scope_semantics()
         assert!(kinds(&after, &reordered).is_empty());
     }
 }
+
+#[test]
+fn changing_rename_destinations_or_source_selection_requires_protected_review() {
+    let mut before =
+        contract("kind='exact-owners',owners=[{path='src/lib.rs',name='Source as Alias'}]");
+    before.source.rust.inventories[0].subject = crate::RustInventorySubject::WrittenImportRenames {
+        names: vec!["Source".into()],
+    };
+    let mut after = before.clone();
+    let crate::RustInventoryAssertion::ExactOwners { owners } =
+        &mut after.source.rust.inventories[0].assertion
+    else {
+        panic!("owners")
+    };
+    owners[0].name = "Source as Other".into();
+    assert_eq!(
+        kinds(&before, &after),
+        [ChangeKind::Grant, ChangeKind::Revoke]
+    );
+    before.source.rust.inventories[0].assertion = crate::RustInventoryAssertion::Count {
+        minimum: 0,
+        maximum: Some(0),
+    };
+    after = before.clone();
+    after.source.rust.inventories[0].subject = crate::RustInventorySubject::WrittenImportRenames {
+        names: vec!["Source".into(), "State".into()],
+    };
+    assert_eq!(kinds(&before, &after), [ChangeKind::Revoke]);
+    assert_eq!(kinds(&after, &before), [ChangeKind::Grant]);
+    after.source.rust.inventories[0].subject = crate::RustInventorySubject::WrittenMethods {
+        names: vec!["Source".into()],
+    };
+    assert_eq!(kinds(&before, &after), [ChangeKind::Unknown]);
+}

@@ -263,9 +263,10 @@ byte equality, separately from Rust syntax and execution evidence.
 TOML/JSON presence, absence, nonempty-string, and exact typed-value checks.
 [Raw structure predicates](RAW-STRUCTURE.md) preserve first-marker order,
 marker-bounded literal presence, and prefixed line-value allowlists.
-[Rust inventories](RUST-INVENTORIES.md) govern exact authored method-call and
-written expression-path
-quantities and per-file/identifier count maps over existing parsed source facts.
+[Rust inventories](RUST-INVENTORIES.md) govern authored method calls, expression
+paths, path-segment membership, and explicit import renames over parsed source
+facts. Exact owner sets retain location and subject identity independently of
+per-file occurrence quantities; rename identities retain both source and alias.
 Their explicit authored world and syntax claim remain separate from semantic
 identity, compilation reachability, and execution.
 
@@ -1426,7 +1427,8 @@ expected identities, missing identities, bounded observed/unexpected samples,
 explicit omitted totals, exact input digests, and satisfied zero-count bans.
 The `rust_inventories` records expose full selectors and authored worlds, complete
 per-file/subject quantities, input digests, bounded source-location samples, and
-explicit omitted totals. Required subjects disappearing cannot become a pass.
+explicit omitted totals. Exact owner policies keep actual quantities visible;
+required subjects disappearing cannot become a pass.
 
 Coverage is an audit artifact, not partial best-effort discovery. It fails when
 source analysis is incomplete, when a governed dependency cannot be mapped to

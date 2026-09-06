@@ -14,6 +14,38 @@ pub(in super::super) fn owners(path: &str, source: &str) -> BTreeSet<String> {
     source_inventory(path, source).connection_set_files
 }
 
+pub(in super::super) fn renames(path: &str, source: &str) -> BTreeSet<String> {
+    source_inventory(path, source).renamed_authorities
+}
+
+pub(in super::super) fn check_renames(renamed_authorities: BTreeSet<String>) {
+    let actual = AuthorityInventory {
+        renamed_authorities,
+        ..AuthorityInventory::default()
+    };
+    assert_eq!(actual.renamed_authorities, BTreeSet::new());
+}
+
+pub(in super::super) fn check_detector_renames(renamed_authorities: BTreeSet<String>) {
+    let actual = AuthorityInventory {
+        renamed_authorities,
+        ..AuthorityInventory::default()
+    };
+    assert_eq!(
+        actual.renamed_authorities,
+        [
+            "ConnectionSet as Set",
+            "DirectSet as SetAlias",
+            "RegisteredTransport as Rt",
+            "SlotTransport as St",
+            "Source as IoSource",
+        ]
+        .map(|rename| format!("src/reactor/rogue.rs:{rename}"))
+        .into_iter()
+        .collect()
+    );
+}
+
 pub(in super::super) fn check_owners(connection_set_files: BTreeSet<String>) {
     let actual = AuthorityInventory {
         connection_set_files,

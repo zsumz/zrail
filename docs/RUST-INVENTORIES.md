@@ -128,6 +128,31 @@ qualified-self types are separate nodes. Owner sets discard only quantity when
 deciding membership; coverage retains all quantities. The explicit claim is
 `authored-rust-path-membership-syntax`, independent of resolved identity.
 
+The `written-import-renames` subject selects explicit `UseTree::Rename` nodes
+by their original written identifier. It preserves the alias destination as
+part of each observed identity:
+
+```toml
+subject = { kind = "written-import-renames", names = ["Source"] }
+assertion = { kind = "exact-owners", owners = [] }
+```
+
+This prohibits `use path::Source as Alias`, `Source as Source`, and `Source as _`,
+including grouped/nested imports and every visibility. It does not select plain
+or glob imports, `Other as Source`, `Source::{self as Alias}`, extern-crate
+renames, type aliases, comments, strings, or opaque macro tokens. Raw prefixes
+and case remain significant. All authored cfg branches and parsed contexts,
+including nested code, const-generic blocks, and attribute expressions, participate.
+
+Exact counts and owners use the closed identity spelling `Source as Alias` in
+their `name` field. Both identifiers must be bounded supported spellings; the
+alias may also be `_`. Changing the destination changes identity even when
+the occurrence count stays constant. Counts retain duplicate renames at distinct
+physical spans; exact owner sets collapse only identical file/source/alias
+memberships. Each sampled span covers the complete `source as alias` leaf.
+The claim is `authored-rust-import-rename-syntax`, independent of semantic alias
+resolution. Existing binding facts retain their earlier meaning.
+
 Selections reuse the bounded physical repository scanner independently of
 `repository.exclude`, Cargo source filtering, and mount reachability. Every
 selected entry must be a physical `.rs` file with complete Rust *file* facts.

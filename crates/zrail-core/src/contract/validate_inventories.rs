@@ -43,7 +43,8 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
         for name in names {
             let valid = match rule.subject {
                 RustInventorySubject::WrittenMethods { .. }
-                | RustInventorySubject::WrittenPathsContaining { .. } => identifier(name),
+                | RustInventorySubject::WrittenPathsContaining { .. }
+                | RustInventorySubject::WrittenImportRenames { .. } => identifier(name),
                 RustInventorySubject::WrittenExpressionPaths { .. } => {
                     name.split("::").count() == 2 && name.split("::").all(identifier)
                 }
@@ -100,7 +101,7 @@ fn validate_pairs<'a>(
         validate_repository_literal(path, errors);
         canonical(path, errors);
         if std::path::Path::new(path).extension() != Some(std::ffi::OsStr::new("rs"))
-            || !rule.subject.names().iter().any(|subject| subject == name)
+            || !selected_identity(&rule.subject, name)
             || !rule
                 .include
                 .iter()
@@ -128,6 +129,21 @@ fn validate_pairs<'a>(
     if length > 4_096 || total > 50_000 {
         errors.push("exact Rust inventory exceeds 4096 pairs or 50000 occurrences".into());
     }
+}
+
+fn selected_identity(subject: &RustInventorySubject, identity: &str) -> bool {
+    let name = if matches!(subject, RustInventorySubject::WrittenImportRenames { .. }) {
+        let Some((source, alias)) = identity.split_once(" as ") else {
+            return false;
+        };
+        if !(alias == "_" || identifier(alias)) {
+            return false;
+        }
+        source
+    } else {
+        identity
+    };
+    subject.names().iter().any(|selected| selected == name)
 }
 
 fn canonical(path: &str, errors: &mut ValidationErrors) {

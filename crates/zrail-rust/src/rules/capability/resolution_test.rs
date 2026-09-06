@@ -218,6 +218,7 @@ fn file() -> RustFileFacts {
         authored_methods: None,
         authored_expressions: None,
         authored_paths: None,
+        authored_renames: None,
         operations: Vec::new(),
         macros: Vec::new(),
         macro_imports: Vec::new(),

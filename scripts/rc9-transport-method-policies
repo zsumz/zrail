@@ -26,7 +26,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("snapshots", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--subject", choices=["methods", "expression-paths", "owners"], default="methods")
+    parser.add_argument("--subject", choices=["methods", "expression-paths", "owners", "renames"], default="methods")
     args = parser.parse_args()
     subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
     consumer = args.snapshots / "kafka-driver"
@@ -37,7 +37,7 @@ def main():
     ledger = json.loads((ROOT / "crates/zrail-testkit/tests/fixtures/rc9/assertions.json").read_text())
     methods = args.subject == "methods"
     identity = {"methods": "KD-TRANSPORT-METHODS", "expression-paths": "KD-TRANSPORT-ASSOCIATED",
-                "owners": "KD-TRANSPORT-OWNERS"}[args.subject]
+                "owners": "KD-TRANSPORT-OWNERS", "renames": "KD-TRANSPORT-RENAMES"}[args.subject]
     rows = [row for row in ledger["reviewed_assertions"] if row["id"] == identity]
     row, = rows
     roots = tomllib.loads((consumer / "guardrails.toml").read_text())["paths"]["rust_roots"]
@@ -51,6 +51,12 @@ def main():
         assertion = dict(kind="exact-owners", owners=[dict(path=path, name=subject["names"][0])
                                                     for path in expected])
         summary = "1 exact owner; occurrence quantities remain independent"
+    elif args.subject == "renames":
+        if row["required_cardinality"]["exact_set"] != []:
+            raise ValueError("reviewed rename prohibition changed")
+        subject = dict(kind="written-import-renames", names=row["matching_semantics"]["guarded"])
+        assertion = dict(kind="exact-owners", owners=[])
+        summary = "persistent empty rename set over five written source identifiers"
     else:
         expected = row["required_cardinality"]["exact_map"]
         counts = [dict(path=key.split(":", 1)[0], name=key.split(":", 1)[1], count=count)
@@ -66,7 +72,8 @@ def main():
         name="kd-transport-" + args.subject,
         reason=("Preserve the exact frozen per-file written selector method quantities; receiver identities and execution are separate claims." if methods else
                 "Preserve every frozen authored ExprPath quantity, including function values and path patterns, by physical file and final two written identifiers." if args.subject == "expression-paths" else
-                "Preserve the exact physical files containing a written ConnectionSet path segment across every original syntax context, independent of occurrence quantity or resolved identity."),
+                "Preserve the exact physical files containing a written ConnectionSet path segment across every original syntax context, independent of occurrence quantity or resolved identity." if args.subject == "owners" else
+                "Preserve the frozen prohibition of explicit guarded import renames, including same-name and underscore aliases; source spelling selects authority and alias destinations remain distinct evidence."),
         include=[root + "/**/*.rs" for root in roots],
         exclude=["tests/**", "**/*_test.rs"], world="authored",
         subject=subject, assertion=assertion,

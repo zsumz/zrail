@@ -8,6 +8,8 @@ mod legacy;
 mod native;
 #[path = "rust_inventories/parity/path_cases.rs"]
 mod path_cases;
+#[path = "rust_inventories/parity/rename_cases.rs"]
+mod rename_cases;
 #[path = "rust_inventories/parity/selection.rs"]
 mod selection;
 #[path = "rust_inventories/parity/syntax_cases.rs"]
@@ -178,6 +180,43 @@ fn frozen_transport_path_membership_preserves_every_written_owner_context() {
         native::observed_with_subject(&root, &detector, path_cases::SUBJECT),
         std::collections::BTreeMap::from([("src/sample.rs:ConnectionSet".into(), 1)])
     );
+}
+
+#[test]
+fn frozen_import_renames_preserve_complete_source_and_alias_identity() {
+    let root = std::env::temp_dir().join(format!(
+        "zrail-rename-parity-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    for (source, counts) in rename_cases::CASES {
+        let expected = counts
+            .iter()
+            .map(|(name, count)| (format!("src/sample.rs:{name}"), *count))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let legacy = legacy::api::renames("src/sample.rs", source);
+        let actual = native::observed_with_subject(&root, source, rename_cases::SUBJECT);
+        assert_eq!(actual, expected, "{source}");
+        assert_eq!(
+            actual
+                .keys()
+                .cloned()
+                .collect::<std::collections::BTreeSet<_>>(),
+            legacy,
+            "{source}"
+        );
+    }
+    legacy::api::check_renames(legacy::api::renames("src/sample.rs", "use p::Source;"));
+    let detector = model::detector_source();
+    legacy::api::check_detector_renames(legacy::api::renames("src/reactor/rogue.rs", &detector));
+    let actual = native::observed_with_subject(&root, &detector, rename_cases::SUBJECT);
+    assert_eq!(actual.len(), 5);
+    assert!(actual.values().all(|count| *count == 1));
+    let renamed = actual
+        .keys()
+        .map(|key| key.replacen("src/sample.rs:", "src/reactor/rogue.rs:", 1))
+        .collect();
+    legacy::api::check_detector_renames(renamed);
 }
 
 #[test]

@@ -10,6 +10,8 @@ mod fixture;
 mod owners_test;
 #[path = "rust_inventories/paths_test.rs"]
 mod paths_test;
+#[path = "rust_inventories/renames_test.rs"]
+mod renames_test;
 #[path = "rust_inventories/support.rs"]
 mod support;
 

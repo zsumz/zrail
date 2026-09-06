@@ -77,6 +77,9 @@ pub(crate) fn analyze(
                 zrail_core::RustInventorySubject::WrittenPathsContaining { .. } => {
                     "authored-rust-path-membership-syntax".into()
                 }
+                zrail_core::RustInventorySubject::WrittenImportRenames { .. } => {
+                    "authored-rust-import-rename-syntax".into()
+                }
             },
             policy,
             quality: AnalysisQuality::Exact,

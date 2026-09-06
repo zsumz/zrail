@@ -181,3 +181,52 @@ fn path_membership_requires_exact_identifiers_and_preserves_explicit_spelling() 
     };
     assert!(validate(selected).is_err());
 }
+
+#[test]
+fn explicit_rename_identities_retain_source_and_alias_in_exact_requirements() {
+    let selected = |identity: &str| {
+        let mut selected = rule(&format!(
+            "kind='exact-owners',owners=[{{path='src/lib.rs',name='{identity}'}}]"
+        ));
+        selected.subject = RustInventorySubject::WrittenImportRenames {
+            names: vec!["Source".into()],
+        };
+        selected
+    };
+    for identity in [
+        "Source as Alias",
+        "Source as Source",
+        "Source as _",
+        "Source as r#Alias",
+    ] {
+        validate(selected(identity)).expect("selected rename pair");
+    }
+    for identity in [
+        "Source",
+        "Alias as Source",
+        "Source as *",
+        "Source as alias::Other",
+        "Source as ",
+        "Source as A as B",
+        "r#Source as Alias",
+        "Source  as Alias",
+    ] {
+        assert!(validate(selected(identity)).is_err(), "{identity}");
+    }
+    let mut counted = selected("Source as Alias");
+    counted.assertion = RustInventoryAssertion::ExactCounts {
+        counts: vec![crate::RustInventoryCount {
+            path: "src/lib.rs".into(),
+            name: "Source as Alias".into(),
+            count: 2,
+        }],
+    };
+    validate(counted).expect("exact rename quantity");
+    let serialized = toml::to_string(&selected("Source as Alias")).expect("rename schema");
+    assert!(
+        toml::from_str::<RustInventoryRule>(
+            &serialized.replace("[subject]", "[subject]\naliases=['Alias']")
+        )
+        .is_err()
+    );
+}

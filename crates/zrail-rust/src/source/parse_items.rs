@@ -3,7 +3,7 @@
 use syn::visit::Visit;
 use zrail_core::RustSourceContract;
 
-use super::{authored_expressions, authored_methods, facade};
+use super::{authored_expressions, authored_methods, authored_renames, facade};
 use crate::{
     inventory::FileClass,
     source::{
@@ -66,6 +66,15 @@ pub(super) fn index_file_as(
             })
             .then(|| authored_expressions::collect_all(syntax, &visitor.paths, &visitor.calls)),
         paths: visitor.paths,
+        authored_renames: inventories
+            .iter()
+            .any(|rule| {
+                matches!(
+                    rule.subject,
+                    zrail_core::RustInventorySubject::WrittenImportRenames { .. }
+                )
+            })
+            .then(|| authored_renames::collect(syntax)),
         calls: visitor.calls,
         call_resolutions: visitor.call_resolutions,
         authored_methods: inventories

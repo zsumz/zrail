@@ -50,13 +50,20 @@ pub enum RustInventorySubject {
         /// Exact case-sensitive segments, including raw prefixes; each path/name pair counts once.
         names: Vec<String>,
     },
+    /// Explicit authored import renames selected by their original identifier.
+    WrittenImportRenames {
+        /// Exact source identifiers; alias destinations do not select an occurrence.
+        names: Vec<String>,
+    },
 }
 
 impl RustInventorySubject {
     /// Exact authored subject selectors, without semantic identity resolution.
     pub fn names(&self) -> &[String] {
         match self {
-            Self::WrittenMethods { names } | Self::WrittenPathsContaining { names } => names,
+            Self::WrittenMethods { names }
+            | Self::WrittenPathsContaining { names }
+            | Self::WrittenImportRenames { names } => names,
             Self::WrittenExpressionPaths { suffixes } => suffixes,
         }
     }
@@ -64,7 +71,9 @@ impl RustInventorySubject {
     /// Canonicalize unordered selectors without changing their authored spelling.
     pub fn canonicalize(&mut self) {
         match self {
-            Self::WrittenMethods { names } | Self::WrittenPathsContaining { names } => names.sort(),
+            Self::WrittenMethods { names }
+            | Self::WrittenPathsContaining { names }
+            | Self::WrittenImportRenames { names } => names.sort(),
             Self::WrittenExpressionPaths { suffixes } => suffixes.sort(),
         }
     }
@@ -101,7 +110,7 @@ pub enum RustInventoryAssertion {
 pub struct RustInventoryOwner {
     /// Exact normalized repository-relative Rust file.
     pub path: String,
-    /// Exact written subject selector.
+    /// Exact written identity: the selector, or `source as alias` for an import rename.
     pub name: String,
 }
 
@@ -111,7 +120,7 @@ pub struct RustInventoryOwner {
 pub struct RustInventoryCount {
     /// Exact normalized repository-relative Rust file.
     pub path: String,
-    /// Exact written subject selector, including both segments for expression paths.
+    /// Exact written identity: the selector, or `source as alias` for an import rename.
     pub name: String,
     /// Positive number of distinct physical syntax occurrences.
     pub count: usize,

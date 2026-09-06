@@ -20,6 +20,7 @@ pub(super) struct Observations<'a> {
     methods: BTreeMap<&'a str, Vec<&'a crate::source::ObservedFact>>,
     expressions: BTreeMap<&'a str, Vec<&'a crate::source::ObservedFact>>,
     paths: BTreeMap<&'a str, Vec<&'a crate::source::ObservedFact>>,
+    renames: BTreeMap<&'a str, Vec<&'a crate::source::ObservedFact>>,
     work: usize,
     occurrences: usize,
     inputs: BTreeMap<String, RustInventoryInput>,
@@ -31,12 +32,14 @@ impl<'a> Observations<'a> {
         let mut methods = BTreeMap::<_, Vec<_>>::new();
         let mut expressions = BTreeMap::<_, Vec<_>>::new();
         let mut paths = BTreeMap::<_, Vec<_>>::new();
+        let mut renames = BTreeMap::<_, Vec<_>>::new();
         for file in &source.files {
             if file.syntax == SourceSyntax::Items {
                 for (target, authored) in [
                     (&mut methods, &file.authored_methods),
                     (&mut expressions, &file.authored_expressions),
                     (&mut paths, &file.authored_paths),
+                    (&mut renames, &file.authored_renames),
                 ] {
                     if let Some(authored) = authored {
                         target
@@ -56,6 +59,7 @@ impl<'a> Observations<'a> {
             methods,
             expressions,
             paths,
+            renames,
             work: 0,
             occurrences: 0,
             inputs: BTreeMap::new(),
@@ -78,6 +82,7 @@ impl<'a> Observations<'a> {
             RustInventorySubject::WrittenMethods { .. } => &self.methods,
             RustInventorySubject::WrittenExpressionPaths { .. } => &self.expressions,
             RustInventorySubject::WrittenPathsContaining { .. } => &self.paths,
+            RustInventorySubject::WrittenImportRenames { .. } => &self.renames,
         };
         let mut counts = BTreeMap::<(&str, &str), usize>::new();
         for path in paths {
@@ -154,6 +159,16 @@ fn selected_names<'a>(
     charge(work)?;
     let mut selected = BTreeSet::new();
     let name = match subject {
+        RustInventorySubject::WrittenImportRenames { .. } => {
+            if names.contains(fact.name.as_str()) {
+                selected.insert(
+                    fact.written
+                        .as_deref()
+                        .ok_or("import rename has no written identity")?,
+                );
+            }
+            None
+        }
         RustInventorySubject::WrittenPathsContaining { .. } => {
             let written = fact
                 .written

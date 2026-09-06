@@ -4,6 +4,8 @@
 mod authored_expressions;
 #[path = "authored_methods.rs"]
 mod authored_methods;
+#[path = "authored_renames.rs"]
+mod authored_renames;
 #[path = "parse_facade.rs"]
 mod facade;
 #[path = "parse_fact_count.rs"]
