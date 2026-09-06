@@ -43,6 +43,19 @@ fn calls_and_function_values_share_expression_quantities_without_resolving_alias
             &SOURCE.replace("State::poll();", replacement),
         );
         violation(&repository);
+        let checked = repository.check();
+        let finding = checked
+            .report
+            .findings
+            .iter()
+            .find(|finding| finding.id == "RUST-INVENTORY-001")
+            .expect("intended expression inventory diagnostic");
+        assert!(
+            finding
+                .message
+                .contains("authored expression-path occurrences")
+        );
+        assert!(!finding.message.contains("method-call"));
     }
 }
 
