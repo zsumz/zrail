@@ -1,6 +1,6 @@
 //! Removing structured evidence and exchanging ordered subjects require protected review.
 
-use super::{configured, kinds, protected};
+use crate::diff::files::files_test::{configured, kinds, protected};
 use crate::{ChangeKind, Contract};
 
 fn document(assertion: &str) -> Contract {

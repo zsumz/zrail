@@ -1,5 +1,9 @@
 //! Exact document values and ordered arrays are authority subjects, not numerical budgets.
 
+#[cfg(test)]
+#[path = "documents_test.rs"]
+mod documents_test;
+
 use crate::{
     ChangeKind, RepositoryDocumentAssertion as Assertion, RepositoryDocumentPredicate,
     RepositoryDocumentValue,

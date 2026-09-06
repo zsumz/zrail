@@ -1,12 +1,9 @@
 //! Protected review accounts for counts, exact identities, quantified scopes, and raw modes.
 
-#[path = "files/documents_test.rs"]
-mod documents_test;
-
 use crate::diff::compare_fixture_test::contract_with_hard_limit;
 use crate::{ChangeKind, Contract, RepositoryEntryMode, RepositoryFileRule, compare_architecture};
 
-fn configured(predicate: &str) -> Contract {
+pub(super) fn configured(predicate: &str) -> Contract {
     let mut contract = contract_with_hard_limit(500);
     contract.repository.files.push(
         toml::from_str::<RepositoryFileRule>(&format!(
@@ -22,7 +19,7 @@ predicate = {{ {predicate} }}
     contract
 }
 
-fn kinds(before: &Contract, after: &Contract) -> Vec<ChangeKind> {
+pub(super) fn kinds(before: &Contract, after: &Contract) -> Vec<ChangeKind> {
     let report = compare_architecture(before, None, after, None);
     let mut kinds = report
         .changes
@@ -38,7 +35,7 @@ fn kinds(before: &Contract, after: &Contract) -> Vec<ChangeKind> {
     kinds
 }
 
-fn protected(before: &Contract, after: &Contract) {
+pub(super) fn protected(before: &Contract, after: &Contract) {
     assert!(compare_architecture(before, None, after, None).denies_grants());
 }
 
