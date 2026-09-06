@@ -59,6 +59,7 @@ fn empty_file() -> RustFileFacts {
         calls: Vec::new(),
         call_resolutions: Vec::new(),
         methods: Vec::new(),
+        authored_methods: None,
         operations: Vec::new(),
         macros: Vec::new(),
         macro_imports: Vec::new(),

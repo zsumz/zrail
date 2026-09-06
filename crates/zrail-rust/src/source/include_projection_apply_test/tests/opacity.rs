@@ -1,5 +1,6 @@
 //! Macro opacity and target cfg uncertainty remain conservative without impersonating resolver failure.
 
+use crate::source::RustFileFacts;
 use std::collections::{BTreeMap, BTreeSet};
 
 use zrail_core::AnalysisQuality;

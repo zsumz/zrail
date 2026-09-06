@@ -12,6 +12,7 @@ mod validate;
 mod validate_dependencies;
 mod validate_evidence;
 mod validate_files;
+mod validate_inventories;
 mod validate_limits;
 mod validate_lock_packages;
 mod validate_paths;
@@ -47,10 +48,11 @@ pub use model::{
     RepositoryDocumentPredicate, RepositoryDocumentValue, RepositoryEntryMode,
     RepositoryFilePredicate, RepositoryFileRule, RepositoryLiteralMode, RepositoryLiteralPredicate,
     RepositoryNameBasis, RepositoryNamePart, RepositoryTextNormalization, RustDuplicationContract,
-    RustFieldContract, RustSourceContract, RustTypeContract, RustTypeKind, ScopeContract,
-    ScopedBudgetContract, SizeExceptionContract, SizeExceptionMetadata, SizePolicyContract,
-    SizeRole, SizeTargetMode, SizeThresholds, SourceContract, SymbolBoundary, SyntaxBoundary,
-    TestExecutionIdentity, TestMirrorContract, TypeProhibition,
+    RustFieldContract, RustInventoryAssertion, RustInventoryCount, RustInventoryRule,
+    RustInventorySubject, RustInventoryWorld, RustSourceContract, RustTypeContract, RustTypeKind,
+    ScopeContract, ScopedBudgetContract, SizeExceptionContract, SizeExceptionMetadata,
+    SizePolicyContract, SizeRole, SizeTargetMode, SizeThresholds, SourceContract, SymbolBoundary,
+    SyntaxBoundary, TestExecutionIdentity, TestMirrorContract, TypeProhibition,
 };
 pub use modes::{
     AsyncSyntax, CycleMode, DependencyMode, Effect, ExactMode, ExternalDependencyMode, FacadeMode,

@@ -33,6 +33,7 @@ pub(crate) struct RepositoryModel {
     pub(crate) source: SourceIndex,
     pub(crate) repository_files: crate::repository_files::RepositoryFileAnalysis,
     pub(crate) lock_packages: Vec<crate::GovernedLockPackage>,
+    pub(crate) rust_inventories: crate::rust_inventories::RustInventoryAnalysis,
     pub(crate) item_macro_manifests: Vec<zrail_core::LockedItemMacroManifest>,
     pub(crate) compilation_domains: BTreeMap<String, BTreeSet<CompilationDomain>>,
     pub(crate) module_edges: Vec<ResolvedModuleEdge>,
@@ -79,6 +80,12 @@ pub(crate) fn load_model_with_bundle(
         .rust_files
         .retain(|file| cargo.source_is_active(&file.relative));
     let mut source = super::source_fragments::index(&mut inventory, &bundle.contract)?;
+    let rust_inventories = crate::rust_inventories::analyze(
+        &inventory,
+        &source,
+        &bundle.contract.source.rust.inventories,
+    )
+    .map_err(CheckError::from_message)?;
     let applied_item_macro_manifests =
         super::item_macro_manifests::apply(&inventory, &bundle.contract, &mut source)?;
     let graph = source_graph::analyze(
@@ -176,6 +183,7 @@ pub(crate) fn load_model_with_bundle(
         item_macro_manifests,
         repository_files,
         lock_packages,
+        rust_inventories,
         compilation_domains: graph.compilation_domains,
         module_edges: graph.module_edges,
     })

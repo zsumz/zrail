@@ -71,6 +71,11 @@ impl GovernedSurfaceReport {
             "Whole-lock inventories: {}",
             crate::lock_packages::display(&self.lock_packages)
         );
+        let _ = writeln!(
+            output,
+            "Rust inventories: {}",
+            crate::rust_inventories::display(&self.rust_inventories)
+        );
         let _ = writeln!(output, "Facade policies: {}", self.facades.len());
         for facade in &self.facades {
             let _ = writeln!(

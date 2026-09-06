@@ -69,6 +69,7 @@ pub(super) fn minimal_contract() -> Contract {
                 duplication: crate::RustDuplicationContract::default(),
                 types: Vec::new(),
                 budgets: None,
+                inventories: Vec::new(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Allow,
                     lint_suppressions: LintSuppressionMode::Allow,

@@ -21,6 +21,7 @@ pub(super) fn compare(before: &Contract, after: &Contract) -> Vec<ArchitectureCh
     );
     boundaries::compare_repository(before, after, &mut changes);
     files::compare(before, after, &mut changes);
+    super::inventories::compare(before, after, &mut changes);
     analysis::compare(before, after, &mut changes);
     source::compare(before, after, &mut changes);
     topology::compare(before, after, &mut changes);

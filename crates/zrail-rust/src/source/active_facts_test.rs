@@ -195,6 +195,7 @@ fn rust_contract() -> RustSourceContract {
         duplication: zrail_core::RustDuplicationContract::default(),
         types: Vec::new(),
         budgets: None,
+        inventories: Vec::new(),
         hygiene: HygieneContract {
             unsafe_code: PolicyMode::Allow,
             lint_suppressions: LintSuppressionMode::Allow,

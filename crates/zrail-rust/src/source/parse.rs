@@ -145,7 +145,7 @@ fn analysis_limit(path: &str, message: String) -> Finding {
 fn index_file(source_file: &crate::inventory::RustSourceFile, syntax: &syn::File) -> RustFileFacts {
     let mode = matches!(source_file.class, FileClass::Facade | FileClass::EntryPoint)
         .then_some(zrail_core::FacadeMode::Declarative);
-    index_file_as(source_file, source_file.class, mode, syntax)
+    index_file_as(source_file, source_file.class, mode, syntax, false)
 }
 
 fn index_file_with_policy(
@@ -158,7 +158,13 @@ fn index_file_with_policy(
             .effective;
     let mode =
         crate::source_policy::facade_mode_for(&source_file.relative, source_file.class, rust);
-    index_file_as(source_file, effective, mode, syntax)
+    index_file_as(
+        source_file,
+        effective,
+        mode,
+        syntax,
+        !rust.inventories.is_empty(),
+    )
 }
 
 fn index_file_as(
@@ -166,6 +172,7 @@ fn index_file_as(
     effective: FileClass,
     mode: Option<zrail_core::FacadeMode>,
     syntax: &syn::File,
+    inventories: bool,
 ) -> RustFileFacts {
     let imports = ImportMap::from_file(syntax);
     let mut visitor = FactVisitor::new(&imports);
@@ -185,6 +192,8 @@ fn index_file_as(
         paths: visitor.paths,
         calls: visitor.calls,
         call_resolutions: visitor.call_resolutions,
+        authored_methods: inventories
+            .then(|| super::authored_methods::collect(syntax, &visitor.methods)),
         methods: visitor.methods,
         operations: visitor.operations,
         macros: visitor.macros,

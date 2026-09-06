@@ -71,6 +71,7 @@ pub fn verify_test_mirrors(
         source: &model.source,
         repository_files: &model.repository_files,
         lock_packages: &model.lock_packages,
+        rust_inventories: &model.rust_inventories.policies,
         module_edges: &model.module_edges,
         compilation_domains: &model.compilation_domains,
         feature_worlds: &model.feature_worlds,

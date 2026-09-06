@@ -177,6 +177,7 @@ fn source(expansion: MacroExpansionFact) -> SourceIndex {
             calls: Vec::new(),
             call_resolutions: Vec::new(),
             methods: Vec::new(),
+            authored_methods: None,
             operations: Vec::new(),
             macros: Vec::new(),
             macro_imports: Vec::new(),
@@ -274,6 +275,7 @@ fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
                 duplication: zrail_core::RustDuplicationContract::default(),
                 types: Vec::new(),
                 budgets: None,
+                inventories: Vec::new(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,
                     lint_suppressions: LintSuppressionMode::Allow,

@@ -6,6 +6,7 @@ mod compare;
 mod contract;
 mod evidence;
 mod files;
+mod inventories;
 mod lock;
 mod lock_packages;
 mod model;

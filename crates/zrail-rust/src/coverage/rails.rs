@@ -106,6 +106,13 @@ pub(super) fn report(
             .iter()
             .map(|scope| format!("scope:{}", scope.name)),
     );
+    rails.extend(
+        model
+            .rust_inventories
+            .policies
+            .iter()
+            .map(|rule| rule.policy_id.clone()),
+    );
     rails.extend(owners.iter().map(|owner| owner.policy_id.clone()));
     rails.extend(contract.ratchets.iter().map(|ratchet| {
         format!(

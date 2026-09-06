@@ -3,6 +3,7 @@ mod active_facts;
 mod assignee_expression;
 mod associated_items;
 mod attributes;
+mod authored_methods;
 mod calls;
 mod canonical;
 mod canonical_observed;

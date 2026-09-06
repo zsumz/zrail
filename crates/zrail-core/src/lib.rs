@@ -33,12 +33,13 @@ pub use contract::{
     RepositoryDocumentAssertion, RepositoryDocumentFormat, RepositoryDocumentPredicate,
     RepositoryDocumentValue, RepositoryEntryMode, RepositoryFilePredicate, RepositoryFileRule,
     RepositoryLiteralMode, RepositoryLiteralPredicate, RepositoryNameBasis, RepositoryNamePart,
-    RepositoryTextNormalization, RustDuplicationContract, RustFieldContract, RustSourceContract,
-    RustTypeContract, RustTypeKind, ScopeContract, ScopedBudgetContract, SizeExceptionContract,
-    SizeExceptionMetadata, SizePolicyContract, SizeRole, SizeTargetMode, SizeThresholds,
-    SourceContract, SymbolBoundary, SymlinkMode, SyntaxBoundary, TestExecutionIdentity,
-    TestMirrorContract, TestMode, TypeProhibition, contract_imports, load_contract,
-    load_contract_with_entry, parse_evidence_reference,
+    RepositoryTextNormalization, RustDuplicationContract, RustFieldContract,
+    RustInventoryAssertion, RustInventoryCount, RustInventoryRule, RustInventorySubject,
+    RustInventoryWorld, RustSourceContract, RustTypeContract, RustTypeKind, ScopeContract,
+    ScopedBudgetContract, SizeExceptionContract, SizeExceptionMetadata, SizePolicyContract,
+    SizeRole, SizeTargetMode, SizeThresholds, SourceContract, SymbolBoundary, SymlinkMode,
+    SyntaxBoundary, TestExecutionIdentity, TestMirrorContract, TestMode, TypeProhibition,
+    contract_imports, load_contract, load_contract_with_entry, parse_evidence_reference,
 };
 pub use contract_edit::{ContractEditError, format_contract_source, migrate_contract_source};
 pub use diagnostic::{

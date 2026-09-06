@@ -47,6 +47,8 @@ pub struct GovernedSurfaceReport {
     pub repository_files: Vec<crate::GovernedRepositoryFile>,
     /// Every whole-Cargo.lock inventory, including satisfied zero-count prohibitions.
     pub lock_packages: Vec<crate::GovernedLockPackage>,
+    /// Authored Rust quantities and complete selected inputs, independent of compilation identity.
+    pub rust_inventories: Vec<crate::GovernedRustInventory>,
     /// Full scoped selectors and exceptions, including policies with zero current matches.
     pub size_policy: Option<zrail_core::SizePolicyContract>,
     /// Complete physical line measurements, effective thresholds, and active debt.

@@ -5,6 +5,7 @@ mod documents;
 mod evidence;
 mod feature_worlds;
 mod files;
+mod inventories;
 mod lock_packages;
 mod macros;
 mod policy;
@@ -34,6 +35,10 @@ pub use files::{
     RepositoryCaseMode, RepositoryEntryMode, RepositoryFilePredicate, RepositoryFileRule,
     RepositoryLiteralMode, RepositoryLiteralPredicate, RepositoryNameBasis, RepositoryNamePart,
     RepositoryTextNormalization,
+};
+pub use inventories::{
+    RustInventoryAssertion, RustInventoryCount, RustInventoryRule, RustInventorySubject,
+    RustInventoryWorld,
 };
 pub use lock_packages::{LockPackageAssertion, LockPackageIdentity, LockPackageRule};
 pub use macros::{MacroExpansionAllow, MacroExpansionContract};
@@ -108,6 +113,8 @@ pub use types::{
     #[doc = "Repository-wide written duplication syntax policy."] pub duplication: RustDuplicationContract,
     #[serde(default)]
     #[doc = "Exact per-type shape and non-duplication policies."] pub types: Vec<RustTypeContract>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[doc = "Exact quantities over explicitly selected authored Rust syntax."] pub inventories: Vec<RustInventoryRule>,
     #[doc = "Unsafe-code, lint-suppression, and denied-operation policy."] pub hygiene: HygieneContract,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[doc = "Optional target and hard line budgets by Rust file role."] pub size: Option<FileSizeContract>,

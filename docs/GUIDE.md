@@ -263,6 +263,10 @@ byte equality, separately from Rust syntax and execution evidence.
 TOML/JSON presence, absence, nonempty-string, and exact typed-value checks.
 [Raw structure predicates](RAW-STRUCTURE.md) preserve first-marker order,
 marker-bounded literal presence, and prefixed line-value allowlists.
+[Rust inventories](RUST-INVENTORIES.md) govern exact authored method-call
+quantities and per-file/identifier count maps over existing parsed source facts.
+Their explicit authored world and syntax claim remain separate from semantic
+identity, compilation reachability, and execution.
 
 ### Contract schema and fragments
 
@@ -1419,6 +1423,9 @@ selections remain visible, and sampled text offsets never truncate totals.
 The `lock_packages` records expose complete whole-lock inventory counts,
 expected identities, missing identities, bounded observed/unexpected samples,
 explicit omitted totals, exact input digests, and satisfied zero-count bans.
+The `rust_inventories` records expose full selectors and authored worlds, complete
+per-file/subject quantities, input digests, bounded source-location samples, and
+explicit omitted totals. Required subjects disappearing cannot become a pass.
 
 Coverage is an audit artifact, not partial best-effort discovery. It fails when
 source analysis is incomplete, when a governed dependency cannot be mapped to

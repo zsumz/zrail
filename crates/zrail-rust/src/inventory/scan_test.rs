@@ -252,6 +252,7 @@ fn contract() -> Contract {
                 duplication: zrail_core::RustDuplicationContract::default(),
                 types: Vec::new(),
                 budgets: None,
+                inventories: Vec::new(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,
                     lint_suppressions: LintSuppressionMode::Deny,

@@ -24,6 +24,7 @@ pub(crate) struct RuleContext<'a> {
     pub(crate) source: &'a SourceIndex,
     pub(crate) repository_files: &'a crate::repository_files::RepositoryFileAnalysis,
     pub(crate) lock_packages: &'a [crate::GovernedLockPackage],
+    pub(crate) rust_inventories: &'a [crate::GovernedRustInventory],
     pub(crate) module_edges: &'a [ResolvedModuleEdge],
     pub(crate) compilation_domains: &'a BTreeMap<String, BTreeSet<CompilationDomain>>,
     pub(crate) feature_worlds: &'a [ResolvedFeatureWorld],
@@ -41,6 +42,7 @@ pub(crate) fn evaluate(context: &RuleContext<'_>, limit: DiagnosticLimit) -> Fin
     generated::evaluate(context, &mut findings);
     dependency::evaluate(context, &mut findings);
     crate::lock_packages::evaluate(context.lock_packages, &mut findings);
+    crate::rust_inventories::evaluate(context.rust_inventories, &mut findings);
     capability::evaluate(context, &mut findings);
     macro_expansion::evaluate(context, &mut findings);
     type_policy::evaluate(context, &mut findings);

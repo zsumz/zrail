@@ -88,6 +88,9 @@ pub struct PathExplanation {
     /// Whole-lock inventory policy and observed identities when explaining `Cargo.lock`.
     #[serde(default)]
     pub lock_packages: Vec<crate::GovernedLockPackage>,
+    /// Matching authored Rust inventories, including required subjects that are absent.
+    #[serde(default)]
+    pub rust_inventories: Vec<crate::GovernedRustInventory>,
     /// The advisory line target for the source class, when configured.
     pub design_target: Option<usize>,
     /// The enforced line ceiling for the source class, when configured.

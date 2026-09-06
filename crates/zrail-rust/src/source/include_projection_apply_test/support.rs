@@ -98,6 +98,7 @@ pub(super) fn parsed_file(relative: &str, source: &str) -> RustFileFacts {
         calls: visitor.calls,
         call_resolutions: visitor.call_resolutions,
         methods: visitor.methods,
+        authored_methods: None,
         operations: visitor.operations,
         macros: visitor.macros,
         macro_imports: imports.macro_imports(),

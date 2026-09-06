@@ -41,6 +41,10 @@ All notable zrail changes are recorded here for reviewed release notes.
 - Closed raw first-marker order, marker-bounded literal presence, and prefixed
   line-value allowlists, with complete quantities, bounded observations, input
   binding, and protected comparisons; these make no workflow execution claim.
+- Exact authored Rust method-call inventories with selected-scope bounds and
+  complete per-file/identifier count maps, independent physical selection,
+  deduplicated locations, explicit cfg-world semantics, input binding, coverage,
+  explanations, and protected quantity comparisons.
 
 ### Changed
 

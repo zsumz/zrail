@@ -134,6 +134,10 @@ fn explain_model(
         schema: 2,
         repository_files: files::for_path(model, &relative),
         lock_packages: crate::lock_packages::for_path(&model.lock_packages, &relative),
+        rust_inventories: crate::rust_inventories::for_path(
+            &model.rust_inventories.policies,
+            &relative,
+        ),
         path: relative,
         file_class: crate::source_policy::role_name(class).into(),
         inferred_file_role: crate::source_policy::role_name(file_role.inferred).into(),

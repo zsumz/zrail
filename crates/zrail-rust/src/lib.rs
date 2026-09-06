@@ -15,6 +15,7 @@ mod mirrors;
 mod onboarding;
 mod repository_files;
 mod rules;
+mod rust_inventories;
 mod source;
 mod source_budget;
 mod source_policy;
@@ -73,4 +74,5 @@ pub use repository_files::{
     GovernedRepositoryFile, GovernedRepositoryFileEntry, RepositoryDocumentKeys,
     RepositoryDocumentObservation, RepositoryLineValue, RepositoryTextStructureObservation,
 };
+pub use rust_inventories::{GovernedRustInventory, RustInventoryInput, RustInventoryOccurrence};
 pub use source_budget::EffectiveSizeBudget;

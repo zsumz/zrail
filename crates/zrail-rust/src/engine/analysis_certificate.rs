@@ -70,6 +70,9 @@ pub(super) fn locked(model: &RepositoryModel) -> LockedAnalysis {
     if let Some(digest) = &model.repository_files.binding_sha256 {
         record(&mut inventory, "repository-file-predicates", digest);
     }
+    if let Some(digest) = &model.rust_inventories.binding_sha256 {
+        record(&mut inventory, "rust-inventories", digest);
+    }
     let mut exclusion_bytes = Vec::new();
     let mut exclusions = model
         .bundle
