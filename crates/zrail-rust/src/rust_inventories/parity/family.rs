@@ -5,7 +5,9 @@ use std::{
     path::Path,
 };
 
-use super::{expression_mutations, legacy, mutations, owner_mutations, rename_mutations};
+use super::{
+    expression_mutations, impl_mutations, legacy, mutations, owner_mutations, rename_mutations,
+};
 
 #[derive(Clone, Copy)]
 pub(super) enum Family {
@@ -13,6 +15,7 @@ pub(super) enum Family {
     ExpressionPaths,
     Owners,
     Renames,
+    Impls,
 }
 
 impl Family {
@@ -22,6 +25,7 @@ impl Family {
             Self::ExpressionPaths => "expression-paths",
             Self::Owners => "owners",
             Self::Renames => "renames",
+            Self::Impls => "impls",
         }
     }
 
@@ -31,6 +35,7 @@ impl Family {
             Self::ExpressionPaths => "ZRAIL_RC9_TRANSPORT_EXPRESSION_PATHS_REPORT",
             Self::Owners => "ZRAIL_RC9_TRANSPORT_OWNERS_REPORT",
             Self::Renames => "ZRAIL_RC9_TRANSPORT_RENAMES_REPORT",
+            Self::Impls => "ZRAIL_RC9_TRANSPORT_IMPLS_REPORT",
         }
     }
 
@@ -40,6 +45,7 @@ impl Family {
             Self::ExpressionPaths => (83, 27),
             Self::Owners => (46, 15),
             Self::Renames => (79, 23),
+            Self::Impls => (78, 28),
         }
     }
 
@@ -49,6 +55,7 @@ impl Family {
             Self::ExpressionPaths => legacy::expected_associated(),
             Self::Owners => members(legacy::api::expected_owner_files()),
             Self::Renames => BTreeMap::new(),
+            Self::Impls => impl_mutations::written_pairs(legacy::api::expected_impls()),
         }
     }
 
@@ -58,6 +65,7 @@ impl Family {
             Self::ExpressionPaths => legacy::associated(path, source),
             Self::Owners => members(legacy::owners(path, source)),
             Self::Renames => identity_members(legacy::api::renames(path, source)),
+            Self::Impls => impl_mutations::written_pairs(legacy::api::impls(path, source)),
         }
     }
 
@@ -67,6 +75,9 @@ impl Family {
             Self::ExpressionPaths => legacy::repository_associated(root, roots),
             Self::Owners => members(legacy::api::repository_owner_files(root, roots)),
             Self::Renames => identity_members(legacy::api::repository_renames(root, roots)),
+            Self::Impls => {
+                impl_mutations::written_pairs(legacy::api::repository_impls(root, roots))
+            }
         }
     }
 
@@ -76,6 +87,7 @@ impl Family {
             Self::ExpressionPaths => legacy::check_associated(counts),
             Self::Owners => legacy::check_owners(member_files(counts)),
             Self::Renames => legacy::api::check_renames(member_identities(counts)),
+            Self::Impls => legacy::api::check_impls(impl_mutations::original_pairs(&counts)),
         }
     }
 
@@ -85,6 +97,9 @@ impl Family {
             Self::ExpressionPaths => legacy::check_detector_associated(counts),
             Self::Owners => legacy::check_detector_owners(member_files(counts)),
             Self::Renames => legacy::api::check_detector_renames(member_identities(counts)),
+            Self::Impls => {
+                legacy::api::check_detector_impls(impl_mutations::original_pairs(&counts));
+            }
         }
     }
 
@@ -98,13 +113,15 @@ impl Family {
             Self::ExpressionPaths => expression_mutations::cases(sources, roots),
             Self::Owners => owner_mutations::cases(sources, roots),
             Self::Renames => rename_mutations::cases(sources, roots),
+            Self::Impls => impl_mutations::cases(sources, roots),
         }
     }
 
     pub(super) fn legacy_measure(self) -> Option<super::model::LegacyMeasure> {
         match self {
-            Self::Owners => Some(super::model::LegacyMeasure::DistinctOwnerFiles),
-            Self::Renames => Some(super::model::LegacyMeasure::DistinctRenameIdentities),
+            Self::Owners => Some(super::model::LegacyMeasure::OwnerFiles),
+            Self::Renames => Some(super::model::LegacyMeasure::RenameIdentities),
+            Self::Impls => Some(super::model::LegacyMeasure::TraitImplIdentities),
             Self::Methods | Self::ExpressionPaths => None,
         }
     }
@@ -117,7 +134,7 @@ impl Family {
             .counts
             .iter()
             .map(|count| {
-                let quantity = if matches!(self, Self::Owners | Self::Renames) {
+                let quantity = if matches!(self, Self::Owners | Self::Renames | Self::Impls) {
                     assert!(count.count > 0, "observed ownership requires presence");
                     1
                 } else {

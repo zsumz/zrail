@@ -9,7 +9,8 @@ This branch implements strict facades, scoped size budgets, and bounded physical
 file/raw-text predicates, UTF-8 equality, and bounded authored TOML/JSON field
 assertions, whole-Cargo.lock package count/identity inventories, and exact authored
 Rust method-call and expression-path quantities, exact file/subject owner sets,
-authored path-segment membership, and explicit import renames. Verified rc9
+authored path-segment membership, explicit import renames, and written trait/type
+implementation sets. Verified rc9
 replacement coverage remains incomplete.
 See [exact reviewed assertion blockers](BLOCKERS.md),
 [qualification commands and results](QUALIFICATION.md), and
@@ -74,7 +75,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 372 | 333 | 328 |
+| kafka-driver | 826 | 772 | 372 | 335 | 328 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 22 | 0 | 0 |
 
@@ -677,3 +678,22 @@ No whole guard file, complete repository bundle or release is qualified. A later
 wording correction makes human expression violations name their own syntax kind;
 this report's claims, counts, decisions and diagnostic IDs were already explicit.
 Final release-revision qualification remains outstanding.
+
+## Written trait implementation slice
+
+`163d3d1` adds strict authored path-type trait inventories, explicit per-trait
+implementing-type filters, exact trait/type/file identities and separate occurrence
+quantities. Twenty-one core inventory tests, 25 stock integration tests and a
+33-case comparison with the unchanged frozen collector pass. Protected diffs
+cover type-filter quantifiers and same-count identity substitutions. The full
+trusted transport fixture suite covers 78 implementation cases: 28 accepted and
+50 rejected, including removal, movement, duplicate membership, qualification,
+raw prefixes, negative impls, misleading comments and opaque macro tokens.
+
+[The partial implementation policy](policies/kafka-driver.transport-impls.fragment.toml)
+retains the frozen three trait/type/file pairs. `Source` selects only the written
+path-type suffix `DirectRustlsTransport`; the other two traits select every path
+type, as the original collector does. These are bounded syntax claims, with no
+semantic alias identity or impl-polarity claim. `KD-TRANSPORT-IMPLS` and
+`KD-TRANSPORT-DETECTOR-IMPLS` remain unverified until full frozen-scope evidence
+has run and been bound to this ledger.

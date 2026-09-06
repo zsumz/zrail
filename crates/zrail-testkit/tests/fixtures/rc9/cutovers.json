@@ -1238,6 +1238,7 @@
           "removable_now": false,
           "replacement_policy_ids": [
             "rust:inventory:kd-transport-expression-paths",
+            "rust:inventory:kd-transport-impls",
             "rust:inventory:kd-transport-methods",
             "rust:inventory:kd-transport-owners",
             "rust:inventory:kd-transport-renames"

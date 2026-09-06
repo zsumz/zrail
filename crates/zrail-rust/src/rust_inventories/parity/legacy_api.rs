@@ -33,6 +33,35 @@ pub(in super::super) fn check_detector_impls(transport_impls: BTreeSet<String>) 
     );
 }
 
+pub(in super::super) fn repository_impls(
+    root: &std::path::Path,
+    roots: &[String],
+) -> BTreeSet<String> {
+    repository_inventory(root, roots).transport_impls
+}
+
+pub(in super::super) fn expected_impls() -> BTreeSet<String> {
+    expected_transport_impls()
+}
+
+pub(in super::super) fn check_impls(transport_impls: BTreeSet<String>) {
+    let actual = AuthorityInventory {
+        transport_impls,
+        ..AuthorityInventory::default()
+    };
+    assert_eq!(actual.transport_impls, expected_transport_impls());
+}
+
+fn expected_transport_impls() -> BTreeSet<String> {
+    [
+        format!("{RUSTLS_ADAPTER}:DirectRustlsTransport:RegisteredTransport"),
+        format!("{RUSTLS_ADAPTER}:DirectRustlsTransport:SlotTransport"),
+        format!("{RUSTLS_ADAPTER}:DirectRustlsTransport:Source"),
+    ]
+    .into_iter()
+    .collect()
+}
+
 pub(in super::super) fn repository_renames(
     root: &std::path::Path,
     roots: &[String],

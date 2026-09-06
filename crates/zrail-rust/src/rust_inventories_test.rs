@@ -23,6 +23,8 @@ mod family;
 mod fixtures;
 #[path = "rust_inventories/parity/impl_cases.rs"]
 mod impl_cases;
+#[path = "rust_inventories/parity/impl_mutations.rs"]
+mod impl_mutations;
 #[path = "../tests/rc9_transport/impls_test.rs"]
 mod impls_test;
 #[path = "rust_inventories/parity/model.rs"]

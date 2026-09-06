@@ -1,0 +1,12 @@
+# Partial authored syntax policy; full downstream qualification remains required.
+# Kafka-driver a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# Transport detector SHA-256: 6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed
+
+[[source.rust.inventories]]
+name = "kd-transport-impls"
+reason = "Preserve the exact frozen file/trait/type implementation set using final written path identifiers, with Source selected only for DirectRustlsTransport; polarity, qualification, generic arguments and duplicate occurrences retain their original syntax-only meaning."
+include = ["src/**/*.rs", "tests/**/*.rs", "crates/kafka-driver-core/src/**/*.rs", "crates/kafka-driver-probe/src/**/*.rs", "crates/kafka-driver-sim/src/**/*.rs", "crates/kafka-driver-transport/src/**/*.rs"]
+exclude = ["tests/**", "**/*_test.rs"]
+world = "authored"
+subject = { kind = "written-trait-impls", names = ["RegisteredTransport", "SlotTransport", "Source"], implementing_types = { Source = ["DirectRustlsTransport"] } }
+assertion = { kind = "exact-owners", owners = [{ path = "src/reactor/direct_plaintext/rustls_transport.rs", name = "RegisteredTransport for DirectRustlsTransport" }, { path = "src/reactor/direct_plaintext/rustls_transport.rs", name = "SlotTransport for DirectRustlsTransport" }, { path = "src/reactor/direct_plaintext/rustls_transport.rs", name = "Source for DirectRustlsTransport" }] }

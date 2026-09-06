@@ -26,7 +26,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("snapshots", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--subject", choices=["methods", "expression-paths", "owners", "renames"], default="methods")
+    parser.add_argument("--subject", choices=["methods", "expression-paths", "owners", "renames", "impls"], default="methods")
     args = parser.parse_args()
     subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
     consumer = args.snapshots / "kafka-driver"
@@ -37,7 +37,8 @@ def main():
     ledger = json.loads((ROOT / "crates/zrail-testkit/tests/fixtures/rc9/assertions.json").read_text())
     methods = args.subject == "methods"
     identity = {"methods": "KD-TRANSPORT-METHODS", "expression-paths": "KD-TRANSPORT-ASSOCIATED",
-                "owners": "KD-TRANSPORT-OWNERS", "renames": "KD-TRANSPORT-RENAMES"}[args.subject]
+                "owners": "KD-TRANSPORT-OWNERS", "renames": "KD-TRANSPORT-RENAMES",
+                "impls": "KD-TRANSPORT-IMPLS"}[args.subject]
     rows = [row for row in ledger["reviewed_assertions"] if row["id"] == identity]
     row, = rows
     roots = tomllib.loads((consumer / "guardrails.toml").read_text())["paths"]["rust_roots"]
@@ -57,6 +58,17 @@ def main():
         subject = dict(kind="written-import-renames", names=row["matching_semantics"]["guarded"])
         assertion = dict(kind="exact-owners", owners=[])
         summary = "persistent empty rename set over five written source identifiers"
+    elif args.subject == "impls":
+        expected = row["required_cardinality"]["exact_set"]
+        owner = "src/reactor/direct_plaintext/rustls_transport.rs"
+        traits = ["RegisteredTransport", "SlotTransport", "Source"]
+        if expected != [f"{owner}:DirectRustlsTransport:{name}" for name in traits]:
+            raise ValueError("reviewed trait/type/file inventory changed")
+        subject = dict(kind="written-trait-impls", names=traits,
+                       implementing_types={"Source": ["DirectRustlsTransport"]})
+        assertion = dict(kind="exact-owners", owners=[dict(path=owner, name=f"{name} for DirectRustlsTransport")
+                                                    for name in traits])
+        summary = "3 exact trait/type/file identities; occurrence quantities remain independent"
     else:
         expected = row["required_cardinality"]["exact_map"]
         counts = [dict(path=key.split(":", 1)[0], name=key.split(":", 1)[1], count=count)
@@ -73,7 +85,8 @@ def main():
         reason=("Preserve the exact frozen per-file written selector method quantities; receiver identities and execution are separate claims." if methods else
                 "Preserve every frozen authored ExprPath quantity, including function values and path patterns, by physical file and final two written identifiers." if args.subject == "expression-paths" else
                 "Preserve the exact physical files containing a written ConnectionSet path segment across every original syntax context, independent of occurrence quantity or resolved identity." if args.subject == "owners" else
-                "Preserve the frozen prohibition of explicit guarded import renames, including same-name and underscore aliases; source spelling selects authority and alias destinations remain distinct evidence."),
+                "Preserve the frozen prohibition of explicit guarded import renames, including same-name and underscore aliases; source spelling selects authority and alias destinations remain distinct evidence." if args.subject == "renames" else
+                "Preserve the exact frozen file/trait/type implementation set using final written path identifiers, with Source selected only for DirectRustlsTransport; polarity, qualification, generic arguments and duplicate occurrences retain their original syntax-only meaning."),
         include=[root + "/**/*.rs" for root in roots],
         exclude=["tests/**", "**/*_test.rs"], world="authored",
         subject=subject, assertion=assertion,
