@@ -5050,6 +5050,1748 @@
       ]
     },
     {
+      "id": "KD-METADATA-PACKAGE-REPOSITORY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:77:5:assertion-macro",
+        "line": 77,
+        "column": 5,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "d411ad1687d0beaa6152fbe6ec59527edf27fd400b83659c302475f6ecf467d6",
+        "instance": null
+      },
+      "intended_property": "Retain the deliberately raw release marker; matching text does not prove execution.",
+      "selection": {
+        "path": "scripts/qualify-packages"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "case-sensitive UTF-8 contains",
+        "literal": "https://github.com/kafkars/kafka-driver",
+        "scope": "whole file, including comments and unrelated text"
+      },
+      "required_cardinality": {
+        "minimum": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-PACKAGE-REPOSITORY",
+          "cause": "Raw file predicates exist; exact policy and frozen differential evidence remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-PARENT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:59:13:failure-macro",
+        "line": 59,
+        "column": 13,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "3813cc18a5fb453e5db913da1a06a03f1f2afc21c4c0d0c992c627617b078cc2",
+        "instance": [
+          [
+            "kafka-driver",
+            "Cargo.toml"
+          ],
+          [
+            "kafka-driver-core",
+            "crates/kafka-driver-core/Cargo.toml"
+          ],
+          [
+            "kafka-driver-transport",
+            "crates/kafka-driver-transport/Cargo.toml"
+          ]
+        ]
+      },
+      "intended_property": "Each fixed public manifest path has a parent for its license copy input.",
+      "selection": {
+        "paths": [
+          "Cargo.toml",
+          "crates/kafka-driver-core/Cargo.toml",
+          "crates/kafka-driver-transport/Cargo.toml"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "Path::parent after joining an absolute workspace root",
+        "proof": "Each hardcoded relative path is nonempty and ends in Cargo.toml. This branch cannot fail for the frozen registry; normalized repository file policy paths preserve the precondition."
+      },
+      "required_cardinality": {
+        "exact": 3
+      },
+      "exception_semantics": "none",
+      "disposition": "existing native rail",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-PARENT",
+          "cause": "Record the path-precondition proof and bind the exact translated license paths before closing this helper assertion."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-PARSE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:90:33:failure-macro",
+        "line": 90,
+        "column": 33,
+        "function": [
+          "parse"
+        ],
+        "syntax_sha256": "3091bd9196214093c4083d90f9e1bf516543165fb6e94b5e551df7b7a7425b8e",
+        "instance": [
+          [
+            "kafka-driver",
+            "Cargo.toml"
+          ],
+          [
+            "kafka-driver-core",
+            "crates/kafka-driver-core/Cargo.toml"
+          ],
+          [
+            "kafka-driver-transport",
+            "crates/kafka-driver-transport/Cargo.toml"
+          ]
+        ]
+      },
+      "intended_property": "Every selected public manifest is readable UTF-8 and valid TOML; parser errors cannot evade metadata assertions.",
+      "selection": {
+        "paths": [
+          "Cargo.toml",
+          "crates/kafka-driver-core/Cargo.toml",
+          "crates/kafka-driver-transport/Cargo.toml"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "toml 0.8.23 Value parsing; duplicate keys rejected"
+      },
+      "required_cardinality": {
+        "exact": 3
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-PARSE",
+          "cause": "Document parser preconditions must be exercised by malformed, duplicate-key, and invalid-encoding fixtures."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-README",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:74:5:assertion-macro",
+        "line": 74,
+        "column": 5,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "e4e52334fbde2ada2f4e53f05e98d42a2cf34cda429946ac890aac1259bedd13",
+        "instance": null
+      },
+      "intended_property": "The root package explicitly selects README.md.",
+      "selection": {
+        "path": "Cargo.toml",
+        "keys": [
+          "package",
+          "readme"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML string equality",
+        "value": "README.md"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-README",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-REQUIRED-KAFKA-DRIVER-LOGO-SVG",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:70:5:assertion-macro",
+        "line": 70,
+        "column": 5,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "65343ff5e043f2086a18934547d892a4949d3bc365634ce6363b22c053f93e22",
+        "instance": null
+      },
+      "intended_property": "The public release input is a regular file.",
+      "selection": {
+        "path": "kafka-driver-logo.svg"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "Path::is_file, following file links"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-REQUIRED-KAFKA-DRIVER-LOGO-SVG",
+          "cause": "Native file presence exists; the exact metadata policy and frozen positive/negative linkage remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-REQUIRED-LICENSE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:68:5:assertion-macro",
+        "line": 68,
+        "column": 5,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "2a93d01a10757b51d39b40f1b6583af1c871db30efaa9b076f67625de8f3d8d4",
+        "instance": null
+      },
+      "intended_property": "The public release input is a regular file.",
+      "selection": {
+        "path": "LICENSE"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "Path::is_file, following file links"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-REQUIRED-LICENSE",
+          "cause": "Native file presence exists; the exact metadata policy and frozen positive/negative linkage remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-REQUIRED-README-MD",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:69:5:assertion-macro",
+        "line": 69,
+        "column": 5,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "23599a165bcb083ecafdb79880c9ee3a7672b7ecc9ab1fabc3fd1896a89936d3",
+        "instance": null
+      },
+      "intended_property": "The public release input is a regular file.",
+      "selection": {
+        "path": "README.md"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "Path::is_file, following file links"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-REQUIRED-README-MD",
+          "cause": "Native file presence exists; the exact metadata policy and frozen positive/negative linkage remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-VERIFY-HTTP-FAIL",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:81:5:assertion-macro",
+        "line": 81,
+        "column": 5,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "4201ce304f0185cc162c7b487db3ce5844a8e964868a90b90418c3ed5c9537bf",
+        "instance": null
+      },
+      "intended_property": "Retain the deliberately raw release marker; matching text does not prove execution.",
+      "selection": {
+        "path": "scripts/verify-release-repository"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "case-sensitive UTF-8 contains",
+        "literal": "--fail",
+        "scope": "whole file, including comments and unrelated text"
+      },
+      "required_cardinality": {
+        "minimum": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-VERIFY-HTTP-FAIL",
+          "cause": "Raw file predicates exist; exact policy and frozen differential evidence remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-VERIFY-REPOSITORY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:80:5:assertion-macro",
+        "line": 80,
+        "column": 5,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "f57685bf05bb9c0c7c538c227dcd27ec92d5edd75dedc5cb0cd4a81d04ca2f9e",
+        "instance": null
+      },
+      "intended_property": "Retain the deliberately raw release marker; matching text does not prove execution.",
+      "selection": {
+        "path": "scripts/verify-release-repository"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "case-sensitive UTF-8 contains",
+        "literal": "repository_url=https://github.com/kafkars/kafka-driver",
+        "scope": "whole file, including comments and unrelated text"
+      },
+      "required_cardinality": {
+        "minimum": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-VERIFY-REPOSITORY",
+          "cause": "Raw file predicates exist; exact policy and frozen differential evidence remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-WORKFLOW-VERIFY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:84:5:assertion-macro",
+        "line": 84,
+        "column": 5,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "26afa86c23078119b0115cfe9607d8034795b8869a6813006887ba24a9467986",
+        "instance": null
+      },
+      "intended_property": "Retain the deliberately raw release marker; matching text does not prove execution.",
+      "selection": {
+        "path": ".github/workflows/qualification.yml"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "case-sensitive UTF-8 contains",
+        "literal": "run: scripts/verify-release-repository",
+        "scope": "whole file, including comments and unrelated text"
+      },
+      "required_cardinality": {
+        "minimum": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-WORKFLOW-VERIFY",
+          "cause": "Raw file predicates exist; exact policy and frozen differential evidence remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-WORKSPACE-LICENSE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:29:5:assertion-macro",
+        "line": 29,
+        "column": 5,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "9983dfa0e2c6ee5a3f39ad9aa1829a1e00b81557a9ef0ac5d2aadfadfd468b86",
+        "instance": null
+      },
+      "intended_property": "The authored workspace publication field has the exact reviewed string.",
+      "selection": {
+        "path": "Cargo.toml",
+        "keys": [
+          "workspace",
+          "package",
+          "license"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML string equality",
+        "value": "Apache-2.0"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-WORKSPACE-LICENSE",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-WORKSPACE-REPOSITORY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:33:5:assertion-macro",
+        "line": 33,
+        "column": 5,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "d2a03b3c641478f83f08ddf43799db0be35e02a7f83c383143f0f1cb20106ef9",
+        "instance": null
+      },
+      "intended_property": "The authored workspace publication field has the exact reviewed string.",
+      "selection": {
+        "path": "Cargo.toml",
+        "keys": [
+          "workspace",
+          "package",
+          "repository"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML string equality",
+        "value": "https://github.com/kafkars/kafka-driver"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-WORKSPACE-REPOSITORY",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-WORKSPACE-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:25:5:assertion-macro",
+        "line": 25,
+        "column": 5,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "f887981c38cf886d2df26ed03922919a29993f569702ced91c8ef4897d5f517b",
+        "instance": null
+      },
+      "intended_property": "The authored workspace publication field has the exact reviewed string.",
+      "selection": {
+        "path": "Cargo.toml",
+        "keys": [
+          "workspace",
+          "package",
+          "version"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML string equality",
+        "value": "0.1.0-rc.5"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-WORKSPACE-VERSION",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-DESCRIPTION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:52:9:assertion-macro",
+        "line": 52,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "2a1d9c5ed4163dcda9c6774e154448e02f12014243287e6754096e74491dd823",
+        "instance": {
+          "name": "kafka-driver",
+          "manifest": "Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "Cargo.toml",
+        "keys": [
+          "package",
+          "description"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML string predicate",
+        "operation": "Rust str::trim then nonempty"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-DESCRIPTION",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-LICENSE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:44:9:assertion-macro",
+        "line": 44,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "efc069fc88c920541cb8219840fcfa0962f6dfb3ba9de5aeff1d260a48407a1b",
+        "instance": {
+          "name": "kafka-driver",
+          "manifest": "Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "Cargo.toml",
+        "keys": [
+          "package",
+          "license",
+          "workspace"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML boolean equality",
+        "value": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-LICENSE",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-LICENSE-COPY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:61:9:assertion-macro",
+        "line": 61,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "d965124a17718c563d84f8cce480a5c65832ad0fb1dd83c2c340e999f4cb9fda",
+        "instance": {
+          "name": "kafka-driver",
+          "manifest": "Cargo.toml"
+        }
+      },
+      "intended_property": "The package license and repository license both decode as UTF-8 and are byte-identical, including whitespace and line endings.",
+      "selection": {
+        "path": "LICENSE",
+        "reference": "LICENSE"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "UTF-8 string equality after fs::read_to_string",
+        "normalization": "none"
+      },
+      "required_cardinality": {
+        "selected": 1,
+        "reference": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-LICENSE-COPY",
+          "cause": "UTF-8 byte equality is implemented; the pinned metadata translation and differential fixtures remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-NAME",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:42:9:assertion-macro",
+        "line": 42,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "4fc1f7fb804dd47f36e1fef80f001003dc5108fcab13cbde7c3108726a073191",
+        "instance": {
+          "name": "kafka-driver",
+          "manifest": "Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "Cargo.toml",
+        "keys": [
+          "package",
+          "name"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML string equality",
+        "value": "kafka-driver"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-NAME",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-PUBLISH",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:46:9:assertion-macro",
+        "line": 46,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "943c665f6ebfb5ac0f078c12694d0aed0ee89607b897feef352a627e8393077a",
+        "instance": {
+          "name": "kafka-driver",
+          "manifest": "Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "Cargo.toml",
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML array equality",
+        "value": [
+          "crates-io"
+        ],
+        "ordered": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-PUBLISH",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-REPOSITORY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:45:9:assertion-macro",
+        "line": 45,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "88b3bbac9ff6654e98a60da3cab16edccabb002f41a2701aa2d9f55abc590f06",
+        "instance": {
+          "name": "kafka-driver",
+          "manifest": "Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "Cargo.toml",
+        "keys": [
+          "package",
+          "repository",
+          "workspace"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML boolean equality",
+        "value": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-REPOSITORY",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:43:9:assertion-macro",
+        "line": 43,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "1d0733ae125d7d5d46e8ed83cbb478471200e83de71b0818c3cedc1a00b9a7de",
+        "instance": {
+          "name": "kafka-driver",
+          "manifest": "Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "Cargo.toml",
+        "keys": [
+          "package",
+          "version",
+          "workspace"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML boolean equality",
+        "value": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-VERSION",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-core-DESCRIPTION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:52:9:assertion-macro",
+        "line": 52,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "2a1d9c5ed4163dcda9c6774e154448e02f12014243287e6754096e74491dd823",
+        "instance": {
+          "name": "kafka-driver-core",
+          "manifest": "crates/kafka-driver-core/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-core/Cargo.toml",
+        "keys": [
+          "package",
+          "description"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML string predicate",
+        "operation": "Rust str::trim then nonempty"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-core-DESCRIPTION",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-core-LICENSE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:44:9:assertion-macro",
+        "line": 44,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "efc069fc88c920541cb8219840fcfa0962f6dfb3ba9de5aeff1d260a48407a1b",
+        "instance": {
+          "name": "kafka-driver-core",
+          "manifest": "crates/kafka-driver-core/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-core/Cargo.toml",
+        "keys": [
+          "package",
+          "license",
+          "workspace"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML boolean equality",
+        "value": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-core-LICENSE",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-core-LICENSE-COPY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:61:9:assertion-macro",
+        "line": 61,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "d965124a17718c563d84f8cce480a5c65832ad0fb1dd83c2c340e999f4cb9fda",
+        "instance": {
+          "name": "kafka-driver-core",
+          "manifest": "crates/kafka-driver-core/Cargo.toml"
+        }
+      },
+      "intended_property": "The package license and repository license both decode as UTF-8 and are byte-identical, including whitespace and line endings.",
+      "selection": {
+        "path": "crates/kafka-driver-core/LICENSE",
+        "reference": "LICENSE"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "UTF-8 string equality after fs::read_to_string",
+        "normalization": "none"
+      },
+      "required_cardinality": {
+        "selected": 1,
+        "reference": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-core-LICENSE-COPY",
+          "cause": "UTF-8 byte equality is implemented; the pinned metadata translation and differential fixtures remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-core-NAME",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:42:9:assertion-macro",
+        "line": 42,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "4fc1f7fb804dd47f36e1fef80f001003dc5108fcab13cbde7c3108726a073191",
+        "instance": {
+          "name": "kafka-driver-core",
+          "manifest": "crates/kafka-driver-core/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-core/Cargo.toml",
+        "keys": [
+          "package",
+          "name"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML string equality",
+        "value": "kafka-driver-core"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-core-NAME",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-core-PUBLISH",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:46:9:assertion-macro",
+        "line": 46,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "943c665f6ebfb5ac0f078c12694d0aed0ee89607b897feef352a627e8393077a",
+        "instance": {
+          "name": "kafka-driver-core",
+          "manifest": "crates/kafka-driver-core/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-core/Cargo.toml",
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML array equality",
+        "value": [
+          "crates-io"
+        ],
+        "ordered": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-core-PUBLISH",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-core-REPOSITORY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:45:9:assertion-macro",
+        "line": 45,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "88b3bbac9ff6654e98a60da3cab16edccabb002f41a2701aa2d9f55abc590f06",
+        "instance": {
+          "name": "kafka-driver-core",
+          "manifest": "crates/kafka-driver-core/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-core/Cargo.toml",
+        "keys": [
+          "package",
+          "repository",
+          "workspace"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML boolean equality",
+        "value": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-core-REPOSITORY",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-core-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:43:9:assertion-macro",
+        "line": 43,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "1d0733ae125d7d5d46e8ed83cbb478471200e83de71b0818c3cedc1a00b9a7de",
+        "instance": {
+          "name": "kafka-driver-core",
+          "manifest": "crates/kafka-driver-core/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-core/Cargo.toml",
+        "keys": [
+          "package",
+          "version",
+          "workspace"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML boolean equality",
+        "value": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-core-VERSION",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-transport-DESCRIPTION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:52:9:assertion-macro",
+        "line": 52,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "2a1d9c5ed4163dcda9c6774e154448e02f12014243287e6754096e74491dd823",
+        "instance": {
+          "name": "kafka-driver-transport",
+          "manifest": "crates/kafka-driver-transport/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-transport/Cargo.toml",
+        "keys": [
+          "package",
+          "description"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML string predicate",
+        "operation": "Rust str::trim then nonempty"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-transport-DESCRIPTION",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-transport-LICENSE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:44:9:assertion-macro",
+        "line": 44,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "efc069fc88c920541cb8219840fcfa0962f6dfb3ba9de5aeff1d260a48407a1b",
+        "instance": {
+          "name": "kafka-driver-transport",
+          "manifest": "crates/kafka-driver-transport/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-transport/Cargo.toml",
+        "keys": [
+          "package",
+          "license",
+          "workspace"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML boolean equality",
+        "value": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-transport-LICENSE",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-transport-LICENSE-COPY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:61:9:assertion-macro",
+        "line": 61,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "d965124a17718c563d84f8cce480a5c65832ad0fb1dd83c2c340e999f4cb9fda",
+        "instance": {
+          "name": "kafka-driver-transport",
+          "manifest": "crates/kafka-driver-transport/Cargo.toml"
+        }
+      },
+      "intended_property": "The package license and repository license both decode as UTF-8 and are byte-identical, including whitespace and line endings.",
+      "selection": {
+        "path": "crates/kafka-driver-transport/LICENSE",
+        "reference": "LICENSE"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "UTF-8 string equality after fs::read_to_string",
+        "normalization": "none"
+      },
+      "required_cardinality": {
+        "selected": 1,
+        "reference": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-transport-LICENSE-COPY",
+          "cause": "UTF-8 byte equality is implemented; the pinned metadata translation and differential fixtures remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-transport-NAME",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:42:9:assertion-macro",
+        "line": 42,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "4fc1f7fb804dd47f36e1fef80f001003dc5108fcab13cbde7c3108726a073191",
+        "instance": {
+          "name": "kafka-driver-transport",
+          "manifest": "crates/kafka-driver-transport/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-transport/Cargo.toml",
+        "keys": [
+          "package",
+          "name"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML string equality",
+        "value": "kafka-driver-transport"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-transport-NAME",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-transport-PUBLISH",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:46:9:assertion-macro",
+        "line": 46,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "943c665f6ebfb5ac0f078c12694d0aed0ee89607b897feef352a627e8393077a",
+        "instance": {
+          "name": "kafka-driver-transport",
+          "manifest": "crates/kafka-driver-transport/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-transport/Cargo.toml",
+        "keys": [
+          "package",
+          "publish"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML array equality",
+        "value": [
+          "crates-io"
+        ],
+        "ordered": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-transport-PUBLISH",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-transport-REPOSITORY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:45:9:assertion-macro",
+        "line": 45,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "88b3bbac9ff6654e98a60da3cab16edccabb002f41a2701aa2d9f55abc590f06",
+        "instance": {
+          "name": "kafka-driver-transport",
+          "manifest": "crates/kafka-driver-transport/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-transport/Cargo.toml",
+        "keys": [
+          "package",
+          "repository",
+          "workspace"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML boolean equality",
+        "value": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-transport-REPOSITORY",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
+      "id": "KD-METADATA-kafka-driver-transport-VERSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_metadata.rs",
+        "file_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_metadata.rs:43:9:assertion-macro",
+        "line": 43,
+        "column": 9,
+        "function": [
+          "public_package_metadata_is_complete"
+        ],
+        "syntax_sha256": "1d0733ae125d7d5d46e8ed83cbb478471200e83de71b0818c3cedc1a00b9a7de",
+        "instance": {
+          "name": "kafka-driver-transport",
+          "manifest": "crates/kafka-driver-transport/Cargo.toml"
+        }
+      },
+      "intended_property": "Preserve this public package metadata assertion and its exact authored type.",
+      "selection": {
+        "path": "crates/kafka-driver-transport/Cargo.toml",
+        "keys": [
+          "package",
+          "version",
+          "workspace"
+        ]
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "TOML boolean equality",
+        "value": true
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-METADATA-kafka-driver-transport-VERSION",
+          "cause": "Authored TOML field predicates and exact frozen positive/negative metadata qualification remain open; effective Cargo values alone do not preserve inheritance syntax."
+        }
+      ]
+    },
+    {
       "id": "KD-MODULE-DOC-DETECTOR-ACCEPT",
       "repository": "kafkars/kafka-driver",
       "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
@@ -5411,6 +7153,876 @@
         }
       },
       "blockers": []
+    },
+    {
+      "id": "KD-RETIRED-BACKEND-VARIANT",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:75:5:assertion-macro",
+        "line": 75,
+        "column": 5,
+        "function": [
+          "reactor_backend_and_construction_have_no_legacy_path"
+        ],
+        "syntax_sha256": "d4c40f92c93be1e81fa5c2e7ee5de7853b55e6aa7d69f9fc496e97ad9c093a6c",
+        "instance": null
+      },
+      "intended_property": "The top-level ReactorBackend enum has no Legacy variant.",
+      "selection": {
+        "path": "src/reactor/backend.rs",
+        "enum": "ReactorBackend",
+        "variant": "Legacy"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "syn top-level named enum and variant spelling; zero matching enum remains accepted"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-BACKEND-VARIANT",
+          "cause": "Bounded Rust enum-variant predicate and cfg/omission/duplicate fixtures remain open."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-CONSTRUCTION-LegacyBackend",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:81:5:assertion-macro",
+        "line": 81,
+        "column": 5,
+        "function": [
+          "reactor_backend_and_construction_have_no_legacy_path"
+        ],
+        "syntax_sha256": "31650ca0f4a0c2f8059176ab3a9c0ca713a0b313715ad20e01c977a5fe975ec9",
+        "instance": "LegacyBackend"
+      },
+      "intended_property": "The host construction source omits the retired raw token.",
+      "selection": {
+        "path": "src/reactor/host/construction.rs"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "case-sensitive UTF-8 literal absence",
+        "literal": "LegacyBackend",
+        "scope": "whole file, including comments and strings"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-CONSTRUCTION-LegacyBackend",
+          "cause": "Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-CONSTRUCTION-new_legacy",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:81:5:assertion-macro",
+        "line": 81,
+        "column": 5,
+        "function": [
+          "reactor_backend_and_construction_have_no_legacy_path"
+        ],
+        "syntax_sha256": "31650ca0f4a0c2f8059176ab3a9c0ca713a0b313715ad20e01c977a5fe975ec9",
+        "instance": "new_legacy"
+      },
+      "intended_property": "The host construction source omits the retired raw token.",
+      "selection": {
+        "path": "src/reactor/host/construction.rs"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "case-sensitive UTF-8 literal absence",
+        "literal": "new_legacy",
+        "scope": "whole file, including comments and strings"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-CONSTRUCTION-new_legacy",
+          "cause": "Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-MODULE-broker_set",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:34:5:assertion-macro",
+        "line": 34,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "b2d600a36e45ddae519d8c6e8a6bed437e211680b8aafdb7d80b2725d782783e",
+        "instance": "broker_set"
+      },
+      "intended_property": "The retired reactor module has no top-level module declaration.",
+      "selection": {
+        "path": "src/reactor/mod.rs",
+        "item_kind": "module",
+        "name": "broker_set"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "syn Item::Mod at file top level, authored identifier; both inline and external modules; cfg attributes do not remove declarations"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-MODULE-broker_set",
+          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-MODULE-plaintext",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:34:5:assertion-macro",
+        "line": 34,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "b2d600a36e45ddae519d8c6e8a6bed437e211680b8aafdb7d80b2725d782783e",
+        "instance": "plaintext"
+      },
+      "intended_property": "The retired reactor module has no top-level module declaration.",
+      "selection": {
+        "path": "src/reactor/mod.rs",
+        "item_kind": "module",
+        "name": "plaintext"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "syn Item::Mod at file top level, authored identifier; both inline and external modules; cfg attributes do not remove declarations"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-MODULE-plaintext",
+          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-MODULE-poller",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:34:5:assertion-macro",
+        "line": 34,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "b2d600a36e45ddae519d8c6e8a6bed437e211680b8aafdb7d80b2725d782783e",
+        "instance": "poller"
+      },
+      "intended_property": "The retired reactor module has no top-level module declaration.",
+      "selection": {
+        "path": "src/reactor/mod.rs",
+        "item_kind": "module",
+        "name": "poller"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "syn Item::Mod at file top level, authored identifier; both inline and external modules; cfg attributes do not remove declarations"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-MODULE-poller",
+          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-MODULE-resource",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:34:5:assertion-macro",
+        "line": 34,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "b2d600a36e45ddae519d8c6e8a6bed437e211680b8aafdb7d80b2725d782783e",
+        "instance": "resource"
+      },
+      "intended_property": "The retired reactor module has no top-level module declaration.",
+      "selection": {
+        "path": "src/reactor/mod.rs",
+        "item_kind": "module",
+        "name": "resource"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "syn Item::Mod at file top level, authored identifier; both inline and external modules; cfg attributes do not remove declarations"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-MODULE-resource",
+          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-MODULE-tcp",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:34:5:assertion-macro",
+        "line": 34,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "b2d600a36e45ddae519d8c6e8a6bed437e211680b8aafdb7d80b2725d782783e",
+        "instance": "tcp"
+      },
+      "intended_property": "The retired reactor module has no top-level module declaration.",
+      "selection": {
+        "path": "src/reactor/mod.rs",
+        "item_kind": "module",
+        "name": "tcp"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "syn Item::Mod at file top level, authored identifier; both inline and external modules; cfg attributes do not remove declarations"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-MODULE-tcp",
+          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-MODULE-timer",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:34:5:assertion-macro",
+        "line": 34,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "b2d600a36e45ddae519d8c6e8a6bed437e211680b8aafdb7d80b2725d782783e",
+        "instance": "timer"
+      },
+      "intended_property": "The retired reactor module has no top-level module declaration.",
+      "selection": {
+        "path": "src/reactor/mod.rs",
+        "item_kind": "module",
+        "name": "timer"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "syn Item::Mod at file top level, authored identifier; both inline and external modules; cfg attributes do not remove declarations"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-MODULE-timer",
+          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-MODULE-tls",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:34:5:assertion-macro",
+        "line": 34,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "b2d600a36e45ddae519d8c6e8a6bed437e211680b8aafdb7d80b2725d782783e",
+        "instance": "tls"
+      },
+      "intended_property": "The retired reactor module has no top-level module declaration.",
+      "selection": {
+        "path": "src/reactor/mod.rs",
+        "item_kind": "module",
+        "name": "tls"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "syn Item::Mod at file top level, authored identifier; both inline and external modules; cfg attributes do not remove declarations"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-MODULE-tls",
+          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-PARSE-BACKEND",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:67:58:failure-macro",
+        "line": 67,
+        "column": 58,
+        "function": [
+          "reactor_backend_and_construction_have_no_legacy_path"
+        ],
+        "syntax_sha256": "83346e9f5af1d9fee2db8382367556e32601fe7554edabee6f07be200d40d765",
+        "instance": null
+      },
+      "intended_property": "The required inspected source is readable UTF-8 and parses as a complete Rust file.",
+      "selection": {
+        "path": "src/reactor/backend.rs"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "syn 2.0.119 parse_file precondition; read failures panic"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "existing native rail",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-PARSE-BACKEND",
+          "cause": "Bind this existing source parse requirement to the explicit source inventory and prove malformed/absent input failure."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-PARSE-MODULES",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:13:66:failure-macro",
+        "line": 13,
+        "column": 66,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "6493cfe9f10566826dcc138d0c97c03898ff75f895ad25d47c7108f1bafca107",
+        "instance": null
+      },
+      "intended_property": "The required inspected source is readable UTF-8 and parses as a complete Rust file.",
+      "selection": {
+        "path": "src/reactor/mod.rs"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "syn 2.0.119 parse_file precondition; read failures panic"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "existing native rail",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-PARSE-MODULES",
+          "cause": "Bind this existing source parse requirement to the explicit source inventory and prove malformed/absent input failure."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-TREE-broker_set",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:42:5:assertion-macro",
+        "line": 42,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "2a1545bc02b56efc56cafcb577cae8e4e24ee5ec4374de64520c16b4b1e8c901",
+        "instance": "broker_set"
+      },
+      "intended_property": "The retired reactor module directory contains no recursively discovered Rust source.",
+      "selection": {
+        "root": "src/reactor/broker_set",
+        "extension": "rs"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
+        "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-TREE-broker_set",
+          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-TREE-plaintext",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:42:5:assertion-macro",
+        "line": 42,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "2a1545bc02b56efc56cafcb577cae8e4e24ee5ec4374de64520c16b4b1e8c901",
+        "instance": "plaintext"
+      },
+      "intended_property": "The retired reactor module directory contains no recursively discovered Rust source.",
+      "selection": {
+        "root": "src/reactor/plaintext",
+        "extension": "rs"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
+        "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-TREE-plaintext",
+          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-TREE-poller",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:42:5:assertion-macro",
+        "line": 42,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "2a1545bc02b56efc56cafcb577cae8e4e24ee5ec4374de64520c16b4b1e8c901",
+        "instance": "poller"
+      },
+      "intended_property": "The retired reactor module directory contains no recursively discovered Rust source.",
+      "selection": {
+        "root": "src/reactor/poller",
+        "extension": "rs"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
+        "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-TREE-poller",
+          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-TREE-resource",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:42:5:assertion-macro",
+        "line": 42,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "2a1545bc02b56efc56cafcb577cae8e4e24ee5ec4374de64520c16b4b1e8c901",
+        "instance": "resource"
+      },
+      "intended_property": "The retired reactor module directory contains no recursively discovered Rust source.",
+      "selection": {
+        "root": "src/reactor/resource",
+        "extension": "rs"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
+        "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-TREE-resource",
+          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-TREE-tcp",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:42:5:assertion-macro",
+        "line": 42,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "2a1545bc02b56efc56cafcb577cae8e4e24ee5ec4374de64520c16b4b1e8c901",
+        "instance": "tcp"
+      },
+      "intended_property": "The retired reactor module directory contains no recursively discovered Rust source.",
+      "selection": {
+        "root": "src/reactor/tcp",
+        "extension": "rs"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
+        "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-TREE-tcp",
+          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-TREE-timer",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:42:5:assertion-macro",
+        "line": 42,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "2a1545bc02b56efc56cafcb577cae8e4e24ee5ec4374de64520c16b4b1e8c901",
+        "instance": "timer"
+      },
+      "intended_property": "The retired reactor module directory contains no recursively discovered Rust source.",
+      "selection": {
+        "root": "src/reactor/timer",
+        "extension": "rs"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
+        "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-TREE-timer",
+          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+        }
+      ]
+    },
+    {
+      "id": "KD-RETIRED-TREE-tls",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/release_graph.rs",
+        "file_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/release_graph.rs:42:5:assertion-macro",
+        "line": 42,
+        "column": 5,
+        "function": [
+          "legacy_transport_module_trees_are_absent"
+        ],
+        "syntax_sha256": "2a1545bc02b56efc56cafcb577cae8e4e24ee5ec4374de64520c16b4b1e8c901",
+        "instance": "tls"
+      },
+      "intended_property": "The retired reactor module directory contains no recursively discovered Rust source.",
+      "selection": {
+        "root": "src/reactor/tls",
+        "extension": "rs"
+      },
+      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "matching_semantics": {
+        "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
+        "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
+      },
+      "required_cardinality": {
+        "exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-RETIRED-TREE-tls",
+          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+        }
+      ]
     },
     {
       "id": "KD-TRANSPORT-ASSOCIATED",
@@ -17693,7 +20305,7 @@
     }
   ],
   "counts": {
-    "reviewed_assertion_instances": 279,
+    "reviewed_assertion_instances": 332,
     "implemented": 224,
     "verified_by_disposition": {
       "existing native rail": 0,

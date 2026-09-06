@@ -232,3 +232,16 @@ deletion, policy weakening, release tag, push, publication, or release asset
 upload was performed. The source remediations made while developing this slice
 were confined to zrail: its facade line budget and trusted fixture/census input
 handling were fixed without changing self-governance policy.
+
+## File parity canonical rerun
+
+At clean commit `338eb74958bb872d4ee8a017e44adb7dd97d2ebf`, `scripts/check`
+passed structure, formatting, strict workspace lint, **1,470 tests** (zero
+failures, four explicit ignores), and rustdoc. Complete self-analysis covered
+915 Rust files, 1,474 base contexts, and 1,203,673 projection work, with zero
+unresolved items. It stopped at `LOCK-008`, `LOCK-026`, `LOCK-028`, and
+`LOCK-030`; archive and cleanliness stages were not reached. The immutable
+[run index](evidence/files-parity-canonical.json) binds the full compressed log.
+This run predates the UTF-8 equality extension. That extension passed its
+15 integration tests, ten protected-diff tests, and strict workspace lint;
+it still needs the subsequent complete gate.

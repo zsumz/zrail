@@ -19,7 +19,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "tests/guardrails/capability.rs",
@@ -162,7 +163,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "tests/guardrails/module_contract.rs",
@@ -228,17 +230,74 @@
           "path": "tests/guardrails/release_graph.rs",
           "sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
           "unit": "conditional checker/helper candidate",
-          "reviewed_assertion_ids": [],
+          "reviewed_assertion_ids": [
+            "KD-RETIRED-BACKEND-VARIANT",
+            "KD-RETIRED-CONSTRUCTION-LegacyBackend",
+            "KD-RETIRED-CONSTRUCTION-new_legacy",
+            "KD-RETIRED-MODULE-broker_set",
+            "KD-RETIRED-MODULE-plaintext",
+            "KD-RETIRED-MODULE-poller",
+            "KD-RETIRED-MODULE-resource",
+            "KD-RETIRED-MODULE-tcp",
+            "KD-RETIRED-MODULE-timer",
+            "KD-RETIRED-MODULE-tls",
+            "KD-RETIRED-PARSE-BACKEND",
+            "KD-RETIRED-PARSE-MODULES",
+            "KD-RETIRED-TREE-broker_set",
+            "KD-RETIRED-TREE-plaintext",
+            "KD-RETIRED-TREE-poller",
+            "KD-RETIRED-TREE-resource",
+            "KD-RETIRED-TREE-tcp",
+            "KD-RETIRED-TREE-timer",
+            "KD-RETIRED-TREE-tls"
+          ],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "tests/guardrails/release_metadata.rs",
           "sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
           "unit": "conditional checker/helper candidate",
-          "reviewed_assertion_ids": [],
+          "reviewed_assertion_ids": [
+            "KD-METADATA-PACKAGE-REPOSITORY",
+            "KD-METADATA-PARENT",
+            "KD-METADATA-PARSE",
+            "KD-METADATA-README",
+            "KD-METADATA-REQUIRED-KAFKA-DRIVER-LOGO-SVG",
+            "KD-METADATA-REQUIRED-LICENSE",
+            "KD-METADATA-REQUIRED-README-MD",
+            "KD-METADATA-VERIFY-HTTP-FAIL",
+            "KD-METADATA-VERIFY-REPOSITORY",
+            "KD-METADATA-WORKFLOW-VERIFY",
+            "KD-METADATA-WORKSPACE-LICENSE",
+            "KD-METADATA-WORKSPACE-REPOSITORY",
+            "KD-METADATA-WORKSPACE-VERSION",
+            "KD-METADATA-kafka-driver-DESCRIPTION",
+            "KD-METADATA-kafka-driver-LICENSE",
+            "KD-METADATA-kafka-driver-LICENSE-COPY",
+            "KD-METADATA-kafka-driver-NAME",
+            "KD-METADATA-kafka-driver-PUBLISH",
+            "KD-METADATA-kafka-driver-REPOSITORY",
+            "KD-METADATA-kafka-driver-VERSION",
+            "KD-METADATA-kafka-driver-core-DESCRIPTION",
+            "KD-METADATA-kafka-driver-core-LICENSE",
+            "KD-METADATA-kafka-driver-core-LICENSE-COPY",
+            "KD-METADATA-kafka-driver-core-NAME",
+            "KD-METADATA-kafka-driver-core-PUBLISH",
+            "KD-METADATA-kafka-driver-core-REPOSITORY",
+            "KD-METADATA-kafka-driver-core-VERSION",
+            "KD-METADATA-kafka-driver-transport-DESCRIPTION",
+            "KD-METADATA-kafka-driver-transport-LICENSE",
+            "KD-METADATA-kafka-driver-transport-LICENSE-COPY",
+            "KD-METADATA-kafka-driver-transport-NAME",
+            "KD-METADATA-kafka-driver-transport-PUBLISH",
+            "KD-METADATA-kafka-driver-transport-REPOSITORY",
+            "KD-METADATA-kafka-driver-transport-VERSION"
+          ],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "tests/guardrails/support.rs",
@@ -246,7 +305,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "tests/guardrails/test_location.rs",
@@ -254,7 +314,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "tests/guardrails/transport_authority.rs",
@@ -293,7 +354,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/admin_create_delegation_token_guard/expectations.rs",
@@ -301,7 +363,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/admin_describe_delegation_tokens_guard.rs",
@@ -309,7 +372,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/admin_describe_delegation_tokens_guard/expectations.rs",
@@ -317,7 +381,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/admin_expire_delegation_token_guard.rs",
@@ -325,7 +390,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/admin_expire_delegation_token_guard/expectations.rs",
@@ -333,7 +399,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/admin_group_offset_alter_protocol_guard.rs",
@@ -341,7 +408,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/admin_group_offset_delete_protocol_guard.rs",
@@ -349,7 +417,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/admin_group_offsets_protocol_guard.rs",
@@ -357,7 +426,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/admin_renew_delegation_token_guard.rs",
@@ -365,7 +435,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/admin_renew_delegation_token_guard/expectations.rs",
@@ -373,7 +444,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/alter_consumer_group_offsets_engine_ownership_guard.rs",
@@ -381,7 +453,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/alter_consumer_group_offsets_facade_guard.rs",
@@ -389,7 +462,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/capability_allow_guard.rs",
@@ -397,7 +471,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/capability_guard.rs",
@@ -405,7 +480,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/ci_contract_guard.rs",
@@ -413,7 +489,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_build_ownership_guard.rs",
@@ -421,7 +498,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_claim_ownership_guard.rs",
@@ -429,7 +507,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_close_completion_ownership_guard.rs",
@@ -437,7 +516,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_close_slot_ownership_guard.rs",
@@ -445,7 +525,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_event_facade_guard.rs",
@@ -453,7 +534,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_event_ownership_guard.rs",
@@ -461,7 +543,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_host_ownership_guard.rs",
@@ -469,7 +552,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_next_event_ownership_guard.rs",
@@ -477,7 +561,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_owner_ownership_guard.rs",
@@ -485,7 +570,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_recv_ownership_guard.rs",
@@ -493,7 +579,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_timers_guard.rs",
@@ -501,7 +588,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assigned_topics_ownership_guard.rs",
@@ -509,7 +597,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_assignment_retirement_ownership_guard.rs",
@@ -517,7 +606,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_call_ownership_guard.rs",
@@ -525,7 +615,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_call_ownership_guard/expectations.rs",
@@ -533,7 +624,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_fetch_activation_guard.rs",
@@ -541,7 +633,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_fetch_preparation_guard.rs",
@@ -549,7 +642,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_fetch_preparation_order_guard.rs",
@@ -573,7 +667,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_follower_calls_guard/expectations.rs",
@@ -581,7 +676,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_follower_ownership_guard.rs",
@@ -589,7 +685,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_follower_ownership_guard/expectations.rs",
@@ -597,7 +694,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_heartbeat_core_guard.rs",
@@ -605,7 +703,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_heartbeat_host_guard.rs",
@@ -613,7 +712,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_heartbeat_host_guard/expectations.rs",
@@ -621,7 +721,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_heartbeat_rpc_guard.rs",
@@ -629,7 +730,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_heartbeat_rpc_guard/expectations.rs",
@@ -637,7 +739,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_leader_ownership_guard.rs",
@@ -645,7 +748,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_leader_ownership_guard/expectations.rs",
@@ -653,7 +757,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_leader_ownership_guard/state.rs",
@@ -661,7 +766,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_ownership_guard.rs",
@@ -669,7 +775,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_ownership_guard/expectations.rs",
@@ -677,7 +784,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_position_execution_guard.rs",
@@ -685,7 +793,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_protocol_guard.rs",
@@ -693,7 +802,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_reconciliation_ownership_guard.rs",
@@ -701,7 +811,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_rejoin_host_guard.rs",
@@ -709,7 +820,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_rejoin_host_guard/expectations.rs",
@@ -717,7 +829,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_rejoin_host_guard/expectations/capabilities.rs",
@@ -725,7 +838,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_rejoin_host_guard/expectations/ownership.rs",
@@ -733,7 +847,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_classic_group_topic_view_guard.rs",
@@ -741,7 +856,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_close_ownership_guard.rs",
@@ -749,7 +865,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_core_fetch_ownership_guard.rs",
@@ -757,7 +874,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_fetch_call_ownership_guard.rs",
@@ -765,7 +883,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_fetch_executor_capability_guard.rs",
@@ -773,7 +892,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_fetch_executor_ownership_guard.rs",
@@ -781,7 +901,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_fetch_executor_ownership_guard/policy.rs",
@@ -789,7 +910,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_fetch_ownership_guard.rs",
@@ -797,7 +919,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_fetch_store_ownership_guard.rs",
@@ -805,7 +928,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_checkpoint_ownership_guard.rs",
@@ -813,7 +937,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_close_facade_guard.rs",
@@ -821,7 +946,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_commit_facade_guard.rs",
@@ -829,7 +955,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_commit_facade_guard/engine_policy.rs",
@@ -837,7 +964,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_commit_facade_guard/expectations.rs",
@@ -845,7 +973,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_host_integration_guard.rs",
@@ -853,7 +982,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_host_integration_guard/expectations.rs",
@@ -861,7 +991,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_offset_commit_host_guard.rs",
@@ -869,7 +1000,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_offset_commit_host_guard/method_expectations.rs",
@@ -877,7 +1009,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_offset_commit_host_guard/mutation_expectations.rs",
@@ -885,7 +1018,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_offset_commit_notifier_guard.rs",
@@ -893,7 +1027,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_offset_commit_ownership_guard.rs",
@@ -901,7 +1036,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_offset_fetch_protocol_guard.rs",
@@ -909,7 +1045,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_position_bootstrap_ownership_guard.rs",
@@ -917,7 +1054,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_position_offset_fetch_rpc_guard.rs",
@@ -925,7 +1063,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_registry_guard.rs",
@@ -933,7 +1072,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_registry_guard/entry_fields.rs",
@@ -941,7 +1081,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_registry_guard/expectations.rs",
@@ -949,7 +1090,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_registry_guard/registry_fields.rs",
@@ -957,7 +1099,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_revocation_facade_guard.rs",
@@ -965,7 +1108,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_session_catalog_guard.rs",
@@ -973,7 +1117,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_group_session_catalog_guard/expectations.rs",
@@ -981,7 +1126,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_position_execution_ownership_guard.rs",
@@ -989,7 +1135,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_read_isolation_api_guard.rs",
@@ -997,7 +1144,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_read_isolation_guard.rs",
@@ -1005,7 +1153,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/consumer_resolved_assignment_ownership_guard.rs",
@@ -1013,7 +1162,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/delete_consumer_group_offsets_engine_ownership_guard.rs",
@@ -1021,7 +1171,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/delete_consumer_group_offsets_facade_guard.rs",
@@ -1029,7 +1180,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/delete_consumer_group_offsets_ownership_guard.rs",
@@ -1037,7 +1189,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/dependency_guard.rs",
@@ -1045,7 +1198,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/describe_cluster_ownership_guard.rs",
@@ -1053,7 +1207,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/describe_configs_ownership_guard.rs",
@@ -1061,7 +1216,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/describe_topics_ownership_guard.rs",
@@ -1069,7 +1225,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/engine_dependency_boundary_guard.rs",
@@ -1077,7 +1234,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/engine_host_group_consumer_guard.rs",
@@ -1085,7 +1243,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/engine_host_group_consumer_guard/expectations.rs",
@@ -1093,7 +1252,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/engine_transaction_initialization_guard.rs",
@@ -1101,7 +1261,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/facade_dependency_guard.rs",
@@ -1109,7 +1270,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/facade_guard.rs",
@@ -1133,7 +1295,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/file_size_guard.rs",
@@ -1165,7 +1328,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/incremental_alter_configs_ownership_guard.rs",
@@ -1173,7 +1337,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/invariant_registry_guard.rs",
@@ -1181,7 +1346,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/list_consumer_group_offsets_engine_surface_guard.rs",
@@ -1189,7 +1355,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/list_consumer_group_offsets_facade_guard.rs",
@@ -1197,7 +1364,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/list_consumer_group_offsets_ownership_guard.rs",
@@ -1205,7 +1373,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/list_topics_ownership_guard.rs",
@@ -1213,7 +1382,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/module_contract_guard.rs",
@@ -1221,7 +1391,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/ownership_guard.rs",
@@ -1229,7 +1400,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/policy_schema_guard.rs",
@@ -1237,7 +1409,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/protected_call_guard.rs",
@@ -1245,7 +1418,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/qualification_workflow_guard.rs",
@@ -1253,7 +1427,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/rust_entrypoint_contract_guard.rs",
@@ -1261,7 +1436,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/shared_admin_completion_ownership_guard.rs",
@@ -1269,7 +1445,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/sibling_manifest_guard.rs",
@@ -1277,7 +1454,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/source_graph_guard.rs",
@@ -1285,7 +1463,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/source_hygiene_guard.rs",
@@ -1293,7 +1472,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/async_capability.rs",
@@ -1301,7 +1481,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/authority.rs",
@@ -1309,7 +1490,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/call_capability.rs",
@@ -1317,7 +1499,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/capability.rs",
@@ -1325,7 +1508,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/cargo_targets.rs",
@@ -1333,7 +1517,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/ci_contract.rs",
@@ -1341,7 +1526,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/ci_contract/architecture.rs",
@@ -1349,7 +1535,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/ci_contract/qualification.rs",
@@ -1357,7 +1544,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/ci_contract/qualification/job.rs",
@@ -1365,7 +1553,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/ci_contract/rust_entrypoint.rs",
@@ -1373,7 +1562,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/ci_contract/shared.rs",
@@ -1381,7 +1571,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/ci_contract/workflow.rs",
@@ -1389,7 +1580,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/ci_contract/workflow_steps.rs",
@@ -1397,7 +1589,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/config.rs",
@@ -1405,7 +1598,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/duplication.rs",
@@ -1413,7 +1607,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/files.rs",
@@ -1439,7 +1634,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/github_yaml/model.rs",
@@ -1447,7 +1643,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/github_yaml/parser.rs",
@@ -1455,7 +1652,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/github_yaml/syntax.rs",
@@ -1463,7 +1661,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/glob_import.rs",
@@ -1471,7 +1670,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/invocation.rs",
@@ -1479,7 +1679,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/invocation_pattern.rs",
@@ -1487,7 +1688,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/invocation_scope.rs",
@@ -1495,7 +1697,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/macro_scope.rs",
@@ -1503,7 +1706,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/macro_token.rs",
@@ -1511,7 +1715,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/method_capability.rs",
@@ -1519,7 +1724,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/mod.rs",
@@ -1527,7 +1733,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/ownership.rs",
@@ -1535,7 +1742,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/ownership_methods.rs",
@@ -1543,7 +1751,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/policy_path.rs",
@@ -1551,7 +1760,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/sibling_manifest.rs",
@@ -1559,7 +1769,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/size_policy.rs",
@@ -1886,7 +2097,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/source_include.rs",
@@ -1894,7 +2106,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/test_evidence.rs",
@@ -1902,7 +2115,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/support/test_layout.rs",
@@ -1910,7 +2124,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/test_declaration_guard.rs",
@@ -1918,7 +2133,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/test_mirror_guard.rs",
@@ -1926,7 +2142,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/transaction_initialization_facade_guard.rs",
@@ -1934,7 +2151,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/transaction_initialization_ownership_guard.rs",
@@ -1942,7 +2160,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/kafka-client-guardrails/tests/traversal_guard.rs",
@@ -1950,7 +2169,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         }
       ],
       "plan": "docs/rc9/CUTOVERS.md",
@@ -1974,7 +2194,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter-invariants/tests/invariant_catalog_guard/assertions.rs",
@@ -1982,7 +2203,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter-invariants/tests/invariant_catalog_guard/doc_checks.rs",
@@ -1990,7 +2212,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter-invariants/tests/invariant_catalog_guard/evidence.rs",
@@ -1998,7 +2221,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter-invariants/tests/invariant_catalog_guard/evidence_tests.rs",
@@ -2006,7 +2230,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter-invariants/tests/invariant_catalog_guard/reviewed_policy.rs",
@@ -2014,7 +2239,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/ci_test_inventory_contract.rs",
@@ -2022,7 +2248,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_ci_contract/support/aggregate_report.rs",
@@ -2030,7 +2257,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_ci_contract/support/assertions.rs",
@@ -2038,7 +2266,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_ci_contract/support/contracts.rs",
@@ -2046,7 +2275,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_ci_contract/support/evidence_transport.rs",
@@ -2054,7 +2284,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_ci_contract/support/mod.rs",
@@ -2062,7 +2293,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_ci_contract/support/workflow.rs",
@@ -2070,7 +2302,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard.rs",
@@ -2078,7 +2311,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/analysis_scenarios.rs",
@@ -2086,7 +2320,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/artifact_scenarios.rs",
@@ -2094,7 +2329,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/debt_scenarios.rs",
@@ -2102,7 +2338,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/domain_scenarios.rs",
@@ -2110,7 +2347,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/maelstrom_scenarios.rs",
@@ -2118,7 +2356,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs",
@@ -2141,7 +2380,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/domain.rs",
@@ -2149,7 +2389,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/mod.rs",
@@ -2157,7 +2398,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
@@ -2165,7 +2407,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
@@ -2173,7 +2416,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/source_inventory.rs",
@@ -2181,7 +2425,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
@@ -2189,7 +2434,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/tla_scenarios.rs",
@@ -2197,7 +2443,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/public_api_docs_guard.rs",
@@ -2205,7 +2452,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/publish_metadata_contract.rs",
@@ -2213,7 +2461,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/readability_architecture_guard.rs",
@@ -2241,7 +2490,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/support/invariant_tooling.rs",
@@ -2249,7 +2499,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/support/mutation_ownership.rs",
@@ -2257,7 +2508,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "crates/rafter/tests/support/readability.rs",
@@ -2265,7 +2517,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "reference/harness/tests/architecture.rs",
@@ -2273,7 +2526,8 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "scripts/private-name-scan",
@@ -2282,7 +2536,8 @@
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "Expand scan-specific predicates and detector invocations; link retirement to the user decision.",
           "removable_now": false,
-          "decision_id": "RC9-DECISION-RF-PRIVATE-NAMES"
+          "decision_id": "RC9-DECISION-RF-PRIVATE-NAMES",
+          "replacement_policy_ids": []
         },
         {
           "path": "scripts/reference-package-boundary-check",
@@ -2290,7 +2545,8 @@
           "unit": "assertions only; retain execution",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "scripts/reference-source-check",
@@ -2298,7 +2554,8 @@
           "unit": "assertions only; retain execution",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         },
         {
           "path": "scripts/verify-action-pins",
@@ -2306,7 +2563,8 @@
           "unit": "assertions only; retain execution",
           "reviewed_assertion_ids": [],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
-          "removable_now": false
+          "removable_now": false,
+          "replacement_policy_ids": []
         }
       ],
       "plan": "docs/rc9/CUTOVERS.md",

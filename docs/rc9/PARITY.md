@@ -59,7 +59,7 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 ## Machine-readable audit state
 
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **279 reviewed assertion instances**. The
+contains **332 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
 record 9,792 files and 72,155 syntax candidates. Every tracked path is included,
@@ -69,7 +69,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 83 | 51 | 50 |
+| kafka-driver | 826 | 772 | 136 | 51 | 50 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
@@ -250,8 +250,18 @@ are explicit blockers; the complete downstream contracts still need qualificatio
 | RC9-RELEASE | Complete compatibility, protected semantic diff, final versioned-tree qualification, and release documentation. |
 
 These are discovery/release blockers, not a claim that assertion inventory is
-complete. [BLOCKERS.md](BLOCKERS.md) lists all **98 reviewed, unverified assertion
+complete. [BLOCKERS.md](BLOCKERS.md) lists all **118 reviewed, unverified assertion
 IDs and their causes**. The remaining candidate IDs are explicitly enumerated in
 the census and need review before their disposition or complete assertion
 expansion can be known. No unsupported generic assertion has been declared
 behavioral merely to remove it from the release criterion.
+
+## Metadata and retired-source expansion
+
+The release metadata and release graph guards add **53 reviewed assertion
+instances**: 32 metadata requirements, two metadata helper preconditions,
+17 retired-source predicates, and two Rust parser preconditions. Their source
+coordinates and expanded package/module instances are bound in the ledger.
+They remain unverified. This review exposed the license UTF-8 precondition
+and the retired-tree scanner's ignored read errors and unbounded directory-link
+traversal. Those limitations cannot silently become exclusions.

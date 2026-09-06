@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "implementation_commit": "338eb74958bb872d4ee8a017e44adb7dd97d2ebf",
+  "clean_when_started": true,
+  "command": "scripts/check",
+  "exit_code": 1,
+  "structure": "pass",
+  "format": "pass",
+  "strict_workspace_clippy": "pass",
+  "tests": {
+    "passed": 1470,
+    "failed": 0,
+    "ignored": 4
+  },
+  "rustdoc": "pass",
+  "self_analysis": {
+    "complete": true,
+    "rust_files": 915,
+    "base_contexts": 1474,
+    "derived_contexts": 0,
+    "projection_work": 1203673,
+    "unresolved": 0
+  },
+  "diagnostics": [
+    "LOCK-008",
+    "LOCK-026",
+    "LOCK-028",
+    "LOCK-030"
+  ],
+  "archive_stage": "not reached",
+  "cleanliness_stage": "not reached",
+  "lock_authority_accepted": false,
+  "log": "files-parity-canonical.log.gz",
+  "log_sha256": "113d08499759494fec2b7c30d665b891c70c03093a95fe1ce66ab97f864e1f1f",
+  "compressed_sha256": "913f8c9d99c4a4895509b75397ed7131325ded96ebb25902fe80eef4519f3b8b"
+}
