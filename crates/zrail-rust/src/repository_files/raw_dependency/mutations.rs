@@ -6,22 +6,7 @@ use super::super::metadata::mutations::Mutation;
 
 pub(super) fn cases(rule: &RepositoryFileRule, original: &[u8]) -> Vec<Mutation> {
     if matches!(rule.predicate, RepositoryFilePredicate::BytesEqual { .. }) {
-        return vec![
-            mutation("invalid-utf8", vec![0xff], Some("REP-FILE-005")),
-            Mutation {
-                name: "missing-input".into(),
-                bytes: None,
-                directory: false,
-                diagnostic: Some("REP-FILE-005"),
-            },
-            Mutation {
-                name: "wrong-entry-kind".into(),
-                bytes: None,
-                directory: true,
-                diagnostic: Some("REP-FILE-005"),
-            },
-            mutation("empty-readable-input", vec![], None),
-        ];
+        return super::super::metadata::mutations::read_cases();
     }
     let RepositoryFilePredicate::Literal(policy) = &rule.predicate else {
         panic!("expected a raw dependency predicate");

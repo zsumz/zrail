@@ -12,6 +12,28 @@ pub(in super::super) struct Mutation {
     pub(in super::super) diagnostic: Option<&'static str>,
 }
 
+pub(in super::super) fn read_cases() -> Vec<Mutation> {
+    [
+        (
+            "invalid-utf8",
+            Some(vec![0xff]),
+            false,
+            Some("REP-FILE-005"),
+        ),
+        ("missing-input", None, false, Some("REP-FILE-005")),
+        ("wrong-entry-kind", None, true, Some("REP-FILE-005")),
+        ("empty-readable-input", Some(vec![]), false, None),
+    ]
+    .into_iter()
+    .map(|(name, bytes, directory, diagnostic)| Mutation {
+        name: name.into(),
+        bytes,
+        directory,
+        diagnostic,
+    })
+    .collect()
+}
+
 pub(in super::super) fn cases(rule: &RepositoryFileRule, original: &[u8]) -> Vec<Mutation> {
     let mutation = |name: &str, bytes, diagnostic| Mutation {
         name: name.into(),
