@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+"""Translate reviewed frozen provenance assertions; trusted setup, never analyzer code."""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import tomllib
+
+
+ROOT = Path(__file__).resolve().parent.parent
+SOURCE_SHA256 = "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573"
+REGISTRY_SHA256 = "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10"
+
+
+def literal(value):
+    if isinstance(value, dict):
+        return "{ " + ", ".join(f"{key} = {literal(item)}" for key, item in value.items()) + " }"
+    if isinstance(value, list):
+        return "[" + ", ".join(literal(item) for item in value) + "]"
+    return json.dumps(value, ensure_ascii=False)
+
+
+def documents(rows):
+    rules = []
+
+    def field(name, path, keys, assertion):
+        rules.append(dict(name=name, include=[path],
+                          reason="Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution.",
+                          predicate=dict(kind="document", format="toml", path=keys, assertion=assertion)))
+
+    for row in rows:
+        if not row["id"].startswith("KD-PROVENANCE-"):
+            continue
+        selection = row["selection"]
+        semantics = row["matching_semantics"]["kind"]
+        if semantics in ["TOML exact string", "TOML get/as_bool exact equality"]:
+            assertion = dict(op="equals", value=row["matching_semantics"]["value"])
+        elif semantics == "TOML immediate table length":
+            prefix = row["id"].removesuffix("-COUNT")
+            fields = [item["selection"]["keys"][-1] for item in rows
+                      if item["id"] in [prefix + "-INHERITANCE", prefix + "-OPTIONAL"]]
+            if len(fields) != row["required_cardinality"]["exact"]:
+                raise ValueError("incomplete reviewed workspace-reference conjunction")
+            assertion = dict(op="keys-exact", keys=sorted(fields))
+        elif semantics == "TOML immediate get absence":
+            assertion = dict(op="absent")
+        elif row["id"] == "KD-PROVENANCE-PARSE":
+            for path in selection["paths"]:
+                name = "lock" if path == "Cargo.lock" else "driver" if path == "Cargo.toml" else "probe"
+                field("kd-provenance-00-parse-" + name, path, [], dict(op="present"))
+            continue
+        else:
+            continue
+        field(row["id"].lower(), selection["paths"][0], selection["keys"], assertion)
+    if len(rules) != 27:
+        raise ValueError("incomplete provenance document translation")
+    return "repository.files", rules
+
+
+def locked(rows):
+    groups = {}
+    for row in rows:
+        if row["id"].startswith("KD-LOCK-") and row["source"]["file_sha256"] == SOURCE_SHA256:
+            package = row["selection"]["select"]["name"]
+            groups.setdefault(package, {})[row["matching_semantics"]["field"]] = row
+    rules = []
+    for package, fields in sorted(groups.items()):
+        if set(fields) != {"count", "version", "source", "checksum"} or fields["count"]["required_cardinality"] != {"exact": 1}:
+            raise ValueError("incomplete reviewed lock conjunction")
+        identity = {field: fields[field]["matching_semantics"]["value"] for field in ["version", "source", "checksum"]}
+        rules.append(dict(name="kd-lock-" + package, package=package,
+                          assertion=dict(kind="exact", identities=[identity]),
+                          reason="Preserve the unique reviewed whole-lock version, registry source, and checksum identity."))
+    if len(rules) != 5:
+        raise ValueError("incomplete reviewed lock inventory")
+    return "dependencies.lock_package", rules
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("snapshots", type=Path)
+    parser.add_argument("kind", choices=["documents", "lock"])
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
+    snapshot = args.snapshots / "kafka-driver"
+    for path, digest in [("tests/guardrails/protocol_provenance.rs", SOURCE_SHA256), ("guardrails.toml", REGISTRY_SHA256)]:
+        if hashlib.sha256((snapshot / path).read_bytes()).hexdigest() != digest:
+            raise ValueError("frozen provenance authority changed")
+    rows = json.loads((ROOT / "crates/zrail-testkit/tests/fixtures/rc9/assertions.json").read_text())["reviewed_assertions"]
+    registry = tomllib.loads((snapshot / "guardrails.toml").read_text())
+    for row in rows:
+        if row["source"]["file_sha256"] == SOURCE_SHA256 and "policy_registry" in row:
+            value = registry
+            for key in row["policy_registry"]["selector"]:
+                value = value[key]
+            if value != row["policy_registry"]["entry"]:
+                raise ValueError("reviewed registry scalar changed")
+    section, rules = documents(rows) if args.kind == "documents" else locked(rows)
+    lines = ["# Partial provenance fragment; assemble and qualify the complete repository policy before adoption.",
+             "# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e", "# Detector SHA-256: " + SOURCE_SHA256]
+    for rule in sorted(rules, key=lambda rule: rule["name"]):
+        lines += ["", f"[[{section}]]"] + [f"{key} = {literal(value)}" for key, value in rule.items()]
+    tomllib.loads("\n".join(lines))
+    with args.output.open("x", encoding="utf-8", newline="\n") as output:
+        output.write("\n".join(lines) + "\n")
+    print(f"provenance {args.kind} translation: {len(rules)} policies")
+
+
+if __name__ == "__main__":
+    main()

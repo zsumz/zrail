@@ -1,0 +1,33 @@
+# Partial provenance fragment; assemble and qualify the complete repository policy before adoption.
+# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# Detector SHA-256: 490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573
+
+[[dependencies.lock_package]]
+name = "kd-lock-bornera"
+package = "bornera"
+assertion = { kind = "exact", identities = [{ version = "0.0.1-rc.3", source = "registry+https://github.com/rust-lang/crates.io-index", checksum = "5cb9b37b34c2be2c5131277760464022d46be96dfb96f53b5baf184eca08960f" }] }
+reason = "Preserve the unique reviewed whole-lock version, registry source, and checksum identity."
+
+[[dependencies.lock_package]]
+name = "kd-lock-bornera-core"
+package = "bornera-core"
+assertion = { kind = "exact", identities = [{ version = "0.0.1-rc.3", source = "registry+https://github.com/rust-lang/crates.io-index", checksum = "31b50b618633b9cdc95fc3b37461b6c303218baefe14d7958c1cddf3c71c87a1" }] }
+reason = "Preserve the unique reviewed whole-lock version, registry source, and checksum identity."
+
+[[dependencies.lock_package]]
+name = "kd-lock-bornera-rustls"
+package = "bornera-rustls"
+assertion = { kind = "exact", identities = [{ version = "0.0.1-rc.3", source = "registry+https://github.com/rust-lang/crates.io-index", checksum = "51d5c22e456b51a2f135f7050c7415aa1dd8359e0e2749db3263541f613a07a9" }] }
+reason = "Preserve the unique reviewed whole-lock version, registry source, and checksum identity."
+
+[[dependencies.lock_package]]
+name = "kd-lock-kafka-wire"
+package = "kafka-wire"
+assertion = { kind = "exact", identities = [{ version = "0.1.0-rc.3", source = "registry+https://github.com/rust-lang/crates.io-index", checksum = "ef04e07a7f2f73a4d00e3341b60504e0f2baf91491ce55e023f2bdfa5ea60b32" }] }
+reason = "Preserve the unique reviewed whole-lock version, registry source, and checksum identity."
+
+[[dependencies.lock_package]]
+name = "kd-lock-kafka-wire-core"
+package = "kafka-wire-core"
+assertion = { kind = "exact", identities = [{ version = "0.1.0-rc.3", source = "registry+https://github.com/rust-lang/crates.io-index", checksum = "ac4f6d455c6371e95044818fbbdc816d35fa0fff3f5bbc7669ce8c83ccf1c6a4" }] }
+reason = "Preserve the unique reviewed whole-lock version, registry source, and checksum identity."
