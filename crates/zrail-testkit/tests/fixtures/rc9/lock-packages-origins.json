@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "context": "The complete original lock-provenance assertion body and helper/read/parse functions are byte-exact. Native Cargo projection derives workspace identities from all five frozen manifests. No source certificate or full repository qualification is produced. Five unchanged target roots retain the library/binary presence required by native Cargo projection. Their bodies are bound but not source-analyzed in this graph-only fixture.",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/protocol_provenance.rs",
+      "source_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+      "function": "protocol_lock_entries_match_the_audited_registry_artifacts body",
+      "harness": "crates/zrail-rust/src/lock_packages/parity/legacy.rs",
+      "start_line": 11,
+      "end_line": 44,
+      "extracted_sha256": "18cb4ebd555acf9bae018d674588658998896ba98ed55072c6e0d29224444f0d"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/protocol_provenance.rs",
+      "source_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+      "function": "assert_locked and parse",
+      "harness": "crates/zrail-rust/src/lock_packages/parity/legacy.rs",
+      "start_line": 141,
+      "end_line": 162,
+      "extracted_sha256": "10ece9797950a4c48bad27d33a0a3da7ffc1fd46fdf0a019ad374d13d107299d"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "function": "load_guardrails and read",
+      "harness": "crates/zrail-rust/src/lock_packages/parity/legacy.rs",
+      "start_line": 60,
+      "end_line": 70,
+      "extracted_sha256": "5e4e9d3bbb4429be23f042b28ed30f365559daf1fcfccab1ca817a4118b7c6e2"
+    }
+  ],
+  "fixtures": [
+    {
+      "repository": "kafka-driver",
+      "path": "Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/Cargo.toml",
+      "sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "Cargo.lock",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/Cargo.lock",
+      "sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "guardrails.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/guardrails.toml",
+      "sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-core/Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/crates/kafka-driver-core/Cargo.toml",
+      "sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-probe/Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/crates/kafka-driver-probe/Cargo.toml",
+      "sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-sim/Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/crates/kafka-driver-sim/Cargo.toml",
+      "sha256": "0c6e1d53bd243f7184967ac6a80aed24e984e4f2112c45bfd93a701116e4e8f1"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-transport/Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/crates/kafka-driver-transport/Cargo.toml",
+      "sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/lib.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/src/lib.rs",
+      "sha256": "c7dd4c12ff5bea113bf6264d13c73678f7b0a543c8cf1805f8a4a31702720f70"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-core/src/lib.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/crates/kafka-driver-core/src/lib.rs",
+      "sha256": "ba99b1183eb03d58bb35ef7a34af6da9ad3142d4715f8939c524b063a6a91e34"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-probe/src/main.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/crates/kafka-driver-probe/src/main.rs",
+      "sha256": "c5b2c8ab1bd786365de1ae5df69938a87271f8e2f1521c1fcc3c6383c3eb48c7"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-sim/src/lib.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/crates/kafka-driver-sim/src/lib.rs",
+      "sha256": "aae212e06f452c5c16aa8563db37de20f9a6bcbea04610130ddd637958b7437b"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-transport/src/lib.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/lock-packages/valid/crates/kafka-driver-transport/src/lib.rs",
+      "sha256": "e0db4b0c90542b36db4e5c04370fa521ca973b273bc6bf42760c9c4e01c365cf"
+    }
+  ]
+}

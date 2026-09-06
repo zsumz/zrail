@@ -145,3 +145,7 @@ pub(crate) fn for_path(policies: &[GovernedLockPackage], path: &str) -> Vec<Gove
         Vec::new()
     }
 }
+
+#[cfg(test)]
+#[path = "lock_packages_test.rs"]
+mod lock_packages_test;

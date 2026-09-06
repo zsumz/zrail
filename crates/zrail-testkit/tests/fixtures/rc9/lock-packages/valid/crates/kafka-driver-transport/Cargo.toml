@@ -1,0 +1,19 @@
+[package]
+name = "kafka-driver-transport"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Sans-I/O framing and byte movement for kafka-driver"
+publish = ["crates-io"]
+keywords = ["kafka", "transport", "sans-io"]
+categories = ["network-programming"]
+
+[dependencies]
+bytes.workspace = true
+kafka-driver-core.workspace = true
+kafka-wire-core.workspace = true
+
+[lints]
+workspace = true
