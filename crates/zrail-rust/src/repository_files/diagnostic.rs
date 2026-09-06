@@ -82,6 +82,22 @@ pub(super) fn finding(observed: &GovernedRepositoryFile, diagnostic: &str) -> Fi
                 .find(|entry| !entry.satisfied)
                 .and_then(|entry| entry.document.as_ref()),
         ),
+        RepositoryFilePredicate::LiteralOrder { .. }
+        | RepositoryFilePredicate::LiteralBetween { .. }
+        | RepositoryFilePredicate::LineValuesAllowed { .. } => format!(
+            "raw {} predicate failed: {} selected files, {failed} unsatisfied files; first observation {:?}",
+            match observed.policy.predicate {
+                RepositoryFilePredicate::LiteralOrder { .. } => "first-marker order",
+                RepositoryFilePredicate::LiteralBetween { .. } => "first-marker interval",
+                _ => "prefixed line-value set",
+            },
+            observed.entries.len(),
+            observed
+                .entries
+                .iter()
+                .find(|entry| !entry.satisfied)
+                .and_then(|entry| entry.text_structure.as_ref()),
+        ),
     };
     let mut finding = Finding::error(diagnostic, &observed.policy_id, "repository-files", message)
         .because(&observed.policy.reason)

@@ -34,7 +34,8 @@ pub(super) fn compare(left: &RepositoryFileRule, right: &RepositoryFileRule) -> 
     let expansion_tightens = match &left.predicate {
         RepositoryFilePredicate::Count { minimum: 0, .. }
         | RepositoryFilePredicate::ExactPaths { .. }
-        | RepositoryFilePredicate::ForbiddenNames { .. } => Some(true),
+        | RepositoryFilePredicate::ForbiddenNames { .. }
+        | RepositoryFilePredicate::LineValuesAllowed { .. } => Some(true),
         RepositoryFilePredicate::Document(document)
             if document.assertion == crate::RepositoryDocumentAssertion::Absent =>
         {

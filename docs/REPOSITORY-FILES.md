@@ -136,7 +136,8 @@ inspected input. Invalid encoding is a decidable `REP-FILE-005` failure, with
 the exact inspected bytes still bound. Removing the UTF-8 requirement is a grant.
 
 Diagnostics `REP-FILE-001` through `005` identify count, exact-set, name, literal,
-and byte-equality failures; `007` identifies document field failures.
+and byte-equality failures; `007` identifies document field failures, and `008`
+identifies [raw order, interval, and line-value failures](RAW-STRUCTURE.md).
 `REP-FILE-006` means incomplete analysis: checks,
 coverage, and lock construction fail instead of returning trusted partial data.
 Reads are limited to 2 MiB per file, 64 MiB unique bytes, and 256 MiB cumulative

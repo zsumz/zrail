@@ -5,6 +5,7 @@ use crate::{RepositoryCaseMode, RepositoryFilePredicate, RepositoryNameBasis, Re
 use super::{ChangeKind, interval, literal, set};
 
 mod documents;
+mod raw;
 
 pub(super) fn compare(
     left: &RepositoryFilePredicate,
@@ -13,6 +14,9 @@ pub(super) fn compare(
     use RepositoryFilePredicate::{BytesEqual, Count, ExactPaths, ForbiddenNames, Literal};
     if left == right {
         return Vec::new();
+    }
+    if let Some(changes) = raw::compare(left, right) {
+        return changes;
     }
     match (left, right) {
         (

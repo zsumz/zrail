@@ -68,6 +68,32 @@ pub enum RepositoryFilePredicate {
     },
     /// Require each selected file to satisfy an explicitly raw UTF-8 text predicate.
     Literal(RepositoryLiteralPredicate),
+    /// Require both case-sensitive markers and strict ordering of their first byte offsets.
+    LiteralOrder {
+        /// First occurrence must precede the first occurrence of `after`.
+        before: String,
+        /// Required later marker; comments and strings participate deliberately.
+        after: String,
+    },
+    /// Require a literal inside the interval between the first two case-sensitive markers.
+    LiteralBetween {
+        /// Required first occurrence; its byte position is included in the interval.
+        start: String,
+        /// Required first occurrence; its byte position is excluded from the interval.
+        end: String,
+        /// Required literal in the selected interval; never code or a regular expression.
+        contains: String,
+    },
+    /// Check each raw line whose normalized spelling begins with one literal prefix.
+    LineValuesAllowed {
+        /// Nonempty case-sensitive prefix selecting a line and removed before comparison.
+        prefix: String,
+        /// Complete allowed suffix values; an empty set prohibits every selected line.
+        values: Vec<String>,
+        /// Transform each line before prefix selection; comparison remains case-sensitive.
+        #[serde(default)]
+        normalization: RepositoryTextNormalization,
+    },
     /// Parse a bounded authored document and inspect one literal key path.
     Document(RepositoryDocumentPredicate),
     /// Require at least one selected file and exact bytes equal to the reference.

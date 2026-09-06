@@ -8,6 +8,8 @@ mod literal;
 mod model;
 mod predicates;
 mod select;
+mod text_model;
+mod text_structure;
 
 use std::path::Path;
 
@@ -20,6 +22,7 @@ pub use model::{
     GovernedRepositoryFile, GovernedRepositoryFileEntry, RepositoryDocumentKeys,
     RepositoryDocumentObservation,
 };
+pub use text_model::{RepositoryLineValue, RepositoryTextStructureObservation};
 
 pub(crate) fn analyze(
     root: &Path,
@@ -50,6 +53,9 @@ pub(crate) fn analyze(
                     "raw-utf8-lines"
                 }
                 RepositoryFilePredicate::Literal(_) => "raw-utf8-text",
+                RepositoryFilePredicate::LiteralOrder { .. }
+                | RepositoryFilePredicate::LiteralBetween { .. } => "raw-utf8-byte-interval",
+                RepositoryFilePredicate::LineValuesAllowed { .. } => "raw-utf8-line-values",
                 RepositoryFilePredicate::Document(_) => "authored-document",
                 RepositoryFilePredicate::BytesEqual { utf8: true, .. } => "utf8-file-bytes",
                 RepositoryFilePredicate::BytesEqual { .. } => "file-bytes",

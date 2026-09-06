@@ -7,7 +7,9 @@ use zrail_core::{
     RepositoryNamePart,
 };
 
-use super::{boundary, documents, input::Inputs, literal, model::GovernedRepositoryFile};
+use super::{
+    boundary, documents, input::Inputs, literal, model::GovernedRepositoryFile, text_structure,
+};
 
 pub(super) fn evaluate(
     root: &Path,
@@ -65,6 +67,19 @@ pub(super) fn evaluate(
             (
                 !literal::requires_file(policy) || !observed.entries.is_empty(),
                 "REP-FILE-004",
+            )
+        }
+        predicate @ (RepositoryFilePredicate::LiteralOrder { .. }
+        | RepositoryFilePredicate::LiteralBetween { .. }
+        | RepositoryFilePredicate::LineValuesAllowed { .. }) => {
+            for entry in &mut observed.entries {
+                let bytes = inputs.read(root, entry)?;
+                text_structure::evaluate(predicate, &bytes, entry)?;
+            }
+            (
+                matches!(predicate, RepositoryFilePredicate::LineValuesAllowed { .. })
+                    || !observed.entries.is_empty(),
+                "REP-FILE-008",
             )
         }
         RepositoryFilePredicate::BytesEqual { other, utf8 } => {

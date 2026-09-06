@@ -71,6 +71,6 @@ pub use onboarding::{
 };
 pub use repository_files::{
     GovernedRepositoryFile, GovernedRepositoryFileEntry, RepositoryDocumentKeys,
-    RepositoryDocumentObservation,
+    RepositoryDocumentObservation, RepositoryLineValue, RepositoryTextStructureObservation,
 };
 pub use source_budget::EffectiveSizeBudget;

@@ -261,6 +261,8 @@ and forbidden paths, exact file inventories, literal naming/text policies, and
 byte equality, separately from Rust syntax and execution evidence.
 [Authored document predicates](REPOSITORY-DOCUMENTS.md) add bounded literal-key
 TOML/JSON presence, absence, nonempty-string, and exact typed-value checks.
+[Raw structure predicates](RAW-STRUCTURE.md) preserve first-marker order,
+marker-bounded literal presence, and prefixed line-value allowlists.
 
 ### Contract schema and fragments
 

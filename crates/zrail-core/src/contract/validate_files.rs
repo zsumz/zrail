@@ -1,5 +1,7 @@
 //! Strict bounded validation for repository-file assertions and literal semantics.
 
+mod content;
+
 use std::collections::BTreeSet;
 
 use super::{
@@ -9,7 +11,7 @@ use super::{
     validate_paths::{validate_repository_literal, validate_repository_pattern},
     validate_sets::require_reason,
 };
-use crate::{RepositoryDocumentAssertion, RepositoryDocumentPredicate, RepositoryDocumentValue};
+use crate::{RepositoryDocumentAssertion, RepositoryDocumentValue};
 
 pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
     let rules = &contract.repository.files;
@@ -137,46 +139,13 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
                     );
                 }
             }
-            RepositoryFilePredicate::Document(document) => {
+            RepositoryFilePredicate::Document(_)
+            | RepositoryFilePredicate::LiteralOrder { .. }
+            | RepositoryFilePredicate::LiteralBetween { .. }
+            | RepositoryFilePredicate::LineValuesAllowed { .. } => {
                 regular(rule.entry, &rule.name, errors);
-                validate_document(document, errors);
+                content::validate(&rule.predicate, errors);
             }
-        }
-    }
-}
-
-fn validate_document(document: &RepositoryDocumentPredicate, errors: &mut ValidationErrors) {
-    if let RepositoryDocumentAssertion::FieldNotString { field } = &document.assertion
-        && field.len() > 1_024
-    {
-        errors.push("document field projections permit at most 1024 key bytes".into());
-    }
-    if document.path.len() > 32 || document.path.iter().any(|key| key.len() > 1_024) {
-        errors.push(
-            "document paths permit at most 32 literal keys of at most 1024 bytes each".into(),
-        );
-    }
-    if let RepositoryDocumentAssertion::KeysExact { keys, .. }
-    | RepositoryDocumentAssertion::KeysAllowed { keys, .. } = &document.assertion
-    {
-        unique(keys, "document key sets", errors);
-        if keys.len() > 1_024 || keys.iter().map(String::len).sum::<usize>() > 16 * 1_024 {
-            errors.push("document key sets permit at most 1024 keys and 16384 key bytes".into());
-        }
-    }
-    if let RepositoryDocumentAssertion::Equals { value } = &document.assertion {
-        let (count, bytes) = match value {
-            RepositoryDocumentValue::String(value) => (1, value.len()),
-            RepositoryDocumentValue::Strings(values) => {
-                (values.len(), values.iter().map(String::len).sum())
-            }
-            _ => (1, 0),
-        };
-        if count > 1_024 || bytes > 16 * 1_024 {
-            errors.push(
-                "document equality permits at most 1024 strings and 16384 expected string bytes"
-                    .into(),
-            );
         }
     }
 }
@@ -215,6 +184,9 @@ pub(super) fn item_count(contract: &Contract) -> usize {
                 + match &rule.predicate {
                     RepositoryFilePredicate::ExactPaths { paths } => paths.len(),
                     RepositoryFilePredicate::ForbiddenNames { names, .. } => names.len(),
+                    RepositoryFilePredicate::LiteralOrder { .. } => 2,
+                    RepositoryFilePredicate::LiteralBetween { .. } => 3,
+                    RepositoryFilePredicate::LineValuesAllowed { values, .. } => values.len() + 1,
                     RepositoryFilePredicate::Document(document) => {
                         document.path.len()
                             + match &document.assertion {

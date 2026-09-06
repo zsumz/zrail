@@ -45,6 +45,9 @@ pub struct GovernedRepositoryFileEntry {
     /// Authored-document selection, only for structural document predicates.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub document: Option<RepositoryDocumentObservation>,
+    /// First-marker offsets or complete line-value quantities for raw structure predicates.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub text_structure: Option<super::RepositoryTextStructureObservation>,
     /// Per-entry result; scope cardinality is reported on the containing policy.
     pub satisfied: bool,
     /// Total non-overlapping occurrences in the transformed UTF-8 text.

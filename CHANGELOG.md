@@ -38,6 +38,9 @@ All notable zrail changes are recorded here for reviewed release notes.
   over the existing complete resolver, including unreachable nodes, persistent
   zero bans, bounded identity samples, coverage/explanation, lock binding, and
   protected comparisons that distinguish exact quantities from upper limits.
+- Closed raw first-marker order, marker-bounded literal presence, and prefixed
+  line-value allowlists, with complete quantities, bounded observations, input
+  binding, and protected comparisons; these make no workflow execution claim.
 
 ### Changed
 

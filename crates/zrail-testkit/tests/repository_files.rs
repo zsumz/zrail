@@ -10,6 +10,8 @@ mod fixture;
 mod line_test;
 #[path = "repository_files/support.rs"]
 mod support;
+#[path = "repository_files/text_structure_test.rs"]
+mod text_structure_test;
 
 use std::fs;
 use support::{configured, coverage, violation};

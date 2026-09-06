@@ -77,6 +77,7 @@ pub(super) fn observe(
         bytes: None,
         valid_utf8: None,
         document: None,
+        text_structure: None,
         satisfied: true,
         literal_count: None,
         literal_offsets: Vec::new(),
