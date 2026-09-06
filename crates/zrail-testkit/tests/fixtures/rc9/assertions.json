@@ -22565,16 +22565,34 @@
             "crates/kafka-driver-transport/src"
           ],
           "extension": ".rs",
-          "world": "all written production and test source"
+          "world": "physical source discovered by the frozen traversal before path-based test exclusion"
         },
         "exclude": "tests/** and *_test.rs",
-        "world": "all authored cfg branches; physical files once under configured roots"
+        "world": "all authored cfg branches; frozen nonoverlapping roots select physical files once"
       },
-      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "context": "Trusted syntax-only detector. Production selection is by physical path, not cfg reachability; all authored cfg branches participate. Parsed macro token bodies and execution behavior are not claims of the original visitor.",
       "matching_semantics": {
         "kind": "written ExprPath",
         "direct_call_and_function_value": "both counted",
-        "owner_kind": "not rc8 direct-call"
+        "owner_kind": "not rc8 direct-call",
+        "selected_suffixes": [
+          "ConnectionSet::new",
+          "ConnectionSet::turn_component",
+          "ConnectionSet::poll_io",
+          "ConnectionSet::wake_handle",
+          "ConnectionSet::pulse_handle",
+          "DirectSet::new",
+          "DirectSet::turn_component",
+          "DirectSet::poll_io",
+          "DirectSet::wake_handle",
+          "DirectSet::pulse_handle",
+          "Source::register",
+          "Source::reregister",
+          "Source::deregister"
+        ],
+        "path_matching": "Final two syn::Path segment identifiers; leading qualification and generic arguments do not change the suffix.",
+        "quantities": "Every ExprPath occurrence, including call callees and function-value acquisition; grouped by physical file and selected suffix.",
+        "opaque_tokens": "The original visitor does not parse macro token bodies; macro paths are not ExprPath occurrences."
       },
       "required_cardinality": {
         "exact_map": {
@@ -22601,7 +22619,7 @@
       "blockers": [
         {
           "id": "KD-TRANSPORT-ASSOCIATED",
-          "cause": "Exact inventory predicates, authored alias restrictions, compilation-world rules, and positive/negative full selection qualification remain open."
+          "cause": "Preserve the exact authored occurrence context, identity/set/count semantics and full physical selection with native inventories; qualify original detector outputs, aliases, cfg branches, macros and all unexpected/missing members."
         }
       ]
     },
@@ -22633,16 +22651,19 @@
             "crates/kafka-driver-transport/src"
           ],
           "extension": ".rs",
-          "world": "all written production and test source"
+          "world": "physical source discovered by the frozen traversal before path-based test exclusion"
         },
         "exclude": "tests/** and *_test.rs",
-        "world": "all authored cfg branches; physical files once under configured roots"
+        "world": "all authored cfg branches; frozen nonoverlapping roots select physical files once"
       },
-      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "context": "Trusted syntax-only detector. Production selection is by physical path, not cfg reachability; all authored cfg branches participate. Parsed macro token bodies and execution behavior are not claims of the original visitor.",
       "matching_semantics": {
         "kind": "ItemImpl",
         "identity": "final authored trait and implementing Type::Path segments",
-        "filter": "RegisteredTransport or SlotTransport; Source only when implementing type is DirectRustlsTransport"
+        "filter": "RegisteredTransport or SlotTransport; Source only when implementing type is DirectRustlsTransport",
+        "duplicate_semantics": "BTreeSet membership collapses duplicate file/type-tail/trait-tail tuples; this assertion imposes no per-tuple occurrence count.",
+        "polarity": "The original predicate also collects negative trait impls when their written trait and Type::Path suffixes match.",
+        "qualification": "Trait and implementing-type qualification/generic arguments are not identity dimensions in this bounded syntax predicate."
       },
       "required_cardinality": {
         "exact_set": [
@@ -22664,7 +22685,7 @@
       "blockers": [
         {
           "id": "KD-TRANSPORT-IMPLS",
-          "cause": "Exact inventory predicates, authored alias restrictions, compilation-world rules, and positive/negative full selection qualification remain open."
+          "cause": "Preserve the exact authored occurrence context, identity/set/count semantics and full physical selection with native inventories; qualify original detector outputs, aliases, cfg branches, macros and all unexpected/missing members."
         }
       ]
     },
@@ -22696,12 +22717,12 @@
             "crates/kafka-driver-transport/src"
           ],
           "extension": ".rs",
-          "world": "all written production and test source"
+          "world": "physical source discovered by the frozen traversal before path-based test exclusion"
         },
         "exclude": "tests/** and *_test.rs",
-        "world": "all authored cfg branches; physical files once under configured roots"
+        "world": "all authored cfg branches; frozen nonoverlapping roots select physical files once"
       },
-      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "context": "Trusted syntax-only detector. Production selection is by physical path, not cfg reachability; all authored cfg branches participate. Parsed macro token bodies and execution behavior are not claims of the original visitor.",
       "matching_semantics": {
         "kind": "written method call",
         "receiver_type": "not resolved",
@@ -22740,7 +22761,7 @@
       "blockers": [
         {
           "id": "KD-TRANSPORT-METHODS",
-          "cause": "Exact inventory predicates, authored alias restrictions, compilation-world rules, and positive/negative full selection qualification remain open."
+          "cause": "Preserve the exact authored occurrence context, identity/set/count semantics and full physical selection with native inventories; qualify original detector outputs, aliases, cfg branches, macros and all unexpected/missing members."
         }
       ]
     },
@@ -22772,15 +22793,17 @@
             "crates/kafka-driver-transport/src"
           ],
           "extension": ".rs",
-          "world": "all written production and test source"
+          "world": "physical source discovered by the frozen traversal before path-based test exclusion"
         },
         "exclude": "tests/** and *_test.rs",
-        "world": "all authored cfg branches; physical files once under configured roots"
+        "world": "all authored cfg branches; frozen nonoverlapping roots select physical files once"
       },
-      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "context": "Trusted syntax-only detector. Production selection is by physical path, not cfg reachability; all authored cfg branches participate. Parsed macro token bodies and execution behavior are not claims of the original visitor.",
       "matching_semantics": {
         "kind": "written path segment",
-        "value": "ConnectionSet"
+        "value": "ConnectionSet",
+        "context": "Every syn::Path reached by the original syn visitor, including type, expression, attribute, visibility, macro-name, pattern, generic-argument, and qualified-self paths; UseTree leaves and opaque token contents are not syn::Path visits.",
+        "cardinality": "Distinct physical owner files, independent of path occurrence quantity."
       },
       "required_cardinality": {
         "exact_set": [
@@ -22800,7 +22823,7 @@
       "blockers": [
         {
           "id": "KD-TRANSPORT-OWNERS",
-          "cause": "Exact inventory predicates, authored alias restrictions, compilation-world rules, and positive/negative full selection qualification remain open."
+          "cause": "Preserve the exact authored occurrence context, identity/set/count semantics and full physical selection with native inventories; qualify original detector outputs, aliases, cfg branches, macros and all unexpected/missing members."
         }
       ]
     },
@@ -22832,12 +22855,12 @@
             "crates/kafka-driver-transport/src"
           ],
           "extension": ".rs",
-          "world": "all written production and test source"
+          "world": "physical source discovered by the frozen traversal before path-based test exclusion"
         },
         "exclude": "tests/** and *_test.rs",
-        "world": "all authored cfg branches; physical files once under configured roots"
+        "world": "all authored cfg branches; frozen nonoverlapping roots select physical files once"
       },
-      "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
+      "context": "Trusted syntax-only detector. Production selection is by physical path, not cfg reachability; all authored cfg branches participate. Parsed macro token bodies and execution behavior are not claims of the original visitor.",
       "matching_semantics": {
         "kind": "UseTree::Rename including nested groups",
         "guarded": [
@@ -22846,7 +22869,10 @@
           "RegisteredTransport",
           "SlotTransport",
           "Source"
-        ]
+        ],
+        "selection": "Compare the source identifier of each explicit UseTree::Rename, including same-name and underscore renames; do not infer a rename from semantic alias resolution.",
+        "non_matches": "Plain imports, glob imports, and unguarded source identifiers are outside this predicate even when their destination alias is guarded.",
+        "duplicates": "BTreeSet collapses duplicate file/source-name/alias-name tuples."
       },
       "required_cardinality": {
         "exact_set": []
@@ -22864,7 +22890,7 @@
       "blockers": [
         {
           "id": "KD-TRANSPORT-RENAMES",
-          "cause": "Exact inventory predicates, authored alias restrictions, compilation-world rules, and positive/negative full selection qualification remain open."
+          "cause": "Preserve the exact authored occurrence context, identity/set/count semantics and full physical selection with native inventories; qualify original detector outputs, aliases, cfg branches, macros and all unexpected/missing members."
         }
       ]
     },
@@ -49803,10 +49829,426 @@
         }
       },
       "blockers": []
+    },
+    {
+      "id": "KD-TRANSPORT-DETECTOR-ASSOCIATED",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/transport_authority.rs",
+        "file_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/transport_authority.rs:94:5:assertion-macro",
+        "instance": null,
+        "line": 94,
+        "column": 5,
+        "function": [
+          "inventory_detects_alias_ufcs_and_guarded_renames"
+        ],
+        "syntax_sha256": "5b0498c14ac4ac86cc329fe02eb86a863d1a4281292b26ce810dfdb8207dedf7"
+      },
+      "intended_property": "The exact frozen adversarial source produces the reviewed associated inventory, including deliberate syntax-only alias limitations.",
+      "selection": {
+        "in_memory_fixture_path": "src/reactor/rogue.rs",
+        "source": "Raw string local named source in inventory_detects_alias_ufcs_and_guarded_renames; bound by the detector file SHA.",
+        "world": "all authored syntax of the original fixture; no Cargo execution"
+      },
+      "context": "Detector assertion executing syn parsing and the architecture collector, without exercising transport or selector behavior.",
+      "matching_semantics": {
+        "kind": "written ExprPath",
+        "direct_call_and_function_value": "both counted",
+        "owner_kind": "not rc8 direct-call",
+        "selected_suffixes": [
+          "ConnectionSet::new",
+          "ConnectionSet::turn_component",
+          "ConnectionSet::poll_io",
+          "ConnectionSet::wake_handle",
+          "ConnectionSet::pulse_handle",
+          "DirectSet::new",
+          "DirectSet::turn_component",
+          "DirectSet::poll_io",
+          "DirectSet::wake_handle",
+          "DirectSet::pulse_handle",
+          "Source::register",
+          "Source::reregister",
+          "Source::deregister"
+        ],
+        "path_matching": "Final two syn::Path segment identifiers; leading qualification and generic arguments do not change the suffix.",
+        "quantities": "Every ExprPath occurrence, including call callees and function-value acquisition; grouped by physical file and selected suffix.",
+        "opaque_tokens": "The original visitor does not parse macro token bodies; macro paths are not ExprPath occurrences."
+      },
+      "required_cardinality": {
+        "exact_map": {
+          "src/reactor/rogue.rs:ConnectionSet::new": 1,
+          "src/reactor/rogue.rs:DirectSet::new": 1,
+          "src/reactor/rogue.rs:DirectSet::poll_io": 1,
+          "src/reactor/rogue.rs:DirectSet::turn_component": 1,
+          "src/reactor/rogue.rs:DirectSet::wake_handle": 1,
+          "src/reactor/rogue.rs:DirectSet::pulse_handle": 1
+        }
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TRANSPORT-DETECTOR-ASSOCIATED",
+          "cause": "Import the exact adversarial source and compare complete native observations with this original detector assertion; reject its architectural violations through the linked live inventory policies."
+        }
+      ],
+      "detector_for": [
+        "KD-TRANSPORT-ASSOCIATED"
+      ]
+    },
+    {
+      "id": "KD-TRANSPORT-DETECTOR-IMPLS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/transport_authority.rs",
+        "file_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/transport_authority.rs:122:5:assertion-macro",
+        "instance": null,
+        "line": 122,
+        "column": 5,
+        "function": [
+          "inventory_detects_alias_ufcs_and_guarded_renames"
+        ],
+        "syntax_sha256": "3eb4c29098964ed222f7373eee33bd5d84dc1af0305dbcf7b09016c648261e43"
+      },
+      "intended_property": "The exact frozen adversarial source produces the reviewed impls inventory, including deliberate syntax-only alias limitations.",
+      "selection": {
+        "in_memory_fixture_path": "src/reactor/rogue.rs",
+        "source": "Raw string local named source in inventory_detects_alias_ufcs_and_guarded_renames; bound by the detector file SHA.",
+        "world": "all authored syntax of the original fixture; no Cargo execution"
+      },
+      "context": "Detector assertion executing syn parsing and the architecture collector, without exercising transport or selector behavior.",
+      "matching_semantics": {
+        "kind": "ItemImpl",
+        "identity": "final authored trait and implementing Type::Path segments",
+        "filter": "RegisteredTransport or SlotTransport; Source only when implementing type is DirectRustlsTransport",
+        "duplicate_semantics": "BTreeSet membership collapses duplicate file/type-tail/trait-tail tuples; this assertion imposes no per-tuple occurrence count.",
+        "polarity": "The original predicate also collects negative trait impls when their written trait and Type::Path suffixes match.",
+        "qualification": "Trait and implementing-type qualification/generic arguments are not identity dimensions in this bounded syntax predicate."
+      },
+      "required_cardinality": {
+        "exact_set": [
+          "src/reactor/rogue.rs:Rogue:RegisteredTransport"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TRANSPORT-DETECTOR-IMPLS",
+          "cause": "Import the exact adversarial source and compare complete native observations with this original detector assertion; reject its architectural violations through the linked live inventory policies."
+        }
+      ],
+      "detector_for": [
+        "KD-TRANSPORT-IMPLS"
+      ]
+    },
+    {
+      "id": "KD-TRANSPORT-DETECTOR-METHODS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/transport_authority.rs",
+        "file_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/transport_authority.rs:118:5:assertion-macro",
+        "instance": null,
+        "line": 118,
+        "column": 5,
+        "function": [
+          "inventory_detects_alias_ufcs_and_guarded_renames"
+        ],
+        "syntax_sha256": "eed072c7b3a4e2109dcbdb35d29c3506f60d710e6a55b020122b65c166333e3b"
+      },
+      "intended_property": "The exact frozen adversarial source produces the reviewed methods inventory, including deliberate syntax-only alias limitations.",
+      "selection": {
+        "in_memory_fixture_path": "src/reactor/rogue.rs",
+        "source": "Raw string local named source in inventory_detects_alias_ufcs_and_guarded_renames; bound by the detector file SHA.",
+        "world": "all authored syntax of the original fixture; no Cargo execution"
+      },
+      "context": "Detector assertion executing syn parsing and the architecture collector, without exercising transport or selector behavior.",
+      "matching_semantics": {
+        "kind": "written method call",
+        "receiver_type": "not resolved",
+        "methods": [
+          "turn_component",
+          "poll_io",
+          "wake_handle",
+          "pulse_handle"
+        ]
+      },
+      "required_cardinality": {
+        "exact_map": {
+          "src/reactor/rogue.rs:poll_io": 1
+        }
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TRANSPORT-DETECTOR-METHODS",
+          "cause": "Import the exact adversarial source and compare complete native observations with this original detector assertion; reject its architectural violations through the linked live inventory policies."
+        }
+      ],
+      "detector_for": [
+        "KD-TRANSPORT-METHODS"
+      ]
+    },
+    {
+      "id": "KD-TRANSPORT-DETECTOR-OWNERS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/transport_authority.rs",
+        "file_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/transport_authority.rs:90:5:assertion-macro",
+        "instance": null,
+        "line": 90,
+        "column": 5,
+        "function": [
+          "inventory_detects_alias_ufcs_and_guarded_renames"
+        ],
+        "syntax_sha256": "212d4c146a402871626a0ad626c26aa4220e53ddf53a2b7466d15d4111eb9322"
+      },
+      "intended_property": "The exact frozen adversarial source produces the reviewed owners inventory, including deliberate syntax-only alias limitations.",
+      "selection": {
+        "in_memory_fixture_path": "src/reactor/rogue.rs",
+        "source": "Raw string local named source in inventory_detects_alias_ufcs_and_guarded_renames; bound by the detector file SHA.",
+        "world": "all authored syntax of the original fixture; no Cargo execution"
+      },
+      "context": "Detector assertion executing syn parsing and the architecture collector, without exercising transport or selector behavior.",
+      "matching_semantics": {
+        "kind": "written path segment",
+        "value": "ConnectionSet",
+        "context": "Every syn::Path reached by the original syn visitor, including type, expression, attribute, visibility, macro-name, pattern, generic-argument, and qualified-self paths; UseTree leaves and opaque token contents are not syn::Path visits.",
+        "cardinality": "Distinct physical owner files, independent of path occurrence quantity."
+      },
+      "required_cardinality": {
+        "exact_set": [
+          "src/reactor/rogue.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TRANSPORT-DETECTOR-OWNERS",
+          "cause": "Import the exact adversarial source and compare complete native observations with this original detector assertion; reject its architectural violations through the linked live inventory policies."
+        }
+      ],
+      "detector_for": [
+        "KD-TRANSPORT-OWNERS"
+      ]
+    },
+    {
+      "id": "KD-TRANSPORT-DETECTOR-RENAMES",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/transport_authority.rs",
+        "file_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/transport_authority.rs:105:5:assertion-macro",
+        "instance": null,
+        "line": 105,
+        "column": 5,
+        "function": [
+          "inventory_detects_alias_ufcs_and_guarded_renames"
+        ],
+        "syntax_sha256": "3e876bf35b3c44725f903e98bb6c7ee99e416a4bd9f510747a9617b37cda2b6e"
+      },
+      "intended_property": "The exact frozen adversarial source produces the reviewed renames inventory, including deliberate syntax-only alias limitations.",
+      "selection": {
+        "in_memory_fixture_path": "src/reactor/rogue.rs",
+        "source": "Raw string local named source in inventory_detects_alias_ufcs_and_guarded_renames; bound by the detector file SHA.",
+        "world": "all authored syntax of the original fixture; no Cargo execution"
+      },
+      "context": "Detector assertion executing syn parsing and the architecture collector, without exercising transport or selector behavior.",
+      "matching_semantics": {
+        "kind": "UseTree::Rename including nested groups",
+        "guarded": [
+          "ConnectionSet",
+          "DirectSet",
+          "RegisteredTransport",
+          "SlotTransport",
+          "Source"
+        ],
+        "selection": "Compare the source identifier of each explicit UseTree::Rename, including same-name and underscore renames; do not infer a rename from semantic alias resolution.",
+        "non_matches": "Plain imports, glob imports, and unguarded source identifiers are outside this predicate even when their destination alias is guarded.",
+        "duplicates": "BTreeSet collapses duplicate file/source-name/alias-name tuples."
+      },
+      "required_cardinality": {
+        "exact_set": [
+          "src/reactor/rogue.rs:ConnectionSet as Set",
+          "src/reactor/rogue.rs:DirectSet as SetAlias",
+          "src/reactor/rogue.rs:RegisteredTransport as Rt",
+          "src/reactor/rogue.rs:SlotTransport as St",
+          "src/reactor/rogue.rs:Source as IoSource"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TRANSPORT-DETECTOR-RENAMES",
+          "cause": "Import the exact adversarial source and compare complete native observations with this original detector assertion; reject its architectural violations through the linked live inventory policies."
+        }
+      ],
+      "detector_for": [
+        "KD-TRANSPORT-RENAMES"
+      ]
+    },
+    {
+      "id": "KD-TRANSPORT-PARSE-FIXTURE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/transport_authority.rs",
+        "file_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/transport_authority.rs:146:33:failure-macro",
+        "instance": null,
+        "line": 146,
+        "column": 33,
+        "function": [
+          "source_inventory"
+        ],
+        "syntax_sha256": "d284024688e559a58dde7116f67b1f8e83ec2a47efba4f5efabdfd474d90d257"
+      },
+      "intended_property": "Every selected input must parse as syn::File before any transport inventory is trusted.",
+      "selection": {
+        "in_memory_fixture_path": "src/reactor/rogue.rs",
+        "source": "source_inventory argument supplied by detector fixtures",
+        "world": "complete authored item syntax"
+      },
+      "context": "Syntax parser precondition, independent of source resolution, cfg availability, Cargo compilation and runtime behavior.",
+      "matching_semantics": {
+        "kind": "syn::parse_file required success",
+        "expression_fallback": "not permitted by the legacy helper",
+        "malformed": "panic before inventory comparison"
+      },
+      "required_cardinality": {
+        "successful_parse": "every selected source input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TRANSPORT-PARSE-FIXTURE",
+          "cause": "Qualify strict item-file parsing over the selected sources, including bare-expression and malformed inputs; zrail supports expression fragments elsewhere and must not silently substitute that fallback here."
+        }
+      ]
+    },
+    {
+      "id": "KD-TRANSPORT-PARSE-PRODUCTION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "tests/guardrails/transport_authority.rs",
+        "file_sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed",
+        "candidate_id": "kafkars/kafka-driver:tests/guardrails/transport_authority.rs:138:61:failure-macro",
+        "instance": null,
+        "line": 138,
+        "column": 61,
+        "function": [
+          "repository_inventory"
+        ],
+        "syntax_sha256": "05d997d57d3f7098dac6f9bf396f4c30c70336d297d0d50507e33bebe3bbba83"
+      },
+      "intended_property": "Every selected input must parse as syn::File before any transport inventory is trusted.",
+      "selection": {
+        "roots": {
+          "roots": [
+            "src",
+            "tests",
+            "crates/kafka-driver-core/src",
+            "crates/kafka-driver-probe/src",
+            "crates/kafka-driver-sim/src",
+            "crates/kafka-driver-transport/src"
+          ],
+          "extension": ".rs",
+          "world": "physical source discovered by the frozen traversal before path-based test exclusion"
+        },
+        "exclude": "tests/** and *_test.rs",
+        "world": "all authored cfg branches; frozen nonoverlapping roots select physical files once"
+      },
+      "context": "Syntax parser precondition, independent of source resolution, cfg availability, Cargo compilation and runtime behavior.",
+      "matching_semantics": {
+        "kind": "syn::parse_file required success",
+        "expression_fallback": "not permitted by the legacy helper",
+        "malformed": "panic before inventory comparison"
+      },
+      "required_cardinality": {
+        "successful_parse": "every selected source input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "KD-TRANSPORT-PARSE-PRODUCTION",
+          "cause": "Qualify strict item-file parsing over the selected sources, including bare-expression and malformed inputs; zrail supports expression fragments elsewhere and must not silently substitute that fallback here."
+        }
+      ]
     }
   ],
   "counts": {
-    "reviewed_assertion_instances": 552,
+    "reviewed_assertion_instances": 559,
     "implemented": 494,
     "verified_by_disposition": {
       "existing native rail": 0,

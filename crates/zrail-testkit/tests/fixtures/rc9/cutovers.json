@@ -804,14 +804,23 @@
           "unit": "conditional checker/helper candidate",
           "reviewed_assertion_ids": [
             "KD-TRANSPORT-ASSOCIATED",
+            "KD-TRANSPORT-DETECTOR-ASSOCIATED",
+            "KD-TRANSPORT-DETECTOR-IMPLS",
+            "KD-TRANSPORT-DETECTOR-METHODS",
+            "KD-TRANSPORT-DETECTOR-OWNERS",
+            "KD-TRANSPORT-DETECTOR-RENAMES",
             "KD-TRANSPORT-IMPLS",
             "KD-TRANSPORT-METHODS",
             "KD-TRANSPORT-OWNERS",
+            "KD-TRANSPORT-PARSE-FIXTURE",
+            "KD-TRANSPORT-PARSE-PRODUCTION",
             "KD-TRANSPORT-RENAMES"
           ],
-          "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
+          "remaining_candidate_ids": [],
           "removable_now": false,
-          "replacement_policy_ids": []
+          "replacement_policy_ids": [],
+          "assertion_review_complete": true,
+          "assertion_review_notes": "All ten assertion sites and two parser-failure sites are reviewed. Complete frozen collector/helper semantics are recorded, including ExprPath function references, all syn::Path contexts, explicit source-side renames, duplicate-collapsing impl sets, and strict item parsing. Shared traversal/registry/read helpers remain separately inventoried."
         }
       ],
       "plan": "docs/rc9/CUTOVERS.md",

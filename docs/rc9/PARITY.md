@@ -61,7 +61,7 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 ## Machine-readable audit state
 
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **552 reviewed assertion instances**. The
+contains **559 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
 record 9,792 files and 72,155 syntax candidates. Every tracked path is included,
@@ -71,7 +71,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 356 | 321 | 320 |
+| kafka-driver | 826 | 772 | 363 | 321 | 320 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
@@ -458,3 +458,31 @@ package metadata, scripts, compose files, and smoke sources; they do not execute
 Cargo, npm, smoque, a shell, or Kafka. The runners and behavioral scenarios remain
 in the downstream cutover plan. Raw conditions that accept comments must not be
 presented as parsed YAML or successful execution evidence.
+
+## Transport inventory assertion expansion
+
+All ten assertion sites and both parser-failure sites in frozen
+`tests/guardrails/transport_authority.rs` are reviewed. The five live boundaries
+remain `KD-TRANSPORT-*`; five new `KD-TRANSPORT-DETECTOR-*` IDs bind the exact
+adversarial inventory expectations, and `KD-TRANSPORT-PARSE-PRODUCTION` /
+`KD-TRANSPORT-PARSE-FIXTURE` preserve strict item-file parsing. These twelve
+assertions remain unverified stock-engine blockers.
+
+The associated inventory counts every selected `ExprPath`, including function
+references, by physical file and final two identifier segments. It selects
+thirteen suffixes and requires the exact eight-entry count map. Method calls
+use four written names and the exact eleven-entry count map without resolving
+receiver types. The implementing-type/trait/file inventory is an exact
+three-member set; duplicate identical tuples are collapsed by the legacy guard.
+Neither a name-only owner rule nor three arbitrary impls preserves that set.
+
+Owner-file presence visits every original `syn::Path` context, including
+attribute, visibility, macro-name, generic-argument, and qualified-self paths.
+An expression-only inventory would miss these cases. Explicit renames compare
+the source identifier, including same-name and underscore renames; plain and
+glob imports remain outside that predicate. The original traversal includes all
+authored cfg branches and does not parse opaque token bodies. These syntax
+claims must remain distinct from resolved identity, expanded source, and
+compilation-world quantities. Existing call-owner invocation semantics remain
+unchanged. Strict item-file parser preconditions cannot be replaced silently by
+zrail's separately supported expression-fragment parsing.
