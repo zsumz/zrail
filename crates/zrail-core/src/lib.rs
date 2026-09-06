@@ -1,7 +1,6 @@
 //! Language-neutral architecture contracts, lock state, diagnostics, and semantic diffs.
 #![doc = include_str!("crate.md")]
 #![deny(missing_docs)]
-
 mod contract;
 mod contract_edit;
 mod diagnostic;
@@ -24,10 +23,11 @@ pub use contract::{
     FileRole, FileRoleContract, FileSizeContract, GateContract, GateKind, GeneratedSourceContract,
     GlobImportMode, HygieneContract, InvariantContract, InvariantStatus, ItemMacroBinding,
     ItemMacroBindingKind, ItemMacroContract, ItemMacroManifest, LayerContract, LayerDependencies,
-    LintSuppressionMode, MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES,
-    MAX_TEST_MIRROR_INPUTS, MacroAmbientInputs, MacroAsyncSyntax, MacroBindingMode,
-    MacroDuplicationEffect, MacroExpansionAllow, MacroExpansionBindings, MacroExpansionContract,
-    MacroExpansionMode, MacroFieldMutation, MacroInputMode, MacroSourceOperations, ModuleDocsMode,
+    LintSuppressionMode, LockPackageAssertion, LockPackageIdentity, LockPackageRule,
+    MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES, MAX_TEST_MIRROR_INPUTS,
+    MacroAmbientInputs, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect,
+    MacroExpansionAllow, MacroExpansionBindings, MacroExpansionContract, MacroExpansionMode,
+    MacroFieldMutation, MacroInputMode, MacroSourceOperations, ModuleDocsMode,
     OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode, PolicyReachability,
     ProfileContract, RatchetContract, RepositoryCaseMode, RepositoryContract,
     RepositoryDocumentAssertion, RepositoryDocumentFormat, RepositoryDocumentPredicate,

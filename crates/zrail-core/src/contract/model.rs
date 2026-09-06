@@ -5,6 +5,7 @@ mod documents;
 mod evidence;
 mod feature_worlds;
 mod files;
+mod lock_packages;
 mod macros;
 mod policy;
 mod repository;
@@ -34,6 +35,7 @@ pub use files::{
     RepositoryLiteralMode, RepositoryLiteralPredicate, RepositoryNameBasis, RepositoryNamePart,
     RepositoryTextNormalization,
 };
+pub use lock_packages::{LockPackageAssertion, LockPackageIdentity, LockPackageRule};
 pub use macros::{MacroExpansionAllow, MacroExpansionContract};
 pub use policy::{
     DependencyRule, EffectBoundary, LayerContract, LayerDependencies, OwnerContract,

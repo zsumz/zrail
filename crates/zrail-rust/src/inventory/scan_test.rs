@@ -233,6 +233,7 @@ fn contract() -> Contract {
             unassigned_packages: PolicyMode::Allow,
             cycles: CycleMode::Allow,
             crate_roots: Vec::new(),
+            lock_packages: Vec::new(),
         },
         analysis: AnalysisContract::default(),
         source: SourceContract {

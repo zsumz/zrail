@@ -7,6 +7,7 @@ mod contract;
 mod evidence;
 mod files;
 mod lock;
+mod lock_packages;
 mod model;
 mod source;
 mod support;

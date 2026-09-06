@@ -13,6 +13,7 @@ mod validate_dependencies;
 mod validate_evidence;
 mod validate_files;
 mod validate_limits;
+mod validate_lock_packages;
 mod validate_paths;
 mod validate_ratchet;
 mod validate_sets;
@@ -39,9 +40,10 @@ pub use model::{
     DuplicationTrait, EffectBoundary, FileRole, FileRoleContract, FileSizeContract, GateContract,
     GateKind, GeneratedSourceContract, HygieneContract, InvariantContract, InvariantStatus,
     ItemMacroBinding, ItemMacroBindingKind, ItemMacroContract, ItemMacroManifest, LayerContract,
-    LayerDependencies, MAX_TEST_MIRROR_INPUTS, MacroAmbientInputs, MacroExpansionAllow,
-    MacroExpansionContract, OutDirSourceContract, OwnerContract, ProfileContract, RatchetContract,
-    RepositoryCaseMode, RepositoryContract, RepositoryDocumentAssertion, RepositoryDocumentFormat,
+    LayerDependencies, LockPackageAssertion, LockPackageIdentity, LockPackageRule,
+    MAX_TEST_MIRROR_INPUTS, MacroAmbientInputs, MacroExpansionAllow, MacroExpansionContract,
+    OutDirSourceContract, OwnerContract, ProfileContract, RatchetContract, RepositoryCaseMode,
+    RepositoryContract, RepositoryDocumentAssertion, RepositoryDocumentFormat,
     RepositoryDocumentPredicate, RepositoryDocumentValue, RepositoryEntryMode,
     RepositoryFilePredicate, RepositoryFileRule, RepositoryLiteralMode, RepositoryLiteralPredicate,
     RepositoryNameBasis, RepositoryNamePart, RepositoryTextNormalization, RustDuplicationContract,

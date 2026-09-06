@@ -3,8 +3,8 @@
 use crate::Contract;
 
 use super::{
-    ArchitectureChange, ChangeKind, analysis, boundaries, evidence, files, source, support,
-    topology,
+    ArchitectureChange, ChangeKind, analysis, boundaries, evidence, files, lock_packages, source,
+    support, topology,
 };
 
 pub(super) fn compare(before: &Contract, after: &Contract) -> Vec<ArchitectureChange> {
@@ -24,6 +24,7 @@ pub(super) fn compare(before: &Contract, after: &Contract) -> Vec<ArchitectureCh
     analysis::compare(before, after, &mut changes);
     source::compare(before, after, &mut changes);
     topology::compare(before, after, &mut changes);
+    lock_packages::compare(before, after, &mut changes);
     boundaries::compare_scopes(before, after, &mut changes);
     boundaries::compare_owners(before, after, &mut changes);
     evidence::compare(before, after, &mut changes);

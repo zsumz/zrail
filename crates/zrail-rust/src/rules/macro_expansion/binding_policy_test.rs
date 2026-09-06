@@ -252,6 +252,7 @@ fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
             unassigned_packages: PolicyMode::Allow,
             cycles: CycleMode::Deny,
             crate_roots: Vec::new(),
+            lock_packages: Vec::new(),
         },
         analysis: AnalysisContract::default(),
         source: SourceContract {

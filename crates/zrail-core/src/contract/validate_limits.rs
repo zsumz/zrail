@@ -52,7 +52,8 @@ pub(super) fn enforce_contract_size(contract: &Contract) -> Result<(), ContractE
 }
 
 fn contract_items(contract: &Contract) -> usize {
-    let file_items = super::validate_files::item_count(contract);
+    let file_items = super::validate_files::item_count(contract)
+        + super::validate_lock_packages::item_count(contract);
     let mut count = file_items
         + contract.adapters.len()
         + contract.repository.roots.len()

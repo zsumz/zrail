@@ -27,6 +27,7 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
             unassigned_packages: PolicyMode::Deny,
             cycles: CycleMode::Deny,
             crate_roots: Vec::new(),
+            lock_packages: Vec::new(),
         },
         analysis: AnalysisContract::default(),
         source: SourceContract {
