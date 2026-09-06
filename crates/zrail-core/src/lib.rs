@@ -64,7 +64,8 @@ pub use migration::{
     LockMigrationFileChange, LockMigrationFileState, LockMigrationReport, LockMigrationRevision,
     LockMigrationSummary, compare_lock_epochs, compare_lock_epochs_across_revisions,
 };
-pub use path::{glob_matches, normalize_relative, repository_file, repository_relative};
+pub use path::{glob_can_match_descendant, glob_matches};
+pub use path::{normalize_relative, repository_file, repository_relative};
 pub use ratchet::normalize_ratchet_selector;
 pub use receipt::{
     EXECUTION_RECEIPT_SCHEMA, ExecutionReceipt, ExecutionReceiptStatus, ExecutionReceiptTest,
