@@ -6,15 +6,15 @@ use zrail_core::{
 };
 
 pub(in super::super) struct Mutation {
-    pub(in super::super) name: &'static str,
+    pub(in super::super) name: String,
     pub(in super::super) bytes: Option<Vec<u8>>,
     pub(in super::super) directory: bool,
     pub(in super::super) diagnostic: Option<&'static str>,
 }
 
 pub(super) fn cases(rule: &RepositoryFileRule, original: &[u8]) -> Vec<Mutation> {
-    let mutation = |name, bytes, diagnostic| Mutation {
-        name,
+    let mutation = |name: &str, bytes, diagnostic| Mutation {
+        name: name.into(),
         bytes,
         directory: false,
         diagnostic: Some(diagnostic),
@@ -109,7 +109,7 @@ pub(super) fn cases(rule: &RepositoryFileRule, original: &[u8]) -> Vec<Mutation>
         RepositoryFilePredicate::Count { .. } => vec![
             mutation("missing-input", None, "REP-FILE-001"),
             Mutation {
-                name: "wrong-entry-kind",
+                name: "wrong-entry-kind".into(),
                 bytes: None,
                 directory: true,
                 diagnostic: Some("REP-FILE-001"),

@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""Translate frozen authored dependency key inventories into declarative file policy."""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+import tomllib
+
+
+ROOT = Path(__file__).resolve().parent.parent
+SOURCE_SHA256 = "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f"
+REGISTRY_SHA256 = "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10"
+
+
+def literal(value):
+    if isinstance(value, dict):
+        return "{ " + ", ".join(f"{key} = {literal(item)}" for key, item in value.items()) + " }"
+    return json.dumps(value, ensure_ascii=False)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("snapshots", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
+    root = args.snapshots / "kafka-driver"
+    source = (root / "tests/guardrails/dependency.rs").read_bytes()
+    registry = (root / "guardrails.toml").read_bytes()
+    if hashlib.sha256(source).hexdigest() != SOURCE_SHA256 or hashlib.sha256(registry).hexdigest() != REGISTRY_SHA256:
+        raise ValueError("dependency detector or registry differs from the frozen audit")
+    config = tomllib.loads(registry.decode("utf-8"))["dependencies"]
+    simulator = re.search(r'BTreeSet::from\(\[(.*?)\]\)', source.decode("utf-8"))[1]
+    simulator_keys = re.findall(r'"([^"]+)"\.to_owned\(\)', simulator)
+    if len(simulator_keys) != 2:
+        raise ValueError("unexpected simulator key inventory")
+    lines = ["# Partial authored-key fragment; assemble the complete repository section before adoption.",
+             "# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+             "# Detector SHA-256: " + SOURCE_SHA256,
+             "# Registry SHA-256: " + REGISTRY_SHA256]
+    for name in ["driver", "core", "transport", "sim", "probe"]:
+        path = "Cargo.toml" if name == "driver" else f"crates/kafka-driver-{name}/Cargo.toml"
+        keys = simulator_keys if name == "sim" else config[name + "_allowed"]
+        if len(keys) != len(set(keys)):
+            raise ValueError("unexpected duplicate frozen dependency name")
+        assertion = dict(op="keys-allowed" if name == "core" else "keys-exact",
+                         keys=sorted(keys), empty_on_non_table=True)
+        rule = dict(name=f"kd-dep-{name}-keys", include=[path],
+                    reason="Preserve the authored ordinary-dependency key set, exact/subset mode, and present-non-table empty projection.",
+                    predicate=dict(kind="document", format="toml", path=["dependencies"], assertion=assertion))
+        lines += ["", "[[repository.files]]"] + [f"{key} = {literal(value)}" for key, value in rule.items()]
+    with args.output.open("x", encoding="utf-8", newline="\n") as output:
+        output.write("\n".join(lines) + "\n")
+    print("authored key translation: 5 policies")
+
+
+if __name__ == "__main__":
+    main()

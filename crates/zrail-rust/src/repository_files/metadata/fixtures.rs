@@ -99,7 +99,10 @@ pub(in super::super) fn qualify(
             );
             outcomes.push(FixtureOutcome {
                 policy_id,
-                case: case.as_ref().map_or("valid", |case| case.name).into(),
+                case: case
+                    .as_ref()
+                    .map_or("valid", |case| case.name.as_str())
+                    .into(),
                 path: policy.include[0].clone(),
                 source_sha256: fs::read(root.join(&policy.include[0]))
                     .ok()
