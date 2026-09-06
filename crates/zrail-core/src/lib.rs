@@ -6,6 +6,7 @@ mod contract_edit;
 mod diagnostic;
 mod diff;
 mod digest;
+mod exports;
 mod input;
 mod lock;
 mod migration;
@@ -14,68 +15,7 @@ mod ratchet;
 mod receipt;
 mod report;
 
-pub use contract::{
-    AnalysisContract, AnalysisLimits, AsyncSyntax, Budget, CargoFeaturePackageContract,
-    CargoFeatureWorldContract, CloneCopyPolicy, Contract, ContractBundle, ContractError,
-    ContractSource, CrateRootContract, CrateRootSource, CycleMode, DependenciesContract,
-    DependencyEdgeKind, DependencyMode, DependencyReachability, DependencyRule, DuplicationTrait,
-    Effect, EffectBoundary, EvidenceReference, ExactMode, ExternalDependencyMode, FacadeMode,
-    FileRole, FileRoleContract, FileSizeContract, GateContract, GateKind, GeneratedSourceContract,
-    GlobImportMode, HygieneContract, InvariantContract, InvariantStatus, ItemMacroBinding,
-    ItemMacroBindingKind, ItemMacroContract, ItemMacroManifest, LayerContract, LayerDependencies,
-    LintSuppressionMode, LockPackageAssertion, LockPackageIdentity, LockPackageRule,
-    MAX_CONTRACT_BYTES, MAX_CONTRACT_FILES, MAX_IMPORT_DIRECTIVES, MAX_TEST_MIRROR_INPUTS,
-    MacroAmbientInputs, MacroAsyncSyntax, MacroBindingMode, MacroDuplicationEffect,
-    MacroExpansionAllow, MacroExpansionBindings, MacroExpansionContract, MacroExpansionMode,
-    MacroFieldMutation, MacroInputMode, MacroSourceOperations, ModuleDocsMode,
-    OutDirSourceContract, OwnerContract, OwnerKind, PolicyMode, PolicyReachability,
-    ProfileContract, RatchetContract, RepositoryCaseMode, RepositoryContract,
-    RepositoryDocumentAssertion, RepositoryDocumentFormat, RepositoryDocumentPredicate,
-    RepositoryDocumentValue, RepositoryEntryMode, RepositoryFilePredicate, RepositoryFileRule,
-    RepositoryLiteralMode, RepositoryLiteralPredicate, RepositoryNameBasis, RepositoryNamePart,
-    RepositoryTextNormalization, RustDuplicationContract, RustFieldContract,
-    RustInventoryAssertion, RustInventoryCount, RustInventoryRule, RustInventorySubject,
-    RustInventoryWorld, RustSourceContract, RustTypeContract, RustTypeKind, ScopeContract,
-    ScopedBudgetContract, SizeExceptionContract, SizeExceptionMetadata, SizePolicyContract,
-    SizeRole, SizeTargetMode, SizeThresholds, SourceContract, SymbolBoundary, SymlinkMode,
-    SyntaxBoundary, TestExecutionIdentity, TestMirrorContract, TestMode, TypeProhibition,
-    contract_imports, load_contract, load_contract_with_entry, parse_evidence_reference,
-};
-pub use contract_edit::{ContractEditError, format_contract_source, migrate_contract_source};
-pub use diagnostic::{
-    AnalysisQuality, DiagnosticLimit, Finding, FindingSink, MAX_REPORT_FINDINGS, Severity,
-    SourceSpan,
-};
-pub use diff::{
-    ArchitectureChange, ChangeKind, DiffReport, DiffSummary, compare_architecture,
-    compare_architecture_checked,
-};
-pub use digest::sha256_hex;
-pub use input::{
-    MAX_DIRECTORY_DEPTH, MAX_INPUT_BYTES, MAX_REPOSITORY_ENTRIES, create_text,
-    read_bytes_with_limit, read_text, read_text_with_limit, replace_text,
-};
-pub use lock::{
-    LOCK_SCHEMA, LOCK_SEMANTICS, LockError, LockFile, LockedAnalysis, LockedContractSource,
-    LockedDependency, LockedDependencyKind, LockedDependencyScope, LockedDependencySource,
-    LockedExecutionReceipt, LockedGate, LockedGateInput, LockedGeneratedSource,
-    LockedItemMacroManifest, LockedMacroImplementation, LockedMacroSource, LockedPackage,
-    LockedRatchet,
-};
-pub use migration::{
-    LockMigrationBridgeReport, LockMigrationClassification, LockMigrationEntry, LockMigrationError,
-    LockMigrationFileChange, LockMigrationFileState, LockMigrationReport, LockMigrationRevision,
-    LockMigrationSummary, compare_lock_epochs, compare_lock_epochs_across_revisions,
-};
-pub use path::{glob_can_match_descendant, glob_matches};
-pub use path::{normalize_relative, repository_file, repository_relative};
-pub use ratchet::normalize_ratchet_selector;
-pub use receipt::{
-    EXECUTION_RECEIPT_SCHEMA, ExecutionReceipt, ExecutionReceiptStatus, ExecutionReceiptTest,
-    MAX_EXECUTION_RECEIPT_BYTES, MAX_TEST_MIRROR_INPUT_BYTES, parse_execution_receipt,
-    test_mirror_input_sha256, validate_execution_receipt, versioned_producer,
-};
-pub use report::{Report, ReportAnalysis, ReportGroup, ReportStatus, ReportSummary};
+pub use exports::*;
 #[cfg(test)]
 #[path = "lock_analysis_test.rs"]
 mod lock_analysis_test;

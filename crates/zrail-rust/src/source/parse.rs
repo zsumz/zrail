@@ -1,5 +1,7 @@
 //! Parse each Rust file once and retain reusable architecture facts.
 
+#[path = "authored_methods.rs"]
+mod authored_methods;
 #[path = "parse_facade.rs"]
 mod facade;
 #[path = "parse_fact_count.rs"]
@@ -192,8 +194,7 @@ fn index_file_as(
         paths: visitor.paths,
         calls: visitor.calls,
         call_resolutions: visitor.call_resolutions,
-        authored_methods: inventories
-            .then(|| super::authored_methods::collect(syntax, &visitor.methods)),
+        authored_methods: inventories.then(|| authored_methods::collect(syntax, &visitor.methods)),
         methods: visitor.methods,
         operations: visitor.operations,
         macros: visitor.macros,

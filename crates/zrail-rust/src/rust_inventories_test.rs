@@ -31,9 +31,14 @@ fn frozen_transport_methods_match_every_parsed_expression_context() {
         "impl Trait for X { fn run(&self) { self.poll_io(); } }",
         "trait Trait { const C: usize = x.poll_io(); fn run(&self) { self.poll_io(); } }",
     ];
+    let root = std::env::temp_dir().join(format!(
+        "zrail-method-parity-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id(),
+    ));
     for (index, source) in cases.into_iter().enumerate() {
         let expected = legacy::observed("src/sample.rs", source);
-        let observed = native::observed(source);
+        let observed = native::observed(&root, source);
         assert_eq!(observed, expected, "case {index}: {source}");
     }
 }

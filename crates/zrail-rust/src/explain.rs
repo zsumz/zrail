@@ -130,6 +130,7 @@ fn explain_model(
         .iter()
         .find(|role| role.path == relative)
         .map(|role| role.reason.clone());
+    let macro_policy = &model.bundle.contract.source.rust.macros;
     Ok(PathExplanation {
         schema: 2,
         repository_files: files::for_path(model, &relative),
@@ -176,33 +177,18 @@ fn explain_model(
         )
         .into(),
         macro_expansion: policy::macro_mode(model.bundle.contract.source.rust.macros.mode).into(),
-        allowed_macro_expansions: model
-            .bundle
-            .contract
-            .source
-            .rust
-            .macros
+        allowed_macro_expansions: macro_policy
             .allow
             .iter()
             .map(|allowed| allowed.name.clone())
             .collect(),
-        opaque_macro_inputs: model
-            .bundle
-            .contract
-            .source
-            .rust
-            .macros
+        opaque_macro_inputs: macro_policy
             .allow
             .iter()
             .filter(|allowed| allowed.inputs == zrail_core::MacroInputMode::Opaque)
             .map(|allowed| allowed.name.clone())
             .collect(),
-        async_closed_macro_expansions: model
-            .bundle
-            .contract
-            .source
-            .rust
-            .macros
+        async_closed_macro_expansions: macro_policy
             .allow
             .iter()
             .filter(|allowed| allowed.async_syntax == zrail_core::MacroAsyncSyntax::None)

@@ -8,7 +8,7 @@ use std::collections::BTreeMap;
 use syn::visit::{self, Visit};
 use zrail_core::{AnalysisQuality, SourceSpan};
 
-use super::{
+use crate::source::{
     ObservedFact,
     fact::{fact, source_span},
 };
@@ -34,7 +34,7 @@ struct AuthoredMethods<'a> {
 impl<'ast> Visit<'ast> for AuthoredMethods<'_> {
     fn visit_expr_method_call(&mut self, call: &'ast syn::ExprMethodCall) {
         // Preserve one excess observation so the existing parser fact limit rejects it.
-        if self.methods.len() > super::parse::MAX_FACTS_PER_FILE {
+        if self.methods.len() > super::MAX_FACTS_PER_FILE {
             return;
         }
         let name = call.method.to_string();
