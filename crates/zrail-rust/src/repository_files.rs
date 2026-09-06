@@ -22,6 +22,7 @@ pub use model::{
     GovernedRepositoryFile, GovernedRepositoryFileEntry, RepositoryDocumentKeys,
     RepositoryDocumentObservation,
 };
+pub(crate) use select::Selection;
 pub use text_model::{RepositoryLineValue, RepositoryTextStructureObservation};
 
 pub(crate) fn analyze(
@@ -32,7 +33,13 @@ pub(crate) fn analyze(
     if rules.is_empty() {
         return Ok(analysis);
     }
-    let mut selection = select::Selection::new(root, rules).map_err(incomplete)?;
+    let mut selection = Selection::new(
+        root,
+        rules
+            .iter()
+            .flat_map(|rule| rule.include.iter().map(String::as_str)),
+    )
+    .map_err(incomplete)?;
     let mut inputs = input::Inputs::default();
     let mut rules = rules.iter().collect::<Vec<_>>();
     rules.sort_by(|left, right| left.name.cmp(&right.name));
@@ -78,7 +85,9 @@ pub(crate) fn analyze(
             } else {
                 None
             },
-            entries: selection.select(root, rule).map_err(&context_error)?,
+            entries: selection
+                .select(root, &rule.include, &rule.exclude, rule.entry)
+                .map_err(&context_error)?,
             reference: None,
             satisfied: false,
         };

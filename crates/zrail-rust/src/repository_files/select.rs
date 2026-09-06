@@ -2,7 +2,7 @@
 
 use std::{collections::BTreeMap, path::Path};
 
-use zrail_core::{RepositoryFileRule, glob_can_match_descendant, glob_matches};
+use zrail_core::{RepositoryEntryMode, glob_can_match_descendant, glob_matches};
 
 use crate::inventory::{RepositoryEntry, RepositoryEntryKind, scan_file_entries, skip_directory};
 
@@ -11,18 +11,18 @@ use super::{boundary, model::GovernedRepositoryFileEntry};
 const MAX_SELECTION_QUERIES: usize = 8_000_000;
 const MAX_SELECTED_ENTRIES: usize = 250_000;
 
-pub(super) struct Selection {
+pub(crate) struct Selection {
     entries: BTreeMap<String, RepositoryEntry>,
     queries: usize,
     selected: usize,
 }
 
 impl Selection {
-    pub(super) fn new(root: &Path, rules: &[RepositoryFileRule]) -> Result<Self, String> {
-        let entries = if rules
-            .iter()
-            .any(|rule| rule.include.iter().any(|pattern| is_glob(pattern)))
-        {
+    pub(crate) fn new<'a>(
+        root: &Path,
+        patterns: impl IntoIterator<Item = &'a str>,
+    ) -> Result<Self, String> {
+        let entries = if patterns.into_iter().any(is_glob) {
             scan_file_entries(root).map_err(|error| error.to_string())?
         } else {
             Vec::new()
@@ -37,13 +37,15 @@ impl Selection {
         })
     }
 
-    pub(super) fn select(
+    pub(crate) fn select(
         &mut self,
         root: &Path,
-        rule: &RepositoryFileRule,
+        include: &[String],
+        exclude: &[String],
+        mode: RepositoryEntryMode,
     ) -> Result<Vec<GovernedRepositoryFileEntry>, String> {
         let mut candidates = BTreeMap::new();
-        for pattern in &rule.include {
+        for pattern in include {
             if !is_glob(pattern) {
                 if let Some(entry) = boundary::probe(root, pattern)? {
                     candidates.insert(pattern.clone(), entry);
@@ -61,7 +63,7 @@ impl Selection {
                 if unvisited {
                     charge(&mut self.queries)?;
                     if glob_can_match_descendant(pattern, &entry.relative)?
-                        && !subtree_excluded(&rule.exclude, &entry.relative, &mut self.queries)?
+                        && !subtree_excluded(exclude, &entry.relative, &mut self.queries)?
                     {
                         // A contained file link has no descendants. Every other unread
                         // target remains uncertain, including broken and escaping links.
@@ -80,10 +82,10 @@ impl Selection {
         }
         let mut selected = Vec::new();
         for entry in candidates.values() {
-            if excluded(&rule.exclude, &entry.relative, &mut self.queries)? {
+            if excluded(exclude, &entry.relative, &mut self.queries)? {
                 continue;
             }
-            if let Some(observation) = boundary::observe(root, entry, rule.entry)? {
+            if let Some(observation) = boundary::observe(root, entry, mode)? {
                 self.selected += 1;
                 if self.selected > MAX_SELECTED_ENTRIES {
                     return Err(format!(
