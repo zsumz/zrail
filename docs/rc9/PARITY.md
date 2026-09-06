@@ -293,7 +293,9 @@ inspection even where the function name mentions protocols or simulation.
 
 `KD-DEP-SIM-NO-VERSION-STRING` accepts absent or non-string versions in the
 legacy detector; a simple absent-key check would change that policy. The key-set
-helper maps missing/non-table dependency declarations to an empty set. These
+helper maps a present non-table dependency value to an empty set; a missing
+entry panics at the preceding Value index. This distinction was verified against
+the pinned TOML implementation, not inferred from map_or_else alone. These
 projection semantics remain explicit gaps, along with strict trimmed-line
 presence and whole-lock line-name extraction. Neither generic Cargo topology
 nor a permissive substring predicate is claimed to subsume them.

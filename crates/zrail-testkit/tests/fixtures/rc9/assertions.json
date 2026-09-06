@@ -3814,8 +3814,9 @@
         "allowed": [
           "kafka-wire-core"
         ],
-        "missing_or_non_table": "empty set",
-        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set."
+        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set.",
+        "missing": "Value indexing panics: the dependencies entry is required",
+        "present_non_table": "empty set from as_table().map_or_else(BTreeSet::new, ...)"
       },
       "required_cardinality": {
         "scope": "one manifest"
@@ -4057,8 +4058,9 @@
           "sasl-scram",
           "zeroize"
         ],
-        "missing_or_non_table": "empty set",
-        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set."
+        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set.",
+        "missing": "Value indexing panics: the dependencies entry is required",
+        "present_non_table": "empty set from as_table().map_or_else(BTreeSet::new, ...)"
       },
       "required_cardinality": {
         "scope": "one manifest"
@@ -4443,8 +4445,9 @@
           "kafka-wire-core",
           "rustls"
         ],
-        "missing_or_non_table": "empty set",
-        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set."
+        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set.",
+        "missing": "Value indexing panics: the dependencies entry is required",
+        "present_non_table": "empty set from as_table().map_or_else(BTreeSet::new, ...)"
       },
       "required_cardinality": {
         "scope": "one manifest"
@@ -5078,7 +5081,8 @@
           "criticality",
           "kafka-driver-core"
         ],
-        "missing_or_non_table": "empty set"
+        "missing": "Value indexing panics: the dependencies entry is required",
+        "present_non_table": "empty set from as_table().map_or_else(BTreeSet::new, ...)"
       },
       "required_cardinality": {
         "exact": 2
@@ -5291,8 +5295,9 @@
           "kafka-driver-core",
           "kafka-wire-core"
         ],
-        "missing_or_non_table": "empty set",
-        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set."
+        "selection": "Only [dependencies]; dev/build/target declarations are not unioned into this set.",
+        "missing": "Value indexing panics: the dependencies entry is required",
+        "present_non_table": "empty set from as_table().map_or_else(BTreeSet::new, ...)"
       },
       "required_cardinality": {
         "scope": "one manifest"
