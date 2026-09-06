@@ -61,10 +61,10 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 ## Machine-readable audit state
 
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **574 reviewed assertion instances**. The
+contains **575 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
-record 9,792 files and 72,155 syntax candidates. Every tracked path is included,
+record 9,792 files and 79,949 syntax candidates. Every tracked path is included,
 including nested workspaces, sources outside `src/`, helper code, and malformed
 detector fixtures. Non-Rust file contents, helper expansion, registries, and
 opaque syntax still require review; this is not a completed assertion inventory.
@@ -73,7 +73,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 | --- | ---: | ---: | ---: | ---: | ---: |
 | kafka-driver | 826 | 772 | 372 | 327 | 320 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
-| Rafter | 2,158 | 1,897 | 21 | 0 | 0 |
+| Rafter | 2,158 | 1,897 | 22 | 0 | 0 |
 
 The **484 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
@@ -93,7 +93,7 @@ individual source digest, selected budget, baseline, and mutation diagnostics.
 has replacement qualification; passing a size family does not close other rails.
 
 The uncompressed census SHA-256 is
-`69c6393f176df64fff2e010968f18efb4e06781385b1bd6896de013411899ba6`.
+`f90b74831614e4a660fdc8d1c008eb9f036fd81350f931478322af1378cab161`.
 Two independent runs produced identical bytes. Candidate IDs bind repository,
 physical path, source coordinates, candidate kind, and normalized syntax digest.
 The one parse boundary is the deliberately invalid Kafkars invariant-registry
@@ -547,3 +547,23 @@ fixture at `process_scenarios.rs:406`. Extend the trusted census before claiming
 complete assertion coverage. Remaining process-format, lifecycle, reaper,
 launcher-selection and shared module-graph assertions also require review; this
 source file does not receive a whole-file disposition.
+
+
+## Fallible-call discovery checkpoint
+
+The expanded census at `e01891c5843757f9f9cb5e1f5f39cfc21ca6e583` records 79,949 candidates,
+including 7,794 newly identified `expect`, `expect_err`, `unwrap`, and
+`unwrap_err` calls (4 kafka-driver, 189 Kafkars, 7,601 Rafter). Two fresh offline
+runs produce identical 37,598,886-byte payloads. Every previous candidate and
+reviewed source identity is preserved, as are all frozen file hashes and Git
+identities. [The checkpoint](evidence/census-fallible-index.json) binds code,
+compiler, test binary, prior artifact and both logs. Three focused tests cover
+chained calls, qualified calls, raw identifiers, function-value non-calls,
+comments, literals, opaque boundaries and default trait helper context.
+
+`RC9-INVENTORY-FALLIBLE-CALLS` is closed as a discovery defect.
+`RF-PROCESS-DETECTOR-PARSE` now identifies the newly discoverable fixture parse
+precondition. The ledger has 575 reviewed, 500 implemented and 484 verified
+assertions; it remains incomplete. New candidates still require individual
+review, including behavioral preconditions and custom methods with matching
+names. Included fragments and opaque macro bodies remain explicit review work.

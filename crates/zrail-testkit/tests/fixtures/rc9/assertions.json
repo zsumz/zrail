@@ -3,7 +3,7 @@
   "release_verdict": "blocked",
   "assertion_inventory_complete": false,
   "candidate_census": "census.json.gz",
-  "census_payload_sha256": "69c6393f176df64fff2e010968f18efb4e06781385b1bd6896de013411899ba6",
+  "census_payload_sha256": "f90b74831614e4a660fdc8d1c008eb9f036fd81350f931478322af1378cab161",
   "snapshots": "snapshots.json",
   "approved_policy_changes": [
     {
@@ -51451,10 +51451,57 @@
           "cause": "Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies."
         }
       ]
+    },
+    {
+      "id": "RF-PROCESS-DETECTOR-PARSE",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "source": {
+        "path": "crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs",
+        "file_sha256": "19f19167311158f3469be3834ca6ef13857275a2fe902331546c6366313e08e9",
+        "candidate_id": "zsumz/rafter:crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs:406:42:fallible-call-candidate",
+        "instance": null,
+        "line": 406,
+        "column": 42,
+        "function": [
+          "architecture_path_collector_rejects_crate_alias_and_macro_indirection"
+        ],
+        "syntax_sha256": "5a515f1327934569215772aaf2dcc87b6c1846e66b1828f17cb8a138716655ea"
+      },
+      "intended_property": "The exact raw-process indirection fixture parses as a complete Rust file before collector assertions execute.",
+      "selection": {
+        "in_memory_source": "Raw string local source in architecture_path_collector_rejects_crate_alias_and_macro_indirection",
+        "world": "all authored fixture syntax"
+      },
+      "context": "The assertion executes syn parsing of an architecture-detector fixture; it does not execute a process or Raft behavior.",
+      "matching_semantics": {
+        "kind": "syn::parse_file required success",
+        "failure": "Result::expect panics",
+        "expression_fallback": "forbidden"
+      },
+      "required_cardinality": {
+        "successful_parse": "the exact detector fixture"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "RF-PROCESS-DETECTOR-PARSE",
+          "cause": "Bind the exact original fixture parse precondition to native strict syntax and malformed/expression-only detector fixtures; no qualified replacement policy identity or diagnostic is linked yet."
+        }
+      ]
     }
   ],
   "counts": {
-    "reviewed_assertion_instances": 574,
+    "reviewed_assertion_instances": 575,
     "implemented": 500,
     "verified_by_disposition": {
       "existing native rail": 0,
@@ -51474,8 +51521,14 @@
   "open_discovery_blockers": [
     "RC9-INVENTORY-KD",
     "RC9-INVENTORY-KF",
-    "RC9-INVENTORY-RF",
-    "RC9-INVENTORY-FALLIBLE-CALLS"
+    "RC9-INVENTORY-RF"
   ],
-  "external_input_blockers": []
+  "external_input_blockers": [],
+  "closed_discovery_findings": [
+    {
+      "id": "RC9-INVENTORY-FALLIBLE-CALLS",
+      "evidence": "docs/rc9/evidence/census-fallible-index.json",
+      "resolution": "Added 7794 parsed fallible-call candidates with unique call-identifier locations. All prior candidates and frozen file identities are unchanged; new candidates still require assertion-level review."
+    }
+  ]
 }

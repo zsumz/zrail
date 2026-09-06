@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "implementation_commit": "e01891c5843757f9f9cb5e1f5f39cfc21ca6e583",
+  "implementation_tree": "7c3f3e816d68fe36d56afaff150b3722741fcb4c",
+  "claim": "Trusted discovery expansion; no candidate is automatically classified or verified.",
+  "snapshots": {
+    "consumers": [
+      {
+        "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+        "name": "kafka-driver",
+        "repository": "kafkars/kafka-driver",
+        "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+      },
+      {
+        "commit": "67ad7aa8d91f9639c87b00338b9e21a633f7bb4c",
+        "name": "kafkars",
+        "repository": "kafkars/kafkars",
+        "tree": "6abde2775e12d772d7cdc1ea01fc253e699c6a45"
+      },
+      {
+        "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+        "name": "rafter",
+        "repository": "zsumz/rafter",
+        "tree": "b91b3ca7362219e32fdbb08a8374403c0353e745"
+      }
+    ],
+    "implementation_base": {
+      "commit": "5a368379360104ca19745326cfcef48d22a6452b",
+      "reference": "v0.0.3-rc.8",
+      "repository": "zsumz/zrail",
+      "tree": "f64cc5c258e1edf8e1de0d9d38a22f6100671475"
+    },
+    "schema": 1
+  },
+  "payload_sha256": "f90b74831614e4a660fdc8d1c008eb9f036fd81350f931478322af1378cab161",
+  "payload_bytes": 37598886,
+  "gzip_sha256": "3d7da59d149e78b3896dd2adf29101cb9e2e24eb76893752843acdc073a6c717",
+  "previous_artifact": {
+    "commit": "e01891c5843757f9f9cb5e1f5f39cfc21ca6e583",
+    "path": "crates/zrail-testkit/tests/fixtures/rc9/census.json.gz",
+    "payload_sha256": "69c6393f176df64fff2e010968f18efb4e06781385b1bd6896de013411899ba6"
+  },
+  "tracked_files": 9792,
+  "previous_candidates": 72155,
+  "candidates": 79949,
+  "added_fallible_calls": 7794,
+  "previous_candidates_preserved": true,
+  "frozen_file_identities_preserved": true,
+  "reviewed_assertion_identities_preserved": true,
+  "repeated_payloads_identical": true,
+  "focused_tests_passed": 3,
+  "focused_clippy_passed": true,
+  "test_binary_sha256": "9a3b84391f74543ff507a4a4b82dd45ea94a4e4f8b733a06c8933baf097a81f0",
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "logs": [
+    {
+      "artifact": "docs/rc9/evidence/census-fallible-a.log.gz",
+      "payload_sha256": "74220cde4a6a3c8ce90618610123d3aecf0389d1524853f5f8d1ea5043a79035",
+      "compressed_sha256": "bf238dd0a035e1bb81c86ad48ab425ff7dd83b044388a0511f236968df72cb61",
+      "exit_status": 0
+    },
+    {
+      "artifact": "docs/rc9/evidence/census-fallible-b.log.gz",
+      "payload_sha256": "a3fc81d99c4b074f9084502b440e81c7abc61491fad24a9d6e596064604cf1e9",
+      "compressed_sha256": "4aed0373058d276b61754991e8beb275753cd8832d9ab007d47a123a63368f31",
+      "exit_status": 0
+    }
+  ],
+  "limitations": [
+    "Every new fallible call still needs review to distinguish a guard precondition from behavioral setup or a same-named custom method.",
+    "Opaque macro bodies, unparsed fragments, non-Rust inputs and helper/registry expansion remain separate discovery work.",
+    "No analyzer policy, reviewed lock authority or downstream source was changed by this census update."
+  ]
+}

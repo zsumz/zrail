@@ -2,11 +2,11 @@
   "schema": 1,
   "status": "discovery-only",
   "assertion_inventory_complete": false,
-  "payload_sha256": "69c6393f176df64fff2e010968f18efb4e06781385b1bd6896de013411899ba6",
-  "gzip_sha256": "61777f2c83f2db46ff7734c34bf098b61159009e6427f27bf0de38aafd17e8ff",
-  "payload_bytes": 34723359,
+  "payload_sha256": "f90b74831614e4a660fdc8d1c008eb9f036fd81350f931478322af1378cab161",
+  "gzip_sha256": "3d7da59d149e78b3896dd2adf29101cb9e2e24eb76893752843acdc073a6c717",
+  "payload_bytes": 37598886,
   "tracked_files": 9792,
-  "candidate_count": 72155,
+  "candidate_count": 79949,
   "repositories": [
     {
       "repository": "kafkars/kafka-driver",
@@ -16,6 +16,7 @@
         "accumulator-candidate": 135,
         "assertion-macro": 3473,
         "failure-macro": 2394,
+        "fallible-call-candidate": 4,
         "helper-call-candidate": 167,
         "macro-review-boundary": 418
       }
@@ -28,6 +29,7 @@
         "accumulator-candidate": 1223,
         "assertion-macro": 21832,
         "failure-macro": 13075,
+        "fallible-call-candidate": 189,
         "helper-call-candidate": 1814,
         "macro-review-boundary": 5824
       }
@@ -40,6 +42,7 @@
         "accumulator-candidate": 1515,
         "assertion-macro": 10370,
         "failure-macro": 617,
+        "fallible-call-candidate": 7601,
         "helper-call-candidate": 1765,
         "macro-review-boundary": 7533
       }

@@ -2,9 +2,9 @@
 
 Release verdict: **blocked**. This list names each reviewed but unverified
 assertion instance. It does not close the additional discovery blockers
-`RC9-INVENTORY-KD`, `RC9-INVENTORY-KF`, `RC9-INVENTORY-RF`, and
-`RC9-INVENTORY-FALLIBLE-CALLS`. The census must add `.expect`/`.unwrap` failure
-sites, including the raw-process detector fixture at `process_scenarios.rs:406`.
+`RC9-INVENTORY-KD`, `RC9-INVENTORY-KF`, and `RC9-INVENTORY-RF`.
+The fallible-call discovery gap is closed by the expanded census; its new
+candidates still require review.
 
 All unreviewed candidate IDs are enumerated in `census.json.gz`. Non-Rust
 files and opaque or invalid syntax remain explicit review work.
@@ -87,6 +87,7 @@ files and opaque or invalid syntax remain explicit review work.
 | `RF-PROCESS-CRATE-ALIASES` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
 | `RF-PROCESS-DETECTOR-CRATE-ALIASES` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
 | `RF-PROCESS-DETECTOR-MACROS` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-DETECTOR-PARSE` | Bind the exact original fixture parse precondition to native strict syntax and malformed/expression-only detector fixtures; no qualified replacement policy identity or diagnostic is linked yet. |
 | `RF-PROCESS-DETECTOR-ROOT-IMPORT` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
 | `RF-PROCESS-EXACT` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
 | `RF-PROCESS-MACROS` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |

@@ -49,7 +49,7 @@ historical evidence; the newer size-policy qualification is recorded below.
 | Strict facade acceptance | **8 tests pass**, including imported frozen Kafkars counterexample, required diagnostic categories, strict item rejection, test identity/reachability, missing mounts, production leakage, and expression fragments. |
 | Frozen facade differential predicate test | **Pass**, 28 inputs × 2 consumer predicates = 56 comparisons. Origins and extracted function bytes are independently checked against the frozen snapshots. This does not establish consumer-wide selection parity. |
 | Frozen kafka-driver legacy guard target | **47/47 pass**, zero ignored/filtered, exact unique outcome inventory. Unmodified `tests/guardrails.rs` was compiled as a trusted minimal harness; runtime, broker, simulation, and archive programs were not thereby qualified. |
-| Repeated all-file census | **Pass**, 2 tests, byte-identical repeated JSON. 9,792 tracked files and 72,155 syntax candidates. Discovery is not completed assertion review. |
+| Repeated all-file census | **Pass**, two fresh byte-identical census runs and three focused discovery tests. 9,792 tracked files and 79,949 syntax candidates. Discovery is not completed assertion review. |
 | Audit completeness gate | **Expected failure**, exit 1: assertion inventory remains incomplete. |
 | Strict rc8 same-revision epoch migration | **36 preserved** entries; zero retired, newly observable, or changed interpretation entries. No lock acceptance was performed. |
 | Protected diff against rc8 | Zero grants/debt changes, **2 unknowns**: the unchanged before/after locks both use epoch 6. These unknowns remain protected; the ordinary diff is not migration approval. |
@@ -642,3 +642,23 @@ The translated method fragment preserves 11 `(file, method)` entries totaling
 It remains a partial policy. Complete frozen production selection and the exact
 original detector fixture still require differential qualification. No new
 assertion is marked verified at this checkpoint.
+
+
+## Expanded fallible-call census
+
+[The census checkpoint](evidence/census-fallible-index.json) records two successful
+offline runs at `e01891c5843757f9f9cb5e1f5f39cfc21ca6e583`, with identical SHA-256
+`f90b74831614e4a660fdc8d1c008eb9f036fd81350f931478322af1378cab161`. It adds 7,794 candidates while
+preserving every prior candidate and frozen file identity. It does not increase
+verified replacement coverage. The existing 64 MiB artifact bound is retained,
+and the producer requires a fresh output path.
+
+```sh
+cargo test --locked --offline -p zrail-rust --test rc9_inventory
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots ZRAIL_RC9_CENSUS=/fresh/census-a.json \
+  cargo test --locked --offline -p zrail-rust --test rc9_inventory write_frozen_assertion_census -- --ignored
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots ZRAIL_RC9_CENSUS=/fresh/census-b.json \
+  cargo test --locked --offline -p zrail-rust --test rc9_inventory write_frozen_assertion_census -- --ignored
+cmp /fresh/census-a.json /fresh/census-b.json
+python3 scripts/rc9-inventory-check --census /fresh/census-a.json
+```
