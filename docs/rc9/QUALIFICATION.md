@@ -9,6 +9,27 @@ identity. Manifest-field parity retains its
 own implementation identity below. None constitutes final versioned-tree release
 qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
 
+## Committed transport evidence and census checkpoint
+
+Commit `11b4e70d5db2f6d3d5d6d55237debe8606058814`, tree
+`37810e99b6fb01f1af4cad165b8e96655fc1f95e`, was qualified in a clean,
+isolated checkout with the unchanged reviewed root contract and lock.
+[The evidence index](evidence/transport-evidence-index.json) binds the logs.
+`scripts/check` passed artifact validation, eight Python unittest methods,
+formatting, Clippy, 1,560 Rust tests (13 explicitly ignored), and rustdoc.
+Self-analysis was complete: 1,020 files, 1,611 base contexts, 1,174,167 work,
+zero unresolved. It rejected the five pending authority differences:
+`LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028`, and `LOCK-030`.
+The script therefore did not reach its archive or cleanliness steps.
+Standalone `scripts/package-check` passed, and an explicit final Git status was
+clean. No authority was accepted.
+
+The initial `d4f901c` run additionally rejected three unreviewed macros in the
+new census test fixtures. Those helpers now use ordinary JSON parsing and the
+existing reviewed panic syntax; the failed log is retained. This checkpoint
+does not relabel earlier frozen differential evidence as having run on this
+revision. Full final-release and downstream qualification remain outstanding.
+
 ## Environment and trusted setup
 
 The runs use the repository-pinned Rust **1.97.1**, on Linux, with locked Cargo
