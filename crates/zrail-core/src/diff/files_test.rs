@@ -40,6 +40,39 @@ pub(super) fn protected(before: &Contract, after: &Contract) {
 }
 
 #[test]
+fn exact_lines_have_distinct_presence_prohibition_and_literal_identity_permissions() {
+    for (before, after) in [
+        ("mode = 'line-present'", "mode = 'contains'"),
+        ("mode = 'absent'", "mode = 'line-absent'"),
+        (
+            "mode = 'line-absent', case = 'ascii-insensitive'",
+            "mode = 'line-absent'",
+        ),
+    ] {
+        let before = configured(&format!(
+            "kind = 'literal', text = 'exact', normalization = 'trim', {before}"
+        ));
+        let after = configured(&format!(
+            "kind = 'literal', text = 'exact', normalization = 'trim', {after}"
+        ));
+        assert_eq!(kinds(&before, &after), [ChangeKind::Grant]);
+        assert_eq!(kinds(&after, &before), [ChangeKind::Revoke]);
+        protected(&before, &after);
+    }
+    for mode in ["line-present", "line-absent"] {
+        let before = configured(&format!(
+            "kind = 'literal', text = 'exact', mode = '{mode}'"
+        ));
+        let after = configured(&format!("kind = 'literal', text = 'act', mode = '{mode}'"));
+        assert_eq!(
+            kinds(&before, &after),
+            [ChangeKind::Grant, ChangeKind::Revoke]
+        );
+        protected(&before, &after);
+    }
+}
+
+#[test]
 fn count_bounds_compare_accepted_intervals_and_removal_is_a_grant() {
     let before = configured("kind = 'count', minimum = 2, maximum = 4");
     for predicate in [

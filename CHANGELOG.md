@@ -23,6 +23,9 @@ All notable zrail changes are recorded here for reviewed release notes.
   path explanations, lock input binding, and protected semantic comparisons.
 - Explicit UTF-8 validity for byte-equality policies, preserving legacy text-read
   preconditions while retaining binary equality by default.
+- Exact raw-line presence and prohibition, with per-line normalization, complete
+  occurrence totals, bounded samples, and protected comparisons against whole-file
+  matching. Existing raw-text modes retain their meaning.
 - Bounded authored TOML/JSON field predicates for presence, absence, nonempty
   strings, and exact typed values or ordered string arrays, with strict duplicate
   rejection, auditable observations, input binding, and protected semantic diffs.

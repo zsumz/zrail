@@ -6,6 +6,8 @@ mod boundary_test;
 mod encoding_test;
 #[path = "strict_facades/fixture.rs"]
 mod fixture;
+#[path = "repository_files/line_test.rs"]
+mod line_test;
 #[path = "repository_files/support.rs"]
 mod support;
 

@@ -115,6 +115,10 @@ pub enum RepositoryLiteralMode {
     Equals,
     /// Exactly `count` non-overlapping occurrences per selected file.
     ExactCount,
+    /// At least one complete line equals the literal after per-line normalization.
+    LinePresent,
+    /// No complete line equals the literal; absence remains a live prohibition.
+    LineAbsent,
 }
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Deserialize, Serialize)]
@@ -126,6 +130,8 @@ pub enum RepositoryTextNormalization {
     None,
     /// Apply Rust's Unicode-aware `str::trim_start` to the input.
     TrimStart,
+    /// Apply Rust's Unicode-aware `str::trim` to the input or each selected line.
+    Trim,
     /// Remove characters matching Rust's Unicode-aware `char::is_whitespace`.
     RemoveWhitespace,
 }

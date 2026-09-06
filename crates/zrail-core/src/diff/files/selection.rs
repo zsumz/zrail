@@ -42,9 +42,11 @@ pub(super) fn compare(left: &RepositoryFileRule, right: &RepositoryFileRule) -> 
         }
         RepositoryFilePredicate::Count { maximum: None, .. } => Some(false),
         RepositoryFilePredicate::Literal(literal)
-            if literal.mode == RepositoryLiteralMode::Absent
-                || (literal.mode == RepositoryLiteralMode::ExactCount
-                    && literal.count == Some(0)) =>
+            if matches!(
+                literal.mode,
+                RepositoryLiteralMode::Absent | RepositoryLiteralMode::LineAbsent
+            ) || (literal.mode == RepositoryLiteralMode::ExactCount
+                && literal.count == Some(0)) =>
         {
             Some(true)
         }

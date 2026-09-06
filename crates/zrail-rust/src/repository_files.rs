@@ -39,6 +39,15 @@ pub(crate) fn analyze(
             policy_id: policy_id.clone(),
             policy: rule.clone(),
             claim: match rule.predicate {
+                RepositoryFilePredicate::Literal(ref literal)
+                    if matches!(
+                        literal.mode,
+                        zrail_core::RepositoryLiteralMode::LinePresent
+                            | zrail_core::RepositoryLiteralMode::LineAbsent
+                    ) =>
+                {
+                    "raw-utf8-lines"
+                }
                 RepositoryFilePredicate::Literal(_) => "raw-utf8-text",
                 RepositoryFilePredicate::Document(_) => "authored-document",
                 RepositoryFilePredicate::BytesEqual { utf8: true, .. } => "utf8-file-bytes",

@@ -8,7 +8,9 @@ pub(super) fn compare(
     left: &RepositoryLiteralPredicate,
     right: &RepositoryLiteralPredicate,
 ) -> Vec<ChangeKind> {
-    use RepositoryLiteralMode::{Absent, Contains, EndsWith, Equals, ExactCount, StartsWith};
+    use RepositoryLiteralMode::{
+        Absent, Contains, EndsWith, Equals, ExactCount, LineAbsent, LinePresent, StartsWith,
+    };
     if left.normalization != right.normalization {
         return vec![ChangeKind::Unknown];
     }
@@ -18,7 +20,7 @@ pub(super) fn compare(
         }
         let insensitive = right.case == RepositoryCaseMode::AsciiInsensitive;
         return match (left.mode, left.count) {
-            (Absent, _) | (ExactCount, Some(0)) => vec![if insensitive {
+            (Absent | LineAbsent, _) | (ExactCount, Some(0)) => vec![if insensitive {
                 ChangeKind::Revoke
             } else {
                 ChangeKind::Grant
@@ -52,6 +54,11 @@ pub(super) fn compare(
             }
             (Equals, ExactCount) if right.count == Some(1) => vec![ChangeKind::Grant],
             (ExactCount, Equals) if left.count == Some(1) => vec![ChangeKind::Revoke],
+            (LinePresent, Contains) | (Absent, LineAbsent) => vec![ChangeKind::Grant],
+            (Contains, LinePresent) | (LineAbsent, Absent) => vec![ChangeKind::Revoke],
+            (LinePresent, LineAbsent) | (LineAbsent, LinePresent) => {
+                vec![ChangeKind::Grant, ChangeKind::Revoke]
+            }
             _ => vec![ChangeKind::Unknown],
         };
     }
@@ -64,7 +71,7 @@ pub(super) fn compare(
         EndsWith => (b.ends_with(&a), a.ends_with(&b)),
         Absent => (a.contains(&b), b.contains(&a)),
         ExactCount if left.count == Some(0) => (a.contains(&b), b.contains(&a)),
-        Equals => return vec![ChangeKind::Grant, ChangeKind::Revoke],
+        Equals | LinePresent | LineAbsent => return vec![ChangeKind::Grant, ChangeKind::Revoke],
         ExactCount => return vec![ChangeKind::Unknown],
     };
     match (new_implies_old, old_implies_new) {

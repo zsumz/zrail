@@ -82,17 +82,40 @@ that deliberately inspect absolute path components; it is not portable naming
 authority inferred from a type or Cargo package.
 
 Literal modes are `contains`, `absent`, `starts-with`, `ends-with`, `equals`, and
-`exact-count`. Only exact-count accepts and requires `count`. Occurrences are
+`exact-count`, plus exact `line-present` and `line-absent`. Only exact-count
+accepts and requires `count`. Occurrences are
 non-overlapping Rust string matches. Positive predicates require a nonempty
 file selection; `absent` and exact-count zero remain valid for an empty selection.
 Comments and string literals participate deliberately. These are raw predicates,
 and matching command text never certifies that the command ran.
 
 Normalization defaults to `none`. `trim-start` applies Unicode-aware Rust
-`str::trim_start`; `remove-whitespace` removes `char::is_whitespace` characters.
+`str::trim_start`; `trim` applies `str::trim`; `remove-whitespace` removes
+`char::is_whitespace` characters.
 Normalization transforms input only; whitespace-removed literals cannot contain
 whitespace. Case defaults to `sensitive`; `ascii-insensitive` folds ASCII letters
 only in both the literal and input. Name comparisons use the same case choices.
+
+Line modes first use Rust `str::lines` (including its LF/CRLF behavior), normalize
+each line independently, and compare complete lines with the literal. They never
+join text across line boundaries. `line-present` requires at least one equal
+line in every selected file; `line-absent` requires zero and stays active when
+the selection is empty. Line literals cannot contain CR/LF and must already
+satisfy their selected whitespace normalization. Comments, prefixes, and suffixes
+do not satisfy equality with a different complete line.
+
+Line coverage uses `raw-utf8-lines`, reports the full matching-line count, and
+samples at most sixteen byte offsets in normalized lines joined by LF. Those
+offsets describe transformed text, not original byte positions. Duplicate equal
+lines count separately, even when the legacy detector only tests set membership.
+
+```toml
+[[repository.files]]
+name = "rust-line-endings"
+include = [".gitattributes"]
+reason = "Preserve the exact trimmed attributes declaration."
+predicate = { kind = "literal", text = "*.rs text eol=lf", mode = "line-present", normalization = "trim" }
+```
 
 ## Evidence, bounds, and review
 

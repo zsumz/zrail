@@ -98,6 +98,27 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
                 if (literal.mode == RepositoryLiteralMode::ExactCount) != literal.count.is_some() {
                     errors.push("file literal count is required only in exact-count mode".into());
                 }
+                if matches!(
+                    literal.mode,
+                    RepositoryLiteralMode::LinePresent | RepositoryLiteralMode::LineAbsent
+                ) && literal.text.contains(['\n', '\r'])
+                {
+                    errors.push("line literals cannot contain CR or LF characters".into());
+                }
+                if matches!(
+                    literal.mode,
+                    RepositoryLiteralMode::LinePresent | RepositoryLiteralMode::LineAbsent
+                ) && match literal.normalization {
+                    RepositoryTextNormalization::TrimStart => {
+                        literal.text.trim_start() != literal.text
+                    }
+                    RepositoryTextNormalization::Trim => literal.text.trim() != literal.text,
+                    _ => false,
+                } {
+                    errors.push(
+                        "line literals must already satisfy their whitespace normalization".into(),
+                    );
+                }
                 if literal.normalization == RepositoryTextNormalization::RemoveWhitespace
                     && literal.text.chars().any(char::is_whitespace)
                 {

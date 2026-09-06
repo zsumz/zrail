@@ -115,6 +115,20 @@ fn old_repository_contract_serialization_omits_the_new_empty_family() {
 }
 
 #[test]
+fn impossible_line_literals_and_line_count_fields_are_rejected() {
+    for predicate in [
+        "{ kind = 'literal', text = '\n', mode = 'line-absent' }",
+        "{ kind = 'literal', text = ' padded', mode = 'line-absent', normalization = 'trim-start' }",
+        "{ kind = 'literal', text = 'padded ', mode = 'line-present', normalization = 'trim' }",
+        "{ kind = 'literal', text = 'line', mode = 'line-present', count = 1 }",
+    ] {
+        // Literal TOML strings may contain an actual newline only in triple quotes.
+        let predicate = predicate.replace("text = '\n'", "text = \"\\n\"");
+        assert!(!errors(&with_predicate(&predicate)).is_empty());
+    }
+}
+
+#[test]
 fn document_policy_is_typed_bounded_and_has_no_expression_or_parser_fallback() {
     let valid = with_predicate(
         "{ kind = 'document', format = 'toml', path = ['package', 'publish'], assertion = { op = 'equals', value = ['crates-io'] } }",
