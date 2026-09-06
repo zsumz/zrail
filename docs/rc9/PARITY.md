@@ -70,15 +70,16 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 185 | 89 | 88 |
+| kafka-driver | 826 | 772 | 185 | 124 | 123 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
-The **252 verified assertions** comprise five facade predicates, four
+The **287 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus five authored dependency key
-inventories. Size instances include
+inventories and 35 authored dependency-field assertions and preconditions.
+Size instances include
 all 141 measured baselines and three hard allowances. Their disposition
 is **new engine capability**; verified counts for the other four dispositions
 remain zero. Each registry instance binds its original TOML entry and the
@@ -323,3 +324,25 @@ missing inputs, case changes, and undisplayed unexpected names exercise the
 intended policies. The [bound evidence](evidence/key-sets-parity-index.json)
 records exact source, policy, fixture, code, compiler, and input identities.
 The complete dependency file still has other unverified assertions.
+
+## Verified authored dependency fields
+
+Thirty native policies in
+[`kafka-driver.dependency-fields.fragment.toml`](policies/kafka-driver.dependency-fields.fragment.toml)
+cover 35 additional reviewed assertion IDs: exact declaration versions,
+workspace inheritance, private/public publication settings, optional/default
+feature flags, ordered feature arrays, parser preconditions for all five
+manifests, and the simulator's exact non-string version projection. Public
+array type/count/registry assertions map to their equivalent conjunction;
+feature array preconditions map to the same complete typed equality already
+required by the original guard. Each linkage records that proof explicitly.
+
+Two runs at `c7ff4588f029169c10cce191be3bac3ceaec9e2d` produced identical
+[bound evidence](evidence/dependency-fields-index.json): 30 frozen observations,
+six immutable inputs, and 151 fixture outcomes (34 accepted, 117 rejected).
+Six complete original assertion bodies and their read/parse helpers execute
+in trusted tests only. Reordering, omission, duplicate feature entries, wrong
+versions/types, missing parents/files, and malformed inputs all exercise their
+intended native policies. No source patch or authority grant was applied.
+Whole-lock/provenance, CI/line checks, source guards, and complete downstream
+qualification remain separate open work.

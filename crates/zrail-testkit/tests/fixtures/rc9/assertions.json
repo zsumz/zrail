@@ -4036,19 +4036,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-criticality-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-CRITICALITY-VERSION",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-criticality-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-criticality-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f11f9f2ce44c686148fca41f8f20642e1bbb505d1a363f2cef868e3710bf0123"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-criticality-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e7c714d4a2097faad1c359026ae2c86389b0b3d0ef361aefd43d94f953c90820"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-criticality-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b3c23d89f4156d1f0a6d1c24b9cbeeb027630675cd001cda61f10cf203022929"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-DETECTOR-EXACT-NAME",
@@ -4668,19 +4705,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-driver-wire-inheritance"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-DRIVER-WIRE-INHERITANCE",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-driver-wire-inheritance",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-driver-wire-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "03cd3a21fc84947c6cd0e6a94e9ec56d163f4fffeefbb3508f9b239eb225b304"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-driver-wire-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0bddfd3880a083802058b1561205086b7ab666c92c17d43a4696b5c88074a432"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-driver-wire-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e16b7a0a560c49d92bc8111ca172242d38dbe35adb0fa088ab1f4f582976b311"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-LF-ATTRIBUTES-01",
@@ -4915,19 +4989,229 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-00-parse-driver",
+          "repository:file:kd-dep-00-parse-kafka-driver-core",
+          "repository:file:kd-dep-00-parse-kafka-driver-probe",
+          "repository:file:kd-dep-00-parse-kafka-driver-sim",
+          "repository:file:kd-dep-00-parse-kafka-driver-transport"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-006",
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-PARSE",
-          "cause": "Bind all five manifest input contexts and malformed/duplicate-key/encoding negatives to the native parser preconditions."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-00-parse-driver",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-00-parse-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "malformed-input",
+            "policy_id": "repository:file:kd-dep-00-parse-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "af035063bb96e3848cd647faef081c579c0648bae24a80f9ae2a633935da83c2"
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-dep-00-parse-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "017ddd2f556e1ba2f42eefd0a6d7b7d473275c4cb16fba6db7770938b87a0b70"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-00-parse-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-core",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-core",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "malformed-input",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-core",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "af035063bb96e3848cd647faef081c579c0648bae24a80f9ae2a633935da83c2"
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-core",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "017ddd2f556e1ba2f42eefd0a6d7b7d473275c4cb16fba6db7770938b87a0b70"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-core",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-probe",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-probe",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "malformed-input",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-probe",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "af035063bb96e3848cd647faef081c579c0648bae24a80f9ae2a633935da83c2"
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-probe",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "017ddd2f556e1ba2f42eefd0a6d7b7d473275c4cb16fba6db7770938b87a0b70"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-probe",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-sim",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "0c6e1d53bd243f7184967ac6a80aed24e984e4f2112c45bfd93a701116e4e8f1"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-sim",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "malformed-input",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-sim",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "af035063bb96e3848cd647faef081c579c0648bae24a80f9ae2a633935da83c2"
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-sim",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "017ddd2f556e1ba2f42eefd0a6d7b7d473275c4cb16fba6db7770938b87a0b70"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-sim",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-transport",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-transport",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "malformed-input",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-transport",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "af035063bb96e3848cd647faef081c579c0648bae24a80f9ae2a633935da83c2"
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-transport",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "017ddd2f556e1ba2f42eefd0a6d7b7d473275c4cb16fba6db7770938b87a0b70"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-dep-00-parse-kafka-driver-transport",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-PROBE-KEYS",
@@ -5242,19 +5526,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-probe-wire-inheritance"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-PROBE-WIRE-INHERITANCE",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-probe-wire-inheritance",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-probe-wire-inheritance",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f26aaef88144b62b92df4fc885b14598c955df2f896f4c649cbc0a814741adba"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-probe-wire-inheritance",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d6425719d3d5f3e8c841dedc8af5a83ce62e3ad0525695da7f7c8f661d4cf35a"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-probe-wire-inheritance",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2ba75cfe062241bea7ec4ead044312f0c7c56d9aba85438604936f6d6245eb76"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-RUSTLS-FEATURE-ARRAY",
@@ -5292,19 +5613,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-rustls-features"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6bf926a37745ac76d36ed9326fcb728b573d19c5879946928072f4af78e71046"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bac2d050b01af0f23cf00a4b9e78da2a5fa58f61c420cbbbb463793692614e1f"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1a77e07094257c3d55f332a3fa14b2517106c0e93345903a9aa910a14f0ed37b"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "cae209d56b2a9efad066117f67ab0b49f2d046b0a82d4e16b8887bd01e8c2c23"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b7308a3370f94d11419acdc3bc5178e89e33afa7ac9a20de1413ccdeda7fd519"
+          },
+          {
+            "case": "reordered-array",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "55e3aeebcfcefdb91ff68013ade9bb8c690f21278d4924495ea42af346fefbf7"
+          },
+          {
+            "case": "missing-array-item",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "76281b25e03600b54a5ccaaaa86524e9b2ea8889dfd6cb1df473879a1f0b3458"
+          },
+          {
+            "case": "same-count-duplicate",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3ad79377435fb72211c8fcba9e1609f487d52bcb256bae972eb36d3556d4a3e3"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
+        },
+        "conjunction_proof": "Exact complete typed array equality proves this precondition together with the original ordered-value assertion; the unchanged complete feature guard is the differential oracle."
       },
-      "blockers": [
-        {
-          "id": "KD-DEP-RUSTLS-FEATURE-ARRAY",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-DEP-RUSTLS-FEATURES",
@@ -5347,19 +5746,96 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-rustls-features"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-RUSTLS-FEATURES",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6bf926a37745ac76d36ed9326fcb728b573d19c5879946928072f4af78e71046"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bac2d050b01af0f23cf00a4b9e78da2a5fa58f61c420cbbbb463793692614e1f"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1a77e07094257c3d55f332a3fa14b2517106c0e93345903a9aa910a14f0ed37b"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "cae209d56b2a9efad066117f67ab0b49f2d046b0a82d4e16b8887bd01e8c2c23"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b7308a3370f94d11419acdc3bc5178e89e33afa7ac9a20de1413ccdeda7fd519"
+          },
+          {
+            "case": "reordered-array",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "55e3aeebcfcefdb91ff68013ade9bb8c690f21278d4924495ea42af346fefbf7"
+          },
+          {
+            "case": "missing-array-item",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "76281b25e03600b54a5ccaaaa86524e9b2ea8889dfd6cb1df473879a1f0b3458"
+          },
+          {
+            "case": "same-count-duplicate",
+            "policy_id": "repository:file:kd-dep-rustls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3ad79377435fb72211c8fcba9e1609f487d52bcb256bae972eb36d3556d4a3e3"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-RUSTLS-INHERITANCE",
@@ -5397,19 +5873,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-rustls-inheritance"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-RUSTLS-INHERITANCE",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-rustls-inheritance",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-rustls-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "dd82ded20546c8b5913f256cd170062c4bb811af64694956a1049123a5c937c6"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-rustls-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5c8c176de855041cc730aa40bb2d9a77ca04b0891b657a495c5582582a4751e3"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-rustls-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bad7701f7cba21e71427b42982a8e0237afdf83a677ad798fa9c3a7d98d2a333"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-RUSTLS-NO-DEFAULTS",
@@ -5448,19 +5961,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-rustls-no-defaults"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-RUSTLS-NO-DEFAULTS",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-rustls-no-defaults",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-rustls-no-defaults",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "09c018e4674c8648b7687e247499a14466ee4bcc8483bff274bf0aa875657f2e"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-rustls-no-defaults",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5c0c764b28e2a2c8419c8e5aa4222e426f21dad8f93cb4c8bb625a20f151a547"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-rustls-no-defaults",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fdd3b5bec048d7853910887d46d3081a1142731de35891a2e531b3fac61b96ac"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-RUSTLS-OPTIONAL",
@@ -5498,19 +6048,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-rustls-optional"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-RUSTLS-OPTIONAL",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-rustls-optional",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-rustls-optional",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "75a26f8df7f4da59ab441840b2d0e8b0bdf23910abaa84db80ce697aea8a6c61"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-rustls-optional",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fd6ef045d7ec0142b2250f22f03f561b4173940a534fe66bbd609368623508c1"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-rustls-optional",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2deac5a7682846ded1d1ad4645c0e8ec09a1f96353ee5a626a1d04a9fde6b2dc"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-SASL-FEATURE-ARRAY",
@@ -5548,19 +6135,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-sasl-features"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4f81bdb0c4a90c44f6b9bf79c8c2f9a6c97a920998b453da826d720f7d679538"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "48a807050619d9d3c73072294bc34bdf516a9d1e08c81baa73497b2203bad5c8"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "44a4fed343be3f73c28990483e5ccee1b16ef23640d9bc00daa7f3203158562a"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a255fd31c194e65f67b20150a3cc77cc2a618ceefd7498e11bbd4aa058502f79"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c9efb61238e0d6010643ae12d8dc7d0a810dbfc1719650c945af796603540b06"
+          },
+          {
+            "case": "reordered-array",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2108cf72e11f735026a01a79cb8a1cad58a86e800616d46019936bfbe0c1d504"
+          },
+          {
+            "case": "missing-array-item",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9b0598dd241334e6044a9db793a0ff9759aab15ca4adad29e138aa1e42eade67"
+          },
+          {
+            "case": "same-count-duplicate",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "265ef3aacc2d4ba2385a144b1624524d21335ffc80dd9414c76d0683f7e5fdf7"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
+        },
+        "conjunction_proof": "Exact complete typed array equality proves this precondition together with the original ordered-value assertion; the unchanged complete feature guard is the differential oracle."
       },
-      "blockers": [
-        {
-          "id": "KD-DEP-SASL-FEATURE-ARRAY",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-DEP-SASL-FEATURES",
@@ -5604,19 +6269,96 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-sasl-features"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-SASL-FEATURES",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4f81bdb0c4a90c44f6b9bf79c8c2f9a6c97a920998b453da826d720f7d679538"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "48a807050619d9d3c73072294bc34bdf516a9d1e08c81baa73497b2203bad5c8"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "44a4fed343be3f73c28990483e5ccee1b16ef23640d9bc00daa7f3203158562a"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a255fd31c194e65f67b20150a3cc77cc2a618ceefd7498e11bbd4aa058502f79"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c9efb61238e0d6010643ae12d8dc7d0a810dbfc1719650c945af796603540b06"
+          },
+          {
+            "case": "reordered-array",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2108cf72e11f735026a01a79cb8a1cad58a86e800616d46019936bfbe0c1d504"
+          },
+          {
+            "case": "missing-array-item",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9b0598dd241334e6044a9db793a0ff9759aab15ca4adad29e138aa1e42eade67"
+          },
+          {
+            "case": "same-count-duplicate",
+            "policy_id": "repository:file:kd-dep-sasl-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "265ef3aacc2d4ba2385a144b1624524d21335ffc80dd9414c76d0683f7e5fdf7"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-SASL-INHERITANCE",
@@ -5654,19 +6396,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-sasl-inheritance"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-SASL-INHERITANCE",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-sasl-inheritance",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-sasl-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "78480de9717e7a97f86385a4f3e5878d857c92ebc6e0cd5c1fe0b1d7a79146be"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-sasl-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c81617aa343e33979a2f86ef38099a7bd80d3e4a971b5d7ffe6c72232c63f2bb"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-sasl-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ccfbd26a804d8494111a872b526dc614a381250c6ea40550daade8659d2555ac"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-SASL-NO-DEFAULTS",
@@ -5705,19 +6484,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-sasl-no-defaults"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-SASL-NO-DEFAULTS",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-sasl-no-defaults",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-sasl-no-defaults",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ac52df6c027c1633bddce954bdb4d6d670c854987b9c779dae96720bd70b7ff2"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-sasl-no-defaults",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "12aa3790d7da68b5efd1d7926278b60b07002a34fd9f60a6e55138da53189554"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-sasl-no-defaults",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "eb2d35af3c134777d7bd56fbdd3fe9f7b6e65fcbb73599faefd789d562060cee"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-SASL-VERSION",
@@ -5756,19 +6572,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-sasl-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-SASL-VERSION",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-sasl-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-sasl-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ccc3ddfdfa935e350bfb9e2061fe9ddc60ee3a2320c8b993a50934bf34371664"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-sasl-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c59f9a2a98fa597b526c453abc2e1be9b971d296d7ddd81f0213443ef1b3798e"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-sasl-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b9a0059fe62b98f80408fa4c2e1b8ada83e37565320ce6925aafe9febb67373d"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-SIM-KEYS",
@@ -6031,19 +6884,96 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-sim-no-version-string"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-SIM-NO-VERSION-STRING",
-          "cause": "A plain absent-key predicate is stronger than this as_str(None) check. Preserve the typed projection and indexed-parent precondition, or record an explicit normalization with evidence."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-sim-no-version-string",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "boolean-version",
+            "policy_id": "repository:file:kd-dep-sim-no-version-string",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "72abb514d82038d22353875702751a8532b42efbbe3f915326e5a921686570e6"
+          },
+          {
+            "case": "integer-version",
+            "policy_id": "repository:file:kd-dep-sim-no-version-string",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "a44298d7b948846532e5124fde0897e6c5774646c626a59b40db87ddb0484c34"
+          },
+          {
+            "case": "array-version",
+            "policy_id": "repository:file:kd-dep-sim-no-version-string",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "7408241e99014ac94441b4533edaef3b875d40647c28f53693f23d1d8a1d6696"
+          },
+          {
+            "case": "empty-string-version",
+            "policy_id": "repository:file:kd-dep-sim-no-version-string",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "115c6a62d5f2ca9882536b856c49a97ff94304ceca5e515efb84ae876f0e688a"
+          },
+          {
+            "case": "string-version",
+            "policy_id": "repository:file:kd-dep-sim-no-version-string",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ab9aa0034739bcb64767288fbfbc56ab627ead59ecf9d1a97224bdf383541a07"
+          },
+          {
+            "case": "present-non-table-parent",
+            "policy_id": "repository:file:kd-dep-sim-no-version-string",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "7c86c6d87e2d81a73ca81321bee09a298925ee3c3266e2dbc58c06e5d2ff4d3d"
+          },
+          {
+            "case": "missing-parent",
+            "policy_id": "repository:file:kd-dep-sim-no-version-string",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "182dff275301ef241e1958b0e98b58eb1954646e6b17c33d4eda87dd03d0a4cf"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-dep-sim-no-version-string",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-TLS-FEATURE-ARRAY",
@@ -6079,19 +7009,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-tls-features"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9a61b1175e2415bcb27ddfefc41b75b33a317bf826f5d329d0abbf0fd3373611"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1b7e3e3820149fcdf8de2756a6dad6a032fc157a89158262bc623c501252acce"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8a357ff00cf8311ec68054bc5be677bb127f55c3e2bad1fccfbfe8636d8ee401"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5cce2a86c059d64553c7c445f10b4ca6c78d5b9262a16bb843bae6feb5a17823"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f93e45ed6d9dd36087f3cb4dab8c2ceecafec57489a51e4c8b411ce855cd0f1f"
+          },
+          {
+            "case": "reordered-array",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "daed8884504f4c4ebbb5c9bc4bc2486a8770cd5396a7d4b54d7fb109b83f2200"
+          },
+          {
+            "case": "missing-array-item",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a6ebd7eade0538b8d55361160aabac81e0063e5886446401fcdcb43cbcfe1c91"
+          },
+          {
+            "case": "same-count-duplicate",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8a3b8cc91e2a56ff4c9722983d58004eca533b60fc6d07859ff3558b123274ea"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
+        },
+        "conjunction_proof": "Exact complete typed array equality proves this precondition together with the original ordered-value assertion; the unchanged complete feature guard is the differential oracle."
       },
-      "blockers": [
-        {
-          "id": "KD-DEP-TLS-FEATURE-ARRAY",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-DEP-TLS-FEATURES",
@@ -6131,19 +7139,96 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-tls-features"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-TLS-FEATURES",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9a61b1175e2415bcb27ddfefc41b75b33a317bf826f5d329d0abbf0fd3373611"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1b7e3e3820149fcdf8de2756a6dad6a032fc157a89158262bc623c501252acce"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8a357ff00cf8311ec68054bc5be677bb127f55c3e2bad1fccfbfe8636d8ee401"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5cce2a86c059d64553c7c445f10b4ca6c78d5b9262a16bb843bae6feb5a17823"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f93e45ed6d9dd36087f3cb4dab8c2ceecafec57489a51e4c8b411ce855cd0f1f"
+          },
+          {
+            "case": "reordered-array",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "daed8884504f4c4ebbb5c9bc4bc2486a8770cd5396a7d4b54d7fb109b83f2200"
+          },
+          {
+            "case": "missing-array-item",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a6ebd7eade0538b8d55361160aabac81e0063e5886446401fcdcb43cbcfe1c91"
+          },
+          {
+            "case": "same-count-duplicate",
+            "policy_id": "repository:file:kd-dep-tls-features",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8a3b8cc91e2a56ff4c9722983d58004eca533b60fc6d07859ff3558b123274ea"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-TRANSPORT-KEYS",
@@ -6440,19 +7525,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-path-release"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-PATH-RELEASE",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-path-release",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-path-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "226d1a0044e0e87e55ba2918fe93587f48156e7df3b1fd9d9896691151817e32"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-path-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "54d33a9f0343cd84dc3a2fcbf382c58433d96f8ac8f0d8c9b83848a3436935ad"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-path-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9aa3e419508e46674979c70ca5d1d8cfa7a415b56243713bdaf1653d0ab0c8f5"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-PUBLIC-ARRAY",
@@ -6488,19 +7610,73 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-public-registry"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0dc150381ea51b254cfc8d33aefbd8e5649681c60733d463f1a2ffc21570ea47"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5d50f2db21516c3a752149f3b821e348f3ecf4894e4214c56c0491b8277bbbe7"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "51fca25b5359bf5cd6e4d98e57e764c9511ee28416468daa1c43c77aecb40908"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2b42ee518e28194ff57a1cd1eb16cc196c19f948ca24392107f3d66e0ac704f5"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a5b159a3e29bfee8ec2b43b4eb2c1e36f98d0991cc153f4a0dd21d551dc69a9c"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
+        },
+        "conjunction_proof": "The exact one-element string array proves the original array-type, length-one, and first-registry conjunction. The unchanged complete publication guard is the differential oracle."
       },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-PUBLIC-ARRAY",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-PUBLIC-COUNT",
@@ -6538,19 +7714,73 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-public-registry"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0dc150381ea51b254cfc8d33aefbd8e5649681c60733d463f1a2ffc21570ea47"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5d50f2db21516c3a752149f3b821e348f3ecf4894e4214c56c0491b8277bbbe7"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "51fca25b5359bf5cd6e4d98e57e764c9511ee28416468daa1c43c77aecb40908"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2b42ee518e28194ff57a1cd1eb16cc196c19f948ca24392107f3d66e0ac704f5"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a5b159a3e29bfee8ec2b43b4eb2c1e36f98d0991cc153f4a0dd21d551dc69a9c"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
+        },
+        "conjunction_proof": "The exact one-element string array proves the original array-type, length-one, and first-registry conjunction. The unchanged complete publication guard is the differential oracle."
       },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-PUBLIC-COUNT",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-PUBLIC-REGISTRY",
@@ -6587,19 +7817,72 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-public-registry"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-PUBLIC-REGISTRY",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0dc150381ea51b254cfc8d33aefbd8e5649681c60733d463f1a2ffc21570ea47"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5d50f2db21516c3a752149f3b821e348f3ecf4894e4214c56c0491b8277bbbe7"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "51fca25b5359bf5cd6e4d98e57e764c9511ee28416468daa1c43c77aecb40908"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2b42ee518e28194ff57a1cd1eb16cc196c19f948ca24392107f3d66e0ac704f5"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-kafka-driver-public-registry",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a5b159a3e29bfee8ec2b43b4eb2c1e36f98d0991cc153f4a0dd21d551dc69a9c"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-core-PATH-RELEASE",
@@ -6638,19 +7921,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-core-path-release"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-core-PATH-RELEASE",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-path-release",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-path-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "56c27beee8053cb6ecd5cd2e2ad54a9424c81ce136fe717ff9afb9d7f97d6390"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-path-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "45c08efe00329cab9030cfad7609210253000553209aa805fb6e1e757c683a25"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-path-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5b6f3d602cca1a6dc5bfcbf5779daaa27b162837d1116d56c1dc146d04ba6f8e"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-core-PUBLIC-ARRAY",
@@ -6686,19 +8006,73 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-core-public-registry"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bd9518725368fe74c75dc0eb7d919ebfd017bb89cf4e07d3c585f9305883f156"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5b2a197422b82653071b433ebd1a08ef00e7c274240407fb943a211f0eb7ba2a"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6bde3ce25c3769796a13ac766c3bb5d8c6638d09e83392c337faef99ddfa7415"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fe385c30fd0af1eb6be77740cff30604f7bd55d48870e746ce560555b4f6e0d2"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e46f4559b0c63a4831a93a6a47fc058d074bc28a11ac509d677be4adf5c390f4"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
+        },
+        "conjunction_proof": "The exact one-element string array proves the original array-type, length-one, and first-registry conjunction. The unchanged complete publication guard is the differential oracle."
       },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-core-PUBLIC-ARRAY",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-core-PUBLIC-COUNT",
@@ -6736,19 +8110,73 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-core-public-registry"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bd9518725368fe74c75dc0eb7d919ebfd017bb89cf4e07d3c585f9305883f156"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5b2a197422b82653071b433ebd1a08ef00e7c274240407fb943a211f0eb7ba2a"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6bde3ce25c3769796a13ac766c3bb5d8c6638d09e83392c337faef99ddfa7415"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fe385c30fd0af1eb6be77740cff30604f7bd55d48870e746ce560555b4f6e0d2"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e46f4559b0c63a4831a93a6a47fc058d074bc28a11ac509d677be4adf5c390f4"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
+        },
+        "conjunction_proof": "The exact one-element string array proves the original array-type, length-one, and first-registry conjunction. The unchanged complete publication guard is the differential oracle."
       },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-core-PUBLIC-COUNT",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-core-PUBLIC-REGISTRY",
@@ -6785,19 +8213,72 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-core-public-registry"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-core-PUBLIC-REGISTRY",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bd9518725368fe74c75dc0eb7d919ebfd017bb89cf4e07d3c585f9305883f156"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5b2a197422b82653071b433ebd1a08ef00e7c274240407fb943a211f0eb7ba2a"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6bde3ce25c3769796a13ac766c3bb5d8c6638d09e83392c337faef99ddfa7415"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fe385c30fd0af1eb6be77740cff30604f7bd55d48870e746ce560555b4f6e0d2"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-kafka-driver-core-public-registry",
+            "path": "crates/kafka-driver-core/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e46f4559b0c63a4831a93a6a47fc058d074bc28a11ac509d677be4adf5c390f4"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-probe-PRIVATE",
@@ -6834,19 +8315,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-probe-private"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-probe-PRIVATE",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-probe-private",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-probe-private",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5be1f6d6920ca27ebc9feabc390b04a2bab728a599020fda9e1fd87007275e96"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-probe-private",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "83dfa48a8779aa3cb9de8696a3f46385c939fa7890a0e28d628d19e57fac9cb9"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-probe-private",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2fada474c1c689f331d7cd0327d25e66478c52463848985ce0b5b22cbce0f9de"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-sim-PRIVATE",
@@ -6883,19 +8401,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-sim-private"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-sim-PRIVATE",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-sim-private",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "0c6e1d53bd243f7184967ac6a80aed24e984e4f2112c45bfd93a701116e4e8f1"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-sim-private",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "641237d4a91787e8b0c3a396810b049fb2dda01ac3421692dbeb8900da0aad4c"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-sim-private",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "312f1196d9fa545f2591c012fa1f53870b932b02ebce1053fd497b05df2014d5"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-sim-private",
+            "path": "crates/kafka-driver-sim/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e7d6e734b5a52ba32bfec0f38b5fcfc51844850fce18110c43218afefa030370"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-transport-PATH-RELEASE",
@@ -6934,19 +8489,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-transport-path-release"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-transport-PATH-RELEASE",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-path-release",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-path-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b48965d8d7db7b1baed3b93bdb77820eb3867d0734dc4acf39952c112e31d388"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-path-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "45fe46d8b114b16b5e9163217d67a7d136f94ef68c344831cff17c148d489aa1"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-path-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8fe4ebcefd3d20d85baefe6195d84cc78f4fd0cc7b4cb07359e1d65d6b14785c"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-transport-PUBLIC-ARRAY",
@@ -6982,19 +8574,73 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-transport-public-registry"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1a0308bd645e073fccb07e6894acd8efb4fbd7eef11aba1444b0809914113c0d"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "69f2c6ba295520a806c296a69838901713fac044e6d822dc0f62d52d4302376f"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "171d7292d8770426bc6a2041a50d311b3280e266f409bc6a12aca5561cb9f438"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3d65754e7a2af237fa2229483aa5845c1b508cd31da9e30b9da110ee0a51242c"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a4a7eb8e5a1827279ee63c2060a3c54ffef955fff77f47e553b2425e3b9372f3"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
+        },
+        "conjunction_proof": "The exact one-element string array proves the original array-type, length-one, and first-registry conjunction. The unchanged complete publication guard is the differential oracle."
       },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-transport-PUBLIC-ARRAY",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-transport-PUBLIC-COUNT",
@@ -7032,19 +8678,73 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-transport-public-registry"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1a0308bd645e073fccb07e6894acd8efb4fbd7eef11aba1444b0809914113c0d"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "69f2c6ba295520a806c296a69838901713fac044e6d822dc0f62d52d4302376f"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "171d7292d8770426bc6a2041a50d311b3280e266f409bc6a12aca5561cb9f438"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3d65754e7a2af237fa2229483aa5845c1b508cd31da9e30b9da110ee0a51242c"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a4a7eb8e5a1827279ee63c2060a3c54ffef955fff77f47e553b2425e3b9372f3"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
+        },
+        "conjunction_proof": "The exact one-element string array proves the original array-type, length-one, and first-registry conjunction. The unchanged complete publication guard is the differential oracle."
       },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-transport-PUBLIC-COUNT",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-driver-transport-PUBLIC-REGISTRY",
@@ -7081,19 +8781,72 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-driver-transport-public-registry"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-driver-transport-PUBLIC-REGISTRY",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1a0308bd645e073fccb07e6894acd8efb4fbd7eef11aba1444b0809914113c0d"
+          },
+          {
+            "case": "duplicate-entry",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "69f2c6ba295520a806c296a69838901713fac044e6d822dc0f62d52d4302376f"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "171d7292d8770426bc6a2041a50d311b3280e266f409bc6a12aca5561cb9f438"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3d65754e7a2af237fa2229483aa5845c1b508cd31da9e30b9da110ee0a51242c"
+          },
+          {
+            "case": "empty-array",
+            "policy_id": "repository:file:kd-dep-kafka-driver-transport-public-registry",
+            "path": "crates/kafka-driver-transport/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a4a7eb8e5a1827279ee63c2060a3c54ffef955fff77f47e553b2425e3b9372f3"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-wire-REGISTRY-VERSION",
@@ -7131,19 +8884,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-wire-registry-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-wire-REGISTRY-VERSION",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-wire-registry-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-wire-registry-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8b7cb9bcdfd3ca882ea7f783660fea2c36d8c5368a8ce50437e5d46fce4eb8fa"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-wire-registry-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3e6bcb3970e959239ba72135a42ddc3a4c2e6d061f457b4ccdcb6990276c8c4d"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-wire-registry-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9c85a8a8b5e68e036b435ae063b8cf1790ed5562959966e1dd66d7008bfa00c1"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -7191,19 +8981,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-wire-release"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-wire-RELEASE",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-wire-release",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-wire-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8b7cb9bcdfd3ca882ea7f783660fea2c36d8c5368a8ce50437e5d46fce4eb8fa"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-wire-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3e6bcb3970e959239ba72135a42ddc3a4c2e6d061f457b4ccdcb6990276c8c4d"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-wire-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9c85a8a8b5e68e036b435ae063b8cf1790ed5562959966e1dd66d7008bfa00c1"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-kafka-wire-core-REGISTRY-VERSION",
@@ -7241,19 +9068,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-wire-core-registry-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-wire-core-REGISTRY-VERSION",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-wire-core-registry-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-wire-core-registry-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "82ee13bba9ebd617a151b21f7bd0cfd7eb162f9d9e8e827bfd113f2bdd7759da"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-wire-core-registry-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a859ecd9af47c6f4270fc333b2f386e573c173725671173f4a173d7e3f5877da"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-wire-core-registry-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "7e3d2d387f3815c55fa376fc3ce5bbed0078ecf618826bd8faf69bb64d77d9ae"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -7301,19 +9165,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-kafka-wire-core-release"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-kafka-wire-core-RELEASE",
-          "cause": "The exact authored dependency assertion and its frozen differential fixtures remain to translate and qualify."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-dep-kafka-wire-core-release",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-dep-kafka-wire-core-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "82ee13bba9ebd617a151b21f7bd0cfd7eb162f9d9e8e827bfd113f2bdd7759da"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-dep-kafka-wire-core-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a859ecd9af47c6f4270fc333b2f386e573c173725671173f4a173d7e3f5877da"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-dep-kafka-wire-core-release",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "7e3d2d387f3815c55fa376fc3ce5bbed0078ecf618826bd8faf69bb64d77d9ae"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-fields-parity.json.gz",
+          "payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+          "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-FACADE-FUNCTION",
@@ -25288,11 +27189,11 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 381,
-    "implemented": 262,
+    "implemented": 297,
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 252,
+      "new engine capability": 287,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },

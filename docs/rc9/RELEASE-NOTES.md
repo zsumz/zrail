@@ -23,6 +23,10 @@ Implemented in the current branch:
   required subjects, complete quantities, and protected permission comparisons.
   Five Kafka-driver inventories have 130 differential fixtures (22 accepted,
   108 rejected), with byte-identical repeated frozen reports.
+- Typed immediate-field string prohibitions retain the legacy simulator version
+  projection. Thirty authored dependency-field policies have 151 differential
+  fixtures and link 35 further verified assertion IDs, including publication
+  conjunctions and exact feature order.
 - Scoped budgets, advisory soft thresholds, warning-only targets, bounded hard
   exceptions with required metadata, and exact authored baseline ratchets.
 - Effective facade modes, reasons, syntax quality, and complete violation lists

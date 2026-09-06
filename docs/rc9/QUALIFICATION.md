@@ -1,7 +1,7 @@
 # Reproducing the current rc9 evidence
 
-Release verdict: **blocked**. The latest metadata parity, canonical gate, and
-archive checkpoint is `db11ebe40f3ffe969939785b34f2acf880c6b79e`, based on the
+Release verdict: **blocked**. The latest manifest-field parity, canonical gate, and
+archive checkpoint is `c7ff4588f029169c10cce191be3bac3ceaec9e2d`, based on the
 exact audited rc8 commit. Earlier facade, size, and file evidence retains its
 own implementation identity below. None constitutes final versioned-tree release
 qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
@@ -386,3 +386,46 @@ only in zrail's own compiled tests. Runtime analysis executes no legacy checker.
 The minimal registry projection is fixed by six bound inputs and does not claim
 replacement of the separate registry-parser assertions. No consumer source or
 reviewed authority changed, and this is not full repository qualification.
+
+## Frozen manifest-field parity and archives
+
+At clean commit `c7ff4588f029169c10cce191be3bac3ceaec9e2d`, two trusted runs
+produced byte-identical JSON with SHA-256
+`bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6`.
+Thirty native policies accept all frozen field selections, with five manifests
+and the original registry bound. The 151 fixtures comprise 34 accepted and
+117 rejected outcomes, all agreeing with the original assertion bodies/helpers.
+The [manifest-field index](evidence/dependency-fields-index.json) links 35
+reviewed IDs, including explicit conjunction proofs for publication and feature
+array preconditions. The native typed-field projection has separate strict
+schema, adversarial, coverage, and protected-diff tests.
+
+The same clean commit passed structure, formatting, strict workspace lint,
+**1,501 tests** (zero failures, seven explicit ignores), and rustdoc. Complete
+self-analysis covered 944 Rust files, 1,511 base contexts, 1,221,288 projection
+work, and zero unresolved items. Only `LOCK-008`, `LOCK-026`, `LOCK-028`, and
+`LOCK-030` stopped `scripts/check`; archive and cleanliness stages were not
+reached within that command. Standalone `scripts/package-check` then passed
+on the same clean tree, verifying the three extracted package archives. Their
+version remains rc8; these are experimental qualification outputs, not rc9 assets.
+
+After the prefetched snapshot and external build setup above:
+
+```sh
+python3 scripts/rc9-dependency-field-policies /absolute/snapshots /absolute/new-fields.fragment.toml
+diff -u docs/rc9/policies/kafka-driver.dependency-fields.fragment.toml /absolute/new-fields.fragment.toml
+cargo test --locked --offline -p zrail-testkit --test repository_documents
+cargo test --locked --offline -p zrail-core --lib files
+cargo test --locked --offline -p zrail-rust --lib frozen_dependency_fields_agree
+export ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots
+export ZRAIL_RC9_DEPENDENCY_FIELDS_REPORT=/absolute/evidence/new-dependency-fields-parity.json
+cargo test --locked --offline -p zrail-rust --lib qualify_all_frozen_kafka_driver_dependency_fields -- --ignored
+python3 scripts/rc9-inventory-check
+scripts/check
+scripts/package-check
+```
+
+Repeat with a second fresh report path on the same clean revision. The trusted
+qualification code shares existing file-analysis isolation and input binding;
+none of its legacy evaluator bodies execute during stock zrail analysis. Full
+downstream Cargo/Rust and execution qualification remains outstanding.
