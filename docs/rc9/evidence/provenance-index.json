@@ -26,5 +26,17 @@
     "artifact": "docs/rc9/evidence/lock-packages-index.json",
     "same_revision": false
   },
-  "command": "cargo test --locked --offline -p zrail-rust qualify_all_frozen_kafka_driver_provenance_documents -- --ignored"
+  "command": "cargo test --locked --offline -p zrail-rust qualify_all_frozen_kafka_driver_provenance_documents -- --ignored",
+  "logs": [
+    {
+      "artifact": "provenance-parity.log.gz",
+      "payload_sha256": "015bb2205a9dfac38e27e409a185ede0fcd80d8cd4a364747ae3afc40afa7ae5",
+      "compressed_sha256": "c670f1b993ac59dd608b530a11cfdfee786ced66db3f5ef31df7785df178186b"
+    },
+    {
+      "artifact": "provenance-parity-repeat.log.gz",
+      "payload_sha256": "ff91550e78081dfb8d6782b6cbc147d5dd8038a21ad0664aba07610803c6799a",
+      "compressed_sha256": "659210f23c2c5fd65a1e2e914eb84796f844f9348b8dd29cb3d0e591c810a401"
+    }
+  ]
 }
