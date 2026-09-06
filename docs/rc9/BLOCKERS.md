@@ -2,7 +2,9 @@
 
 Release verdict: **blocked**. This list names each reviewed but unverified
 assertion instance. It does not close the additional discovery blockers
-`RC9-INVENTORY-KD`, `RC9-INVENTORY-KF`, and `RC9-INVENTORY-RF`.
+`RC9-INVENTORY-KD`, `RC9-INVENTORY-KF`, `RC9-INVENTORY-RF`, and
+`RC9-INVENTORY-FALLIBLE-CALLS`. The census must add `.expect`/`.unwrap` failure
+sites, including the raw-process detector fixture at `process_scenarios.rs:406`.
 
 All unreviewed candidate IDs are enumerated in `census.json.gz`. Non-Rust
 files and opaque or invalid syntax remain explicit review work.
@@ -81,11 +83,17 @@ files and opaque or invalid syntax remain explicit review work.
 | `KF-SCAN-MINIMUM` | Repository-file assertions and exact source-selection fixtures are required; passing the frozen scan does not supply a replacement guard. |
 | `KF-SCAN-ROOTS` | Native repository.roots already checks directory presence; the frozen positive/negative source-selection qualification still needs intended-diagnostic linkage. |
 | `RF-FACADE-LIVE` | Rafter permits data declarations; wiring modes would change policy. Exact raw-line or reviewed structural normalization remains open. |
-| `RF-PROCESS-ALLOWLIST` | Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified. |
-| `RF-PROCESS-CRATE-ALIASES` | Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified. |
-| `RF-PROCESS-EXACT` | Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified. |
-| `RF-PROCESS-MACROS` | Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified. |
-| `RF-PROCESS-SPELLING` | Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified. |
+| `RF-PROCESS-ALLOWLIST` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
+| `RF-PROCESS-CRATE-ALIASES` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
+| `RF-PROCESS-DETECTOR-CRATE-ALIASES` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-DETECTOR-MACROS` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-DETECTOR-ROOT-IMPORT` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-EXACT` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
+| `RF-PROCESS-MACROS` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
+| `RF-PROCESS-NORMALIZE-IMPORT-SELF` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-NORMALIZE-SUPER` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-PARSE` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-SPELLING` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
 | `RF-TEST-FACADE-LIVE` | Rafter permits data declarations; wiring modes would change policy. Exact raw-line or reviewed structural normalization remains open. |
 | `RF-WIRE-ALIAS-ENTRY` | The same final assertion combines expression-shape and raw-text checks; this independent raw-text branch also needs replacement. |
 | `RF-WIRE-ALIAS-MEMBERSHIP` | The same final assertion combines expression-shape and raw-text checks; this independent raw-text branch also needs replacement. |

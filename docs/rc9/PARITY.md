@@ -61,7 +61,7 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 ## Machine-readable audit state
 
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **568 reviewed assertion instances**. The
+contains **574 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
 record 9,792 files and 72,155 syntax candidates. Every tracked path is included,
@@ -73,7 +73,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 | --- | ---: | ---: | ---: | ---: | ---: |
 | kafka-driver | 826 | 772 | 372 | 327 | 320 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
-| Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
+| Rafter | 2,158 | 1,897 | 21 | 0 | 0 |
 
 The **484 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
@@ -521,3 +521,29 @@ The shared helper's required typed TOML fields, supported schema, and every
 fallible directory/entry/type observation are recorded separately. Its remaining
 invocation expansion and the wider non-Rust review stay open; accounting for the
 visible failure/assertion sites does not complete the repository inventory.
+
+
+## Raw-process collector review expansion
+
+Six additional `RF-PROCESS-*` records identify the strict parser precondition,
+two normalization expectations, and three crate-alias/macro/import detector
+assertions. The ledger now has 574 reviewed assertions, 500 implemented, and
+484 verified. Rafter's five existing live predicates now describe the exact
+collector and bind its helper source hashes. The eighteen required tuples remain
+unchanged, and all eleven raw-process assertions remain blockers.
+
+Rafter's `Expression` label includes ordinary `syn::Path` visits, not only
+`ExprPath` or direct calls. Imports flatten groups, globs and source-side renames;
+rename targets and visibility paths do not participate. Normalization uses the
+exact declared module owner and strips raw-identifier prefixes, while a separate
+predicate compares written and normalized segments. The macro ban flattens
+identifiers across nested token groups, ignores punctuation and literals, and
+looks for adjacent `execution`, `process` identifiers. Those semantics differ
+from both expansion provenance and an authored method-call inventory.
+
+`RC9-INVENTORY-FALLIBLE-CALLS` records a discovery gap: the existing census does
+not identify `.expect`/`.unwrap` preconditions such as parsing the raw detector
+fixture at `process_scenarios.rs:406`. Extend the trusted census before claiming
+complete assertion coverage. Remaining process-format, lifecycle, reaper,
+launcher-selection and shared module-graph assertions also require review; this
+source file does not receive a whole-file disposition.

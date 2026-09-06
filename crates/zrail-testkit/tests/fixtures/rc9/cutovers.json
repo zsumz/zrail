@@ -2873,13 +2873,20 @@
           "reviewed_assertion_ids": [
             "RF-PROCESS-ALLOWLIST",
             "RF-PROCESS-CRATE-ALIASES",
+            "RF-PROCESS-DETECTOR-CRATE-ALIASES",
+            "RF-PROCESS-DETECTOR-MACROS",
+            "RF-PROCESS-DETECTOR-ROOT-IMPORT",
             "RF-PROCESS-EXACT",
             "RF-PROCESS-MACROS",
+            "RF-PROCESS-NORMALIZE-IMPORT-SELF",
+            "RF-PROCESS-NORMALIZE-SUPER",
+            "RF-PROCESS-PARSE",
             "RF-PROCESS-SPELLING"
           ],
           "remaining_candidate_ids": "All unreviewed or partly expanded candidates at this file record in census.json.gz",
           "removable_now": false,
-          "replacement_policy_ids": []
+          "replacement_policy_ids": [],
+          "assertion_review_notes": "The five raw-process live predicates, strict parser precondition, two normalization fixtures and three indirection detector assertions are reviewed. Other format/lifecycle/launcher assertions, helper preconditions and the fixture expect call remain discovery blockers; this file is not classified wholesale."
         },
         {
           "path": "crates/rafter/tests/invariant_tooling_architecture_guard/receipt_scenarios.rs",

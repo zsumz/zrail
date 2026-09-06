@@ -34091,14 +34091,51 @@
       },
       "intended_property": "Every file/context/canonical-path tuple belongs to the reviewed inventory.",
       "selection": {
-        "root": "crates/rafter-invariants/src",
-        "exclude": "execution/process/ subtree",
-        "test_context": "legacy invariant_rust_files plus declared module graph; no source execution"
+        "roots": [
+          "crates/rafter-invariant-test-macros/src",
+          "crates/rafter-invariant-test/src",
+          "crates/rafter-invariants/src"
+        ],
+        "traversal": "Original /usr/bin/git ls-files -z --cached --others --exclude-standard -- roots; .rs byte suffix; path.is_file; sorted PathBuf list.",
+        "include_prefix": "crates/rafter-invariants/src/",
+        "exclude_prefix": "crates/rafter-invariants/src/execution/process/",
+        "world": "All authored cfg branches, including declared tests. Physical file enumeration is independent of module mounts.",
+        "module_identity": "Exact original declared graph rooted at invariants src/lib.rs and src/main.rs; no filename fallback for unmounted inputs."
       },
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "tuple membership",
-        "identity": "legacy bounded module-path normalization; import/expression contexts distinct"
+        "identity": "legacy bounded module-path normalization; import/expression contexts distinct",
+        "collector": {
+          "helper_sources": [
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
+              "sha256": "42c8fe5dac489ee534efabce1e0c6b0b1385b4fbe0fc98a0dbf4cd2725e5ff8d"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
+              "sha256": "20284f3238d25bcef4a4e8e6eff8adb697cc343f63c06d07542e250fa139db50"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
+              "sha256": "71037db27158a236128ff525af3dcaa8cd0cd4e36edd05f82b81a89a6d08e061"
+            },
+            {
+              "path": "crates/rafter/tests/support/invariant_tooling.rs",
+              "sha256": "5ef2cfb29c15ff0303d445c98c79fc5453934b4494a64b71ef5d3d0a1150e643"
+            }
+          ],
+          "imports": "Flatten UseTree leaves, including grouped paths, source-side renames and glob markers; do not visit use attributes or visibility. Rename target names are omitted.",
+          "expressions": "Every other visited syn::Path, including type, attribute, macro-invocation and generic paths; visibility paths are skipped. This is not an ExprPath-only or direct-call claim.",
+          "inline_modules": "Push the authored module identifier while visiting inline contents; external modules use the declared file owner.",
+          "normalization": "Strip r# for normalization; crate and rafter_invariants become crate; self extends the exact module owner, optionally popping subsequent super; leading super pops owners. Unrooted paths and over-climbing super return None. Import trailing self is removed.",
+          "process_selection": "Include Import crate itself and normalized crate::execution with at most two segments or third segment process. Do not include a bare crate expression or other execution subdomains.",
+          "spelling": "Compare original written segment vector to normalized vector for every selected occurrence. Semantic resolution is not claimed; alias targets are not resolved.",
+          "macro_occurrences": "Recursively inspect tokens for crate/rafter_invariants/self/super roots and colon-separated or grouped paths, preserving the original token scanner semantics; macro invocation paths are also ordinary visited paths.",
+          "macro_ban": "Recursively flatten identifiers, strip r#, ignore punctuation and literals, and reject a macro token group containing adjacent identifiers execution,process. Macro definitions and invocations both participate.",
+          "crate_alias_ban": "Every extern crate self or extern crate rafter_invariants declaration records its rename or the literal self when no rename is authored.",
+          "quantities": "Exact physical file/context/normalized-path tuples; no receiver identity, control-flow or execution claim."
+        }
       },
       "required_cardinality": {
         "unexpected": 0
@@ -34116,7 +34153,7 @@
       "blockers": [
         {
           "id": "RF-PROCESS-ALLOWLIST",
-          "cause": "Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified."
+          "cause": "Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient."
         }
       ]
     },
@@ -34136,16 +34173,53 @@
         "syntax_sha256": "fd2eb7ae2cb6f4f4ee41515cfc6dc4241c9c2faf2c24523ae9ec3ed2aefde4b3",
         "instance": null
       },
-      "intended_property": "No authored crate-root aliases occur.",
+      "intended_property": "No extern crate self or extern crate rafter_invariants declaration may introduce crate-root authority; import-root aliases are independently rejected by the exact path inventory.",
       "selection": {
-        "root": "crates/rafter-invariants/src",
-        "exclude": "execution/process/ subtree",
-        "test_context": "legacy invariant_rust_files plus declared module graph; no source execution"
+        "roots": [
+          "crates/rafter-invariant-test-macros/src",
+          "crates/rafter-invariant-test/src",
+          "crates/rafter-invariants/src"
+        ],
+        "traversal": "Original /usr/bin/git ls-files -z --cached --others --exclude-standard -- roots; .rs byte suffix; path.is_file; sorted PathBuf list.",
+        "include_prefix": "crates/rafter-invariants/src/",
+        "exclude_prefix": "crates/rafter-invariants/src/execution/process/",
+        "world": "All authored cfg branches, including declared tests. Physical file enumeration is independent of module mounts.",
+        "module_identity": "Exact original declared graph rooted at invariants src/lib.rs and src/main.rs; no filename fallback for unmounted inputs."
       },
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "crate_root_aliases",
-        "identity": "legacy bounded module-path normalization; import/expression contexts distinct"
+        "identity": "legacy bounded module-path normalization; import/expression contexts distinct",
+        "collector": {
+          "helper_sources": [
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
+              "sha256": "42c8fe5dac489ee534efabce1e0c6b0b1385b4fbe0fc98a0dbf4cd2725e5ff8d"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
+              "sha256": "20284f3238d25bcef4a4e8e6eff8adb697cc343f63c06d07542e250fa139db50"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
+              "sha256": "71037db27158a236128ff525af3dcaa8cd0cd4e36edd05f82b81a89a6d08e061"
+            },
+            {
+              "path": "crates/rafter/tests/support/invariant_tooling.rs",
+              "sha256": "5ef2cfb29c15ff0303d445c98c79fc5453934b4494a64b71ef5d3d0a1150e643"
+            }
+          ],
+          "imports": "Flatten UseTree leaves, including grouped paths, source-side renames and glob markers; do not visit use attributes or visibility. Rename target names are omitted.",
+          "expressions": "Every other visited syn::Path, including type, attribute, macro-invocation and generic paths; visibility paths are skipped. This is not an ExprPath-only or direct-call claim.",
+          "inline_modules": "Push the authored module identifier while visiting inline contents; external modules use the declared file owner.",
+          "normalization": "Strip r# for normalization; crate and rafter_invariants become crate; self extends the exact module owner, optionally popping subsequent super; leading super pops owners. Unrooted paths and over-climbing super return None. Import trailing self is removed.",
+          "process_selection": "Include Import crate itself and normalized crate::execution with at most two segments or third segment process. Do not include a bare crate expression or other execution subdomains.",
+          "spelling": "Compare original written segment vector to normalized vector for every selected occurrence. Semantic resolution is not claimed; alias targets are not resolved.",
+          "macro_occurrences": "Recursively inspect tokens for crate/rafter_invariants/self/super roots and colon-separated or grouped paths, preserving the original token scanner semantics; macro invocation paths are also ordinary visited paths.",
+          "macro_ban": "Recursively flatten identifiers, strip r#, ignore punctuation and literals, and reject a macro token group containing adjacent identifiers execution,process. Macro definitions and invocations both participate.",
+          "crate_alias_ban": "Every extern crate self or extern crate rafter_invariants declaration records its rename or the literal self when no rename is authored.",
+          "quantities": "Exact physical file/context/normalized-path tuples; no receiver identity, control-flow or execution claim."
+        }
       },
       "required_cardinality": {
         "count": 0
@@ -34163,7 +34237,7 @@
       "blockers": [
         {
           "id": "RF-PROCESS-CRATE-ALIASES",
-          "cause": "Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified."
+          "cause": "Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient."
         }
       ]
     },
@@ -34185,14 +34259,51 @@
       },
       "intended_property": "Every reviewed raw-process file/context/path tuple occurs exactly once, with no extra tuple.",
       "selection": {
-        "root": "crates/rafter-invariants/src",
-        "exclude": "execution/process/ subtree",
-        "test_context": "legacy invariant_rust_files plus declared module graph; no source execution"
+        "roots": [
+          "crates/rafter-invariant-test-macros/src",
+          "crates/rafter-invariant-test/src",
+          "crates/rafter-invariants/src"
+        ],
+        "traversal": "Original /usr/bin/git ls-files -z --cached --others --exclude-standard -- roots; .rs byte suffix; path.is_file; sorted PathBuf list.",
+        "include_prefix": "crates/rafter-invariants/src/",
+        "exclude_prefix": "crates/rafter-invariants/src/execution/process/",
+        "world": "All authored cfg branches, including declared tests. Physical file enumeration is independent of module mounts.",
+        "module_identity": "Exact original declared graph rooted at invariants src/lib.rs and src/main.rs; no filename fallback for unmounted inputs."
       },
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "exact tuple/count map",
-        "identity": "legacy bounded module-path normalization; import/expression contexts distinct"
+        "identity": "legacy bounded module-path normalization; import/expression contexts distinct",
+        "collector": {
+          "helper_sources": [
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
+              "sha256": "42c8fe5dac489ee534efabce1e0c6b0b1385b4fbe0fc98a0dbf4cd2725e5ff8d"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
+              "sha256": "20284f3238d25bcef4a4e8e6eff8adb697cc343f63c06d07542e250fa139db50"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
+              "sha256": "71037db27158a236128ff525af3dcaa8cd0cd4e36edd05f82b81a89a6d08e061"
+            },
+            {
+              "path": "crates/rafter/tests/support/invariant_tooling.rs",
+              "sha256": "5ef2cfb29c15ff0303d445c98c79fc5453934b4494a64b71ef5d3d0a1150e643"
+            }
+          ],
+          "imports": "Flatten UseTree leaves, including grouped paths, source-side renames and glob markers; do not visit use attributes or visibility. Rename target names are omitted.",
+          "expressions": "Every other visited syn::Path, including type, attribute, macro-invocation and generic paths; visibility paths are skipped. This is not an ExprPath-only or direct-call claim.",
+          "inline_modules": "Push the authored module identifier while visiting inline contents; external modules use the declared file owner.",
+          "normalization": "Strip r# for normalization; crate and rafter_invariants become crate; self extends the exact module owner, optionally popping subsequent super; leading super pops owners. Unrooted paths and over-climbing super return None. Import trailing self is removed.",
+          "process_selection": "Include Import crate itself and normalized crate::execution with at most two segments or third segment process. Do not include a bare crate expression or other execution subdomains.",
+          "spelling": "Compare original written segment vector to normalized vector for every selected occurrence. Semantic resolution is not claimed; alias targets are not resolved.",
+          "macro_occurrences": "Recursively inspect tokens for crate/rafter_invariants/self/super roots and colon-separated or grouped paths, preserving the original token scanner semantics; macro invocation paths are also ordinary visited paths.",
+          "macro_ban": "Recursively flatten identifiers, strip r#, ignore punctuation and literals, and reject a macro token group containing adjacent identifiers execution,process. Macro definitions and invocations both participate.",
+          "crate_alias_ban": "Every extern crate self or extern crate rafter_invariants declaration records its rename or the literal self when no rename is authored.",
+          "quantities": "Exact physical file/context/normalized-path tuples; no receiver identity, control-flow or execution claim."
+        }
       },
       "required_cardinality": {
         "exact_map": [
@@ -34319,7 +34430,7 @@
       "blockers": [
         {
           "id": "RF-PROCESS-EXACT",
-          "cause": "Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified."
+          "cause": "Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient."
         }
       ]
     },
@@ -34341,14 +34452,51 @@
       },
       "intended_property": "Raw process authority is not hidden in macro token bodies.",
       "selection": {
-        "root": "crates/rafter-invariants/src",
-        "exclude": "execution/process/ subtree",
-        "test_context": "legacy invariant_rust_files plus declared module graph; no source execution"
+        "roots": [
+          "crates/rafter-invariant-test-macros/src",
+          "crates/rafter-invariant-test/src",
+          "crates/rafter-invariants/src"
+        ],
+        "traversal": "Original /usr/bin/git ls-files -z --cached --others --exclude-standard -- roots; .rs byte suffix; path.is_file; sorted PathBuf list.",
+        "include_prefix": "crates/rafter-invariants/src/",
+        "exclude_prefix": "crates/rafter-invariants/src/execution/process/",
+        "world": "All authored cfg branches, including declared tests. Physical file enumeration is independent of module mounts.",
+        "module_identity": "Exact original declared graph rooted at invariants src/lib.rs and src/main.rs; no filename fallback for unmounted inputs."
       },
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "process_macro_tokens",
-        "identity": "legacy bounded module-path normalization; import/expression contexts distinct"
+        "identity": "legacy bounded module-path normalization; import/expression contexts distinct",
+        "collector": {
+          "helper_sources": [
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
+              "sha256": "42c8fe5dac489ee534efabce1e0c6b0b1385b4fbe0fc98a0dbf4cd2725e5ff8d"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
+              "sha256": "20284f3238d25bcef4a4e8e6eff8adb697cc343f63c06d07542e250fa139db50"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
+              "sha256": "71037db27158a236128ff525af3dcaa8cd0cd4e36edd05f82b81a89a6d08e061"
+            },
+            {
+              "path": "crates/rafter/tests/support/invariant_tooling.rs",
+              "sha256": "5ef2cfb29c15ff0303d445c98c79fc5453934b4494a64b71ef5d3d0a1150e643"
+            }
+          ],
+          "imports": "Flatten UseTree leaves, including grouped paths, source-side renames and glob markers; do not visit use attributes or visibility. Rename target names are omitted.",
+          "expressions": "Every other visited syn::Path, including type, attribute, macro-invocation and generic paths; visibility paths are skipped. This is not an ExprPath-only or direct-call claim.",
+          "inline_modules": "Push the authored module identifier while visiting inline contents; external modules use the declared file owner.",
+          "normalization": "Strip r# for normalization; crate and rafter_invariants become crate; self extends the exact module owner, optionally popping subsequent super; leading super pops owners. Unrooted paths and over-climbing super return None. Import trailing self is removed.",
+          "process_selection": "Include Import crate itself and normalized crate::execution with at most two segments or third segment process. Do not include a bare crate expression or other execution subdomains.",
+          "spelling": "Compare original written segment vector to normalized vector for every selected occurrence. Semantic resolution is not claimed; alias targets are not resolved.",
+          "macro_occurrences": "Recursively inspect tokens for crate/rafter_invariants/self/super roots and colon-separated or grouped paths, preserving the original token scanner semantics; macro invocation paths are also ordinary visited paths.",
+          "macro_ban": "Recursively flatten identifiers, strip r#, ignore punctuation and literals, and reject a macro token group containing adjacent identifiers execution,process. Macro definitions and invocations both participate.",
+          "crate_alias_ban": "Every extern crate self or extern crate rafter_invariants declaration records its rename or the literal self when no rename is authored.",
+          "quantities": "Exact physical file/context/normalized-path tuples; no receiver identity, control-flow or execution claim."
+        }
       },
       "required_cardinality": {
         "count": 0
@@ -34366,7 +34514,7 @@
       "blockers": [
         {
           "id": "RF-PROCESS-MACROS",
-          "cause": "Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified."
+          "cause": "Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient."
         }
       ]
     },
@@ -34388,14 +34536,51 @@
       },
       "intended_property": "Every selected occurrence uses the canonical written crate::execution::process spelling.",
       "selection": {
-        "root": "crates/rafter-invariants/src",
-        "exclude": "execution/process/ subtree",
-        "test_context": "legacy invariant_rust_files plus declared module graph; no source execution"
+        "roots": [
+          "crates/rafter-invariant-test-macros/src",
+          "crates/rafter-invariant-test/src",
+          "crates/rafter-invariants/src"
+        ],
+        "traversal": "Original /usr/bin/git ls-files -z --cached --others --exclude-standard -- roots; .rs byte suffix; path.is_file; sorted PathBuf list.",
+        "include_prefix": "crates/rafter-invariants/src/",
+        "exclude_prefix": "crates/rafter-invariants/src/execution/process/",
+        "world": "All authored cfg branches, including declared tests. Physical file enumeration is independent of module mounts.",
+        "module_identity": "Exact original declared graph rooted at invariants src/lib.rs and src/main.rs; no filename fallback for unmounted inputs."
       },
       "context": "Trusted detector test execution; analyzed source context is specified by selection. No source cfg branch is discarded unless the legacy selector does so.",
       "matching_semantics": {
         "kind": "written equals module-normalized path",
-        "identity": "legacy bounded module-path normalization; import/expression contexts distinct"
+        "identity": "legacy bounded module-path normalization; import/expression contexts distinct",
+        "collector": {
+          "helper_sources": [
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
+              "sha256": "42c8fe5dac489ee534efabce1e0c6b0b1385b4fbe0fc98a0dbf4cd2725e5ff8d"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
+              "sha256": "20284f3238d25bcef4a4e8e6eff8adb697cc343f63c06d07542e250fa139db50"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
+              "sha256": "71037db27158a236128ff525af3dcaa8cd0cd4e36edd05f82b81a89a6d08e061"
+            },
+            {
+              "path": "crates/rafter/tests/support/invariant_tooling.rs",
+              "sha256": "5ef2cfb29c15ff0303d445c98c79fc5453934b4494a64b71ef5d3d0a1150e643"
+            }
+          ],
+          "imports": "Flatten UseTree leaves, including grouped paths, source-side renames and glob markers; do not visit use attributes or visibility. Rename target names are omitted.",
+          "expressions": "Every other visited syn::Path, including type, attribute, macro-invocation and generic paths; visibility paths are skipped. This is not an ExprPath-only or direct-call claim.",
+          "inline_modules": "Push the authored module identifier while visiting inline contents; external modules use the declared file owner.",
+          "normalization": "Strip r# for normalization; crate and rafter_invariants become crate; self extends the exact module owner, optionally popping subsequent super; leading super pops owners. Unrooted paths and over-climbing super return None. Import trailing self is removed.",
+          "process_selection": "Include Import crate itself and normalized crate::execution with at most two segments or third segment process. Do not include a bare crate expression or other execution subdomains.",
+          "spelling": "Compare original written segment vector to normalized vector for every selected occurrence. Semantic resolution is not claimed; alias targets are not resolved.",
+          "macro_occurrences": "Recursively inspect tokens for crate/rafter_invariants/self/super roots and colon-separated or grouped paths, preserving the original token scanner semantics; macro invocation paths are also ordinary visited paths.",
+          "macro_ban": "Recursively flatten identifiers, strip r#, ignore punctuation and literals, and reject a macro token group containing adjacent identifiers execution,process. Macro definitions and invocations both participate.",
+          "crate_alias_ban": "Every extern crate self or extern crate rafter_invariants declaration records its rename or the literal self when no rename is authored.",
+          "quantities": "Exact physical file/context/normalized-path tuples; no receiver identity, control-flow or execution claim."
+        }
       },
       "required_cardinality": {
         "violations": 0
@@ -34413,7 +34598,7 @@
       "blockers": [
         {
           "id": "RF-PROCESS-SPELLING",
-          "cause": "Exact contextual inventory and non-aliasing predicates are not implemented or differentially verified."
+          "cause": "Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient."
         }
       ]
     },
@@ -50805,10 +50990,471 @@
           "cause": "Execute the exact frozen detector fixture and compare the structural observations, including original order and cardinality; a generic nonzero zrail status is insufficient."
         }
       ]
+    },
+    {
+      "id": "RF-PROCESS-PARSE",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "source": {
+        "path": "crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs",
+        "file_sha256": "19f19167311158f3469be3834ca6ef13857275a2fe902331546c6366313e08e9",
+        "candidate_id": "zsumz/rafter:crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs:125:37:failure-macro",
+        "instance": null,
+        "line": 125,
+        "column": 37,
+        "function": [
+          "raw_process_execution_has_exact_non_aliasable_callsites"
+        ],
+        "syntax_sha256": "ce713341add7f51e008a33bcd5d417ae03ab1c311ba2de796a350eda406807e0"
+      },
+      "intended_property": "Every selected raw-process inventory input parses as a complete Rust item file.",
+      "selection": {
+        "roots": [
+          "crates/rafter-invariant-test-macros/src",
+          "crates/rafter-invariant-test/src",
+          "crates/rafter-invariants/src"
+        ],
+        "traversal": "Original /usr/bin/git ls-files -z --cached --others --exclude-standard -- roots; .rs byte suffix; path.is_file; sorted PathBuf list.",
+        "include_prefix": "crates/rafter-invariants/src/",
+        "exclude_prefix": "crates/rafter-invariants/src/execution/process/",
+        "world": "All authored cfg branches, including declared tests. Physical file enumeration is independent of module mounts.",
+        "module_identity": "Exact original declared graph rooted at invariants src/lib.rs and src/main.rs; no filename fallback for unmounted inputs."
+      },
+      "context": "Architecture collector/parser test; no process, Raft behavior or receipt verification executes.",
+      "matching_semantics": {
+        "kind": "syn::parse_file required success",
+        "expression_fallback": "forbidden",
+        "helper_sources": [
+          {
+            "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
+            "sha256": "42c8fe5dac489ee534efabce1e0c6b0b1385b4fbe0fc98a0dbf4cd2725e5ff8d"
+          },
+          {
+            "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
+            "sha256": "20284f3238d25bcef4a4e8e6eff8adb697cc343f63c06d07542e250fa139db50"
+          },
+          {
+            "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
+            "sha256": "71037db27158a236128ff525af3dcaa8cd0cd4e36edd05f82b81a89a6d08e061"
+          },
+          {
+            "path": "crates/rafter/tests/support/invariant_tooling.rs",
+            "sha256": "5ef2cfb29c15ff0303d445c98c79fc5453934b4494a64b71ef5d3d0a1150e643"
+          }
+        ]
+      },
+      "required_cardinality": {
+        "successful_parse": "every selected input"
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "RF-PROCESS-PARSE",
+          "cause": "Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies."
+        }
+      ]
+    },
+    {
+      "id": "RF-PROCESS-NORMALIZE-SUPER",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "source": {
+        "path": "crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs",
+        "file_sha256": "19f19167311158f3469be3834ca6ef13857275a2fe902331546c6366313e08e9",
+        "candidate_id": "zsumz/rafter:crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs:358:5:assertion-macro",
+        "instance": null,
+        "line": 358,
+        "column": 5,
+        "function": [
+          "architecture_paths_normalize_relative_and_module_alias_forms"
+        ],
+        "syntax_sha256": "25081e15efa8af9d65f5481a1a46221b94ca20a1ab7de15ad210214020de1b3f"
+      },
+      "intended_property": "The exact relative path climbs three declared module levels and preserves the process suffix.",
+      "selection": {
+        "module": [
+          "producer",
+          "process",
+          "adapter"
+        ],
+        "written": [
+          "super",
+          "super",
+          "super",
+          "execution",
+          "process",
+          "run"
+        ],
+        "context": "Expression"
+      },
+      "context": "Architecture collector/parser test; no process, Raft behavior or receipt verification executes.",
+      "matching_semantics": {
+        "kind": "bounded module-path normalization",
+        "helper_sources": [
+          {
+            "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
+            "sha256": "42c8fe5dac489ee534efabce1e0c6b0b1385b4fbe0fc98a0dbf4cd2725e5ff8d"
+          },
+          {
+            "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
+            "sha256": "20284f3238d25bcef4a4e8e6eff8adb697cc343f63c06d07542e250fa139db50"
+          },
+          {
+            "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
+            "sha256": "71037db27158a236128ff525af3dcaa8cd0cd4e36edd05f82b81a89a6d08e061"
+          },
+          {
+            "path": "crates/rafter/tests/support/invariant_tooling.rs",
+            "sha256": "5ef2cfb29c15ff0303d445c98c79fc5453934b4494a64b71ef5d3d0a1150e643"
+          }
+        ]
+      },
+      "required_cardinality": {
+        "exact": [
+          "crate",
+          "execution",
+          "process",
+          "run"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "RF-PROCESS-NORMALIZE-SUPER",
+          "cause": "Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies."
+        }
+      ]
+    },
+    {
+      "id": "RF-PROCESS-NORMALIZE-IMPORT-SELF",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "source": {
+        "path": "crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs",
+        "file_sha256": "19f19167311158f3469be3834ca6ef13857275a2fe902331546c6366313e08e9",
+        "candidate_id": "zsumz/rafter:crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs:378:5:assertion-macro",
+        "instance": null,
+        "line": 378,
+        "column": 5,
+        "function": [
+          "architecture_paths_normalize_relative_and_module_alias_forms"
+        ],
+        "syntax_sha256": "0a5a3264637771d94110584d786d1c14118f08af0f0fc2772498d96da746bedc"
+      },
+      "intended_property": "A trailing import self selects the containing canonical module.",
+      "selection": {
+        "module": [
+          "producer",
+          "process",
+          "adapter"
+        ],
+        "written": [
+          "crate",
+          "execution",
+          "self"
+        ],
+        "context": "Import"
+      },
+      "context": "Architecture collector/parser test; no process, Raft behavior or receipt verification executes.",
+      "matching_semantics": {
+        "kind": "bounded module-path normalization",
+        "helper_sources": [
+          {
+            "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
+            "sha256": "42c8fe5dac489ee534efabce1e0c6b0b1385b4fbe0fc98a0dbf4cd2725e5ff8d"
+          },
+          {
+            "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
+            "sha256": "20284f3238d25bcef4a4e8e6eff8adb697cc343f63c06d07542e250fa139db50"
+          },
+          {
+            "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
+            "sha256": "71037db27158a236128ff525af3dcaa8cd0cd4e36edd05f82b81a89a6d08e061"
+          },
+          {
+            "path": "crates/rafter/tests/support/invariant_tooling.rs",
+            "sha256": "5ef2cfb29c15ff0303d445c98c79fc5453934b4494a64b71ef5d3d0a1150e643"
+          }
+        ]
+      },
+      "required_cardinality": {
+        "exact": [
+          "crate",
+          "execution"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "RF-PROCESS-NORMALIZE-IMPORT-SELF",
+          "cause": "Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies."
+        }
+      ]
+    },
+    {
+      "id": "RF-PROCESS-DETECTOR-CRATE-ALIASES",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "source": {
+        "path": "crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs",
+        "file_sha256": "19f19167311158f3469be3834ca6ef13857275a2fe902331546c6366313e08e9",
+        "candidate_id": "zsumz/rafter:crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs:410:5:assertion-macro",
+        "instance": null,
+        "line": 410,
+        "column": 5,
+        "function": [
+          "architecture_path_collector_rejects_crate_alias_and_macro_indirection"
+        ],
+        "syntax_sha256": "a2e3c19ae18171b6dc46347d91ada4cd759722d27de4c7ef5d90645db9a5244b"
+      },
+      "intended_property": "The fixture records exactly the authored extern-crate rename root.",
+      "selection": {
+        "module": [],
+        "fixture": "extern crate self as root; use crate as another_root; macro_rules! hidden_run { () => { root::execution::process::run() }; }",
+        "source": "Exact raw string local source in architecture_path_collector_rejects_crate_alias_and_macro_indirection; whitespace remains bound by the source file SHA."
+      },
+      "context": "Architecture collector/parser test; no process, Raft behavior or receipt verification executes.",
+      "matching_semantics": {
+        "kind": "crate-root alias vector",
+        "collector": {
+          "helper_sources": [
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
+              "sha256": "42c8fe5dac489ee534efabce1e0c6b0b1385b4fbe0fc98a0dbf4cd2725e5ff8d"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
+              "sha256": "20284f3238d25bcef4a4e8e6eff8adb697cc343f63c06d07542e250fa139db50"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
+              "sha256": "71037db27158a236128ff525af3dcaa8cd0cd4e36edd05f82b81a89a6d08e061"
+            },
+            {
+              "path": "crates/rafter/tests/support/invariant_tooling.rs",
+              "sha256": "5ef2cfb29c15ff0303d445c98c79fc5453934b4494a64b71ef5d3d0a1150e643"
+            }
+          ],
+          "imports": "Flatten UseTree leaves, including grouped paths, source-side renames and glob markers; do not visit use attributes or visibility. Rename target names are omitted.",
+          "expressions": "Every other visited syn::Path, including type, attribute, macro-invocation and generic paths; visibility paths are skipped. This is not an ExprPath-only or direct-call claim.",
+          "inline_modules": "Push the authored module identifier while visiting inline contents; external modules use the declared file owner.",
+          "normalization": "Strip r# for normalization; crate and rafter_invariants become crate; self extends the exact module owner, optionally popping subsequent super; leading super pops owners. Unrooted paths and over-climbing super return None. Import trailing self is removed.",
+          "process_selection": "Include Import crate itself and normalized crate::execution with at most two segments or third segment process. Do not include a bare crate expression or other execution subdomains.",
+          "spelling": "Compare original written segment vector to normalized vector for every selected occurrence. Semantic resolution is not claimed; alias targets are not resolved.",
+          "macro_occurrences": "Recursively inspect tokens for crate/rafter_invariants/self/super roots and colon-separated or grouped paths, preserving the original token scanner semantics; macro invocation paths are also ordinary visited paths.",
+          "macro_ban": "Recursively flatten identifiers, strip r#, ignore punctuation and literals, and reject a macro token group containing adjacent identifiers execution,process. Macro definitions and invocations both participate.",
+          "crate_alias_ban": "Every extern crate self or extern crate rafter_invariants declaration records its rename or the literal self when no rename is authored.",
+          "quantities": "Exact physical file/context/normalized-path tuples; no receiver identity, control-flow or execution claim."
+        }
+      },
+      "required_cardinality": {
+        "exact_ordered": [
+          "root"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "RF-PROCESS-DETECTOR-CRATE-ALIASES",
+          "cause": "Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies."
+        }
+      ]
+    },
+    {
+      "id": "RF-PROCESS-DETECTOR-MACROS",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "source": {
+        "path": "crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs",
+        "file_sha256": "19f19167311158f3469be3834ca6ef13857275a2fe902331546c6366313e08e9",
+        "candidate_id": "zsumz/rafter:crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs:411:5:assertion-macro",
+        "instance": null,
+        "line": 411,
+        "column": 5,
+        "function": [
+          "architecture_path_collector_rejects_crate_alias_and_macro_indirection"
+        ],
+        "syntax_sha256": "3b9531f6591d75b9a62dd561985822df124c7b37fea221bea555f30403e166db"
+      },
+      "intended_property": "The fixture records exactly one macro token body containing process authority.",
+      "selection": {
+        "module": [],
+        "fixture": "extern crate self as root; use crate as another_root; macro_rules! hidden_run { () => { root::execution::process::run() }; }",
+        "source": "Exact raw string local source in architecture_path_collector_rejects_crate_alias_and_macro_indirection; whitespace remains bound by the source file SHA."
+      },
+      "context": "Architecture collector/parser test; no process, Raft behavior or receipt verification executes.",
+      "matching_semantics": {
+        "kind": "flattened macro identifier adjacency",
+        "collector": {
+          "helper_sources": [
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
+              "sha256": "42c8fe5dac489ee534efabce1e0c6b0b1385b4fbe0fc98a0dbf4cd2725e5ff8d"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
+              "sha256": "20284f3238d25bcef4a4e8e6eff8adb697cc343f63c06d07542e250fa139db50"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
+              "sha256": "71037db27158a236128ff525af3dcaa8cd0cd4e36edd05f82b81a89a6d08e061"
+            },
+            {
+              "path": "crates/rafter/tests/support/invariant_tooling.rs",
+              "sha256": "5ef2cfb29c15ff0303d445c98c79fc5453934b4494a64b71ef5d3d0a1150e643"
+            }
+          ],
+          "imports": "Flatten UseTree leaves, including grouped paths, source-side renames and glob markers; do not visit use attributes or visibility. Rename target names are omitted.",
+          "expressions": "Every other visited syn::Path, including type, attribute, macro-invocation and generic paths; visibility paths are skipped. This is not an ExprPath-only or direct-call claim.",
+          "inline_modules": "Push the authored module identifier while visiting inline contents; external modules use the declared file owner.",
+          "normalization": "Strip r# for normalization; crate and rafter_invariants become crate; self extends the exact module owner, optionally popping subsequent super; leading super pops owners. Unrooted paths and over-climbing super return None. Import trailing self is removed.",
+          "process_selection": "Include Import crate itself and normalized crate::execution with at most two segments or third segment process. Do not include a bare crate expression or other execution subdomains.",
+          "spelling": "Compare original written segment vector to normalized vector for every selected occurrence. Semantic resolution is not claimed; alias targets are not resolved.",
+          "macro_occurrences": "Recursively inspect tokens for crate/rafter_invariants/self/super roots and colon-separated or grouped paths, preserving the original token scanner semantics; macro invocation paths are also ordinary visited paths.",
+          "macro_ban": "Recursively flatten identifiers, strip r#, ignore punctuation and literals, and reject a macro token group containing adjacent identifiers execution,process. Macro definitions and invocations both participate.",
+          "crate_alias_ban": "Every extern crate self or extern crate rafter_invariants declaration records its rename or the literal self when no rename is authored.",
+          "quantities": "Exact physical file/context/normalized-path tuples; no receiver identity, control-flow or execution claim."
+        }
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "RF-PROCESS-DETECTOR-MACROS",
+          "cause": "Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies."
+        }
+      ]
+    },
+    {
+      "id": "RF-PROCESS-DETECTOR-ROOT-IMPORT",
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "source": {
+        "path": "crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs",
+        "file_sha256": "19f19167311158f3469be3834ca6ef13857275a2fe902331546c6366313e08e9",
+        "candidate_id": "zsumz/rafter:crates/rafter/tests/invariant_tooling_architecture_guard/process_scenarios.rs:412:5:assertion-macro",
+        "instance": null,
+        "line": 412,
+        "column": 5,
+        "function": [
+          "architecture_path_collector_rejects_crate_alias_and_macro_indirection"
+        ],
+        "syntax_sha256": "15a821c99962e574ca0392f541900182a2d8d24b5f7699231435c83a03cfc7f2"
+      },
+      "intended_property": "The use crate alias is retained as an Import occurrence rooted at crate.",
+      "selection": {
+        "module": [],
+        "fixture": "extern crate self as root; use crate as another_root; macro_rules! hidden_run { () => { root::execution::process::run() }; }",
+        "source": "Exact raw string local source in architecture_path_collector_rejects_crate_alias_and_macro_indirection; whitespace remains bound by the source file SHA."
+      },
+      "context": "Architecture collector/parser test; no process, Raft behavior or receipt verification executes.",
+      "matching_semantics": {
+        "kind": "contextual occurrence presence",
+        "collector": {
+          "helper_sources": [
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/rust_paths.rs",
+              "sha256": "42c8fe5dac489ee534efabce1e0c6b0b1385b4fbe0fc98a0dbf4cd2725e5ff8d"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/module_graph.rs",
+              "sha256": "20284f3238d25bcef4a4e8e6eff8adb697cc343f63c06d07542e250fa139db50"
+            },
+            {
+              "path": "crates/rafter/tests/invariant_tooling_architecture_guard/support/workspace.rs",
+              "sha256": "71037db27158a236128ff525af3dcaa8cd0cd4e36edd05f82b81a89a6d08e061"
+            },
+            {
+              "path": "crates/rafter/tests/support/invariant_tooling.rs",
+              "sha256": "5ef2cfb29c15ff0303d445c98c79fc5453934b4494a64b71ef5d3d0a1150e643"
+            }
+          ],
+          "imports": "Flatten UseTree leaves, including grouped paths, source-side renames and glob markers; do not visit use attributes or visibility. Rename target names are omitted.",
+          "expressions": "Every other visited syn::Path, including type, attribute, macro-invocation and generic paths; visibility paths are skipped. This is not an ExprPath-only or direct-call claim.",
+          "inline_modules": "Push the authored module identifier while visiting inline contents; external modules use the declared file owner.",
+          "normalization": "Strip r# for normalization; crate and rafter_invariants become crate; self extends the exact module owner, optionally popping subsequent super; leading super pops owners. Unrooted paths and over-climbing super return None. Import trailing self is removed.",
+          "process_selection": "Include Import crate itself and normalized crate::execution with at most two segments or third segment process. Do not include a bare crate expression or other execution subdomains.",
+          "spelling": "Compare original written segment vector to normalized vector for every selected occurrence. Semantic resolution is not claimed; alias targets are not resolved.",
+          "macro_occurrences": "Recursively inspect tokens for crate/rafter_invariants/self/super roots and colon-separated or grouped paths, preserving the original token scanner semantics; macro invocation paths are also ordinary visited paths.",
+          "macro_ban": "Recursively flatten identifiers, strip r#, ignore punctuation and literals, and reject a macro token group containing adjacent identifiers execution,process. Macro definitions and invocations both participate.",
+          "crate_alias_ban": "Every extern crate self or extern crate rafter_invariants declaration records its rename or the literal self when no rename is authored.",
+          "quantities": "Exact physical file/context/normalized-path tuples; no receiver identity, control-flow or execution claim."
+        }
+      },
+      "required_cardinality": {
+        "minimum": 1,
+        "context": "Import",
+        "normalized": [
+          "crate"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "new engine capability",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": []
+      },
+      "blockers": [
+        {
+          "id": "RF-PROCESS-DETECTOR-ROOT-IMPORT",
+          "cause": "Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies."
+        }
+      ]
     }
   ],
   "counts": {
-    "reviewed_assertion_instances": 568,
+    "reviewed_assertion_instances": 574,
     "implemented": 500,
     "verified_by_disposition": {
       "existing native rail": 0,
@@ -50828,7 +51474,8 @@
   "open_discovery_blockers": [
     "RC9-INVENTORY-KD",
     "RC9-INVENTORY-KF",
-    "RC9-INVENTORY-RF"
+    "RC9-INVENTORY-RF",
+    "RC9-INVENTORY-FALLIBLE-CALLS"
   ],
   "external_input_blockers": []
 }
