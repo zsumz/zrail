@@ -43,7 +43,6 @@ use std::{
     process::Command,
 };
 
-use serde_json::json;
 use zrail_core::sha256_hex;
 
 #[test]
@@ -107,38 +106,71 @@ fn qualify_all_frozen_kafka_driver_lock_inventories() {
     assert!(compiler.status.success());
     let legacy = observations
         .iter()
-        .map(|policy| json!({"policy_id":policy.policy_id,"path":"Cargo.lock","accepted":true}))
+        .map(|policy| model::LegacyObservation {
+            policy_id: policy.policy_id.clone(),
+            path: "Cargo.lock",
+            accepted: true,
+        })
         .collect::<Vec<_>>();
-    let report = json!({
-        "schema":1, "implementation_commit":commit, "implementation_tree":tree,
-        "snapshot":snapshot, "policy_sha256":policy_sha256, "inputs":model::hashes(&inputs),
-        "cargo_inventory_roots":["."],
-        "workspace_packages":workspace.iter().map(|package| json!({"name":package.name,"directory":package.directory})).collect::<Vec<_>>(),
-        "projection_contract_sha256":sha256_hex(&fs::read(project.join("crates/zrail-testkit/tests/fixtures/good/zrail.toml")).expect("projection fixture contract")),
-        "rustc_version":String::from_utf8(compiler.stdout).expect("compiler identity").trim(),
-        "test_binary_sha256":sha256_hex(&fs::read(std::env::current_exe().expect("test executable")).expect("test binary bytes")),
-        "cargo_lock_sha256":sha256_hex(&fs::read(project.join("Cargo.lock")).expect("compiler dependency lock")),
-        "fixture_origins_sha256":sha256_hex(&fs::read(project.join("crates/zrail-testkit/tests/fixtures/rc9/lock-packages-origins.json")).expect("frozen origins")),
-        "fixture_root":fixture_root.to_str().expect("UTF-8 fixture path"),
-        "predicates":rules.len(), "full_repository_qualified":false,
-        "observations":observations, "legacy":legacy, "fixtures":outcomes,
-        "limitations":[
+    let report = model::Report {
+        schema: 1,
+        implementation_commit: commit,
+        implementation_tree: tree,
+        snapshot,
+        policy_sha256,
+        inputs: model::hashes(&inputs),
+        cargo_inventory_roots: ["."],
+        workspace_packages: workspace
+            .iter()
+            .map(|package| model::WorkspaceIdentity {
+                name: &package.name,
+                directory: &package.directory,
+            })
+            .collect(),
+        projection_contract_sha256: sha256_hex(
+            &fs::read(project.join("crates/zrail-testkit/tests/fixtures/good/zrail.toml"))
+                .expect("projection fixture contract"),
+        ),
+        rustc_version: String::from_utf8(compiler.stdout)
+            .expect("compiler identity")
+            .trim()
+            .into(),
+        test_binary_sha256: sha256_hex(
+            &fs::read(std::env::current_exe().expect("test executable"))
+                .expect("test binary bytes"),
+        ),
+        cargo_lock_sha256: sha256_hex(
+            &fs::read(project.join("Cargo.lock")).expect("compiler dependency lock"),
+        ),
+        fixture_origins_sha256: sha256_hex(
+            &fs::read(
+                project.join("crates/zrail-testkit/tests/fixtures/rc9/lock-packages-origins.json"),
+            )
+            .expect("frozen origins"),
+        ),
+        fixture_root: fixture_root.to_str().expect("UTF-8 fixture path"),
+        predicates: rules.len(),
+        full_repository_qualified: false,
+        observations,
+        legacy,
+        fixtures: outcomes,
+        limitations: [
             "Whole-lock cardinality and complete version/source/checksum sets only. Native Cargo projection derives all five workspace identities from the frozen manifests and target presence.",
             "The original complete protocol lock test body and its read/parse/assert_locked helpers execute unchanged; workspace_root alone is supplied from the isolated fixture path.",
             "Fixtures copy and bind all five manifests, the registry, Cargo.lock, and five original target roots. Source bodies and the source module graph are not analyzed; no source certificate, candidate lock, or full repository qualification is produced.",
             "Deletion, version/source substitutions, and duplicate-name fixtures explicitly adjust incoming dependency references to keep the graph resolvable. All failures reach DEP-LOCK-001 for the intended package rule.",
             "The manifest registry stays pinned as translation authority. Its exact-version-prefix guards and the legacy lock-array/name type preconditions remain separate reviewed assertions.",
         ],
-    });
+    };
     clean(&project);
-    verify(&source, &report["snapshot"]);
+    verify(&source, &report.snapshot);
     assert_eq!(
         git(&project, &["rev-parse", "HEAD"]),
-        report["implementation_commit"].as_str().expect("code SHA")
+        report.implementation_commit
     );
     assert_eq!(
         git(&project, &["rev-parse", "HEAD^{tree}"]),
-        report["implementation_tree"].as_str().expect("code tree")
+        report.implementation_tree
     );
     assert_eq!(
         model::hashes(&model::inputs(&source)),

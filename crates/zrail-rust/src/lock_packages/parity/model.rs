@@ -114,3 +114,40 @@ pub(super) struct FixtureOutcome {
     pub(super) diagnostic: Option<String>,
     pub(super) observed: GovernedLockPackage,
 }
+
+#[derive(Serialize)]
+pub(super) struct WorkspaceIdentity<'a> {
+    pub(super) name: &'a str,
+    pub(super) directory: &'a str,
+}
+
+#[derive(Serialize)]
+pub(super) struct LegacyObservation {
+    pub(super) policy_id: String,
+    pub(super) path: &'static str,
+    pub(super) accepted: bool,
+}
+
+#[derive(Serialize)]
+pub(super) struct Report<'a> {
+    pub(super) schema: u64,
+    pub(super) implementation_commit: String,
+    pub(super) implementation_tree: String,
+    pub(super) snapshot: serde_json::Value,
+    pub(super) policy_sha256: String,
+    pub(super) inputs: BTreeMap<String, String>,
+    pub(super) cargo_inventory_roots: [&'static str; 1],
+    pub(super) workspace_packages: Vec<WorkspaceIdentity<'a>>,
+    pub(super) projection_contract_sha256: String,
+    pub(super) rustc_version: String,
+    pub(super) test_binary_sha256: String,
+    pub(super) cargo_lock_sha256: String,
+    pub(super) fixture_origins_sha256: String,
+    pub(super) fixture_root: &'a str,
+    pub(super) predicates: usize,
+    pub(super) full_repository_qualified: bool,
+    pub(super) observations: Vec<GovernedLockPackage>,
+    pub(super) legacy: Vec<LegacyObservation>,
+    pub(super) fixtures: Vec<FixtureOutcome>,
+    pub(super) limitations: [&'static str; 5],
+}
