@@ -29,6 +29,10 @@ mod mutations;
 mod owner_mutations;
 #[path = "../tests/rc9_transport/qualification.rs"]
 mod qualification;
+#[path = "rust_inventories/parity/rename_mutations.rs"]
+mod rename_mutations;
+#[path = "../tests/rc9_transport/renames_test.rs"]
+mod renames_test;
 
 #[test]
 fn frozen_transport_methods_match_every_parsed_expression_context() {

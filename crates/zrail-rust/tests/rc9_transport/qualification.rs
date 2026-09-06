@@ -117,7 +117,7 @@ pub(super) fn run(family: Family) {
             "Only selected authored syntax quantities and strict Rust file parsing are qualified; no Cargo resolution, semantic receiver identity, execution, lock, or complete repository qualification is claimed.".into(),
             "Original source traversal and collector bodies execute with an injected snapshot root and the original roots loop; the registry and every original Rust source are hash-bound.".into(),
             "Mutations use isolated physical copies; original snapshots and reviewed lock authority remain unchanged.".into(),
-            "When legacy_measure is distinct-owner-files, legacy count maps encode one membership per file/subject pair; native observation counts retain actual syntax quantities independently.".into(),
+            "Legacy set measures encode one membership per file/subject identity; native observation counts retain actual syntax quantities independently. Rename identities retain both source and alias spellings.".into(),
         ],
     };
     let mut bytes = serde_json::to_vec_pretty(&report).expect("typed evidence");

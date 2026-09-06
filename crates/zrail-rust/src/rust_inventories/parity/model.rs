@@ -154,6 +154,7 @@ pub(super) struct Report {
 #[serde(rename_all = "kebab-case")]
 pub(super) enum LegacyMeasure {
     DistinctOwnerFiles,
+    DistinctRenameIdentities,
 }
 
 #[derive(Serialize)]

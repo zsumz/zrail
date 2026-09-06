@@ -18,6 +18,13 @@ pub(in super::super) fn renames(path: &str, source: &str) -> BTreeSet<String> {
     source_inventory(path, source).renamed_authorities
 }
 
+pub(in super::super) fn repository_renames(
+    root: &std::path::Path,
+    roots: &[String],
+) -> BTreeSet<String> {
+    repository_inventory(root, roots).renamed_authorities
+}
+
 pub(in super::super) fn check_renames(renamed_authorities: BTreeSet<String>) {
     let actual = AuthorityInventory {
         renamed_authorities,

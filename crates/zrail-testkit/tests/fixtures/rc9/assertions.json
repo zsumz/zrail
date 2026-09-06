@@ -22922,7 +22922,9 @@
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_import_renames_preserve_complete_source_and_alias_identity",
           "rust-test:crates/zrail-testkit/tests/rust_inventories/renames_test.rs::required_rename_identity_rejects_alias_substitution_omission_and_quantity_changes",
-          "rust-test:crates/zrail-testkit/tests/rust_inventories/renames_test.rs::renamed_owner_sets_deduplicate_members_but_keep_every_physical_occurrence"
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/renames_test.rs::renamed_owner_sets_deduplicate_members_but_keep_every_physical_occurrence",
+          "rust-test:crates/zrail-rust/tests/rc9_transport/renames_test.rs::frozen_rename_assertion_preserves_zero_bans_and_exact_alias_identities",
+          "rust-test:crates/zrail-rust/tests/rc9_transport/renames_test.rs::qualify_all_frozen_kafka_driver_transport_renames"
         ]
       },
       "blockers": [
@@ -50387,7 +50389,9 @@
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_import_renames_preserve_complete_source_and_alias_identity",
           "rust-test:crates/zrail-testkit/tests/rust_inventories/renames_test.rs::required_rename_identity_rejects_alias_substitution_omission_and_quantity_changes",
-          "rust-test:crates/zrail-testkit/tests/rust_inventories/renames_test.rs::renamed_owner_sets_deduplicate_members_but_keep_every_physical_occurrence"
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/renames_test.rs::renamed_owner_sets_deduplicate_members_but_keep_every_physical_occurrence",
+          "rust-test:crates/zrail-rust/tests/rc9_transport/renames_test.rs::frozen_rename_assertion_preserves_zero_bans_and_exact_alias_identities",
+          "rust-test:crates/zrail-rust/tests/rc9_transport/renames_test.rs::qualify_all_frozen_kafka_driver_transport_renames"
         ]
       },
       "blockers": [
