@@ -143,7 +143,6 @@ fn implies(left: &RustInventoryAssertion, right: &RustInventoryAssertion) -> boo
             },
             ExactCounts { counts },
         ) => counts.is_empty(),
-        (Count { .. }, ExactCounts { .. }) => false,
         (ExactCounts { counts: left }, ExactCounts { counts: right }) => {
             left.iter().collect::<BTreeSet<_>>() == right.iter().collect::<BTreeSet<_>>()
         }
@@ -171,7 +170,7 @@ fn implies(left: &RustInventoryAssertion, right: &RustInventoryAssertion) -> boo
             },
             ExactOwners { owners },
         ) => owners.is_empty(),
-        (Count { .. }, ExactOwners { .. }) => false,
+        (Count { .. }, ExactCounts { .. } | ExactOwners { .. }) => false,
     }
 }
 
