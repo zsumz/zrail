@@ -1,9 +1,16 @@
-//! Exact frozen transport collector; executed only in trusted qualification tests.
+//! Syntax-level ownership guard for the sole selector and transport adapter.
+//!
+//! This catches accidental source regressions, not semantic name resolution or macro expansion.
+//! Imports of guarded authority names therefore may not be renamed.
 
-use super::selection::{display_path, is_test, read};
 use std::collections::{BTreeMap, BTreeSet};
+
 use syn::{ExprMethodCall, ExprPath, File, ItemImpl, ItemUse, Path, Type, UseTree, visit::Visit};
 
+use super::support::{display_path, is_test, read, rust_files, workspace_root};
+
+const SET_OWNER: &str = "src/reactor/direct_plaintext/set_owner.rs";
+const RUSTLS_ADAPTER: &str = "src/reactor/direct_plaintext/rustls_transport.rs";
 const ASSOCIATED_CALLS: [&str; 13] = [
     "ConnectionSet::new",
     "ConnectionSet::turn_component",
@@ -35,6 +42,103 @@ struct AuthorityInventory {
     renamed_authorities: BTreeSet<String>,
     selector_methods: BTreeMap<String, usize>,
     transport_impls: BTreeSet<String>,
+}
+
+#[test]
+fn selector_and_transport_authority_matches_the_reviewed_boundary() {
+    let actual = repository_inventory();
+    assert_eq!(
+        actual.connection_set_files,
+        BTreeSet::from([SET_OWNER.into()])
+    );
+    assert_eq!(actual.associated_calls, expected_associated_calls());
+    assert_eq!(actual.renamed_authorities, BTreeSet::new());
+    assert_eq!(actual.selector_methods, expected_selector_methods());
+    assert_eq!(actual.transport_impls, expected_transport_impls());
+}
+
+#[test]
+fn inventory_detects_alias_ufcs_and_guarded_renames() {
+    let source = r"
+        use bornera::{
+            ConnectionSet as Set,
+            RegisteredTransport as Rt,
+            SlotTransport as St,
+        };
+        use crate::reactor::direct_plaintext::set_owner::DirectSet;
+        use crate::reactor::direct_plaintext::set_owner::DirectSet as SetAlias;
+        use mio::event::Source as IoSource;
+
+        fn rogue(mut set: DirectSet<T>) {
+            let _ = ConnectionSet::new(config, limits);
+            let _ = DirectSet::<T>::new(config, limits);
+            let poll = DirectSet::poll_io;
+            let _ = poll(&mut set, maximum);
+            let _ = DirectSet::turn_component(&mut set, now);
+            let _ = DirectSet::wake_handle(&set);
+            let _ = DirectSet::pulse_handle(&set);
+            let _ = set.poll_io(span);
+            let _ = Set::<Decoder, Classifier, T>::new(config, limits);
+        }
+        struct Rogue;
+        impl RegisteredTransport for Rogue {}
+        impl Rt for Rogue {}
+        impl St for Rogue {}
+        impl IoSource for DirectRustlsTransport {}
+    ";
+    let actual = source_inventory("src/reactor/rogue.rs", source);
+    assert_eq!(
+        actual.connection_set_files,
+        BTreeSet::from(["src/reactor/rogue.rs".into()])
+    );
+    assert_eq!(
+        actual.associated_calls,
+        counts(&[
+            ("src/reactor/rogue.rs:ConnectionSet::new", 1),
+            ("src/reactor/rogue.rs:DirectSet::new", 1),
+            ("src/reactor/rogue.rs:DirectSet::poll_io", 1),
+            ("src/reactor/rogue.rs:DirectSet::turn_component", 1),
+            ("src/reactor/rogue.rs:DirectSet::wake_handle", 1),
+            ("src/reactor/rogue.rs:DirectSet::pulse_handle", 1),
+        ])
+    );
+    assert_eq!(
+        actual.renamed_authorities,
+        [
+            "ConnectionSet as Set",
+            "DirectSet as SetAlias",
+            "RegisteredTransport as Rt",
+            "SlotTransport as St",
+            "Source as IoSource",
+        ]
+        .map(|rename| format!("src/reactor/rogue.rs:{rename}"))
+        .into_iter()
+        .collect()
+    );
+    assert_eq!(
+        actual.selector_methods,
+        counts(&[("src/reactor/rogue.rs:poll_io", 1)])
+    );
+    assert_eq!(
+        actual.transport_impls,
+        BTreeSet::from(["src/reactor/rogue.rs:Rogue:RegisteredTransport".into()])
+    );
+}
+
+fn repository_inventory() -> AuthorityInventory {
+    let root = workspace_root();
+    let mut inventory = AuthorityInventory::default();
+    for path in rust_files(&root) {
+        if is_test(&root, &path) {
+            continue;
+        }
+        let relative = display_path(&root, &path);
+        let source = read(&path);
+        let syntax =
+            syn::parse_file(&source).unwrap_or_else(|error| panic!("parse {relative}: {error}"));
+        inspect(&syntax, &relative, &mut inventory);
+    }
+    inventory
 }
 
 fn source_inventory(path: &str, source: &str) -> AuthorityInventory {
@@ -167,6 +271,19 @@ fn counts(entries: &[(&str, usize)]) -> BTreeMap<String, usize> {
         .collect()
 }
 
+fn expected_associated_calls() -> BTreeMap<String, usize> {
+    counts(&[
+        (&format!("{SET_OWNER}:ConnectionSet::new"), 1),
+        (&format!("{SET_OWNER}:ConnectionSet::turn_component"), 1),
+        (&format!("{SET_OWNER}:ConnectionSet::poll_io"), 1),
+        (&format!("{SET_OWNER}:ConnectionSet::wake_handle"), 1),
+        (&format!("{SET_OWNER}:ConnectionSet::pulse_handle"), 1),
+        (&format!("{RUSTLS_ADAPTER}:Source::register"), 1),
+        (&format!("{RUSTLS_ADAPTER}:Source::reregister"), 1),
+        (&format!("{RUSTLS_ADAPTER}:Source::deregister"), 1),
+    ])
+}
+
 fn expected_selector_methods() -> BTreeMap<String, usize> {
     counts(&[
         ("src/reactor/backend.rs:wake_handle", 2),
@@ -189,51 +306,12 @@ fn expected_selector_methods() -> BTreeMap<String, usize> {
     ])
 }
 
-pub(super) fn observed(path: &str, source: &str) -> BTreeMap<String, usize> {
-    source_inventory(path, source).selector_methods
-}
-
-pub(super) fn expected() -> BTreeMap<String, usize> {
-    expected_selector_methods()
-}
-
-fn repository_inventory(root: &std::path::Path, roots: &[String]) -> AuthorityInventory {
-    let workspace_root = || root.to_path_buf();
-    let rust_files = |root: &std::path::Path| crate::rules::legacy_driver_paths(root, roots);
-    let root = workspace_root();
-    let mut inventory = AuthorityInventory::default();
-    for path in rust_files(&root) {
-        if is_test(&root, &path) {
-            continue;
-        }
-        let relative = display_path(&root, &path);
-        let source = read(&path);
-        let syntax =
-            syn::parse_file(&source).unwrap_or_else(|error| panic!("parse {relative}: {error}"));
-        inspect(&syntax, &relative, &mut inventory);
-    }
-    inventory
-}
-
-pub(super) fn repository(root: &std::path::Path, roots: &[String]) -> BTreeMap<String, usize> {
-    repository_inventory(root, roots).selector_methods
-}
-
-pub(super) fn check_selector_methods(selector_methods: BTreeMap<String, usize>) {
-    let actual = AuthorityInventory {
-        selector_methods,
-        ..AuthorityInventory::default()
-    };
-    assert_eq!(actual.selector_methods, expected_selector_methods());
-}
-
-pub(super) fn check_detector_methods(selector_methods: BTreeMap<String, usize>) {
-    let actual = AuthorityInventory {
-        selector_methods,
-        ..AuthorityInventory::default()
-    };
-    assert_eq!(
-        actual.selector_methods,
-        counts(&[("src/reactor/rogue.rs:poll_io", 1)])
-    );
+fn expected_transport_impls() -> BTreeSet<String> {
+    [
+        format!("{RUSTLS_ADAPTER}:DirectRustlsTransport:RegisteredTransport"),
+        format!("{RUSTLS_ADAPTER}:DirectRustlsTransport:SlotTransport"),
+        format!("{RUSTLS_ADAPTER}:DirectRustlsTransport:Source"),
+    ]
+    .into_iter()
+    .collect()
 }
