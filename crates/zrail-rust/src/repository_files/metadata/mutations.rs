@@ -5,11 +5,11 @@ use zrail_core::{
     RepositoryFilePredicate, RepositoryFileRule,
 };
 
-pub(super) struct Mutation {
-    pub(super) name: &'static str,
-    pub(super) bytes: Option<Vec<u8>>,
-    pub(super) directory: bool,
-    pub(super) diagnostic: &'static str,
+pub(in super::super) struct Mutation {
+    pub(in super::super) name: &'static str,
+    pub(in super::super) bytes: Option<Vec<u8>>,
+    pub(in super::super) directory: bool,
+    pub(in super::super) diagnostic: Option<&'static str>,
 }
 
 pub(super) fn cases(rule: &RepositoryFileRule, original: &[u8]) -> Vec<Mutation> {
@@ -17,7 +17,7 @@ pub(super) fn cases(rule: &RepositoryFileRule, original: &[u8]) -> Vec<Mutation>
         name,
         bytes,
         directory: false,
-        diagnostic,
+        diagnostic: Some(diagnostic),
     };
     match &rule.predicate {
         RepositoryFilePredicate::Document(document) if document.assertion == Assertion::Present => {
@@ -112,7 +112,7 @@ pub(super) fn cases(rule: &RepositoryFileRule, original: &[u8]) -> Vec<Mutation>
                 name: "wrong-entry-kind",
                 bytes: None,
                 directory: true,
-                diagnostic: "REP-FILE-001",
+                diagnostic: Some("REP-FILE-001"),
             },
         ],
         RepositoryFilePredicate::Literal(literal) => vec![mutation(

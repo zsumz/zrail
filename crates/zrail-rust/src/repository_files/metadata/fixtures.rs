@@ -5,13 +5,16 @@ use std::{collections::BTreeMap, fs, path::Path};
 use zrail_core::{RepositoryFileRule, sha256_hex};
 
 use super::{
-    legacy,
+    Suite,
     model::{self, FixtureOutcome},
-    mutations,
 };
 
-pub(super) fn legacy_result(root: &Path) -> Result<(), String> {
-    std::panic::catch_unwind(|| legacy::check(root)).map_err(|payload| {
+pub(super) fn legacy_result(
+    root: &Path,
+    policy: &RepositoryFileRule,
+    suite: &Suite,
+) -> Result<(), String> {
+    std::panic::catch_unwind(|| (suite.legacy)(root, policy)).map_err(|payload| {
         payload
             .downcast_ref::<String>()
             .cloned()
@@ -20,10 +23,11 @@ pub(super) fn legacy_result(root: &Path) -> Result<(), String> {
     })
 }
 
-pub(super) fn qualify(
+pub(in super::super) fn qualify(
     root: &Path,
     inputs: &BTreeMap<String, Vec<u8>>,
     policies: &[RepositoryFileRule],
+    suite: &Suite,
 ) -> Vec<FixtureOutcome> {
     assert!(
         !root.exists(),
@@ -34,7 +38,7 @@ pub(super) fn qualify(
     let mut outcomes = Vec::new();
     for policy in policies {
         for case in std::iter::once(None).chain(
-            mutations::cases(policy, &inputs[&policy.include[0]])
+            (suite.mutations)(policy, &inputs[&policy.include[0]])
                 .into_iter()
                 .map(Some),
         ) {
@@ -50,7 +54,7 @@ pub(super) fn qualify(
                 }
             }
             let policy_id = format!("repository:file:{}", policy.name);
-            let legacy = legacy_result(root);
+            let legacy = legacy_result(root, policy, suite);
             let native = crate::repository_files::analyze(root, std::slice::from_ref(policy));
             let diagnostic = match &native {
                 Ok(analysis) => {
@@ -70,9 +74,13 @@ pub(super) fn qualify(
                     Some("REP-FILE-006".into())
                 }
             };
-            let expected = case.as_ref().map(|case| case.diagnostic);
+            let expected = case.as_ref().and_then(|case| case.diagnostic);
             assert_eq!(diagnostic.as_deref(), expected, "{policy_id}");
-            assert_eq!(legacy.is_ok(), case.is_none(), "{policy_id}: {legacy:?}");
+            assert_eq!(
+                legacy.is_ok(),
+                expected.is_none(),
+                "{policy_id}: {legacy:?}"
+            );
             let observed: BTreeMap<_, _> = inputs
                 .keys()
                 .filter_map(|path| {

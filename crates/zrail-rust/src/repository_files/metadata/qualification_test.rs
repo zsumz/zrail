@@ -10,20 +10,21 @@ use std::{
 use zrail_core::sha256_hex;
 
 use super::super::model::project;
-use super::{fixtures, model};
+use super::{Suite, fixtures, metadata, model};
 
 #[test]
 fn frozen_metadata_assertions_agree_on_every_authored_field_and_negative_input() {
+    let suite = metadata();
     let root = std::env::temp_dir().join(format!(
         "zrail-metadata-parity-{}-{:?}",
         std::process::id(),
         std::thread::current().id()
     ));
-    let (policies, _) = model::policies(&project());
+    let (policies, _) = model::policies(&project(), &suite);
     let source = project().join("crates/zrail-testkit/tests/fixtures/rc9/metadata/valid");
-    let inputs = model::inputs(&source, &policies);
+    let inputs = model::inputs(&source, &policies, &suite);
     assert_eq!(inputs.len(), 11);
-    let outcomes = fixtures::qualify(&root, &inputs, &policies);
+    let outcomes = fixtures::qualify(&root, &inputs, &policies, &suite);
     assert_eq!(
         outcomes.iter().filter(|row| row.native_accepted).count(),
         35
@@ -34,11 +35,18 @@ fn frozen_metadata_assertions_agree_on_every_authored_field_and_negative_input()
 #[test]
 #[ignore = "requires prefetched snapshots and fresh ZRAIL_RC9_METADATA_REPORT"]
 fn qualify_all_frozen_kafka_driver_metadata_assertions() {
+    super::qualify(&metadata());
+}
+
+pub(in super::super) fn qualify(suite: &Suite) {
     let project = project();
     let snapshots =
         PathBuf::from(std::env::var_os("ZRAIL_RC9_SNAPSHOTS").expect("prefetch snapshots"));
-    let output =
-        PathBuf::from(std::env::var_os("ZRAIL_RC9_METADATA_REPORT").expect("fresh output"));
+    let variable = format!(
+        "ZRAIL_RC9_{}_REPORT",
+        suite.name.to_ascii_uppercase().replace('-', "_")
+    );
+    let output = PathBuf::from(std::env::var_os(variable).expect("fresh output"));
     assert!(!output.exists(), "do not overwrite evidence");
     let evidence = fs::canonicalize(output.parent().expect("evidence parent"))
         .expect("existing evidence directory");
@@ -66,14 +74,16 @@ fn qualify_all_frozen_kafka_driver_metadata_assertions() {
         .clone();
     let source = snapshots.join("kafka-driver");
     verify(&source, &snapshot);
-    let (policies, policy_sha256) = model::policies(&project);
-    let inputs = model::inputs(&source, &policies);
-    assert_eq!(inputs.len(), 11);
+    let (policies, policy_sha256) = model::policies(&project, suite);
+    let inputs = model::inputs(&source, &policies, suite);
+    assert_eq!(inputs.len(), suite.input_count);
     let baseline = crate::repository_files::analyze(&source, &policies)
         .expect("complete frozen metadata selection");
     assert!(baseline.findings.is_empty(), "{:?}", baseline.findings);
-    fixtures::legacy_result(&source)
-        .expect("complete original metadata guard accepts the frozen source");
+    for policy in &policies {
+        fixtures::legacy_result(&source, policy, suite)
+            .expect("original guard accepts the frozen source");
+    }
     let legacy = baseline
         .policies
         .iter()
@@ -85,12 +95,12 @@ fn qualify_all_frozen_kafka_driver_metadata_assertions() {
             })
         })
         .collect();
-    let fixture_root = evidence.join("metadata-parity-fixture");
-    let fixtures = fixtures::qualify(&fixture_root, &inputs, &policies);
-    assert_eq!(fixtures.len(), 134);
+    let fixture_root = evidence.join(format!("{}-parity-fixture", suite.name));
+    let fixtures = fixtures::qualify(&fixture_root, &inputs, &policies, suite);
+    assert_eq!(fixtures.len(), suite.fixture_count);
     assert_eq!(
         fixtures.iter().filter(|row| row.native_accepted).count(),
-        35
+        suite.positive_count
     );
     let compiler = Command::new("rustc")
         .arg("--version")
@@ -99,20 +109,40 @@ fn qualify_all_frozen_kafka_driver_metadata_assertions() {
         .expect("pinned compiler identity");
     assert!(compiler.status.success());
     let report = model::Report {
-        schema: 1, implementation_commit, snapshot, inputs: model::hashes(&inputs),
-        rustc_version: String::from_utf8(compiler.stdout).expect("compiler identity").trim().into(),
-        test_binary_sha256: sha256_hex(&fs::read(std::env::current_exe().expect("test executable")).expect("test binary bytes")),
-        cargo_lock_sha256: sha256_hex(&fs::read(project.join("Cargo.lock")).expect("compiler input lock")),
-        fixture_origins_sha256: sha256_hex(&fs::read(project.join("crates/zrail-testkit/tests/fixtures/rc9/metadata-origins.json")).expect("frozen extraction origins")),
-        policy_sha256, fixture_root: fixture_root.to_str().expect("UTF-8 fixture path").into(),
-        predicates: policies.len(), full_repository_qualified: false,
-        observations: baseline.policies, legacy, fixtures,
-        limitations: vec![
-            "Authored metadata fields, UTF-8 license equality, physical file presence, and deliberate raw markers only; no resolved Cargo or execution claim.".into(),
-            "The original assertion body and helpers execute unchanged, with workspace_root supplied from the isolated input path.".into(),
-            "Only the declared 11 metadata inputs are copied; other source and independently governed assertions require full repository qualification.".into(),
-            "Malformed documents and exhausted bounds fail analysis explicitly instead of returning partial observations.".into(),
-        ],
+        schema: 1,
+        implementation_commit,
+        snapshot,
+        inputs: model::hashes(&inputs),
+        rustc_version: String::from_utf8(compiler.stdout)
+            .expect("compiler identity")
+            .trim()
+            .into(),
+        test_binary_sha256: sha256_hex(
+            &fs::read(std::env::current_exe().expect("test executable"))
+                .expect("test binary bytes"),
+        ),
+        cargo_lock_sha256: sha256_hex(
+            &fs::read(project.join("Cargo.lock")).expect("compiler input lock"),
+        ),
+        fixture_origins_sha256: sha256_hex(
+            &fs::read(project.join(format!(
+                "crates/zrail-testkit/tests/fixtures/rc9/{}-origins.json",
+                suite.name
+            )))
+            .expect("frozen extraction origins"),
+        ),
+        policy_sha256,
+        fixture_root: fixture_root.to_str().expect("UTF-8 fixture path").into(),
+        predicates: policies.len(),
+        full_repository_qualified: false,
+        observations: baseline.policies,
+        legacy,
+        fixtures,
+        limitations: suite
+            .limitations
+            .iter()
+            .map(|text| (*text).into())
+            .collect(),
     };
     clean(&project);
     verify(&source, &report.snapshot);
@@ -121,7 +151,7 @@ fn qualify_all_frozen_kafka_driver_metadata_assertions() {
         report.implementation_commit
     );
     assert_eq!(
-        model::hashes(&model::inputs(&source, &policies)),
+        model::hashes(&model::inputs(&source, &policies, suite)),
         report.inputs
     );
     let value = serde_json::to_value(&report).expect("canonical report");
@@ -137,7 +167,8 @@ fn qualify_all_frozen_kafka_driver_metadata_assertions() {
     std::io::stdout()
         .write_all(
             format!(
-                "metadata parity: {} policies, {} frozen inputs, {} fixtures; sha256 {}\n",
+                "{} parity: {} policies, {} frozen inputs, {} fixtures; sha256 {}\n",
+                suite.name,
                 report.predicates,
                 report.inputs.len(),
                 report.fixtures.len(),

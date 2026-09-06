@@ -5,6 +5,7 @@ use std::{collections::BTreeMap, fs, path::Path};
 use serde::{Deserialize, Serialize};
 use zrail_core::{RepositoryFileRule, normalize_relative, sha256_hex};
 
+use super::Suite;
 use crate::repository_files::GovernedRepositoryFile;
 
 #[derive(Deserialize)]
@@ -19,27 +20,38 @@ struct Rules {
     files: Vec<RepositoryFileRule>,
 }
 
-pub(super) fn policies(project: &Path) -> (Vec<RepositoryFileRule>, String) {
-    let bytes = fs::read(project.join("docs/rc9/policies/kafka-driver.metadata.fragment.toml"))
-        .expect("metadata policy");
+pub(in super::super) fn policies(
+    project: &Path,
+    suite: &Suite,
+) -> (Vec<RepositoryFileRule>, String) {
+    let bytes = fs::read(project.join(format!(
+        "docs/rc9/policies/kafka-driver.{}.fragment.toml",
+        suite.name
+    )))
+    .expect("metadata policy");
     let fragment: Fragment =
         toml::from_str(std::str::from_utf8(&bytes).expect("UTF-8 policy")).expect("typed policy");
-    assert_eq!(fragment.repository.files.len(), 35);
+    assert_eq!(fragment.repository.files.len(), suite.policy_count);
     (fragment.repository.files, sha256_hex(&bytes))
 }
 
-pub(super) fn inputs(root: &Path, policies: &[RepositoryFileRule]) -> BTreeMap<String, Vec<u8>> {
+pub(in super::super) fn inputs(
+    root: &Path,
+    policies: &[RepositoryFileRule],
+    suite: &Suite,
+) -> BTreeMap<String, Vec<u8>> {
     policies
         .iter()
-        .flat_map(|rule| &rule.include)
+        .flat_map(|rule| rule.include.iter().map(String::as_str))
+        .chain(suite.extra_inputs.iter().copied())
         .map(|path| {
             assert_eq!(
                 normalize_relative(Path::new(path)).expect("contained literal"),
-                *path
+                path
             );
             assert!(!path.contains(['*', '?']));
             (
-                path.clone(),
+                path.to_owned(),
                 fs::read(root.join(path)).expect("frozen metadata input"),
             )
         })
@@ -61,17 +73,17 @@ pub(super) struct LegacyObservation {
 }
 
 #[derive(Serialize)]
-pub(super) struct FixtureOutcome {
-    pub(super) policy_id: String,
-    pub(super) case: String,
-    pub(super) path: String,
-    pub(super) source_sha256: Option<String>,
-    pub(super) entry_kind: String,
-    pub(super) inputs: BTreeMap<String, String>,
-    pub(super) legacy_accepted: bool,
-    pub(super) legacy_failure: Option<String>,
-    pub(super) native_accepted: bool,
-    pub(super) diagnostic: Option<String>,
+pub(in super::super) struct FixtureOutcome {
+    pub(in super::super) policy_id: String,
+    pub(in super::super) case: String,
+    pub(in super::super) path: String,
+    pub(in super::super) source_sha256: Option<String>,
+    pub(in super::super) entry_kind: String,
+    pub(in super::super) inputs: BTreeMap<String, String>,
+    pub(in super::super) legacy_accepted: bool,
+    pub(in super::super) legacy_failure: Option<String>,
+    pub(in super::super) native_accepted: bool,
+    pub(in super::super) diagnostic: Option<String>,
 }
 
 #[derive(Serialize)]
