@@ -71,15 +71,16 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 228 | 124 | 123 |
+| kafka-driver | 826 | 772 | 228 | 180 | 159 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 15 | 0 | 0 |
 
-The **287 verified assertions** comprise five facade predicates, four
+The **323 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus five authored dependency key
-inventories and 35 authored dependency-field assertions and preconditions.
+inventories, 35 authored dependency-field assertions and preconditions, and
+36 authored provenance assertions and parser preconditions.
 Size instances include
 all 141 measured baselines and three hard allowances. Their disposition
 is **new engine capability**; verified counts for the other four dispositions
@@ -364,5 +365,21 @@ A present non-string name is ignored by the old filter. Native Cargo parsing
 rejects that malformed lock shape more strictly; this distinction is recorded
 as `KD-PROVENANCE-LOCK-PACKAGE-NAMES` and requires explicit qualification.
 Whole-lock checks cannot be replaced solely by reachable dependency policies.
-These 43 new rows are unimplemented/unverified translation work, not new parity
-claims. Complete repository inventory remains open.
+Of these 43 new rows, 36 authored document assertions now have verified
+differential evidence. Five registry-prefix and two whole-lock preconditions
+remain unverified. Complete repository inventory remains open.
+
+## Authored protocol provenance parity
+
+At `51901c18681e15b1f14db2b61a2db057c678a90d`, the 27 generated
+provenance document predicates accepted the untouched frozen source. Two
+trusted runs produced byte-identical reports for 161 fixtures: 39 accepted and
+122 rejected through the intended document diagnostic. This verifies 36
+assertion IDs, including exact workspace-reference type/count/field
+conjunctions and the root/probe bans on any `patch`, `replace`, or `target` key.
+The parser policies retain required file presence alongside absent-key rules.
+
+See [bound provenance evidence](evidence/provenance-index.json). The five
+generated whole-lock policies implement the 20 reviewed version/source/checksum
+and cardinality assertions, but their frozen differential verification remains
+open. No package-node claim is inferred from successful document parsing.

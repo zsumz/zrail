@@ -462,3 +462,27 @@ scripts/package-check
 Consumer provenance policy translation and frozen differential qualification
 remain separate work. This native checkpoint adds no verified assertion IDs
 and establishes no full consumer repository qualification.
+
+## Authored provenance differential qualification
+
+The two clean runs at `51901c18681e15b1f14db2b61a2db057c678a90d accepted
+all 27 policies on frozen Kafka-driver and produced identical
+`f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726` reports.
+There are 161 fixture outcomes (39 accepted, 122 rejected), four immutable
+inputs, and 36 newly verified assertion IDs. [The index](evidence/provenance-index.json)
+binds the code, policy, snapshot, input copies, unchanged original assertion
+body/helpers, compiler, and test binary. This is document parity only. The
+preceding whole-lock canonical/archive checkpoint has its own earlier SHA.
+
+```sh
+export ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots
+export ZRAIL_RC9_PROVENANCE_REPORT=/absolute/evidence/provenance.json
+cargo test --locked --offline -p zrail-rust \
+  qualify_all_frozen_kafka_driver_provenance_documents -- --ignored
+python3 scripts/rc9-provenance-policies /absolute/snapshots documents /absolute/new-provenance.toml
+python3 scripts/rc9-provenance-policies /absolute/snapshots lock /absolute/new-lock-inventory.toml
+```
+
+Use a fresh report path for each run. Generated fragments remain partial
+bundles; the lock fragment has native engine acceptance tests but does not yet
+have its own frozen differential report.

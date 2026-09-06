@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d",
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "1f679c464fe0e958b9a181f8a0378ba913340a90e81cf736aa21221f7d14f59d",
+  "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+  "compressed_sha256": "21b804a00ec66c26264a4834ef235dc785a455a22b1c7d51c5321d16dbee1ae4",
+  "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+  "repeated_byte_identical": true,
+  "predicates": 27,
+  "inputs": 4,
+  "fixtures": {
+    "total": 161,
+    "accepted": 39,
+    "rejected": 122
+  },
+  "full_repository_qualified": false,
+  "lock_authority_accepted": false,
+  "canonical_reference": {
+    "implementation_commit": "bd6372b91d39f59c3064a7a327b1b4349be7e28a",
+    "artifact": "docs/rc9/evidence/lock-packages-index.json",
+    "same_revision": false
+  },
+  "command": "cargo test --locked --offline -p zrail-rust qualify_all_frozen_kafka_driver_provenance_documents -- --ignored"
+}

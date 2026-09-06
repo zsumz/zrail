@@ -9749,9 +9749,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -9759,7 +9763,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-CHECKSUM",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -9812,9 +9816,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -9822,7 +9830,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-COUNT",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -9866,9 +9874,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -9876,7 +9888,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-SOURCE",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -9920,9 +9932,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -9930,7 +9946,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-VERSION",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -9984,9 +10000,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera-core"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -9994,7 +10014,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-core-CHECKSUM",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10047,9 +10067,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera-core"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10057,7 +10081,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-core-COUNT",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10101,9 +10125,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera-core"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10111,7 +10139,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-core-SOURCE",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10155,9 +10183,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera-core"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10165,7 +10197,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-core-VERSION",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10219,9 +10251,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera-rustls"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10229,7 +10265,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-rustls-CHECKSUM",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10282,9 +10318,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera-rustls"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10292,7 +10332,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-rustls-COUNT",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10336,9 +10376,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera-rustls"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10346,7 +10390,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-rustls-SOURCE",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10390,9 +10434,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera-rustls"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10400,7 +10448,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-bornera-rustls-VERSION",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10454,9 +10502,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-kafka-wire"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10464,7 +10516,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-kafka-wire-CHECKSUM",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10517,9 +10569,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-kafka-wire"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10527,7 +10583,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-kafka-wire-COUNT",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10571,9 +10627,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-kafka-wire"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10581,7 +10641,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-kafka-wire-SOURCE",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10625,9 +10685,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-kafka-wire"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10635,7 +10699,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-kafka-wire-VERSION",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10689,9 +10753,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-kafka-wire-core"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10699,7 +10767,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-kafka-wire-core-CHECKSUM",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10752,9 +10820,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-kafka-wire-core"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10762,7 +10834,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-kafka-wire-core-COUNT",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10806,9 +10878,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-kafka-wire-core"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10816,7 +10892,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-kafka-wire-core-SOURCE",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -10860,9 +10936,13 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-kafka-wire-core"
+        ],
+        "expected_diagnostics": [
+          "DEP-LOCK-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
         "fixtures": []
@@ -10870,7 +10950,7 @@
       "blockers": [
         {
           "id": "KD-LOCK-kafka-wire-core-VERSION",
-          "cause": "Requires whole-lock selected cardinality and exact provenance parity; no replacement bundle has been qualified."
+          "cause": "Native whole-lock policy is translated; frozen cardinality/provenance differential evidence remains to qualify."
         }
       ],
       "invocations": [
@@ -14388,19 +14468,147 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-00-parse-driver",
+          "repository:file:kd-provenance-00-parse-lock",
+          "repository:file:kd-provenance-00-parse-probe"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-006",
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-PARSE",
-          "cause": "Bind all three complete provenance inputs and malformed/duplicate-key/UTF-8 negatives to native parser diagnostics."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-00-parse-driver",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-provenance-00-parse-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "malformed-input",
+            "policy_id": "repository:file:kd-provenance-00-parse-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "af035063bb96e3848cd647faef081c579c0648bae24a80f9ae2a633935da83c2"
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-provenance-00-parse-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "017ddd2f556e1ba2f42eefd0a6d7b7d473275c4cb16fba6db7770938b87a0b70"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-provenance-00-parse-driver",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-00-parse-lock",
+            "path": "Cargo.lock",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-provenance-00-parse-lock",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "malformed-input",
+            "policy_id": "repository:file:kd-provenance-00-parse-lock",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "af035063bb96e3848cd647faef081c579c0648bae24a80f9ae2a633935da83c2"
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-provenance-00-parse-lock",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "017ddd2f556e1ba2f42eefd0a6d7b7d473275c4cb16fba6db7770938b87a0b70"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-provenance-00-parse-lock",
+            "path": "Cargo.lock",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          },
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-00-parse-probe",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+          },
+          {
+            "case": "missing-input",
+            "policy_id": "repository:file:kd-provenance-00-parse-probe",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": null
+          },
+          {
+            "case": "malformed-input",
+            "policy_id": "repository:file:kd-provenance-00-parse-probe",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "af035063bb96e3848cd647faef081c579c0648bae24a80f9ae2a633935da83c2"
+          },
+          {
+            "case": "duplicate-key",
+            "policy_id": "repository:file:kd-provenance-00-parse-probe",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "017ddd2f556e1ba2f42eefd0a6d7b7d473275c4cb16fba6db7770938b87a0b70"
+          },
+          {
+            "case": "invalid-utf8",
+            "policy_id": "repository:file:kd-provenance-00-parse-probe",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-006",
+            "source_sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-bornera-TYPE",
@@ -14440,19 +14648,57 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-bornera-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-bornera-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-bornera-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "52a5843cc162716febba9e5a7548f2858c7b067e6c8f88014aa1b657f66df3b4"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-bornera-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2f2141fa6576971427657f524f3017eec8ee9994cde0c9b3112cd75de507289c"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-bornera-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b6406957d817ec6d67ca19b22b330f978c8a87a5642cb41e0a22cdcb79eac914"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact typed string equality also establishes the original preceding string-type assertion; wrong-type fixtures exercise the unchanged original guard."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-bornera-TYPE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-bornera-VERSION",
@@ -14492,19 +14738,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-bornera-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-bornera-VERSION",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-bornera-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-bornera-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "52a5843cc162716febba9e5a7548f2858c7b067e6c8f88014aa1b657f66df3b4"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-bornera-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2f2141fa6576971427657f524f3017eec8ee9994cde0c9b3112cd75de507289c"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-bornera-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b6406957d817ec6d67ca19b22b330f978c8a87a5642cb41e0a22cdcb79eac914"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -14619,19 +14902,57 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-bornera-core-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-bornera-core-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-bornera-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "45cf641fc0cc2216a5630cbcf7ab4925835a12a601993b1069aab83d88898c68"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-bornera-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "43dc2e3db77ef625f79aad25d02be9b71a2f4ef2bb7609e19c8cc87a3caaba30"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-bornera-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b2946417d0bf894545f41e789655872fe141bdc23418c57a7a128e165efa3255"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact typed string equality also establishes the original preceding string-type assertion; wrong-type fixtures exercise the unchanged original guard."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-bornera-core-TYPE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-bornera-core-VERSION",
@@ -14671,19 +14992,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-bornera-core-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-bornera-core-VERSION",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-bornera-core-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-bornera-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "45cf641fc0cc2216a5630cbcf7ab4925835a12a601993b1069aab83d88898c68"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-bornera-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "43dc2e3db77ef625f79aad25d02be9b71a2f4ef2bb7609e19c8cc87a3caaba30"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-bornera-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b2946417d0bf894545f41e789655872fe141bdc23418c57a7a128e165efa3255"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -14798,19 +15156,57 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-bornera-rustls-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-bornera-rustls-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-bornera-rustls-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d4aeadd4f688b51cdaa34dc0c8391e89295eaf764d348486a1b49734cf17d666"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-bornera-rustls-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e18301778b40d579723f0b583672f59c575f1ad9e7039528327d2dca58bb9778"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-bornera-rustls-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c29cbe173e4196ae227db447c60d929de2cc7eb857fc01fd4135825b899d38eb"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact typed string equality also establishes the original preceding string-type assertion; wrong-type fixtures exercise the unchanged original guard."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-bornera-rustls-TYPE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-bornera-rustls-VERSION",
@@ -14850,19 +15246,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-bornera-rustls-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-bornera-rustls-VERSION",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-bornera-rustls-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-bornera-rustls-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d4aeadd4f688b51cdaa34dc0c8391e89295eaf764d348486a1b49734cf17d666"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-bornera-rustls-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e18301778b40d579723f0b583672f59c575f1ad9e7039528327d2dca58bb9778"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-bornera-rustls-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c29cbe173e4196ae227db447c60d929de2cc7eb857fc01fd4135825b899d38eb"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -14976,19 +15409,81 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-no-patch"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-no-patch",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "present-false",
+            "policy_id": "repository:file:kd-provenance-driver-no-patch",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4dd938a7dcb527113227e17bec2e3e5170f2f07ecf23e2cff2b1a054970f784d"
+          },
+          {
+            "case": "present-string",
+            "policy_id": "repository:file:kd-provenance-driver-no-patch",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "746184351248436c4ee8f563ccedf15fb3afcea9b3afe5b472ca19ee0ac4863a"
+          },
+          {
+            "case": "present-integer",
+            "policy_id": "repository:file:kd-provenance-driver-no-patch",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3ee5c2cf3f82e5be2da323476829ecb286a2e9125c3dd4eefb5f22ef8a5ca1fa"
+          },
+          {
+            "case": "present-empty-array",
+            "policy_id": "repository:file:kd-provenance-driver-no-patch",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f117644527fc865c75d37c26ba3c439ff061fc72ef3ba27a671281b4d7039c99"
+          },
+          {
+            "case": "present-empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-no-patch",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "597151ec54177a76d80ed53c2ddd2a7f3af802d77ef16262a4ba3227a58789f2"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-no-patch",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "2d6fdbd5a59047339c0093b81e96dc32577fe56148a0676effc319bdbf6e723c"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Top-level key absence retains the entire override prohibition; explicit parser-input policies also retain required physical input presence. No reachable-package or protocol-only filtering is introduced."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-NO-PATCH",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-driver-NO-REPLACE",
@@ -15027,19 +15522,81 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-no-replace"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-no-replace",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "present-false",
+            "policy_id": "repository:file:kd-provenance-driver-no-replace",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "59a0a60845c3645f335e3df3bee7970817830e80885e822b172a9c5ab8870d35"
+          },
+          {
+            "case": "present-string",
+            "policy_id": "repository:file:kd-provenance-driver-no-replace",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "dfa9ced9e7069ecfce2be7215d67427448b26765ea9adc38653ce8d54db3f433"
+          },
+          {
+            "case": "present-integer",
+            "policy_id": "repository:file:kd-provenance-driver-no-replace",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c7142b3cddc28860892cf3ce6ba5ccb20496139bc730c51baf87ab88aaaab21f"
+          },
+          {
+            "case": "present-empty-array",
+            "policy_id": "repository:file:kd-provenance-driver-no-replace",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "392de0c3fa4fd4c0244c60145710efe700f166d6cc65f56d62f5fa36be4490c4"
+          },
+          {
+            "case": "present-empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-no-replace",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "382ba329dafaca9b5c09012c44111f05213d0cb9b5c23e19e0d9a7fe65f4af15"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-no-replace",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "2c1f1e7db705beafbd155506a02682b682fcc91f879f102f28f9dd564d2e869a"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Top-level key absence retains the entire override prohibition; explicit parser-input policies also retain required physical input presence. No reachable-package or protocol-only filtering is introduced."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-NO-REPLACE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-driver-NO-TARGET",
@@ -15078,19 +15635,81 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-no-target"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-no-target",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "present-false",
+            "policy_id": "repository:file:kd-provenance-driver-no-target",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "87f03e2bae2daae73c90a3b2b73015957ac813060f4017659da7c37313f4618c"
+          },
+          {
+            "case": "present-string",
+            "policy_id": "repository:file:kd-provenance-driver-no-target",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "59812dfb4dfa9d0e8f8f383bd36ad4cab79328ee685ecbddb425b350961ddc8b"
+          },
+          {
+            "case": "present-integer",
+            "policy_id": "repository:file:kd-provenance-driver-no-target",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "466d5f2a47150693461619f0669be8c0e07fceeb6cf321f3452da5d6f507f066"
+          },
+          {
+            "case": "present-empty-array",
+            "policy_id": "repository:file:kd-provenance-driver-no-target",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "630df3e2808875bb50b1538f9cbfb191e7649ea470f4ebd1c4f3485046ad2ac8"
+          },
+          {
+            "case": "present-empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-no-target",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "db0c0f892ddc4cf7878c42b5276d43e0c2b55229e473f8c3703edc4f3612d1ce"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-no-target",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "7985e8b4ebf8a503ebf7da4693069620af66a5f1e11a15089ae68f835e773729"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Top-level key absence retains the entire override prohibition; explicit parser-input policies also retain required physical input presence. No reachable-package or protocol-only filtering is introduced."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-NO-TARGET",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-driver-bornera-COUNT",
@@ -15128,19 +15747,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-bornera-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "283d76cd2ed9f51e18fa649d9ad422a32286e09ffe671b6791e411efcc9d54f1"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ee1afd9ba2db684406851e8507f0ebeb2c95577b806be6386c0efb4553f122c5"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6ccbac2762b866f753d9a4c23117bf2564fb4990218a76e5541fc3f22292ab27"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6ccbac2762b866f753d9a4c23117bf2564fb4990218a76e5541fc3f22292ab27"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "68901464ebf70109dfdf8335f527a5829f687e76e6f786db1beeecd6413fc22d"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b384dee77e74120bc5efba26c6eb9d1f2c3a1061d01d0556394cbfcc38ecf36c"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fe2c9b033cffb4cb05edf4050cf0e5ebe6439c6c6101893bd99859f4e358c9e1"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "34698054b15e17f7585dfe3df6711de66f81a35bbc4762b984128f229f51258b"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-bornera-COUNT",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:87:5:helper-call-candidate"
       ]
@@ -15185,19 +15882,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-bornera-inheritance"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-bornera-INHERITANCE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-inheritance",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5c679f81a4aaa76808a6d173a5ecfd5ee3e9ea104de6abd1f071e444d56355b5"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b6113f0c3aed0e8dc5d2007818b90db446556b32fe9e5372d5ff7b8185838915"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6ccbac2762b866f753d9a4c23117bf2564fb4990218a76e5541fc3f22292ab27"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:87:5:helper-call-candidate"
       ]
@@ -15239,19 +15973,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-bornera-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "283d76cd2ed9f51e18fa649d9ad422a32286e09ffe671b6791e411efcc9d54f1"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ee1afd9ba2db684406851e8507f0ebeb2c95577b806be6386c0efb4553f122c5"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6ccbac2762b866f753d9a4c23117bf2564fb4990218a76e5541fc3f22292ab27"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6ccbac2762b866f753d9a4c23117bf2564fb4990218a76e5541fc3f22292ab27"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "68901464ebf70109dfdf8335f527a5829f687e76e6f786db1beeecd6413fc22d"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "b384dee77e74120bc5efba26c6eb9d1f2c3a1061d01d0556394cbfcc38ecf36c"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "fe2c9b033cffb4cb05edf4050cf0e5ebe6439c6c6101893bd99859f4e358c9e1"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "34698054b15e17f7585dfe3df6711de66f81a35bbc4762b984128f229f51258b"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-bornera-TABLE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:87:5:helper-call-candidate"
       ]
@@ -15292,19 +16104,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-bornera-core-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9b00f5a38b8cbdb4b2affb75e509a4735fd6888b6e896174f84e954bfa77b2d5"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2b3206451a60798c57683e013e35c211a405f1258fda2ce28b48aaec6c7b6dbe"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "416b109276fd1acf19295a87c332c675ceba7da59184bf95494cf00e79b88170"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "416b109276fd1acf19295a87c332c675ceba7da59184bf95494cf00e79b88170"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "82e04f7ebfc7b069c1514ded54bee64239463294c6e7e9a0aa1b4ab91e3c0e4f"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6d144d4f5d1f964fede77fe2e20992459f814ae9142c28c2cf16ec32cfb36b68"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "078a36a9d39ceb459c6820252e691bd36b6a69f697ac66b4a3424c32da87fad4"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "03c3caafd952f426820a99ae561307bad5a1477490b659af49b12eccb08c8256"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-bornera-core-COUNT",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:88:5:helper-call-candidate"
       ]
@@ -15349,19 +16239,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-bornera-core-inheritance"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-bornera-core-INHERITANCE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-inheritance",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "624648713cc8b6377a2e8579b682d8e4138b1918902d69ad4cfc8013e3448286"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "534f6b3b78aa9a48f387d2df39de369ba2d5bc686cdc6b85400540e48e4b935e"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "416b109276fd1acf19295a87c332c675ceba7da59184bf95494cf00e79b88170"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:88:5:helper-call-candidate"
       ]
@@ -15403,19 +16330,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-bornera-core-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9b00f5a38b8cbdb4b2affb75e509a4735fd6888b6e896174f84e954bfa77b2d5"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2b3206451a60798c57683e013e35c211a405f1258fda2ce28b48aaec6c7b6dbe"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "416b109276fd1acf19295a87c332c675ceba7da59184bf95494cf00e79b88170"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "416b109276fd1acf19295a87c332c675ceba7da59184bf95494cf00e79b88170"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "82e04f7ebfc7b069c1514ded54bee64239463294c6e7e9a0aa1b4ab91e3c0e4f"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6d144d4f5d1f964fede77fe2e20992459f814ae9142c28c2cf16ec32cfb36b68"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "078a36a9d39ceb459c6820252e691bd36b6a69f697ac66b4a3424c32da87fad4"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-core-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "03c3caafd952f426820a99ae561307bad5a1477490b659af49b12eccb08c8256"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-bornera-core-TABLE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:88:5:helper-call-candidate"
       ]
@@ -15456,19 +16461,113 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-bornera-rustls-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c4a6195922e2a8c98366ad4dbe94930f45ad90419cfc5e7fe21caf494aa50972"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2dbecb4ec007c20ddb4d7c71d71ea7c2692aed8aa1013acf6426abbcaa87ee8a"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "eb650639679ff7a0be9902f29b94322b2f53646f49cadb1e2fb7196a9ab805cb"
+          },
+          {
+            "case": "missing-optional",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6ffd0d3e2cbaca8cdf488ec33a0a376ae1e9d94920681713b607896f046e61a6"
+          },
+          {
+            "case": "same-count-case-changed-optional",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f79ea533b3adae45d12ed52f8ae690924b6d3b691c454feb7400d58f65945cb7"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "57892a678bc0a9a83e709e21e6ecac4e2c9fb038d377ef72f4acf062ad3e8686"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d631b2c784db0793c9930921e30504ea44d606be8e0abb91b51e3a9eea7145b2"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "58d24f15a1dff3fd4623e1502eab11817c77f8b427afaee60b33da9290125a94"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4b966e191e9c0b22d876526ddddb67df6ecb6b4d88f254d04651504e9fe47b8c"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "d3fc9db1b535e04408d254866da14402e6fc23b3f4102298a6f1469b309092d5"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-bornera-rustls-COUNT",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:89:5:helper-call-candidate"
       ]
@@ -15513,19 +16612,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-bornera-rustls-inheritance"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-bornera-rustls-INHERITANCE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-inheritance",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "85838880884b9fdec4a00ceb61a54639faff7a552a40165745fac01d144a71f8"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "85081e385c8ba5ad2f548a4f0323d90f8f3e0f5544d6b12b9121f444f445bf03"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "57892a678bc0a9a83e709e21e6ecac4e2c9fb038d377ef72f4acf062ad3e8686"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:89:5:helper-call-candidate"
       ]
@@ -15570,19 +16706,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-bornera-rustls-optional"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-bornera-rustls-OPTIONAL",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-optional",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-optional",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "258489df19ec9f78dfeed761fedb8a6f85466d77f9fb25197ba53ef98a915e58"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-optional",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ab9c347495d5d977a23da32ab09f84b19542ca92d1c575e47283e99fa5a7caaf"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-optional",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6ffd0d3e2cbaca8cdf488ec33a0a376ae1e9d94920681713b607896f046e61a6"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:89:5:helper-call-candidate"
       ]
@@ -15624,19 +16797,113 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-bornera-rustls-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c4a6195922e2a8c98366ad4dbe94930f45ad90419cfc5e7fe21caf494aa50972"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2dbecb4ec007c20ddb4d7c71d71ea7c2692aed8aa1013acf6426abbcaa87ee8a"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "eb650639679ff7a0be9902f29b94322b2f53646f49cadb1e2fb7196a9ab805cb"
+          },
+          {
+            "case": "missing-optional",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6ffd0d3e2cbaca8cdf488ec33a0a376ae1e9d94920681713b607896f046e61a6"
+          },
+          {
+            "case": "same-count-case-changed-optional",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f79ea533b3adae45d12ed52f8ae690924b6d3b691c454feb7400d58f65945cb7"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "57892a678bc0a9a83e709e21e6ecac4e2c9fb038d377ef72f4acf062ad3e8686"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d631b2c784db0793c9930921e30504ea44d606be8e0abb91b51e3a9eea7145b2"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "58d24f15a1dff3fd4623e1502eab11817c77f8b427afaee60b33da9290125a94"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4b966e191e9c0b22d876526ddddb67df6ecb6b4d88f254d04651504e9fe47b8c"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-bornera-rustls-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "d3fc9db1b535e04408d254866da14402e6fc23b3f4102298a6f1469b309092d5"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-bornera-rustls-TABLE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:89:5:helper-call-candidate"
       ]
@@ -15677,19 +16944,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-wire-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "abb17aca8155f8848efb0fa799300a9f57bc2f0cef93e98ec034327e0e843f09"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "69d105f43f400e25d353886984a6704f61062d43457393c250d2f871545b4c6a"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e16b7a0a560c49d92bc8111ca172242d38dbe35adb0fa088ab1f4f582976b311"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e16b7a0a560c49d92bc8111ca172242d38dbe35adb0fa088ab1f4f582976b311"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8f5be933b0a340f8afb3ad9fcecce409d783077292afd63d53fbb3c6bb8fc68a"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bbb5f20b77567fb8156c49269fbfd84f278876a80d2650db69762c45806814c4"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "65fc9e0a8c7b5e64d866ceb6ef63e508ea9f08bb73167c3d96efaaa212231c76"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "491dcaae135782eb2f9312e8fcb65e087a4ba5f569d375f570560c3743f8d99d"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-wire-COUNT",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:84:5:helper-call-candidate"
       ]
@@ -15734,19 +17079,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-wire-inheritance"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-wire-INHERITANCE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-wire-inheritance",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-driver-wire-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "03cd3a21fc84947c6cd0e6a94e9ec56d163f4fffeefbb3508f9b239eb225b304"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-driver-wire-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0bddfd3880a083802058b1561205086b7ab666c92c17d43a4696b5c88074a432"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-driver-wire-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e16b7a0a560c49d92bc8111ca172242d38dbe35adb0fa088ab1f4f582976b311"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:84:5:helper-call-candidate"
       ]
@@ -15788,19 +17170,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-wire-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "abb17aca8155f8848efb0fa799300a9f57bc2f0cef93e98ec034327e0e843f09"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "69d105f43f400e25d353886984a6704f61062d43457393c250d2f871545b4c6a"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e16b7a0a560c49d92bc8111ca172242d38dbe35adb0fa088ab1f4f582976b311"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e16b7a0a560c49d92bc8111ca172242d38dbe35adb0fa088ab1f4f582976b311"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8f5be933b0a340f8afb3ad9fcecce409d783077292afd63d53fbb3c6bb8fc68a"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bbb5f20b77567fb8156c49269fbfd84f278876a80d2650db69762c45806814c4"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "65fc9e0a8c7b5e64d866ceb6ef63e508ea9f08bb73167c3d96efaaa212231c76"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-wire-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "491dcaae135782eb2f9312e8fcb65e087a4ba5f569d375f570560c3743f8d99d"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-wire-TABLE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:84:5:helper-call-candidate"
       ]
@@ -15841,19 +17301,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-wire-core-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "97e0e154ff3ec8f4e6e5be92e11c2bcab46602e7e0409653871306a407070742"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "7507c2db5fbcddba6cc60469139bd90c9312f3c56bbb3a88a546bce24727347e"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d55d76cd6b34e0ab7567f9e976990af6b34e76770ebc63081cc7ee52f7c84743"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d55d76cd6b34e0ab7567f9e976990af6b34e76770ebc63081cc7ee52f7c84743"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1d0b105dbd48fa6d092c329fb3c561ebb83891a6eaa768c70dcc2ad62d0c43e8"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ac8ded5208bf9cfcefa86fce4607c81a17e771dd4581f2c28dee8c56a3160d06"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "182e68f23523ca27bd3b0fa5a8dd83e57ba42a684add4d3224f2c9a2756e3177"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b58787fcc83a5e3323a3931dfc02939f8c4d44fe24a7cb1921820ece547edea7"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-wire-core-COUNT",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:85:5:helper-call-candidate"
       ]
@@ -15898,19 +17436,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-wire-core-inheritance"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-wire-core-INHERITANCE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-inheritance",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "85a9c9b7f3923826245d7bac26a60e83858e1feb129bfedfd7eb711b8e4182d4"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a1dd6e153dac2eb4c885474abf8a1525c8a9e9a8187299395637b6416102f08e"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-inheritance",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d55d76cd6b34e0ab7567f9e976990af6b34e76770ebc63081cc7ee52f7c84743"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:85:5:helper-call-candidate"
       ]
@@ -15952,19 +17527,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-driver-wire-core-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "97e0e154ff3ec8f4e6e5be92e11c2bcab46602e7e0409653871306a407070742"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "7507c2db5fbcddba6cc60469139bd90c9312f3c56bbb3a88a546bce24727347e"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d55d76cd6b34e0ab7567f9e976990af6b34e76770ebc63081cc7ee52f7c84743"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d55d76cd6b34e0ab7567f9e976990af6b34e76770ebc63081cc7ee52f7c84743"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1d0b105dbd48fa6d092c329fb3c561ebb83891a6eaa768c70dcc2ad62d0c43e8"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "ac8ded5208bf9cfcefa86fce4607c81a17e771dd4581f2c28dee8c56a3160d06"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "182e68f23523ca27bd3b0fa5a8dd83e57ba42a684add4d3224f2c9a2756e3177"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-driver-wire-core-count",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "b58787fcc83a5e3323a3931dfc02939f8c4d44fe24a7cb1921820ece547edea7"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-driver-wire-core-TABLE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:85:5:helper-call-candidate"
       ]
@@ -16007,19 +17660,57 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-kafka-wire-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8b7cb9bcdfd3ca882ea7f783660fea2c36d8c5368a8ce50437e5d46fce4eb8fa"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3e6bcb3970e959239ba72135a42ddc3a4c2e6d061f457b4ccdcb6990276c8c4d"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9c85a8a8b5e68e036b435ae063b8cf1790ed5562959966e1dd66d7008bfa00c1"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact typed string equality also establishes the original preceding string-type assertion; wrong-type fixtures exercise the unchanged original guard."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-kafka-wire-TYPE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-kafka-wire-VERSION",
@@ -16059,19 +17750,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-kafka-wire-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-kafka-wire-VERSION",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "8b7cb9bcdfd3ca882ea7f783660fea2c36d8c5368a8ce50437e5d46fce4eb8fa"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "3e6bcb3970e959239ba72135a42ddc3a4c2e6d061f457b4ccdcb6990276c8c4d"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9c85a8a8b5e68e036b435ae063b8cf1790ed5562959966e1dd66d7008bfa00c1"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -16186,19 +17914,57 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-kafka-wire-core-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-core-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "82ee13bba9ebd617a151b21f7bd0cfd7eb162f9d9e8e827bfd113f2bdd7759da"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a859ecd9af47c6f4270fc333b2f386e573c173725671173f4a173d7e3f5877da"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "7e3d2d387f3815c55fa376fc3ce5bbed0078ecf618826bd8faf69bb64d77d9ae"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact typed string equality also establishes the original preceding string-type assertion; wrong-type fixtures exercise the unchanged original guard."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-kafka-wire-core-TYPE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-kafka-wire-core-VERSION",
@@ -16238,19 +18004,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-kafka-wire-core-version"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-kafka-wire-core-VERSION",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-core-version",
+            "path": "Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "82ee13bba9ebd617a151b21f7bd0cfd7eb162f9d9e8e827bfd113f2bdd7759da"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "a859ecd9af47c6f4270fc333b2f386e573c173725671173f4a173d7e3f5877da"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-kafka-wire-core-version",
+            "path": "Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "7e3d2d387f3815c55fa376fc3ce5bbed0078ecf618826bd8faf69bb64d77d9ae"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -16364,19 +18167,81 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-probe-no-patch"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-probe-no-patch",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+          },
+          {
+            "case": "present-false",
+            "policy_id": "repository:file:kd-provenance-probe-no-patch",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "e5cb062c875deb0572368a65d12096a2375c857aa24f5f15eaafcb67e24435dd"
+          },
+          {
+            "case": "present-string",
+            "policy_id": "repository:file:kd-provenance-probe-no-patch",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5f07c75892235f9c187d91872b6493461c149bda41da23938bfc4610a7ccc336"
+          },
+          {
+            "case": "present-integer",
+            "policy_id": "repository:file:kd-provenance-probe-no-patch",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "cfb85bd3b905097be7a9be56849b027300b229bec1d03595269f4f59823cfb68"
+          },
+          {
+            "case": "present-empty-array",
+            "policy_id": "repository:file:kd-provenance-probe-no-patch",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "c291b49633a8309775ff5ea764737e2adb133f00c7b4942cc5bdb6fa78c20427"
+          },
+          {
+            "case": "present-empty-table",
+            "policy_id": "repository:file:kd-provenance-probe-no-patch",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "eae3ceb2487cdc2d4db107b675ac90a97f40e3f1938106c08c9135ec279774c2"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-probe-no-patch",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "1c7284713d4fb50bd5f3145efb4c5b963ccb0c0f59e1d47eddbc15ca35895b13"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Top-level key absence retains the entire override prohibition; explicit parser-input policies also retain required physical input presence. No reachable-package or protocol-only filtering is introduced."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-probe-NO-PATCH",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-probe-NO-REPLACE",
@@ -16415,19 +18280,81 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-probe-no-replace"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-probe-no-replace",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+          },
+          {
+            "case": "present-false",
+            "policy_id": "repository:file:kd-provenance-probe-no-replace",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4cf7c7e0eaae276fae7935cfea755f07171f2d3983ba5ceb4fbf3828f1979729"
+          },
+          {
+            "case": "present-string",
+            "policy_id": "repository:file:kd-provenance-probe-no-replace",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "6c1531c374717778edd9a25883908d57a18d5ac93f8c16d5ed9cfa40c210e872"
+          },
+          {
+            "case": "present-integer",
+            "policy_id": "repository:file:kd-provenance-probe-no-replace",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4bbc531cff61d0e47ba08ca2cc4f6d1c698d04c4adb903c6b1d51f2bbdc1c2f8"
+          },
+          {
+            "case": "present-empty-array",
+            "policy_id": "repository:file:kd-provenance-probe-no-replace",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "9e6944ef93ce33e55bee07176ff49548071520dbd015955aecedb251b2cb6c14"
+          },
+          {
+            "case": "present-empty-table",
+            "policy_id": "repository:file:kd-provenance-probe-no-replace",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "135a4f3b749514419d255c8d382c54c4f00a89d2d095371b491b9e01cad8fc06"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-probe-no-replace",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "94d5903da45db44bbd2f18034272149b8728228591831bf5678c94810f0b1481"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Top-level key absence retains the entire override prohibition; explicit parser-input policies also retain required physical input presence. No reachable-package or protocol-only filtering is introduced."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-probe-NO-REPLACE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-probe-NO-TARGET",
@@ -16466,19 +18393,81 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-probe-no-target"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-probe-no-target",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+          },
+          {
+            "case": "present-false",
+            "policy_id": "repository:file:kd-provenance-probe-no-target",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "340e6beecba2a34bbed0db2444a41fcec6ee000d2e1e6d127a35f5d2be676b33"
+          },
+          {
+            "case": "present-string",
+            "policy_id": "repository:file:kd-provenance-probe-no-target",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "5bc7b66ad11075afb72be4306feedfa2973cd2e07870a552320dfd8ce7d924c8"
+          },
+          {
+            "case": "present-integer",
+            "policy_id": "repository:file:kd-provenance-probe-no-target",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "1ff5b5592b2359b8a58f4a1788496e2ced56c96d08723947d0cc03dc2b1fd7f3"
+          },
+          {
+            "case": "present-empty-array",
+            "policy_id": "repository:file:kd-provenance-probe-no-target",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4b970656cac897c2a956d5d78331a5e73d4f0c10039557e9246c3b9ca6f7129c"
+          },
+          {
+            "case": "present-empty-table",
+            "policy_id": "repository:file:kd-provenance-probe-no-target",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "0cfe000605ac2370d1fe2c21ed1ef9c78f85463d90abed8344510822e57b8755"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-probe-no-target",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "ca58b58f51538cb9ac2ce32f768f33a42ea14b0ad672d4565af5d1661ad00166"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Top-level key absence retains the entire override prohibition; explicit parser-input policies also retain required physical input presence. No reachable-package or protocol-only filtering is introduced."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-probe-NO-TARGET",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-PROVENANCE-probe-wire-COUNT",
@@ -16516,19 +18505,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-probe-wire-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d1e597f8489f294c176bce66da6aed911b9b2f3c6be49d7d51b0ff1f8f39efdd"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bb98f6e35dadf1b7fa55ab98ee5d0bc56093c92519c175da896f9a198dd13dee"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2ba75cfe062241bea7ec4ead044312f0c7c56d9aba85438604936f6d6245eb76"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2ba75cfe062241bea7ec4ead044312f0c7c56d9aba85438604936f6d6245eb76"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "249382bdda39e015b9e75a7b4575b30e5deabb3bfa18025c90150b1a8be0cab8"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "999a0aefe48258c443298bb07aba682fa9cf661078883975e7a589eba05aac2c"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4f88cf3f70c5d831a6315e1ba195fa63f996e8a7710edd90cafab6b2e7769091"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "7997da61cba32102aad9eb6a0ff9095bff7efbe6c82cfddef89356de68833320"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-probe-wire-COUNT",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:86:5:helper-call-candidate"
       ]
@@ -16573,19 +18640,56 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-probe-wire-inheritance"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-probe-wire-INHERITANCE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-probe-wire-inheritance",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+          },
+          {
+            "case": "wrong-value",
+            "policy_id": "repository:file:kd-provenance-probe-wire-inheritance",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "f26aaef88144b62b92df4fc885b14598c955df2f896f4c649cbc0a814741adba"
+          },
+          {
+            "case": "wrong-type",
+            "policy_id": "repository:file:kd-provenance-probe-wire-inheritance",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d6425719d3d5f3e8c841dedc8af5a83ce62e3ad0525695da7f7c8f661d4cf35a"
+          },
+          {
+            "case": "missing-field",
+            "policy_id": "repository:file:kd-provenance-probe-wire-inheritance",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2ba75cfe062241bea7ec4ead044312f0c7c56d9aba85438604936f6d6245eb76"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
         }
-      ],
+      },
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:86:5:helper-call-candidate"
       ]
@@ -16627,19 +18731,97 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-provenance-probe-wire-count"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          {
+            "case": "valid",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+          },
+          {
+            "case": "missing-table",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "d1e597f8489f294c176bce66da6aed911b9b2f3c6be49d7d51b0ff1f8f39efdd"
+          },
+          {
+            "case": "non-table",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "bb98f6e35dadf1b7fa55ab98ee5d0bc56093c92519c175da896f9a198dd13dee"
+          },
+          {
+            "case": "empty-table",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2ba75cfe062241bea7ec4ead044312f0c7c56d9aba85438604936f6d6245eb76"
+          },
+          {
+            "case": "missing-workspace",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "2ba75cfe062241bea7ec4ead044312f0c7c56d9aba85438604936f6d6245eb76"
+          },
+          {
+            "case": "same-count-case-changed-workspace",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "249382bdda39e015b9e75a7b4575b30e5deabb3bfa18025c90150b1a8be0cab8"
+          },
+          {
+            "case": "unexpected-key",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "999a0aefe48258c443298bb07aba682fa9cf661078883975e7a589eba05aac2c"
+          },
+          {
+            "case": "undisplayed-key",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": false,
+            "diagnostic": "REP-FILE-007",
+            "source_sha256": "4f88cf3f70c5d831a6315e1ba195fa63f996e8a7710edd90cafab6b2e7769091"
+          },
+          {
+            "case": "matching-keys-in-unrelated-location",
+            "policy_id": "repository:file:kd-provenance-probe-wire-count",
+            "path": "crates/kafka-driver-probe/Cargo.toml",
+            "accepted": true,
+            "diagnostic": null,
+            "source_sha256": "7997da61cba32102aad9eb6a0ff9095bff7efbe6c82cfddef89356de68833320"
+          }
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/provenance-parity.json.gz",
+          "payload_sha256": "f7b83df14569b1bcb6694087cf5b215d87f0e93121e57d0a31340b2632e66726",
+          "implementation_commit": "51901c18681e15b1f14db2b61a2db057c678a90d"
+        },
+        "conjunction_proof": "Exact workspace/optional key sets preserve the original table-type, table-length, and required-field conjunction. Separate typed true-value predicates retain every required field value."
       },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-probe-wire-TABLE",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
-        }
-      ],
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:86:5:helper-call-candidate"
       ]
@@ -29796,11 +31978,11 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 424,
-    "implemented": 297,
+    "implemented": 353,
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 287,
+      "new engine capability": 323,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },
