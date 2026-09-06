@@ -22845,7 +22845,9 @@
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_path_membership_preserves_every_written_owner_context",
           "rust-test:crates/zrail-testkit/tests/rust_inventories/paths_test.rs::path_owners_bind_exact_authored_spelling_and_all_occurrence_evidence",
-          "rust-test:crates/zrail-testkit/tests/rust_inventories/owners_test.rs::complete_ownership_sets_reject_moved_and_additional_locations"
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/owners_test.rs::complete_ownership_sets_reject_moved_and_additional_locations",
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_owner_assertion_rejects_missing_and_unexpected_members",
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::qualify_all_frozen_kafka_driver_transport_owners"
         ]
       },
       "blockers": [
@@ -50302,7 +50304,9 @@
         "fixtures": [
           "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_path_membership_preserves_every_written_owner_context",
           "rust-test:crates/zrail-testkit/tests/rust_inventories/paths_test.rs::path_owners_bind_exact_authored_spelling_and_all_occurrence_evidence",
-          "rust-test:crates/zrail-testkit/tests/rust_inventories/owners_test.rs::complete_ownership_sets_reject_moved_and_additional_locations"
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/owners_test.rs::complete_ownership_sets_reject_moved_and_additional_locations",
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_owner_assertion_rejects_missing_and_unexpected_members",
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::qualify_all_frozen_kafka_driver_transport_owners"
         ]
       },
       "blockers": [

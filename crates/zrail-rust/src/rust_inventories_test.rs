@@ -23,6 +23,8 @@ mod fixtures;
 mod model;
 #[path = "rust_inventories/parity/mutations.rs"]
 mod mutations;
+#[path = "rust_inventories/parity/owner_mutations.rs"]
+mod owner_mutations;
 #[path = "../tests/rc9_transport/qualification.rs"]
 mod qualification;
 
@@ -88,6 +90,38 @@ fn qualify_all_frozen_kafka_driver_transport_methods() {
 #[ignore = "requires prefetched snapshots and fresh ZRAIL_RC9_TRANSPORT_EXPRESSION_PATHS_REPORT"]
 fn qualify_all_frozen_kafka_driver_transport_expression_paths() {
     qualification::run(family::Family::ExpressionPaths);
+}
+
+#[test]
+#[ignore = "requires prefetched snapshots and fresh ZRAIL_RC9_TRANSPORT_OWNERS_REPORT"]
+fn qualify_all_frozen_kafka_driver_transport_owners() {
+    qualification::run(family::Family::Owners);
+}
+
+#[test]
+fn frozen_owner_assertion_rejects_missing_and_unexpected_members() {
+    let family = family::Family::Owners;
+    let (policy, _) = model::policy_for(family);
+    let roots = policy
+        .include
+        .iter()
+        .map(|p| p.strip_suffix("/**/*.rs").expect("root selector").into())
+        .collect::<Vec<String>>();
+    let sources = std::collections::BTreeMap::from([(
+        "src/reactor/direct_plaintext/set_owner.rs".into(),
+        "fn run(x: ConnectionSet) {}".into(),
+    )]);
+    let root = std::env::temp_dir().join(format!(
+        "zrail-owner-fixtures-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id()
+    ));
+    let cases = fixtures::qualify_family(&root, &roots, &sources, &policy, family);
+    assert_eq!(cases.len(), family.totals().0);
+    assert_eq!(
+        cases.iter().filter(|row| row.native_accepted).count(),
+        family.totals().1
+    );
 }
 
 #[test]

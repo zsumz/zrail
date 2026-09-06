@@ -72,14 +72,7 @@ pub(super) fn run(family: Family) {
     );
     let legacy_counts = family.repository(&source, &roots);
     family.check(legacy_counts.clone());
-    assert_eq!(
-        observation
-            .counts
-            .iter()
-            .map(|count| (format!("{}:{}", count.path, count.name), count.count))
-            .collect::<std::collections::BTreeMap<_, _>>(),
-        legacy_counts
-    );
+    assert_eq!(family.native_counts(&observation), legacy_counts);
     let detector = model::detector_source();
     let detector_counts = family.observed("src/reactor/rogue.rs", &detector);
     family.check_detector(detector_counts.clone());
@@ -110,7 +103,7 @@ pub(super) fn run(family: Family) {
         .expect("compiler");
     assert!(compiler.status.success());
     let report = model::Report {
-        schema: 1, implementation_commit, implementation_tree, snapshot, policy_sha256,
+        schema: 1, legacy_measure: family.legacy_measure(), implementation_commit, implementation_tree, snapshot, policy_sha256,
         registry_sha256: sha256_hex(&registry_bytes),
         fixture_origins_sha256: sha256_hex(&fs::read(project.join(format!("crates/zrail-testkit/tests/fixtures/rc9/transport-{}-origins.json", family.name()))).expect("origins")),
         test_binary_sha256: sha256_hex(&fs::read(std::env::current_exe().expect("test binary")).expect("binary bytes")),
@@ -124,6 +117,7 @@ pub(super) fn run(family: Family) {
             "Only selected authored syntax quantities and strict Rust file parsing are qualified; no Cargo resolution, semantic receiver identity, execution, lock, or complete repository qualification is claimed.".into(),
             "Original source traversal and collector bodies execute with an injected snapshot root and the original roots loop; the registry and every original Rust source are hash-bound.".into(),
             "Mutations use isolated physical copies; original snapshots and reviewed lock authority remain unchanged.".into(),
+            "When legacy_measure is distinct-owner-files, legacy count maps encode one membership per file/subject pair; native observation counts retain actual syntax quantities independently.".into(),
         ],
     };
     let mut bytes = serde_json::to_vec_pretty(&report).expect("typed evidence");

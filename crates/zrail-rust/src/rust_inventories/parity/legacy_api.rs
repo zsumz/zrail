@@ -25,6 +25,17 @@ pub(in super::super) fn check_owners(connection_set_files: BTreeSet<String>) {
     );
 }
 
+pub(in super::super) fn expected_owner_files() -> BTreeSet<String> {
+    BTreeSet::from([SET_OWNER.into()])
+}
+
+pub(in super::super) fn repository_owner_files(
+    root: &std::path::Path,
+    roots: &[String],
+) -> BTreeSet<String> {
+    repository_inventory(root, roots).connection_set_files
+}
+
 pub(in super::super) fn check_detector_owners(connection_set_files: BTreeSet<String>) {
     let actual = AuthorityInventory {
         connection_set_files,

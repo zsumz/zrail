@@ -128,6 +128,8 @@ pub(super) fn detector_source() -> String {
 #[derive(Serialize)]
 pub(super) struct Report {
     pub(super) schema: u32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(super) legacy_measure: Option<LegacyMeasure>,
     pub(super) implementation_commit: String,
     pub(super) implementation_tree: String,
     pub(super) snapshot: serde_json::Value,
@@ -146,6 +148,12 @@ pub(super) struct Report {
     pub(super) fixtures: Vec<Fixture>,
     pub(super) full_repository_qualified: bool,
     pub(super) limitations: Vec<String>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub(super) enum LegacyMeasure {
+    DistinctOwnerFiles,
 }
 
 #[derive(Serialize)]

@@ -74,11 +74,7 @@ pub(super) fn qualify_family(
         );
         let diagnostic = if let Ok(report) = &observed {
             if let Some(counts) = &legacy_counts {
-                let native_counts = report
-                    .counts
-                    .iter()
-                    .map(|count| (format!("{}:{}", count.path, count.name), count.count))
-                    .collect::<BTreeMap<_, _>>();
+                let native_counts = family.native_counts(report);
                 assert_eq!(
                     &native_counts, counts,
                     "complete identity/quantity map: {}",
