@@ -36,7 +36,7 @@ pub enum RepositoryDocumentAssertion {
     /// The selected value is a string nonempty after Rust's Unicode-aware trim.
     NonemptyString,
     /// The subject exists and its named immediate field is absent or not a string.
-    /// A present non-object subject has no field, preserving an explicit get/as_str projection.
+    /// A present non-object subject has no field, preserving an explicit `get/as_str` projection.
     FieldNotString {
         /// Literal case-sensitive key; this operation does not search descendants.
         field: String,

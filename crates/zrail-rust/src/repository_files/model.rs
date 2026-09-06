@@ -74,7 +74,7 @@ pub struct RepositoryDocumentObservation {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub keys: Option<RepositoryDocumentKeys>,
     /// Immediate projected field type, when a field predicate observes an existing child.
-    /// Parent absence/type remains independently visible in selected_type and selection_error.
+    /// Parent absence/type remains independently visible in `selected_type` and `selection_error`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub field_type: Option<String>,
 }
