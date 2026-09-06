@@ -32,7 +32,7 @@ pub(super) fn compare(
                     .as_str()
                     .expect("root");
                 assert_eq!(source.include, [expected]);
-                assert!(snapshot.root.join(expected).is_dir());
+                assert!(legacy::directory(&snapshot.root, expected));
                 BTreeSet::from([expected.to_owned()])
             }
             RepositoryFilePredicate::Literal(literal)
@@ -71,7 +71,9 @@ pub(super) fn compare(
         );
         for entry in &policy.entries {
             let accepted = match &source.predicate {
-                RepositoryFilePredicate::Count { .. } => snapshot.root.join(&entry.path).is_dir(),
+                RepositoryFilePredicate::Count { .. } => {
+                    legacy::directory(&snapshot.root, &entry.path)
+                }
                 RepositoryFilePredicate::ForbiddenNames { .. } => {
                     legacy::names(&snapshot.root.join(&entry.path))
                 }

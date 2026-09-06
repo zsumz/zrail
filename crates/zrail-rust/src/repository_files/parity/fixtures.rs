@@ -16,12 +16,30 @@ pub(super) fn qualify(root: &Path, policies: &[RepositoryFileRule]) -> Vec<Fixtu
         match &policy.predicate {
             RepositoryFilePredicate::Count { .. } => {
                 let path = &policy.include[0];
-                rows.push(check(root, policy, path, None, false));
+                rows.push(check(
+                    root,
+                    policy,
+                    path,
+                    None,
+                    legacy::directory(root, path),
+                ));
                 fs::create_dir_all(root.join(path)).expect("required directory");
-                rows.push(check(root, policy, path, None, true));
+                rows.push(check(
+                    root,
+                    policy,
+                    path,
+                    None,
+                    legacy::directory(root, path),
+                ));
                 fs::remove_dir(root.join(path)).expect("remove required directory");
                 fs::write(root.join(path), "ordinary file").expect("wrong entry kind");
-                rows.push(check(root, policy, path, Some("ordinary file"), false));
+                rows.push(check(
+                    root,
+                    policy,
+                    path,
+                    Some("ordinary file"),
+                    legacy::directory(root, path),
+                ));
             }
             RepositoryFilePredicate::ForbiddenNames { .. } => {
                 for path in [

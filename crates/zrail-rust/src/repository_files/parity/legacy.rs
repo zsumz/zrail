@@ -33,6 +33,10 @@ pub(super) fn names(path: &Path) -> bool {
     !has_vague_name(path)
 }
 
+pub(super) fn directory(root: &Path, relative: &str) -> bool {
+    root.join(relative).is_dir()
+}
+
 pub(super) fn capability(path: &str, source: &str, token: &str) -> bool {
     source_violations(path, source, &[token.to_owned()]).is_empty()
 }
