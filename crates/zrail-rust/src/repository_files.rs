@@ -17,7 +17,8 @@ use zrail_core::{
 
 pub(crate) use model::RepositoryFileAnalysis;
 pub use model::{
-    GovernedRepositoryFile, GovernedRepositoryFileEntry, RepositoryDocumentObservation,
+    GovernedRepositoryFile, GovernedRepositoryFileEntry, RepositoryDocumentKeys,
+    RepositoryDocumentObservation,
 };
 
 pub(crate) fn analyze(

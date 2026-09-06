@@ -68,6 +68,7 @@ pub use onboarding::{
     discover_source_roots_with_selection,
 };
 pub use repository_files::{
-    GovernedRepositoryFile, GovernedRepositoryFileEntry, RepositoryDocumentObservation,
+    GovernedRepositoryFile, GovernedRepositoryFileEntry, RepositoryDocumentKeys,
+    RepositoryDocumentObservation,
 };
 pub use source_budget::EffectiveSizeBudget;

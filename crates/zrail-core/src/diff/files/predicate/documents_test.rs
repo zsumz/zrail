@@ -59,3 +59,79 @@ fn weakened_document_presence_selection_and_removal_remain_protected() {
     assert_eq!(kinds(&nonempty, &exact), [ChangeKind::Revoke]);
     protected(&exact, &nonempty);
 }
+
+#[test]
+fn document_key_sets_compare_accepted_sets_and_explicit_type_permissions() {
+    for (left, right, expected) in [
+        (
+            "keys-exact', keys = ['a', 'b']",
+            "keys-exact', keys = ['b', 'a']",
+            vec![],
+        ),
+        (
+            "keys-exact', keys = ['a']",
+            "keys-exact', keys = ['b']",
+            vec![ChangeKind::Grant, ChangeKind::Revoke],
+        ),
+        (
+            "keys-allowed', keys = ['a']",
+            "keys-allowed', keys = ['a', 'b']",
+            vec![ChangeKind::Grant],
+        ),
+        (
+            "keys-exact', keys = ['a']",
+            "keys-allowed', keys = ['a', 'b']",
+            vec![ChangeKind::Grant],
+        ),
+        (
+            "keys-allowed', keys = ['a', 'b']",
+            "keys-exact', keys = ['a']",
+            vec![ChangeKind::Revoke],
+        ),
+        ("keys-allowed', keys = []", "keys-exact', keys = []", vec![]),
+        (
+            "keys-allowed', keys = ['a']",
+            "keys-exact', keys = ['b']",
+            vec![ChangeKind::Grant, ChangeKind::Revoke],
+        ),
+        (
+            "keys-exact', keys = ['a']",
+            "keys-exact', keys = ['a'], empty_on_non_table = true",
+            vec![],
+        ),
+        (
+            "keys-exact', keys = []",
+            "keys-exact', keys = [], empty_on_non_table = true",
+            vec![ChangeKind::Grant],
+        ),
+        (
+            "keys-allowed', keys = ['a']",
+            "keys-allowed', keys = ['a'], empty_on_non_table = true",
+            vec![ChangeKind::Grant],
+        ),
+    ] {
+        let before = document(&format!("op = '{left}"));
+        let after = document(&format!("op = '{right}"));
+        assert_eq!(kinds(&before, &after), expected, "{left} -> {right}");
+        let mut reverse = expected
+            .iter()
+            .map(|kind| match kind {
+                ChangeKind::Grant => ChangeKind::Revoke,
+                ChangeKind::Revoke => ChangeKind::Grant,
+                _ => panic!("unexpected comparison kind"),
+            })
+            .collect::<Vec<_>>();
+        reverse.sort();
+        assert_eq!(kinds(&after, &before), reverse);
+        if expected.contains(&ChangeKind::Grant) {
+            protected(&before, &after);
+        }
+    }
+    for op in ["keys-exact", "keys-allowed"] {
+        let before = document(&format!("op = '{op}', keys = ['a']"));
+        let after = document("op = 'present'");
+        assert_eq!(kinds(&before, &after), [ChangeKind::Grant]);
+        assert_eq!(kinds(&after, &before), [ChangeKind::Revoke]);
+        protected(&before, &after);
+    }
+}

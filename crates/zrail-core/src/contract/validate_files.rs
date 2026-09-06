@@ -151,6 +151,14 @@ fn validate_document(document: &RepositoryDocumentPredicate, errors: &mut Valida
             "document paths permit at most 32 literal keys of at most 1024 bytes each".into(),
         );
     }
+    if let RepositoryDocumentAssertion::KeysExact { keys, .. }
+    | RepositoryDocumentAssertion::KeysAllowed { keys, .. } = &document.assertion
+    {
+        unique(keys, "document key sets", errors);
+        if keys.len() > 1_024 || keys.iter().map(String::len).sum::<usize>() > 16 * 1_024 {
+            errors.push("document key sets permit at most 1024 keys and 16384 key bytes".into());
+        }
+    }
     if let RepositoryDocumentAssertion::Equals { value } = &document.assertion {
         let (count, bytes) = match value {
             RepositoryDocumentValue::String(value) => (1, value.len()),
@@ -205,6 +213,10 @@ pub(super) fn item_count(contract: &Contract) -> usize {
                     RepositoryFilePredicate::Document(document) => {
                         document.path.len()
                             + match &document.assertion {
+                                RepositoryDocumentAssertion::KeysExact { keys, .. }
+                                | RepositoryDocumentAssertion::KeysAllowed { keys, .. } => {
+                                    keys.len()
+                                }
                                 RepositoryDocumentAssertion::Equals {
                                     value: RepositoryDocumentValue::Strings(values),
                                 } => values.len(),

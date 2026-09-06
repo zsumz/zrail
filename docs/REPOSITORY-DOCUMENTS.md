@@ -39,6 +39,8 @@ value of the wrong type fails the assertion, including `absent` assertions.
 | `absent` | The selected key does not exist. An empty physical file selection remains a valid prohibition. |
 | `nonempty-string` | A string with at least one character after Rust's Unicode-aware `str::trim`. |
 | `equals` | Exact string, boolean, signed 64-bit integer, or complete ordered string array. Types, array order, duplicates, and cardinality matter. |
+| `keys-exact` | Immediate object/table keys equal the complete `keys` set. Both missing and unexpected keys fail. |
+| `keys-allowed` | Every immediate object/table key belongs to `keys`. Unused allowed keys are valid. |
 
 Every assertion other than `absent` requires at least one selected file. Every
 selected file must parse completely and satisfy the field predicate. String
@@ -48,6 +50,22 @@ and larger unsigned numbers are not supported equality expectations. They can
 still be observed as present values. Unknown formats, operations, and fields
 fail strict contract parsing.
 
+Key sets compare literal, case-sensitive names independently of policy order.
+They inspect the selected table only; nested or unrelated keys cannot satisfy
+the inventory. Both modes require the selected subject to exist, even for an
+empty expected set. By default a present non-table value fails. The explicit
+`empty_on_non_table = true` option preserves legacy evaluators that project a
+present value of another type to an empty key set. It never accepts a missing
+subject. For example:
+
+```toml
+[[repository.files]]
+name = "exact-dependencies"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored dependency names."
+predicate = { kind = "document", format = "toml", path = ["dependencies"], assertion = { op = "keys-exact", keys = ["driver-core", "transport"] } }
+```
+
 TOML uses the existing TOML 1.0 parser with duplicate-key rejection and its
 parser recursion guard. JSON additionally uses a bounded visitor that rejects
 duplicate object keys, including differently escaped spellings of the same
@@ -55,7 +73,8 @@ key. Comments, trailing values, and nonstandard JSON syntax are rejected. Both
 formats permit at most 100,000 value nodes and 64 nested levels, including
 unselected portions of the document. Existing file input and content-work
 limits apply. Policy paths permit at most 32 keys of 1,024 bytes each; expected
-values permit at most 1,024 strings and 16 KiB of string bytes in total.
+values and key sets permit at most 1,024 strings and 16 KiB of string bytes in
+total. Duplicate expected keys are rejected.
 
 The canonical policy identity remains `repository:file:<name>`. Coverage and
 explain identify the claim as `authored-document`, expose the complete policy,
@@ -63,6 +82,10 @@ selected type, observed value when representable within 16 KiB, omission flag,
 and intermediate selection errors. Omitted values never change evaluation.
 Complete inspected input bytes remain hash-bound even when a field still passes.
 Empty selections and absent keys remain visible.
+Key observations include complete actual and unexpected counts, all missing
+required keys, and lexical samples of at most sixteen actual/unexpected keys
+and 16 KiB of JSON-encoded key bytes each. Oversized names are omitted from
+samples, with explicit omission counts; they still participate in comparison.
 
 `REP-FILE-007` identifies a structural predicate violation. Invalid UTF-8,
 malformed documents, duplicate keys, and exhausted analysis bounds fail closed
@@ -70,9 +93,13 @@ with `REP-FILE-006`; they cannot produce a trusted partial lock or coverage repo
 Protected diffs classify removed guards and weakened requirements as grants.
 Changed exact values or array order can both grant and revoke authority;
 changing literal key paths or parser formats remains protected as unknown.
+Key-set diffs compare accepted sets: widening an allowlist grants authority,
+exchanging exact identities can both grant and revoke, and policy ordering is
+neutral. Allowing non-table empty projections is a grant when it admits new
+inputs. An empty projection cannot satisfy a nonempty exact key set.
 
 This initial subset supports the inventoried publication metadata fields.
-YAML, selected array/object inventories, allowed/exact sets, cross-field
+YAML, selected array/object inventories, value sets, cross-field
 relations, and selected workflow ordering remain explicit rc9 implementation
 and qualification work. They must not be approximated using raw substring
 searches or described as proven by these field checks.

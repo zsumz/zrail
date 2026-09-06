@@ -157,6 +157,42 @@ fn document_policy_is_typed_bounded_and_has_no_expression_or_parser_fallback() {
     assert!(errors(&valid.replace("value = ['crates-io']", &large_value)).contains("16384"));
 }
 
+#[test]
+fn document_key_sets_reject_duplicates_and_bound_all_expected_names() {
+    for op in ["keys-exact", "keys-allowed"] {
+        let rule = with_predicate(&format!(
+            "{{ kind = 'document', format = 'toml', path = ['dependencies'], assertion = {{ op = '{op}', keys = [] }} }}"
+        ));
+        assert!(errors(&rule).is_empty());
+        assert!(errors(&rule.replace("keys = []", "keys = ['a', 'a']")).contains("duplicate"));
+        assert!(
+            errors(&rule.replace("keys = []", &format!("keys = ['{}']", "x".repeat(16385))))
+                .contains("16384")
+        );
+        let keys = (0..1025)
+            .map(|key| format!("'{key}'"))
+            .collect::<Vec<_>>()
+            .join(",");
+        assert!(errors(&rule.replace("keys = []", &format!("keys = [{keys}]"))).contains("1024"));
+        let parsed: crate::RepositoryFileRule = toml::from_str(&rule).expect("default strict keys");
+        assert!(
+            !toml::to_string(&parsed)
+                .expect("default omitted")
+                .contains("empty_on_non_table")
+        );
+        for invalid in [
+            "keys = [1]",
+            "keys = [], unknown = true",
+            "keys = [], empty_on_non_table = 'true'",
+        ] {
+            assert!(
+                toml::from_str::<crate::RepositoryFileRule>(&rule.replace("keys = []", invalid))
+                    .is_err()
+            );
+        }
+    }
+}
+
 fn with_predicate(predicate: &str) -> String {
     format!(
         "{}predicate = {predicate}\n",

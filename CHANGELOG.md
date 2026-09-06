@@ -29,6 +29,9 @@ All notable zrail changes are recorded here for reviewed release notes.
 - Bounded authored TOML/JSON field predicates for presence, absence, nonempty
   strings, and exact typed values or ordered string arrays, with strict duplicate
   rejection, auditable observations, input binding, and protected semantic diffs.
+- Immediate exact/allowed document key sets with explicit legacy non-table
+  projection, required subject presence, complete counts, bounded key samples,
+  and protected comparisons of accepted identities and type permissions.
 
 ### Changed
 

@@ -4,6 +4,8 @@
 mod boundary_test;
 #[path = "strict_facades/fixture.rs"]
 mod fixture;
+#[path = "repository_documents/key_sets_test.rs"]
+mod key_sets_test;
 #[path = "repository_files/support.rs"]
 mod support;
 

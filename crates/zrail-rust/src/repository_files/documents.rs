@@ -1,6 +1,7 @@
 //! Authored TOML/JSON predicates share file inputs, bounds, and exact policy diagnostics.
 
 mod json;
+mod keys;
 mod node;
 
 use zrail_core::{
@@ -42,6 +43,7 @@ fn inspect(
         value: None,
         value_omitted: false,
         selection_error: None,
+        keys: None,
     };
     let selected = match root.select(&policy.path) {
         Ok(selected) => selected,
@@ -60,6 +62,26 @@ fn inspect(
             .and_then(Node::string)
             .is_some_and(|value| !value.trim().is_empty()),
         Assertion::Equals { value: expected } => value.as_ref() == Some(expected),
+        Assertion::KeysExact {
+            keys: expected,
+            empty_on_non_table,
+        } => keys::evaluate(
+            selected,
+            expected,
+            *empty_on_non_table,
+            true,
+            &mut observation,
+        )?,
+        Assertion::KeysAllowed {
+            keys: expected,
+            empty_on_non_table,
+        } => keys::evaluate(
+            selected,
+            expected,
+            *empty_on_non_table,
+            false,
+            &mut observation,
+        )?,
     };
     observation.selected_type = selected.map(|node| node.kind().into());
     let encoded = value

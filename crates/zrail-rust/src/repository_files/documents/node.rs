@@ -9,6 +9,17 @@ pub(super) enum Node<'a> {
 }
 
 impl<'a> Node<'a> {
+    pub(super) fn keys(self) -> Option<Vec<&'a str>> {
+        match self {
+            Self::Toml(toml::Value::Table(table)) => {
+                Some(table.keys().map(String::as_str).collect())
+            }
+            Self::Json(serde_json::Value::Object(object)) => {
+                Some(object.keys().map(String::as_str).collect())
+            }
+            _ => None,
+        }
+    }
     pub(super) fn select(mut self, keys: &[String]) -> Result<Option<Self>, String> {
         for (index, key) in keys.iter().enumerate() {
             let child = match self {

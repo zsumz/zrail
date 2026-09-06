@@ -70,6 +70,29 @@ pub struct RepositoryDocumentObservation {
     pub value_omitted: bool,
     /// An intermediate key had a wrong structural type; this is never treated as absence.
     pub selection_error: Option<String>,
+    /// Complete key-set quantities with bounded key samples, only for key predicates.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub keys: Option<RepositoryDocumentKeys>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+/// Key quantities are complete even when individual names are omitted from display.
+pub struct RepositoryDocumentKeys {
+    /// Exact number of immediate keys, including an explicit non-table empty projection.
+    pub count: usize,
+    /// At most sixteen keys and 16 KiB of JSON-encoded key bytes, in lexical order.
+    pub sample: Vec<String>,
+    /// Keys omitted from the sample, never from comparison or the total.
+    pub omitted: usize,
+    /// Complete missing required keys for exact mode; empty for allowed mode.
+    pub missing: Vec<String>,
+    /// Complete number of keys outside the policy set.
+    pub unexpected_count: usize,
+    /// Bounded examples of unexpected keys, using the same sample limits.
+    pub unexpected_sample: Vec<String>,
+    /// Unexpected keys omitted from display.
+    pub unexpected_omitted: usize,
 }
 
 #[derive(Debug, Default)]

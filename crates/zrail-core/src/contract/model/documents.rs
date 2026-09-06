@@ -40,6 +40,24 @@ pub enum RepositoryDocumentAssertion {
         /// Expected scalar or complete ordered string array.
         value: RepositoryDocumentValue,
     },
+    /// Exactly the named immediate keys; ordering in the policy is irrelevant.
+    KeysExact {
+        /// Complete allowed and required key set.
+        keys: Vec<String>,
+        /// Explicit legacy projection: a present non-table value yields no keys.
+        /// Missing subjects still fail. The default requires an object/table.
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        empty_on_non_table: bool,
+    },
+    /// Every immediate key belongs to the allowlist; unused allowed keys are valid.
+    KeysAllowed {
+        /// Complete allowed key set.
+        keys: Vec<String>,
+        /// Explicit legacy projection: a present non-table value yields no keys.
+        /// Missing subjects still fail. The default requires an object/table.
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        empty_on_non_table: bool,
+    },
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
