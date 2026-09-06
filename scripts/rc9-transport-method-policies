@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Translate the frozen selector method inventory; trusted policy setup only."""
+"""Translate frozen transport syntax inventories; trusted policy setup only."""
 
 import argparse
 import hashlib
@@ -26,6 +26,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("snapshots", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--subject", choices=["methods", "expression-paths"], default="methods")
     args = parser.parse_args()
     subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
     consumer = args.snapshots / "kafka-driver"
@@ -34,22 +35,27 @@ def main():
         if hashlib.sha256((consumer / path).read_bytes()).hexdigest() != digest:
             raise ValueError("frozen transport policy input changed")
     ledger = json.loads((ROOT / "crates/zrail-testkit/tests/fixtures/rc9/assertions.json").read_text())
-    rows = [row for row in ledger["reviewed_assertions"] if row["id"] == "KD-TRANSPORT-METHODS"]
+    methods = args.subject == "methods"
+    identity = "KD-TRANSPORT-METHODS" if methods else "KD-TRANSPORT-ASSOCIATED"
+    rows = [row for row in ledger["reviewed_assertions"] if row["id"] == identity]
     row, = rows
     roots = tomllib.loads((consumer / "guardrails.toml").read_text())["paths"]["rust_roots"]
     if roots != row["selection"]["roots"]["roots"] or row["source"]["file_sha256"] != SOURCE_SHA:
         raise ValueError("reviewed source selection differs from the frozen registry")
     expected = row["required_cardinality"]["exact_map"]
-    counts = [dict(path=key.rsplit(":", 1)[0], name=key.rsplit(":", 1)[1], count=count)
+    counts = [dict(path=key.split(":", 1)[0], name=key.split(":", 1)[1], count=count)
               for key, count in sorted(expected.items())]
-    if len(counts) != 11 or sum(expected.values()) != 20:
+    pairs, total = (11, 20) if methods else (8, 8)
+    if len(counts) != pairs or sum(expected.values()) != total:
         raise ValueError("reviewed selector inventory changed")
     rule = dict(
-        name="kd-transport-methods",
-        reason="Preserve the exact frozen per-file written selector method quantities; receiver identities and execution are separate claims.",
+        name="kd-transport-methods" if methods else "kd-transport-expression-paths",
+        reason=("Preserve the exact frozen per-file written selector method quantities; receiver identities and execution are separate claims." if methods else
+                "Preserve every frozen authored ExprPath quantity, including function values and path patterns, by physical file and final two written identifiers."),
         include=[root + "/**/*.rs" for root in roots],
         exclude=["tests/**", "**/*_test.rs"], world="authored",
-        subject=dict(kind="written-methods", names=row["matching_semantics"]["methods"]),
+        subject=(dict(kind="written-methods", names=row["matching_semantics"]["methods"]) if methods else
+                 dict(kind="written-expression-paths", suffixes=row["matching_semantics"]["selected_suffixes"])),
         assertion=dict(kind="exact-counts", counts=counts),
     )
     lines = ["# Partial authored syntax policy; full downstream qualification remains required.",
@@ -60,7 +66,7 @@ def main():
         raise ValueError("translated policy failed round-trip validation")
     with args.output.open("x", encoding="utf-8", newline="\n") as output:
         output.write(text)
-    print("transport method translation: 1 policy, 11 exact pairs, 20 occurrences")
+    print(f"transport {args.subject} translation: 1 policy, {pairs} exact pairs, {total} occurrences")
 
 
 if __name__ == "__main__":

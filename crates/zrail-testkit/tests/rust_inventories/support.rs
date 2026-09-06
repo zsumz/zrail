@@ -5,10 +5,18 @@ use super::fixture::{Repository, TEST_FACADE};
 pub(super) const SOURCE: &str = "//! State.\npub struct State;\nimpl State { pub fn run(&self) { self.poll(); } fn poll(&self) {} fn wake(&self) {} }\n";
 
 pub(super) fn configured(assertion: &str, source: &str) -> Repository {
+    configured_subject(
+        "kind='written-methods',names=['poll','wake']",
+        assertion,
+        source,
+    )
+}
+
+pub(super) fn configured_subject(subject: &str, assertion: &str, source: &str) -> Repository {
     let repository = Repository::new("declarative", TEST_FACADE);
     let policy = std::fs::read_to_string(repository.0.join("zrail.toml")).expect("contract");
     repository.write("zrail.toml", &format!(
-        "{policy}\n[[source.rust.inventories]]\nname='methods'\nreason='Reviewed written transport calls.'\ninclude=['src/**/*.rs']\nworld='authored'\nsubject={{kind='written-methods',names=['poll','wake']}}\nassertion={{{assertion}}}\n"
+        "{policy}\n[[source.rust.inventories]]\nname='methods'\nreason='Reviewed written transport syntax.'\ninclude=['src/**/*.rs']\nworld='authored'\nsubject={{{subject}}}\nassertion={{{assertion}}}\n"
     ));
     repository.write("src/child.rs", source);
     repository.write(

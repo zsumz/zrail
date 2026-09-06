@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{Contract, RustInventoryAssertion, RustInventoryRule, RustInventorySubject};
+use crate::{Contract, RustInventoryAssertion, RustInventoryRule};
 
 use super::{ArchitectureChange, ChangeKind};
 
@@ -74,10 +74,19 @@ pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<Arc
 }
 
 fn selection_change(left: &RustInventoryRule, right: &RustInventoryRule) -> Option<ChangeKind> {
-    let RustInventorySubject::WrittenMethods { names: left_names } = &left.subject;
-    let RustInventorySubject::WrittenMethods { names: right_names } = &right.subject;
-    let (li, le, ln) = (set(&left.include), set(&left.exclude), set(left_names));
-    let (ri, re, rn) = (set(&right.include), set(&right.exclude), set(right_names));
+    if std::mem::discriminant(&left.subject) != std::mem::discriminant(&right.subject) {
+        return Some(ChangeKind::Unknown);
+    }
+    let (li, le, ln) = (
+        set(&left.include),
+        set(&left.exclude),
+        set(left.subject.names()),
+    );
+    let (ri, re, rn) = (
+        set(&right.include),
+        set(&right.exclude),
+        set(right.subject.names()),
+    );
     if (li.clone(), le.clone(), ln.clone(), left.world)
         == (ri.clone(), re.clone(), rn.clone(), right.world)
     {

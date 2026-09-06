@@ -1,5 +1,7 @@
 //! Frozen collector parity checks syntax corners before downstream replacement is claimed.
 
+#[path = "rust_inventories/parity/expression_cases.rs"]
+mod expression_cases;
 #[path = "rust_inventories/parity/legacy.rs"]
 mod legacy;
 #[path = "rust_inventories/parity/native.rs"]
@@ -216,4 +218,26 @@ fn qualify_all_frozen_kafka_driver_transport_methods() {
         sha256_hex(&bytes)
     )
     .expect("write qualification summary");
+}
+
+#[test]
+fn frozen_transport_expression_paths_preserve_authored_contexts_and_quantities() {
+    let root = std::env::temp_dir().join(format!(
+        "zrail-expression-parity-{}-{:?}",
+        std::process::id(),
+        std::thread::current().id(),
+    ));
+    for (source, count) in expression_cases::CASES {
+        let expected = legacy::associated("src/sample.rs", source);
+        assert_eq!(
+            expected.values().sum::<usize>(),
+            count,
+            "frozen semantics: {source}"
+        );
+        assert_eq!(
+            native::observed_with_subject(&root, source, expression_cases::SUBJECT),
+            expected,
+            "{source}"
+        );
+    }
 }

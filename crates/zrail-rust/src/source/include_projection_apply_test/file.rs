@@ -23,6 +23,7 @@ pub(super) fn file(
         call_resolutions: Vec::new(),
         methods: Vec::new(),
         authored_methods: None,
+        authored_expressions: None,
         operations: Vec::new(),
         macros: Vec::new(),
         macro_imports: Vec::new(),

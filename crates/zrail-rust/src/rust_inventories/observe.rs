@@ -1,4 +1,4 @@
-//! Inventories reuse pre-projection method facts and the exact source bytes already parsed.
+//! Inventories reuse authored syntax facts and the exact source bytes already parsed.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -18,6 +18,7 @@ const MAX_INPUT_BYTES: usize = 256 * 1024 * 1024;
 pub(super) struct Observations<'a> {
     sources: BTreeMap<&'a str, &'a str>,
     methods: BTreeMap<&'a str, Vec<&'a crate::source::ObservedFact>>,
+    expressions: BTreeMap<&'a str, Vec<&'a crate::source::ObservedFact>>,
     work: usize,
     occurrences: usize,
     inputs: BTreeMap<String, RustInventoryInput>,
@@ -27,14 +28,20 @@ pub(super) struct Observations<'a> {
 impl<'a> Observations<'a> {
     pub(super) fn new(inventory: &'a RepositoryInventory, source: &'a SourceIndex) -> Self {
         let mut methods = BTreeMap::<_, Vec<_>>::new();
+        let mut expressions = BTreeMap::<_, Vec<_>>::new();
         for file in &source.files {
-            if file.syntax == SourceSyntax::Items
-                && let Some(authored) = &file.authored_methods
-            {
-                methods
-                    .entry(file.relative.as_str())
-                    .or_default()
-                    .extend(authored);
+            if file.syntax == SourceSyntax::Items {
+                for (target, authored) in [
+                    (&mut methods, &file.authored_methods),
+                    (&mut expressions, &file.authored_expressions),
+                ] {
+                    if let Some(authored) = authored {
+                        target
+                            .entry(file.relative.as_str())
+                            .or_default()
+                            .extend(authored);
+                    }
+                }
             }
         }
         Self {
@@ -44,6 +51,7 @@ impl<'a> Observations<'a> {
                 .map(|file| (file.relative.as_str(), file.source.as_str()))
                 .collect(),
             methods,
+            expressions,
             work: 0,
             occurrences: 0,
             inputs: BTreeMap::new(),
@@ -56,11 +64,19 @@ impl<'a> Observations<'a> {
         report: &mut GovernedRustInventory,
         paths: &[String],
     ) -> Result<(), String> {
-        let RustInventorySubject::WrittenMethods { names } = &report.policy.subject;
-        let names = names.iter().map(String::as_str).collect::<BTreeSet<_>>();
+        let subject = &report.policy.subject;
+        let names = subject
+            .names()
+            .iter()
+            .map(String::as_str)
+            .collect::<BTreeSet<_>>();
+        let facts = match subject {
+            RustInventorySubject::WrittenMethods { .. } => &self.methods,
+            RustInventorySubject::WrittenExpressionPaths { .. } => &self.expressions,
+        };
         let mut counts = BTreeMap::<(&str, &str), usize>::new();
         for path in paths {
-            let methods = self.methods.get(path.as_str()).ok_or_else(|| format!(
+            let facts = facts.get(path.as_str()).ok_or_else(|| format!(
                 "selected file {path:?} has no complete Rust file parse; source exclusions, workspace boundaries, and expression fragments cannot satisfy this inventory"
             ))?;
             let source = self
@@ -85,21 +101,21 @@ impl<'a> Observations<'a> {
             }
             report.inputs.push(self.inputs[path].clone());
             let mut physical = BTreeSet::<(&str, SourceSpan)>::new();
-            for method in methods {
+            for fact in facts {
                 self.work += 1;
                 if self.work > MAX_WORK {
                     return Err(format!(
                         "Rust inventories exceed the {MAX_WORK}-fact comparison limit"
                     ));
                 }
-                if names.contains(method.name.as_str()) {
-                    let span = method.span.ok_or_else(|| {
-                        format!(
-                            "written method {:?} in {path:?} has no exact source span",
-                            method.name
-                        )
+                let Some(name) = selected_name(subject, fact) else {
+                    continue;
+                };
+                if names.contains(name) {
+                    let span = fact.span.ok_or_else(|| {
+                        format!("written subject {name:?} in {path:?} has no exact source span")
                     })?;
-                    physical.insert((&method.name, span));
+                    physical.insert((name, span));
                 }
             }
             for (name, span) in physical {
@@ -130,5 +146,23 @@ impl<'a> Observations<'a> {
             .collect();
         report.occurrences_omitted = report.observed_count - report.occurrence_sample.len();
         Ok(())
+    }
+}
+
+fn selected_name<'a>(
+    subject: &RustInventorySubject,
+    fact: &'a crate::source::ObservedFact,
+) -> Option<&'a str> {
+    match subject {
+        RustInventorySubject::WrittenMethods { .. } => Some(&fact.name),
+        RustInventorySubject::WrittenExpressionPaths { .. } => {
+            let written = fact.written.as_deref()?.trim_start_matches("::");
+            let (owner, _) = written.rsplit_once("::")?;
+            Some(
+                owner
+                    .rfind("::")
+                    .map_or(written, |offset| &written[offset + 2..]),
+            )
+        }
     }
 }

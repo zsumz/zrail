@@ -92,9 +92,52 @@ fn sets_ignore_order_and_unproved_selection_changes_remain_protected() {
     assert!(kinds(&before, &after).is_empty());
     let mut reordered = before.clone();
     let crate::RustInventorySubject::WrittenMethods { names } =
-        &mut reordered.source.rust.inventories[0].subject;
+        &mut reordered.source.rust.inventories[0].subject
+    else {
+        panic!("written methods")
+    };
     names.reverse();
     assert!(kinds(&before, &reordered).is_empty());
     reordered.source.rust.inventories[0].include = vec!["other/**/*.rs".into()];
     assert_eq!(kinds(&before, &reordered), [ChangeKind::Unknown]);
+}
+
+#[test]
+fn expression_path_scope_quantities_and_kind_changes_remain_protected() {
+    use crate::RustInventorySubject::WrittenExpressionPaths;
+    for (assertion, expanded) in [
+        ("kind='count',maximum=0", ChangeKind::Revoke),
+        ("kind='count',minimum=1", ChangeKind::Grant),
+    ] {
+        let methods = contract(assertion);
+        let mut before = methods.clone();
+        before.source.rust.inventories[0].subject = WrittenExpressionPaths {
+            suffixes: vec!["State::poll".into()],
+        };
+        assert_eq!(kinds(&methods, &before), [ChangeKind::Unknown]);
+        assert_eq!(kinds(&before, &methods), [ChangeKind::Unknown]);
+        let mut after = before.clone();
+        after.source.rust.inventories[0].subject = WrittenExpressionPaths {
+            suffixes: vec!["State::wake".into(), "State::poll".into()],
+        };
+        assert_eq!(kinds(&before, &after), [expanded]);
+        let mut reordered = after.clone();
+        reordered.source.rust.inventories[0].subject.canonicalize();
+        assert!(kinds(&after, &reordered).is_empty());
+    }
+    let mut before = contract(&exact(1).replace("poll", "State::poll"));
+    before.source.rust.inventories[0].subject = WrittenExpressionPaths {
+        suffixes: vec!["State::poll".into(), "State::wake".into()],
+    };
+    let mut after = before.clone();
+    let crate::RustInventoryAssertion::ExactCounts { counts } =
+        &mut after.source.rust.inventories[0].assertion
+    else {
+        panic!("exact")
+    };
+    counts[0].name = "State::wake".into();
+    assert_eq!(
+        kinds(&before, &after),
+        [ChangeKind::Grant, ChangeKind::Revoke]
+    );
 }

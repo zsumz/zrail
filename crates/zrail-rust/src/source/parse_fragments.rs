@@ -123,6 +123,7 @@ fn finish(
         call_resolutions: visitor.call_resolutions,
         methods: visitor.methods,
         authored_methods: None,
+        authored_expressions: None,
         operations: visitor.operations,
         macros: visitor.macros,
         macro_imports: Vec::new(),

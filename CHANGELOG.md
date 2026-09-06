@@ -45,6 +45,9 @@ All notable zrail changes are recorded here for reviewed release notes.
   complete per-file/identifier count maps, independent physical selection,
   deduplicated locations, explicit cfg-world semantics, input binding, coverage,
   explanations, and protected quantity comparisons.
+- Explicit written expression-path suffix inventories, including direct callees,
+  function-value acquisition and path patterns, with distinct syntax claims and
+  unchanged rc8 invocation authority. Qualification reuses the frozen collector.
 
 ### Changed
 

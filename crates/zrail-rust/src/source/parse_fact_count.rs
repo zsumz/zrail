@@ -15,6 +15,7 @@ pub(crate) fn fact_count(file: &RustFileFacts) -> usize {
         + file.call_resolutions.len()
         + file.methods.len()
         + file.authored_methods.as_ref().map_or(0, Vec::len)
+        + file.authored_expressions.as_ref().map_or(0, Vec::len)
         + file.operations.len()
         + file.macros.len()
         + file.macro_imports.len()

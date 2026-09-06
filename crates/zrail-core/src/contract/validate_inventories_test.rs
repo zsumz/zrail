@@ -84,3 +84,41 @@ fn quantities_are_bounded_and_exact_pairs_must_belong_to_their_selection() {
     invalid.include.push("src/**/*.rs".into());
     assert!(validate(invalid).is_err());
 }
+
+#[test]
+fn expression_path_subjects_require_two_exact_written_segments() {
+    for suffix in ["State::poll", "r#State::r#poll", "_State::poll2"] {
+        let mut selected = rule("kind='count',maximum=0");
+        selected.subject = RustInventorySubject::WrittenExpressionPaths {
+            suffixes: vec![suffix.into()],
+        };
+        validate(selected).expect("bounded written suffix");
+    }
+    for suffix in [
+        "poll",
+        "*::poll",
+        "::State::poll",
+        "crate::State::poll",
+        "State :: poll",
+        "State::poll()",
+        "State<T>::poll",
+        "_::poll",
+        "State::",
+    ] {
+        let mut selected = rule("kind='count',maximum=0");
+        selected.subject = RustInventorySubject::WrittenExpressionPaths {
+            suffixes: vec![suffix.into()],
+        };
+        assert!(validate(selected).is_err(), "{suffix}");
+    }
+    let mut selected =
+        rule("kind='exact-counts',counts=[{path='src/lib.rs',name='State::poll',count=1}]");
+    selected.subject = RustInventorySubject::WrittenExpressionPaths {
+        suffixes: vec!["State::poll".into()],
+    };
+    validate(selected.clone()).expect("exact path quantity");
+    selected.subject = RustInventorySubject::WrittenExpressionPaths {
+        suffixes: vec!["State::poll".into(); 2],
+    };
+    assert!(validate(selected).is_err());
+}

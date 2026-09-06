@@ -39,8 +39,7 @@ pub(crate) fn analyze(
         let context_error = |error| incomplete(&policy_id, error);
         policy.include.sort();
         policy.exclude.sort();
-        let zrail_core::RustInventorySubject::WrittenMethods { names } = &mut policy.subject;
-        names.sort();
+        policy.subject.canonicalize();
         if let RustInventoryAssertion::ExactCounts { counts } = &mut policy.assertion {
             counts.sort();
         }
@@ -66,9 +65,12 @@ pub(crate) fn analyze(
         }
         let mut report = GovernedRustInventory {
             policy_id: policy_id.clone(),
-            claim: match policy.world {
-                zrail_core::RustInventoryWorld::Authored => {
+            claim: match policy.subject {
+                zrail_core::RustInventorySubject::WrittenMethods { .. } => {
                     "authored-rust-method-call-syntax".into()
+                }
+                zrail_core::RustInventorySubject::WrittenExpressionPaths { .. } => {
+                    "authored-rust-expression-path-syntax".into()
                 }
             },
             policy,

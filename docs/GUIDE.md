@@ -263,7 +263,8 @@ byte equality, separately from Rust syntax and execution evidence.
 TOML/JSON presence, absence, nonempty-string, and exact typed-value checks.
 [Raw structure predicates](RAW-STRUCTURE.md) preserve first-marker order,
 marker-bounded literal presence, and prefixed line-value allowlists.
-[Rust inventories](RUST-INVENTORIES.md) govern exact authored method-call
+[Rust inventories](RUST-INVENTORIES.md) govern exact authored method-call and
+written expression-path
 quantities and per-file/identifier count maps over existing parsed source facts.
 Their explicit authored world and syntax claim remain separate from semantic
 identity, compilation reachability, and execution.

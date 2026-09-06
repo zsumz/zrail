@@ -22591,8 +22591,9 @@
           "Source::deregister"
         ],
         "path_matching": "Final two syn::Path segment identifiers; leading qualification and generic arguments do not change the suffix.",
-        "quantities": "Every ExprPath occurrence, including call callees and function-value acquisition; grouped by physical file and selected suffix.",
-        "opaque_tokens": "The original visitor does not parse macro token bodies; macro paths are not ExprPath occurrences."
+        "quantities": "Every syn::ExprPath node, including call callees, function-value acquisition and path patterns; grouped by physical file and selected suffix.",
+        "opaque_tokens": "The original visitor does not parse macro token bodies; macro paths are not ExprPath occurrences.",
+        "qualified_self": "Only the final two identifiers in the ExprPath.path select the suffix. Qualified-self types are traversed separately; one-segment <Type>::method paths do not match."
       },
       "required_cardinality": {
         "exact_map": {
@@ -22609,17 +22610,25 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "rust:inventory:kd-transport-expression-paths"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_expression_paths_preserve_authored_contexts_and_quantities",
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/expression_test.rs::calls_and_function_values_share_expression_quantities_without_resolving_aliases",
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/expression_test.rs::physical_expression_inputs_bind_coverage_explain_and_lock_with_no_mount_duplication"
+        ]
       },
       "blockers": [
         {
           "id": "KD-TRANSPORT-ASSOCIATED",
-          "cause": "Preserve the exact authored occurrence context, identity/set/count semantics and full physical selection with native inventories; qualify original detector outputs, aliases, cfg branches, macros and all unexpected/missing members."
+          "cause": "Native written-expression-path quantities and 22 frozen-collector syntax comparisons are implemented. Bind all frozen selected files, the exact original detector assertion and complete positive/negative count maps to reproducible differential evidence."
         }
       ]
     },
@@ -50068,8 +50077,9 @@
           "Source::deregister"
         ],
         "path_matching": "Final two syn::Path segment identifiers; leading qualification and generic arguments do not change the suffix.",
-        "quantities": "Every ExprPath occurrence, including call callees and function-value acquisition; grouped by physical file and selected suffix.",
-        "opaque_tokens": "The original visitor does not parse macro token bodies; macro paths are not ExprPath occurrences."
+        "quantities": "Every syn::ExprPath node, including call callees, function-value acquisition and path patterns; grouped by physical file and selected suffix.",
+        "opaque_tokens": "The original visitor does not parse macro token bodies; macro paths are not ExprPath occurrences.",
+        "qualified_self": "Only the final two identifiers in the ExprPath.path select the suffix. Qualified-self types are traversed separately; one-segment <Type>::method paths do not match."
       },
       "required_cardinality": {
         "exact_map": {
@@ -50084,17 +50094,25 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "rust:inventory:kd-transport-expression-paths"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          "rust-test:crates/zrail-rust/src/rust_inventories_test.rs::frozen_transport_expression_paths_preserve_authored_contexts_and_quantities",
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/expression_test.rs::calls_and_function_values_share_expression_quantities_without_resolving_aliases",
+          "rust-test:crates/zrail-testkit/tests/rust_inventories/expression_test.rs::physical_expression_inputs_bind_coverage_explain_and_lock_with_no_mount_duplication"
+        ]
       },
       "blockers": [
         {
           "id": "KD-TRANSPORT-DETECTOR-ASSOCIATED",
-          "cause": "Import the exact adversarial source and compare complete native observations with this original detector assertion; reject its architectural violations through the linked live inventory policies."
+          "cause": "Native written-expression-path quantities and 22 frozen-collector syntax comparisons are implemented. Bind all frozen selected files, the exact original detector assertion and complete positive/negative count maps to reproducible differential evidence."
         }
       ],
       "detector_for": [
@@ -51506,7 +51524,7 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 575,
-    "implemented": 500,
+    "implemented": 502,
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,

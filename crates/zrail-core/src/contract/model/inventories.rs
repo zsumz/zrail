@@ -40,6 +40,29 @@ pub enum RustInventorySubject {
         /// Exact case-sensitive identifiers, including an authored `r#` prefix.
         names: Vec<String>,
     },
+    /// Every authored expression path, including callees and function-value acquisition.
+    WrittenExpressionPaths {
+        /// Exact final two written identifiers; qualification and generic arguments are ignored.
+        suffixes: Vec<String>,
+    },
+}
+
+impl RustInventorySubject {
+    /// Exact authored subject selectors, without semantic identity resolution.
+    pub fn names(&self) -> &[String] {
+        match self {
+            Self::WrittenMethods { names } => names,
+            Self::WrittenExpressionPaths { suffixes } => suffixes,
+        }
+    }
+
+    /// Canonicalize unordered selectors without changing their authored spelling.
+    pub fn canonicalize(&mut self) {
+        match self {
+            Self::WrittenMethods { names } => names.sort(),
+            Self::WrittenExpressionPaths { suffixes } => suffixes.sort(),
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
@@ -68,7 +91,7 @@ pub enum RustInventoryAssertion {
 pub struct RustInventoryCount {
     /// Exact normalized repository-relative Rust file.
     pub path: String,
-    /// Exact written subject identifier.
+    /// Exact written subject selector, including both segments for expression paths.
     pub name: String,
     /// Positive number of distinct physical syntax occurrences.
     pub count: usize,

@@ -71,7 +71,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 372 | 327 | 324 |
+| kafka-driver | 826 | 772 | 372 | 329 | 324 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 22 | 0 | 0 |
 
@@ -590,7 +590,28 @@ intended diagnostics are `RUST-INVENTORY-001` for quantities and
 The evidence validator checks every original input and complete per-fixture map;
 twenty tampering cases cannot substitute unrelated failures or partial counts.
 
-The ledger is now **575 reviewed / 500 implemented / 488 verified**. These are
+At that evidence checkpoint the ledger had **575 reviewed / 500 implemented / 488 verified**. These are
 authored syntax assertions, with no receiver identity, Cargo compilation, lock,
 execution, or complete repository claim. The other eight transport assertions
 remain blockers, and the downstream file cannot yet be removed.
+
+
+## Written expression-path inventory implementation
+
+The stock inventory family now adds `written-expression-paths`, selecting exact
+final two written identifiers. It reuses located pre-projection path/call facts
+and authored AST membership; the existing method facts, resolver, and direct-call
+ownership semantics remain unchanged. Both call callees and function-value
+acquisition participate. The original collector also visits path patterns,
+which are represented by `syn::ExprPath`; the ledger now states that context
+explicitly. Comments, strings and macro-token payloads remain outside this claim.
+
+Twenty-two source-bound differential syntax cases and three further integration
+tests pass, including aliases, qualified-self syntax, generic arguments, cfg
+branches, nested items, path patterns, same-count substitutions, repeated mounts,
+source-byte binding, coverage and explain. Eight core inventory schema/diff tests
+pass. The [partial expression-path policy](policies/kafka-driver.transport-expression-paths.fragment.toml)
+preserves thirteen suffixes and eight exact per-file quantities.
+`KD-TRANSPORT-ASSOCIATED` and `KD-TRANSPORT-DETECTOR-ASSOCIATED` are implemented
+but remain unverified pending complete frozen-source and exact detector parity.
+The ledger is **575 reviewed / 502 implemented / 488 verified**.

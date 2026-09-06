@@ -35,14 +35,20 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
                 canonical(pattern, errors);
             }
         }
-        let RustInventorySubject::WrittenMethods { names } = &rule.subject;
+        let names = rule.subject.names();
         if names.is_empty() || names.len() > 128 {
-            errors.push("written-method inventories require 1..128 identifiers".into());
+            errors.push("Rust inventories require 1..128 subject selectors".into());
         }
-        unique(names, "written-method identifiers", errors);
+        unique(names, "Rust inventory subject selectors", errors);
         for name in names {
-            if !identifier(name) {
-                errors.push(format!("unsupported written method identifier {name:?}"));
+            let valid = match rule.subject {
+                RustInventorySubject::WrittenMethods { .. } => identifier(name),
+                RustInventorySubject::WrittenExpressionPaths { .. } => {
+                    name.split("::").count() == 2 && name.split("::").all(identifier)
+                }
+            };
+            if !valid {
+                errors.push(format!("unsupported written inventory subject {name:?}"));
             }
         }
         match &rule.assertion {
@@ -135,10 +141,9 @@ pub(super) fn item_count(contract: &Contract) -> usize {
         .inventories
         .iter()
         .map(|rule| {
-            let RustInventorySubject::WrittenMethods { names } = &rule.subject;
             1 + rule.include.len()
                 + rule.exclude.len()
-                + names.len()
+                + rule.subject.names().len()
                 + match &rule.assertion {
                     RustInventoryAssertion::Count { .. } => 1,
                     RustInventoryAssertion::ExactCounts { counts } => counts.len(),

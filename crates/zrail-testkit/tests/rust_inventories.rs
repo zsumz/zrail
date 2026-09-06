@@ -2,6 +2,8 @@
 
 #[path = "rust_inventories/boundary_test.rs"]
 mod boundary_test;
+#[path = "rust_inventories/expression_test.rs"]
+mod expression_test;
 #[path = "strict_facades/fixture.rs"]
 mod fixture;
 #[path = "rust_inventories/support.rs"]

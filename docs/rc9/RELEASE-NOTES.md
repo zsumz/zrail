@@ -12,6 +12,9 @@ Implemented in the current branch:
   transport collector agrees across 479 selected frozen files and 76 adversarial
   fixtures, linking four verified method/parser assertions. The other transport
   predicates and full consumer qualification remain open.
+- Written expression-path suffix quantities with explicit call/reference/pattern
+  semantics; twenty-two frozen-collector syntax cases pass. Complete frozen
+  selection and original detector assertion qualification are still pending.
 - Strict wiring facades with distinct import and re-export policy, preserving
   existing declarative mode behavior.
 - Exact test-facade structure independent of test compilation and execution.

@@ -34,8 +34,8 @@ single-file selector gives a per-file quantity without a separate language.
 
 ## Claim boundary
 
-The initial subject is `written-methods`, and the only supported world is
-explicit `authored`. Counts are exact for authored method-call syntax:
+The only supported world is explicit `authored`. The `written-methods` subject
+counts exact authored method-call syntax:
 
 - Each physical `(path, written method, identifier span)` counts once, even
   when source is mounted repeatedly. Overlapping selectors do not duplicate it.
@@ -57,6 +57,34 @@ explicit `authored`. Counts are exact for authored method-call syntax:
   expressions. No expansion or runtime claim is made. Existing macro authority
   and completeness rules continue to apply independently.
 
+The `written-expression-paths` subject counts authored `syn::ExprPath` nodes
+whose final two written identifier segments match a configured suffix:
+
+```toml
+subject = { kind = "written-expression-paths", suffixes = ["ConnectionSet::new", "Source::register"] }
+assertion = { kind = "exact-counts", counts = [
+  { path = "src/owner.rs", name = "ConnectionSet::new", count = 1 },
+] }
+```
+
+Each suffix has exactly two bounded ASCII identifiers. Leading qualification and
+generic arguments do not affect the suffix; raw-identifier prefixes and case
+remain significant. `ConnectionSet::new()`, `let f = ConnectionSet::new`, and
+`crate::transport::ConnectionSet::<T>::new` participate. `Alias::new` does not
+match `ConnectionSet::new`, even if the alias resolves to that type.
+`<T as Source>::register` matches `Source::register`; `<Source>::register`
+has a one-segment path and does not. Qualified-self types are visited separately,
+so nested const-generic expression paths still participate.
+
+This is a syntax-node inventory: Rust path patterns use the same `syn::ExprPath`
+representation and participate, including `match x { ConnectionSet::new => ... }`.
+Ordinary type paths, imports, and macro-token payloads are outside this subject.
+All authored cfg branches and parsed expression contexts participate as above.
+Each physical `(path, suffix, complete path span)` counts once. The claim is
+`authored-rust-expression-path-syntax`, never invocation or resolved identity.
+Changing a direct call into a function-value acquisition preserves this quantity;
+rc8 direct-call owner restrictions retain their independent meaning.
+
 Selections reuse the bounded physical repository scanner independently of
 `repository.exclude`, Cargo source filtering, and mount reachability. Every
 selected entry must be a physical `.rs` file with complete Rust *file* facts.
@@ -75,8 +103,8 @@ digest, every file/subject count, complete occurrence totals, sixteen sampled
 locations, and an explicit omitted-location count. Explain reports the matching
 policy and complete scope quantities. Display sampling never affects decisions.
 
-The parser reuses located method facts and indexes membership in the original
-AST. It supplies missing syntax observations in contexts outside semantic
+The parser reuses located method/path/call facts and indexes membership in the
+original AST. It supplies missing syntax observations in contexts outside semantic
 traversal and excludes macro-token observations. Existing macro-aware facts
 remain unchanged, and this additional index is absent in contracts without
 inventories.
@@ -99,7 +127,7 @@ maps with totals, and narrower prohibited scopes as grants. Changing an exact
 count in either direction changes accepted states and records both grant and
 revocation. Expanding positive-presence scope weakens its requirement; expanding
 an exact map's scope adds zero-count requirements for newly selected pairs.
-Unproved selector changes remain protected unknowns. Declaration ordering is
+Changing subject kinds and unproved selector changes remain protected unknowns. Declaration ordering is
 irrelevant; reason changes remain protected unknowns.
 
 Other relationships, semantic identities, and compilation-world inventories

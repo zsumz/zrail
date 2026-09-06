@@ -1,5 +1,9 @@
 //! Exact frozen transport collector; executed only in trusted qualification tests.
 
+#[path = "legacy_api.rs"]
+mod api;
+pub(super) use api::{associated, expected, observed};
+
 use super::selection::{display_path, is_test, read};
 use std::collections::{BTreeMap, BTreeSet};
 use syn::{ExprMethodCall, ExprPath, File, ItemImpl, ItemUse, Path, Type, UseTree, visit::Visit};
@@ -187,14 +191,6 @@ fn expected_selector_methods() -> BTreeMap<String, usize> {
             2,
         ),
     ])
-}
-
-pub(super) fn observed(path: &str, source: &str) -> BTreeMap<String, usize> {
-    source_inventory(path, source).selector_methods
-}
-
-pub(super) fn expected() -> BTreeMap<String, usize> {
-    expected_selector_methods()
 }
 
 fn repository_inventory(root: &std::path::Path, roots: &[String]) -> AuthorityInventory {
