@@ -331,3 +331,21 @@ and missing positive inputs. Strict validation rejects impossible normalized
 line literals; protected comparisons distinguish exact-line identity changes
 from weakened whole-file substring checks. These engine tests do not yet
 close the corresponding frozen dependency/attributes assertions.
+
+## Authored key-set engine qualification
+
+At clean commit `b846d4e5edfdb9ae3c293c3295eccfb81724d4f1`, `scripts/check`
+passed structure, formatting, strict workspace lint, **1,495 tests** (zero
+failures, five explicit ignores), and rustdoc. Complete self-analysis covered
+933 Rust files, 1,500 base contexts, 1,218,510 projection work, and zero unresolved
+items. Only `LOCK-008`, `LOCK-026`, `LOCK-028`, and `LOCK-030` stopped the gate.
+Archive and cleanliness stages were not reached. The
+[key-set evidence index](evidence/key-sets-index.json) binds the complete log.
+The initial gate at `4c4407c` stopped at a Clippy pattern-style error; the
+qualified revision fixes it without changing predicate semantics.
+
+The new integration fixtures cover exact and allowed immediate key sets,
+equal-count substitutions, missing subjects, explicit present-non-table empty
+projections, bounded display samples, and deterministic observations. Protected
+diffs compare actual accepted sets and type permissions. These engine tests
+do not by themselves close frozen dependency assertion IDs.
