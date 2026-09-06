@@ -6,7 +6,8 @@ published. The user approved retiring Rafter's private-name policy; see
 [policy decisions](DECISIONS.md).
 
 This branch implements strict facades, scoped size budgets, and bounded physical
-file/raw-text predicates. It does **not** yet deliver rc9
+file/raw-text predicates, UTF-8 equality, and bounded authored TOML/JSON field
+assertions. It does **not** yet deliver rc9
 replacement coverage. See [exact reviewed assertion blockers](BLOCKERS.md),
 [qualification commands and results](QUALIFICATION.md), and
 [conditional downstream cutovers](CUTOVERS.md).

@@ -245,3 +245,24 @@ unresolved items. It stopped at `LOCK-008`, `LOCK-026`, `LOCK-028`, and
 This run predates the UTF-8 equality extension. That extension passed its
 15 integration tests, ten protected-diff tests, and strict workspace lint;
 it still needs the subsequent complete gate.
+
+## Authored document engine qualification
+
+At `8e37c7203be2c1d97b149b93a4711b7214c09e92`, the complete gate passed
+structure, formatting, strict workspace lint, **1,484 tests** (zero failures,
+four explicit ignores), and rustdoc. Complete self-analysis covered 924 Rust
+files, 1,490 base contexts, 1,211,785 projection work, and zero unresolved items.
+The same four lock-review diagnostics stopped self-hosting. Archive and
+cleanliness stages were not reached; no lock was accepted.
+The [document evidence index](evidence/documents-index.json) binds the exact log.
+The initial gate at `04d1a72` had stopped at a misplaced test file; that failure
+was corrected before the reported run.
+
+The nine document integration tests cover typed field selection, exact arrays,
+Unicode trimming, absent/null distinctions, wrong intermediate types, full-input
+lock binding, repeated coverage, duplicate-key parsing, invalid UTF-8, and
+resource exhaustion. Two protected-diff tests cover changed exact values and
+order, weakened predicates, removed guards, and unproven selector changes.
+A strict-schema test rejects unsupported formats, values, expressions, and
+oversized expectations. These engine results do not close downstream assertions
+until their individual frozen differential evidence is linked.
