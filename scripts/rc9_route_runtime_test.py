@@ -2,16 +2,27 @@
 
 import copy
 import json
+from pathlib import Path
 import subprocess
 import sys
 import unittest
 
 sys.dont_write_bytecode = True
 
-from rc9_route_runtime_common import FULL_NAME, input_paths, parse, parse_execution, policy
+from rc9_route_runtime_common import FULL_NAME, input_paths, parse, parse_execution, policy, source_environments
 
 
 class RuntimeProducer(unittest.TestCase):
+    def test_original_and_patched_checkouts_never_share_artifact_outputs(self):
+        build = Path("/Volumes/zdev/test-owned-build")
+        env = {"CARGO_TARGET_DIR": str(build), "RUSTUP_TOOLCHAIN": "1.97.1"}
+        original, patched = source_environments(env, build)
+        self.assertEqual(original["CARGO_TARGET_DIR"], str(build / "original"))
+        self.assertEqual(patched["CARGO_TARGET_DIR"], str(build / "patched"))
+        self.assertEqual(env["CARGO_TARGET_DIR"], str(build))
+        self.assertEqual(original["RUSTUP_TOOLCHAIN"], patched["RUSTUP_TOOLCHAIN"])
+        self.assertEqual(len({env["CARGO_TARGET_DIR"], original["CARGO_TARGET_DIR"], patched["CARGO_TARGET_DIR"]}), 3)
+
     def test_full_frozen_tree_is_explicitly_bound(self):
         mirror = policy()
         self.assertEqual(len(input_paths(mirror)), 826)

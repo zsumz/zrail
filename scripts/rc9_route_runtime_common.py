@@ -88,6 +88,11 @@ def write_json(path, value):
     path.write_text(json.dumps(value, indent=2) + "\n")
 
 
+def source_environments(env, build):
+    return (env | {"CARGO_TARGET_DIR": str(build / "original")},
+            env | {"CARGO_TARGET_DIR": str(build / "patched")})
+
+
 def parse_execution(result, name=FULL_NAME):
     require(result.returncode == 0, "execution failed")
     artifacts, text = [], []

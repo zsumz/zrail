@@ -12,7 +12,8 @@ sys.dont_write_bytecode = True
 
 from rc9_route_runtime_common import (
     AFTER, BEFORE, FULL_NAME, PATCH, PATCHED, PIN, POLICY, PRODUCER, PROFILE, ROOT,
-    execute, git, hashes, input_paths, json_command, parse, policy, require, run, sha, write_json,
+    execute, git, hashes, input_paths, json_command, parse, policy, require, run, sha,
+    source_environments, write_json,
 )
 from rc9_route_runtime_mutations import run_mutations
 
@@ -82,8 +83,7 @@ def main():
     command = shlex.split(mirror["execution"]["command"])
     # Identical Cargo package/target names from distinct checkouts must never share
     # executable output paths: one checkout can otherwise overwrite a fresh artifact.
-    original_env = env | {"CARGO_TARGET_DIR": str(build / "original")}
-    patched_env = env | {"CARGO_TARGET_DIR": str(build / "patched")}
+    original_env, patched_env = source_environments(env, build)
     print("executing exact original routing scenario", flush=True)
     original_execution = execute(command, snapshot, original_env, directory / (args.report.name + ".original.log"))
     fixture.mkdir()
