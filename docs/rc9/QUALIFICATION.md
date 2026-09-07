@@ -1,13 +1,66 @@
 # Reproducing the current rc9 evidence
 
-Release verdict: **blocked**. The latest recorded canonical/archive checkpoint
-and import-rename differential evidence use `405fe5674f77b8a31bd5aea01b190da55c7dcbcf`.
+Release verdict: **blocked**. The completed trait-set evidence uses
+`53936654ffbaff1bb0e9e127db46d3ca0aa510ba`; its archived canonical gate fails
+only the five pending protected-lock diagnostics. Import-rename evidence uses
+`405fe5674f77b8a31bd5aea01b190da55c7dcbcf`.
 Qualification-text parity retains its `7c6c01d0af8bdeee598e87c3c8fae97ce72b9a0c`
 identity, based on the exact audited rc8 commit. Whole-lock parity retains its `5251b4f056741768eb667c74d6e0949257ca843b`
 identity. Manifest-field parity retains its
 `c7ff4588f029169c10cce191be3bac3ceaec9e2d` identity. Earlier evidence retains its
 own implementation identity below. None constitutes final versioned-tree release
 qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
+
+## Current pending Rafter boundary slice
+
+[The bound evidence](evidence/rafter-boundary-index.json) identifies HEAD
+`01bbf38481217b0611a387ee2af488328f52137c` plus its exact tracked diff and every
+untracked input hash. No input changed during the run. The code is pending
+commits because the configured GPG signing key is unavailable; this is not a
+clean committed release qualification.
+
+The final `scripts/check` run passes artifact validation, formatting, strict
+Clippy, **1,609 Rust tests** (zero failures; 17 explicitly ignored), and rustdoc.
+Self-analysis is complete: **1,051 files, 1,646 base contexts, zero derived,
+1,194,894 projection work, zero unresolved**. It fails at the five protected
+lock diagnostics `LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028`, `LOCK-030`.
+Its archive/cleanliness stages are consequently unreached. Separate
+`scripts/package-check`, `git diff --check` and staged whitespace checks pass.
+The original failed gate and its corrected diagnostic assertion are preserved
+in the index; no failed run is relabeled as passing.
+
+The native Rafter boundary translation passes **992** focused original/native
+comparisons: **248 accepted / 744 rejected**, each checked against its intended
+policy/category. All **194** frozen family inputs pass the original matcher and
+the 158-rule native file slice, within the unchanged work bound. This does not
+establish full source/Cargo analysis, execution receipts, repeated per-case
+evidence at a committed revision, or Rafter cutover readiness.
+
+With the environment below, reproduce the relevant checks using fresh outputs:
+
+```sh
+python3 scripts/rc9-source-boundary-policies /absolute/snapshots /fresh/rafter.fragment.toml
+cargo test --locked --offline -p zrail-core --lib prefix
+cargo test --locked --offline -p zrail-rust --lib boundary_sources
+cargo test --locked --offline -p zrail-testkit --test repository_files
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots cargo test --locked --offline -p zrail-rust --lib frozen_rafter_boundary_files_fit_the_work_bound_and_match_the_original -- --ignored
+scripts/check
+scripts/package-check
+```
+
+Compare the generated fragment byte-for-byte with
+`docs/rc9/policies/rafter.source-boundaries.fragment.toml`. The canonical gate
+remains expected to fail until protected review is complete; running the archive
+check separately does not bypass that release decision.
+
+The [public API/docs baseline](evidence/rafter-public-api-legacy-index.json)
+compiles the unchanged frozen guard with the pinned compiler and correct
+manifest context. All eight actual top-level tests pass; missing, extra,
+duplicate or ignored outcomes are rejected. A synthetic `unit` test inside a
+raw-string detector fixture is not an executed test. The source-boundary
+baseline similarly passes its two original tests with private-name injection
+explicitly unset. These are source-policy detector baselines, not simulation,
+Maelstrom, consumer builds, or native replacement qualification.
 
 ## Committed transport evidence and census checkpoint
 
@@ -925,3 +978,58 @@ over the complete frozen detector selection; it does not certify Cargo resolutio
 full downstream policy, execution receipts, or removal of the old scanner.
 The later artifact validator passes ten unittest methods and 89 adversarial
 mutations; that later validation is distinct from the pinned checkpoint's tests.
+
+## Resumed trait-set qualification
+
+The [trait index](evidence/transport-impls-index.json) binds two complete fresh
+runs at `53936654ffbaff1bb0e9e127db46d3ca0aa510ba`, tree
+`867f379edce0e69867392247bf569d76e5f5038c`. Each passes 78 cases: 28 accepted,
+50 rejected. Both payloads contain 8,058,906 bytes with SHA-256
+`a6287bc87a993c2d782cfc24ccfb3e21dbb866dd0c697c0cb8e17da74547c73e`.
+All 772 frozen Rust inputs, 479 selected physical files, the original detector,
+registry, policy and compiler inputs are bound. The only change from the stopped
+first report is the fresh absolute fixture directory. Stopped artifacts remain.
+
+```sh
+# Clean isolated checkout at the indexed revision, after trusted prefetch.
+export ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots
+# Create a fresh external directory; use the same directory for both reports.
+ZRAIL_RC9_TRANSPORT_IMPLS_REPORT=/fresh/trait-a.json \
+  cargo test --locked --offline -p zrail-rust --lib \
+  qualify_all_frozen_kafka_driver_transport_impls -- --ignored
+ZRAIL_RC9_TRANSPORT_IMPLS_REPORT=/fresh/trait-b.json \
+  cargo test --locked --offline -p zrail-rust --lib \
+  qualify_all_frozen_kafka_driver_transport_impls -- --ignored
+cmp /fresh/trait-a.json /fresh/trait-b.json
+# Evidence-bearing checkout: verify strict bindings and tampering rejection.
+python3 -B scripts/rc9_method_evidence_test.py
+python3 -B scripts/rc9-inventory-check
+```
+
+The validator suite has 13 methods and 116 adversarial mutations, including
+trait substitution, implementing-type substitution, broadened type filters,
+duplicate quantities, membership substitution and forged provenance. The two
+trait assertions are verified within their authored-syntax scope. The indexed
+canonical run at this revision passed 1,591 Rust tests, with 16 ignored, and
+completed analysis of 1,038 files / 1,632 base contexts with zero unresolved.
+It failed `LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028` and `LOCK-030`.
+Its standalone archive check passed; no authority was accepted.
+
+## Goal resumption working-tree qualification
+
+The resumed mixed route-policy slice passed three focused tests (all ten source
+files, raw matching contexts, exact facade count, required input and UTF-8
+mutations), formatting, structure and strict Clippy. All 28 census candidates
+in the mixed original file are linked to 31 assertion instances; full route
+qualification and runtime execution evidence remain pending.
+
+A full `scripts/check` run at HEAD `01bbf38481217b0611a387ee2af488328f52137c`
+plus the recorded working changes passed 1,602 Rust tests (zero failures,
+16 ignored), artifact validation, formatting, Clippy and rustdoc. Self-analysis
+was complete: 1,048 files, 1,643 base contexts, 1,191,665 work, zero unresolved.
+The same five protected-lock diagnostics stopped the canonical gate. This is
+working-tree evidence, not qualification of a new committed release revision.
+The external `rc9-goal-resume-check-20260907/runner.json` binds its tracked patch
+and all untracked input digests and confirms those inputs did not change during
+the run. Standalone `scripts/package-check` subsequently passed; its result does
+not turn the failed canonical gate into a pass. No lock or root contract was changed.

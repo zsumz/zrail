@@ -7,12 +7,12 @@ No downstream checker is removable on the strength of this directory.
 - `census.json.gz` is the deterministic syntax census of **all tracked files**,
   including separate workspaces and invalid detector fixtures. The decompressed
   JSON bytes are canonical; `census-summary.json` gives counts and their SHA-256.
-- `assertions.json` records 559 reviewed assertion instances, including separately
+- `assertions.json` records 672 reviewed assertion instances, including separately
   instantiated capability tokens and lock provenance assertions. It binds each
   assertion to a census identity, source digest, selection, matching semantics,
   cardinality, exceptions, disposition, and independent implementation and
-  verification states. Its 75 open assertion IDs are release blockers, alongside
-  the unfinished discovery work; 484 instances have verified replacement evidence.
+  verification states. Its 176 open assertion IDs are release blockers, alongside
+  the unfinished discovery work; 496 instances have verified replacement evidence.
 - `facade-origins.json` binds two byte-exact extracted predicates and the imported
   `kafkars-facade-invalid.rs.txt` fixture to the frozen sources.
 - The budget, size-selection, file, and metadata origin manifests bind further
@@ -66,3 +66,17 @@ stock zrail does not execute them or any downstream evaluator during analysis.
   125 raw-text/read assertions, including first-marker order and intervals and
   complete image-line suffix allowlists. The unenforced-zrail prohibition remains
   a separate cutover blocker; actual qualification and behavioral runners remain.
+
+- `route-sources-origins.json` binds the mixed route test, eleven exact included
+  source inputs and its unchanged raw-text assertions. All 28 census candidates
+  in this file are accounted for by 31 assertion instances: sixteen source/input
+  contracts and fifteen retained runtime assertions. The translated six stock
+  file rules have focused fixtures; committed repeated evidence and the runtime
+  execution receipt remain unverified.
+
+- `audited-text-origins.json` binds the complete frozen Rafter source-boundary,
+  private-name script and release-document inputs. The ledger records 21 manual
+  text spans with UTF-8 byte offsets and digests separately from parsed Rust
+  candidates. Source/supporting-helper links cover all 14 candidates in the
+  mixed source-boundary guard. Its 41 retained and 25 retirement instances are
+  inventoried but not counted as verified replacement evidence.

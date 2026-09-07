@@ -1,4 +1,71 @@
-# Stopped rc9 work
+# Active rc9 goal checkpoint
+
+The user resumed work and explicitly set a completion goal on 2026-09-07.
+See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
+The current ledger is **672 reviewed / 558 implemented / 496 verified**;
+176 reviewed assertion instances and the three discovery blockers remain open.
+No complete consumer bundle or full downstream qualification exists yet.
+
+The two trait-set assertions now have two fresh byte-identical 78-case reports
+at the original pinned implementation `5393665`. Their evidence index is
+`evidence/transport-impls-index.json`; the stopped report remains intact.
+The evidence validator passes 13 methods covering 116 adversarial mutations.
+
+The mixed kafka-driver route-test review adds 31 previously unlisted instances:
+five raw source assertions, eleven compile-time inputs and fifteen actual runtime
+assertions. Six existing-native file policies and focused differential tests are
+prepared. These 31 instances remain unverified; full frozen evidence and retained
+runtime receipts still need qualification.
+
+Rafter source-boundary review adds 66 instances: 41 static boundary/input
+requirements and 25 contracts linked to the approved private-name retirement.
+The new bounded raw line-prefix set preserves the original matcher in 992
+positive/negative comparisons. The 158-rule partial Rafter fragment accepts all
+194 frozen source inputs using 57.52 MiB of the unchanged content-work bound.
+The retirement is not a verified native replacement, and these rows remain
+unverified pending final evidence/cutover linkage. Twenty-one audited non-Rust
+spans bind frozen shell/document bytes separately from parsed Rust identities.
+
+The final working code passed **1,609 Rust tests**, formatting, Clippy, rustdoc,
+structure and complete self-analysis: 1,051 files, 1,646 base contexts,
+1,194,894 work, zero unresolved. Seventeen Rust tests are explicitly ignored in
+the ordinary suite; the frozen Rafter boundary test ran separately and passed.
+`scripts/check` rejects exactly `LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028`
+and `LOCK-030`. Standalone `scripts/package-check` and both Git whitespace
+checks passed. The initial gate caught a diagnostic-expectation error in the
+new UTF-8 fixture; its corrected full rerun has zero test failures.
+[The evidence index](evidence/rafter-boundary-index.json) binds the exact pending
+inputs and every log. No input changed during execution. This does not qualify
+an uncommitted tree as a release revision.
+
+The unchanged Rafter source-boundary baseline passes two tests, and the public
+API/docs baseline passes eight. The latter guard and `scripts/reference-source-check`
+were read completely; their [API](inventory/RAFTER-PUBLIC-API-DISCOVERY.json) and
+[reference](inventory/RAFTER-REFERENCE-DISCOVERY.json) findings remain explicit
+assertion-expansion blockers. API warnings are enforced errors with 41 reviewed
+site-pattern allowances. Reference hard allowances lack measured caps in the
+legacy script; no bounded replacement allowance has been accepted automatically.
+
+No new commit could be created: `/root/.gitconfig` requires GPG signing, and
+its configured key is unavailable (`No secret key`). The user has been asked
+whether unsigned local commits are permitted; that answer is pending. Signing
+configuration has not been changed or bypassed. HEAD remains
+`01bbf38481217b0611a387ee2af488328f52137c`. The tested trait-validator change is
+staged. Trait evidence, route policies, audited text binding, native prefix
+policy and Rafter translation/evidence form separate pending commit slices.
+Preserve this work and the existing frozen checkouts.
+
+The idle 7 GiB `/root/zrail/target` cache was preserved at
+`/mnt/volume_atl1_1787847588295/zrail-rc9/root-zrail-target-preserved-20260907`,
+with its original path retained as a symlink. No cache contents were discarded.
+
+Continue by saving the tested slices as small commits once signing is resolved,
+then complete route compile-input/frozen parity evidence and the kafka-driver
+inventory and full policy bundle. Continue the remaining consumer inventories
+before treating the engine capability list as complete. No downstream guard was
+removed, no authority accepted, and no publication, push or release tag occurred.
+
+## Previous stopped checkpoint
 
 Work stopped at the user's request. All running zrail qualification, Cargo and
 test processes were terminated and the host process list was checked afterward.

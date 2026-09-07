@@ -63,8 +63,27 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 
 ## Machine-readable audit state
 
+The [mixed route-test review](inventory/KAFKA-DRIVER-ROUTE.md) adds five previously
+unlisted source-policy instances, eleven required compile-time inputs and fifteen
+retained runtime assertions. Its existing-native-policy translation has focused
+fixtures; all 31 instances remain unverified pending bound qualification.
+
+The [Rafter source-boundary/private-name review](inventory/RAFTER-SOURCE-BOUNDARIES.md)
+adds 41 retained boundary/input requirements and 25 contracts covered by the
+user-approved private-name retirement. All 66 remain unverified. Twenty-one
+non-Rust spans bind exact copied source bytes without claiming parsed syntax.
+
+The source-boundary translation now uses a bounded raw prefix set and 158
+stock file rules, with 992 focused comparisons and acceptance over all 194 frozen
+family inputs. [Current qualification](evidence/rafter-boundary-index.json) passes
+1,609 Rust tests and complete self-analysis but stops at protected lock review.
+The [API](inventory/RAFTER-PUBLIC-API-DISCOVERY.json) and
+[reference-runner](inventory/RAFTER-REFERENCE-DISCOVERY.json) reviews expose
+further explicit assertion-expansion work; neither is classified as behavioral
+merely because it reads simulation or reference-consumer code.
+
 The [assertion ledger](../../crates/zrail-testkit/tests/fixtures/rc9/assertions.json)
-contains **575 reviewed assertion instances**. The
+contains **672 reviewed assertion instances**. The
 [full tracked-file census](../../crates/zrail-testkit/tests/fixtures/rc9/census.json.gz)
 and [summary](../../crates/zrail-testkit/tests/fixtures/rc9/census-summary.json)
 record 9,792 files and 80,135 syntax candidates, including seven explicitly
@@ -75,11 +94,11 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 372 | 335 | 330 |
+| kafka-driver | 826 | 772 | 403 | 351 | 332 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
-| Rafter | 2,158 | 1,897 | 22 | 0 | 0 |
+| Rafter | 2,158 | 1,897 | 88 | 34 | 0 |
 
-The **494 verified assertions** comprise five facade predicates, four
+The **496 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus five authored dependency key
@@ -87,7 +106,7 @@ inventories, 35 authored dependency-field assertions and preconditions, and
 36 authored provenance assertions and parser preconditions, and 20 whole-lock
 cardinality/version/source/checksum assertions, plus 16 raw dependency/read
 assertions, plus 125 qualification text assertions and read preconditions, and four transport
-method/parser assertions, two expression-path assertions, two exact-owner assertions, and two rename assertions.
+method/parser assertions, two expression-path assertions, two exact-owner assertions, two rename assertions, and two trait/type-set assertions.
 Size instances include
 all 141 measured baselines and three hard allowances. Their disposition
 is **new engine capability**; verified counts for the other four dispositions
@@ -716,3 +735,21 @@ Artifact verification independently checks all quantities, identities, parsed
 inputs and intended diagnostics; ten unittest methods exercise 89 tamper cases
 across the four committed transport families. Full repository qualification,
 assembled policy bundles and downstream deletion remain outstanding.
+
+## Resumed trait qualification and mixed route inventory
+
+The [trait evidence index](evidence/transport-impls-index.json) closes
+`KD-TRANSPORT-IMPLS` and `KD-TRANSPORT-DETECTOR-IMPLS`: two fresh runs at
+`53936654ffbaff1bb0e9e127db46d3ca0aa510ba` each pass 78 cases (28 accepted,
+50 rejected) with byte-identical payloads. Their SHA-256 is
+`a6287bc87a993c2d782cfc24ccfb3e21dbb866dd0c697c0cb8e17da74547c73e`.
+The 13 artifact tests exercise 116 tampering cases. This is exact authored
+trait/type/file membership, with actual quantities retained separately.
+The old stopped report remains intact; only its absolute fixture directory
+differs from the new reports. No later code is relabeled as qualified by this run.
+
+The [mixed route review](inventory/KAFKA-DRIVER-ROUTE.md) additionally accounts
+for 31 previously unlisted instances and supplies six stock file policies with
+focused differential fixtures. All of those instances remain unverified.
+The current ledger is **606 reviewed / 524 implemented / 496 verified**.
+Inventory completion, full consumer qualification and release approval remain open.

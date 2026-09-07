@@ -1,0 +1,152 @@
+{
+  "schema": 1,
+  "status": "working-tree-qualified-with-protected-lock-blockers",
+  "base_commit": "01bbf38481217b0611a387ee2af488328f52137c",
+  "base_tree": "da94311ebc90e262e2304915b958cc5cc15b61d0",
+  "tracked_diff_sha256": "6c35241057c11f104da0d4efaee57761544b2b4d93930a9c6e17d63533f76247",
+  "untracked_inputs": [
+    {
+      "path": "crates/zrail-rust/tests/rc9_route/legacy.rs",
+      "sha256": "dd81972cbadd25e8f61ce5ad82da6cb11fdf57d301670be0704352f25bbc1689",
+      "bytes": 521
+    },
+    {
+      "path": "crates/zrail-rust/tests/rc9_route/model.rs",
+      "sha256": "6959a6e6a1209bd8ccff2b7f8ada5a96a2ebc1bb1fd867f992b69096ff258ad7",
+      "bytes": 3388
+    },
+    {
+      "path": "crates/zrail-rust/tests/rc9_route/policy_test.rs",
+      "sha256": "17fb92829781505500ddeef3c74fc34e5407e5225350d0d6eb47b7539e6c2925",
+      "bytes": 4197
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources-origins.json",
+      "sha256": "69dbf848608a70f88ad28ac023c95ac4e62622cf577669496bc169b941743bdf",
+      "bytes": 5636
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime.rs",
+      "sha256": "03afec2edfc59afd02453ad077cae13f3ad354820d33b89e3b59253104e29070",
+      "bytes": 7616
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_admission.rs",
+      "sha256": "3228c4c0bb47bc57d683b70ebc8f448d57c3d1eaec5d839c5dc74f12d7b96da8",
+      "bytes": 5689
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_directory.rs",
+      "sha256": "6eb9acd903268ab53f7f7594834afafa99b7c65d7017f5f895fd4068604e399c",
+      "bytes": 4015
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_failure.rs",
+      "sha256": "bc780e62de5d81610e5566e6d56382fbf9fc6a90ad8b5cba42588a046506998e",
+      "bytes": 7223
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_install.rs",
+      "sha256": "eea677a6d29a94593515846dfe50a2a7d2b8d2c5f8e2ee46b5f80e5f04d5942b",
+      "bytes": 7219
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs",
+      "sha256": "3b2c8842677f75a9d0b2a71090c8a632eeaa098cced9bc10e89d57380dcaf078",
+      "bytes": 7968
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs",
+      "sha256": "0ee6d1d94e2c2ca019f5e7795deec87cf31c55c2b33a19dd1f8fb4d6b6b644a9",
+      "bytes": 798
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs",
+      "sha256": "dc6d8e398107b69d375bcbe4a3b1eaddc31d2466788fe0bfaf50d7ea560b025f",
+      "bytes": 5330
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs",
+      "sha256": "4a3467c744b8982dc3550edc1947529b82d0c1426f4fb80d8ad817c8b20f38f3",
+      "bytes": 7168
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_state.rs",
+      "sha256": "17e6b37405804bd37e2ef918af6dd866b0745480e52839fa39366b9e520cb73e",
+      "bytes": 5799
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+      "sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+      "bytes": 4355
+    },
+    {
+      "path": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_turn.rs",
+      "sha256": "f213d3788b491914ab70085eaba786ebcb42a5f6cfa2e41d5788b980bb69a180",
+      "bytes": 6429
+    },
+    {
+      "path": "docs/rc9/inventory/KAFKA-DRIVER-ROUTE.md",
+      "sha256": "b8403eba5d968c3f3ff287d7339fe9929e4b28f0946630949423f65cd1e6ce59",
+      "bytes": 2898
+    },
+    {
+      "path": "docs/rc9/policies/kafka-driver.route-sources.fragment.toml",
+      "sha256": "ca58a580184e3ef1209b04c2b3188e0c8b7921d7d78a3c629a8e137d66887873",
+      "bytes": 5919
+    }
+  ],
+  "canonical": {
+    "command": "scripts/check",
+    "exit_status": 1,
+    "rust_tests_passed": 1602,
+    "rust_tests_failed": 0,
+    "rust_tests_ignored": 16,
+    "analysis_complete": true,
+    "rust_files": 1048,
+    "base_contexts": 1643,
+    "derived_contexts": 0,
+    "projection_work": 1191665,
+    "unresolved": 0,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-016",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ]
+  },
+  "standalone_archive_check": {
+    "command": "scripts/package-check",
+    "exit_status": 0
+  },
+  "lock_authority_accepted": false,
+  "full_repository_qualified": false,
+  "release_verdict": "blocked",
+  "limitations": [
+    "This binds the working inputs present for the gate, not a new committed revision. Later trait report selection and audit-document binding changes received their focused artifact checks separately.",
+    "No final rc9 versioned release or complete downstream policy bundle was qualified."
+  ],
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/goal-resume-check.log.gz",
+      "payload_sha256": "50e76dfebe0da228e1f94a12547942cef1e34eb4d0937884f4ce7ca7f8e53769",
+      "compressed_sha256": "8593d5480680ca59112f5af347889b26267803b4ed6023f83d64582c1d361d62"
+    },
+    {
+      "artifact": "docs/rc9/evidence/goal-resume-package.log.gz",
+      "payload_sha256": "ee028ff99c83467ee9fd566ba4667f908cba822f377199185fce1ec2894f5dab",
+      "compressed_sha256": "3d6f79ba033fd3081bc490211d4bd0de4b8b4812ce088e7b466aff31b1261ec5"
+    },
+    {
+      "artifact": "docs/rc9/evidence/goal-resume-runner.json.gz",
+      "payload_sha256": "27673af6c52706e9e3e5fac357254a67b923f75372ad290d7a0e935de62b48c5",
+      "compressed_sha256": "f8b446af4bab910e07bdb10fac97c8c61462ddbf01bcef54e136df77e4624cbb"
+    },
+    {
+      "artifact": "docs/rc9/evidence/goal-resume-tracked-changes.patch.gz",
+      "payload_sha256": "6c35241057c11f104da0d4efaee57761544b2b4d93930a9c6e17d63533f76247",
+      "compressed_sha256": "6a3a479fc7bfb7d7bc43fffc07455cb1dfdb3ec77a53c4c243062edf17ab5904"
+    }
+  ]
+}
