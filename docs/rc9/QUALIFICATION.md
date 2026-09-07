@@ -11,7 +11,42 @@ identity. Manifest-field parity retains its
 own implementation identity below. None constitutes final versioned-tree release
 qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
 
-## Committed checkpoints after local signing approval
+## Retained routing execution
+
+The PGP-signed producer `d8919dc02377f6463d625d26e7d2528cfe7ed34e` binds all
+826 original tracked inputs and a single proposed explicit-trait helper change.
+The unchanged routing scenario passes on both inputs. Its four affected helper
+tests pass on the proposed checkout. Stock mirror planning analyzes 772 Rust
+files completely; stock receipt rendering and verification pass. Thirty negative
+cases reject missing/malformed/failed/skipped receipts, wrong execution identities,
+changed source and Cargo inputs, renamed/ignored tests, and plan/contract drift.
+
+The [index](evidence/route-runtime-index.json) binds both identical reports,
+producer/tree/compiler and binary identities, every input, the exact proposed
+patch, and all execution logs. Their payload is
+`2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780`.
+The initial shared-target reports are explicitly diagnostic-only: Cargo reused a
+patched binary for an original execution. Separate original/patched target
+directories eliminate that cross-checkout reuse; the final reports retain
+distinct source roots and binary paths.
+
+From a clean producer checkout, repeat with fresh report names in one external
+zdev evidence directory, leaving the frozen snapshots unchanged:
+
+```sh
+python3 scripts/rc9-route-runtime --snapshots /Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/snapshots --directory /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/route-runtime-evidence --report new-a.json --build /Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/route-runtime-build
+python3 scripts/rc9-route-runtime --snapshots /Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/snapshots --directory /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/route-runtime-evidence --report new-b.json --build /Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/route-runtime-build
+cmp /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/route-runtime-evidence/new-a.json /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/route-runtime-evidence/new-b.json
+python3 scripts/rc9_route_runtime_test.py
+python3 scripts/rc9_route_runtime_evidence_test.py
+```
+
+The policy is a platform-specific mirror fragment, not a complete downstream
+contract or enforced CI lane. The untouched snapshot still has one explicit
+`RUST-CALL-001` completeness boundary. Review the proposed helper patch and
+requalify any eventual downstream revision before cutover. No grants are accepted.
+
+## Historical committed checkpoints after local signing approval
 
 The user approved unsigned local commits. Per-command overrides saved the six
 prepared slices through `7fb1093e77e636a3e98c69fec7bf1dbcb61ff26d`, tree

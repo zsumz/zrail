@@ -17,6 +17,11 @@ Rafter public API/docs discovery also remains open as `RC9-INVENTORY-RF-PUBLIC-A
 
 The separate reference runner also remains open as `RC9-INVENTORY-RF-REFERENCE-SCRIPT`: its patch-closure checks and six uncapped hard allowances require explicit translation and review.
 
+The fifteen routing execution rows are verified only for original execution plus
+the proposed patched-snapshot native mirror. The one-line explicit-trait helper
+patch remains a downstream cutover prerequisite; no untouched-snapshot or full
+policy qualification is claimed. See [the runtime evidence](evidence/route-runtime-index.json).
+
 | Assertion ID | Cause |
 | --- | --- |
 | `KD-CI-ENFORCEMENT` | The mission explicitly requires replacing this prohibition with an enforced zrail lane. The new lane and its required policy/receipt evidence are not yet qualified. |
@@ -41,21 +46,6 @@ The separate reference runner also remains open as `RC9-INVENTORY-RF-REFERENCE-S
 | `KD-RETIRED-TREE-tcp` | The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified. |
 | `KD-RETIRED-TREE-timer` | The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified. |
 | `KD-RETIRED-TREE-tls` | The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified. |
-| `KD-ROUTE-RUNTIME-CONTROL-ATTEMPTS` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-CONTROL-LANES` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-CONTROL-OWNERS` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-CONTROL-WORK` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-FIRST-ROUTE` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-INITIAL-LANES` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-LONG-POLL-WORK` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-PENDING-EMPTY` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-QUEUED-REQUESTS` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-REUSED-ATTEMPTS` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-REUSED-LANES` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-REUSED-OWNERS` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-REUSED-RESOLUTION` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-REUSED-SUBMISSION` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
-| `KD-ROUTE-RUNTIME-SECOND-ROUTE` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
 | `KD-TEST-PLACEMENT-DETECTOR` | Execute the exact frozen detector fixture and compare the structural observations, including original order and cardinality; a generic nonzero zrail status is insufficient. |
 | `KD-TEST-PLACEMENT-LIVE` | Preserve the top-level selection and intentional raw cfg-token predicate, or obtain a separately approved normalization. Semantic cfg(test) detection alone permits legacy-forbidden cfg(not(test)) and feature="latest" inline modules; nested detection also differs. No policy/diagnostic fixtures yet. |
 | `KD-TEST-PLACEMENT-PARSE` | The authored inventory already requires strict file syntax over the same frozen production path selection. Bind the original test_body_kinds helper and its exact detector source to differential parser fixtures before claiming this separate assertion verified. |

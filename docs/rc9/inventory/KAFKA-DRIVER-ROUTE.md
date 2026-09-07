@@ -45,7 +45,24 @@ the initial harness failure. The trusted artifact validator checks all policy
 selectors, raw quantities, input hashes, original outcomes and compiler sites;
 42 tamper cases fail. These producers and validators stay outside zrail's runtime.
 
-The fifteen retained runtime assertions still have no execution receipt from
-this slice. No downstream test or helper was changed or removed. A future cutover
-may remove only the source-only function after complete repository qualification;
-the directory/routing/DNS/owner-reuse scenario and mixed file remain.
+The fifteen retained runtime assertions now have separately bound execution
+evidence and a stock native mirror receipt. Two identical reports at signed
+`d8919dc02377f6463d625d26e7d2528cfe7ed34e` bind all 826 tracked files, original
+and proposed-checkout execution, four helper regressions and thirty negative
+receipt/plan cases. [The runtime index](../evidence/route-runtime-index.json)
+retains every source, patch, compiler, binary and command identity.
+
+The original checkout cannot yet pass native mirror planning: its unrelated
+`src/request/bornera_test.rs:169` uses an array-relative call that the analyzer
+does not resolve. A [review-only one-line patch](../patches/kafka-driver-explicit-array-conversion.patch)
+names `core::convert::TryFrom<&[u8]>` explicitly. The routing test itself is
+unchanged. Complete native mirror analysis succeeds on that separately identified
+proposed checkout; this is not an untouched-snapshot or full architecture claim.
+
+Original and patched execution use separate Cargo output directories. The first
+shared-target attempt let Cargo reuse a patched binary for an original run;
+those reports are diagnostic-only, never assertion-closing evidence.
+
+No downstream test or helper was changed or removed. A future cutover must
+review the helper patch and complete policy/CI qualification, and may remove only
+the source-only function. Retain the actual routing scenario and mixed file.

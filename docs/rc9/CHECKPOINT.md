@@ -8,8 +8,8 @@ unchanged by that metadata-only rewrite.
 The user confirmed continued coverage work on 2026-09-07 after the signed-history
 release preparation. The full replacement criterion remains in place.
 See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
-The current ledger is **672 reviewed / 577 implemented / 524 verified**;
-148 reviewed assertion instances and the discovery blockers remain open.
+The current ledger is **672 reviewed / 592 implemented / 539 verified**;
+133 reviewed assertion instances and the discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
 
 The signed `06b0f185f072bbd9211816a0694f0812ab4188d6` now qualifies the partial
@@ -20,10 +20,26 @@ for read-error, entry-error and symlink boundary qualification. The artifact
 validator rejects 37 tamper mutations. See [the evidence index](evidence/retired-index.json).
 No runtime analyzer behavior changed and no root authority was accepted.
 
-The unchanged kafka-driver routing scenario also passed locally with all features,
-one executed test and none ignored. This is an execution result, not yet a native
-mirror receipt or a closed audit assertion. Its fifteen retained runtime rows
-remain open pending exact downstream execution-contract binding.
+The signed `d8919dc02377f6463d625d26e7d2528cfe7ed34e` qualifies the fifteen
+retained routing assertions with two identical isolated-build reports. Each run
+executes the original and proposed patched scenarios, all four affected request
+helper tests, and thirty stock native receipt/plan rejection cases. All 826
+tracked consumer files are bound. See [the runtime index](evidence/route-runtime-index.json).
+
+Native planning over the untouched snapshot still rejects the array-relative
+call at `src/request/bornera_test.rs:169`. The review-only one-line
+[explicit-trait patch](patches/kafka-driver-explicit-array-conversion.patch)
+permits complete mirror analysis over a separately identified proposed checkout:
+772 Rust files, 1,316 base contexts and 574,278 projection work. The actual routing
+test remains byte-identical. This is not a complete consumer policy or untouched-
+snapshot mirror qualification; the patch remains a downstream cutover prerequisite.
+
+The initial shared-target repeat reused the patched binary for an original run.
+Those reports remain diagnostic-only. Original and patched builds now have
+separate output directories and recorded source/binary paths; the regression
+test enforces their separation. No downstream guard or reviewed lock changed.
+The bound evidence checker rejects 39 artifact/linkage mutations and is part of
+the canonical gate alongside the execution producer's three regression tests.
 
 Historical checkpoints below retain their original identities, platforms and
 counts. They are not current release qualification.

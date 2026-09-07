@@ -52827,21 +52827,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-CONTROL-ATTEMPTS",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-CONTROL-LANES",
@@ -52881,21 +52892,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-CONTROL-LANES",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-CONTROL-OWNERS",
@@ -52935,21 +52957,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-CONTROL-OWNERS",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-CONTROL-WORK",
@@ -52989,21 +53022,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-CONTROL-WORK",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-FIRST-ROUTE",
@@ -53043,21 +53087,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-FIRST-ROUTE",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-INITIAL-LANES",
@@ -53097,21 +53152,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-INITIAL-LANES",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-LONG-POLL-WORK",
@@ -53151,21 +53217,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-LONG-POLL-WORK",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-PENDING-EMPTY",
@@ -53205,21 +53282,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-PENDING-EMPTY",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-QUEUED-REQUESTS",
@@ -53259,21 +53347,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-QUEUED-REQUESTS",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-REUSED-ATTEMPTS",
@@ -53313,21 +53412,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-REUSED-ATTEMPTS",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-REUSED-LANES",
@@ -53367,21 +53477,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-REUSED-LANES",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-REUSED-OWNERS",
@@ -53421,21 +53542,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-REUSED-OWNERS",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-REUSED-RESOLUTION",
@@ -53475,21 +53607,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-REUSED-RESOLUTION",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-REUSED-SUBMISSION",
@@ -53529,21 +53672,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-REUSED-SUBMISSION",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-RUNTIME-SECOND-ROUTE",
@@ -53583,21 +53737,32 @@
       "exception_semantics": "none",
       "disposition": "behavioral evidence retained",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4"
+        ],
+        "expected_diagnostics": [
+          "RECEIPT-001",
+          "RECEIPT-002",
+          "RECEIPT-003",
+          "RECEIPT-004",
+          "RECEIPT-005",
+          "RECEIPT-007"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-RUNTIME-SECOND-ROUTE",
-          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        ],
+        "required_source_patch": "docs/rc9/patches/kafka-driver-explicit-array-conversion.patch",
+        "qualification_scope": "original execution and proposed patched-snapshot native mirror",
+        "runtime_evidence": {
+          "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+          "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+          "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "RF-BOUNDARY-rafter-std-fs",
@@ -58880,12 +59045,12 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 672,
-    "implemented": 577,
+    "implemented": 592,
     "verified_by_disposition": {
       "existing native rail": 2,
       "declarative translation": 16,
       "new engine capability": 506,
-      "behavioral evidence retained": 0,
+      "behavioral evidence retained": 15,
       "approved retirement": 0
     },
     "full_repository_verified": 0

@@ -19,6 +19,7 @@ METHOD_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_method_evidence.py")["verif
 TEXT_SOURCES = runpy.run_path(ROOT / "scripts/rc9_text_sources.py")["load"]
 ROUTE_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_route_evidence.py")["verify"]
 RETIRED_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_retired_evidence.py")["verify"]
+RUNTIME_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_route_runtime_evidence.py")["verify"]
 
 
 def unique_object(pairs):
@@ -303,7 +304,12 @@ def main():
                     and not condition.get("read_preconditions"), "invalid frozen read precondition")
             require(not replacement["verified"] or condition["replacement"]["verified"],
                     "verified assertion depends on an unverified read precondition")
-        if assertion["id"].startswith("KD-RETIRED-"):
+        if assertion["id"].startswith("KD-ROUTE-RUNTIME-"):
+            require(not replacement["verified"] or replacement.get("runtime_evidence"), "verified runtime assertion needs bound execution evidence")
+            runtime_report = parity_report(assertion, "runtime_evidence", "test-mirror:", file_reports)
+            if runtime_report is not None:
+                RUNTIME_EVIDENCE(assertion, runtime_report, files)
+        elif assertion["id"].startswith("KD-RETIRED-"):
             require(not replacement["verified"] or replacement.get("retired_parity_evidence"), "verified retired assertion needs bound evidence")
             retired_report = parity_report(assertion, "retired_parity_evidence", "rust:inventory:", file_reports)
             if retired_report is not None:

@@ -1,0 +1,337 @@
+{
+  "schema": 1,
+  "implementation_commit": "d8919dc02377f6463d625d26e7d2528cfe7ed34e",
+  "implementation_tree": "365a71d379c8ec1a86fea081294411c63d6d5749",
+  "zrail_binary_sha256": "84ef6fb07d1d65c6c96e7f612ebcc9dc1dc91436fe2fa66df30fc9ad59026901",
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: aarch64-apple-darwin\nrelease: 1.97.1\nLLVM version: 22.1.6",
+  "policy_sha256": "41495147ef547db5c8137d880ae32f75fd0d67aef560d8e323f2a3f0850abdb1",
+  "profile_sha256": "99919b6f1481b2a37362718ca7686cca26ac8867c887d361b9765116697cdaa6",
+  "patch_sha256": "71d4dca324cc0ea046010943c7e9a4d4a12b6270323f692ba9d3e64a3d3a481c",
+  "analysis": {
+    "base_contexts": 1316,
+    "derived_contexts": 0,
+    "physical_facts": 231495,
+    "physical_rust_files": 772,
+    "projected_facts": 0,
+    "projection_files": 0,
+    "projection_work": 574278
+  },
+  "policy_id": "test-mirror:sha256:73668cad3667aedc9458906d44b5942057767939c929c15b2f30aec4e5725fe4",
+  "input_sha256": "e43fb319802c24560981536309eab5ba40053d9ede94e99dd41abb1160f38b7f",
+  "plan_sha256": "5866d8b00cf33d0fa1cd10e8d0674556e5bc7a0fb920cf383afbb15267bb88d9",
+  "original_execution": {
+    "arguments": [
+      "cargo",
+      "test",
+      "--package",
+      "kafka-driver",
+      "--lib",
+      "--locked",
+      "--offline",
+      "--features",
+      "tls-rustls",
+      "--target",
+      "aarch64-apple-darwin",
+      "--message-format=json",
+      "reactor::direct_plaintext::cluster_runtime::route_state::test::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+      "--",
+      "--exact"
+    ],
+    "binary_path": "/Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/route-runtime-build/original/aarch64-apple-darwin/debug/deps/kafka_driver-9aa85a05566f8d3e",
+    "binary_sha256": "6c7710e558a0347ef0b7c552df86731f83cac5b24c2c17c96d287c8740091892",
+    "listing_sha256": "73a445140da10746b2054ffce3d9b4d61564c512e107af98a1395c313e179364",
+    "outcome": {
+      "failed": 0,
+      "filtered": 468,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 1,
+      "test": "reactor::direct_plaintext::cluster_runtime::route_state::test::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+    },
+    "source_root": "/Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/snapshots/kafka-driver"
+  },
+  "patched_execution": {
+    "arguments": [
+      "cargo",
+      "test",
+      "--package",
+      "kafka-driver",
+      "--lib",
+      "--locked",
+      "--offline",
+      "--features",
+      "tls-rustls",
+      "--target",
+      "aarch64-apple-darwin",
+      "--message-format=json",
+      "reactor::direct_plaintext::cluster_runtime::route_state::test::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+      "--",
+      "--exact"
+    ],
+    "binary_path": "/Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/route-runtime-build/patched/aarch64-apple-darwin/debug/deps/kafka_driver-9aa85a05566f8d3e",
+    "binary_sha256": "59a00bde507ce22c9fd4b39e009e8062061b737b8277a81e47ad2eaa2afb896f",
+    "listing_sha256": "73a445140da10746b2054ffce3d9b4d61564c512e107af98a1395c313e179364",
+    "outcome": {
+      "failed": 0,
+      "filtered": 468,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 1,
+      "test": "reactor::direct_plaintext::cluster_runtime::route_state::test::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+    },
+    "source_root": "/Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/route-runtime-evidence/route-runtime-fixture"
+  },
+  "patch_before_sha256": "5da550e2a3a058b3169931722204163075a385c0b58ac58c14c2a02ae27fd07a",
+  "patch_after_sha256": "3b63737e134709afdbf0c36e2a1d890a63f822c7f177db0877a17db9ed8f1887",
+  "original_planning": {
+    "exit_code": 2,
+    "output": {
+      "error": "mirror planning requires complete analysis; 1 unresolved issue(s)",
+      "help": null,
+      "schema": 1,
+      "status": "invalid"
+    }
+  },
+  "unresolved": [
+    {
+      "analysis": "unresolved",
+      "category": "source",
+      "fingerprint": "99984c5789e4798f519805d012af704b32ac369aea97b1bf5c9c54206ef3da3b",
+      "help": "name one concrete type before trusting path or direct-call authority at this site",
+      "id": "RUST-CALL-001",
+      "message": "qualified expression path crosses an associated-type projection that zrail cannot resolve exactly: <unresolved self type>::try_from",
+      "path": "src/request/bornera_test.rs",
+      "reason": null,
+      "rule": "rust.source.call-resolution",
+      "severity": "error",
+      "span": {
+        "column": 21,
+        "end_column": 40,
+        "end_line": 169,
+        "line": 169
+      }
+    }
+  ],
+  "verification": {
+    "exit_code": 0,
+    "output": {
+      "mirrors": 1,
+      "plan_sha256": "5866d8b00cf33d0fa1cd10e8d0674556e5bc7a0fb920cf383afbb15267bb88d9",
+      "report": {
+        "analysis": {
+          "base_source_instances": 0,
+          "complete": true,
+          "derived_source_instances": 0,
+          "include_affected_files": 0,
+          "packages": 0,
+          "physical_facts": 0,
+          "projected_facts": 0,
+          "projection_work": 0,
+          "rust_files": 0,
+          "unresolved": 0
+        },
+        "findings": [],
+        "groups": [],
+        "max_findings": 10000,
+        "schema": 3,
+        "status": "pass",
+        "summary": {
+          "errors": 0,
+          "notes": 0,
+          "omitted": 0,
+          "retained": 0,
+          "warnings": 0
+        },
+        "truncated": false
+      },
+      "schema": 1
+    }
+  },
+  "plan_rejections": {
+    "input-drift:src/reactor/direct_plaintext/cluster_runtime/route_state.rs": {
+      "case": "input-drift:src/reactor/direct_plaintext/cluster_runtime/route_state.rs",
+      "diagnostics": [],
+      "error": "mirror plan differs from the current exact contract and inputs",
+      "exit_code": 2,
+      "input_sha256": "c9bebb0b80318c24b08c0deecd1d91cba67b286b2e6048f755c6f8772f5dc534",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_state.rs"
+    },
+    "input-drift:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs": {
+      "case": "input-drift:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+      "diagnostics": [],
+      "error": "mirror plan differs from the current exact contract and inputs",
+      "exit_code": 2,
+      "input_sha256": "c2d98b442e002d6a1f18aca546e0e5fc9aa70ed743926b11ca11694c4f488022",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+    },
+    "input-drift:src/reactor/direct_plaintext/cluster_runtime/route_test_support.rs": {
+      "case": "input-drift:src/reactor/direct_plaintext/cluster_runtime/route_test_support.rs",
+      "diagnostics": [],
+      "error": "mirror plan differs from the current exact contract and inputs",
+      "exit_code": 2,
+      "input_sha256": "2cbb5b593a8d463e951ce798a896389d7004ad7a661187a3683f8453fd24c4f1",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_test_support.rs"
+    },
+    "input-drift:Cargo.toml": {
+      "case": "input-drift:Cargo.toml",
+      "diagnostics": [],
+      "error": "mirror plan differs from the current exact contract and inputs",
+      "exit_code": 2,
+      "input_sha256": "ca6f2e86ddbca9bb28669d46e46469f11c883a490006f4b874cd4aee19ba8762",
+      "path": "Cargo.toml"
+    },
+    "input-drift:Cargo.lock": {
+      "case": "input-drift:Cargo.lock",
+      "diagnostics": [],
+      "error": "mirror plan differs from the current exact contract and inputs",
+      "exit_code": 2,
+      "input_sha256": "ac142c9470e6333a53bc42d07f478a6a6d11b07ec1fd440ffb4c9cc71bb476b7",
+      "path": "Cargo.lock"
+    },
+    "input-drift:README.md": {
+      "case": "input-drift:README.md",
+      "diagnostics": [],
+      "error": "mirror plan differs from the current exact contract and inputs",
+      "exit_code": 2,
+      "input_sha256": "19ad188cf292b4baed14628bdaa86b9fd2a87597d42fdd695253edd8276ae3c9",
+      "path": "README.md"
+    },
+    "test-renamed": {
+      "case": "test-renamed",
+      "diagnostics": [],
+      "error": "mirror test \"same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling\" must be exactly present once in feature world \"mirror-execution\"; found 0",
+      "exit_code": 2,
+      "input_sha256": "2a4afae829c62cf4b2a51cc04453b16df04e6f0d81385db0a763fe94b5bd70a0",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+    },
+    "test-ignored": {
+      "case": "test-ignored",
+      "diagnostics": [],
+      "error": "mirror plan differs from the current exact contract and inputs",
+      "exit_code": 2,
+      "input_sha256": "50755e7b857e9e134a98f440fc8c11934b2ba03b953133584b8e786303303c5d",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+    },
+    "contract-execution-command": {
+      "case": "contract-execution-command",
+      "diagnostics": [],
+      "error": "mirror plan differs from the current exact contract and inputs",
+      "exit_code": 2,
+      "input_sha256": "9fe36f4b7a0b37a054891e7e424c008b4c221d0070b4f303418d6fc7bffcf142",
+      "path": "route-mirror.toml"
+    },
+    "contract-execution-features": {
+      "case": "contract-execution-features",
+      "diagnostics": [],
+      "error": "mirror plan differs from the current exact contract and inputs",
+      "exit_code": 2,
+      "input_sha256": "6fd0dd6d2f0eceeb98cc5d1b33f6c2b1d6b44b89cc0b7320360f62fdfd3dc500",
+      "path": "route-mirror.toml"
+    },
+    "contract-execution-target": {
+      "case": "contract-execution-target",
+      "diagnostics": [],
+      "error": "mirror plan differs from the current exact contract and inputs",
+      "exit_code": 2,
+      "input_sha256": "40ed8ced8af4c6ed4c7a2ff5203466802f4ca6bf575eed30168cb44e846576ea",
+      "path": "route-mirror.toml"
+    },
+    "contract-execution-toolchain": {
+      "case": "contract-execution-toolchain",
+      "diagnostics": [],
+      "error": "mirror plan differs from the current exact contract and inputs",
+      "exit_code": 2,
+      "input_sha256": "19a6032175f94c7a39b0d7538e56309ed16dc6b573623fa9dc11807a57d8788b",
+      "path": "route-mirror.toml"
+    },
+    "plan-digest": {
+      "case": "plan-digest",
+      "diagnostics": [],
+      "error": "mirror plan digest does not match its canonical payload",
+      "exit_code": 2,
+      "input_sha256": "e75b3035cb8d27fc81143fdcd90349f81e576b174b151e7e4f77abe4486edd30",
+      "path": "route-plan.json"
+    }
+  },
+  "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780",
+  "artifact": "docs/rc9/evidence/route-runtime.json.gz",
+  "scope": "Original retained routing execution plus native mirror verification over a separately identified one-line patched snapshot; not untouched-snapshot or complete architecture qualification.",
+  "diagnostic_history": [
+    {
+      "artifact": "docs/rc9/evidence/route-runtime-shared-cache-a.json.gz",
+      "payload_sha256": "26353ee6d7cc76c32d18745b8224223ec1f14c886aaad2a55f6b1ad6204f55b3",
+      "implementation_commit": "24bd40c5b91af7ecdd650984792a0050f5a4b50e",
+      "qualified": false
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-runtime-shared-cache-b.json.gz",
+      "payload_sha256": "94871b0ba4b1045eb8bcca30d086b0dd509c0494caae5c443c15885bd713cd83",
+      "implementation_commit": "24bd40c5b91af7ecdd650984792a0050f5a4b50e",
+      "qualified": false
+    }
+  ],
+  "diagnostic_reason": "The shared Cargo target directory let the second original execution reuse the patched binary. Only isolated-build reports may verify assertion bindings.",
+  "archives": {
+    "docs/rc9/evidence/route-runtime.json.gz": "84985b5b870a2ae4117662d0c597046285a7d080993db10f3cb53e6fbb9ba611",
+    "docs/rc9/evidence/route-runtime-shared-cache-a.json.gz": "ce713ca75b2609da447cc23890b8fe949296f90ee369a4efce7a5670e27196eb",
+    "docs/rc9/evidence/route-runtime-shared-cache-b.json.gz": "22e60ee1506919f992ff7c0df5ab19e40741d4385223774a4414b34094d0e778",
+    "docs/rc9/evidence/route-runtime-a.log.gz": "aea957bbf8167cd7c1830129bb199d07a9268f11d95b189a72f549125de5a562",
+    "docs/rc9/evidence/route-runtime-b.log.gz": "353ac7587aeb5c3ec8d33f53d38eed403ddfc47a13d4e727f10ec882415b38fe",
+    "docs/rc9/evidence/route-runtime-c.log.gz": "9ad27a1ce1ce73d7e517b3f144d9770ad13f43528ee74997fe7fd88d1b8fb9bb",
+    "docs/rc9/evidence/route-runtime-d.log.gz": "9ad27a1ce1ce73d7e517b3f144d9770ad13f43528ee74997fe7fd88d1b8fb9bb",
+    "docs/rc9/evidence/route-runtime-initial-canonical.log.gz": "b60d95890a4907e640b5ee7b9371af79239141030d8e3f924dbda3d4269104dc",
+    "docs/rc9/evidence/route-runtime-initial-package.log.gz": "2b967adf04d27671a30d6f81615d12fe821afbea7a4a1edd393c7a09406cd6d1",
+    "docs/rc9/evidence/route-runtime-execution-logs.tar.gz": "5525ffaa304640ef0cbd388a767936a59b8325c9e25d8ccf9e0aee4360a3e7d5"
+  },
+  "runs": [
+    {
+      "label": "c",
+      "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780"
+    },
+    {
+      "label": "d",
+      "payload_sha256": "2d1181cab57e495a38d9585153bbcd7d0b5299b4c420cd3553cf02ddfd47c780"
+    }
+  ],
+  "execution_log_members": [
+    "runtime-a.json.original.log",
+    "runtime-a.json.patched.log",
+    "runtime-a.json.helper-0.log",
+    "runtime-a.json.helper-1.log",
+    "runtime-a.json.helper-2.log",
+    "runtime-a.json.helper-3.log",
+    "runtime-b.json.original.log",
+    "runtime-b.json.patched.log",
+    "runtime-b.json.helper-0.log",
+    "runtime-b.json.helper-1.log",
+    "runtime-b.json.helper-2.log",
+    "runtime-b.json.helper-3.log",
+    "runtime-c.json.original.log",
+    "runtime-c.json.patched.log",
+    "runtime-c.json.helper-0.log",
+    "runtime-c.json.helper-1.log",
+    "runtime-c.json.helper-2.log",
+    "runtime-c.json.helper-3.log",
+    "runtime-d.json.original.log",
+    "runtime-d.json.patched.log",
+    "runtime-d.json.helper-0.log",
+    "runtime-d.json.helper-1.log",
+    "runtime-d.json.helper-2.log",
+    "runtime-d.json.helper-3.log"
+  ],
+  "initial_gate": {
+    "implementation_commit": "24bd40c5b91af7ecdd650984792a0050f5a4b50e",
+    "rust_tests_passed": 1611,
+    "rust_tests_failed": 0,
+    "ignored": 19,
+    "pending_lock_diagnostics": [
+      "LOCK-008",
+      "LOCK-016",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "standalone_rc8_archive_checks": "pass"
+  }
+}
