@@ -18,6 +18,7 @@ QUALIFICATION_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_qualification_eviden
 METHOD_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_method_evidence.py")["verify"]
 TEXT_SOURCES = runpy.run_path(ROOT / "scripts/rc9_text_sources.py")["load"]
 ROUTE_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_route_evidence.py")["verify"]
+RETIRED_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_retired_evidence.py")["verify"]
 
 
 def unique_object(pairs):
@@ -302,11 +303,17 @@ def main():
                     and not condition.get("read_preconditions"), "invalid frozen read precondition")
             require(not replacement["verified"] or condition["replacement"]["verified"],
                     "verified assertion depends on an unverified read precondition")
-        file_evidence(assertion, file_reports, files)
-        lock_evidence(assertion, file_reports)
-        method_report = parity_report(assertion, "rust_inventory_parity_evidence", "rust:inventory:", file_reports)
-        if method_report is not None:
-            METHOD_EVIDENCE(assertion, method_report, assertions_by_id, files)
+        if assertion["id"].startswith("KD-RETIRED-"):
+            require(not replacement["verified"] or replacement.get("retired_parity_evidence"), "verified retired assertion needs bound evidence")
+            retired_report = parity_report(assertion, "retired_parity_evidence", "rust:inventory:", file_reports)
+            if retired_report is not None:
+                RETIRED_EVIDENCE(assertion, retired_report, files, assertions_by_id)
+        else:
+            file_evidence(assertion, file_reports, files)
+            lock_evidence(assertion, file_reports)
+            method_report = parity_report(assertion, "rust_inventory_parity_evidence", "rust:inventory:", file_reports)
+            if method_report is not None:
+                METHOD_EVIDENCE(assertion, method_report, assertions_by_id, files)
         if replacement["verified"]:
             require(replacement["implemented"] and replacement["fixtures"], "verified assertion lacks implementation or fixtures")
             require(not assertion["blockers"], "verified assertion retains blockers")

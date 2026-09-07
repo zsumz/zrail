@@ -21727,19 +21727,26 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "rust:inventory:kd-retired-backend"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-BACKEND-VARIANT",
-          "cause": "Bounded Rust enum-variant predicate and cfg/omission/duplicate fixtures remain open."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-CONSTRUCTION-LegacyBackend",
@@ -21773,19 +21780,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-retired-construction-LegacyBackend",
+          "repository:file:kd-retired-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-004",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-CONSTRUCTION-LegacyBackend",
-          "cause": "Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-CONSTRUCTION-new_legacy",
@@ -21819,19 +21836,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-retired-construction-new_legacy",
+          "repository:file:kd-retired-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-004",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-CONSTRUCTION-new_legacy",
-          "cause": "Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-MODULE-broker_set",
@@ -21865,19 +21892,26 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "rust:inventory:kd-retired-modules"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-MODULE-broker_set",
-          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-MODULE-plaintext",
@@ -21911,19 +21945,26 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "rust:inventory:kd-retired-modules"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-MODULE-plaintext",
-          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-MODULE-poller",
@@ -21957,19 +21998,26 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "rust:inventory:kd-retired-modules"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-MODULE-poller",
-          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-MODULE-resource",
@@ -22003,19 +22051,26 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "rust:inventory:kd-retired-modules"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-MODULE-resource",
-          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-MODULE-tcp",
@@ -22049,19 +22104,26 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "rust:inventory:kd-retired-modules"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-MODULE-tcp",
-          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-MODULE-timer",
@@ -22095,19 +22157,26 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "rust:inventory:kd-retired-modules"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-MODULE-timer",
-          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-MODULE-tls",
@@ -22141,19 +22210,26 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "rust:inventory:kd-retired-modules"
+        ],
+        "expected_diagnostics": [
+          "RUST-INVENTORY-001"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-MODULE-tls",
-          "cause": "Required Rust module-declaration absence predicate and adversarial source fixtures remain open."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-PARSE-BACKEND",
@@ -22185,19 +22261,28 @@
       "exception_semantics": "none",
       "disposition": "existing native rail",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-retired-inputs",
+          "rust:inventory:kd-retired-backend"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "RUST-INVENTORY-002"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-PARSE-BACKEND",
-          "cause": "Bind this existing source parse requirement to the explicit source inventory and prove malformed/absent input failure."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-PARSE-MODULES",
@@ -22229,19 +22314,28 @@
       "exception_semantics": "none",
       "disposition": "existing native rail",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-retired-inputs",
+          "rust:inventory:kd-retired-modules"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "RUST-INVENTORY-002"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-PARSE-MODULES",
-          "cause": "Bind this existing source parse requirement to the explicit source inventory and prove malformed/absent input failure."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-TREE-broker_set",
@@ -22275,17 +22369,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-retired-tree-broker_set"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
+        }
       },
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-broker_set",
-          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
         }
       ]
     },
@@ -22321,17 +22427,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-retired-tree-plaintext"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
+        }
       },
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-plaintext",
-          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
         }
       ]
     },
@@ -22367,17 +22485,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-retired-tree-poller"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
+        }
       },
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-poller",
-          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
         }
       ]
     },
@@ -22413,17 +22543,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-retired-tree-resource"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
+        }
       },
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-resource",
-          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
         }
       ]
     },
@@ -22459,17 +22601,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-retired-tree-tcp"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
+        }
       },
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-tcp",
-          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
         }
       ]
     },
@@ -22505,17 +22659,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-retired-tree-timer"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
+        }
       },
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-timer",
-          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
         }
       ]
     },
@@ -22551,17 +22717,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
+        "policy_ids": [
+          "repository:file:kd-retired-tree-tls"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-001"
+        ],
+        "implemented": true,
         "verified": false,
         "full_snapshot_verified": false,
-        "fixtures": []
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+        ],
+        "retired_parity_evidence": {
+          "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+          "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+          "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
+        }
       },
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-tls",
-          "cause": "A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence."
+          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
         }
       ]
     },
@@ -58702,11 +58880,11 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 672,
-    "implemented": 558,
+    "implemented": 577,
     "verified_by_disposition": {
-      "existing native rail": 0,
+      "existing native rail": 2,
       "declarative translation": 16,
-      "new engine capability": 496,
+      "new engine capability": 506,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },

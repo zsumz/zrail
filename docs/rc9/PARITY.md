@@ -94,11 +94,11 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 403 | 351 | 348 |
+| kafka-driver | 826 | 772 | 403 | 370 | 360 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 88 | 34 | 0 |
 
-The **512 verified assertions** comprise five facade predicates, four
+The **524 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus five authored dependency key
@@ -106,11 +106,12 @@ inventories, 35 authored dependency-field assertions and preconditions, and
 36 authored provenance assertions and parser preconditions, and 20 whole-lock
 cardinality/version/source/checksum assertions, plus 16 raw dependency/read
 assertions, plus 125 qualification text assertions and read preconditions, and four transport
-method/parser assertions, two expression-path assertions, two exact-owner assertions, two rename assertions, and two trait/type-set assertions, plus sixteen route source/input assertions.
+method/parser assertions, two expression-path assertions, two exact-owner assertions, two rename assertions, and two trait/type-set assertions, plus sixteen route source/input assertions and twelve retired-backend declaration, raw-token and source-input assertions.
 Size instances include
 all 141 measured baselines and three hard allowances. The original 496 verified instances use **new engine capability**; sixteen
-route instances use **declarative translation**. Verified counts for the other
-three dispositions remain zero. Each registry instance binds its original TOML entry and the
+route instances use **declarative translation**. The retired-backend slice adds
+ten **new engine capability** and two **existing native rail** assertions. Behavioral
+retention and approved-retirement verified counts remain zero. Each registry instance binds its original TOML entry and the
 independently failing helper predicate. The full size report preserves the
 individual source digest, selected budget, baseline, and mutation diagnostics.
 `KD-FACADE-LIVE` and `KF-FACADE-LIVE` remain unverified. No complete repository

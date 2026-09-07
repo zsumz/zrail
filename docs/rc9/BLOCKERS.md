@@ -34,25 +34,13 @@ The separate reference runner also remains open as `RC9-INVENTORY-RF-REFERENCE-S
 | `KD-PROVENANCE-kafka-wire-core-VERSION-PREFIX` | Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority. |
 | `KD-REGISTRY-PARSE` | Complete the typed registry-to-zrail conversion and schema compatibility evidence. Do not retain an unexecuted legacy registry as proof of translated policy; source registry read and type failures need explicit fixture bindings. |
 | `KD-REGISTRY-SCHEMA` | Bind the supported source schema to the trusted conversion and resulting strict zrail contract schema; malformed, absent and unsupported versions need original/native comparison. |
-| `KD-RETIRED-BACKEND-VARIANT` | Bounded Rust enum-variant predicate and cfg/omission/duplicate fixtures remain open. |
-| `KD-RETIRED-CONSTRUCTION-LegacyBackend` | Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify. |
-| `KD-RETIRED-CONSTRUCTION-new_legacy` | Raw absence predicate exists; the pinned source selection and differential evidence remain to qualify. |
-| `KD-RETIRED-MODULE-broker_set` | Required Rust module-declaration absence predicate and adversarial source fixtures remain open. |
-| `KD-RETIRED-MODULE-plaintext` | Required Rust module-declaration absence predicate and adversarial source fixtures remain open. |
-| `KD-RETIRED-MODULE-poller` | Required Rust module-declaration absence predicate and adversarial source fixtures remain open. |
-| `KD-RETIRED-MODULE-resource` | Required Rust module-declaration absence predicate and adversarial source fixtures remain open. |
-| `KD-RETIRED-MODULE-tcp` | Required Rust module-declaration absence predicate and adversarial source fixtures remain open. |
-| `KD-RETIRED-MODULE-timer` | Required Rust module-declaration absence predicate and adversarial source fixtures remain open. |
-| `KD-RETIRED-MODULE-tls` | Required Rust module-declaration absence predicate and adversarial source fixtures remain open. |
-| `KD-RETIRED-PARSE-BACKEND` | Bind this existing source parse requirement to the explicit source inventory and prove malformed/absent input failure. |
-| `KD-RETIRED-PARSE-MODULES` | Bind this existing source parse requirement to the explicit source inventory and prove malformed/absent input failure. |
-| `KD-RETIRED-TREE-broker_set` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
-| `KD-RETIRED-TREE-plaintext` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
-| `KD-RETIRED-TREE-poller` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
-| `KD-RETIRED-TREE-resource` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
-| `KD-RETIRED-TREE-tcp` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
-| `KD-RETIRED-TREE-timer` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
-| `KD-RETIRED-TREE-tls` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
+| `KD-RETIRED-TREE-broker_set` | The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified. |
+| `KD-RETIRED-TREE-plaintext` | The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified. |
+| `KD-RETIRED-TREE-poller` | The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified. |
+| `KD-RETIRED-TREE-resource` | The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified. |
+| `KD-RETIRED-TREE-tcp` | The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified. |
+| `KD-RETIRED-TREE-timer` | The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified. |
+| `KD-RETIRED-TREE-tls` | The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified. |
 | `KD-ROUTE-RUNTIME-CONTROL-ATTEMPTS` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
 | `KD-ROUTE-RUNTIME-CONTROL-LANES` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
 | `KD-ROUTE-RUNTIME-CONTROL-OWNERS` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |

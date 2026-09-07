@@ -2,9 +2,9 @@
 
 use super::{
     cases,
-    model::{self, BACKEND, CONSTRUCTION, Fixture, MODULES, POLICY},
+    model::{self, BACKEND, CONSTRUCTION, Fixture, MODULES, Outcome, POLICY},
 };
-use serde_json::json;
+use serde::Serialize;
 use std::{
     collections::BTreeMap,
     fs,
@@ -13,6 +13,25 @@ use std::{
     process::Command,
 };
 use zrail_core::sha256_hex;
+
+#[derive(Serialize)]
+struct Report {
+    schema: u32,
+    implementation_commit: String,
+    implementation_tree: String,
+    snapshot: serde_json::Value,
+    full_repository_qualified: bool,
+    policy_sha256: String,
+    fixture_origins_sha256: String,
+    test_binary_sha256: String,
+    cargo_lock_sha256: String,
+    rustc_version: String,
+    input_hashes: BTreeMap<String, String>,
+    fixture_root: PathBuf,
+    baseline: Outcome,
+    fixtures: Vec<Outcome>,
+    limitations: [&'static str; 3],
+}
 
 pub(super) fn run() {
     let project = model::project();
@@ -86,23 +105,38 @@ pub(super) fn run() {
         .output()
         .expect("toolchain");
     assert!(rustc.status.success());
-    let report = json!({
-        "schema": 1, "implementation_commit": commit,
-        "implementation_tree": git(&project, &["rev-parse", "HEAD^{tree}"]),
-        "snapshot": pin, "full_repository_qualified": false,
-        "policy_sha256": sha256_hex(&fs::read(project.join(POLICY)).expect("policy")),
-        "fixture_origins_sha256": sha256_hex(&fs::read(project.join("crates/zrail-testkit/tests/fixtures/rc9/declarations-origins.json")).expect("origins")),
-        "test_binary_sha256": sha256_hex(&fs::read(std::env::current_exe().expect("binary")).expect("binary bytes")),
-        "cargo_lock_sha256": sha256_hex(&fs::read(project.join("Cargo.lock")).expect("lock")),
-        "rustc_version": String::from_utf8(rustc.stdout).expect("compiler identity").trim(),
-        "input_hashes": fixture.hashes(), "fixture_root": fixture.root,
-        "baseline": baseline, "fixtures": rows,
-        "limitations": [
+    let report = Report {
+        schema: 1,
+        implementation_commit: commit.clone(),
+        implementation_tree: git(&project, &["rev-parse", "HEAD^{tree}"]),
+        snapshot: pin.clone(),
+        full_repository_qualified: false,
+        policy_sha256: sha256_hex(&fs::read(project.join(POLICY)).expect("policy")),
+        fixture_origins_sha256: sha256_hex(
+            &fs::read(
+                project.join("crates/zrail-testkit/tests/fixtures/rc9/declarations-origins.json"),
+            )
+            .expect("origins"),
+        ),
+        test_binary_sha256: sha256_hex(
+            &fs::read(std::env::current_exe().expect("binary")).expect("binary bytes"),
+        ),
+        cargo_lock_sha256: sha256_hex(&fs::read(project.join("Cargo.lock")).expect("lock")),
+        rustc_version: String::from_utf8(rustc.stdout)
+            .expect("compiler identity")
+            .trim()
+            .into(),
+        input_hashes: fixture.hashes(),
+        fixture_root: fixture.root.clone(),
+        baseline,
+        fixtures: rows,
+        limitations: [
             "Only the release-graph source predicates and their required inputs are qualified; no full Cargo, lock or downstream execution claim.",
             "The old tree walker ignores read errors and follows directory links without bounds. Native unread and link boundaries fail closed; this report does not equate those failure paths.",
-            "All frozen source checks remain installed; no downstream cutover or authority acceptance is performed."
-        ]
-    });
+            "All frozen source checks remain installed; no downstream cutover or authority acceptance is performed.",
+        ],
+    };
+    let report = serde_json::to_value(report).expect("canonical typed report");
     drop(fixture);
     verify();
     assert_eq!(git(&project, &["rev-parse", "HEAD"]), commit);

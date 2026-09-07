@@ -23,6 +23,7 @@ python3 scripts/rc9_text_sources_test.py
 python3 scripts/rc9_qualification_evidence_test.py
 python3 scripts/rc9_method_evidence_test.py
 python3 scripts/rc9_route_evidence_test.py
+python3 scripts/rc9_retired_evidence_test.py
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --all-features --locked --offline -- -D warnings
 cargo test --workspace --all-features --locked --offline

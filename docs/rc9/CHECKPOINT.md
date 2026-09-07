@@ -5,11 +5,28 @@ The 118-commit history is now PGP-signed in the user's commit style. See the
 commit identifiers below. The recorded evidence and release blockers remain
 unchanged by that metadata-only rewrite.
 
-The user resumed work and explicitly set a completion goal on 2026-09-07.
+The user confirmed continued coverage work on 2026-09-07 after the signed-history
+release preparation. The full replacement criterion remains in place.
 See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
-The current ledger is **672 reviewed / 558 implemented / 512 verified**;
-160 reviewed assertion instances and the three discovery blockers remain open.
+The current ledger is **672 reviewed / 577 implemented / 524 verified**;
+148 reviewed assertion instances and the discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
+
+The signed `06b0f185f072bbd9211816a0694f0812ab4188d6` now qualifies the partial
+kafka-driver retired-backend bundle. Two byte-identical 144-case reports accept
+72 and reject 72 fixtures each. They close twelve declaration, raw-construction
+and required-source assertions; the seven physical-tree assertions remain open
+for read-error, entry-error and symlink boundary qualification. The artifact
+validator rejects 37 tamper mutations. See [the evidence index](evidence/retired-index.json).
+No runtime analyzer behavior changed and no root authority was accepted.
+
+The unchanged kafka-driver routing scenario also passed locally with all features,
+one executed test and none ignored. This is an execution result, not yet a native
+mirror receipt or a closed audit assertion. Its fifteen retained runtime rows
+remain open pending exact downstream execution-contract binding.
+
+Historical checkpoints below retain their original identities, platforms and
+counts. They are not current release qualification.
 
 The two trait-set assertions now have two fresh byte-identical 78-case reports
 at the original pinned implementation `5393665`. Their evidence index is

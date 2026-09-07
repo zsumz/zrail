@@ -1082,3 +1082,32 @@ The external `rc9-goal-resume-check-20260907/runner.json` binds its tracked patc
 and all untracked input digests and confirms those inputs did not change during
 the run. Standalone `scripts/package-check` subsequently passed; its result does
 not turn the failed canonical gate into a pass. No lock or root contract was changed.
+# Signed retired-backend qualification on macOS
+
+The partial policy `policies/kafka-driver.retired.fragment.toml` was qualified
+twice at signed commit `06b0f185f072bbd9211816a0694f0812ab4188d6`, tree
+`77cf32ad242a74ad59887c98648ee77475516863`, using Rust 1.97.1 on
+`aarch64-apple-darwin`. The [index](evidence/retired-index.json) binds both logs
+and the byte-identical 144-case payload (72 accepts and 72 rejects).
+
+```sh
+ZRAIL_RC9_SNAPSHOTS=/absolute/verified-snapshots \
+ZRAIL_RC9_RETIRED_REPORT=/absolute/external-evidence/parity-a.json \
+cargo test --locked --offline -p zrail-rust --lib \
+  qualify_frozen_retired_release_graph_bundle -- --ignored
+```
+
+Repeat with a fresh `parity-b.json` in the same external directory, then compare
+both reports byte-for-byte. The runner requires a clean committed producer and
+verifies every frozen snapshot before and after execution. It checks native
+physical selection directly over the frozen kafka-driver tree before mutating
+only a separate, test-owned copy of the three required source inputs.
+
+Twelve assertion rows are verified. The seven retired-tree rows are implemented
+but still blocked on read-error, entry-error and symlink boundary evidence.
+This is neither complete downstream qualification nor rc9 release approval.
+
+The original route runtime scenario also passed under a locked, offline,
+all-feature Cargo run: exactly one test passed, zero failed or ignored. No
+runtime code or guard was edited. The execution-contract/native-receipt binding
+is still pending, so its fifteen runtime rows remain unverified.
