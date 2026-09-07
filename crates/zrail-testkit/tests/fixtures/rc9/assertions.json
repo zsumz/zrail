@@ -22692,7 +22692,7 @@
           "RUST-INVENTORY-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/tests/rc9_transport/impls_test.rs::frozen_impl_pairs_match_every_path_type_and_nested_syntax_context",
@@ -22700,14 +22700,14 @@
           "rust-test:crates/zrail-rust/tests/rc9_transport/impls_test.rs::qualify_all_frozen_kafka_driver_transport_impls",
           "rust-test:crates/zrail-testkit/tests/rust_inventories/impls_test.rs::required_impl_pair_rejects_same_quantity_substitution_omission_and_growth",
           "rust-test:crates/zrail-testkit/tests/rust_inventories/impls_test.rs::authored_impl_sets_preserve_cfg_occurrences_and_deduplicate_repeated_mounts"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-IMPLS",
-          "cause": "Native written trait inventories retain both trait and path-type suffixes, explicit per-trait type filters, exact ownership sets and independent quantities. Full frozen-scope differential evidence remains required before verification."
+        ],
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-impls-resumed-parity.json.gz",
+          "payload_sha256": "a6287bc87a993c2d782cfc24ccfb3e21dbb866dd0c697c0cb8e17da74547c73e",
+          "implementation_commit": "53936654ffbaff1bb0e9e127db46d3ca0aa510ba"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-TRANSPORT-METHODS",
@@ -50197,7 +50197,7 @@
           "RUST-INVENTORY-001"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "rust-test:crates/zrail-rust/tests/rc9_transport/impls_test.rs::frozen_impl_pairs_match_every_path_type_and_nested_syntax_context",
@@ -50205,14 +50205,14 @@
           "rust-test:crates/zrail-rust/tests/rc9_transport/impls_test.rs::qualify_all_frozen_kafka_driver_transport_impls",
           "rust-test:crates/zrail-testkit/tests/rust_inventories/impls_test.rs::required_impl_pair_rejects_same_quantity_substitution_omission_and_growth",
           "rust-test:crates/zrail-testkit/tests/rust_inventories/impls_test.rs::authored_impl_sets_preserve_cfg_occurrences_and_deduplicate_repeated_mounts"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-TRANSPORT-DETECTOR-IMPLS",
-          "cause": "Native written trait inventories retain both trait and path-type suffixes, explicit per-trait type filters, exact ownership sets and independent quantities. Full frozen-scope differential evidence remains required before verification."
+        ],
+        "rust_inventory_parity_evidence": {
+          "artifact": "docs/rc9/evidence/transport-impls-resumed-parity.json.gz",
+          "payload_sha256": "a6287bc87a993c2d782cfc24ccfb3e21dbb866dd0c697c0cb8e17da74547c73e",
+          "implementation_commit": "53936654ffbaff1bb0e9e127db46d3ca0aa510ba"
         }
-      ],
+      },
+      "blockers": [],
       "detector_for": [
         "KD-TRANSPORT-IMPLS"
       ]
@@ -51590,7 +51590,7 @@
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
-      "new engine capability": 494,
+      "new engine capability": 496,
       "behavioral evidence retained": 0,
       "approved retirement": 0
     },

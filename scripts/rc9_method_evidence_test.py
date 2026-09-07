@@ -81,8 +81,7 @@ class TransportEvidence(unittest.TestCase):
                 elif mutation == "wrong-count-map":
                     fixture["native"]["counts"][0]["name"] = "another_method"
                 elif mutation == "legacy-map":
-                    fixture["legacy_counts"] = ({} if self.FIXTURE_CASE == "owner-duplicated"
-                                                else report["legacy_counts"])
+                    fixture["legacy_counts"] = {"src/rc9_forged.rs:forged": 1}
                 elif mutation == "diagnostic":
                     fixture["diagnostic"] = "LOCK-028"
                 elif mutation == "claim":
@@ -156,6 +155,36 @@ class RenameEvidence(TransportEvidence):
                 fixture["legacy_counts"] = {key: 2 for key in fixture["legacy_counts"]}
             elif mutation == "alias":
                 fixture["native"]["counts"][0]["name"] = "Source as Other"
+            else:
+                report["fixture_origins_sha256"] = "0" * 64
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                VERIFY(self.assertions[self.LIVE_ID], report, self.assertions, self.files)
+
+
+class ImplEvidence(TransportEvidence):
+    REPORT_FILE = "transport-impls-resumed-parity.json.gz"
+    IDS = MODULE["IMPL_IDS"]
+    EXPECTED_IDS = 2
+    LIVE_ID = "KD-TRANSPORT-IMPLS"
+    SUBJECT_VALUE = "Source"
+    FIXTURE_CASE = "duplicate-Source"
+
+    def test_trait_type_membership_and_occurrence_quantities_are_independent(self):
+        for mutation in ["measure", "quantity", "membership", "trait", "type", "filter", "origins"]:
+            report = copy.deepcopy(self.report)
+            fixture = next(row for row in report["fixtures"] if row["case"] == self.FIXTURE_CASE)
+            if mutation == "measure":
+                report["legacy_measure"] = "source-occurrences"
+            elif mutation == "quantity":
+                count = next(row for row in fixture["native"]["counts"] if row["count"] == 2)
+                count["count"] = 1
+            elif mutation == "membership":
+                fixture["legacy_counts"] = {key: 2 for key in fixture["legacy_counts"]}
+            elif mutation in {"trait", "type"}:
+                fixture["native"]["counts"][0]["name"] = (
+                    "Other for DirectRustlsTransport" if mutation == "trait" else "Source for Other")
+            elif mutation == "filter":
+                report["observation"]["policy"]["subject"]["implementing_types"]["Source"].append("Other")
             else:
                 report["fixture_origins_sha256"] = "0" * 64
             with self.subTest(mutation=mutation), self.assertRaises(ValueError):

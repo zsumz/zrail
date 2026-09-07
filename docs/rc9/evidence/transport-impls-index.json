@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "implementation_commit": "53936654ffbaff1bb0e9e127db46d3ca0aa510ba",
+  "implementation_tree": "867f379edce0e69867392247bf569d76e5f5038c",
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "6a935f1e82792b0f568532c67b9666c38dced9f37e10322f65b5794c0c776361",
+  "registry_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+  "fixture_origins_sha256": "5c12081cf9eac8c09e413302fec0bcfd991f0d912b7a240e8b51387e28cb110e",
+  "test_binary_sha256": "f8ce9e70ef0660c30b5a059d9d6a7724f507e64fd2ec7c1192603115e188b2c3",
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "detector_source_sha256": "52931f702eed8c81c079a2aabfb4934a0f7c4388faa26ed5c425bf470232f4bc",
+  "assertion_ids": [
+    "KD-TRANSPORT-IMPLS",
+    "KD-TRANSPORT-DETECTOR-IMPLS"
+  ],
+  "canonical": {
+    "command": "scripts/check",
+    "exit_status": 1,
+    "passed": 1591,
+    "failed": 0,
+    "ignored": 16,
+    "analysis_complete": true,
+    "rust_files": 1038,
+    "base_contexts": 1632,
+    "derived_contexts": 0,
+    "projection_work": 1187546,
+    "unresolved": 0,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-016",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_step_reached": false,
+    "cleanliness_step_reached": false
+  },
+  "standalone_archive_check_passed": true,
+  "git_status_unchanged": true,
+  "lock_authority_accepted": false,
+  "full_repository_qualified": false,
+  "differential": {
+    "runs": 2,
+    "identical_payloads": true,
+    "payload_sha256": "a6287bc87a993c2d782cfc24ccfb3e21dbb866dd0c697c0cb8e17da74547c73e",
+    "payload_bytes": 8058906,
+    "all_frozen_rust_inputs": 772,
+    "selected_physical_files": 479,
+    "legacy_distinct_trait_type_file_identities": 3,
+    "native_authored_impl_occurrences": 3,
+    "cases": 78,
+    "accepted": 28,
+    "rejected": 50
+  },
+  "claim": "Exact authored trait/type/file membership over the complete frozen detector selection. Native counts retain duplicate physical occurrences independently of the original set-membership decision. No semantic identity, full-repository or behavior claim.",
+  "artifact_validation": {
+    "unittest_methods": 13,
+    "adversarial_mutations": 116,
+    "command": "python3 scripts/rc9_method_evidence_test.py"
+  },
+  "previous_checkpoint": "docs/rc9/evidence/transport-impls-checkpoint.json",
+  "resumption_note": "Both fresh reports use one new evidence directory and the original pinned clean implementation. Their only difference from the stopped first report is fixture_root. The stopped report and its incomplete repeat logs remain unchanged.",
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/transport-impls-resumed-parity.json.gz",
+      "implementation_commit": "53936654ffbaff1bb0e9e127db46d3ca0aa510ba",
+      "payload_sha256": "a6287bc87a993c2d782cfc24ccfb3e21dbb866dd0c697c0cb8e17da74547c73e",
+      "compressed_sha256": "fb962ada6b8d56105ba360bc3fec224113c2fb88b41736c4bbe34989fc8e5501"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-impls-resumed-parity-a.log.gz",
+      "implementation_commit": "53936654ffbaff1bb0e9e127db46d3ca0aa510ba",
+      "payload_sha256": "029036d1f2c95fd3d25dd0e3526f582d1cf0c56c14a3b1b9b8c9594c978f50c3",
+      "compressed_sha256": "fe166389e184a48b75ab5e4c4c76dd5729740f8ba97dc96efdefd3ccc682f96d"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-impls-resumed-parity-b.log.gz",
+      "implementation_commit": "53936654ffbaff1bb0e9e127db46d3ca0aa510ba",
+      "payload_sha256": "3edcfcb81e215e0ee808aa5cb2abe1cbcecf2cf2e84ea56f1c655ec4cabd0889",
+      "compressed_sha256": "05b7da3daee202f6aee75d17fa4882cfc7b8836fcce2faa71c30e8694631e87a"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-impls-resumed-runner.json.gz",
+      "implementation_commit": "53936654ffbaff1bb0e9e127db46d3ca0aa510ba",
+      "payload_sha256": "4d61248dd8ff6454b52dc7b81778df71bc460b6cd26d79d338148c680478d0b2",
+      "compressed_sha256": "7028547408e18571b5f26815853c4b9cbfba3c6fef9ddc43aa2038a402a2a4c5"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-impls-stopped-canonical.log.gz",
+      "implementation_commit": "53936654ffbaff1bb0e9e127db46d3ca0aa510ba",
+      "payload_sha256": "eaf1209fabf25ec6c4b2d57176f6d018a056832096c6822caac5fd015e466757",
+      "compressed_sha256": "56e327bdfefd0f218f3ebb9c824899588aa66328f93cc34966d41f3f18c8f8fe"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-impls-stopped-package.log.gz",
+      "implementation_commit": "53936654ffbaff1bb0e9e127db46d3ca0aa510ba",
+      "payload_sha256": "24e702c3c3708e87b3bfc507bfcfe2f6e7a7f9eca6038abe97edaf2943da079d",
+      "compressed_sha256": "759782d10cdb3a62327e5f4d219d39229447679d3a0b03e670e15c86945b09fe"
+    }
+  ]
+}
