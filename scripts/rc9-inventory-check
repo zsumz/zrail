@@ -16,6 +16,7 @@ DATA = ROOT / "crates/zrail-testkit/tests/fixtures/rc9"
 MAX_BYTES = 64 * 1024 * 1024
 QUALIFICATION_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_qualification_evidence.py")["verify"]
 METHOD_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_method_evidence.py")["verify"]
+TEXT_SOURCES = runpy.run_path(ROOT / "scripts/rc9_text_sources.py")["load"]
 
 
 def unique_object(pairs):
@@ -206,6 +207,9 @@ def main():
             require(candidate["id"] not in candidates, "duplicate candidate identity")
             candidates[candidate["id"]] = (file, candidate)
     require(len(candidates) == census["candidate_count"] == summary["candidate_count"], "candidate count mismatch")
+    text_sources = TEXT_SOURCES(ledger, files)
+    require(not candidates.keys() & text_sources.keys(), "audited spans cannot replace Rust candidates")
+    candidates.update(text_sources)
     for repository in summary["repositories"]:
         selected = [file for file in files.values() if file["repository"] == repository["repository"]]
         counts = collections.Counter(c["kind"] for file in selected for c in file["candidates"])
@@ -225,8 +229,23 @@ def main():
         file, candidate = candidates[source["candidate_id"]]
         require(file["repository"] == assertion["repository"] and file["commit"] == assertion["commit"], "assertion snapshot mismatch")
         require(file["path"] == source["path"] and file["sha256"] == source["file_sha256"], "assertion file mismatch")
-        for field in ["line", "column", "function", "syntax_sha256"]:
+        evidence_kind = source.get("evidence_kind", "rust-census")
+        require(evidence_kind in {"rust-census", "audited-text"}, "unknown assertion evidence kind")
+        require((evidence_kind == "audited-text") == (candidate["kind"] == "audited-text"),
+                "manual text cannot claim parsed Rust identity")
+        digest_field = "span_sha256" if evidence_kind == "audited-text" else "syntax_sha256"
+        require(("syntax_sha256" if evidence_kind == "audited-text" else "span_sha256") not in source,
+                "assertion cannot mix parsed and manual source digests")
+        for field in ["line", "column", "function", digest_field]:
             require(candidate[field] == source[field], f"assertion {field} mismatch")
+        related = source.get("related_candidate_ids", [])
+        require(isinstance(related, list) and len(related) <= 1024
+                and all(isinstance(identity, str) for identity in related)
+                and len(related) == len(set(related)), "invalid supporting source identities")
+        for identity in related:
+            related_file, _ = candidates[identity]
+            require(related_file == file and identity != source["candidate_id"],
+                    "supporting source must belong to the same frozen file")
         invocations = assertion.get("invocations", [])
         require(isinstance(invocations, list) and len(invocations) <= 1024
                 and len(invocations) == len(set(invocations)), "invalid helper invocation identities")
@@ -244,6 +263,30 @@ def main():
                     and registry["selector"], "invalid registry entry selector")
         require(assertion["disposition"] in dispositions, "unsupported assertion disposition")
         replacement = assertion["replacement"]
+        if assertion["disposition"] == "approved retirement":
+            decisions = [decision for decision in ledger["approved_policy_changes"]
+                         if decision["id"] == assertion.get("policy_decision")]
+            require(len(decisions) == 1, "retirement requires one recorded policy decision")
+            decision = decisions[0]
+            require(decision["authority"] == "user" and decision["disposition"] == "approved retirement"
+                    and decision["repository"] == assertion["repository"]
+                    and decision["commit"] == assertion["commit"]
+                    and assertion["id"] in decision["assertion_ids"], "retirement is outside its recorded decision")
+            require(not replacement["policy_ids"] and not replacement["expected_diagnostics"],
+                    "retirement cannot claim a replacement policy or diagnostic")
+        compiled = assertion.get("compile_input_preconditions", [])
+        require(isinstance(compiled, list) and len(compiled) <= 1024
+                and len(compiled) == len(set(compiled)), "invalid compile-input links")
+        for identity in compiled:
+            condition = assertions_by_id[identity]
+            require(condition["repository"] == assertion["repository"]
+                    and condition["commit"] == assertion["commit"]
+                    and condition["matching_semantics"]["kind"] == "Rust include_str! UTF-8 input precondition"
+                    and len(condition["selection"]["paths"]) == 1
+                    and set(condition["selection"]["paths"]) <= set(assertion["selection"]["paths"])
+                    and not condition.get("compile_input_preconditions"), "invalid compile-input dependency")
+            require(not replacement["verified"] or condition["replacement"]["verified"],
+                    "verified assertion depends on an unverified compile-time input")
         preconditions = assertion.get("read_preconditions", [])
         require(isinstance(preconditions, list) and len(preconditions) <= 1024
                 and len(preconditions) == len(set(preconditions)), "invalid read precondition links")
@@ -272,7 +315,8 @@ def main():
     expected = {"reviewed_assertion_instances": len(ids), "implemented": implemented,
                 "verified_by_disposition": dispositions, "full_repository_verified": full}
     require(ledger["counts"] == expected, "ledger disposition counts mismatch")
-    print(f"Audit integrity: pass; {len(files)} files, {len(candidates)} discovery candidates")
+    print(f"Audit integrity: pass; {len(files)} files, {census['candidate_count']} discovery candidates")
+    print(f"Audited non-Rust assertion spans: {len(text_sources)}; no execution claim")
     print(f"Reviewed assertion instances: {len(ids)}; implemented: {implemented}; verified: {sum(dispositions.values())}")
     print(f"Assertion inventory complete: {ledger['assertion_inventory_complete']}; release verdict: {ledger['release_verdict']}")
     if args.require_complete:
