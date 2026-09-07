@@ -2,13 +2,13 @@
 
 use std::{fs, io::Write as _, path::PathBuf, process::Command};
 
-use serde_json::json;
 use zrail_core::sha256_hex;
 
 use super::{
     compiler::{Compiler, SOURCE, SOURCE_SHA},
     fixtures,
     model::{self, Fixture},
+    report::Report,
 };
 
 pub(super) fn run() {
@@ -62,26 +62,46 @@ pub(super) fn run() {
         .output()
         .expect("compiler identity");
     assert!(rustc.status.success());
-    let report = json!({
-        "schema": 1, "implementation_commit": commit, "implementation_tree": tree,
-        "snapshot": snapshot.pin, "full_repository_qualified": false,
-        "rustc_version": String::from_utf8(rustc.stdout).expect("compiler").trim(),
-        "test_binary_sha256": sha256_hex(&fs::read(std::env::current_exe().expect("test binary")).expect("binary bytes")),
-        "cargo_lock_sha256": sha256_hex(&fs::read(project.join("Cargo.lock")).expect("Cargo lock")),
-        "fixture_origins_sha256": sha256_hex(&fs::read(project.join("crates/zrail-testkit/tests/fixtures/rc9/route-sources-origins.json")).expect("origins")),
-        "policy_sha256": sha256_hex(&fs::read(project.join("docs/rc9/policies/kafka-driver.route-sources.fragment.toml")).expect("policy bytes")),
-        "source_test_sha256": SOURCE_SHA, "harness_sha256": compiler.harness_sha256,
-        "input_hashes": baseline, "fixture_root": fixture.root, "fixtures": rows,
-        "limitations": [
+    let report = Report {
+        schema: 1,
+        implementation_commit: commit.clone(),
+        implementation_tree: tree,
+        snapshot: snapshot.pin,
+        full_repository_qualified: false,
+        rustc_version: String::from_utf8(rustc.stdout)
+            .expect("compiler")
+            .trim()
+            .into(),
+        test_binary_sha256: sha256_hex(
+            &fs::read(std::env::current_exe().expect("test binary")).expect("binary bytes"),
+        ),
+        cargo_lock_sha256: sha256_hex(&fs::read(project.join("Cargo.lock")).expect("Cargo lock")),
+        fixture_origins_sha256: sha256_hex(
+            &fs::read(
+                project.join("crates/zrail-testkit/tests/fixtures/rc9/route-sources-origins.json"),
+            )
+            .expect("origins"),
+        ),
+        policy_sha256: sha256_hex(
+            &fs::read(project.join("docs/rc9/policies/kafka-driver.route-sources.fragment.toml"))
+                .expect("policy bytes"),
+        ),
+        source_test_sha256: SOURCE_SHA,
+        harness_sha256: compiler.harness_sha256,
+        input_hashes: baseline,
+        fixture_root: fixture.root.clone(),
+        fixtures: rows,
+        limitations: [
             "Only the source-only route test and its eleven compile inputs are qualified; the mixed file's runtime scenario is retained and unqualified here.",
             "Raw UTF-8 and physical-file observations do not claim semantic field/type identity, Cargo analysis, or full repository qualification.",
-            "The complete unchanged source-only test compiles and executes on the baseline. Missing inputs fail at the original include_str invocation; invalid UTF-8 diagnostics identify the included file's invalid byte."
-        ]
-    });
+            "The complete unchanged source-only test compiles and executes on the baseline. Missing inputs fail at the original include_str invocation; invalid UTF-8 diagnostics identify the included file's invalid byte.",
+        ],
+    };
     drop(fixture);
     verify();
     assert_eq!(super::super::git(&project, &["rev-parse", "HEAD"]), commit);
-    let mut bytes = serde_json::to_vec_pretty(&report).expect("deterministic report");
+    let value = serde_json::to_value(report).expect("typed report value");
+    let mut bytes = serde_json::to_vec_pretty(&value).expect("deterministic report");
     bytes.push(b'\n');
     fs::OpenOptions::new()
         .write(true)

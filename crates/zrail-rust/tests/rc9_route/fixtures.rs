@@ -2,12 +2,13 @@
 
 use std::{collections::BTreeMap, fs};
 
-use serde_json::{Value, json};
-use zrail_core::{RepositoryFileRule, sha256_hex};
+use serde_json::Value;
+use zrail_core::RepositoryFileRule;
 
 use super::{
     compiler::Compiler,
     model::{FACADE, FORBIDDEN, Fixture, MARKER},
+    report::{self, Outcome},
 };
 
 pub(super) fn inputs(fixture: &Fixture) -> BTreeMap<String, Value> {
@@ -16,7 +17,7 @@ pub(super) fn inputs(fixture: &Fixture) -> BTreeMap<String, Value> {
         .keys()
         .map(|path| {
             let value = match fs::read(fixture.root.join(path)) {
-                Ok(bytes) => json!({"sha256": sha256_hex(&bytes), "bytes": bytes.len()}),
+                Ok(bytes) => report::input(&bytes),
                 Err(error) if error.kind() == std::io::ErrorKind::NotFound => Value::Null,
                 Err(error) => panic!("unexpected input read error: {error}"),
             };
@@ -29,10 +30,7 @@ fn extra_inputs(fixture: &Fixture) -> BTreeMap<String, Value> {
     let path = "unrelated.rs";
     if fixture.root.join(path).exists() {
         let bytes = fs::read(fixture.root.join(path)).expect("owned decoy bytes");
-        BTreeMap::from([(
-            path.into(),
-            json!({"sha256": sha256_hex(&bytes), "bytes": bytes.len()}),
-        )])
+        BTreeMap::from([(path.into(), report::input(&bytes))])
     } else {
         BTreeMap::new()
     }
@@ -87,9 +85,17 @@ pub(super) fn observe(
         }
         assert_eq!(findings, expected, "{name}");
     }
-    json!({"case": name, "inputs": inputs(fixture), "extra_inputs": extra_inputs(fixture), "legacy_accepted": legacy_accepted,
-           "native_accepted": native_accepted, "observations": observations,
-           "findings": findings, "error": error})
+    serde_json::to_value(Outcome {
+        case: name.into(),
+        inputs: inputs(fixture),
+        extra_inputs: extra_inputs(fixture),
+        legacy_accepted,
+        native_accepted,
+        observations,
+        findings,
+        error,
+    })
+    .expect("typed fixture outcome")
 }
 
 pub(super) fn qualify(

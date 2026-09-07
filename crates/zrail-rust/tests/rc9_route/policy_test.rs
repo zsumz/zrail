@@ -10,6 +10,8 @@ mod legacy;
 mod model;
 #[path = "qualification.rs"]
 mod qualification;
+#[path = "report.rs"]
+mod report;
 
 use std::fs;
 

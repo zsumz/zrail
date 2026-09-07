@@ -2,10 +2,13 @@
 
 use std::{fs, path::PathBuf, process::Command};
 
-use serde_json::{Value, json};
+use serde_json::Value;
 use zrail_core::sha256_hex;
 
-use super::model::{self, FACADE, Fixture};
+use super::{
+    model::{self, FACADE, Fixture},
+    report::{Compilation, Execution},
+};
 
 pub(super) const TEST: &str = "route_modules_cannot_own_a_selector_or_legacy_routing_capability";
 pub(super) const SOURCE: &str = "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs";
@@ -158,14 +161,25 @@ impl Compiler {
             assert!(run.status.success());
             let text = String::from_utf8(run.stdout).expect("test outcome");
             assert!(text.contains("1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out"));
-            json!({"test": TEST, "passed": 1, "failed": 0, "ignored": 0, "filtered": 0,
-                   "binary_sha256": sha256_hex(&fs::read(binary).expect("test bytes")),
-                   "list_sha256": sha256_hex(&list.stdout)})
+            Execution {
+                test: TEST,
+                passed: 1,
+                failed: 0,
+                ignored: 0,
+                filtered: 0,
+                binary_sha256: sha256_hex(&fs::read(binary).expect("test bytes")),
+                list_sha256: sha256_hex(&list.stdout),
+            }
         });
-        json!({"executable": self.executable,
-               "executable_sha256": sha256_hex(&fs::read(&self.executable).expect("compiler bytes")),
-               "arguments": arguments, "exit_code": output.status.code(),
-               "stderr_sha256": sha256_hex(&output.stderr), "errors": errors,
-               "execution": execution})
+        serde_json::to_value(Compilation {
+            executable: self.executable.clone(),
+            executable_sha256: sha256_hex(&fs::read(&self.executable).expect("compiler bytes")),
+            arguments,
+            exit_code: output.status.code(),
+            stderr_sha256: sha256_hex(&output.stderr),
+            errors,
+            execution,
+        })
+        .expect("typed compilation evidence")
     }
 }

@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "status": "failed",
+  "implementation": {
+    "commit": "d5d2f9bcd0e64d36b5703980fe5f2a4593476aa7",
+    "tree": "8b152c1c1658d0265fa473d74d555d49aa590cce",
+    "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked": {},
+    "git_status": ""
+  },
+  "cause": "Self-hosting rejected six unreviewed serde_json::json macro expansions in the new trusted route report producer. Typed serialization replaces them without changing root authority.",
+  "canonical": {
+    "passed": 1609,
+    "failed": 0,
+    "ignored": 18,
+    "diagnostics": {
+      "LOCK-008": 1,
+      "LOCK-016": 1,
+      "LOCK-026": 1,
+      "LOCK-028": 1,
+      "LOCK-030": 1,
+      "RUST-MACRO-001": 6
+    }
+  },
+  "standalone_archive": "pass",
+  "inputs_unchanged": true,
+  "release_qualified": false,
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/route-macro-policy-runner.json.gz",
+      "payload_sha256": "e007507315f2aed67675750a4235ca2abc07cde2c3dac74e2f1ddc57bc98bd73",
+      "payload_bytes": 2892,
+      "compressed_sha256": "e02a5e43dd71b5a717ad06129ea20b6a40081b2b7e86a2d3bb6774125a6926dd"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-macro-policy-canonical.log.gz",
+      "payload_sha256": "6ee730f10b348fd77d62ffa7424f9a972fb7c597c9b8a2f5ae67db888d90f5d7",
+      "payload_bytes": 192681,
+      "compressed_sha256": "dc482fc0f85e13100a524b5618466d3eac34609cad5fd7a4b1f2d60db2fb813e"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-macro-policy-package.log.gz",
+      "payload_sha256": "89022e1e74912b145a13673caa761240df54d7ab33621834f6cd5fdd2f923407",
+      "payload_bytes": 10596,
+      "compressed_sha256": "f5c889e14ce9dd67d3fee797632ef8cd95a0d1137fbbb2fc607b3c23488f3d42"
+    }
+  ]
+}
