@@ -1,0 +1,168 @@
+#!/usr/bin/env python3
+"""Qualify original execution and patched native receipts; never mutate a downstream checkout."""
+
+import argparse
+import os
+from pathlib import Path
+import shlex
+import shutil
+import sys
+
+sys.dont_write_bytecode = True
+
+from rc9_route_runtime_common import (
+    AFTER, BEFORE, FULL_NAME, PATCH, PATCHED, PIN, POLICY, PRODUCER, PROFILE, ROOT,
+    execute, git, hashes, input_paths, json_command, parse, policy, require, run, sha, write_json,
+)
+from rc9_route_runtime_mutations import run_mutations
+
+
+def clean(root):
+    require(not git(root, "status", "--porcelain=v1", "--untracked-files=all"), "dirty producer/snapshot")
+
+
+def verify_snapshot(snapshots):
+    result = run([sys.executable, ROOT / "scripts/rc9-snapshots", snapshots], ROOT)
+    require(result.returncode == 0, "frozen snapshot/origin verification failed")
+
+
+def environment(build, directory):
+    env = os.environ.copy()
+    forbidden = [key for key in env if key in {"RUSTFLAGS", "RUSTDOCFLAGS", "RUSTC", "RUSTDOC",
+                 "RUSTC_WRAPPER", "RUSTC_WORKSPACE_WRAPPER", "RUSTC_BOOTSTRAP", "CARGO_ENCODED_RUSTFLAGS"}
+                 or key.startswith(("CARGO_BUILD_", "CARGO_TARGET_", "CARGO_PROFILE_", "CARGO_ALIAS_"))]
+    require(not forbidden, "ambient build overrides: " + ", ".join(forbidden))
+    cargo_home = Path(env.get("CARGO_HOME", str(Path.home() / ".cargo"))).resolve()
+    for candidate in [cargo_home / "config", cargo_home / "config.toml"]:
+        if candidate.exists():
+            # The reviewed machine setting only bounds compilation concurrency.
+            require(candidate.read_bytes() == b"[build]\njobs = 4\n", "unreviewed Cargo home config")
+    for parent in [directory, *directory.parents]:
+        for filename in ["config", "config.toml"]:
+            require(not (parent / ".cargo" / filename).exists(), "ancestor Cargo configuration")
+    env.update(RUSTUP_TOOLCHAIN="1.97.1", CARGO_TARGET_DIR=str(build), TMPDIR=str(directory),
+               CARGO_TERM_COLOR="never", CARGO_INCREMENTAL="0")
+    return env
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--snapshots", type=Path, required=True)
+    parser.add_argument("--directory", type=Path, required=True)
+    parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--build", type=Path, required=True)
+    args = parser.parse_args()
+    snapshots, directory = args.snapshots.resolve(strict=True), args.directory.resolve(strict=True)
+    output = directory / args.report
+    build = args.build.resolve()
+    require(args.report.name == str(args.report) and not output.exists(), "fresh report basename required")
+    require(directory.is_relative_to("/Volumes/zdev/") and build.is_relative_to("/Volumes/zdev/"), "zdev storage required")
+    require(not directory.is_relative_to(ROOT.resolve()) and not directory.is_relative_to(snapshots), "external evidence directory required")
+    require(not build.is_relative_to(snapshots) and not directory.is_relative_to(build), "separate build storage")
+    fixture = directory / "route-runtime-fixture"
+    require(not fixture.exists(), "never replace existing fixture")
+    clean(ROOT)
+    verify_snapshot(snapshots)
+    commit, tree = git(ROOT, "rev-parse", "HEAD"), git(ROOT, "rev-parse", "HEAD^{tree}")
+    snapshot = snapshots / "kafka-driver"
+    require(git(snapshot, "rev-parse", "HEAD") == PIN["commit"]
+            and git(snapshot, "rev-parse", "HEAD^{tree}") == PIN["tree"], "wrong snapshot")
+    mirror = policy()
+    paths = input_paths(mirror)
+    require(git(snapshot, "ls-files").splitlines() == paths, "unbound frozen tracked inputs")
+    original_inputs = hashes(snapshot, paths)
+    env = environment(build, directory)
+    compiler = run(["rustc", "-Vv"], ROOT, env)
+    require(compiler.returncode == 0 and compiler.stdout.decode().splitlines()[0] == mirror["execution"]["toolchain"]
+            and "host: " + mirror["execution"]["target"] in compiler.stdout.decode(), "wrong compiler or host")
+    built = run(["cargo", "build", "--package", "zrail", "--bin", "zrail", "--locked", "--offline"], ROOT, env)
+    require(built.returncode == 0, "build exact committed native CLI: " + built.stderr.decode())
+    binary = build / "debug/zrail"
+    binary_hash = sha(binary.read_bytes())
+    command = shlex.split(mirror["execution"]["command"])
+    print("executing exact original routing scenario", flush=True)
+    original_execution = execute(command, snapshot, env, directory / (args.report.name + ".original.log"))
+    fixture.mkdir()
+    try:
+        for path in paths:
+            destination = fixture / path
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(snapshot / path, destination)
+        config = (ROOT / PROFILE).read_bytes() + (ROOT / POLICY).read_bytes()
+        (fixture / "route-mirror.toml").write_bytes(config)
+        original_plan = json_command(binary, fixture, "plan")
+        require(original_plan["exit_code"] == 2 and original_plan["output"]["error"]
+                == "mirror planning requires complete analysis; 1 unresolved issue(s)", "unexpected original completeness result")
+        original_check = run([binary, "check", "--root", fixture, "--config", "route-mirror.toml", "--format", "json"], ROOT)
+        unresolved = [f for f in parse(original_check.stdout)["findings"] if f["analysis"] == "unresolved"]
+        require(len(unresolved) == 1 and unresolved[0]["id"] == "RUST-CALL-001"
+                and unresolved[0]["path"] == PATCHED and unresolved[0]["span"]["line"] == 169, "unrelated resolution boundary")
+        applied = run(["git", "apply", ROOT / PATCH], fixture)
+        require(applied.returncode == 0, "apply exact reviewed test-owned patch")
+        expected = (snapshot / PATCHED).read_bytes()
+        require(expected.count(BEFORE) == 1 and (fixture / PATCHED).read_bytes() == expected.replace(BEFORE, AFTER), "overbroad patch")
+        patched_inputs = hashes(fixture, paths)
+        require([path for path in paths if original_inputs[path] != patched_inputs[path]] == [PATCHED], "unexpected source change")
+        print("planning complete patched checkout and executing retained scenario", flush=True)
+        planned = json_command(binary, fixture, "plan")
+        require(planned["exit_code"] == 0, "complete patched mirror planning: " + str(planned))
+        plan = planned["output"]
+        write_json(fixture / "route-plan.json", plan)
+        patched_execution = execute(command, fixture, env, directory / (args.report.name + ".patched.log"))
+        helper_tests = [
+            "measured_request_binds_permit_correlation_before_exact_frame_and_typed_completion",
+            "measurement_failure_settles_typed_completion_without_a_context",
+            "unsupported_version_settles_the_typed_completion_exactly_once",
+            "binding_failure_leaves_the_context_as_the_only_typed_failure_owner",
+        ]
+        helper_execution = []
+        for index, test in enumerate(helper_tests):
+            name = "request::bornera_test::" + test
+            arguments = [name if arg == FULL_NAME else arg for arg in command]
+            helper_execution.append(execute(arguments, fixture, env,
+                directory / f"{args.report.name}.helper-{index}.log", name))
+        planned_mirror, = plan["mirrors"]
+        results = {"schema": 1, "plan_sha256": plan["plan_sha256"], "producer": PRODUCER, "groups": [
+            {"execution_group": planned_mirror["execution_group"], "tests": [
+                {"policy_id": planned_mirror["policy_id"], "status": "passed"}]}]}
+        write_json(fixture / "route-results.json", results)
+        rendered = json_command(binary, fixture, "receipts", "--plan", "route-plan.json", "--results", "route-results.json")
+        require(rendered["exit_code"] == 0, "stock receipt rendering")
+        artifact, = rendered["output"]["receipts"]
+        require(artifact["path"] == mirror["receipt"] and sha(artifact["source"].encode()) == artifact["sha256"], "wrong rendered receipt")
+        receipt_path = fixture / mirror["receipt"]
+        receipt_path.parent.mkdir(parents=True, exist_ok=True)
+        receipt_path.write_bytes(artifact["source"].encode())
+        verified = json_command(binary, fixture, "verify", "--plan", "route-plan.json")
+        require(verified["exit_code"] == 0 and verified["output"]["report"]["status"] == "pass", "stock mirror verification failed")
+        mutations = run_mutations(binary, fixture, mirror, parse(artifact["source"]))
+        require(hashes(fixture, paths) == patched_inputs, "mutation restoration failed")
+        require(json_command(binary, fixture, "verify", "--plan", "route-plan.json") == verified, "baseline not restored")
+        report = {"schema": 1, "snapshot": PIN, "implementation_commit": commit, "implementation_tree": tree,
+                  "full_repository_qualified": False, "untouched_snapshot_mirror_verified": False,
+                  "patched_snapshot_mirror_verified": True, "policy_sha256": sha((ROOT / POLICY).read_bytes()),
+                  "profile_sha256": sha((ROOT / PROFILE).read_bytes()), "patch_sha256": sha((ROOT / PATCH).read_bytes()),
+                  "cargo_lock_sha256": sha((ROOT / "Cargo.lock").read_bytes()), "zrail_binary_sha256": binary_hash,
+                  "rustc_version": compiler.stdout.decode().strip(), "original_inputs": original_inputs,
+                  "patched_inputs": patched_inputs, "original_execution": original_execution,
+                  "patched_execution": patched_execution, "original_planning": original_plan, "unresolved": unresolved,
+                  "helper_execution": helper_execution,
+                  "plan": plan, "results": results, "receipt_artifact": artifact,
+                  "verification": verified, "mutations": mutations,
+                  "limitations": ["Mirror-only policy; no complete architecture or lock qualification.",
+                                   "One proposed explicit-trait helper patch is required for native complete analysis.",
+                                   "All downstream guards and original snapshot bytes remain unchanged."]}
+    finally:
+        shutil.rmtree(fixture)
+    require(hashes(snapshot, paths) == original_inputs and sha(binary.read_bytes()) == binary_hash, "qualification input drift")
+    verify_snapshot(snapshots)
+    clean(ROOT)
+    require(git(ROOT, "rev-parse", "HEAD") == commit, "producer moved during qualification")
+    with output.open("x") as stream:
+        import json
+        stream.write(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    print("route runtime report: " + sha(output.read_bytes()), flush=True)
+
+
+if __name__ == "__main__":
+    main()

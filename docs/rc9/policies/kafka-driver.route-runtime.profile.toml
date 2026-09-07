@@ -1,0 +1,26 @@
+# Mirror-only qualification profile, not replacement architecture authority.
+schema = 2
+adapters = ["rust"]
+
+[repository]
+roots = ["."]
+exclude = []
+workspace_members = "exact"
+nested_git = "deny"
+submodules = "deny"
+symlinks = "inside"
+
+[dependencies]
+mode = "observed"
+unassigned_packages = "allow"
+cycles = "deny"
+
+[source.rust]
+module_docs = "allow"
+facades = "allow"
+tests = "allow"
+
+[source.rust.hygiene]
+unsafe = "deny"
+lint_suppressions = "allow"
+
