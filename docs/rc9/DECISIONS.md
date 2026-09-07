@@ -22,3 +22,11 @@ No downstream deletion is performed here. The assertion inventory must still
 identify scan-specific predicates, detector tests, and invocations and link their
 retirement to this decision. Existing verified-predicate counts are unchanged;
 recording a decision is not detector parity evidence.
+
+The [completed private-name assertion expansion](inventory/RAFTER-SOURCE-BOUNDARIES.md)
+now identifies 25 retirement instances: three dynamic source-boundary extensions,
+one parser detector, eighteen scan contracts and three normative release
+document contracts. Each machine-readable row links this decision. The static
+source-boundary rules and their shared discovery/read helpers are separately
+inventoried and remain replacement obligations. Retirement verification counts
+remain zero until final cutover/evidence linkage is bound.

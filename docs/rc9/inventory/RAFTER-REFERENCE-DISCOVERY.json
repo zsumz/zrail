@@ -1,0 +1,29 @@
+{
+  "repository": "zsumz/rafter",
+  "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+  "path": "scripts/reference-source-check",
+  "sha256": "18982c0d6075c8a7e03d6eedb680cdee39d184e41afb75a72eee012e1b84088d",
+  "read_complete": true,
+  "assertion_expansion_complete": false,
+  "separate_workspace": "reference",
+  "source_policy_notes": [
+    "11 exact patched crate names must equal raw publishable-manifest directory basenames; whole root publishable set, not currently reachable packages. Raw ^publish\\s*=\\s*false grep is not Cargo publish inheritance semantics.",
+    "Every patch target Cargo.toml must exist; CLI patches only, preserving published reference consumer manifests. --print-args still validates patch closure but skips size/build gates.",
+    "Source size selection: git ls-files -z --cached --others --exclude-standard -- . in reference; tr NUL to LF; *.rs and -f. Requires git, successful inventory, nonempty Rust selection. Newline path behavior differs from a byte-exact native inventory.",
+    "Implementation target/soft/hard = 400/700/1000; auxiliary = 700/1100/1500. Auxiliary shell patterns: */src/bin/*, */examples/*, */tests/*, */tests.rs, *_test.rs, *_tests.rs, */src/main.rs.",
+    "Line count is awk END NR. Target and soft are warning-only; the so-called ratchet target does not compare a frozen baseline. Max25 target diagnostics affects display only.",
+    "Six hard-limit allowances carry path|tracking-label|reason. Metadata checks nonempty label/reason, and reason must differ from path; no whitespace trim or duplicate-path check. Path validation is -f only, not actual inventory membership despite its comment.",
+    "Allowances at/below hard are stale failures. Above-hard allowances warn and have no measured cap in the original script. User requires explicit bounded migration; propose bounds with approval, never silently grant them in a lock update.",
+    "First matching allowance wins for an over-hard source; preserve/classify duplicate handling explicitly.",
+    "All violations accumulated fail exit1; missing git, failed inventory, empty source list fail exit2.",
+    "Actual cargo fmt, clippy, tests and rustdoc remain trusted runners after declarative guard cutover; no script execution path goes inside analyzer. Reference lockfile is intentionally untracked and source/package modes resolve different contexts."
+  ],
+  "allowance_paths": [
+    "sharded-counter/src/oracle.rs",
+    "sharded-counter/src/types.rs",
+    "sharded-counter/src/model.rs",
+    "fenced-lock/tests/durable_crash.rs",
+    "ledger/tests/durable_crash.rs",
+    "sharded-counter/tests/model_contract.rs"
+  ]
+}

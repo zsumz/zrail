@@ -1,0 +1,954 @@
+# Partial Rafter authored-spelling policy; full workspace qualification remains open.
+# Frozen commit: e99b43c1b3fb3c94dd626effccee8420016594f2
+# Detector SHA-256: d0d72712188265e89b5a23f8e084e733eed86ea5b918a78f1263752e8e9eacd6
+
+[[repository.files]]
+name = "rf-boundary-rafter-std-fs-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "std::fs::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-std-fs-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use std::fs:", "use std::fs;", "use std::fs,", "use std::fs{", "use std::fs ", "use std::fs\t", "pub use std::fs:", "pub use std::fs;", "pub use std::fs,", "pub use std::fs{", "pub use std::fs ", "pub use std::fs\t", "extern crate std::fs:", "extern crate std::fs;", "extern crate std::fs,", "extern crate std::fs{", "extern crate std::fs ", "extern crate std::fs\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-std-fs-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use std::fs", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-std-fs-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use std::fs", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-std-fs-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate std::fs", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-std-net-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "std::net::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-std-net-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use std::net:", "use std::net;", "use std::net,", "use std::net{", "use std::net ", "use std::net\t", "pub use std::net:", "pub use std::net;", "pub use std::net,", "pub use std::net{", "pub use std::net ", "pub use std::net\t", "extern crate std::net:", "extern crate std::net;", "extern crate std::net,", "extern crate std::net{", "extern crate std::net ", "extern crate std::net\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-std-net-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use std::net", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-std-net-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use std::net", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-std-net-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate std::net", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-tokio-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "tokio::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-tokio-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use tokio:", "use tokio;", "use tokio,", "use tokio{", "use tokio ", "use tokio\t", "pub use tokio:", "pub use tokio;", "pub use tokio,", "pub use tokio{", "pub use tokio ", "pub use tokio\t", "extern crate tokio:", "extern crate tokio;", "extern crate tokio,", "extern crate tokio{", "extern crate tokio ", "extern crate tokio\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-tokio-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use tokio", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-tokio-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use tokio", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-tokio-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate tokio", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-async_trait-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-async_trait authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "async_trait::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-async_trait-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-async_trait authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use async_trait:", "use async_trait;", "use async_trait,", "use async_trait{", "use async_trait ", "use async_trait\t", "pub use async_trait:", "pub use async_trait;", "pub use async_trait,", "pub use async_trait{", "pub use async_trait ", "pub use async_trait\t", "extern crate async_trait:", "extern crate async_trait;", "extern crate async_trait,", "extern crate async_trait{", "extern crate async_trait ", "extern crate async_trait\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-async_trait-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-async_trait authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use async_trait", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-async_trait-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-async_trait authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use async_trait", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-async_trait-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-async_trait authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate async_trait", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_runtime_api-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_runtime_api authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_runtime_api::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_runtime_api-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_runtime_api authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_runtime_api:", "use rafter_runtime_api;", "use rafter_runtime_api,", "use rafter_runtime_api{", "use rafter_runtime_api ", "use rafter_runtime_api\t", "pub use rafter_runtime_api:", "pub use rafter_runtime_api;", "pub use rafter_runtime_api,", "pub use rafter_runtime_api{", "pub use rafter_runtime_api ", "pub use rafter_runtime_api\t", "extern crate rafter_runtime_api:", "extern crate rafter_runtime_api;", "extern crate rafter_runtime_api,", "extern crate rafter_runtime_api{", "extern crate rafter_runtime_api ", "extern crate rafter_runtime_api\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_runtime_api-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_runtime_api authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_runtime_api", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_runtime_api-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_runtime_api authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_runtime_api", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_runtime_api-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_runtime_api authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_runtime_api", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_storage-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_storage::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_storage-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_storage:", "use rafter_storage;", "use rafter_storage,", "use rafter_storage{", "use rafter_storage ", "use rafter_storage\t", "pub use rafter_storage:", "pub use rafter_storage;", "pub use rafter_storage,", "pub use rafter_storage{", "pub use rafter_storage ", "pub use rafter_storage\t", "extern crate rafter_storage:", "extern crate rafter_storage;", "extern crate rafter_storage,", "extern crate rafter_storage{", "extern crate rafter_storage ", "extern crate rafter_storage\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_storage-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_storage", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_storage-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_storage", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_storage-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_storage", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_runtime-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_runtime::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_runtime-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_runtime:", "use rafter_runtime;", "use rafter_runtime,", "use rafter_runtime{", "use rafter_runtime ", "use rafter_runtime\t", "pub use rafter_runtime:", "pub use rafter_runtime;", "pub use rafter_runtime,", "pub use rafter_runtime{", "pub use rafter_runtime ", "pub use rafter_runtime\t", "extern crate rafter_runtime:", "extern crate rafter_runtime;", "extern crate rafter_runtime,", "extern crate rafter_runtime{", "extern crate rafter_runtime ", "extern crate rafter_runtime\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_runtime-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_runtime", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_runtime-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_runtime", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_runtime-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_runtime", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_app-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_app authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_app::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_app-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_app authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_app:", "use rafter_app;", "use rafter_app,", "use rafter_app{", "use rafter_app ", "use rafter_app\t", "pub use rafter_app:", "pub use rafter_app;", "pub use rafter_app,", "pub use rafter_app{", "pub use rafter_app ", "pub use rafter_app\t", "extern crate rafter_app:", "extern crate rafter_app;", "extern crate rafter_app,", "extern crate rafter_app{", "extern crate rafter_app ", "extern crate rafter_app\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_app-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_app authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_app", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_app-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_app authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_app", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_app-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_app authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_app", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_service-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_service::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_service-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_service:", "use rafter_service;", "use rafter_service,", "use rafter_service{", "use rafter_service ", "use rafter_service\t", "pub use rafter_service:", "pub use rafter_service;", "pub use rafter_service,", "pub use rafter_service{", "pub use rafter_service ", "pub use rafter_service\t", "extern crate rafter_service:", "extern crate rafter_service;", "extern crate rafter_service,", "extern crate rafter_service{", "extern crate rafter_service ", "extern crate rafter_service\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_service-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_service", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_service-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_service", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_service-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_service", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_multiraft-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_multiraft::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_multiraft-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_multiraft:", "use rafter_multiraft;", "use rafter_multiraft,", "use rafter_multiraft{", "use rafter_multiraft ", "use rafter_multiraft\t", "pub use rafter_multiraft:", "pub use rafter_multiraft;", "pub use rafter_multiraft,", "pub use rafter_multiraft{", "pub use rafter_multiraft ", "pub use rafter_multiraft\t", "extern crate rafter_multiraft:", "extern crate rafter_multiraft;", "extern crate rafter_multiraft,", "extern crate rafter_multiraft{", "extern crate rafter_multiraft ", "extern crate rafter_multiraft\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_multiraft-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_multiraft", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_multiraft-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_multiraft", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_multiraft-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_multiraft", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_transport_tcp_insecure-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_transport_tcp_insecure::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_transport_tcp_insecure-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_transport_tcp_insecure:", "use rafter_transport_tcp_insecure;", "use rafter_transport_tcp_insecure,", "use rafter_transport_tcp_insecure{", "use rafter_transport_tcp_insecure ", "use rafter_transport_tcp_insecure\t", "pub use rafter_transport_tcp_insecure:", "pub use rafter_transport_tcp_insecure;", "pub use rafter_transport_tcp_insecure,", "pub use rafter_transport_tcp_insecure{", "pub use rafter_transport_tcp_insecure ", "pub use rafter_transport_tcp_insecure\t", "extern crate rafter_transport_tcp_insecure:", "extern crate rafter_transport_tcp_insecure;", "extern crate rafter_transport_tcp_insecure,", "extern crate rafter_transport_tcp_insecure{", "extern crate rafter_transport_tcp_insecure ", "extern crate rafter_transport_tcp_insecure\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_transport_tcp_insecure-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_transport_tcp_insecure", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_transport_tcp_insecure-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_transport_tcp_insecure", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_transport_tcp_insecure-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_transport_tcp_insecure", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_codec-path"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_codec authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_codec::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_codec-prefixes"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_codec authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_codec:", "use rafter_codec;", "use rafter_codec,", "use rafter_codec{", "use rafter_codec ", "use rafter_codec\t", "pub use rafter_codec:", "pub use rafter_codec;", "pub use rafter_codec,", "pub use rafter_codec{", "pub use rafter_codec ", "pub use rafter_codec\t", "extern crate rafter_codec:", "extern crate rafter_codec;", "extern crate rafter_codec,", "extern crate rafter_codec{", "extern crate rafter_codec ", "extern crate rafter_codec\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_codec-end-1"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_codec authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_codec", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_codec-end-2"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_codec authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_codec", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-rafter_codec-end-3"
+include = ["crates/rafter/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-rafter_codec authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_codec", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-std-fs-path"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "std::fs::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-std-fs-prefixes"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use std::fs:", "use std::fs;", "use std::fs,", "use std::fs{", "use std::fs ", "use std::fs\t", "pub use std::fs:", "pub use std::fs;", "pub use std::fs,", "pub use std::fs{", "pub use std::fs ", "pub use std::fs\t", "extern crate std::fs:", "extern crate std::fs;", "extern crate std::fs,", "extern crate std::fs{", "extern crate std::fs ", "extern crate std::fs\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-std-fs-end-1"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use std::fs", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-std-fs-end-2"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use std::fs", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-std-fs-end-3"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate std::fs", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-std-net-path"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "std::net::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-std-net-prefixes"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use std::net:", "use std::net;", "use std::net,", "use std::net{", "use std::net ", "use std::net\t", "pub use std::net:", "pub use std::net;", "pub use std::net,", "pub use std::net{", "pub use std::net ", "pub use std::net\t", "extern crate std::net:", "extern crate std::net;", "extern crate std::net,", "extern crate std::net{", "extern crate std::net ", "extern crate std::net\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-std-net-end-1"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use std::net", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-std-net-end-2"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use std::net", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-std-net-end-3"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate std::net", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-tokio-path"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "tokio::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-tokio-prefixes"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use tokio:", "use tokio;", "use tokio,", "use tokio{", "use tokio ", "use tokio\t", "pub use tokio:", "pub use tokio;", "pub use tokio,", "pub use tokio{", "pub use tokio ", "pub use tokio\t", "extern crate tokio:", "extern crate tokio;", "extern crate tokio,", "extern crate tokio{", "extern crate tokio ", "extern crate tokio\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-tokio-end-1"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use tokio", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-tokio-end-2"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use tokio", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-tokio-end-3"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate tokio", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_runtime-path"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_runtime::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_runtime-prefixes"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_runtime:", "use rafter_runtime;", "use rafter_runtime,", "use rafter_runtime{", "use rafter_runtime ", "use rafter_runtime\t", "pub use rafter_runtime:", "pub use rafter_runtime;", "pub use rafter_runtime,", "pub use rafter_runtime{", "pub use rafter_runtime ", "pub use rafter_runtime\t", "extern crate rafter_runtime:", "extern crate rafter_runtime;", "extern crate rafter_runtime,", "extern crate rafter_runtime{", "extern crate rafter_runtime ", "extern crate rafter_runtime\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_runtime-end-1"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_runtime", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_runtime-end-2"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_runtime", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_runtime-end-3"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_runtime", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_storage-path"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_storage::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_storage-prefixes"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_storage:", "use rafter_storage;", "use rafter_storage,", "use rafter_storage{", "use rafter_storage ", "use rafter_storage\t", "pub use rafter_storage:", "pub use rafter_storage;", "pub use rafter_storage,", "pub use rafter_storage{", "pub use rafter_storage ", "pub use rafter_storage\t", "extern crate rafter_storage:", "extern crate rafter_storage;", "extern crate rafter_storage,", "extern crate rafter_storage{", "extern crate rafter_storage ", "extern crate rafter_storage\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_storage-end-1"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_storage", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_storage-end-2"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_storage", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_storage-end-3"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_storage", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_service-path"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_service::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_service-prefixes"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_service:", "use rafter_service;", "use rafter_service,", "use rafter_service{", "use rafter_service ", "use rafter_service\t", "pub use rafter_service:", "pub use rafter_service;", "pub use rafter_service,", "pub use rafter_service{", "pub use rafter_service ", "pub use rafter_service\t", "extern crate rafter_service:", "extern crate rafter_service;", "extern crate rafter_service,", "extern crate rafter_service{", "extern crate rafter_service ", "extern crate rafter_service\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_service-end-1"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_service", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_service-end-2"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_service", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_service-end-3"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_service", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_multiraft-path"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_multiraft::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_multiraft-prefixes"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_multiraft:", "use rafter_multiraft;", "use rafter_multiraft,", "use rafter_multiraft{", "use rafter_multiraft ", "use rafter_multiraft\t", "pub use rafter_multiraft:", "pub use rafter_multiraft;", "pub use rafter_multiraft,", "pub use rafter_multiraft{", "pub use rafter_multiraft ", "pub use rafter_multiraft\t", "extern crate rafter_multiraft:", "extern crate rafter_multiraft;", "extern crate rafter_multiraft,", "extern crate rafter_multiraft{", "extern crate rafter_multiraft ", "extern crate rafter_multiraft\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_multiraft-end-1"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_multiraft", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_multiraft-end-2"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_multiraft", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_multiraft-end-3"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_multiraft", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_transport_tcp_insecure-path"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_transport_tcp_insecure::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_transport_tcp_insecure-prefixes"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_transport_tcp_insecure:", "use rafter_transport_tcp_insecure;", "use rafter_transport_tcp_insecure,", "use rafter_transport_tcp_insecure{", "use rafter_transport_tcp_insecure ", "use rafter_transport_tcp_insecure\t", "pub use rafter_transport_tcp_insecure:", "pub use rafter_transport_tcp_insecure;", "pub use rafter_transport_tcp_insecure,", "pub use rafter_transport_tcp_insecure{", "pub use rafter_transport_tcp_insecure ", "pub use rafter_transport_tcp_insecure\t", "extern crate rafter_transport_tcp_insecure:", "extern crate rafter_transport_tcp_insecure;", "extern crate rafter_transport_tcp_insecure,", "extern crate rafter_transport_tcp_insecure{", "extern crate rafter_transport_tcp_insecure ", "extern crate rafter_transport_tcp_insecure\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_transport_tcp_insecure-end-1"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_transport_tcp_insecure", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_transport_tcp_insecure-end-2"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_transport_tcp_insecure", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-app-rafter_transport_tcp_insecure-end-3"
+include = ["crates/rafter-app/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-app-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_transport_tcp_insecure", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-std-fs-path"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "std::fs::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-std-fs-prefixes"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use std::fs:", "use std::fs;", "use std::fs,", "use std::fs{", "use std::fs ", "use std::fs\t", "pub use std::fs:", "pub use std::fs;", "pub use std::fs,", "pub use std::fs{", "pub use std::fs ", "pub use std::fs\t", "extern crate std::fs:", "extern crate std::fs;", "extern crate std::fs,", "extern crate std::fs{", "extern crate std::fs ", "extern crate std::fs\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-std-fs-end-1"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use std::fs", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-std-fs-end-2"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use std::fs", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-std-fs-end-3"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-std-fs authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate std::fs", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-std-net-path"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "std::net::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-std-net-prefixes"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use std::net:", "use std::net;", "use std::net,", "use std::net{", "use std::net ", "use std::net\t", "pub use std::net:", "pub use std::net;", "pub use std::net,", "pub use std::net{", "pub use std::net ", "pub use std::net\t", "extern crate std::net:", "extern crate std::net;", "extern crate std::net,", "extern crate std::net{", "extern crate std::net ", "extern crate std::net\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-std-net-end-1"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use std::net", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-std-net-end-2"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use std::net", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-std-net-end-3"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-std-net authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate std::net", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-tokio-path"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "tokio::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-tokio-prefixes"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use tokio:", "use tokio;", "use tokio,", "use tokio{", "use tokio ", "use tokio\t", "pub use tokio:", "pub use tokio;", "pub use tokio,", "pub use tokio{", "pub use tokio ", "pub use tokio\t", "extern crate tokio:", "extern crate tokio;", "extern crate tokio,", "extern crate tokio{", "extern crate tokio ", "extern crate tokio\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-tokio-end-1"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use tokio", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-tokio-end-2"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use tokio", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-tokio-end-3"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-tokio authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate tokio", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-async_trait-path"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-async_trait authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "async_trait::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-async_trait-prefixes"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-async_trait authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use async_trait:", "use async_trait;", "use async_trait,", "use async_trait{", "use async_trait ", "use async_trait\t", "pub use async_trait:", "pub use async_trait;", "pub use async_trait,", "pub use async_trait{", "pub use async_trait ", "pub use async_trait\t", "extern crate async_trait:", "extern crate async_trait;", "extern crate async_trait,", "extern crate async_trait{", "extern crate async_trait ", "extern crate async_trait\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-async_trait-end-1"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-async_trait authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use async_trait", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-async_trait-end-2"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-async_trait authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use async_trait", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-async_trait-end-3"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-async_trait authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate async_trait", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_storage-path"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_storage::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_storage-prefixes"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_storage:", "use rafter_storage;", "use rafter_storage,", "use rafter_storage{", "use rafter_storage ", "use rafter_storage\t", "pub use rafter_storage:", "pub use rafter_storage;", "pub use rafter_storage,", "pub use rafter_storage{", "pub use rafter_storage ", "pub use rafter_storage\t", "extern crate rafter_storage:", "extern crate rafter_storage;", "extern crate rafter_storage,", "extern crate rafter_storage{", "extern crate rafter_storage ", "extern crate rafter_storage\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_storage-end-1"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_storage", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_storage-end-2"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_storage", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_storage-end-3"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_storage authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_storage", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_runtime-path"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_runtime::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_runtime-prefixes"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_runtime:", "use rafter_runtime;", "use rafter_runtime,", "use rafter_runtime{", "use rafter_runtime ", "use rafter_runtime\t", "pub use rafter_runtime:", "pub use rafter_runtime;", "pub use rafter_runtime,", "pub use rafter_runtime{", "pub use rafter_runtime ", "pub use rafter_runtime\t", "extern crate rafter_runtime:", "extern crate rafter_runtime;", "extern crate rafter_runtime,", "extern crate rafter_runtime{", "extern crate rafter_runtime ", "extern crate rafter_runtime\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_runtime-end-1"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_runtime", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_runtime-end-2"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_runtime", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_runtime-end-3"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_runtime authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_runtime", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_app-path"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_app authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_app::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_app-prefixes"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_app authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_app:", "use rafter_app;", "use rafter_app,", "use rafter_app{", "use rafter_app ", "use rafter_app\t", "pub use rafter_app:", "pub use rafter_app;", "pub use rafter_app,", "pub use rafter_app{", "pub use rafter_app ", "pub use rafter_app\t", "extern crate rafter_app:", "extern crate rafter_app;", "extern crate rafter_app,", "extern crate rafter_app{", "extern crate rafter_app ", "extern crate rafter_app\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_app-end-1"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_app authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_app", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_app-end-2"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_app authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_app", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_app-end-3"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_app authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_app", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_service-path"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_service::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_service-prefixes"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_service:", "use rafter_service;", "use rafter_service,", "use rafter_service{", "use rafter_service ", "use rafter_service\t", "pub use rafter_service:", "pub use rafter_service;", "pub use rafter_service,", "pub use rafter_service{", "pub use rafter_service ", "pub use rafter_service\t", "extern crate rafter_service:", "extern crate rafter_service;", "extern crate rafter_service,", "extern crate rafter_service{", "extern crate rafter_service ", "extern crate rafter_service\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_service-end-1"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_service", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_service-end-2"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_service", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_service-end-3"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_service authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_service", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_multiraft-path"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_multiraft::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_multiraft-prefixes"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_multiraft:", "use rafter_multiraft;", "use rafter_multiraft,", "use rafter_multiraft{", "use rafter_multiraft ", "use rafter_multiraft\t", "pub use rafter_multiraft:", "pub use rafter_multiraft;", "pub use rafter_multiraft,", "pub use rafter_multiraft{", "pub use rafter_multiraft ", "pub use rafter_multiraft\t", "extern crate rafter_multiraft:", "extern crate rafter_multiraft;", "extern crate rafter_multiraft,", "extern crate rafter_multiraft{", "extern crate rafter_multiraft ", "extern crate rafter_multiraft\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_multiraft-end-1"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_multiraft", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_multiraft-end-2"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_multiraft", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_multiraft-end-3"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_multiraft authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_multiraft", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_transport_tcp_insecure-path"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_transport_tcp_insecure::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_transport_tcp_insecure-prefixes"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_transport_tcp_insecure:", "use rafter_transport_tcp_insecure;", "use rafter_transport_tcp_insecure,", "use rafter_transport_tcp_insecure{", "use rafter_transport_tcp_insecure ", "use rafter_transport_tcp_insecure\t", "pub use rafter_transport_tcp_insecure:", "pub use rafter_transport_tcp_insecure;", "pub use rafter_transport_tcp_insecure,", "pub use rafter_transport_tcp_insecure{", "pub use rafter_transport_tcp_insecure ", "pub use rafter_transport_tcp_insecure\t", "extern crate rafter_transport_tcp_insecure:", "extern crate rafter_transport_tcp_insecure;", "extern crate rafter_transport_tcp_insecure,", "extern crate rafter_transport_tcp_insecure{", "extern crate rafter_transport_tcp_insecure ", "extern crate rafter_transport_tcp_insecure\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_transport_tcp_insecure-end-1"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_transport_tcp_insecure", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_transport_tcp_insecure-end-2"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_transport_tcp_insecure", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_transport_tcp_insecure-end-3"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_transport_tcp_insecure authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_transport_tcp_insecure", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_codec-path"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_codec authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "absent", text = "rafter_codec::" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_codec-prefixes"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_codec authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "line-prefixes-absent", normalization = "trim-start", prefixes = ["use rafter_codec:", "use rafter_codec;", "use rafter_codec,", "use rafter_codec{", "use rafter_codec ", "use rafter_codec\t", "pub use rafter_codec:", "pub use rafter_codec;", "pub use rafter_codec,", "pub use rafter_codec{", "pub use rafter_codec ", "pub use rafter_codec\t", "extern crate rafter_codec:", "extern crate rafter_codec;", "extern crate rafter_codec,", "extern crate rafter_codec{", "extern crate rafter_codec ", "extern crate rafter_codec\t"] }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_codec-end-1"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_codec authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "use rafter_codec", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_codec-end-2"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_codec authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "pub use rafter_codec", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-rafter-runtime-api-rafter_codec-end-3"
+include = ["crates/rafter-runtime-api/src/**/*.rs"]
+reason = "Preserve RF-BOUNDARY-rafter-runtime-api-rafter_codec authored raw spelling; comments, strings and test/cfg text participate."
+predicate = { kind = "literal", mode = "line-absent", text = "extern crate rafter_codec", normalization = "trim-start" }
+
+[[repository.files]]
+name = "rf-boundary-root-rafter-app"
+include = ["crates/rafter-app/src"]
+entry = "directory"
+reason = "The original boundary traversal requires this exact source directory, including when it has no Rust files."
+predicate = { kind = "count", minimum = 1, maximum = 1 }
+
+[[repository.files]]
+name = "rf-boundary-root-rafter-runtime-api"
+include = ["crates/rafter-runtime-api/src"]
+entry = "directory"
+reason = "The original boundary traversal requires this exact source directory, including when it has no Rust files."
+predicate = { kind = "count", minimum = 1, maximum = 1 }
+
+[[repository.files]]
+name = "rf-boundary-root-rafter"
+include = ["crates/rafter/src"]
+entry = "directory"
+reason = "The original boundary traversal requires this exact source directory, including when it has no Rust files."
+predicate = { kind = "count", minimum = 1, maximum = 1 }

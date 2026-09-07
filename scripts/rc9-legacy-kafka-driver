@@ -23,6 +23,7 @@ SURFACES = {
     "kafka-driver": ("kafka-driver", "tests/guardrails.rs", ".", 47),
     "kafkars-sizes": ("kafkars", "crates/kafka-client-guardrails/tests/file_size_guard.rs", "crates/kafka-client-guardrails", 5),
     "rafter-sizes": ("rafter", "crates/rafter/tests/file_size_guard.rs", "crates/rafter", 5),
+    "rafter-source-boundaries": ("rafter", "crates/rafter/tests/source_boundary.rs", "crates/rafter", 2),
 }
 
 
@@ -77,6 +78,11 @@ def main():
         command.extend(["--extern", f"{name}={library['path']}"])
     environment = os.environ.copy()
     environment["CARGO_MANIFEST_DIR"] = str(snapshot / manifest_dir)
+    runtime_unset = []
+    if args.surface == "rafter-source-boundaries":
+        runtime_unset = ["RAFTER_SOURCE_BOUNDARY_EXTRA_PATTERNS"]
+        for name in runtime_unset:
+            environment.pop(name, None)
     subprocess.run(command, cwd=ROOT, env=environment, check=True)
     inventory = run([str(binary), "--list"])
     expected = [line.removesuffix(": test") for line in inventory.splitlines()
@@ -85,7 +91,8 @@ def main():
         raise ValueError(f"frozen detector inventory is not {expected_count} unique tests")
     log_path = output / "legacy-guards.log"
     with log_path.open("w") as log:
-        result = subprocess.run([str(binary), "--test-threads=2"], stdout=log, stderr=subprocess.STDOUT)
+        result = subprocess.run([str(binary), "--test-threads=2"], env=environment,
+                                stdout=log, stderr=subprocess.STDOUT)
     if run(status):
         raise ValueError("legacy detector changed its frozen snapshot")
     outcomes = re.findall(r"^test (\S+) \.\.\. (\S+)$", log_path.read_text(), re.MULTILINE)
@@ -95,6 +102,8 @@ def main():
         raise ValueError("successful detector run includes nonpassing or ignored outcomes")
     receipt = {"schema": 1, "snapshot": pin, "harness": f"unmodified {entry}",
                "surface": args.surface, "environment": {"CARGO_MANIFEST_DIR": environment["CARGO_MANIFEST_DIR"]},
+               "runtime_environment_unset": runtime_unset,
+               "harness_source_sha256": hashlib.sha256((snapshot / entry).read_bytes()).hexdigest(),
                "implementation_commit": run(["git", "rev-parse", "HEAD"], cwd=ROOT),
                "implementation_diff_sha256": hashlib.sha256(run(["git", "diff", "HEAD", "--"], cwd=ROOT).encode()).hexdigest(),
                "build": build, "compile": command, "toolchain": run(["rustc", "-Vv"], cwd=ROOT),

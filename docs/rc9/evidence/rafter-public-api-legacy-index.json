@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "status": "frozen legacy detector baseline passed; native parity not implemented",
+  "full_repository_qualified": false,
+  "source": {
+    "repository": "zsumz/rafter",
+    "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+    "tree": "b91b3ca7362219e32fdbb08a8374403c0353e745",
+    "path": "crates/rafter/tests/public_api_docs_guard.rs",
+    "sha256": "daf0f10e90093be82029b29c2a62580e2c89d25d4091983ae6a02004e6748242"
+  },
+  "tests": [
+    {
+      "name": "public_api_docs_guard_allowlist_entries_are_actionable",
+      "status": "ok"
+    },
+    {
+      "name": "public_api_docs_guard_detects_missing_docs_and_enum_policy",
+      "status": "ok"
+    },
+    {
+      "name": "public_api_docs_guard_excludes_test_support_files_from_library_risk_scan",
+      "status": "ok"
+    },
+    {
+      "name": "public_api_docs_guard_ignores_cfg_test_modules_for_risky_macros",
+      "status": "ok"
+    },
+    {
+      "name": "public_api_docs_guard_allowlist_entries_are_used",
+      "status": "ok"
+    },
+    {
+      "name": "public_api_docs_guard_rejects_unallowlisted_warnings",
+      "status": "ok"
+    },
+    {
+      "name": "public_api_docs_guard_warns_on_untracked_todo_in_rustdoc",
+      "status": "ok"
+    },
+    {
+      "name": "public_api_docs_guard_rejects_untracked_todo_fixme_in_rustdoc",
+      "status": "ok"
+    }
+  ],
+  "artifacts": {
+    "receipt.json": {
+      "artifact": "docs/rc9/evidence/rafter-public-api-legacy-receipt.json.gz",
+      "payload_sha256": "28916bfcb0a86ea33258b38d54620d717b176089a8945b6957ceea28641a979a",
+      "payload_bytes": 2282,
+      "compressed_sha256": "795b0d0f2f74a8240a9d77230bdf4ab6607e69bec3ddd77775a4426e9fed1732"
+    },
+    "legacy.log": {
+      "artifact": "docs/rc9/evidence/rafter-public-api-legacy-legacy.log.gz",
+      "payload_sha256": "fa4a1a5ae2a1010ce539905c9eade4237d970bff18bbfefe7d47f89e1c157ac2",
+      "payload_bytes": 681,
+      "compressed_sha256": "0a3c89900d5c864d6025934f683baf3f971029613865190c2ae02030c204d23f"
+    },
+    "runner.py": {
+      "artifact": "docs/rc9/evidence/rafter-public-api-legacy-runner.py.gz",
+      "payload_sha256": "948602350f0f24c0006eb344dc4ace559f3c40a729ece7729f4daf3d73593853",
+      "payload_bytes": 2686,
+      "compressed_sha256": "5c85b984de2e1d09cf69d7d33a6d680285eb35a66927177ded97aafcde51334d"
+    }
+  }
+}

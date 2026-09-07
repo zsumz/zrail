@@ -2,6 +2,8 @@
 
 #[path = "repository_files/parity/baseline.rs"]
 mod baseline;
+#[path = "../tests/rc9_boundaries/policy_test.rs"]
+mod boundary_sources;
 #[path = "repository_files/dependency_fields/qualification.rs"]
 mod dependency_fields;
 #[path = "repository_files/parity/fixtures.rs"]
