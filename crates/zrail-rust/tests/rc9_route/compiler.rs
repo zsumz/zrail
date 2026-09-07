@@ -1,4 +1,4 @@
-//! Trusted compilation of the exact source-only test retains every include_str precondition.
+//! Trusted compilation of the exact source-only test retains every `include_str!` precondition.
 
 use std::{fs, path::PathBuf, process::Command};
 
