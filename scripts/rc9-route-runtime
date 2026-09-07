@@ -80,8 +80,12 @@ def main():
     binary = build / "debug/zrail"
     binary_hash = sha(binary.read_bytes())
     command = shlex.split(mirror["execution"]["command"])
+    # Identical Cargo package/target names from distinct checkouts must never share
+    # executable output paths: one checkout can otherwise overwrite a fresh artifact.
+    original_env = env | {"CARGO_TARGET_DIR": str(build / "original")}
+    patched_env = env | {"CARGO_TARGET_DIR": str(build / "patched")}
     print("executing exact original routing scenario", flush=True)
-    original_execution = execute(command, snapshot, env, directory / (args.report.name + ".original.log"))
+    original_execution = execute(command, snapshot, original_env, directory / (args.report.name + ".original.log"))
     fixture.mkdir()
     try:
         for path in paths:
@@ -108,7 +112,7 @@ def main():
         require(planned["exit_code"] == 0, "complete patched mirror planning: " + str(planned))
         plan = planned["output"]
         write_json(fixture / "route-plan.json", plan)
-        patched_execution = execute(command, fixture, env, directory / (args.report.name + ".patched.log"))
+        patched_execution = execute(command, fixture, patched_env, directory / (args.report.name + ".patched.log"))
         helper_tests = [
             "measured_request_binds_permit_correlation_before_exact_frame_and_typed_completion",
             "measurement_failure_settles_typed_completion_without_a_context",
@@ -119,7 +123,7 @@ def main():
         for index, test in enumerate(helper_tests):
             name = "request::bornera_test::" + test
             arguments = [name if arg == FULL_NAME else arg for arg in command]
-            helper_execution.append(execute(arguments, fixture, env,
+            helper_execution.append(execute(arguments, fixture, patched_env,
                 directory / f"{args.report.name}.helper-{index}.log", name))
         planned_mirror, = plan["mirrors"]
         results = {"schema": 1, "plan_sha256": plan["plan_sha256"], "producer": PRODUCER, "groups": [

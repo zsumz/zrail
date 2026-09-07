@@ -119,8 +119,11 @@ def execute(arguments, root, env, log, name=FULL_NAME):
     binary, outcome = parse_execution(result, name)
     executable = Path(binary["executable"]).resolve(strict=True)
     require(executable.is_relative_to(Path(env["CARGO_TARGET_DIR"]).resolve()), "foreign binary")
+    require(Path(binary["target"]["src_path"]).resolve(strict=True) == (root / "src/lib.rs").resolve(strict=True),
+            "compiler artifact belongs to a different source checkout")
     listing = run([executable, name, "--exact", "--list", "--format=terse"], root, env)
     require(listing.returncode == 0 and listing.stdout == f"{name}: test\n".encode(),
             "test listing is not exactly one named runnable test")
     return {"arguments": arguments, "outcome": outcome,
-            "binary_sha256": sha(executable.read_bytes()), "listing_sha256": sha(listing.stdout)}
+            "binary_sha256": sha(executable.read_bytes()), "listing_sha256": sha(listing.stdout),
+            "source_root": str(root), "binary_path": str(executable)}
