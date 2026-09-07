@@ -23,7 +23,7 @@ Clippy, rustdoc, complete self-analysis, and standalone archive checks.
 [The committed index](evidence/committed-check-index.json) binds every command,
 log and clean input identity; no lock authority was accepted.
 
-Route parity uses `f552b5387b8d7941e8b52facdfe8e7e8829889b4`. From a clean
+Route parity uses `359fd5621f42e106615a66bb7a665a85cff3ff41`. From a clean
 checkout of that revision, with the environment below and a fresh external
 evidence directory, reproduce both runs:
 
@@ -35,8 +35,8 @@ cmp /fresh/evidence/route-a.json /fresh/evidence/route-b.json
 
 Both reports contain 189 cases (43 accepted, 146 rejected) and 23 original
 compilations. Payloads are identical: 6,723,169 bytes, SHA-256
-`db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609`.
-[The route index](evidence/route-source-index.json) binds the two runs, pinned
+`f6ed371562d7c28c7e9e9e9c697a3c4712cdc0ce8c624729c88111673ba332ef`.
+[The route index](evidence/route-source-typed-index.json) binds the two runs, pinned
 compiler and source-only test, all eleven inputs and unrelated-file decoys.
 The artifact validator runs in the canonical gate; its two unittest methods
 verify sixteen assertion bindings and reject 42 evidence mutations.
@@ -51,6 +51,14 @@ scripts/package-check
 No behavioral route scenario, full consumer bundle, final rc9 version or release
 is qualified by these source-only reports. Their initial failed compiler-span
 expectation remains in the evidence index and is not relabeled as a pass.
+
+The first report producer used six unreviewed JSON macros. Self-hosting rejected
+those sites; typed serialization now uses the existing reviewed boundary. The
+[failed gate](evidence/route-macro-policy-index.json) is preserved. The repeated
+typed reports differ from the first successful source slice only in implementation
+identity, the zrail test binary hash and the external fixture path. The compiled
+original guard, all policy observations, original results and compiler failures
+remain byte-identical as JSON values.
 
 ## Historical pending Rafter boundary slice
 

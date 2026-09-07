@@ -13,12 +13,12 @@ The evidence validator passes 13 methods covering 116 adversarial mutations.
 
 The mixed kafka-driver route-test review accounts for 31 previously unlisted
 instances. Six stock file policies now verify its five source assertions and
-eleven compile-time inputs. At `f552b5387b8d7941e8b52facdfe8e7e8829889b4`, two
+eleven compile-time inputs. At `359fd5621f42e106615a66bb7a665a85cff3ff41`, two
 byte-identical 189-case reports accept 43 and reject 146 cases each. Each run also
 compiles the complete original source-only test once and proves 22 intended
 missing/invalid-UTF-8 compilation failures. The artifact validator passes two
 methods covering 42 tamper cases. The fifteen behavioral route assertions remain
-unverified. See `evidence/route-source-index.json`.
+unverified. See `evidence/route-source-typed-index.json`.
 
 Rafter source-boundary review adds 66 instances: 41 static boundary/input
 requirements and 25 contracts linked to the approved private-name retirement.

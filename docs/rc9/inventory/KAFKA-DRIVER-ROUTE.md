@@ -31,7 +31,7 @@ decoys; and require missing/invalid UTF-8 inputs to fail with the intended nativ
 policy or completeness diagnostic.
 
 The sixteen source/input translations are verified at
-`f552b5387b8d7941e8b52facdfe8e7e8829889b4`. Two byte-identical reports cover 189
+`359fd5621f42e106615a66bb7a665a85cff3ff41`. Two byte-identical reports cover 189
 cases each (43 accepted, 146 rejected) and 23 original compilations: one clean
 source-only test and missing/invalid-UTF-8 failures for each of eleven inputs.
 The whole original source-only function is extracted byte-for-byte and checked
@@ -40,7 +40,7 @@ diagnostics identify the original include; invalid-UTF-8 diagnostics identify
 the selected file's invalid byte. Every fixture binds the eleven selected inputs
 and any unrelated-file decoy.
 
-The [evidence index](../evidence/route-source-index.json) preserves both runs and
+The [evidence index](../evidence/route-source-typed-index.json) preserves both runs and
 the initial harness failure. The trusted artifact validator checks all policy
 selectors, raw quantities, input hashes, original outcomes and compiler sites;
 42 tamper cases fail. These producers and validators stay outside zrail's runtime.

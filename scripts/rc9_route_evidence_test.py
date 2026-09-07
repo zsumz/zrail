@@ -20,7 +20,7 @@ class RouteEvidence(unittest.TestCase):
         ledger = json.loads((DATA / "assertions.json").read_bytes())
         cls.assertions = [row for row in ledger["reviewed_assertions"]
                           if row["id"].startswith("KD-ROUTE-") and "-RUNTIME-" not in row["id"]]
-        with gzip.open(ROOT / "docs/rc9/evidence/route-source-parity.json.gz", "rb") as stream:
+        with gzip.open(ROOT / "docs/rc9/evidence/route-source-typed-parity.json.gz", "rb") as stream:
             payload = stream.read(64 * 1024 * 1024 + 1)
         if len(payload) > 64 * 1024 * 1024:
             raise ValueError("oversized route report")

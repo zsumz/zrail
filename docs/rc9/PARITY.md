@@ -756,16 +756,16 @@ Inventory completion, full consumer qualification and release approval remain op
 
 ## Committed route-source and compile-input parity
 
-At `f552b5387b8d7941e8b52facdfe8e7e8829889b4`, two fresh runs produced identical
+At `359fd5621f42e106615a66bb7a665a85cff3ff41`, two fresh runs produced identical
 6,723,169-byte reports with SHA-256
-`db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609`.
+`f6ed371562d7c28c7e9e9e9c697a3c4712cdc0ce8c624729c88111673ba332ef`.
 Each run checks 189 cases: 43 accepted, 146 rejected, with complete native policy
 observations, input hashes and intended diagnostics. Unrelated-file decoys are
 bound explicitly. The complete unchanged source-only test compiles and runs once;
 all eleven inputs separately fail compilation when missing and when invalid UTF-8.
 The two compiler diagnostic locations are preserved rather than conflated.
 
-[The route index](evidence/route-source-index.json) binds the reports, runners and
+[The route index](evidence/route-source-typed-index.json) binds the reports, runners and
 initial failed harness diagnostic check. Two artifact-validator methods reject
 42 adversarial mutations. All sixteen `KD-ROUTE-FORBID-*`, `KD-ROUTE-INPUT-*` and
 `KD-ROUTE-OWNER-FIELD` instances are verified. Fifteen `KD-ROUTE-RUNTIME-*`
