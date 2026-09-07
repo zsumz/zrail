@@ -31,6 +31,15 @@ pub enum RepositoryTextStructureObservation {
         /// Unauthorized lines omitted only from display, never from evaluation.
         unauthorized_omitted: usize,
     },
+    /// Each physical line beginning with any forbidden prefix is counted exactly once.
+    LinePrefixes {
+        /// Complete violating line count, independent of sample truncation or overlap.
+        forbidden_count: usize,
+        /// At most sixteen original one-based physical line numbers.
+        forbidden_lines: Vec<usize>,
+        /// Violating lines omitted only from display.
+        forbidden_omitted: usize,
+    },
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]

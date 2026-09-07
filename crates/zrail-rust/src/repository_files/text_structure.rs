@@ -63,6 +63,28 @@ pub(super) fn evaluate(
             );
             observation
         }
+        RepositoryFilePredicate::LinePrefixesAbsent {
+            prefixes,
+            normalization,
+        } => {
+            let mut forbidden_count = 0;
+            let mut forbidden_lines = Vec::new();
+            for (index, line) in source.lines().enumerate() {
+                let line = normalize_line(line, *normalization)?;
+                if prefixes.iter().any(|prefix| line.starts_with(prefix)) {
+                    forbidden_count += 1;
+                    if forbidden_lines.len() < 16 {
+                        forbidden_lines.push(index + 1);
+                    }
+                }
+            }
+            entry.satisfied = forbidden_count == 0;
+            Observation::LinePrefixes {
+                forbidden_count,
+                forbidden_omitted: forbidden_count - forbidden_lines.len(),
+                forbidden_lines,
+            }
+        }
         _ => return Err("unsupported raw structure predicate".into()),
     };
     entry.text_structure = Some(observation);
@@ -81,14 +103,7 @@ fn line_values(
     let mut unauthorized_sample = Vec::new();
     let mut sample_bytes = 2;
     for (index, line) in source.lines().enumerate() {
-        let line = match normalization {
-            RepositoryTextNormalization::None => line,
-            RepositoryTextNormalization::TrimStart => line.trim_start(),
-            RepositoryTextNormalization::Trim => line.trim(),
-            RepositoryTextNormalization::RemoveWhitespace => {
-                return Err("unsupported raw line-value normalization".into());
-            }
-        };
+        let line = normalize_line(line, normalization)?;
         let Some(value) = line.strip_prefix(prefix) else {
             continue;
         };
@@ -119,6 +134,17 @@ fn line_values(
         unauthorized_omitted: unauthorized_count - unauthorized_sample.len(),
         unauthorized_sample,
     })
+}
+
+fn normalize_line(line: &str, normalization: RepositoryTextNormalization) -> Result<&str, String> {
+    match normalization {
+        RepositoryTextNormalization::None => Ok(line),
+        RepositoryTextNormalization::TrimStart => Ok(line.trim_start()),
+        RepositoryTextNormalization::Trim => Ok(line.trim()),
+        RepositoryTextNormalization::RemoveWhitespace => {
+            Err("unsupported raw line normalization".into())
+        }
+    }
 }
 
 #[cfg(test)]

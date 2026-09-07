@@ -1,6 +1,6 @@
 # Bounded raw-text structure
 
-Unreleased rc9 adds three closed `repository.files` predicates for existing
+Unreleased rc9 adds four closed `repository.files` predicates for existing
 source-only checks of scripts, workflows, and other UTF-8 files. All matching
 is case-sensitive and deliberately includes comments and string contents.
 These predicates do not parse Rust, YAML, or shell, or establish execution order.
@@ -23,6 +23,12 @@ name = "worker-images"
 include = ["worker-config.txt"]
 reason = "Only the complete reviewed raw suffix values are permitted."
 predicate = { kind = "line-values-allowed", prefix = "image: ", values = ["reviewed-image-a", "reviewed-image-b"], normalization = "trim" }
+
+[[repository.files]]
+name = "raw-import-boundaries"
+include = ["crates/core/src/**/*.rs"]
+reason = "Preserve these reviewed authored line prefixes, including test and cfg text."
+predicate = { kind = "line-prefixes-absent", prefixes = ["use tokio;", "extern crate tokio;"], normalization = "trim-start" }
 ```
 
 `literal-order` requires both markers and compares the byte offsets of their
@@ -44,6 +50,17 @@ this prohibition; use a separate path/read predicate when presence is required.
 Duplicate allowed values, CR/LF in prefixes or values, and unsupported
 normalization modes fail contract validation.
 
+`line-prefixes-absent` rejects each normalized physical line beginning with any
+configured prefix. It shares the same line splitting and normalization modes.
+Prefixes are literal and case-sensitive; this does not resolve Rust imports.
+The set requires 1..64 distinct nonempty prefixes, at most 16 KiB of combined
+prefix bytes, no CR/LF, and no leading whitespace removed by the selected
+normalization. Overlapping prefixes are permitted and count a matching line
+once. Zero selected lines or files remains an active absence policy; require
+source roots separately when the original guard requires them. The analyzer
+reads each selected input once for this predicate and compares each line against
+the bounded prefix set without changing the existing file-content work limit.
+
 Markers and prefixes are nonempty and at most 16 KiB each. Allowed value sets
 contain at most 1,024 distinct values and 16 KiB of combined value bytes. Existing
 file, aggregate input, selection, and content-work limits also apply. Invalid
@@ -57,6 +74,9 @@ Line-value matching reports complete selected/unauthorized counts, at most
 sixteen unauthorized values within a 16 KiB encoded sample, and the omitted
 count. Oversized values still participate in comparison and totals. Every
 inspected byte is bound, including content outside a selected interval.
+Prefix-set observations expose the complete `forbidden_count`, the first
+sixteen original `forbidden_lines`, and `forbidden_omitted`; an omitted line
+still contributes to failure. Prefix violations use `REP-FILE-008`.
 
 Removing a guard, replacing bounded presence/order with an entailed whole-file
 presence check, shortening an interval's required literal, expanding an allowed
@@ -65,3 +85,11 @@ Reordering the same allowed value set is neutral. Arbitrary marker, prefix,
 normalization, or interval-boundary changes retain protected uncertainty when
 accepted-state inclusion is unproven. Existing contract meanings and defaults
 remain unchanged; this is part of unreleased analyzer semantics 7.
+
+For forbidden prefix sets with unchanged normalization, comparison uses the
+prefix languages: a shorter prefix prohibits every extension of that prefix.
+Extending a forbidden prefix or removing a nonredundant prohibition is a grant;
+adding a prohibition or shortening a prefix tightens policy. Reordering and
+removing a prefix already covered by another prefix are neutral. Redirecting a
+prohibition can grant and revoke simultaneously. Normalization changes remain
+protected unknown comparisons. Narrowing the governed file selection is a grant.

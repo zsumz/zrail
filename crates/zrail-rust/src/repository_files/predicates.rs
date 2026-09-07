@@ -71,14 +71,18 @@ pub(super) fn evaluate(
         }
         predicate @ (RepositoryFilePredicate::LiteralOrder { .. }
         | RepositoryFilePredicate::LiteralBetween { .. }
-        | RepositoryFilePredicate::LineValuesAllowed { .. }) => {
+        | RepositoryFilePredicate::LineValuesAllowed { .. }
+        | RepositoryFilePredicate::LinePrefixesAbsent { .. }) => {
             for entry in &mut observed.entries {
                 let bytes = inputs.read(root, entry)?;
                 text_structure::evaluate(predicate, &bytes, entry)?;
             }
             (
-                matches!(predicate, RepositoryFilePredicate::LineValuesAllowed { .. })
-                    || !observed.entries.is_empty(),
+                matches!(
+                    predicate,
+                    RepositoryFilePredicate::LineValuesAllowed { .. }
+                        | RepositoryFilePredicate::LinePrefixesAbsent { .. }
+                ) || !observed.entries.is_empty(),
                 "REP-FILE-008",
             )
         }

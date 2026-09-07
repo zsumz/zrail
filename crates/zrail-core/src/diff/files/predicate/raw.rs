@@ -10,6 +10,25 @@ use super::super::{ChangeKind, set};
 pub(super) fn compare(left: &Predicate, right: &Predicate) -> Option<Vec<ChangeKind>> {
     match (left, right) {
         (
+            Predicate::LinePrefixesAbsent {
+                prefixes: a,
+                normalization: an,
+            },
+            Predicate::LinePrefixesAbsent {
+                prefixes: b,
+                normalization: bn,
+            },
+        ) if an == bn => {
+            let mut changes = Vec::new();
+            if !prefixes_cover(b, a) {
+                changes.push(ChangeKind::Grant);
+            }
+            if !prefixes_cover(a, b) {
+                changes.push(ChangeKind::Revoke);
+            }
+            Some(changes)
+        }
+        (
             Predicate::LineValuesAllowed {
                 prefix: a,
                 values: av,
@@ -61,6 +80,12 @@ pub(super) fn compare(left: &Predicate, right: &Predicate) -> Option<Vec<ChangeK
     }
 }
 
+fn prefixes_cover(covering: &[String], covered: &[String]) -> bool {
+    covered
+        .iter()
+        .all(|prefix| covering.iter().any(|other| prefix.starts_with(other)))
+}
+
 fn entails_literal(structured: &Predicate, literal: &crate::RepositoryLiteralPredicate) -> bool {
     if literal.mode != RepositoryLiteralMode::Contains
         || literal.normalization != RepositoryTextNormalization::None
@@ -87,6 +112,7 @@ fn is_structure(predicate: &Predicate) -> bool {
         Predicate::LiteralOrder { .. }
             | Predicate::LiteralBetween { .. }
             | Predicate::LineValuesAllowed { .. }
+            | Predicate::LinePrefixesAbsent { .. }
     )
 }
 

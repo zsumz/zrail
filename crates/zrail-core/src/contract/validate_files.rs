@@ -142,7 +142,8 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
             RepositoryFilePredicate::Document(_)
             | RepositoryFilePredicate::LiteralOrder { .. }
             | RepositoryFilePredicate::LiteralBetween { .. }
-            | RepositoryFilePredicate::LineValuesAllowed { .. } => {
+            | RepositoryFilePredicate::LineValuesAllowed { .. }
+            | RepositoryFilePredicate::LinePrefixesAbsent { .. } => {
                 regular(rule.entry, &rule.name, errors);
                 content::validate(&rule.predicate, errors);
             }
@@ -187,6 +188,7 @@ pub(super) fn item_count(contract: &Contract) -> usize {
                     RepositoryFilePredicate::LiteralOrder { .. } => 2,
                     RepositoryFilePredicate::LiteralBetween { .. } => 3,
                     RepositoryFilePredicate::LineValuesAllowed { values, .. } => values.len() + 1,
+                    RepositoryFilePredicate::LinePrefixesAbsent { prefixes, .. } => prefixes.len(),
                     RepositoryFilePredicate::Document(document) => {
                         document.path.len()
                             + match &document.assertion {

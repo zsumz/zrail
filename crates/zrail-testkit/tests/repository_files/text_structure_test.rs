@@ -182,6 +182,7 @@ fn raw_structure_invalid_utf8_cannot_produce_partial_locks_or_coverage() {
         "kind = 'literal-order', before = 'a', after = 'b'",
         "kind = 'literal-between', start = 'a', end = 'b', contains = 'x'",
         "kind = 'line-values-allowed', prefix = 'image: ', values = []",
+        "kind = 'line-prefixes-absent', prefixes = ['use tokio;']",
     ] {
         let repository = repository(predicate);
         std::fs::write(repository.0.join("input"), [0xff]).unwrap();

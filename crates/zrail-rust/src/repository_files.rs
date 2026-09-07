@@ -63,6 +63,7 @@ pub(crate) fn analyze(
                 RepositoryFilePredicate::LiteralOrder { .. }
                 | RepositoryFilePredicate::LiteralBetween { .. } => "raw-utf8-byte-interval",
                 RepositoryFilePredicate::LineValuesAllowed { .. } => "raw-utf8-line-values",
+                RepositoryFilePredicate::LinePrefixesAbsent { .. } => "raw-utf8-line-prefixes",
                 RepositoryFilePredicate::Document(_) => "authored-document",
                 RepositoryFilePredicate::BytesEqual { utf8: true, .. } => "utf8-file-bytes",
                 RepositoryFilePredicate::BytesEqual { .. } => "file-bytes",

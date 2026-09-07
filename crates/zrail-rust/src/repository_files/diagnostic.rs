@@ -84,11 +84,13 @@ pub(super) fn finding(observed: &GovernedRepositoryFile, diagnostic: &str) -> Fi
         ),
         RepositoryFilePredicate::LiteralOrder { .. }
         | RepositoryFilePredicate::LiteralBetween { .. }
-        | RepositoryFilePredicate::LineValuesAllowed { .. } => format!(
+        | RepositoryFilePredicate::LineValuesAllowed { .. }
+        | RepositoryFilePredicate::LinePrefixesAbsent { .. } => format!(
             "raw {} predicate failed: {} selected files, {failed} unsatisfied files; first observation {:?}",
             match observed.policy.predicate {
                 RepositoryFilePredicate::LiteralOrder { .. } => "first-marker order",
                 RepositoryFilePredicate::LiteralBetween { .. } => "first-marker interval",
+                RepositoryFilePredicate::LinePrefixesAbsent { .. } => "forbidden line-prefix set",
                 _ => "prefixed line-value set",
             },
             observed.entries.len(),

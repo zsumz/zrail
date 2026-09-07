@@ -8,6 +8,8 @@ mod encoding_test;
 mod fixture;
 #[path = "repository_files/line_test.rs"]
 mod line_test;
+#[path = "repository_files/prefix_test.rs"]
+mod prefix_test;
 #[path = "repository_files/support.rs"]
 mod support;
 #[path = "repository_files/text_structure_test.rs"]

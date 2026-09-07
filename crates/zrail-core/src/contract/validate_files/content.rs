@@ -44,6 +44,30 @@ pub(super) fn validate(predicate: &RepositoryFilePredicate, errors: &mut Validat
                 );
             }
         }
+        RepositoryFilePredicate::LinePrefixesAbsent {
+            prefixes,
+            normalization,
+        } => {
+            unique(prefixes, "line prefix sets", errors);
+            if prefixes.is_empty()
+                || prefixes.len() > 64
+                || prefixes.iter().map(String::len).sum::<usize>() > 16 * 1_024
+            {
+                errors
+                    .push("line prefix sets require 1..64 prefixes and at most 16384 bytes".into());
+            }
+            if prefixes.iter().any(|prefix| {
+                prefix.is_empty()
+                    || prefix.contains(['\n', '\r'])
+                    || (*normalization != RepositoryTextNormalization::None
+                        && prefix.trim_start() != prefix)
+            }) {
+                errors.push("line prefixes must be nonempty, contain no CR/LF, and satisfy leading normalization".into());
+            }
+            if *normalization == RepositoryTextNormalization::RemoveWhitespace {
+                errors.push("line prefixes support none, trim-start, or trim normalization".into());
+            }
+        }
         _ => {}
     }
 }

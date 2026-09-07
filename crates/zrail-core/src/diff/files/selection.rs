@@ -35,7 +35,8 @@ pub(super) fn compare(left: &RepositoryFileRule, right: &RepositoryFileRule) -> 
         RepositoryFilePredicate::Count { minimum: 0, .. }
         | RepositoryFilePredicate::ExactPaths { .. }
         | RepositoryFilePredicate::ForbiddenNames { .. }
-        | RepositoryFilePredicate::LineValuesAllowed { .. } => Some(true),
+        | RepositoryFilePredicate::LineValuesAllowed { .. }
+        | RepositoryFilePredicate::LinePrefixesAbsent { .. } => Some(true),
         RepositoryFilePredicate::Document(document)
             if document.assertion == crate::RepositoryDocumentAssertion::Absent =>
         {

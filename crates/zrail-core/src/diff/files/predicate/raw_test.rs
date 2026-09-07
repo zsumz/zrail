@@ -9,6 +9,7 @@ fn removing_order_or_interval_guards_is_a_grant() {
         "kind = 'literal-order', before = 'fetch', after = 'gate'",
         "kind = 'literal-between', start = 'gate', end = 'package', contains = 'offline'",
         "kind = 'line-values-allowed', prefix = 'image: ', values = ['pin']",
+        "kind = 'line-prefixes-absent', prefixes = ['use tokio;']",
     ] {
         let before = configured(predicate);
         let mut after = before.clone();
@@ -16,6 +17,49 @@ fn removing_order_or_interval_guards_is_a_grant() {
         assert_eq!(kinds(&before, &after), [ChangeKind::Grant]);
         protected(&before, &after);
     }
+}
+
+#[test]
+fn forbidden_prefix_languages_classify_shortening_extension_and_redundancy() {
+    for (before, after, expected) in [
+        ("['a', 'b']", "['b', 'a']", vec![]),
+        ("['a', 'ab']", "['a']", vec![]),
+        ("['a']", "['ab']", vec![ChangeKind::Grant]),
+        ("['ab']", "['a']", vec![ChangeKind::Revoke]),
+        ("['a', 'b']", "['a']", vec![ChangeKind::Grant]),
+        ("['a']", "['a', 'b']", vec![ChangeKind::Revoke]),
+        (
+            "['a']",
+            "['b']",
+            vec![ChangeKind::Grant, ChangeKind::Revoke],
+        ),
+    ] {
+        let before = configured(&format!(
+            "kind = 'line-prefixes-absent', prefixes = {before}"
+        ));
+        let after = configured(&format!(
+            "kind = 'line-prefixes-absent', prefixes = {after}"
+        ));
+        assert_eq!(kinds(&before, &after), expected);
+        if expected.contains(&ChangeKind::Grant) {
+            protected(&before, &after);
+        }
+    }
+}
+
+#[test]
+fn forbidden_prefix_scope_narrowing_is_protected_and_normalization_is_not_assumed_neutral() {
+    let before = configured("kind = 'line-prefixes-absent', prefixes = ['use tokio;']");
+    let mut larger = before.clone();
+    larger.repository.files[0].include.push("extra/**".into());
+    assert_eq!(kinds(&larger, &before), [ChangeKind::Grant]);
+    assert_eq!(kinds(&before, &larger), [ChangeKind::Revoke]);
+    protected(&larger, &before);
+    let after = configured(
+        "kind = 'line-prefixes-absent', prefixes = ['use tokio;'], normalization = 'trim-start'",
+    );
+    assert_eq!(kinds(&before, &after), [ChangeKind::Unknown]);
+    protected(&before, &after);
 }
 
 #[test]

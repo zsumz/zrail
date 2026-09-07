@@ -94,6 +94,14 @@ pub enum RepositoryFilePredicate {
         #[serde(default)]
         normalization: RepositoryTextNormalization,
     },
+    /// Forbid lines beginning with any member of a bounded literal prefix set.
+    LinePrefixesAbsent {
+        /// Nonempty, distinct, case-sensitive prefixes; overlap never duplicates a line.
+        prefixes: Vec<String>,
+        /// Transform each physical line before prefix matching.
+        #[serde(default)]
+        normalization: RepositoryTextNormalization,
+    },
     /// Parse a bounded authored document and inspect one literal key path.
     Document(RepositoryDocumentPredicate),
     /// Require at least one selected file and exact bytes equal to the reference.
