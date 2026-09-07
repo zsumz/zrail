@@ -2,8 +2,8 @@
 
 The user resumed work and explicitly set a completion goal on 2026-09-07.
 See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
-The current ledger is **672 reviewed / 558 implemented / 496 verified**;
-176 reviewed assertion instances and the three discovery blockers remain open.
+The current ledger is **672 reviewed / 558 implemented / 512 verified**;
+160 reviewed assertion instances and the three discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
 
 The two trait-set assertions now have two fresh byte-identical 78-case reports
@@ -11,11 +11,14 @@ at the original pinned implementation `5393665`. Their evidence index is
 `evidence/transport-impls-index.json`; the stopped report remains intact.
 The evidence validator passes 13 methods covering 116 adversarial mutations.
 
-The mixed kafka-driver route-test review adds 31 previously unlisted instances:
-five raw source assertions, eleven compile-time inputs and fifteen actual runtime
-assertions. Six existing-native file policies and focused differential tests are
-prepared. These 31 instances remain unverified; full frozen evidence and retained
-runtime receipts still need qualification.
+The mixed kafka-driver route-test review accounts for 31 previously unlisted
+instances. Six stock file policies now verify its five source assertions and
+eleven compile-time inputs. At `f552b5387b8d7941e8b52facdfe8e7e8829889b4`, two
+byte-identical 189-case reports accept 43 and reject 146 cases each. Each run also
+compiles the complete original source-only test once and proves 22 intended
+missing/invalid-UTF-8 compilation failures. The artifact validator passes two
+methods covering 42 tamper cases. The fifteen behavioral route assertions remain
+unverified. See `evidence/route-source-index.json`.
 
 Rafter source-boundary review adds 66 instances: 41 static boundary/input
 requirements and 25 contracts linked to the approved private-name retirement.
@@ -46,22 +49,27 @@ assertion-expansion blockers. API warnings are enforced errors with 41 reviewed
 site-pattern allowances. Reference hard allowances lack measured caps in the
 legacy script; no bounded replacement allowance has been accepted automatically.
 
-No new commit could be created: `/root/.gitconfig` requires GPG signing, and
-its configured key is unavailable (`No secret key`). The user has been asked
-whether unsigned local commits are permitted; that answer is pending. Signing
-configuration has not been changed or bypassed. HEAD remains
-`01bbf38481217b0611a387ee2af488328f52137c`. The tested trait-validator change is
-staged. Trait evidence, route policies, audited text binding, native prefix
-policy and Rafter translation/evidence form separate pending commit slices.
-Preserve this work and the existing frozen checkouts.
+The user explicitly approved skipping signing for local commits. The six
+prepared slices are saved as `6f5b3e9`, `5b2ca58`, `1f18bf5`, `1a3d5da`,
+`bc2c8de`, and `7fb1093`; per-command signing overrides leave the global
+configuration intact. That exact committed tree was independently requalified
+in `/root/zrail-rc9-qualification-7fb1093`: 1,609 Rust tests passed, 17 ignored,
+formatting/Clippy/rustdoc and complete self-analysis passed, and standalone
+archives passed. The same five protected lock diagnostics still stop the
+canonical gate. `evidence/committed-check-index.json` binds this clean committed
+run; the earlier pending-tree evidence remains historically distinct.
+
+Route qualification and artifact validation are saved in `8c198a0`, `f552b53`
+and `0e1fce7`. The failed first route run remains preserved. Source, policy and
+compiler-input identities are explicit; no artifact claims full downstream
+qualification. Local signing no longer blocks progress.
 
 The idle 7 GiB `/root/zrail/target` cache was preserved at
 `/mnt/volume_atl1_1787847588295/zrail-rc9/root-zrail-target-preserved-20260907`,
 with its original path retained as a symlink. No cache contents were discarded.
 
-Continue by saving the tested slices as small commits once signing is resolved,
-then complete route compile-input/frozen parity evidence and the kafka-driver
-inventory and full policy bundle. Continue the remaining consumer inventories
+Continue with the retained route execution receipt, retired declaration-policy
+translation, and the remaining kafka-driver inventory and full policy bundle. Continue the remaining consumer inventories
 before treating the engine capability list as complete. No downstream guard was
 removed, no authority accepted, and no publication, push or release tag occurred.
 

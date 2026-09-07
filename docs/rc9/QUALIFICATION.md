@@ -11,13 +11,54 @@ identity. Manifest-field parity retains its
 own implementation identity below. None constitutes final versioned-tree release
 qualification. The workspace version and internal pins remain `0.0.3-rc.8`.
 
-## Current pending Rafter boundary slice
+## Committed checkpoints after local signing approval
+
+The user approved unsigned local commits. Per-command overrides saved the six
+prepared slices through `7fb1093e77e636a3e98c69fec7bf1dbcb61ff26d`, tree
+`4e849e86425ff2e463ce4eb914819edc6eefad7a`, without changing global Git settings.
+An isolated clean checkout of that exact commit passed snapshot verification,
+the frozen Rafter boundary check, 1,609 Rust tests (17 ignored), formatting,
+Clippy, rustdoc, complete self-analysis, and standalone archive checks.
+`scripts/check` exits 1 with exactly the five protected lock diagnostics below.
+[The committed index](evidence/committed-check-index.json) binds every command,
+log and clean input identity; no lock authority was accepted.
+
+Route parity uses `f552b5387b8d7941e8b52facdfe8e7e8829889b4`. From a clean
+checkout of that revision, with the environment below and a fresh external
+evidence directory, reproduce both runs:
+
+```sh
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots ZRAIL_RC9_ROUTE_REPORT=/fresh/evidence/route-a.json cargo test --locked --offline -p zrail-rust --lib qualify_frozen_route_source_and_compile_input_parity -- --ignored --nocapture
+ZRAIL_RC9_SNAPSHOTS=/absolute/snapshots ZRAIL_RC9_ROUTE_REPORT=/fresh/evidence/route-b.json cargo test --locked --offline -p zrail-rust --lib qualify_frozen_route_source_and_compile_input_parity -- --ignored --nocapture
+cmp /fresh/evidence/route-a.json /fresh/evidence/route-b.json
+```
+
+Both reports contain 189 cases (43 accepted, 146 rejected) and 23 original
+compilations. Payloads are identical: 6,723,169 bytes, SHA-256
+`db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609`.
+[The route index](evidence/route-source-index.json) binds the two runs, pinned
+compiler and source-only test, all eleven inputs and unrelated-file decoys.
+The artifact validator runs in the canonical gate; its two unittest methods
+verify sixteen assertion bindings and reject 42 evidence mutations.
+
+```sh
+python3 scripts/rc9_route_evidence_test.py
+python3 scripts/rc9-inventory-check
+scripts/check
+scripts/package-check
+```
+
+No behavioral route scenario, full consumer bundle, final rc9 version or release
+is qualified by these source-only reports. Their initial failed compiler-span
+expectation remains in the evidence index and is not relabeled as a pass.
+
+## Historical pending Rafter boundary slice
 
 [The bound evidence](evidence/rafter-boundary-index.json) identifies HEAD
 `01bbf38481217b0611a387ee2af488328f52137c` plus its exact tracked diff and every
-untracked input hash. No input changed during the run. The code is pending
-commits because the configured GPG signing key is unavailable; this is not a
-clean committed release qualification.
+untracked input hash. No input changed during the run. That run preceded local
+signing approval and commits; it remains a pending-tree record. The separate
+committed qualification above does not change its historical identity.
 
 The final `scripts/check` run passes artifact validation, formatting, strict
 Clippy, **1,609 Rust tests** (zero failures; 17 explicitly ignored), and rustdoc.
