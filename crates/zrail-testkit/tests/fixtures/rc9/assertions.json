@@ -51582,11 +51582,1805 @@
           "cause": "Bind the exact original fixture parse precondition to native strict syntax and malformed/expression-only detector fixtures; no qualified replacement policy identity or diagnostic is linked yet."
         }
       ]
+    },
+    {
+      "id": "KD-ROUTE-FORBID-BrokerSet",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:116:9:assertion-macro",
+        "line": 116,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "a89cfb76c2a5ec2106c0fa5b53032ccc3955258c9bbd2748b1cb00fedc59e807",
+        "instance": "BrokerSet"
+      },
+      "intended_property": "Every one of the ten explicitly included route files omits the exact forbidden raw token.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_admission.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_state.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "case-sensitive Rust str::contains absence",
+        "literal": "BrokerSet",
+        "scope": "each complete UTF-8 file, including comments, strings, aliases and inactive cfg text"
+      },
+      "required_cardinality": {
+        "per_file_exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-forbid-BrokerSet"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-FORBID-BrokerSet",
+          "cause": "Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence."
+        }
+      ],
+      "compile_input_preconditions": [
+        "KD-ROUTE-INPUT-route_admission",
+        "KD-ROUTE-INPUT-route_directory",
+        "KD-ROUTE-INPUT-route_failure",
+        "KD-ROUTE-INPUT-route_install",
+        "KD-ROUTE-INPUT-route_install_publish",
+        "KD-ROUTE-INPUT-route_install_rollback",
+        "KD-ROUTE-INPUT-route_install_work",
+        "KD-ROUTE-INPUT-route_resolution",
+        "KD-ROUTE-INPUT-route_state",
+        "KD-ROUTE-INPUT-route_turn"
+      ]
+    },
+    {
+      "id": "KD-ROUTE-FORBID-ConnectionSet",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:116:9:assertion-macro",
+        "line": 116,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "a89cfb76c2a5ec2106c0fa5b53032ccc3955258c9bbd2748b1cb00fedc59e807",
+        "instance": "ConnectionSet"
+      },
+      "intended_property": "Every one of the ten explicitly included route files omits the exact forbidden raw token.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_admission.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_state.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "case-sensitive Rust str::contains absence",
+        "literal": "ConnectionSet",
+        "scope": "each complete UTF-8 file, including comments, strings, aliases and inactive cfg text"
+      },
+      "required_cardinality": {
+        "per_file_exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-forbid-ConnectionSet"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-FORBID-ConnectionSet",
+          "cause": "Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence."
+        }
+      ],
+      "compile_input_preconditions": [
+        "KD-ROUTE-INPUT-route_admission",
+        "KD-ROUTE-INPUT-route_directory",
+        "KD-ROUTE-INPUT-route_failure",
+        "KD-ROUTE-INPUT-route_install",
+        "KD-ROUTE-INPUT-route_install_publish",
+        "KD-ROUTE-INPUT-route_install_rollback",
+        "KD-ROUTE-INPUT-route_install_work",
+        "KD-ROUTE-INPUT-route_resolution",
+        "KD-ROUTE-INPUT-route_state",
+        "KD-ROUTE-INPUT-route_turn"
+      ]
+    },
+    {
+      "id": "KD-ROUTE-FORBID-Poller",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:116:9:assertion-macro",
+        "line": 116,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "a89cfb76c2a5ec2106c0fa5b53032ccc3955258c9bbd2748b1cb00fedc59e807",
+        "instance": "Poller"
+      },
+      "intended_property": "Every one of the ten explicitly included route files omits the exact forbidden raw token.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_admission.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_state.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "case-sensitive Rust str::contains absence",
+        "literal": "Poller",
+        "scope": "each complete UTF-8 file, including comments, strings, aliases and inactive cfg text"
+      },
+      "required_cardinality": {
+        "per_file_exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-forbid-Poller"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-FORBID-Poller",
+          "cause": "Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence."
+        }
+      ],
+      "compile_input_preconditions": [
+        "KD-ROUTE-INPUT-route_admission",
+        "KD-ROUTE-INPUT-route_directory",
+        "KD-ROUTE-INPUT-route_failure",
+        "KD-ROUTE-INPUT-route_install",
+        "KD-ROUTE-INPUT-route_install_publish",
+        "KD-ROUTE-INPUT-route_install_rollback",
+        "KD-ROUTE-INPUT-route_install_work",
+        "KD-ROUTE-INPUT-route_resolution",
+        "KD-ROUTE-INPUT-route_state",
+        "KD-ROUTE-INPUT-route_turn"
+      ]
+    },
+    {
+      "id": "KD-ROUTE-FORBID-SingleBroker",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:116:9:assertion-macro",
+        "line": 116,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "a89cfb76c2a5ec2106c0fa5b53032ccc3955258c9bbd2748b1cb00fedc59e807",
+        "instance": "SingleBroker"
+      },
+      "intended_property": "Every one of the ten explicitly included route files omits the exact forbidden raw token.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_admission.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_state.rs",
+          "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "case-sensitive Rust str::contains absence",
+        "literal": "SingleBroker",
+        "scope": "each complete UTF-8 file, including comments, strings, aliases and inactive cfg text"
+      },
+      "required_cardinality": {
+        "per_file_exact": 0
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-forbid-SingleBroker"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-FORBID-SingleBroker",
+          "cause": "Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence."
+        }
+      ],
+      "compile_input_preconditions": [
+        "KD-ROUTE-INPUT-route_admission",
+        "KD-ROUTE-INPUT-route_directory",
+        "KD-ROUTE-INPUT-route_failure",
+        "KD-ROUTE-INPUT-route_install",
+        "KD-ROUTE-INPUT-route_install_publish",
+        "KD-ROUTE-INPUT-route_install_rollback",
+        "KD-ROUTE-INPUT-route_install_work",
+        "KD-ROUTE-INPUT-route_resolution",
+        "KD-ROUTE-INPUT-route_state",
+        "KD-ROUTE-INPUT-route_turn"
+      ]
+    },
+    {
+      "id": "KD-ROUTE-INPUT-facade",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:123:18:macro-review-boundary",
+        "line": 123,
+        "column": 18,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "89c9031c30a51d95b40109b2cbc568890952c4b2036790e48cec2e05a4b0029a",
+        "instance": "facade"
+      },
+      "intended_property": "The exact compile-time source input exists and decodes as UTF-8.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "Rust include_str! UTF-8 input precondition",
+        "literal_path": "../cluster_runtime.rs",
+        "scope": "literal path relative to the declaring source file; no execution or semantic type claim"
+      },
+      "required_cardinality": {
+        "required_paths": [
+          "src/reactor/direct_plaintext/cluster_runtime.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-INPUT-facade",
+          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-INPUT-route_admission",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:104:9:macro-review-boundary",
+        "line": 104,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "8737446a8b6f134013bfeab034b6d10e42cf250aded139e52897fd71d9b1cc9d",
+        "instance": "route_admission"
+      },
+      "intended_property": "The exact compile-time source input exists and decodes as UTF-8.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_admission.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "Rust include_str! UTF-8 input precondition",
+        "literal_path": "route_admission.rs",
+        "scope": "literal path relative to the declaring source file; no execution or semantic type claim"
+      },
+      "required_cardinality": {
+        "required_paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_admission.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-INPUT-route_admission",
+          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-INPUT-route_directory",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:105:9:macro-review-boundary",
+        "line": 105,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "c477189a527fd78d819ecba5c81b436fce7a67a861bc599e7d1ffde3e3e5e867",
+        "instance": "route_directory"
+      },
+      "intended_property": "The exact compile-time source input exists and decodes as UTF-8.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "Rust include_str! UTF-8 input precondition",
+        "literal_path": "route_directory.rs",
+        "scope": "literal path relative to the declaring source file; no execution or semantic type claim"
+      },
+      "required_cardinality": {
+        "required_paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-INPUT-route_directory",
+          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-INPUT-route_failure",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:106:9:macro-review-boundary",
+        "line": 106,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "eb225c42bec1a5808a37611112892f6c575ef4d4b021a91f436b63cd7ad545ce",
+        "instance": "route_failure"
+      },
+      "intended_property": "The exact compile-time source input exists and decodes as UTF-8.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "Rust include_str! UTF-8 input precondition",
+        "literal_path": "route_failure.rs",
+        "scope": "literal path relative to the declaring source file; no execution or semantic type claim"
+      },
+      "required_cardinality": {
+        "required_paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-INPUT-route_failure",
+          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-INPUT-route_install",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:107:9:macro-review-boundary",
+        "line": 107,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "8f2f8c88c461c4b22c3c6635f38d2b54398410a5d062666b750914e90504413c",
+        "instance": "route_install"
+      },
+      "intended_property": "The exact compile-time source input exists and decodes as UTF-8.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_install.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "Rust include_str! UTF-8 input precondition",
+        "literal_path": "route_install.rs",
+        "scope": "literal path relative to the declaring source file; no execution or semantic type claim"
+      },
+      "required_cardinality": {
+        "required_paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_install.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-INPUT-route_install",
+          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-INPUT-route_install_publish",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:108:9:macro-review-boundary",
+        "line": 108,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "c8f26400bc004f03920ac16b8fcba639577cfbe9287265afb4478802e58606e2",
+        "instance": "route_install_publish"
+      },
+      "intended_property": "The exact compile-time source input exists and decodes as UTF-8.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "Rust include_str! UTF-8 input precondition",
+        "literal_path": "route_install_publish.rs",
+        "scope": "literal path relative to the declaring source file; no execution or semantic type claim"
+      },
+      "required_cardinality": {
+        "required_paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-INPUT-route_install_publish",
+          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-INPUT-route_install_rollback",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:109:9:macro-review-boundary",
+        "line": 109,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "65aa45120fb13e32d9046db5347fead7f9fe585a2117343de51f6ca2109f305f",
+        "instance": "route_install_rollback"
+      },
+      "intended_property": "The exact compile-time source input exists and decodes as UTF-8.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "Rust include_str! UTF-8 input precondition",
+        "literal_path": "route_install_rollback.rs",
+        "scope": "literal path relative to the declaring source file; no execution or semantic type claim"
+      },
+      "required_cardinality": {
+        "required_paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-INPUT-route_install_rollback",
+          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-INPUT-route_install_work",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:110:9:macro-review-boundary",
+        "line": 110,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "b2170fc8ce7e35a92f97801a395657e42e43b91e876f43a3fbc9f51c8a33c4f2",
+        "instance": "route_install_work"
+      },
+      "intended_property": "The exact compile-time source input exists and decodes as UTF-8.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "Rust include_str! UTF-8 input precondition",
+        "literal_path": "route_install_work.rs",
+        "scope": "literal path relative to the declaring source file; no execution or semantic type claim"
+      },
+      "required_cardinality": {
+        "required_paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-INPUT-route_install_work",
+          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-INPUT-route_resolution",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:111:9:macro-review-boundary",
+        "line": 111,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "c2559ae3ab093aede610708ccde6db035e7e640a49fa833e47279cdaea0b3113",
+        "instance": "route_resolution"
+      },
+      "intended_property": "The exact compile-time source input exists and decodes as UTF-8.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "Rust include_str! UTF-8 input precondition",
+        "literal_path": "route_resolution.rs",
+        "scope": "literal path relative to the declaring source file; no execution or semantic type claim"
+      },
+      "required_cardinality": {
+        "required_paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-INPUT-route_resolution",
+          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-INPUT-route_state",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:112:9:macro-review-boundary",
+        "line": 112,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "3ef1ed9e196aa40a2e661eedec198678ee6057201fed315b6c8118c38f1192f0",
+        "instance": "route_state"
+      },
+      "intended_property": "The exact compile-time source input exists and decodes as UTF-8.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "Rust include_str! UTF-8 input precondition",
+        "literal_path": "route_state.rs",
+        "scope": "literal path relative to the declaring source file; no execution or semantic type claim"
+      },
+      "required_cardinality": {
+        "required_paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-INPUT-route_state",
+          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-INPUT-route_turn",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:113:9:macro-review-boundary",
+        "line": 113,
+        "column": 9,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "a4d827dc0bacfe9fc3211731ccefb61f43b8f793aaecde5100ec839752c5ad90",
+        "instance": "route_turn"
+      },
+      "intended_property": "The exact compile-time source input exists and decodes as UTF-8.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "Rust include_str! UTF-8 input precondition",
+        "literal_path": "route_turn.rs",
+        "scope": "literal path relative to the declaring source file; no execution or semantic type claim"
+      },
+      "required_cardinality": {
+        "required_paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"
+        ]
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-inputs"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-INPUT-route_turn",
+          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-OWNER-FIELD",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:124:5:assertion-macro",
+        "line": 124,
+        "column": 5,
+        "function": [
+          "route_modules_cannot_own_a_selector_or_legacy_routing_capability"
+        ],
+        "syntax_sha256": "7ca61ff47a59da53d35ca157fdd401783e93ccc5520820e5e623266ac77ca805",
+        "instance": null
+      },
+      "intended_property": "The separately selected cluster runtime facade contains exactly one raw owner-field marker.",
+      "selection": {
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime.rs"
+        ]
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "case-sensitive nonoverlapping Rust str::matches count",
+        "literal": "connections: DirectSetOwner<T>",
+        "scope": "complete UTF-8 file, including comments and strings; this is not a parsed or resolved field identity"
+      },
+      "required_cardinality": {
+        "exact": 1
+      },
+      "exception_semantics": "none",
+      "disposition": "declarative translation",
+      "replacement": {
+        "policy_ids": [
+          "repository:file:kd-route-owner-field"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_facade_preserves_exact_raw_quantity_and_file_location"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-OWNER-FIELD",
+          "cause": "Bind required presence, duplicate count, wrong-file and misleading-comment fixtures to repeated frozen evidence."
+        }
+      ],
+      "compile_input_preconditions": [
+        "KD-ROUTE-INPUT-facade"
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-CONTROL-ATTEMPTS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:92:5:assertion-macro",
+        "line": 92,
+        "column": 5,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "f8ceb9e9370e6b18e647336aa3c32b4bfff4749b3cafdc8a2b28a404b953de86",
+        "instance": null
+      },
+      "intended_property": "Completing control DNS makes exactly the second connection attempt.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust value assertion",
+        "expected": 2,
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-CONTROL-ATTEMPTS",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-CONTROL-LANES",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:93:5:assertion-macro",
+        "line": 93,
+        "column": 5,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "e7bf3d089bade2f0dc39569ec4b1b80b257dc0f9d0f0ba6ff9a25cad6a4f0569",
+        "instance": null
+      },
+      "intended_property": "Demanding control opens exactly the second lane.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust value assertion",
+        "expected": 2,
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-CONTROL-LANES",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-CONTROL-OWNERS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:94:5:assertion-macro",
+        "line": 94,
+        "column": 5,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "9df44b272c13ad6448b490527a80577e650e9936108ea532d1b3ef299915a3f4",
+        "instance": null
+      },
+      "intended_property": "Opening the demanded sibling preserves every existing traffic-class owner.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust value assertion",
+        "expected": "exact previous owner array",
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-CONTROL-OWNERS",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-CONTROL-WORK",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:82:28:failure-macro",
+        "line": 82,
+        "column": 28,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "fbaea9cf75463432ab9f81c18176a1cf32756fece2e57d8252ff4843dd979e96",
+        "instance": null
+      },
+      "intended_property": "Demanding the control sibling produces its own route and DNS work.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust failure precondition",
+        "expected": "Some route and DNS work",
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-CONTROL-WORK",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-FIRST-ROUTE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:21:28:failure-macro",
+        "line": 21,
+        "column": 28,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "b2bfd845d2047d73ff159914097efdced9979da64d4c66f35f77e82678b61f8a",
+        "instance": null
+      },
+      "intended_property": "The installed first directory provides the requested broker route.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust failure precondition",
+        "expected": "Some route",
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-FIRST-ROUTE",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-INITIAL-LANES",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:44:5:assertion-macro",
+        "line": 44,
+        "column": 5,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "39acba92e9279fe39577079d99dab881d45564e69086115743a50f3f44fb0474",
+        "instance": null
+      },
+      "intended_property": "Completing initial DNS opens exactly one lane.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust value assertion",
+        "expected": 1,
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-INITIAL-LANES",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-LONG-POLL-WORK",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:33:28:failure-macro",
+        "line": 33,
+        "column": 28,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "1517a6d953366293c55291c0102a32f511ab74f5aa1ee186a6b2b2c11105230f",
+        "instance": null
+      },
+      "intended_property": "Initial long-poll submission produces a route and DNS work.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust failure precondition",
+        "expected": "Some route and DNS work",
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-LONG-POLL-WORK",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-PENDING-EMPTY",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:98:5:assertion-macro",
+        "line": 98,
+        "column": 5,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "764c58a6302f9c85c198d140db01c4be0292eeb9fb3a456f5999cdc880e997fe",
+        "instance": null
+      },
+      "intended_property": "After resolution completes, every opened lane has no pending work.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust value assertion",
+        "expected": true,
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-PENDING-EMPTY",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-QUEUED-REQUESTS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:70:5:assertion-macro",
+        "line": 70,
+        "column": 5,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "0018eef691f32c66b7357eee2e88018b42b7831a80a88a7b14411f3bcd372446",
+        "instance": null
+      },
+      "intended_property": "Both long-poll requests wait on the existing route.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust value assertion",
+        "expected": 2,
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-QUEUED-REQUESTS",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-REUSED-ATTEMPTS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:64:5:assertion-macro",
+        "line": 64,
+        "column": 5,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "dc0d2c28fcf50d98def8c5f4125df19c7d47af557415fa8a5770331f13e455d0",
+        "instance": null
+      },
+      "intended_property": "Reusing the long-poll endpoint makes no additional connection attempt.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust value assertion",
+        "expected": 1,
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-REUSED-ATTEMPTS",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-REUSED-LANES",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:65:5:assertion-macro",
+        "line": 65,
+        "column": 5,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "39acba92e9279fe39577079d99dab881d45564e69086115743a50f3f44fb0474",
+        "instance": null
+      },
+      "intended_property": "Reusing the endpoint retains exactly one opened lane.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust value assertion",
+        "expected": 1,
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-REUSED-LANES",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-REUSED-OWNERS",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:66:5:assertion-macro",
+        "line": 66,
+        "column": 5,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "9df44b272c13ad6448b490527a80577e650e9936108ea532d1b3ef299915a3f4",
+        "instance": null
+      },
+      "intended_property": "All traffic-class owner identities are preserved across directory generations.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust value assertion",
+        "expected": "exact previous owner array",
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-REUSED-OWNERS",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-REUSED-RESOLUTION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:51:5:assertion-macro",
+        "line": 51,
+        "column": 5,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "dafbde96227994274791b3713d2ea2bf90f0e7109f857cd9b3a3e1e200f20559",
+        "instance": null
+      },
+      "intended_property": "The replacement route has no outstanding long-poll resolution lane.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust value assertion",
+        "expected": null,
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-REUSED-RESOLUTION",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-REUSED-SUBMISSION",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:58:5:assertion-macro",
+        "line": 58,
+        "column": 5,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "2482cd5cbe22cf00a6525a2d586149cde954f35162d4be0051f6f99288c2382a",
+        "instance": null
+      },
+      "intended_property": "Submitting through the same endpoint generation requires no new DNS work.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust value assertion",
+        "expected": true,
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-REUSED-SUBMISSION",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
+    },
+    {
+      "id": "KD-ROUTE-RUNTIME-SECOND-ROUTE",
+      "repository": "kafkars/kafka-driver",
+      "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+      "source": {
+        "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+        "file_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+        "candidate_id": "kafkars/kafka-driver:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs:50:28:failure-macro",
+        "line": 50,
+        "column": 28,
+        "function": [
+          "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ],
+        "syntax_sha256": "323d01e5aa9ffb604039e026763bc6d48913bae4b7bca848490e851acee53c26",
+        "instance": null
+      },
+      "intended_property": "The second directory generation provides the requested broker route.",
+      "selection": {
+        "rust_test": "same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling",
+        "paths": [
+          "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs"
+        ],
+        "package": "kafka-driver",
+        "target": "library-unit-tests"
+      },
+      "context": "Original nonignored Rust unit test, compiled under cfg(test) in kafka-driver. Source-only assertions inspect literal include_str! inputs in their authored form; runtime assertions execute directory installation, routing, DNS completion and owner reuse.",
+      "matching_semantics": {
+        "kind": "executed Rust failure precondition",
+        "expected": "Some route",
+        "scope": "runtime values produced by the complete retained generation-reuse scenario, its support types and actual routing implementation"
+      },
+      "required_cardinality": {
+        "required_test_outcomes": 1,
+        "ignored": false
+      },
+      "exception_semantics": "none",
+      "disposition": "behavioral evidence retained",
+      "replacement": {
+        "policy_ids": [],
+        "expected_diagnostics": [],
+        "implemented": false,
+        "verified": false,
+        "full_snapshot_verified": false,
+        "fixtures": [
+          "rust-test:src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs::same_endpoint_generation_reuses_all_owners_then_opens_only_demanded_sibling"
+        ]
+      },
+      "blockers": [
+        {
+          "id": "KD-ROUTE-RUNTIME-SECOND-ROUTE",
+          "cause": "Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice."
+        }
+      ]
     }
   ],
   "counts": {
-    "reviewed_assertion_instances": 575,
-    "implemented": 508,
+    "reviewed_assertion_instances": 606,
+    "implemented": 524,
     "verified_by_disposition": {
       "existing native rail": 0,
       "declarative translation": 0,
@@ -51620,5 +53414,45 @@
       "resolution": "Parsed seven explicitly bound Rust item fragments and discovered 186 additional candidates. Every prior candidate and frozen file identity is unchanged; the new candidates remain unreviewed."
     }
   ],
-  "open_discovery_findings": []
+  "open_discovery_findings": [
+    {
+      "id": "RC9-INVENTORY-KD-ROUTE-MIXED",
+      "source": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+      "report": "docs/rc9/inventory/KAFKA-DRIVER-ROUTE.md",
+      "assertion_ids": [
+        "KD-ROUTE-FORBID-BrokerSet",
+        "KD-ROUTE-FORBID-ConnectionSet",
+        "KD-ROUTE-FORBID-Poller",
+        "KD-ROUTE-FORBID-SingleBroker",
+        "KD-ROUTE-INPUT-facade",
+        "KD-ROUTE-INPUT-route_admission",
+        "KD-ROUTE-INPUT-route_directory",
+        "KD-ROUTE-INPUT-route_failure",
+        "KD-ROUTE-INPUT-route_install",
+        "KD-ROUTE-INPUT-route_install_publish",
+        "KD-ROUTE-INPUT-route_install_rollback",
+        "KD-ROUTE-INPUT-route_install_work",
+        "KD-ROUTE-INPUT-route_resolution",
+        "KD-ROUTE-INPUT-route_state",
+        "KD-ROUTE-INPUT-route_turn",
+        "KD-ROUTE-OWNER-FIELD",
+        "KD-ROUTE-RUNTIME-CONTROL-ATTEMPTS",
+        "KD-ROUTE-RUNTIME-CONTROL-LANES",
+        "KD-ROUTE-RUNTIME-CONTROL-OWNERS",
+        "KD-ROUTE-RUNTIME-CONTROL-WORK",
+        "KD-ROUTE-RUNTIME-FIRST-ROUTE",
+        "KD-ROUTE-RUNTIME-INITIAL-LANES",
+        "KD-ROUTE-RUNTIME-LONG-POLL-WORK",
+        "KD-ROUTE-RUNTIME-PENDING-EMPTY",
+        "KD-ROUTE-RUNTIME-QUEUED-REQUESTS",
+        "KD-ROUTE-RUNTIME-REUSED-ATTEMPTS",
+        "KD-ROUTE-RUNTIME-REUSED-LANES",
+        "KD-ROUTE-RUNTIME-REUSED-OWNERS",
+        "KD-ROUTE-RUNTIME-REUSED-RESOLUTION",
+        "KD-ROUTE-RUNTIME-REUSED-SUBMISSION",
+        "KD-ROUTE-RUNTIME-SECOND-ROUTE"
+      ],
+      "cause": "A mixed runtime test file outside tests/guardrails contains five source-policy instances and eleven literal compile-time input requirements. All 28 census candidates in this file are now accounted for by 31 assertion instances, including fifteen retained runtime assertions; replacement and execution qualification remain open."
+    }
+  ]
 }

@@ -1,0 +1,39 @@
+# Partial route-source policy; behavioral route execution remains separately governed.
+# Frozen kafka-driver a45be8071e6a663cd4ae3142cc5304ece9fdf45e.
+# These preserve deliberate raw text checks, including comments and string literals.
+
+[[repository.files]]
+name = "kd-route-inputs"
+reason = "Preserve all eleven compile-time include_str inputs of the original route-source guard."
+include = ["src/reactor/direct_plaintext/cluster_runtime.rs", "src/reactor/direct_plaintext/cluster_runtime/route_admission.rs", "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs", "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs", "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs", "src/reactor/direct_plaintext/cluster_runtime/route_state.rs", "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"]
+predicate = { kind = "exact-paths", paths = ["src/reactor/direct_plaintext/cluster_runtime.rs", "src/reactor/direct_plaintext/cluster_runtime/route_admission.rs", "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs", "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs", "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs", "src/reactor/direct_plaintext/cluster_runtime/route_state.rs", "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"] }
+
+[[repository.files]]
+name = "kd-route-forbid-ConnectionSet"
+reason = "Preserve the exact case-sensitive raw token ban over the ten explicitly included route files."
+include = ["src/reactor/direct_plaintext/cluster_runtime/route_admission.rs", "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs", "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs", "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs", "src/reactor/direct_plaintext/cluster_runtime/route_state.rs", "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"]
+predicate = { kind = "literal", text = "ConnectionSet", mode = "absent" }
+
+[[repository.files]]
+name = "kd-route-forbid-Poller"
+reason = "Preserve the exact case-sensitive raw token ban over the ten explicitly included route files."
+include = ["src/reactor/direct_plaintext/cluster_runtime/route_admission.rs", "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs", "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs", "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs", "src/reactor/direct_plaintext/cluster_runtime/route_state.rs", "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"]
+predicate = { kind = "literal", text = "Poller", mode = "absent" }
+
+[[repository.files]]
+name = "kd-route-forbid-SingleBroker"
+reason = "Preserve the exact case-sensitive raw token ban over the ten explicitly included route files."
+include = ["src/reactor/direct_plaintext/cluster_runtime/route_admission.rs", "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs", "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs", "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs", "src/reactor/direct_plaintext/cluster_runtime/route_state.rs", "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"]
+predicate = { kind = "literal", text = "SingleBroker", mode = "absent" }
+
+[[repository.files]]
+name = "kd-route-forbid-BrokerSet"
+reason = "Preserve the exact case-sensitive raw token ban over the ten explicitly included route files."
+include = ["src/reactor/direct_plaintext/cluster_runtime/route_admission.rs", "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs", "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs", "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs", "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs", "src/reactor/direct_plaintext/cluster_runtime/route_state.rs", "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs"]
+predicate = { kind = "literal", text = "BrokerSet", mode = "absent" }
+
+[[repository.files]]
+name = "kd-route-owner-field"
+reason = "Preserve exactly one authored connections field marker in the selected facade, without claiming resolved field identity."
+include = ["src/reactor/direct_plaintext/cluster_runtime.rs"]
+predicate = { kind = "literal", text = "connections: DirectSetOwner<T>", mode = "exact-count", count = 1 }

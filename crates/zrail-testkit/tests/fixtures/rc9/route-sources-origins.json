@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+      "source_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+      "harness": "crates/zrail-rust/tests/rc9_route/legacy.rs",
+      "function": "route forbidden-name loop and complete all-files quantifier",
+      "start_line": 115,
+      "end_line": 122,
+      "extracted_sha256": "2050482495af4ac45eb744d1e05e18df30625e8017acd84427f3a12658962a1c"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+      "source_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+      "harness": "crates/zrail-rust/tests/rc9_route/legacy.rs",
+      "function": "exact raw facade occurrence assertion",
+      "start_line": 124,
+      "end_line": 124,
+      "extracted_sha256": "d510cfc9e11e93b97bfa72af81f6ebf5e250770ba55a0ad62bc0f30f0272da43"
+    }
+  ],
+  "fixtures": [
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime.rs",
+      "sha256": "03afec2edfc59afd02453ad077cae13f3ad354820d33b89e3b59253104e29070"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_admission.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_admission.rs",
+      "sha256": "3228c4c0bb47bc57d683b70ebc8f448d57c3d1eaec5d839c5dc74f12d7b96da8"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_directory.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_directory.rs",
+      "sha256": "6eb9acd903268ab53f7f7594834afafa99b7c65d7017f5f895fd4068604e399c"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_failure.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_failure.rs",
+      "sha256": "bc780e62de5d81610e5566e6d56382fbf9fc6a90ad8b5cba42588a046506998e"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_install.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_install.rs",
+      "sha256": "eea677a6d29a94593515846dfe50a2a7d2b8d2c5f8e2ee46b5f80e5f04d5942b"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_install_publish.rs",
+      "sha256": "3b2c8842677f75a9d0b2a71090c8a632eeaa098cced9bc10e89d57380dcaf078"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_install_rollback.rs",
+      "sha256": "0ee6d1d94e2c2ca019f5e7795deec87cf31c55c2b33a19dd1f8fb4d6b6b644a9"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_install_work.rs",
+      "sha256": "dc6d8e398107b69d375bcbe4a3b1eaddc31d2466788fe0bfaf50d7ea560b025f"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_resolution.rs",
+      "sha256": "4a3467c744b8982dc3550edc1947529b82d0c1426f4fb80d8ad817c8b20f38f3"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_state.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_state.rs",
+      "sha256": "17e6b37405804bd37e2ef918af6dd866b0745480e52839fa39366b9e520cb73e"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_turn.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_turn.rs",
+      "sha256": "f213d3788b491914ab70085eaba786ebcb42a5f6cfa2e41d5788b980bb69a180"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/route-sources/valid/src/reactor/direct_plaintext/cluster_runtime/route_state_test.rs",
+      "sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3"
+    }
+  ],
+  "harness_adaptations": [
+    "The two original assertion statements and forbidden-name loop are unchanged. Compile-time include_str inputs are injected as UTF-8 strings in the minimal detector harness; separate physical inventory policies retain every required input path. Full compile-failure and downstream execution evidence remain unverified."
+  ]
+}

@@ -20,6 +20,8 @@ mod provenance;
 mod qualification;
 #[path = "repository_files/raw_dependency/qualification.rs"]
 mod raw_dependency;
+#[path = "../tests/rc9_route/policy_test.rs"]
+mod route_sources;
 
 use std::{
     fs,
