@@ -1,5 +1,8 @@
 //! Frozen collector parity checks syntax corners before downstream replacement is claimed.
 
+#[path = "../tests/rc9_declarations/legacy.rs"]
+mod declaration_legacy;
+
 #[path = "rust_inventories/parity/expression_cases.rs"]
 mod expression_cases;
 #[path = "rust_inventories/parity/legacy.rs"]
@@ -41,6 +44,8 @@ mod qualification;
 mod rename_mutations;
 #[path = "../tests/rc9_transport/renames_test.rs"]
 mod renames_test;
+#[path = "../tests/rc9_declarations/retired_test.rs"]
+mod retired_test;
 
 #[test]
 fn frozen_transport_methods_match_every_parsed_expression_context() {

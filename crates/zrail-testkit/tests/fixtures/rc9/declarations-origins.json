@@ -60,6 +60,26 @@
       "start_line": 75,
       "end_line": 78,
       "extracted_sha256": "960d62a3f352c97e0ee8cd513247c2f9cff3a3dffc3e8f0294fdba7ed82939ad"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_graph.rs",
+      "source_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+      "harness": "crates/zrail-rust/tests/rc9_declarations/retired_legacy.rs",
+      "function": "original fallible directory walker body",
+      "start_line": 49,
+      "end_line": 60,
+      "extracted_sha256": "65ce0cc6567b9d2eccbfa2f1de90252a36bf9a140f9a322b753a0b70746a020e"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/release_graph.rs",
+      "source_sha256": "e30e48c6f261690844c9db7ef14d02316740c4b4d8eec322241268d454c947ff",
+      "harness": "crates/zrail-rust/tests/rc9_declarations/retired_legacy.rs",
+      "function": "original raw construction assertion",
+      "start_line": 81,
+      "end_line": 84,
+      "extracted_sha256": "1191cf0c563793d639128554e5d9b5c2b1377e4cf6aff9c8b24811da9967db41"
     }
   ],
   "fixtures": [

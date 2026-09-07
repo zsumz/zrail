@@ -1,11 +1,9 @@
 //! Direct-file predicates compare original detectors with complete native written quantities.
 
-#[path = "legacy.rs"]
-mod legacy;
 #[path = "origins.rs"]
 mod origins;
 
-use super::native;
+use super::{declaration_legacy as legacy, native};
 use std::collections::BTreeMap;
 
 #[test]
