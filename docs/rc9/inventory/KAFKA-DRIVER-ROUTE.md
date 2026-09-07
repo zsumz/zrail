@@ -30,8 +30,22 @@ imports; preserve case-sensitive acceptance; test exact counts and wrong-file
 decoys; and require missing/invalid UTF-8 inputs to fail with the intended native
 policy or completeness diagnostic.
 
-These are implemented translations with qualification pending. They do not yet
-provide repeated, committed-revision differential evidence or original
-`include_str!` compilation-failure evidence. The retained runtime scenario has
-no bound execution receipt from this slice. All 31 instances remain unverified.
-No downstream test or helper was changed or removed.
+The sixteen source/input translations are verified at
+`f552b5387b8d7941e8b52facdfe8e7e8829889b4`. Two byte-identical reports cover 189
+cases each (43 accepted, 146 rejected) and 23 original compilations: one clean
+source-only test and missing/invalid-UTF-8 failures for each of eleven inputs.
+The whole original source-only function is extracted byte-for-byte and checked
+for AST equality; its single runnable, nonignored test must pass. Missing-input
+diagnostics identify the original include; invalid-UTF-8 diagnostics identify
+the selected file's invalid byte. Every fixture binds the eleven selected inputs
+and any unrelated-file decoy.
+
+The [evidence index](../evidence/route-source-index.json) preserves both runs and
+the initial harness failure. The trusted artifact validator checks all policy
+selectors, raw quantities, input hashes, original outcomes and compiler sites;
+42 tamper cases fail. These producers and validators stay outside zrail's runtime.
+
+The fifteen retained runtime assertions still have no execution receipt from
+this slice. No downstream test or helper was changed or removed. A future cutover
+may remove only the source-only function after complete repository qualification;
+the directory/routing/DNS/owner-reuse scenario and mixed file remain.

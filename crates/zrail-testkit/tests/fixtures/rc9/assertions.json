@@ -51661,18 +51661,19 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-FORBID-BrokerSet",
-          "cause": "Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ],
+      },
+      "blockers": [],
       "compile_input_preconditions": [
         "KD-ROUTE-INPUT-route_admission",
         "KD-ROUTE-INPUT-route_directory",
@@ -51736,18 +51737,19 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-FORBID-ConnectionSet",
-          "cause": "Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ],
+      },
+      "blockers": [],
       "compile_input_preconditions": [
         "KD-ROUTE-INPUT-route_admission",
         "KD-ROUTE-INPUT-route_directory",
@@ -51811,18 +51813,19 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-FORBID-Poller",
-          "cause": "Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ],
+      },
+      "blockers": [],
       "compile_input_preconditions": [
         "KD-ROUTE-INPUT-route_admission",
         "KD-ROUTE-INPUT-route_directory",
@@ -51886,18 +51889,19 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-FORBID-SingleBroker",
-          "cause": "Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_bans_preserve_every_selected_file_and_raw_matching_context",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ],
+      },
+      "blockers": [],
       "compile_input_preconditions": [
         "KD-ROUTE-INPUT-route_admission",
         "KD-ROUTE-INPUT-route_directory",
@@ -51955,18 +51959,19 @@
           "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-INPUT-facade",
-          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-INPUT-route_admission",
@@ -52012,18 +52017,19 @@
           "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-INPUT-route_admission",
-          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-INPUT-route_directory",
@@ -52069,18 +52075,19 @@
           "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-INPUT-route_directory",
-          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-INPUT-route_failure",
@@ -52126,18 +52133,19 @@
           "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-INPUT-route_failure",
-          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-INPUT-route_install",
@@ -52183,18 +52191,19 @@
           "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-INPUT-route_install",
-          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-INPUT-route_install_publish",
@@ -52240,18 +52249,19 @@
           "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-INPUT-route_install_publish",
-          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-INPUT-route_install_rollback",
@@ -52297,18 +52307,19 @@
           "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-INPUT-route_install_rollback",
-          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-INPUT-route_install_work",
@@ -52354,18 +52365,19 @@
           "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-INPUT-route_install_work",
-          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-INPUT-route_resolution",
@@ -52411,18 +52423,19 @@
           "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-INPUT-route_resolution",
-          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-INPUT-route_state",
@@ -52468,18 +52481,19 @@
           "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-INPUT-route_state",
-          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-INPUT-route_turn",
@@ -52525,18 +52539,19 @@
           "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-INPUT-route_turn",
-          "cause": "Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_inputs_remain_required_when_absence_predicates_have_zero_matches",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-ROUTE-OWNER-FIELD",
@@ -52579,18 +52594,19 @@
           "REP-FILE-004"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
-          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_facade_preserves_exact_raw_quantity_and_file_location"
-        ]
-      },
-      "blockers": [
-        {
-          "id": "KD-ROUTE-OWNER-FIELD",
-          "cause": "Bind required presence, duplicate count, wrong-file and misleading-comment fixtures to repeated frozen evidence."
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::route_facade_preserves_exact_raw_quantity_and_file_location",
+          "rust-test:crates/zrail-rust/tests/rc9_route/policy_test.rs::qualify_frozen_route_source_and_compile_input_parity"
+        ],
+        "file_parity_evidence": {
+          "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+          "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+          "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4"
         }
-      ],
+      },
+      "blockers": [],
       "compile_input_preconditions": [
         "KD-ROUTE-INPUT-facade"
       ]
@@ -58689,7 +58705,7 @@
     "implemented": 558,
     "verified_by_disposition": {
       "existing native rail": 0,
-      "declarative translation": 0,
+      "declarative translation": 16,
       "new engine capability": 496,
       "behavioral evidence retained": 0,
       "approved retirement": 0

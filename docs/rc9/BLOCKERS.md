@@ -53,22 +53,6 @@ The separate reference runner also remains open as `RC9-INVENTORY-RF-REFERENCE-S
 | `KD-RETIRED-TREE-tcp` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
 | `KD-RETIRED-TREE-timer` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
 | `KD-RETIRED-TREE-tls` | A bounded physical prohibition exists; preserve the exact descendant scope and record stronger explicit read/symlink failure behavior in differential evidence. |
-| `KD-ROUTE-FORBID-BrokerSet` | Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence. |
-| `KD-ROUTE-FORBID-ConnectionSet` | Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence. |
-| `KD-ROUTE-FORBID-Poller` | Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence. |
-| `KD-ROUTE-FORBID-SingleBroker` | Bind positive and negative native/original cases to one committed implementation and repeat the complete frozen source-policy evidence. |
-| `KD-ROUTE-INPUT-facade` | Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification. |
-| `KD-ROUTE-INPUT-route_admission` | Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification. |
-| `KD-ROUTE-INPUT-route_directory` | Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification. |
-| `KD-ROUTE-INPUT-route_failure` | Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification. |
-| `KD-ROUTE-INPUT-route_install` | Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification. |
-| `KD-ROUTE-INPUT-route_install_publish` | Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification. |
-| `KD-ROUTE-INPUT-route_install_rollback` | Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification. |
-| `KD-ROUTE-INPUT-route_install_work` | Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification. |
-| `KD-ROUTE-INPUT-route_resolution` | Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification. |
-| `KD-ROUTE-INPUT-route_state` | Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification. |
-| `KD-ROUTE-INPUT-route_turn` | Native required-path and UTF-8 fixtures exist; bind the original include_str compile-failure cases and repeated frozen evidence before verification. |
-| `KD-ROUTE-OWNER-FIELD` | Bind required presence, duplicate count, wrong-file and misleading-comment fixtures to repeated frozen evidence. |
 | `KD-ROUTE-RUNTIME-CONTROL-ATTEMPTS` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
 | `KD-ROUTE-RUNTIME-CONTROL-LANES` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |
 | `KD-ROUTE-RUNTIME-CONTROL-OWNERS` | Retain the original runtime scenario unchanged and bind its exact nonignored execution outcome, source/support inputs and execution context through the downstream evidence contract; no execution receipt exists for this slice. |

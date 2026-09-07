@@ -65,8 +65,8 @@ surface remains an inventory blocker, not an inferred behavioral exemption.
 
 The [mixed route-test review](inventory/KAFKA-DRIVER-ROUTE.md) adds five previously
 unlisted source-policy instances, eleven required compile-time inputs and fifteen
-retained runtime assertions. Its existing-native-policy translation has focused
-fixtures; all 31 instances remain unverified pending bound qualification.
+retained runtime assertions. Its six stock file policies now have repeated committed evidence for all sixteen
+source/input instances; the fifteen runtime assertions remain unverified.
 
 The [Rafter source-boundary/private-name review](inventory/RAFTER-SOURCE-BOUNDARIES.md)
 adds 41 retained boundary/input requirements and 25 contracts covered by the
@@ -94,11 +94,11 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 403 | 351 | 332 |
+| kafka-driver | 826 | 772 | 403 | 351 | 348 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 88 | 34 | 0 |
 
-The **496 verified assertions** comprise five facade predicates, four
+The **512 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus five authored dependency key
@@ -106,11 +106,11 @@ inventories, 35 authored dependency-field assertions and preconditions, and
 36 authored provenance assertions and parser preconditions, and 20 whole-lock
 cardinality/version/source/checksum assertions, plus 16 raw dependency/read
 assertions, plus 125 qualification text assertions and read preconditions, and four transport
-method/parser assertions, two expression-path assertions, two exact-owner assertions, two rename assertions, and two trait/type-set assertions.
+method/parser assertions, two expression-path assertions, two exact-owner assertions, two rename assertions, and two trait/type-set assertions, plus sixteen route source/input assertions.
 Size instances include
-all 141 measured baselines and three hard allowances. Their disposition
-is **new engine capability**; verified counts for the other four dispositions
-remain zero. Each registry instance binds its original TOML entry and the
+all 141 measured baselines and three hard allowances. The original 496 verified instances use **new engine capability**; sixteen
+route instances use **declarative translation**. Verified counts for the other
+three dispositions remain zero. Each registry instance binds its original TOML entry and the
 independently failing helper predicate. The full size report preserves the
 individual source digest, selected budget, baseline, and mutation diagnostics.
 `KD-FACADE-LIVE` and `KF-FACADE-LIVE` remain unverified. No complete repository
@@ -751,5 +751,23 @@ differs from the new reports. No later code is relabeled as qualified by this ru
 The [mixed route review](inventory/KAFKA-DRIVER-ROUTE.md) additionally accounts
 for 31 previously unlisted instances and supplies six stock file policies with
 focused differential fixtures. All of those instances remain unverified.
-The current ledger is **606 reviewed / 524 implemented / 496 verified**.
+That intermediate checkpoint recorded **606 reviewed / 524 implemented / 496 verified**.
 Inventory completion, full consumer qualification and release approval remain open.
+
+## Committed route-source and compile-input parity
+
+At `f552b5387b8d7941e8b52facdfe8e7e8829889b4`, two fresh runs produced identical
+6,723,169-byte reports with SHA-256
+`db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609`.
+Each run checks 189 cases: 43 accepted, 146 rejected, with complete native policy
+observations, input hashes and intended diagnostics. Unrelated-file decoys are
+bound explicitly. The complete unchanged source-only test compiles and runs once;
+all eleven inputs separately fail compilation when missing and when invalid UTF-8.
+The two compiler diagnostic locations are preserved rather than conflated.
+
+[The route index](evidence/route-source-index.json) binds the reports, runners and
+initial failed harness diagnostic check. Two artifact-validator methods reject
+42 adversarial mutations. All sixteen `KD-ROUTE-FORBID-*`, `KD-ROUTE-INPUT-*` and
+`KD-ROUTE-OWNER-FIELD` instances are verified. Fifteen `KD-ROUTE-RUNTIME-*`
+assertions still require behavioral execution evidence. This source-only slice
+does not qualify the whole consumer or authorize deleting its mixed test file.

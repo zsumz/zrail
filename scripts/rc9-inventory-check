@@ -17,6 +17,7 @@ MAX_BYTES = 64 * 1024 * 1024
 QUALIFICATION_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_qualification_evidence.py")["verify"]
 METHOD_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_method_evidence.py")["verify"]
 TEXT_SOURCES = runpy.run_path(ROOT / "scripts/rc9_text_sources.py")["load"]
+ROUTE_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_route_evidence.py")["verify"]
 
 
 def unique_object(pairs):
@@ -104,10 +105,12 @@ def parity_report(assertion, field, prefix, cache):
     return report
 
 
-def file_evidence(assertion, cache):
+def file_evidence(assertion, cache, files):
     report = parity_report(assertion, "file_parity_evidence", "repository:file:", cache)
     if report is None:
         return
+    if assertion["id"].startswith("KD-ROUTE-"):
+        return ROUTE_EVIDENCE(assertion, report, files)
     if assertion["id"].startswith("KD-QUAL-"):
         QUALIFICATION_EVIDENCE(assertion, report)
     for policy_id in assertion["replacement"]["policy_ids"]:
@@ -299,7 +302,7 @@ def main():
                     and not condition.get("read_preconditions"), "invalid frozen read precondition")
             require(not replacement["verified"] or condition["replacement"]["verified"],
                     "verified assertion depends on an unverified read precondition")
-        file_evidence(assertion, file_reports)
+        file_evidence(assertion, file_reports, files)
         lock_evidence(assertion, file_reports)
         method_report = parity_report(assertion, "rust_inventory_parity_evidence", "rust:inventory:", file_reports)
         if method_report is not None:
