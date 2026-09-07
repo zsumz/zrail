@@ -61,7 +61,8 @@ pub(super) fn qualify(root: &Path, policies: &[RepositoryFileRule]) -> Vec<Fixtu
                         Some("//! A written module.\n"),
                         accepted,
                     ));
-                    fs::remove_file(root.join(path)).expect("remove isolated case");
+                    fs::remove_dir_all(root.join("src"))
+                        .expect("remove isolated naming case and its exact directory spelling");
                 }
             }
             RepositoryFilePredicate::Literal(literal) => {

@@ -38,11 +38,14 @@ struct Fixture(PathBuf);
 
 impl Fixture {
     fn new() -> Self {
-        let root = std::env::temp_dir().join(format!(
-            "zrail-boundary-parity-{}-{:?}",
-            std::process::id(),
-            std::thread::current().id()
-        ));
+        let root = std::env::temp_dir()
+            .canonicalize()
+            .expect("canonical temporary directory")
+            .join(format!(
+                "zrail-boundary-parity-{}-{:?}",
+                std::process::id(),
+                std::thread::current().id()
+            ));
         fs::create_dir(&root).expect("fresh isolated fixture");
         Self(root)
     }

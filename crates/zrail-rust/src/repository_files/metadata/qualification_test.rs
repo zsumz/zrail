@@ -15,11 +15,14 @@ use super::{Suite, fixtures, metadata, model};
 #[test]
 fn frozen_metadata_assertions_agree_on_every_authored_field_and_negative_input() {
     let suite = metadata();
-    let root = std::env::temp_dir().join(format!(
-        "zrail-metadata-parity-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-metadata-parity-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
     let (policies, _) = model::policies(&project(), &suite);
     let source = project().join("crates/zrail-testkit/tests/fixtures/rc9/metadata/valid");
     let inputs = model::inputs(&source, &policies, &suite);

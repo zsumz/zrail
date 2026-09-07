@@ -8,11 +8,14 @@ use super::{
 
 #[test]
 fn frozen_impl_pairs_match_every_path_type_and_nested_syntax_context() {
-    let root = std::env::temp_dir().join(format!(
-        "zrail-impl-parity-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-impl-parity-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
     for (source, expected) in impl_cases::CASES {
         let expected = expected
             .iter()
@@ -63,11 +66,14 @@ fn frozen_impl_assertion_preserves_exact_trait_type_and_file_membership() {
         "src/reactor/direct_plaintext/rustls_transport.rs".into(),
         source,
     )]);
-    let root = std::env::temp_dir().join(format!(
-        "zrail-impl-fixtures-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-impl-fixtures-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
     let cases = fixtures::qualify_family(&root, &roots, &sources, &policy, family);
     assert_eq!(cases.len(), family.totals().0);
     assert_eq!(

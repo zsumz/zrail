@@ -21,11 +21,14 @@ fn frozen_rename_assertion_preserves_zero_bans_and_exact_alias_identities() {
         "src/reactor/direct_plaintext/set_owner.rs".into(),
         "use p::ConnectionSet;".into(),
     )]);
-    let root = std::env::temp_dir().join(format!(
-        "zrail-rename-fixtures-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-rename-fixtures-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
     let cases = fixtures::qualify_family(&root, &roots, &sources, &policy, family);
     assert_eq!(cases.len(), family.totals().0);
     assert_eq!(

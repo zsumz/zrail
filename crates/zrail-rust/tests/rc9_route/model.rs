@@ -48,11 +48,14 @@ pub(super) struct Fixture {
 
 impl Fixture {
     pub(super) fn new(name: &str, policies: &[RepositoryFileRule]) -> Self {
-        let root = std::env::temp_dir().join(format!(
-            "zrail-route-{name}-{}-{:?}",
-            std::process::id(),
-            std::thread::current().id()
-        ));
+        let root = std::env::temp_dir()
+            .canonicalize()
+            .expect("canonical temporary directory")
+            .join(format!(
+                "zrail-route-{name}-{}-{:?}",
+                std::process::id(),
+                std::thread::current().id()
+            ));
         Self::at(root, policies)
     }
 

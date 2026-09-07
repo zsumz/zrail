@@ -6,11 +6,14 @@ use super::suite;
 #[test]
 fn frozen_dependency_key_sets_agree_on_every_identity_and_type_boundary() {
     let suite = suite();
-    let root = std::env::temp_dir().join(format!(
-        "zrail-key-set-parity-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-key-set-parity-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
     let (policies, _) = metadata::model::policies(&project(), &suite);
     let source = project().join("crates/zrail-testkit/tests/fixtures/rc9/key-sets/valid");
     let inputs = metadata::model::inputs(&source, &policies, &suite);

@@ -46,11 +46,14 @@ mod renames_test;
 fn frozen_transport_methods_match_every_parsed_expression_context() {
     assert_eq!(legacy::expected().len(), 11);
     assert_eq!(legacy::expected().values().sum::<usize>(), 20);
-    let root = std::env::temp_dir().join(format!(
-        "zrail-method-parity-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id(),
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-method-parity-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id(),
+        ));
     for (index, source) in syntax_cases::CASES.into_iter().enumerate() {
         let expected = legacy::observed("src/sample.rs", source);
         let observed = native::observed(&root, source);
@@ -82,11 +85,14 @@ fn frozen_transport_assertion_rejects_each_quantity_and_scope_regression() {
                 .expect("write synthetic source");
         }
     }
-    let root = std::env::temp_dir().join(format!(
-        "zrail-transport-fixtures-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id(),
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-transport-fixtures-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id(),
+        ));
     let cases = fixtures::qualify(&root, &roots, &sources, &policy);
     assert_eq!(cases.len(), 76);
     assert_eq!(cases.iter().filter(|row| row.native_accepted).count(), 7);
@@ -125,11 +131,14 @@ fn frozen_owner_assertion_rejects_missing_and_unexpected_members() {
         "src/reactor/direct_plaintext/set_owner.rs".into(),
         "fn run(x: ConnectionSet) {}".into(),
     )]);
-    let root = std::env::temp_dir().join(format!(
-        "zrail-owner-fixtures-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-owner-fixtures-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
     let cases = fixtures::qualify_family(&root, &roots, &sources, &policy, family);
     assert_eq!(cases.len(), family.totals().0);
     assert_eq!(
@@ -140,11 +149,14 @@ fn frozen_owner_assertion_rejects_missing_and_unexpected_members() {
 
 #[test]
 fn frozen_transport_expression_paths_preserve_authored_contexts_and_quantities() {
-    let root = std::env::temp_dir().join(format!(
-        "zrail-expression-parity-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id(),
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-expression-parity-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id(),
+        ));
     for (source, count) in expression_cases::CASES {
         let expected = legacy::associated("src/sample.rs", source);
         assert_eq!(
@@ -162,11 +174,14 @@ fn frozen_transport_expression_paths_preserve_authored_contexts_and_quantities()
 
 #[test]
 fn frozen_transport_path_membership_preserves_every_written_owner_context() {
-    let root = std::env::temp_dir().join(format!(
-        "zrail-path-parity-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-path-parity-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
     for (source, count) in path_cases::CASES {
         let expected = legacy::owners("src/sample.rs", source);
         assert_eq!(
@@ -196,11 +211,14 @@ fn frozen_transport_path_membership_preserves_every_written_owner_context() {
 
 #[test]
 fn frozen_import_renames_preserve_complete_source_and_alias_identity() {
-    let root = std::env::temp_dir().join(format!(
-        "zrail-rename-parity-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-rename-parity-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
     for (source, counts) in rename_cases::CASES {
         let expected = counts
             .iter()
@@ -254,11 +272,14 @@ fn frozen_expression_assertion_rejects_quantity_and_scope_changes() {
             .expect("fixture source");
         }
     }
-    let root = std::env::temp_dir().join(format!(
-        "zrail-expression-fixtures-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-expression-fixtures-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
     let cases = fixtures::qualify_family(&root, &roots, &sources, &policy, family);
     assert_eq!(cases.len(), family.totals().0);
     assert_eq!(

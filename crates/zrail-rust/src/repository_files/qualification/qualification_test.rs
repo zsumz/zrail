@@ -6,11 +6,14 @@ use super::suite;
 #[test]
 fn frozen_qualification_checks_preserve_counts_intervals_images_and_input_reads() {
     let suite = suite();
-    let root = std::env::temp_dir().join(format!(
-        "zrail-qualification-parity-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id(),
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-qualification-parity-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id(),
+        ));
     let (policies, _) = metadata::model::policies(&project(), &suite);
     let source = project().join("crates/zrail-testkit/tests/fixtures/rc9/qualification/valid");
     let inputs = metadata::model::inputs(&source, &policies, &suite);

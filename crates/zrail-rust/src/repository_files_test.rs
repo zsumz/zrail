@@ -34,11 +34,14 @@ use std::{
 
 #[test]
 fn frozen_file_predicates_agree_on_positive_and_adversarial_physical_fixtures() {
-    let root = std::env::temp_dir().join(format!(
-        "zrail-file-parity-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-file-parity-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
     let (policies, _) = model::policies();
     let rows = fixtures::qualify(&root, &policies);
     for policy in policies {

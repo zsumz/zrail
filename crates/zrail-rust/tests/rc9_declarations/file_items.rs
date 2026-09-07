@@ -104,9 +104,12 @@ fn frozen_backend_variant_predicate_retains_exact_enum_and_variant_context() {
 }
 
 fn root(name: &str) -> std::path::PathBuf {
-    std::env::temp_dir().join(format!(
-        "zrail-file-{name}-syntax-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id()
-    ))
+    std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-file-{name}-syntax-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ))
 }

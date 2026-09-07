@@ -6,11 +6,14 @@ use super::suite;
 #[test]
 fn frozen_raw_dependency_checks_preserve_line_spelling_counts_and_read_preconditions() {
     let suite = suite();
-    let root = std::env::temp_dir().join(format!(
-        "zrail-raw-dependency-parity-{}-{:?}",
-        std::process::id(),
-        std::thread::current().id(),
-    ));
+    let root = std::env::temp_dir()
+        .canonicalize()
+        .expect("canonical temporary directory")
+        .join(format!(
+            "zrail-raw-dependency-parity-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id(),
+        ));
     let (policies, _) = metadata::model::policies(&project(), &suite);
     let source = project().join("crates/zrail-testkit/tests/fixtures/rc9/raw-dependency/valid");
     let inputs = metadata::model::inputs(&source, &policies, &suite);
