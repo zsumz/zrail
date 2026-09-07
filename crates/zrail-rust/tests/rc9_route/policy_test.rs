@@ -1,13 +1,25 @@
 //! Mixed-file source assertions migrate independently of the retained runtime scenario.
 
+#[path = "compiler.rs"]
+mod compiler;
+#[path = "fixtures.rs"]
+mod fixtures;
 #[path = "legacy.rs"]
 mod legacy;
 #[path = "model.rs"]
 mod model;
+#[path = "qualification.rs"]
+mod qualification;
 
 use std::fs;
 
 use model::{FACADE, FORBIDDEN, Fixture, MARKER};
+
+#[test]
+#[ignore = "requires prefetched snapshots, a committed tree and a fresh ZRAIL_RC9_ROUTE_REPORT"]
+fn qualify_frozen_route_source_and_compile_input_parity() {
+    qualification::run();
+}
 
 #[test]
 fn route_bans_preserve_every_selected_file_and_raw_matching_context() {

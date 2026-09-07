@@ -53,6 +53,10 @@ impl Fixture {
             std::process::id(),
             std::thread::current().id()
         ));
+        Self::at(root, policies)
+    }
+
+    pub(super) fn at(root: PathBuf, policies: &[RepositoryFileRule]) -> Self {
         assert!(!root.exists(), "never overwrite unrelated fixture data");
         let inputs: BTreeMap<_, _> = policies
             .iter()
