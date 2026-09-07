@@ -117,7 +117,11 @@ predicate = { kind = "forbidden-names", names = ["helpers"], part = "component-s
         coverage(&repository).repository_files[0]
             .checkout_path
             .as_deref(),
-        repository.0.to_str()
+        repository
+            .0
+            .canonicalize()
+            .expect("canonical checkout path")
+            .to_str()
     );
 }
 
