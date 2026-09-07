@@ -108,26 +108,34 @@ impl Compiler {
             } else {
                 path.rsplit('/').next().expect("input name")
             };
-            assert!(
+            let located =
                 error["spans"]
                     .as_array()
                     .expect("spans")
                     .iter()
                     .any(|span| {
-                        span["is_primary"] == true
-                            && span["file_name"] == SOURCE
-                            && span["text"]
-                                .as_array()
-                                .expect("source lines")
-                                .iter()
-                                .any(|line| {
-                                    line["text"]
-                                        .as_str()
-                                        .expect("line")
-                                        .contains(&format!("include_str!(\"{literal}\")"))
-                                })
-                    }),
-                "failure must name the original include, not an unrelated compile error"
+                        if span["is_primary"] != true {
+                            return false;
+                        }
+                        if invalid_utf8 {
+                            span["file_name"] == literal
+                                && span["byte_start"] == 0
+                                && span["label"] == "byte `255` is not valid utf-8"
+                        } else {
+                            span["file_name"] == SOURCE
+                                && span["text"].as_array().expect("source lines").iter().any(
+                                    |line| {
+                                        line["text"]
+                                            .as_str()
+                                            .expect("line")
+                                            .contains(&format!("include_str!(\"{literal}\")"))
+                                    },
+                                )
+                        }
+                    });
+            assert!(
+                located,
+                "failure must identify the selected include input: {error}"
             );
         } else {
             assert!(errors.is_empty());
@@ -154,7 +162,9 @@ impl Compiler {
                    "binary_sha256": sha256_hex(&fs::read(binary).expect("test bytes")),
                    "list_sha256": sha256_hex(&list.stdout)})
         });
-        json!({"executable": self.executable, "arguments": arguments, "exit_code": output.status.code(),
+        json!({"executable": self.executable,
+               "executable_sha256": sha256_hex(&fs::read(&self.executable).expect("compiler bytes")),
+               "arguments": arguments, "exit_code": output.status.code(),
                "stderr_sha256": sha256_hex(&output.stderr), "errors": errors,
                "execution": execution})
     }

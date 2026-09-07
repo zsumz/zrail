@@ -75,7 +75,7 @@ pub(super) fn run() {
         "limitations": [
             "Only the source-only route test and its eleven compile inputs are qualified; the mixed file's runtime scenario is retained and unqualified here.",
             "Raw UTF-8 and physical-file observations do not claim semantic field/type identity, Cargo analysis, or full repository qualification.",
-            "The complete unchanged source-only test compiles and executes on the baseline. Each missing or invalid UTF-8 input is compiled separately and must fail at its original include_str invocation."
+            "The complete unchanged source-only test compiles and executes on the baseline. Missing inputs fail at the original include_str invocation; invalid UTF-8 diagnostics identify the included file's invalid byte."
         ]
     });
     drop(fixture);

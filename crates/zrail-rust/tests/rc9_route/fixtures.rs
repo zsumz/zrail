@@ -25,6 +25,19 @@ pub(super) fn inputs(fixture: &Fixture) -> BTreeMap<String, Value> {
         .collect()
 }
 
+fn extra_inputs(fixture: &Fixture) -> BTreeMap<String, Value> {
+    let path = "unrelated.rs";
+    if fixture.root.join(path).exists() {
+        let bytes = fs::read(fixture.root.join(path)).expect("owned decoy bytes");
+        BTreeMap::from([(
+            path.into(),
+            json!({"sha256": sha256_hex(&bytes), "bytes": bytes.len()}),
+        )])
+    } else {
+        BTreeMap::new()
+    }
+}
+
 pub(super) fn observe(
     fixture: &Fixture,
     policies: &[RepositoryFileRule],
@@ -74,7 +87,7 @@ pub(super) fn observe(
         }
         assert_eq!(findings, expected, "{name}");
     }
-    json!({"case": name, "inputs": inputs(fixture), "legacy_accepted": legacy_accepted,
+    json!({"case": name, "inputs": inputs(fixture), "extra_inputs": extra_inputs(fixture), "legacy_accepted": legacy_accepted,
            "native_accepted": native_accepted, "observations": observations,
            "findings": findings, "error": error})
 }
