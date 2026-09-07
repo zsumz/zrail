@@ -1,5 +1,10 @@
 # Active rc9 goal checkpoint
 
+The 118-commit history is now PGP-signed in the user's commit style. See the
+[signed-history correspondence](HISTORY.md) before resolving the historical
+commit identifiers below. The recorded evidence and release blockers remain
+unchanged by that metadata-only rewrite.
+
 The user resumed work and explicitly set a completion goal on 2026-09-07.
 See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
 The current ledger is **672 reviewed / 558 implemented / 512 verified**;
