@@ -176,10 +176,7 @@ pub(super) fn observe(
             };
             assert_eq!(row.diagnostics, expected, "{case}: intended diagnostic");
             if diagnostic.is_empty() {
-                assert_eq!(
-                    row.native_paths, row.legacy_paths,
-                    "{case}: complete physical source selection"
-                );
+                compare_paths(&row.legacy_paths, &row.native_paths);
             }
         }
         Err(error) => {
@@ -212,5 +209,16 @@ pub(super) fn source_binding() {
     assert_eq!(
         sha256_hex(&source.as_bytes()[start..start + length]),
         "b2cd5030320fbd1bb6e958d71ae82fa2e0a505b9d8842144f8528450fc25388a"
+    );
+}
+
+pub(super) fn compare_paths(original: &[String], native: &[String]) {
+    let mut original = original.iter().map(Path::new).collect::<Vec<_>>();
+    let mut native = native.iter().map(Path::new).collect::<Vec<_>>();
+    original.sort();
+    native.sort();
+    assert_eq!(
+        original, native,
+        "complete multiset; no path deduplication or ordering equivalence claim"
     );
 }

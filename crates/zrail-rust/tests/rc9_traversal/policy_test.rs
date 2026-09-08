@@ -30,6 +30,7 @@ fn portable() -> Vec<Row> {
             "empty",
             "nested-empty",
             "ordered-source",
+            "component-order",
             "git-empty",
             "git-source",
         ] {
@@ -69,6 +70,10 @@ fn portable() -> Vec<Row> {
                     }
                     fixture.write("outside/decoy.rs", "// not selected");
                 }
+                "component-order" => {
+                    fixture.write(&format!("{selected}/a.rs"), "// sibling");
+                    fixture.write(&format!("{selected}/a/nested.rs"), "// descendant");
+                }
                 "git-empty" | "git-source" => {
                     fs::create_dir(path.join(".git")).expect("pruned tree");
                     if case == "git-source" {
@@ -90,9 +95,26 @@ fn portable() -> Vec<Row> {
                     ""
                 },
             ));
+            if case == "component-order" {
+                let row = rows.last().expect("ordering observation");
+                assert_eq!(
+                    row.legacy_paths,
+                    [
+                        format!("{selected}/a/nested.rs"),
+                        format!("{selected}/a.rs")
+                    ]
+                );
+                assert_eq!(
+                    row.native_paths,
+                    [
+                        format!("{selected}/a.rs"),
+                        format!("{selected}/a/nested.rs")
+                    ]
+                );
+            }
         }
     }
-    assert_eq!(rows.len(), 42);
+    assert_eq!(rows.len(), 48);
     rows
 }
 

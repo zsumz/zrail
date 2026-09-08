@@ -30,10 +30,11 @@ struct Report {
     roots: Vec<String>,
     frozen_inputs: BTreeMap<String, String>,
     frozen_paths: Vec<String>,
+    native_frozen_paths: Vec<String>,
     frozen_observations: Vec<crate::GovernedRepositoryFile>,
     physical: Vec<model::Row>,
     injected: Vec<super::injected::Row>,
-    limitations: [&'static str; 4],
+    limitations: [&'static str; 5],
 }
 
 #[cfg(unix)]
@@ -111,7 +112,7 @@ pub(super) fn run() {
         })
         .map(|entry| entry.path.clone())
         .collect::<Vec<_>>();
-    assert_eq!(native_paths, frozen_paths);
+    model::compare_paths(&frozen_paths, &native_paths);
     let frozen_inputs = frozen_paths
         .iter()
         .map(|path| (path.clone(), hash(&root.join(path))))
@@ -119,7 +120,7 @@ pub(super) fn run() {
     let mut physical = super::portable();
     physical.extend(super::unix::links_and_specials());
     physical.extend(super::unix::permissions());
-    assert_eq!(physical.len(), 127);
+    assert_eq!(physical.len(), 133);
     let injected = super::injected::run();
     let pins: serde_json::Value = serde_json::from_slice(
         &fs::read(project.join("crates/zrail-testkit/tests/fixtures/rc9/snapshots.json"))
@@ -153,10 +154,12 @@ pub(super) fn run() {
         roots,
         frozen_inputs,
         frozen_paths,
+        native_frozen_paths: native_paths,
         frozen_observations: analysis.policies,
         physical,
         injected,
         limitations: [
+            "The original sorts PathBuf components; native evidence sorts UTF-8 path strings. Complete multisets are compared without deduplication; both observed orders remain in the report.",
             "Only three physical traversal preconditions over six frozen roots; no complete source/Cargo policy, root configuration migration, or downstream cutover.",
             "Unread pruned/link descendants and unselected unread directories fail closed more strongly than the old selected-root traversal.",
             "The old walker does not recurse directory links; its link-cycle cases terminate and are executed. Special-entry observations never read content streams.",

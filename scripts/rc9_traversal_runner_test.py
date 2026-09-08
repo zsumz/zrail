@@ -13,7 +13,7 @@ class TraversalRunner(unittest.TestCase):
         self.assertEqual(len(ROOTS), len(set(ROOTS)))
         self.assertEqual(len(SUITES), 7)
         self.assertFalse(any(a != b and a.startswith(b + "/") for a in ROOTS for b in ROOTS))
-        self.assertEqual([row[2] for row in SUITES.values()], [0, 42, 66, 19, 0, 96, 223])
+        self.assertEqual([row[2] for row in SUITES.values()], [0, 48, 66, 19, 0, 96, 229])
         self.assertEqual(sum(row[0] for row in SUITES.values()), 2)
 
     def test_each_required_test_must_actually_pass_once(self):

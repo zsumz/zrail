@@ -36,8 +36,9 @@ terminates because it does not recurse links; this old cycle is safe to execute,
 unlike the retired-tree walker. Native traversal remains bounded and UTF-8-path
 constrained; this is not unbounded or arbitrary-config equivalence.
 
-- 42 portable cases: each root missing, replaced by a file, empty, with nested
-  empty directories, ordered/cfg/extension/decoy inputs, and empty/Rust `.git`.
+- 48 portable cases: each root missing, replaced by a file, empty, with nested
+  empty directories, ordered/cfg/extension/decoy inputs, component-order
+  differences, and empty/Rust `.git`.
 - 66 Unix cases: eight link cases and three FIFO extension cases per root.
 - 19 explicitly permission-gated cases: unread empty/nested directories and
   unread source files per root, plus an unread directory outside selected roots.
@@ -51,6 +52,14 @@ static filesystem seam and require an exact error from the entire scan, with
 one injected operation and no partial inventory. Its metadata inspection is
 not misrepresented as a call to `DirEntry::file_type`. Real permission/link
 cases separately bind the public file-analysis diagnostic path.
+
+The first frozen run at `08696c81e44542a92be2ea7ff4fe15b01edac8a6` found all
+772 paths in both inventories, but its direct vector comparison failed: native
+UTF-8 string ordering puts `a.rs` before `a/nested.rs`, while the original
+`PathBuf` ordering reverses them. The failed log is preserved, not relabeled as
+a pass. Both orders are retained in the corrected report and compared as
+multisets without deduplication. Six explicit cases enforce this distinction;
+the precondition proof does not assert identical output ordering.
 
 The proposed trusted runner is `scripts/rc9-traversal`. Qualification must use a
 clean signed producer, bind the complete frozen selected-path/input inventory,
