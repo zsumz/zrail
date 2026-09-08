@@ -8,21 +8,21 @@ use std::{
 };
 
 #[derive(Clone, Copy, Debug)]
-pub(super) enum Fault {
+pub(crate) enum Fault {
     Directory,
     EntryFirst,
     EntryLast,
     Metadata,
 }
 
-pub(super) struct Injected {
-    pub(super) path: PathBuf,
-    pub(super) fault: Fault,
-    pub(super) kind: io::ErrorKind,
-    pub(super) hits: Cell<usize>,
+pub(crate) struct Injected {
+    pub(crate) path: PathBuf,
+    pub(crate) fault: Fault,
+    pub(crate) kind: io::ErrorKind,
+    pub(crate) hits: Cell<usize>,
 }
 
-pub(super) struct Entries {
+pub(crate) struct Entries {
     real: fs::ReadDir,
     pending: Option<io::ErrorKind>,
     first: bool,

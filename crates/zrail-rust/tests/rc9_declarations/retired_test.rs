@@ -8,9 +8,8 @@ mod cases;
 mod entry_oracle;
 #[path = "retired_entry_test.rs"]
 mod entry_test;
-#[path = "retired_fault_io.rs"]
-mod fault_io;
 use super::declaration_legacy as legacy;
+use crate::inventory::test_faults as fault_io;
 #[path = "retired_model.rs"]
 mod model;
 #[path = "retired_legacy.rs"]

@@ -4,6 +4,9 @@ mod classify;
 mod exclusions;
 mod io;
 mod scan;
+#[cfg(test)]
+#[path = "../../tests/rc9_declarations/retired_fault_io.rs"]
+pub(crate) mod test_faults;
 mod traverse;
 mod types;
 

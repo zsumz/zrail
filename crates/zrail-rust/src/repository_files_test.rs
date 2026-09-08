@@ -24,6 +24,8 @@ mod qualification;
 mod raw_dependency;
 #[path = "../tests/rc9_route/policy_test.rs"]
 mod route_sources;
+#[path = "../tests/rc9_traversal/policy_test.rs"]
+mod traversal;
 
 use std::{
     fs,
