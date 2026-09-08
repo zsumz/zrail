@@ -34,12 +34,35 @@ struct Report {
 }
 
 pub(super) fn run() {
+    qualify(
+        POLICY,
+        &model::policies(),
+        "ZRAIL_RC9_RETIRED_REPORT",
+        "The old tree walker ignores read errors and follows directory links without bounds. Native unread and link boundaries fail closed; this report does not equate those failure paths.",
+    );
+}
+
+pub(super) fn run_boundary() {
+    qualify(
+        "docs/rc9/policies/kafka-driver.retired-boundary.fragment.toml",
+        &super::boundary::policies(),
+        "ZRAIL_RC9_RETIRED_BOUNDARY_REPORT",
+        "Non-directory tree selection is paired with separately executed physical and injected-error suites; their fail-closed differences are not exact error-path parity.",
+    );
+}
+
+fn qualify(
+    policy_path: &str,
+    policies: &model::Fragment,
+    output_variable: &str,
+    boundary_scope: &'static str,
+) {
     let project = model::project();
     let snapshots =
         PathBuf::from(std::env::var_os("ZRAIL_RC9_SNAPSHOTS").expect("prefetched snapshots"))
             .canonicalize()
             .expect("snapshots");
-    let output = PathBuf::from(std::env::var_os("ZRAIL_RC9_RETIRED_REPORT").expect("fresh report"));
+    let output = PathBuf::from(std::env::var_os(output_variable).expect("fresh report"));
     let directory = output
         .parent()
         .expect("parent")
@@ -89,8 +112,7 @@ pub(super) fn run() {
         })
         .collect();
     let fixture = Fixture::at(directory.join("retired-parity-fixture"), inputs);
-    let policies = model::policies();
-    let baseline = model::observe(&fixture, &policies, "valid");
+    let baseline = model::observe(&fixture, policies, "valid");
     assert!(baseline.native_accepted);
     let original_files = crate::repository_files::analyze(&snapshot, &policies.repository.files)
         .expect("complete snapshot tree discovery");
@@ -99,7 +121,7 @@ pub(super) fn run() {
         serde_json::to_value(&original_files.policies).expect("snapshot observations"),
         serde_json::to_value(&baseline.files).expect("fixture observations")
     );
-    let rows = cases::run(&fixture, &policies);
+    let rows = cases::run(&fixture, policies);
     let rustc = Command::new("rustc")
         .arg("-Vv")
         .output()
@@ -111,7 +133,7 @@ pub(super) fn run() {
         implementation_tree: git(&project, &["rev-parse", "HEAD^{tree}"]),
         snapshot: pin.clone(),
         full_repository_qualified: false,
-        policy_sha256: sha256_hex(&fs::read(project.join(POLICY)).expect("policy")),
+        policy_sha256: sha256_hex(&fs::read(project.join(policy_path)).expect("policy")),
         fixture_origins_sha256: sha256_hex(
             &fs::read(
                 project.join("crates/zrail-testkit/tests/fixtures/rc9/declarations-origins.json"),
@@ -132,7 +154,7 @@ pub(super) fn run() {
         fixtures: rows,
         limitations: [
             "Only the release-graph source predicates and their required inputs are qualified; no full Cargo, lock or downstream execution claim.",
-            "The old tree walker ignores read errors and follows directory links without bounds. Native unread and link boundaries fail closed; this report does not equate those failure paths.",
+            boundary_scope,
             "All frozen source checks remain installed; no downstream cutover or authority acceptance is performed.",
         ],
     };

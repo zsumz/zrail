@@ -1,7 +1,9 @@
 //! One bounded physical traversal shared by source discovery and repository-file assertions.
 
 use super::{
-    RepositoryEntry, RepositoryEntryKind, exclusions::excluded_subtree,
+    RepositoryEntry, RepositoryEntryKind,
+    exclusions::excluded_subtree,
+    io::{DirectoryIo, Filesystem},
     scan::RepositoryInventoryError,
 };
 use std::{
@@ -21,11 +23,28 @@ pub(super) fn scan_repository(
     exclusions: &[String],
     include_special: bool,
 ) -> Result<(PathBuf, Vec<RepositoryEntry>), RepositoryInventoryError> {
+    scan_repository_using(root, exclusions, include_special, &Filesystem)
+}
+
+pub(crate) fn scan_repository_using(
+    root: &Path,
+    exclusions: &[String],
+    include_special: bool,
+    io: &impl DirectoryIo,
+) -> Result<(PathBuf, Vec<RepositoryEntry>), RepositoryInventoryError> {
     let root = fs::canonicalize(root).map_err(|error| {
         RepositoryInventoryError(format!("open repository {}: {error}", root.display()))
     })?;
     let mut entries = Vec::new();
-    collect(&root, &root, exclusions, include_special, &mut entries, 0)?;
+    collect(
+        &root,
+        &root,
+        exclusions,
+        include_special,
+        &mut entries,
+        0,
+        io,
+    )?;
     entries.sort_by(|left, right| left.relative.cmp(&right.relative));
     Ok((root, entries))
 }
@@ -37,6 +56,7 @@ fn collect(
     include_special: bool,
     entries: &mut Vec<RepositoryEntry>,
     depth: usize,
+    io: &impl DirectoryIo,
 ) -> Result<(), RepositoryInventoryError> {
     if depth > MAX_DIRECTORY_DEPTH {
         return Err(RepositoryInventoryError(format!(
@@ -44,7 +64,7 @@ fn collect(
             current.display()
         )));
     }
-    let directory = fs::read_dir(current).map_err(|error| {
+    let directory = io.read_dir(current).map_err(|error| {
         RepositoryInventoryError(format!("read {}: {error}", current.display()))
     })?;
     let mut children = Vec::new();
@@ -61,7 +81,7 @@ fn collect(
     for child in children {
         let path = child.path();
         let relative = repository_relative(root, &path).map_err(RepositoryInventoryError)?;
-        let metadata = fs::symlink_metadata(&path).map_err(|error| {
+        let metadata = io.symlink_metadata(&path).map_err(|error| {
             RepositoryInventoryError(format!("inspect {}: {error}", path.display()))
         })?;
         if metadata.file_type().is_symlink() {
@@ -77,7 +97,15 @@ fn collect(
                 kind: RepositoryEntryKind::Directory,
             });
             if !skip_directory(&relative) && !excluded_subtree(exclusions, &relative) {
-                collect(root, &path, exclusions, include_special, entries, depth + 1)?;
+                collect(
+                    root,
+                    &path,
+                    exclusions,
+                    include_special,
+                    entries,
+                    depth + 1,
+                    io,
+                )?;
             }
         } else if metadata.is_file() {
             entries.push(RepositoryEntry {

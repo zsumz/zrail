@@ -4,6 +4,12 @@
 mod boundary;
 #[path = "retired_cases.rs"]
 mod cases;
+#[path = "retired_entry_oracle.rs"]
+mod entry_oracle;
+#[path = "retired_entry_test.rs"]
+mod entry_test;
+#[path = "retired_fault_io.rs"]
+mod fault_io;
 use super::declaration_legacy as legacy;
 #[path = "retired_model.rs"]
 mod model;
@@ -52,4 +58,10 @@ fn retired_physical_oracles_retain_the_complete_original_function_bodies() {
 #[ignore = "requires prefetched snapshots, committed inputs and fresh ZRAIL_RC9_RETIRED_REPORT"]
 fn qualify_frozen_retired_release_graph_bundle() {
     qualification::run();
+}
+
+#[test]
+#[ignore = "requires clean committed producer, frozen snapshots and fresh boundary report"]
+fn qualify_frozen_retired_boundary_bundle() {
+    qualification::run_boundary();
 }

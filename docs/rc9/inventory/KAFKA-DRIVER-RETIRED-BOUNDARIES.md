@@ -61,11 +61,25 @@ cargo test --locked --offline -p zrail-rust --lib \
   retired_unreadable_directories_fail_closed_and_unreadable_files_still_count -- --ignored
 ```
 
-Deterministic per-entry iterator-error and entry-inspection failure evidence is
-still needed. Do not introduce racy deletion tests or run the legacy cycle.
-Bind a fresh corrected-policy report to a clean signed producer, its executable,
-the frozen source inputs and all ordinary/failure cases; repeat it and validate
-artifact tampering before changing the seven ledger verification flags.
+The injected-error suite uses a static internal filesystem seam, with no CLI or
+environment-controlled fault mode. Across all seven roots it runs 56 iterator
+cases (error first/last, empty/nonempty tree, permission-denied/not-found) and
+28 directory-read/entry-metadata cases. The legacy iterator expression is the
+unchanged frozen `release_graph.rs:52-59` excerpt, including
+`filter_map(Result::ok)`, applied to real entries plus a synthetic error. Its
+short-circuiting `any` may stop before a final error when Rust is already found.
+These are explicitly injected expression/scanner proofs, not observed OS entry
+errors or exact error-path parity. Native cases require the entire scan to
+return the expected stage-specific error, not a partial inventory. Real
+permission and link tests separately exercise the `REP-FILE-006` analyzer path.
+
+`scripts/rc9-retired-boundaries` binds the corrected policy, frozen inputs,
+committed producer, executable, test inventory and exact suite outcomes. It
+executes the permission test explicitly and generates a fresh 144-case frozen
+ordinary report. Run it twice into fresh reports in the same external zdev
+directory and compare them; archive and validate artifact tampering before
+changing the seven ledger verification flags. Do not introduce racy deletion
+tests or run the legacy cycle.
 
 The separate `KD-TRAVERSAL-*` source-root helper has different failure semantics
 and selection requirements. These retired-tree fixtures do not close its three
