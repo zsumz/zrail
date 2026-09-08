@@ -12,6 +12,21 @@ The current ledger is **672 reviewed / 592 implemented / 539 verified**;
 133 reviewed assertion instances and the discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
 
+The next physical-boundary slice adds explicit non-directory entry selection.
+Real FIFO fixtures expose a gap in the prior regular-file tree proposal; the
+separate corrected proposal preserves the historical artifact-bound policy.
+See [retired-tree boundaries](inventory/KAFKA-DRIVER-RETIRED-BOUNDARIES.md).
+The seven tree rows remain unverified pending deterministic entry-error evidence
+and repeated, artifact-bound qualification of the corrected policy. Counts are
+unchanged; the separate source-root traversal assertions also remain open.
+
+This slice passes 1,624 Rust tests with zero failures and 20 ordinary-suite
+ignores. The new permission test ran separately and passed all 21 cases.
+Formatting, Clippy, rustdoc and all three extracted package builds pass.
+Complete self-analysis observes 1,064 Rust files, 1,659 base contexts and
+1,202,347 projection work with zero unresolved items. Canonical still rejects
+exactly the five known protected-lock diagnostics; no authority was accepted.
+
 The signed `06b0f185f072bbd9211816a0694f0812ab4188d6` now qualifies the partial
 kafka-driver retired-backend bundle. Two byte-identical 144-case reports accept
 72 and reject 72 fixtures each. They close twelve declaration, raw-construction

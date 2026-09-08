@@ -32,6 +32,8 @@ pub enum RepositoryEntryMode {
     File,
     /// Directories, without recursively following directory links.
     Directory,
+    /// Non-directory entries, including special files and resolved contained links.
+    NonDirectory,
     /// Any filesystem entry at a selected path, including a broken link.
     Any,
 }

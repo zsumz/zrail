@@ -57,6 +57,7 @@ pub(super) fn observe(
     let selected = match mode {
         RepositoryEntryMode::File => target_kind == RepositoryEntryKind::File,
         RepositoryEntryMode::Directory => target_kind == RepositoryEntryKind::Directory,
+        RepositoryEntryMode::NonDirectory => target_kind != RepositoryEntryKind::Directory,
         RepositoryEntryMode::Any => true,
     };
     if !selected {

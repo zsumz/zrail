@@ -67,5 +67,11 @@ pub(super) fn compare(left: &RepositoryFileRule, right: &RepositoryFileRule) -> 
 }
 
 fn kind_subset(left: RepositoryEntryMode, right: RepositoryEntryMode) -> bool {
-    left == right || right == RepositoryEntryMode::Any
+    left == right
+        || right == RepositoryEntryMode::Any
+        || (left == RepositoryEntryMode::File && right == RepositoryEntryMode::NonDirectory)
 }
+
+#[cfg(test)]
+#[path = "selection_test.rs"]
+mod selection_test;

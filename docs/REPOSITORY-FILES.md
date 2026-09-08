@@ -47,8 +47,12 @@ Rust API callers constructing `RepositoryContract` add `files: Vec::new()`.
 bounded `*`, `?`, and `**` globs. Per-rule `exclude` subtracts matching paths.
 Selectors cannot contain parent traversal, `.` components, duplicate separators,
 or platform-dependent separators. Overlapping selectors count a path once.
-Ordering has no effect. `entry` selects `file` (default), `directory`, or `any`.
-The last option includes broken links and other filesystem entries. Count rules
+Ordering has no effect. `entry` selects `file` (default), `directory`,
+`non-directory`, or `any`. `non-directory` additionally selects special files,
+such as FIFOs, without opening them. Like `file` and `directory`, it resolves
+contained links before classifying their targets; broken or escaping links fail
+closed. `any` includes broken links and other filesystem entries without resolving
+their targets. Content predicates still require `entry = "file"`. Count rules
 count distinct written physical paths, not file contents or inode identities.
 
 The shared scanner runs independently of Rust roots, source exclusions, Cargo

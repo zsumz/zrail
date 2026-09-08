@@ -22391,7 +22391,7 @@
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-broker_set",
-          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
+          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
         }
       ]
     },
@@ -22449,7 +22449,7 @@
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-plaintext",
-          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
+          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
         }
       ]
     },
@@ -22507,7 +22507,7 @@
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-poller",
-          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
+          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
         }
       ]
     },
@@ -22565,7 +22565,7 @@
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-resource",
-          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
+          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
         }
       ]
     },
@@ -22623,7 +22623,7 @@
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-tcp",
-          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
+          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
         }
       ]
     },
@@ -22681,7 +22681,7 @@
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-timer",
-          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
+          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
         }
       ]
     },
@@ -22739,7 +22739,7 @@
       "blockers": [
         {
           "id": "KD-RETIRED-TREE-tls",
-          "cause": "The committed 144-case report proves ordinary path selection, including extensionless .rs files. Native/legacy read-error, entry-error and symlink boundary evidence remains open; no tree cutover is qualified."
+          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
         }
       ]
     },

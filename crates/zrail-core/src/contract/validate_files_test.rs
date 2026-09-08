@@ -235,3 +235,40 @@ fn errors(source: &str) -> String {
     validate(&contract, &mut errors);
     errors.finish().join("\n")
 }
+
+#[test]
+fn non_directory_entries_support_path_predicates_but_never_content_reads() {
+    for predicate in [
+        "{ kind = 'count', minimum = 0, maximum = 0 }",
+        "{ kind = 'exact-paths', paths = [] }",
+        "{ kind = 'forbidden-names', names = ['old'], part = 'file-stem' }",
+    ] {
+        let rule = format!("{}entry = 'non-directory'\n", with_predicate(predicate));
+        assert!(errors(&rule).is_empty());
+        let parsed: crate::RepositoryFileRule = toml::from_str(&rule).expect("new entry mode");
+        assert_eq!(parsed.entry, crate::RepositoryEntryMode::NonDirectory);
+        let encoded = toml::to_string(&parsed).expect("serialize entry mode");
+        assert!(encoded.contains("non-directory"));
+        assert_eq!(
+            toml::from_str::<crate::RepositoryFileRule>(&encoded).expect("round trip"),
+            parsed
+        );
+    }
+    for predicate in [
+        "{ kind = 'literal', text = 'old', mode = 'absent' }",
+        "{ kind = 'bytes-equal', other = 'LICENSE' }",
+        "{ kind = 'document', format = 'toml', path = ['package'], assertion = { op = 'absent' } }",
+    ] {
+        assert!(
+            errors(&format!(
+                "{}entry = 'non-directory'\n",
+                with_predicate(predicate)
+            ))
+            .contains("select file entries")
+        );
+    }
+    assert!(
+        toml::from_str::<crate::RepositoryFileRule>(&format!("{RULE}\nentry = 'non-regular'"))
+            .is_err()
+    );
+}

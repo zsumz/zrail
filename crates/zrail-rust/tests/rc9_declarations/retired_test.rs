@@ -1,5 +1,7 @@
 //! Frozen release-graph bundle qualifies syntax, raw tokens, presence and physical trees together.
 
+#[path = "retired_boundary_test.rs"]
+mod boundary;
 #[path = "retired_cases.rs"]
 mod cases;
 use super::declaration_legacy as legacy;

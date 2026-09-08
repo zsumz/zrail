@@ -1146,3 +1146,25 @@ The original route runtime scenario also passed under a locked, offline,
 all-feature Cargo run: exactly one test passed, zero failed or ignored. No
 runtime code or guard was edited. The execution-contract/native-receipt binding
 is still pending, so its fifteen runtime rows remain unverified.
+
+# Non-directory and retired-tree boundary validation
+
+The 2026-09-07 boundary implementation passes the full Rust suite: 1,624 passed,
+zero failed, 20 ignored. The newly gated Unix permission test ran separately:
+one test passed, exercising all 21 permission cases without skips. The ordinary
+retired suite passes nine tests, including the 126 other physical cases and
+the corrected proposal's repeated 144-case ordinary matrix. See the
+[boundary review](inventory/KAFKA-DRIVER-RETIRED-BOUNDARIES.md) for exact scope.
+
+Formatting, Clippy, rustdoc, archive staging and all three extracted builds pass.
+The first canonical attempt caught a non-octal Unix permission literal; the
+corrected full rerun has no test failures. Self-analysis is complete: 1,064 Rust
+files, 1,659 base contexts, zero derived contexts, 1,202,347 projection work and
+zero unresolved. Canonical exits with exactly `LOCK-008`, `LOCK-016`, `LOCK-026`,
+`LOCK-028`, `LOCK-030`. The read-only root diff reports zero grants or debt and
+two semantics-6/7 authority unknowns, one for each comparison side.
+
+These are local implementation regressions, not a new immutable differential
+artifact or full-repository qualification. The original policy/report remain
+unchanged; the seven corrected tree rows and three source-traversal rows remain
+unverified. No root lock, version, downstream guard or release state changed.

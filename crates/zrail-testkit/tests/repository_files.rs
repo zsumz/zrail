@@ -4,6 +4,8 @@
 mod boundary_test;
 #[path = "repository_files/encoding_test.rs"]
 mod encoding_test;
+#[path = "repository_files/entry_test.rs"]
+mod entry_test;
 #[path = "strict_facades/fixture.rs"]
 mod fixture;
 #[path = "repository_files/line_test.rs"]
