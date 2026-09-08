@@ -1200,3 +1200,46 @@ recomputed ordinary digests. A missing corrected report still reaches the
 original validator's explicit refusal to verify a tree assertion. Ledger
 integrity passes at 672 reviewed / 592 implemented / 546 verified: 126 remain.
 The three `KD-TRAVERSAL-*` rows and full consumer qualification stay open.
+
+## Source-traversal precondition qualification, 2026-09-07
+
+The three `KD-TRAVERSAL-*` preconditions are now verified by their own bounded
+bundle, superseding only their open status in the historical checkpoint above.
+Signed producer `ec8ac46392ab08e2b6cf80c3fb944961e89b52d7`, tree
+`39831085492981052d680632c9db2fc60e2d86d3`, produced two byte-identical reports
+with SHA-256 `8f38573e3888798cbff42bb023cc8315c9a60096c023df35ce56d344d61777e1`.
+Each exact seven-test run binds all 772 frozen Rust inputs, 133 physical cases
+and 96 explicitly injected failures; 19 real permission cases are explicitly
+executed, not inferred from an ignored ordinary-suite test. Frozen snapshots
+and clean producer inputs are checked before and after each run.
+
+The existing original walker is reused unchanged. Its PathBuf-component order
+differs from native UTF-8-string order; the report preserves both and compares
+complete multisets without deduplication. The first producer's direct-order
+comparison failed and remains archived as diagnostic-only. Native directory
+link, pruned-tree and outside-root completeness failures are documented stronger
+behavior. Injected original error expressions are not observed OS entry errors,
+and native metadata inspection is not `DirEntry::file_type`.
+
+The [index](evidence/traversal-index.json) binds both reports, exact execution
+logs, signed producer and diagnostic-only first failure. Eight validator tests
+reject 93 mutations, and two runner tests reject 42 malformed outcomes. The
+ledger is now 672 reviewed / 595 implemented / 549 verified: 123 remain, plus
+discovery and complete downstream qualification. No downstream guard or root
+authority changed. See the [scope review](inventory/KAFKA-DRIVER-TRAVERSAL.md).
+
+The final binding revision passes 1,632 Rust tests, zero failures and 23
+ordinary-suite ignores. Formatting, strict Clippy, rustdoc and all three
+extracted package builds pass. Complete self-analysis observes 1,074 Rust files,
+1,670 base contexts and 1,206,743 projection work with zero unresolved items.
+`scripts/check` exits only on the five protected-lock diagnostics: `LOCK-008`,
+`LOCK-016`, `LOCK-026`, `LOCK-028` and `LOCK-030`; this is not release approval.
+
+The first full run failed the repository-manifest lock-input test with
+`RUST-INCLUDE-002` on the conditional report type. The final type is
+platform-independent while fixture execution remains Unix-gated; no serialized
+field, matrix case or policy changes. That test passes in the full rerun.
+Logs are preserved separately under `target/rc9-completion-20260907/` as
+`traversal-final-check.log`, `traversal-final-check-retry.log` and
+`traversal-package-check-retry.log`. Historical frozen reports remain pinned to
+their original signed producer, not relabeled as full-workspace qualification.

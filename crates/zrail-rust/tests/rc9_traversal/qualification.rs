@@ -1,19 +1,19 @@
 //! A clean producer binds the exact frozen configuration, complete selected paths and failure matrix.
 
+use super::model;
 #[cfg(unix)]
-use super::model::{self, POLICY, ROOTS};
-#[cfg(unix)]
+use super::model::{POLICY, ROOTS};
 use serde::Serialize;
+use std::collections::BTreeMap;
 #[cfg(unix)]
 use std::{
-    collections::BTreeMap,
     fs,
     io::Write as _,
     path::{Path, PathBuf},
     process::Command,
 };
 
-#[cfg(unix)]
+// The report schema is platform-independent; only fixture execution requires Unix.
 #[derive(Serialize)]
 struct Report {
     schema: u32,
@@ -198,5 +198,6 @@ fn git(root: &Path, arguments: &[&str]) -> String {
 
 #[cfg(not(unix))]
 pub(super) fn run() {
+    let _: Option<Report> = None;
     panic!("qualification requires a Unix host with enforced permissions");
 }

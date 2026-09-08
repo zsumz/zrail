@@ -8,9 +8,32 @@ unchanged by that metadata-only rewrite.
 The user confirmed continued coverage work on 2026-09-07 after the signed-history
 release preparation. The full replacement criterion remains in place.
 See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
-The current ledger is **672 reviewed / 592 implemented / 546 verified**;
-126 reviewed assertion instances and the discovery blockers remain open.
+The current ledger is **672 reviewed / 595 implemented / 549 verified**;
+123 reviewed assertion instances and the discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
+
+The three source-traversal preconditions now bind two byte-identical reports
+from signed producer `ec8ac46392ab08e2b6cf80c3fb944961e89b52d7`: all 772 frozen
+Rust inputs, 133 physical boundary cases and 96 explicitly injected failures.
+The original and native path orders are retained separately; complete multisets
+agree. Stronger native completeness failures are explicit, not exact parity.
+The [traversal index](evidence/traversal-index.json) binds both reports and exact
+execution logs, including explicit permission-test execution. Eight validator
+tests reject 93 mutations; two runner tests reject 42 malformed outcomes.
+The initial ordering-comparison failure is archived as diagnostic-only.
+See [the scope review](inventory/KAFKA-DRIVER-TRAVERSAL.md).
+Next bounded slice: the two dependency line-name detector assertions, followed
+by remaining kafka-driver inventory and complete policy qualification.
+
+Final local validation passes 1,632 Rust tests with zero failures and 23
+ordinary-suite ignores, plus formatting, strict Clippy, rustdoc and all three
+extracted package builds. Complete self-analysis observes 1,074 Rust files,
+1,670 base contexts and 1,206,743 projection work with zero unresolved items.
+The first full run found a test-only conditional report-type binding failure;
+making the report schema platform-independent fixed it without changing cases,
+policies or analyzer rules. The failed log remains preserved. The corrected
+canonical run stops only at `LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028` and
+`LOCK-030`; it is still a failed release gate. Root authority remains untouched.
 
 The seven retired-tree assertions now bind two byte-identical reports from
 PGP-signed producer `147fa9b1efd0fa26f75c6066726d9d0866355979`. Each run executes
@@ -23,7 +46,7 @@ See [retired-tree boundaries](inventory/KAFKA-DRIVER-RETIRED-BOUNDARIES.md).
 The [new index](evidence/retired-boundary-index.json) binds the producer, executable,
 frozen inputs, both complete raw reports and exact execution logs. The validator
 rejects 68 artifact, outcome and assertion-linkage mutations. The separate three
-source-root traversal assertions remain open and are the next bounded slice.
+source-root traversal assertions are qualified by their own evidence above.
 
 The preceding non-directory implementation passes 1,624 Rust tests with zero failures and 20 ordinary-suite
 ignores. The new permission test ran separately and passed all 21 cases.

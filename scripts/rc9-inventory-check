@@ -22,6 +22,7 @@ RETIRED_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_retired_evidence.py")["ver
 RETIRED_REPORT = runpy.run_path(ROOT / "scripts/rc9_retired_evidence.py")["verify_report"]
 RETIRED_BOUNDARIES = runpy.run_path(ROOT / "scripts/rc9_retired_boundary_evidence.py")["verify"]
 RUNTIME_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_route_runtime_evidence.py")["verify"]
+TRAVERSAL_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_traversal_evidence.py")["verify"]
 
 
 def unique_object(pairs):
@@ -311,6 +312,11 @@ def main():
             runtime_report = parity_report(assertion, "runtime_evidence", "test-mirror:", file_reports)
             if runtime_report is not None:
                 RUNTIME_EVIDENCE(assertion, runtime_report, files)
+        elif assertion["id"].startswith("KD-TRAVERSAL-"):
+            require(not replacement["verified"] or replacement.get("traversal_evidence"), "verified traversal assertion needs bound evidence")
+            traversal_report = parity_report(assertion, "traversal_evidence", "repository:file:", file_reports)
+            if traversal_report is not None:
+                TRAVERSAL_EVIDENCE(assertion, traversal_report, files)
         elif assertion["id"].startswith("KD-RETIRED-"):
             require(not replacement["verified"] or replacement.get("retired_parity_evidence"), "verified retired assertion needs bound evidence")
             retired_report = parity_report(assertion, "retired_parity_evidence", "rust:inventory:", file_reports)

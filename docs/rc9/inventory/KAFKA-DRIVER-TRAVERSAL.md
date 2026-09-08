@@ -61,9 +61,34 @@ a pass. Both orders are retained in the corrected report and compared as
 multisets without deduplication. Six explicit cases enforce this distinction;
 the precondition proof does not assert identical output ordering.
 
-The proposed trusted runner is `scripts/rc9-traversal`. Qualification must use a
-clean signed producer, bind the complete frozen selected-path/input inventory,
-execute permission cases explicitly, and archive two byte-identical reports
-with exact execution logs and tamper validation before changing verification
-flags. No complete consumer policy, downstream guard deletion, authority
-acceptance or release approval follows from these three preconditions.
+## Bound qualification
+
+The trusted `scripts/rc9-traversal` runner produced two byte-identical reports
+from clean signed producer `ec8ac46392ab08e2b6cf80c3fb944961e89b52d7`, tree
+`39831085492981052d680632c9db2fc60e2d86d3`. Each explicitly executes seven tests,
+including the permission gate and frozen qualifier. All 772 frozen Rust inputs
+and 846 physical entries are bound, alongside the 133 physical and 96 injected
+cases above. No snapshot or producer input changed during either run.
+
+The [index](../evidence/traversal-index.json) binds producer, compiler, executable,
+policy, both full reports and all 28 successful execution-log/report files.
+Payload SHA-256 is
+`8f38573e3888798cbff42bb023cc8315c9a60096c023df35ce56d344d61777e1`.
+The initial failure logs are archived separately and confer no verification.
+Eight validator tests reject 93 artifact, structural, outcome and ledger-linkage
+mutations; two runner tests reject 42 malformed execution outcomes. Structural
+checks independently reconstruct frozen paths from the tracked-file census and
+require every physical and injected case, not just a self-reported case count.
+
+The three ledger rows now bind both policies as one precondition bundle and
+`REP-FILE-002`/`REP-FILE-006`, with `full_snapshot_verified = false`.
+The subsequent binding revision makes the report type platform-independent
+while keeping Unix execution gated. Self-analysis had rejected the first field
+of the conditionally declared report with `RUST-INCLUDE-002`; the revised type
+has zero unresolved bindings. No case, serialized field, policy or analyzer
+rule changes. Archived reports retain their exact historical producer identity;
+they do not claim that producer passed the complete workspace gate.
+The conditional-report binding limitation remains an analyzer follow-up; this
+test layout change is not a general engine fix for conditional type bindings.
+No complete consumer policy, downstream guard deletion, authority acceptance
+or release approval follows from these three preconditions.

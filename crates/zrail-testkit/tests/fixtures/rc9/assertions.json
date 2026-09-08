@@ -51018,19 +51018,32 @@
       "exception_semantics": "none",
       "disposition": "existing native rail",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-source-roots",
+          "repository:file:kd-source-traversal"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-TRAVERSAL-DIRECTORY",
-          "cause": "Qualify complete selected-root traversal and original I/O failure behavior, including missing and empty roots, unreadable directories, entry inspection failure, and symlink differences. Bind the intended completeness diagnostic before claiming parity."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_traversal/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_traversal/unix_test.rs",
+          "crates/zrail-rust/tests/rc9_traversal/injected_test.rs",
+          "crates/zrail-rust/tests/rc9_traversal/injected_oracle.rs",
+          "crates/zrail-rust/tests/rc9_traversal/qualification.rs"
+        ],
+        "qualification_scope": "three-precondition bundle; complete physical path multisets; separate native ordering and fail-closed differences; injected errors are not observed OS errors; no full-policy proof",
+        "traversal_evidence": {
+          "artifact": "docs/rc9/evidence/traversal.json.gz",
+          "payload_sha256": "8f38573e3888798cbff42bb023cc8315c9a60096c023df35ce56d344d61777e1",
+          "implementation_commit": "ec8ac46392ab08e2b6cf80c3fb944961e89b52d7"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-TRAVERSAL-ENTRY",
@@ -51075,19 +51088,32 @@
       "exception_semantics": "none",
       "disposition": "existing native rail",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-source-roots",
+          "repository:file:kd-source-traversal"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-TRAVERSAL-ENTRY",
-          "cause": "Qualify complete selected-root traversal and original I/O failure behavior, including missing and empty roots, unreadable directories, entry inspection failure, and symlink differences. Bind the intended completeness diagnostic before claiming parity."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_traversal/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_traversal/unix_test.rs",
+          "crates/zrail-rust/tests/rc9_traversal/injected_test.rs",
+          "crates/zrail-rust/tests/rc9_traversal/injected_oracle.rs",
+          "crates/zrail-rust/tests/rc9_traversal/qualification.rs"
+        ],
+        "qualification_scope": "three-precondition bundle; complete physical path multisets; separate native ordering and fail-closed differences; injected errors are not observed OS errors; no full-policy proof",
+        "traversal_evidence": {
+          "artifact": "docs/rc9/evidence/traversal.json.gz",
+          "payload_sha256": "8f38573e3888798cbff42bb023cc8315c9a60096c023df35ce56d344d61777e1",
+          "implementation_commit": "ec8ac46392ab08e2b6cf80c3fb944961e89b52d7"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-TRAVERSAL-TYPE",
@@ -51132,19 +51158,32 @@
       "exception_semantics": "none",
       "disposition": "existing native rail",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-source-roots",
+          "repository:file:kd-source-traversal"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-002",
+          "REP-FILE-006"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-TRAVERSAL-TYPE",
-          "cause": "Qualify complete selected-root traversal and original I/O failure behavior, including missing and empty roots, unreadable directories, entry inspection failure, and symlink differences. Bind the intended completeness diagnostic before claiming parity."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_traversal/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_traversal/unix_test.rs",
+          "crates/zrail-rust/tests/rc9_traversal/injected_test.rs",
+          "crates/zrail-rust/tests/rc9_traversal/injected_oracle.rs",
+          "crates/zrail-rust/tests/rc9_traversal/qualification.rs"
+        ],
+        "qualification_scope": "three-precondition bundle; complete physical path multisets; separate native ordering and fail-closed differences; injected errors are not observed OS errors; no full-policy proof",
+        "traversal_evidence": {
+          "artifact": "docs/rc9/evidence/traversal.json.gz",
+          "payload_sha256": "8f38573e3888798cbff42bb023cc8315c9a60096c023df35ce56d344d61777e1",
+          "implementation_commit": "ec8ac46392ab08e2b6cf80c3fb944961e89b52d7"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-TEST-PLACEMENT-PARSE",
@@ -59080,9 +59119,9 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 672,
-    "implemented": 592,
+    "implemented": 595,
     "verified_by_disposition": {
-      "existing native rail": 2,
+      "existing native rail": 5,
       "declarative translation": 16,
       "new engine capability": 513,
       "behavioral evidence retained": 15,

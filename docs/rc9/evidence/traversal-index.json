@@ -1,0 +1,88 @@
+{
+  "adversarial_tests": "scripts/rc9_traversal_evidence_test.py",
+  "archives": {
+    "docs/rc9/evidence/traversal-execution-logs.tar.gz": "a282bdffc4a4a79f1862fbd43d5e5fef2be52ff7bf24d48f93fa208d51cf6d59",
+    "docs/rc9/evidence/traversal-initial-failure-logs.tar.gz": "61b78b19a330effd60029865bb3fe1e46be1fc55a4034248a314c4a576a45aad",
+    "docs/rc9/evidence/traversal.json.gz": "0b0e6d69bf395a79e0ae7d7746a51dfed0101d2a5a6618712ed89b5c68ca6cdd"
+  },
+  "assertions_verified": 3,
+  "binary_path": "/Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/traversal-build/debug/deps/zrail_rust-80983c5ff1b09614",
+  "build_command": [
+    "cargo",
+    "test",
+    "-p",
+    "zrail-rust",
+    "--lib",
+    "--all-features",
+    "--locked",
+    "--offline",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "cases": {
+    "frozen_rust_files": 772,
+    "injected": 96,
+    "physical": 133
+  },
+  "full_repository_qualified": false,
+  "implementation_commit": "ec8ac46392ab08e2b6cf80c3fb944961e89b52d7",
+  "implementation_tree": "39831085492981052d680632c9db2fc60e2d86d3",
+  "initial_failure": {
+    "implementation_commit": "08696c81e44542a92be2ea7ff4fe15b01edac8a6",
+    "implementation_tree": "f5ad16d7adba5612c8afd9f84c485ee1db672066",
+    "logs": 11,
+    "qualification": "failed",
+    "reason": "Original PathBuf component ordering differs from native UTF-8 string ordering; both selected the same 772-file multiset. Diagnostic logs only; no successful report was emitted."
+  },
+  "limitations": [
+    "The original sorts PathBuf components; native evidence sorts UTF-8 path strings. Complete multisets are compared without deduplication; both observed orders remain in the report.",
+    "Only three physical traversal preconditions over six frozen roots; no complete source/Cargo policy, root configuration migration, or downstream cutover.",
+    "Unread pruned/link descendants and unselected unread directories fail closed more strongly than the old selected-root traversal.",
+    "The old walker does not recurse directory links; its link-cycle cases terminate and are executed. Special-entry observations never read content streams.",
+    "Injected original failure expressions and native scan errors are separate from real OS permission cases; native metadata inspection is not DirEntry::file_type."
+  ],
+  "listing_sha256": "dd85accf4a8e48b2b27f8182e0ecf28fcbc4fbad86a6b80b141b9c67fee1c858",
+  "native_payload_sha256": "a38e5466755d121325246e89110d100a89deaa2ccfefc11156e8c9f0da688125",
+  "payload_bytes": 1063022,
+  "payload_sha256": "8f38573e3888798cbff42bb023cc8315c9a60096c023df35ce56d344d61777e1",
+  "policy_sha256": "c5ad57fc7c250070bf103007713bcfb1cdf7014eff7ffb097d644016e12be4ee",
+  "producer_inputs": {
+    "crates/zrail-rust/src/inventory/io.rs": "8d6e4046a4e82f990a62f6d4ab93efd1b436a7c3d5d0f1f52de2b4038ee32957",
+    "crates/zrail-rust/src/inventory/mod.rs": "cc3f941965a77dcbeb12414f441c9f83e57c2f228605fb35f900486386240eff",
+    "crates/zrail-rust/src/inventory/traverse.rs": "b00bdfa321cf49eacdcb6f94dffcbeb8eadb96306343d6277fb2c019648f95da",
+    "crates/zrail-rust/src/repository_files.rs": "95df26c2fba72d36e1791d3f7bacd129becf8bd9e3558880e42979044b476a1d",
+    "crates/zrail-rust/src/repository_files/select.rs": "3c14f68553bfa1f629c90cafdafbf986074433fcb0fc10a0866df8a951f3a0ba",
+    "crates/zrail-rust/src/repository_files_test.rs": "8e4a809be3a9a7cbad0c1212541e4c9bc25fde4a4c58eede5ede8b6f8ce65f55",
+    "crates/zrail-rust/src/rules/size/snapshot/legacy_driver.rs": "c71b3b5d37809f5e9d3bbad728f47638d5e860174ff5f62b68f1e60a92a7339e",
+    "crates/zrail-rust/tests/rc9_declarations/retired_fault_io.rs": "4e78bae69241bdb579e4f77876c9669ae0a563873afd80344bb037dec27a2898",
+    "crates/zrail-rust/tests/rc9_declarations/retired_test.rs": "fcb6aebd35a6acd1dc729c9a71cc3c948f91fc2079b827e71815110cc16f6ac6",
+    "crates/zrail-rust/tests/rc9_traversal/injected_oracle.rs": "17ef13d2762756a2a9fdb1b01713183289b77abf18379707732ddf530a870a2b",
+    "crates/zrail-rust/tests/rc9_traversal/injected_test.rs": "599afaf8aad0165908924b4aff4a8e7ca81d6f7e305e127028d43fde9f762c1a",
+    "crates/zrail-rust/tests/rc9_traversal/model.rs": "f99e33edc7fc4ef050cafadff2155af0a6df06f03c29197a96c0fd1c7657121b",
+    "crates/zrail-rust/tests/rc9_traversal/policy_test.rs": "4068480cdf7cfc45701e61fbd6fdf1905de48f397248cd4fb4145ff1b5bb9b72",
+    "crates/zrail-rust/tests/rc9_traversal/qualification.rs": "9dd7a17b50df53029838676fda4f0800f38f004fd3faa3ee50ee2874abc9c44e",
+    "crates/zrail-rust/tests/rc9_traversal/unix_test.rs": "11449731221965856f8839cc7b6ce9d5f5325fb9428e517f72cfb213e2b75859",
+    "scripts/rc9-retired-boundaries": "d44407fcf841904b7034a7ac68f242f9c20034e41fc9a191a90f44af78cc626b",
+    "scripts/rc9-route-runtime": "9f72ca5ebeec13d814a5ec9f5f04d2f3ead262a861ef8563da74e034397beb62",
+    "scripts/rc9-traversal": "23a56b0a6804e756d773f85384af01a6441ca0cd8304888e3d40f7992c9a76e6",
+    "scripts/rc9_retired_boundary_common.py": "2fdb53d4c7df5107739e4e54ff239ec1735f566a8abf66c4fe2450cd782e0afc",
+    "scripts/rc9_route_runtime_common.py": "3c99f33502725eae0961ca277f8ec47533ebb98c8e8d02e4f50cf4180f30c50f",
+    "scripts/rc9_traversal_common.py": "e730653c5793f566829619a4d531e815d5fd6466b810c97740e274945538a1dc"
+  },
+  "producer_signature": "B58439871CD2A7275B20CC19EC8E4D26598A0373",
+  "repeat": {
+    "byte_identical": true,
+    "runs": 2
+  },
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: aarch64-apple-darwin\nrelease: 1.97.1\nLLVM version: 22.1.6",
+  "schema": 1,
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "test_binary_sha256": "c286d0a27b14042f0b0432b7a26cffe7bf3136c6b87033429512e6b93aba3ac0",
+  "validator": "scripts/rc9_traversal_evidence.py"
+}

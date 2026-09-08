@@ -97,4 +97,7 @@ links, unlike the retired walker. The existing test-only copy is
 its frozen function body instead of introducing a third interpretation.
 Missing selected roots must still fail, even when other roots contain sources.
 Any injected iterator-error proof must be labeled separately from the real OS
-permission cases above. No downstream guards have been removed or grants accepted.
+permission cases above. Those three assertions now bind their own
+[traversal qualification](KAFKA-DRIVER-TRAVERSAL.md), including the documented
+ordering difference; this retired-tree artifact is not their proof.
+No downstream guards have been removed or grants accepted.
