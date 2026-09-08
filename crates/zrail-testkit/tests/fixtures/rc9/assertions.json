@@ -22358,7 +22358,7 @@
         "root": "src/reactor/broker_set",
         "extension": "rs"
       },
-      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "context": "Trusted source-only physical-path detector. Non-directory extension selection does not read contents; no execution, Cargo feature activation, or source cfg filtering is performed.",
       "matching_semantics": {
         "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
         "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
@@ -22373,27 +22373,32 @@
           "repository:file:kd-retired-tree-broker_set"
         ],
         "expected_diagnostics": [
-          "REP-FILE-001"
+          "REP-FILE-001",
+          "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
-          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_unix_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_entry_test.rs"
         ],
         "retired_parity_evidence": {
           "artifact": "docs/rc9/evidence/retired-parity.json.gz",
           "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
           "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
-        }
+        },
+        "retired_boundary_evidence": {
+          "artifact": "docs/rc9/evidence/retired-boundary.json.gz",
+          "payload_sha256": "8a9462a6d77f55c1294853bd770eec8a25a65f7445eb3b83d681c1210114591f",
+          "implementation_commit": "147fa9b1efd0fa26f75c6066726d9d0866355979"
+        },
+        "qualification_scope": "corrected non-directory predicates; Unix physical boundaries and explicitly injected errors; no full-policy or exact error-path parity"
       },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-TREE-broker_set",
-          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-TREE-plaintext",
@@ -22416,7 +22421,7 @@
         "root": "src/reactor/plaintext",
         "extension": "rs"
       },
-      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "context": "Trusted source-only physical-path detector. Non-directory extension selection does not read contents; no execution, Cargo feature activation, or source cfg filtering is performed.",
       "matching_semantics": {
         "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
         "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
@@ -22431,27 +22436,32 @@
           "repository:file:kd-retired-tree-plaintext"
         ],
         "expected_diagnostics": [
-          "REP-FILE-001"
+          "REP-FILE-001",
+          "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
-          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_unix_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_entry_test.rs"
         ],
         "retired_parity_evidence": {
           "artifact": "docs/rc9/evidence/retired-parity.json.gz",
           "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
           "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
-        }
+        },
+        "retired_boundary_evidence": {
+          "artifact": "docs/rc9/evidence/retired-boundary.json.gz",
+          "payload_sha256": "8a9462a6d77f55c1294853bd770eec8a25a65f7445eb3b83d681c1210114591f",
+          "implementation_commit": "147fa9b1efd0fa26f75c6066726d9d0866355979"
+        },
+        "qualification_scope": "corrected non-directory predicates; Unix physical boundaries and explicitly injected errors; no full-policy or exact error-path parity"
       },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-TREE-plaintext",
-          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-TREE-poller",
@@ -22474,7 +22484,7 @@
         "root": "src/reactor/poller",
         "extension": "rs"
       },
-      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "context": "Trusted source-only physical-path detector. Non-directory extension selection does not read contents; no execution, Cargo feature activation, or source cfg filtering is performed.",
       "matching_semantics": {
         "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
         "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
@@ -22489,27 +22499,32 @@
           "repository:file:kd-retired-tree-poller"
         ],
         "expected_diagnostics": [
-          "REP-FILE-001"
+          "REP-FILE-001",
+          "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
-          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_unix_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_entry_test.rs"
         ],
         "retired_parity_evidence": {
           "artifact": "docs/rc9/evidence/retired-parity.json.gz",
           "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
           "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
-        }
+        },
+        "retired_boundary_evidence": {
+          "artifact": "docs/rc9/evidence/retired-boundary.json.gz",
+          "payload_sha256": "8a9462a6d77f55c1294853bd770eec8a25a65f7445eb3b83d681c1210114591f",
+          "implementation_commit": "147fa9b1efd0fa26f75c6066726d9d0866355979"
+        },
+        "qualification_scope": "corrected non-directory predicates; Unix physical boundaries and explicitly injected errors; no full-policy or exact error-path parity"
       },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-TREE-poller",
-          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-TREE-resource",
@@ -22532,7 +22547,7 @@
         "root": "src/reactor/resource",
         "extension": "rs"
       },
-      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "context": "Trusted source-only physical-path detector. Non-directory extension selection does not read contents; no execution, Cargo feature activation, or source cfg filtering is performed.",
       "matching_semantics": {
         "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
         "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
@@ -22547,27 +22562,32 @@
           "repository:file:kd-retired-tree-resource"
         ],
         "expected_diagnostics": [
-          "REP-FILE-001"
+          "REP-FILE-001",
+          "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
-          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_unix_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_entry_test.rs"
         ],
         "retired_parity_evidence": {
           "artifact": "docs/rc9/evidence/retired-parity.json.gz",
           "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
           "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
-        }
+        },
+        "retired_boundary_evidence": {
+          "artifact": "docs/rc9/evidence/retired-boundary.json.gz",
+          "payload_sha256": "8a9462a6d77f55c1294853bd770eec8a25a65f7445eb3b83d681c1210114591f",
+          "implementation_commit": "147fa9b1efd0fa26f75c6066726d9d0866355979"
+        },
+        "qualification_scope": "corrected non-directory predicates; Unix physical boundaries and explicitly injected errors; no full-policy or exact error-path parity"
       },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-TREE-resource",
-          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-TREE-tcp",
@@ -22590,7 +22610,7 @@
         "root": "src/reactor/tcp",
         "extension": "rs"
       },
-      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "context": "Trusted source-only physical-path detector. Non-directory extension selection does not read contents; no execution, Cargo feature activation, or source cfg filtering is performed.",
       "matching_semantics": {
         "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
         "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
@@ -22605,27 +22625,32 @@
           "repository:file:kd-retired-tree-tcp"
         ],
         "expected_diagnostics": [
-          "REP-FILE-001"
+          "REP-FILE-001",
+          "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
-          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_unix_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_entry_test.rs"
         ],
         "retired_parity_evidence": {
           "artifact": "docs/rc9/evidence/retired-parity.json.gz",
           "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
           "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
-        }
+        },
+        "retired_boundary_evidence": {
+          "artifact": "docs/rc9/evidence/retired-boundary.json.gz",
+          "payload_sha256": "8a9462a6d77f55c1294853bd770eec8a25a65f7445eb3b83d681c1210114591f",
+          "implementation_commit": "147fa9b1efd0fa26f75c6066726d9d0866355979"
+        },
+        "qualification_scope": "corrected non-directory predicates; Unix physical boundaries and explicitly injected errors; no full-policy or exact error-path parity"
       },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-TREE-tcp",
-          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-TREE-timer",
@@ -22648,7 +22673,7 @@
         "root": "src/reactor/timer",
         "extension": "rs"
       },
-      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "context": "Trusted source-only physical-path detector. Non-directory extension selection does not read contents; no execution, Cargo feature activation, or source cfg filtering is performed.",
       "matching_semantics": {
         "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
         "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
@@ -22663,27 +22688,32 @@
           "repository:file:kd-retired-tree-timer"
         ],
         "expected_diagnostics": [
-          "REP-FILE-001"
+          "REP-FILE-001",
+          "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
-          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_unix_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_entry_test.rs"
         ],
         "retired_parity_evidence": {
           "artifact": "docs/rc9/evidence/retired-parity.json.gz",
           "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
           "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
-        }
+        },
+        "retired_boundary_evidence": {
+          "artifact": "docs/rc9/evidence/retired-boundary.json.gz",
+          "payload_sha256": "8a9462a6d77f55c1294853bd770eec8a25a65f7445eb3b83d681c1210114591f",
+          "implementation_commit": "147fa9b1efd0fa26f75c6066726d9d0866355979"
+        },
+        "qualification_scope": "corrected non-directory predicates; Unix physical boundaries and explicitly injected errors; no full-policy or exact error-path parity"
       },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-TREE-timer",
-          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-RETIRED-TREE-tls",
@@ -22706,7 +22736,7 @@
         "root": "src/reactor/tls",
         "extension": "rs"
       },
-      "context": "Trusted source-only detector. Reads authored physical files as UTF-8; no execution, Cargo feature activation, or source cfg filtering is performed.",
+      "context": "Trusted source-only physical-path detector. Non-directory extension selection does not read contents; no execution, Cargo feature activation, or source cfg filtering is performed.",
       "matching_semantics": {
         "kind": "recursive physical traversal; case-sensitive Path::extension; no cfg filtering",
         "legacy_limit": "read_dir errors and individual entry errors are ignored; directory symlinks are followed without a cycle bound"
@@ -22721,27 +22751,32 @@
           "repository:file:kd-retired-tree-tls"
         ],
         "expected_diagnostics": [
-          "REP-FILE-001"
+          "REP-FILE-001",
+          "REP-FILE-006"
         ],
         "implemented": true,
-        "verified": false,
+        "verified": true,
         "full_snapshot_verified": false,
         "fixtures": [
           "crates/zrail-rust/tests/rc9_declarations/retired_test.rs",
-          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs"
+          "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_boundary_unix_test.rs",
+          "crates/zrail-rust/tests/rc9_declarations/retired_entry_test.rs"
         ],
         "retired_parity_evidence": {
           "artifact": "docs/rc9/evidence/retired-parity.json.gz",
           "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
           "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6"
-        }
+        },
+        "retired_boundary_evidence": {
+          "artifact": "docs/rc9/evidence/retired-boundary.json.gz",
+          "payload_sha256": "8a9462a6d77f55c1294853bd770eec8a25a65f7445eb3b83d681c1210114591f",
+          "implementation_commit": "147fa9b1efd0fa26f75c6066726d9d0866355979"
+        },
+        "qualification_scope": "corrected non-directory predicates; Unix physical boundaries and explicitly injected errors; no full-policy or exact error-path parity"
       },
-      "blockers": [
-        {
-          "id": "KD-RETIRED-TREE-tls",
-          "cause": "The original artifact-bound file-only policy misses special entries. A separate non-directory proposal and real filesystem regressions cover that gap and read/link boundaries. Deterministic entry-error evidence and repeated corrected-policy artifact qualification remain open; no tree cutover is qualified."
-        }
-      ]
+      "blockers": []
     },
     {
       "id": "KD-TRANSPORT-ASSOCIATED",
@@ -59049,7 +59084,7 @@
     "verified_by_disposition": {
       "existing native rail": 2,
       "declarative translation": 16,
-      "new engine capability": 506,
+      "new engine capability": 513,
       "behavioral evidence retained": 15,
       "approved retirement": 0
     },

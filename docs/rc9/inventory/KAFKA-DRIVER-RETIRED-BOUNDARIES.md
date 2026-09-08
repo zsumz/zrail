@@ -1,6 +1,9 @@
 # Retired-tree physical boundaries
 
-The seven `KD-RETIRED-TREE-*` assertions remain unverified. The original
+The seven `KD-RETIRED-TREE-*` assertions now have bounded slice verification.
+Two identical reports from signed producer `147fa9b1efd0fa26f75c6066726d9d0866355979`
+bind the exact executions in the [evidence index](../evidence/retired-boundary-index.json).
+The original
 `release_graph.rs:49-60` walker is still copied byte-for-byte in the physical
 oracle and hash-checked against the frozen source. This slice tests that walker
 and stock repository-file analysis on test-owned physical trees; it does not
@@ -50,7 +53,7 @@ the input binding, and broken exact links cannot produce partial evidence.
 Contract tests reject content predicates with the new selector; protected diff
 tests cover both quantifiers, inverse changes and unproven directory relations.
 
-## Remaining qualification
+## Qualified execution and reproduction
 
 Run the ordinary suite and the separate permission cases on a qualifying Unix
 host, with `TMPDIR` pointing to an external test-owned directory:
@@ -77,9 +80,13 @@ permission and link tests separately exercise the `REP-FILE-006` analyzer path.
 committed producer, executable, test inventory and exact suite outcomes. It
 executes the permission test explicitly and generates a fresh 144-case frozen
 ordinary report. Run it twice into fresh reports in the same external zdev
-directory and compare them; archive and validate artifact tampering before
-changing the seven ledger verification flags. Do not introduce racy deletion
-tests or run the legacy cycle.
+directory and compare them. The archived pair is byte-identical at SHA-256
+`8a9462a6d77f55c1294853bd770eec8a25a65f7445eb3b83d681c1210114591f`.
+The artifact validator rechecks both raw reports and every exact test outcome;
+68 tamper mutations reject changed identities, missing/skipped suites, invented
+counts, ordinary observations and expanded assertion claims. The seven ledger
+flags now bind this evidence with `full_snapshot_verified = false`. Do not
+introduce racy deletion tests or run the legacy cycle.
 
 The separate `KD-TRAVERSAL-*` source-root helper has different failure semantics
 and selection requirements. These retired-tree fixtures do not close its three

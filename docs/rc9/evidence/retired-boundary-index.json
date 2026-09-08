@@ -1,0 +1,81 @@
+{
+  "adversarial_mutations": 68,
+  "adversarial_tests": "scripts/rc9_retired_boundary_evidence_test.py",
+  "archives": {
+    "docs/rc9/evidence/retired-boundary-execution-logs.tar.gz": "ae9c8ef990368d56d4778311bee6afdde3d1c8f151e0c2d949db33d9d0b50117",
+    "docs/rc9/evidence/retired-boundary.json.gz": "188d20a362ec31d0170543e622bc135a2836a487e39ff6531808dfec31ff3f0c"
+  },
+  "assertions_verified": 7,
+  "binary_path": "/Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/retired-boundary-build/debug/deps/zrail_rust-80983c5ff1b09614",
+  "build_command": [
+    "cargo",
+    "test",
+    "-p",
+    "zrail-rust",
+    "--lib",
+    "--all-features",
+    "--locked",
+    "--offline",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "cases": {
+    "injected": 84,
+    "ordinary_frozen": 144,
+    "ordinary_synthetic": 144,
+    "physical": 147
+  },
+  "full_repository_qualified": false,
+  "implementation_commit": "147fa9b1efd0fa26f75c6066726d9d0866355979",
+  "implementation_tree": "58b62cf9ad4e69153efe7515e9f11865bbf9c62c",
+  "limitations": [
+    "Unix physical qualification; no downstream cutover or full-policy proof.",
+    "Seven cycles execute native analysis only, never the unbounded old walker.",
+    "Injected iterator-expression and native scanner failures are not observed OS entry errors."
+  ],
+  "listing_sha256": "45e51176b212ed449c7658e2f358d1c572e0cecbc1d15ec4cf2366789ee47483",
+  "ordinary_sha256": "8ccfb80c75ac19ccedab788c0c770082a2fb4a86d79aa7cd07b6ee9ed4e341ec",
+  "payload_bytes": 2132212,
+  "payload_sha256": "8a9462a6d77f55c1294853bd770eec8a25a65f7445eb3b83d681c1210114591f",
+  "policy": "docs/rc9/policies/kafka-driver.retired-boundary.fragment.toml",
+  "policy_sha256": "1a35460d1ed6a7cb0cc173f91c977e9fc6794be08c6641cd961980f7f82264ca",
+  "producer_inputs": {
+    "crates/zrail-rust/src/inventory/io.rs": "8d6e4046a4e82f990a62f6d4ab93efd1b436a7c3d5d0f1f52de2b4038ee32957",
+    "crates/zrail-rust/src/inventory/traverse.rs": "b00bdfa321cf49eacdcb6f94dffcbeb8eadb96306343d6277fb2c019648f95da",
+    "crates/zrail-rust/src/repository_files.rs": "95df26c2fba72d36e1791d3f7bacd129becf8bd9e3558880e42979044b476a1d",
+    "crates/zrail-rust/src/repository_files/select.rs": "3c14f68553bfa1f629c90cafdafbf986074433fcb0fc10a0866df8a951f3a0ba",
+    "crates/zrail-rust/tests/rc9_declarations/file_items.rs": "1b0c622e8258fb48a1c3c0149be5ca904613f3f420b9da92c77e004dc214fbf6",
+    "crates/zrail-rust/tests/rc9_declarations/legacy.rs": "aac837f3476c2197cc0ca55efd20d661553951904d437d36ea9680ce06b62bdc",
+    "crates/zrail-rust/tests/rc9_declarations/origins.rs": "d6d6bb8cd5b56dea87e476d8c6bccd468e5c7721dc0e55f9414aa93fc4bd76ea",
+    "crates/zrail-rust/tests/rc9_declarations/retired_boundary_test.rs": "98429b2fef29805b3e1a1e0c82ac7989e14aa6306d6d7a46e8959153bddde920",
+    "crates/zrail-rust/tests/rc9_declarations/retired_boundary_unix_test.rs": "6929beb4ceb7270559b38c4d718e0dc7a9182ea1dd9ffc02dcbe9f6b1e05e8b2",
+    "crates/zrail-rust/tests/rc9_declarations/retired_cases.rs": "6ae93c2a3e9be623de1c5f1a9b21f76d9d69440372c0b18cd6b19d28e3865738",
+    "crates/zrail-rust/tests/rc9_declarations/retired_entry_oracle.rs": "309c9217d8a39212d5b53371c96e93c3bea9750ab327bf06773f75b7e6d56d28",
+    "crates/zrail-rust/tests/rc9_declarations/retired_entry_test.rs": "d7158a1624944d1243a4876c57c4b3ad986f9105aef32614acde4ab40c14d44c",
+    "crates/zrail-rust/tests/rc9_declarations/retired_fault_io.rs": "7aef0959b143fc0ed524020570e89e566773bed732340b4ad51d14a6ceea00d9",
+    "crates/zrail-rust/tests/rc9_declarations/retired_legacy.rs": "163d1dc487d40febef65341680c91eaa9bc3b2e720fc4376667ec263e556bfb7",
+    "crates/zrail-rust/tests/rc9_declarations/retired_model.rs": "507a66451a23c87834d5a3b1544d99ee3e8578a900b0e3d1a71eccc4ae69f7cd",
+    "crates/zrail-rust/tests/rc9_declarations/retired_qualification.rs": "43982733c5551c8c87c65c5a2f466ea222e2d60e2bc39bc4ef49c8a1f56d35ae",
+    "crates/zrail-rust/tests/rc9_declarations/retired_test.rs": "95993bbc21f47e658d2dc0400450399cfad457625a370f8d8d63f8fb644f73b9",
+    "scripts/rc9-retired-boundaries": "d44407fcf841904b7034a7ac68f242f9c20034e41fc9a191a90f44af78cc626b",
+    "scripts/rc9-route-runtime": "9f72ca5ebeec13d814a5ec9f5f04d2f3ead262a861ef8563da74e034397beb62",
+    "scripts/rc9_retired_boundary_common.py": "2fdb53d4c7df5107739e4e54ff239ec1735f566a8abf66c4fe2450cd782e0afc",
+    "scripts/rc9_route_runtime_common.py": "3c99f33502725eae0961ca277f8ec47533ebb98c8e8d02e4f50cf4180f30c50f"
+  },
+  "producer_signature": "B58439871CD2A7275B20CC19EC8E4D26598A0373",
+  "repeat": {
+    "byte_identical": true,
+    "runs": 2
+  },
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: aarch64-apple-darwin\nrelease: 1.97.1\nLLVM version: 22.1.6",
+  "schema": 1,
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "test_binary_sha256": "d123eb77d1762ada20e48512d475cd5ef2c0b88e4d06098b521a73df2ab3fb9a",
+  "validator": "scripts/rc9_retired_boundary_evidence.py"
+}

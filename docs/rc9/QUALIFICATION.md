@@ -1168,3 +1168,35 @@ These are local implementation regressions, not a new immutable differential
 artifact or full-repository qualification. The original policy/report remain
 unchanged; the seven corrected tree rows and three source-traversal rows remain
 unverified. No root lock, version, downstream guard or release state changed.
+
+# Signed corrected retired-tree qualification
+
+PGP-signed producer `147fa9b1efd0fa26f75c6066726d9d0866355979`, tree
+`58b62cf9ad4e69153efe7515e9f11865bbf9c62c`, now qualifies the seven corrected
+tree predicates with two independent byte-identical reports. The
+[index](evidence/retired-boundary-index.json) binds both full reports, exact
+execution logs, pinned Rust 1.97.1, test binary and frozen source inputs.
+Each run explicitly executes all 13 required tests, including the ignored Unix
+permission test and frozen qualifier: 144 frozen ordinary cases, 144 synthetic
+ordinary cases, 147 physical boundaries and 84 injected errors. The seven
+cycle cases are native-only. The unchanged legacy iterator expression ignores
+errors; native scanning stops without returning a partial inventory. This is
+documented stronger behavior, not exact legacy error-path parity or observed
+OS entry-error evidence.
+
+From that clean producer checkout, use fresh report names in an existing
+external test-owned zdev evidence directory and keep frozen snapshots untouched:
+
+```sh
+python3 scripts/rc9-retired-boundaries --snapshots /Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/snapshots --directory /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/retired-boundary-evidence --report new-a.json --build /Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/retired-boundary-build
+python3 scripts/rc9-retired-boundaries --snapshots /Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/snapshots --directory /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/retired-boundary-evidence --report new-b.json --build /Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/retired-boundary-build
+cmp /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/retired-boundary-evidence/new-a.json /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/retired-boundary-evidence/new-b.json
+```
+
+The canonical artifact checker validates the original report separately, then
+requires the corrected-policy evidence for each newly verified tree row. Its
+five unittest methods reject 68 mutations, including structural checks with
+recomputed ordinary digests. A missing corrected report still reaches the
+original validator's explicit refusal to verify a tree assertion. Ledger
+integrity passes at 672 reviewed / 592 implemented / 546 verified: 126 remain.
+The three `KD-TRAVERSAL-*` rows and full consumer qualification stay open.

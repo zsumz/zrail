@@ -19,6 +19,8 @@ METHOD_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_method_evidence.py")["verif
 TEXT_SOURCES = runpy.run_path(ROOT / "scripts/rc9_text_sources.py")["load"]
 ROUTE_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_route_evidence.py")["verify"]
 RETIRED_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_retired_evidence.py")["verify"]
+RETIRED_REPORT = runpy.run_path(ROOT / "scripts/rc9_retired_evidence.py")["verify_report"]
+RETIRED_BOUNDARIES = runpy.run_path(ROOT / "scripts/rc9_retired_boundary_evidence.py")["verify"]
 RUNTIME_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_route_runtime_evidence.py")["verify"]
 
 
@@ -313,7 +315,12 @@ def main():
             require(not replacement["verified"] or replacement.get("retired_parity_evidence"), "verified retired assertion needs bound evidence")
             retired_report = parity_report(assertion, "retired_parity_evidence", "rust:inventory:", file_reports)
             if retired_report is not None:
-                RETIRED_EVIDENCE(assertion, retired_report, files, assertions_by_id)
+                if assertion["id"].startswith("KD-RETIRED-TREE-") and replacement.get("retired_boundary_evidence"):
+                    RETIRED_REPORT(retired_report, files)
+                    boundary_report = parity_report(assertion, "retired_boundary_evidence", "repository:file:", file_reports)
+                    RETIRED_BOUNDARIES(assertion, boundary_report, files)
+                else:
+                    RETIRED_EVIDENCE(assertion, retired_report, files, assertions_by_id)
         else:
             file_evidence(assertion, file_reports, files)
             lock_evidence(assertion, file_reports)

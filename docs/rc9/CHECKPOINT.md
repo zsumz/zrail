@@ -8,30 +8,35 @@ unchanged by that metadata-only rewrite.
 The user confirmed continued coverage work on 2026-09-07 after the signed-history
 release preparation. The full replacement criterion remains in place.
 See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
-The current ledger is **672 reviewed / 592 implemented / 539 verified**;
-133 reviewed assertion instances and the discovery blockers remain open.
+The current ledger is **672 reviewed / 592 implemented / 546 verified**;
+126 reviewed assertion instances and the discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
 
-The next physical-boundary slice adds explicit non-directory entry selection.
-Real FIFO fixtures expose a gap in the prior regular-file tree proposal; the
-separate corrected proposal preserves the historical artifact-bound policy.
+The seven retired-tree assertions now bind two byte-identical reports from
+PGP-signed producer `147fa9b1efd0fa26f75c6066726d9d0866355979`. Each run executes
+144 frozen ordinary cases, 144 synthetic ordinary cases, 147 real filesystem
+boundary cases and 84 explicitly injected errors. The seven cycle cases execute
+native analysis only; unread/link/entry errors preserve documented fail-closed
+differences, not exact error-path parity. The corrected non-directory proposal
+preserves the original artifact-bound file-only policy as historical evidence.
 See [retired-tree boundaries](inventory/KAFKA-DRIVER-RETIRED-BOUNDARIES.md).
-The seven tree rows remain unverified pending deterministic entry-error evidence
-and repeated, artifact-bound qualification of the corrected policy. Counts are
-unchanged; the separate source-root traversal assertions also remain open.
+The [new index](evidence/retired-boundary-index.json) binds the producer, executable,
+frozen inputs, both complete raw reports and exact execution logs. The validator
+rejects 68 artifact, outcome and assertion-linkage mutations. The separate three
+source-root traversal assertions remain open and are the next bounded slice.
 
-This slice passes 1,624 Rust tests with zero failures and 20 ordinary-suite
+The preceding non-directory implementation passes 1,624 Rust tests with zero failures and 20 ordinary-suite
 ignores. The new permission test ran separately and passed all 21 cases.
 Formatting, Clippy, rustdoc and all three extracted package builds pass.
 Complete self-analysis observes 1,064 Rust files, 1,659 base contexts and
 1,202,347 projection work with zero unresolved items. Canonical still rejects
 exactly the five known protected-lock diagnostics; no authority was accepted.
 
-The signed `06b0f185f072bbd9211816a0694f0812ab4188d6` now qualifies the partial
+The earlier signed `06b0f185f072bbd9211816a0694f0812ab4188d6` qualifies the partial
 kafka-driver retired-backend bundle. Two byte-identical 144-case reports accept
 72 and reject 72 fixtures each. They close twelve declaration, raw-construction
-and required-source assertions; the seven physical-tree assertions remain open
-for read-error, entry-error and symlink boundary qualification. The artifact
+and required-source assertions; it leaves the seven physical-tree assertions open
+for the separate boundary qualification now recorded above. The artifact
 validator rejects 37 tamper mutations. See [the evidence index](evidence/retired-index.json).
 No runtime analyzer behavior changed and no root authority was accepted.
 
