@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "context": "The exact four-line complete-array name selection is isolated. The full original caller/helper remains unchanged and bound by lock-packages-origins.json; non-string names are an explicit existing native strictness difference.",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/protocol_provenance.rs",
+      "source_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+      "function": "assert_locked whole-array name selection",
+      "harness": "crates/zrail-rust/tests/rc9_lock_names/original.rs",
+      "start_line": 148,
+      "end_line": 151,
+      "extracted_sha256": "266826a67ebf3bf14dd3e832b3500f51845bcbec0febda6f516f5b076506bd3c"
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "name": "unchanged",
+      "position": "none",
+      "entry": "",
+      "original_error": null,
+      "native_error": null,
+      "stage": "same-acceptance"
+    },
+    {
+      "name": "append-unrelated",
+      "position": "append",
+      "entry": "\n[[package]]\nname = \"unrelated-probe\"\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": null,
+      "stage": "same-acceptance"
+    },
+    {
+      "name": "prepend-unrelated",
+      "position": "prepend",
+      "entry": "\n[[package]]\nname = \"unrelated-probe\"\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": null,
+      "stage": "same-acceptance"
+    },
+    {
+      "name": "append-missing",
+      "position": "append",
+      "entry": "\n[[package]]\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": "index not found",
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "missing-name"
+    },
+    {
+      "name": "prepend-missing",
+      "position": "prepend",
+      "entry": "\n[[package]]\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": "index not found",
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "missing-name"
+    },
+    {
+      "name": "middle-missing",
+      "position": "middle",
+      "entry": "\n[[package]]\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": "index not found",
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "missing-name"
+    },
+    {
+      "name": "append-integer",
+      "position": "append",
+      "entry": "\n[[package]]\nname = 1\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "append-boolean",
+      "position": "append",
+      "entry": "\n[[package]]\nname = true\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "append-float",
+      "position": "append",
+      "entry": "\n[[package]]\nname = 1.5\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "append-datetime",
+      "position": "append",
+      "entry": "\n[[package]]\nname = 2026-09-09\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "append-array",
+      "position": "append",
+      "entry": "\n[[package]]\nname = []\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "append-table",
+      "position": "append",
+      "entry": "\n[[package]]\nname = {}\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "append-empty",
+      "position": "append",
+      "entry": "\n[[package]]\nname = \"\"\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "append-blank",
+      "position": "append",
+      "entry": "\n[[package]]\nname = \"  \"\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "append-surrounding-space",
+      "position": "append",
+      "entry": "\n[[package]]\nname = \" kafka-wire \"\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": null,
+      "stage": "same-acceptance"
+    },
+    {
+      "name": "append-wrong-case",
+      "position": "append",
+      "entry": "\n[[package]]\nname = \"Kafka-wire\"\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n\n",
+      "original_error": null,
+      "native_error": null,
+      "stage": "same-acceptance"
+    }
+  ]
+}
