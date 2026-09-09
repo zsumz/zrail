@@ -35,6 +35,13 @@ consumer contract or turn its inline `bytes` example into a package requirement.
 The mixed dependency checker stays installed until its other assertions and
 complete downstream qualification are discharged.
 
+The `protocol_provenance.rs` package-array precondition now has a separate
+[bound proof](evidence/lock-array-index.json) through the mandatory native
+whole-lock loader. Preserve the distinction between accepting an empty array
+at the type stage and rejecting its five missing required identities afterward.
+This does not close the all-entry name or version-prefix preconditions, and
+does not authorize removing the mixed provenance checker.
+
 The mission explicitly requires replacing `KD-CI-ENFORCEMENT`'s current blanket
 `!workflow.contains("zrail")` predicate. The proposed downstream change must add
 a required CI lane that verifies the protected rc9 archive/provenance, runs

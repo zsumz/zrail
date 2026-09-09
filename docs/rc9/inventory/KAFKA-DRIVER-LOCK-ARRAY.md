@@ -41,6 +41,18 @@ produced, and package-name and exact-version preconditions remain separate work.
 ## Evidence boundary
 
 The trusted runner requires five exact tests, including explicit frozen
-qualification. Verification remains open until two clean signed-producer runs,
-raw execution logs and artifact/linkage rejection checks are bound. No root
-contract, lock, policy fragment, downstream guard, grant or release state changes.
+qualification. Two clean runs at signed producer
+`a385ebb5e01d8e92fbcbff834b29b3f5c5080238`, tree
+`86436f9057ab0025667cf0a914c78c4263cdbb9d`, produced identical reports with SHA-256
+`0a8700af9ed45f74581a41106c904f6a63a66025009186d2fbf58563ecf8125a`.
+The [index](../evidence/lock-array-index.json) binds all 24 raw reports/logs,
+the exact 644-test executable inventory, compiler, producer and inputs.
+Seven validator tests reject 117 mutations; two runner tests reject 35 malformed
+execution outcomes. The ledger verifies only this one precondition, with
+`full_snapshot_verified` false. No root contract, lock, policy fragment,
+downstream guard, grant or release state changes.
+
+The native array error is a Cargo graph loader error, not a stable finding ID;
+the assertion therefore has no invented diagnostic code. Its exact message is
+bound in the matrix. `DEP-LOCK-001` belongs only to the separately exercised
+empty-array required-count failures, not to the array-type check.

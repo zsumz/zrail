@@ -8,9 +8,39 @@ unchanged by that metadata-only rewrite.
 The user confirmed continued coverage work on 2026-09-07 after the signed-history
 release preparation. The full replacement criterion remains in place.
 See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
-The current ledger is **672 reviewed / 598 implemented / 552 verified**;
-120 reviewed assertion instances and the discovery blockers remain open.
+The current ledger is **672 reviewed / 599 implemented / 553 verified**;
+119 reviewed assertion instances and the discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
+
+The whole-lock package-array precondition now binds two byte-identical reports
+from signed producer `a385ebb5e01d8e92fbcbff834b29b3f5c5080238`: 24 precise
+failure-stage fixtures, five separate empty-array count failures, and complete
+original/native execution over twelve inputs, five workspace packages and 83
+lock nodes. Seven validator tests reject 117 mutations; two runner tests reject
+35 malformed outcomes. This closes only `KD-PROVENANCE-LOCK-PACKAGE-ARRAY`;
+package-name and version-prefix qualification remain open. See the
+[index](evidence/lock-array-index.json) and [scope](inventory/KAFKA-DRIVER-LOCK-ARRAY.md).
+Next bounded slice: `KD-PROVENANCE-LOCK-PACKAGE-NAMES`, then remaining
+kafka-driver inventory and complete policy qualification.
+
+Current local validation passes 1,644 Rust tests with zero failures and 26
+ordinary-suite ignores, plus formatting, strict Clippy, rustdoc, structure and
+all three extracted package builds. Complete self-analysis observes 1,085 Rust
+files, 1,681 base contexts and 1,209,223 projection work with zero unresolved
+items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
+`LOCK-028` and `LOCK-030`; this remains a failed release gate. Logs are
+`lock-array-final-check.log`, `lock-array-package-check.log` and
+`lock-array-final-self-analysis.json` under `target/rc9-completion-20260907/`.
+Root authority, locks, versions and the existing lock-package fragment are unchanged.
+
+The preceding metadata-parent head `97fdb7e` failed two Windows fixture
+assumptions. Separate signed fix `c5a2470` now passes Windows, macOS and Rust
+1.96.1 compatibility in [CI](https://github.com/zsumz/zrail/actions/runs/34395647556);
+its [Security run](https://github.com/zsumz/zrail/actions/runs/34395647564) passes.
+The correction uses the existing portable observed-path renderer and canonical
+fixture root; original guards and historical evidence remain unchanged. The old
+failed Windows run is not relabeled, and these results bind only the isolated
+fix, not the later array producer or binding revision.
 
 The fixed metadata-parent precondition now binds two byte-identical reports
 from signed producer `f40fd5c3efda8619cf7dbf14662fa90d7e7a39c9`. The complete
@@ -21,10 +51,9 @@ two runner tests reject 35 malformed execution outcomes. This is not arbitrary
 manifest discovery or a new license requirement. See the
 [index](evidence/metadata-parent-index.json) and
 [proof](inventory/KAFKA-DRIVER-METADATA-PARENT.md).
-Next bounded slice: `KD-PROVENANCE-LOCK-PACKAGE-ARRAY`, then remaining
-kafka-driver inventory and complete policy qualification.
+The array precondition has separate qualification above.
 
-Current local validation passes 1,640 Rust tests with zero failures and 25
+The preceding metadata-parent local validation passes 1,640 Rust tests with zero failures and 25
 ordinary-suite ignores, plus formatting, strict Clippy, rustdoc, structure and
 all three extracted package builds. Complete self-analysis observes 1,081 Rust
 files, 1,677 base contexts and 1,207,972 projection work with zero unresolved

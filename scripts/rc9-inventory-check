@@ -25,6 +25,7 @@ RUNTIME_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_route_runtime_evidence.py"
 TRAVERSAL_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_traversal_evidence.py")["verify"]
 DEPENDENCY_DETECTOR_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_dependency_detector_evidence.py")["verify"]
 METADATA_PARENT_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_metadata_parent_evidence.py")["verify"]
+LOCK_ARRAY_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_lock_array_evidence.py")["verify"]
 
 
 def unique_object(pairs):
@@ -314,6 +315,11 @@ def main():
             runtime_report = parity_report(assertion, "runtime_evidence", "test-mirror:", file_reports)
             if runtime_report is not None:
                 RUNTIME_EVIDENCE(assertion, runtime_report, files)
+        elif assertion["id"] == "KD-PROVENANCE-LOCK-PACKAGE-ARRAY":
+            require(not replacement["verified"] or replacement.get("array_evidence"), "verified array assertion needs bound proof")
+            array_report = parity_report(assertion, "array_evidence", "dependency:lock-package:", file_reports)
+            if array_report is not None:
+                LOCK_ARRAY_EVIDENCE(assertion, array_report, files)
         elif assertion["id"] == "KD-METADATA-PARENT":
             require(not replacement["verified"] or replacement.get("parent_evidence"), "verified parent assertion needs bound proof")
             parent_report = parity_report(assertion, "parent_evidence", "repository:file:", file_reports)

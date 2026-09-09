@@ -17246,19 +17246,31 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera",
+          "dependency:lock-package:kd-lock-bornera-core",
+          "dependency:lock-package:kd-lock-bornera-rustls",
+          "dependency:lock-package:kd-lock-kafka-wire",
+          "dependency:lock-package:kd-lock-kafka-wire-core"
+        ],
         "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-LOCK-PACKAGE-ARRAY",
-          "cause": "Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_lock_array/original.rs",
+          "crates/zrail-rust/tests/rc9_lock_array/model.rs",
+          "crates/zrail-rust/tests/rc9_lock_array/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_lock_array/qualification.rs"
+        ],
+        "qualification_scope": "one whole-lock array-type precondition; 24 precise failure-stage fixtures, five separate empty-array required-count failures and five exact frozen identities over 83 nodes; no package-name or version-prefix qualification",
+        "array_evidence": {
+          "artifact": "docs/rc9/evidence/lock-array.json.gz",
+          "payload_sha256": "0a8700af9ed45f74581a41106c904f6a63a66025009186d2fbf58563ecf8125a",
+          "implementation_commit": "a385ebb5e01d8e92fbcbff834b29b3f5c5080238"
         }
-      ],
+      },
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate",
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate",
@@ -59148,11 +59160,11 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 672,
-    "implemented": 598,
+    "implemented": 599,
     "verified_by_disposition": {
       "existing native rail": 6,
       "declarative translation": 16,
-      "new engine capability": 515,
+      "new engine capability": 516,
       "behavioral evidence retained": 15,
       "approved retirement": 0
     },

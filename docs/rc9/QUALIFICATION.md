@@ -1326,3 +1326,58 @@ compatibility in [CI](https://github.com/zsumz/zrail/actions/runs/34391668594);
 only the same five canonical lock diagnostics fail. Its
 [Security run](https://github.com/zsumz/zrail/actions/runs/34391668590) passes.
 Those hosted results do not qualify the later metadata-parent commits.
+
+## Whole-lock package-array qualification, 2026-09-09
+
+`KD-PROVENANCE-LOCK-PACKAGE-ARRAY` binds signed producer
+`a385ebb5e01d8e92fbcbff834b29b3f5c5080238`, tree
+`86436f9057ab0025667cf0a914c78c4263cdbb9d`, and two byte-identical reports:
+`0a8700af9ed45f74581a41106c904f6a63a66025009186d2fbf58563ecf8125a`.
+Each exact five-test run binds the original three-line excerpt and full unchanged
+caller/helper, 24 precise failure-stage cases, five empty-array required-count
+failures and all five frozen identities over 83 lock nodes. The synthetic graph
+has no active workspace packages; the frozen graph derives all five packages
+from twelve bound inputs. An empty array is accepted at the original/native
+type stage and rejected separately by the required-count rules. Earlier version
+and later package-field errors are explicit existing native constraints, not
+array-rejection parity. Package-name and exact-version authority remain open.
+
+The [index](evidence/lock-array-index.json) binds 24 raw reports/logs, the exact
+644-test executable inventory, compiler, producer and input digests. Seven
+validator tests reject 117 mutations; two runner tests reject 35 malformed
+execution outcomes. Ledger integrity passes at 672 reviewed / 599 implemented /
+553 verified: 119 reviewed instances remain, plus discovery and complete
+qualification. No root authority, version, policy fragment or downstream guard
+changed. See [the scope review](inventory/KAFKA-DRIVER-LOCK-ARRAY.md).
+
+Reproduction requires the clean signed producer and fresh external zdev outputs:
+
+```sh
+python3 scripts/rc9-lock-array --snapshots target/rc9-completion-20260907/snapshots --directory /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/lock-array-evidence --report new-a.json --build target/rc9-completion-20260907/lock-array-build
+python3 scripts/rc9-lock-array --snapshots target/rc9-completion-20260907/snapshots --directory /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/lock-array-evidence --report new-b.json --build target/rc9-completion-20260907/lock-array-build
+```
+
+Separately, the prior metadata-parent head `97fdb7e` failed two Windows fixture
+assumptions in [CI](https://github.com/zsumz/zrail/actions/runs/34393956491).
+Signed `c5a2470` uses the existing portable observed-path renderer and canonical
+fixture root, with raw/canonical input regression coverage. It does not change
+original guard bytes, policies, historical reports or runtime semantics. The
+failed hosted log remains `metadata-parent-hosted-failures.log` under
+`target/rc9-completion-20260907/`; the old Windows run remains a failed result.
+
+That isolated fix now passes Windows, macOS and Rust 1.96.1 compatibility in
+[CI](https://github.com/zsumz/zrail/actions/runs/34395647556); its
+[Security run](https://github.com/zsumz/zrail/actions/runs/34395647564) passes.
+Canonical retains only the five protected-lock errors. These hosted results
+bind `c5a2470`, not the later array producer or evidence-binding revision.
+
+Final local validation passes 1,644 Rust tests, zero failures and 26
+ordinary-suite ignores. Formatting, strict Clippy, rustdoc, structure and all
+three extracted package builds pass. Complete self-analysis observes 1,085 Rust
+files, 1,681 base contexts and 1,209,223 projection work with zero unresolved
+items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
+`LOCK-028` and `LOCK-030`; no protected lock was accepted or bypassed. Logs are
+`lock-array-final-check.log`, `lock-array-package-check.log`,
+`lock-array-final-self-analysis.json` and
+`metadata-parent-portable-hosted-failures.log` under
+`target/rc9-completion-20260907/`.
