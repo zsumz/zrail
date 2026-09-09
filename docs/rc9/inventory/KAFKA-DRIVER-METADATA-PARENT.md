@@ -68,3 +68,16 @@ malformed outcomes. The ledger links the three existing license policies but
 has no expected parent-failure diagnostic: this branch cannot fail for the
 fixed registry. License/read failures retain their separate assertions.
 `full_snapshot_verified` remains false; no guard or authority changed.
+
+## Windows fixture correction
+
+Hosted Windows testing of `97fdb7e` failed two fixture assumptions: authored-path
+normalization rejects backslashes rendered by native `PathBuf`, and passing a
+noncanonical fixture root mismatches Windows canonical path prefixes during
+file containment checks. The harness now uses the existing `repository_relative`
+renderer for observed paths and canonicalizes its physical fixture root before
+native analysis. The ordinary test compares observations from supplied and
+canonical roots. Original guard bytes, policies, path cases and historical
+Darwin evidence remain unchanged. The failed hosted log is retained at
+`target/rc9-completion-20260907/metadata-parent-hosted-failures.log`; successful
+local tests do not relabel that Windows result as passing.

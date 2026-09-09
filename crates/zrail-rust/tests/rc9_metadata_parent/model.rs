@@ -8,7 +8,7 @@ use std::{
 };
 use zrail_core::{
     RepositoryEntryMode, RepositoryFilePredicate, RepositoryFileRule, normalize_relative,
-    sha256_hex,
+    repository_relative, sha256_hex,
 };
 
 pub(super) const POLICY: &str = "docs/rc9/policies/kafka-driver.metadata.fragment.toml";
@@ -145,12 +145,8 @@ pub(super) fn path_proof(root: &Path) -> Vec<PathProof> {
                 root_shape,
                 name,
                 manifest,
-                parent: normalize_relative(parent.strip_prefix(&anchor).expect("contained parent"))
-                    .expect("relative parent"),
-                license: normalize_relative(
-                    license.strip_prefix(&anchor).expect("contained license"),
-                )
-                .expect("relative license"),
+                parent: repository_relative(&anchor, parent).expect("relative parent"),
+                license: repository_relative(&anchor, &license).expect("relative license"),
                 policy_id: format!("repository:file:kd-metadata-{name}-license-copy"),
             });
         }
@@ -176,11 +172,12 @@ pub(super) fn inputs(root: &Path) -> BTreeMap<String, String> {
 }
 
 pub(super) fn original_and_native(root: &Path) -> Vec<crate::GovernedRepositoryFile> {
-    assert_eq!(inputs(root).len(), 11);
-    super::super::check(root);
+    let root = root.canonicalize().expect("canonical fixture root");
+    assert_eq!(inputs(&root).len(), 11);
+    super::super::check(&root);
     let rules = policies();
     let result =
-        crate::repository_files::analyze(root, &rules).expect("complete native license inputs");
+        crate::repository_files::analyze(&root, &rules).expect("complete native license inputs");
     assert!(result.findings.is_empty(), "{:?}", result.findings);
     assert_eq!(result.policies.len(), 3);
     for (rule, license) in rules.iter().zip(LICENSES) {

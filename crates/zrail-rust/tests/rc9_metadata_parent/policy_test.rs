@@ -65,7 +65,12 @@ fn metadata_parent_mapping_rejects_changed_license_authority() {
 #[test]
 fn metadata_parent_original_and_native_accept_exact_frozen_fixture_inputs() {
     let root = model::project().join("crates/zrail-testkit/tests/fixtures/rc9/metadata/valid");
-    model::original_and_native(&root);
+    let canonical = root.canonicalize().expect("canonical root");
+    assert_eq!(
+        serde_json::to_value(model::original_and_native(&root)).expect("raw-root observation"),
+        serde_json::to_value(model::original_and_native(&canonical))
+            .expect("canonical-root observation")
+    );
 }
 
 #[test]
