@@ -44,12 +44,27 @@ physical input hashes. Successful completion demonstrates the original parent
 branch was reached for each of the three public packages. The runner requires
 five exact tests, including explicit execution of the frozen qualifier.
 
-Evidence flags remain open until repeated clean committed runs, exact execution
-logs and artifact/linkage rejection tests are bound. This is one precondition,
-not new manifest discovery, full metadata qualification, downstream cutover or
-release approval. Other metadata assertions retain their own evidence.
+This is one precondition, not new manifest discovery, full metadata
+qualification, downstream cutover or release approval. Other metadata
+assertions retain their own evidence.
 
 The first local comparison assumed native policy order matched registry order
 and failed. The corrected comparison matches unique policy identities instead;
 no original assertion or policy changed. The diagnostic-only log is retained at
 `target/rc9-completion-20260907/metadata-parent-focused-retry.log`.
+
+## Bound qualification, 2026-09-09
+
+Signed producer `f40fd5c3efda8619cf7dbf14662fa90d7e7a39c9`, tree
+`3a5ad04d3dbdfbd64b007469af65ac4eb5d20e8f`, produced two byte-identical reports
+with SHA-256 `6b595acb5c42228c37d78c0eefe327649ed6679af7e2bda2ebcb08856f8e18fb`.
+The [index](../evidence/metadata-parent-index.json) binds all 24 raw report/log
+files, exact five-test execution, compiler/binary/producer identities, original
+source, eleven inputs, existing policy and unchanged frozen snapshots.
+
+Six artifact/linkage tests reject 95 mutations, including direct structural
+checks independent of the immutable payload digest. Two runner tests reject 35
+malformed outcomes. The ledger links the three existing license policies but
+has no expected parent-failure diagnostic: this branch cannot fail for the
+fixed registry. License/read failures retain their separate assertions.
+`full_snapshot_verified` remains false; no guard or authority changed.

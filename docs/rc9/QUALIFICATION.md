@@ -1287,3 +1287,42 @@ items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
 `target/rc9-completion-20260907/` as `dependency-detector-final-check.log`,
 `dependency-detector-package-check.log` and `traversal-portable-hosted-failures.log`.
 No reviewed root contract, lock, version or downstream guard changed.
+
+## Fixed metadata-parent qualification, 2026-09-09
+
+One fixed-registry parent precondition now binds signed producer
+`f40fd5c3efda8619cf7dbf14662fa90d7e7a39c9`, tree
+`3a5ad04d3dbdfbd64b007469af65ac4eb5d20e8f`, and two byte-identical reports:
+`6b595acb5c42228c37d78c0eefe327649ed6679af7e2bda2ebcb08856f8e18fb`.
+Each exact five-test run executes the unchanged original metadata body over
+eleven frozen inputs, twelve lexical mappings across four absolute root shapes,
+seven altered policy mappings and native observation of three unchanged license
+rules. Synthetic anchor shapes are not filesystem or permission observations.
+No arbitrary manifest discovery or complete metadata qualification is claimed.
+
+The [index](evidence/metadata-parent-index.json) binds all 24 raw report/log files,
+source and policy hashes, producer/compiler/executable and exact suite inventory.
+Six validator tests reject 95 mutations; two runner tests reject 35 malformed
+outcomes. The prior ordering-assumption failure remains diagnostic-only in
+`metadata-parent-focused-retry.log`; native observations now match by policy
+identity without changing their order, original code or policy.
+
+Ledger integrity passes at 672 reviewed / 598 implemented / 552 verified:
+120 reviewed instances remain, plus discovery and complete qualification.
+No reviewed root contract, lock, version or downstream guard changed. See
+[the lexical proof and its limits](inventory/KAFKA-DRIVER-METADATA-PARENT.md).
+
+Final local validation passes 1,640 Rust tests, zero failures and 25
+ordinary-suite ignores. Formatting, strict Clippy, rustdoc, structure and all
+three extracted package builds pass. Complete self-analysis observes 1,081 Rust
+files, 1,677 base contexts and 1,207,972 projection work with zero unresolved
+items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
+`LOCK-028` and `LOCK-030`. The logs are `metadata-parent-final-check.log` and
+`metadata-parent-package-check.log` under `target/rc9-completion-20260907/`.
+This failed protected gate was not bypassed or accepted.
+
+The preceding detector head `df0e64a` passes Windows, macOS and Rust 1.96.1
+compatibility in [CI](https://github.com/zsumz/zrail/actions/runs/34391668594);
+only the same five canonical lock diagnostics fail. Its
+[Security run](https://github.com/zsumz/zrail/actions/runs/34391668590) passes.
+Those hosted results do not qualify the later metadata-parent commits.

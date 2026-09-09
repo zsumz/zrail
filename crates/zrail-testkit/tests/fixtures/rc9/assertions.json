@@ -13971,19 +13971,28 @@
       "exception_semantics": "none",
       "disposition": "existing native rail",
       "replacement": {
-        "policy_ids": [],
+        "policy_ids": [
+          "repository:file:kd-metadata-kafka-driver-license-copy",
+          "repository:file:kd-metadata-kafka-driver-core-license-copy",
+          "repository:file:kd-metadata-kafka-driver-transport-license-copy"
+        ],
         "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-METADATA-PARENT",
-          "cause": "Record the path-precondition proof and bind the exact translated license paths before closing this helper assertion."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_metadata_parent/model.rs",
+          "crates/zrail-rust/tests/rc9_metadata_parent/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_metadata_parent/qualification.rs"
+        ],
+        "qualification_scope": "one fixed-registry lexical parent precondition; three exact existing license-policy mappings, twelve absolute-anchor checks; no arbitrary discovery or full repository qualification",
+        "parent_evidence": {
+          "artifact": "docs/rc9/evidence/metadata-parent.json.gz",
+          "payload_sha256": "6b595acb5c42228c37d78c0eefe327649ed6679af7e2bda2ebcb08856f8e18fb",
+          "implementation_commit": "f40fd5c3efda8619cf7dbf14662fa90d7e7a39c9"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-METADATA-PARSE",
@@ -59139,9 +59148,9 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 672,
-    "implemented": 597,
+    "implemented": 598,
     "verified_by_disposition": {
-      "existing native rail": 5,
+      "existing native rail": 6,
       "declarative translation": 16,
       "new engine capability": 515,
       "behavioral evidence retained": 15,

@@ -27,7 +27,6 @@ policy qualification is claimed. See [the runtime evidence](evidence/route-runti
 | `KD-CI-ENFORCEMENT` | The mission explicitly requires replacing this prohibition with an enforced zrail lane. The new lane and its required policy/receipt evidence are not yet qualified. |
 | `KD-FACADE-LIVE` | Predicate fixtures pass; full downstream selection and complete declarative policy qualification remain open. |
 | `KD-FACADE-PARSE` | Stock wiring-only and test-facade policies already reject non-item fragments through RUST-FACADE-002, and malformed source fails parsing. Bind every frozen facade and the exact original implementation_items helper to positive/negative differential fixtures; preserve rc8 declarative fragment behavior. |
-| `KD-METADATA-PARENT` | Record the path-precondition proof and bind the exact translated license paths before closing this helper assertion. |
 | `KD-PROVENANCE-LOCK-PACKAGE-ARRAY` | Translate the exact authored provenance predicate and qualify frozen positive/negative inputs; no complete protocol policy bundle has been verified. |
 | `KD-PROVENANCE-LOCK-PACKAGE-NAMES` | Account for the implicit all-entry name-index precondition. Existing Cargo parsing rejects non-string names more strictly; qualify this distinction and preserve complete lock scope. |
 | `KD-PROVENANCE-bornera-VERSION-PREFIX` | Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority. |

@@ -8,9 +8,31 @@ unchanged by that metadata-only rewrite.
 The user confirmed continued coverage work on 2026-09-07 after the signed-history
 release preparation. The full replacement criterion remains in place.
 See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
-The current ledger is **672 reviewed / 597 implemented / 551 verified**;
-121 reviewed assertion instances and the discovery blockers remain open.
+The current ledger is **672 reviewed / 598 implemented / 552 verified**;
+120 reviewed assertion instances and the discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
+
+The fixed metadata-parent precondition now binds two byte-identical reports
+from signed producer `f40fd5c3efda8619cf7dbf14662fa90d7e7a39c9`. The complete
+original metadata body executes over eleven frozen inputs. Twelve lexical
+checks bind the three fixed manifest parents to three unchanged license policies;
+seven altered mappings are rejected. Six validator tests reject 95 mutations;
+two runner tests reject 35 malformed execution outcomes. This is not arbitrary
+manifest discovery or a new license requirement. See the
+[index](evidence/metadata-parent-index.json) and
+[proof](inventory/KAFKA-DRIVER-METADATA-PARENT.md).
+Next bounded slice: `KD-PROVENANCE-LOCK-PACKAGE-ARRAY`, then remaining
+kafka-driver inventory and complete policy qualification.
+
+Current local validation passes 1,640 Rust tests with zero failures and 25
+ordinary-suite ignores, plus formatting, strict Clippy, rustdoc, structure and
+all three extracted package builds. Complete self-analysis observes 1,081 Rust
+files, 1,677 base contexts and 1,207,972 projection work with zero unresolved
+items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
+`LOCK-028` and `LOCK-030`; this remains a failed release gate. Logs are
+`metadata-parent-final-check.log` and `metadata-parent-package-check.log` under
+`target/rc9-completion-20260907/`. The root contract, locks, versions and existing
+metadata policy fragment remain unchanged.
 
 The two dependency name-detector assertions now bind two byte-identical reports
 from signed producer `2a066fe2c9588bab3ccf737e0ff830111d7f9b79`. Each binds the
@@ -19,10 +41,9 @@ native line-policy comparisons. Six validator tests reject 92 mutations; two
 runner tests reject 28 malformed outcomes. These are fixture policies, not new
 live Cargo.lock requirements. See the [index](evidence/dependency-detector-index.json)
 and [scope review](inventory/KAFKA-DRIVER-DEPENDENCY-DETECTOR.md).
-Next bounded slice: `KD-METADATA-PARENT`, then remaining kafka-driver inventory
-and complete policy qualification.
+The separately bound metadata-parent precondition is recorded above.
 
-The previous head's hosted Windows failure was a traversal fixture comparing
+The earlier `b961309` head's hosted Windows failure was a traversal fixture comparing
 backslash-rendered paths to slash-separated case identities. Signed `654f2ab`
 fixes only that comparison and adds a regression; recorded error text and
 historical evidence remain unchanged. Do not relabel the previous Windows run
@@ -33,7 +54,7 @@ now passes Windows, macOS and Rust 1.96.1 compatibility; its
 Canonical fails only the five protected-lock diagnostics. These results bind
 `654f2ab`, not the later detector producer or evidence-binding revision.
 
-The current detector binding passes 1,636 Rust tests with zero failures and 24
+The preceding detector binding passes 1,636 Rust tests with zero failures and 24
 ordinary-suite ignores. Formatting, strict Clippy, rustdoc, structure and all
 three extracted package builds pass. Complete self-analysis observes 1,078 Rust
 files, 1,674 base contexts and 1,207,358 projection work with zero unresolved
@@ -41,6 +62,11 @@ items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
 `LOCK-028` and `LOCK-030`; this remains a failed release gate. Root authority
 and versions remain unchanged. Local logs are `dependency-detector-final-check.log`
 and `dependency-detector-package-check.log` under `target/rc9-completion-20260907/`.
+That detector head, `df0e64a`, now passes hosted Windows, macOS and Rust 1.96.1
+compatibility in [CI](https://github.com/zsumz/zrail/actions/runs/34391668594),
+with only the same five canonical lock failures. Its
+[Security run](https://github.com/zsumz/zrail/actions/runs/34391668590) passes.
+These are preceding-head results, not hosted qualification of the parent proof.
 
 The three source-traversal preconditions now bind two byte-identical reports
 from signed producer `ec8ac46392ab08e2b6cf80c3fb944961e89b52d7`: all 772 frozen

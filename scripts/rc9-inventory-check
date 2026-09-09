@@ -24,6 +24,7 @@ RETIRED_BOUNDARIES = runpy.run_path(ROOT / "scripts/rc9_retired_boundary_evidenc
 RUNTIME_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_route_runtime_evidence.py")["verify"]
 TRAVERSAL_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_traversal_evidence.py")["verify"]
 DEPENDENCY_DETECTOR_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_dependency_detector_evidence.py")["verify"]
+METADATA_PARENT_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_metadata_parent_evidence.py")["verify"]
 
 
 def unique_object(pairs):
@@ -313,6 +314,11 @@ def main():
             runtime_report = parity_report(assertion, "runtime_evidence", "test-mirror:", file_reports)
             if runtime_report is not None:
                 RUNTIME_EVIDENCE(assertion, runtime_report, files)
+        elif assertion["id"] == "KD-METADATA-PARENT":
+            require(not replacement["verified"] or replacement.get("parent_evidence"), "verified parent assertion needs bound proof")
+            parent_report = parity_report(assertion, "parent_evidence", "repository:file:", file_reports)
+            if parent_report is not None:
+                METADATA_PARENT_EVIDENCE(assertion, parent_report, files)
         elif assertion["id"].startswith("KD-DEP-DETECTOR-"):
             require(not replacement["verified"] or replacement.get("detector_evidence"), "verified detector assertion needs bound evidence")
             detector_report = parity_report(assertion, "detector_evidence", "repository:file:", file_reports)

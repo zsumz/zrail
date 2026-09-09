@@ -98,14 +98,15 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 403 | 390 | 387 |
+| kafka-driver | 826 | 772 | 403 | 391 | 388 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 88 | 34 | 0 |
 
-The **551 verified assertions** comprise five facade predicates, four
+The **552 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
-metadata assertions and parser preconditions, plus five authored dependency key
+metadata assertions and parser preconditions, plus one fixed metadata-parent
+precondition, plus five authored dependency key
 inventories, 35 authored dependency-field assertions and preconditions, and
 36 authored provenance assertions and parser preconditions, and 20 whole-lock
 cardinality/version/source/checksum assertions, plus 16 raw dependency/read
@@ -116,7 +117,8 @@ all 141 measured baselines and three hard allowances. The original 496 verified 
 route instances use **declarative translation**. The retired-backend slice adds
 seventeen **new engine capability** and two **existing native rail** assertions.
 The three traversal preconditions add three **existing native rail** assertions;
-the dependency detector adds two **new engine capability** assertions. Behavioral
+the dependency detector adds two **new engine capability** assertions and the
+metadata-parent proof adds one **existing native rail** assertion. Behavioral
 retention now has fifteen verified assertions, conditional on the explicitly
 patched native mirror scope; the approved-retirement verified count remains zero.
 Each registry instance binds its original TOML entry and the
@@ -134,7 +136,11 @@ two identical runs cover 772 frozen Rust inputs, 133 physical boundary cases and
 remain explicit; no full-policy proof is claimed. The two dependency detector
 assertions bind their own [fixture-only proof](evidence/dependency-detector-index.json):
 the complete inline original test, 32 cases and 64 native line comparisons per
-report. This does not impose new live lockfile requirements. There are 121 reviewed
+report. This does not impose new live lockfile requirements. The fixed metadata
+parent [proof](evidence/metadata-parent-index.json) binds all three manifest-to-license
+mappings with twelve lexical checks and unchanged native license policies.
+It neither invents a failing frozen-registry path nor qualifies arbitrary
+manifest discovery. There are 120 reviewed
 instances remaining overall.
 `KD-FACADE-LIVE` and `KF-FACADE-LIVE` remain unverified. No complete repository
 has replacement qualification; passing a size family does not close other rails.
