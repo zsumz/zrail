@@ -4356,19 +4356,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-detector-exact-name"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-DETECTOR-EXACT-NAME",
-          "cause": "Import the exact detector fixture and execute its line-name extractor beside native line policies."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_dependency_detector/model.rs",
+          "crates/zrail-rust/tests/rc9_dependency_detector/original_test.rs",
+          "crates/zrail-rust/tests/rc9_dependency_detector/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_dependency_detector/qualification.rs"
+        ],
+        "qualification_scope": "two frozen inline detector assertions; fixture-only raw line policies, not a consumer contract or Cargo graph; complete name sets and duplicate-line counts",
+        "detector_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-detector.json.gz",
+          "payload_sha256": "1b690baa1b241d2133f1dfbbecb23bc7ed8d7084171c111418431615a0645feb",
+          "implementation_commit": "2a066fe2c9588bab3ccf737e0ff830111d7f9b79"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-DETECTOR-PRESENT-NAME",
@@ -4404,19 +4414,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
-        "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "policy_ids": [
+          "repository:file:kd-dep-detector-present-name"
+        ],
+        "expected_diagnostics": [
+          "REP-FILE-004"
+        ],
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-DEP-DETECTOR-PRESENT-NAME",
-          "cause": "Import the exact detector fixture and execute its line-name extractor beside native line policies."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_dependency_detector/model.rs",
+          "crates/zrail-rust/tests/rc9_dependency_detector/original_test.rs",
+          "crates/zrail-rust/tests/rc9_dependency_detector/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_dependency_detector/qualification.rs"
+        ],
+        "qualification_scope": "two frozen inline detector assertions; fixture-only raw line policies, not a consumer contract or Cargo graph; complete name sets and duplicate-line counts",
+        "detector_evidence": {
+          "artifact": "docs/rc9/evidence/dependency-detector.json.gz",
+          "payload_sha256": "1b690baa1b241d2133f1dfbbecb23bc7ed8d7084171c111418431615a0645feb",
+          "implementation_commit": "2a066fe2c9588bab3ccf737e0ff830111d7f9b79"
         }
-      ]
+      },
+      "blockers": []
     },
     {
       "id": "KD-DEP-DRIVER-KEYS",
@@ -59119,11 +59139,11 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 672,
-    "implemented": 595,
+    "implemented": 597,
     "verified_by_disposition": {
       "existing native rail": 5,
       "declarative translation": 16,
-      "new engine capability": 513,
+      "new engine capability": 515,
       "behavioral evidence retained": 15,
       "approved retirement": 0
     },

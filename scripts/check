@@ -28,6 +28,8 @@ python3 scripts/rc9_retired_boundary_runner_test.py
 python3 scripts/rc9_retired_boundary_evidence_test.py
 python3 scripts/rc9_traversal_runner_test.py
 python3 scripts/rc9_traversal_evidence_test.py
+python3 scripts/rc9_dependency_detector_runner_test.py
+python3 scripts/rc9_dependency_detector_evidence_test.py
 python3 scripts/rc9_route_runtime_test.py
 python3 scripts/rc9_route_runtime_evidence_test.py
 cargo fmt --all -- --check

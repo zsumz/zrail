@@ -1,0 +1,77 @@
+{
+  "adversarial_mutations": 92,
+  "adversarial_tests": "scripts/rc9_dependency_detector_evidence_test.py",
+  "archives": {
+    "docs/rc9/evidence/dependency-detector-execution-logs.tar.gz": "a3b34dae5c94f297b82e59c8fe3554a28e9f710ca530837cde64e007fe073844",
+    "docs/rc9/evidence/dependency-detector.json.gz": "eb58f5231d856984b4f66865730f21719e216f8c67a4c91dd9b89b365bd0170a"
+  },
+  "assertions_verified": 2,
+  "binary_path": "/Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/dependency-detector-build/debug/deps/zrail_rust-80983c5ff1b09614",
+  "build_command": [
+    "cargo",
+    "test",
+    "-p",
+    "zrail-rust",
+    "--lib",
+    "--all-features",
+    "--locked",
+    "--offline",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "cases": 32,
+  "cases_sha256": "e27e21aa10d73c58cad0be00096bc0e8dbe79af95bc7448a70f1a971e6eaee8e",
+  "full_repository_qualified": false,
+  "implementation_commit": "2a066fe2c9588bab3ccf737e0ff830111d7f9b79",
+  "implementation_tree": "9e14b141c64f48c7e60b4dae58dd87ebbd61246d",
+  "limitations": [
+    "Two inline detector assertions only; fixture policies are not an installed consumer contract.",
+    "Raw lines deliberately inspect unrelated sections, malformed TOML and multiline strings; no package graph or TOML parsing claim.",
+    "Original name sets deduplicate; native complete-line counts preserve multiplicity and bound offset samples independently of membership."
+  ],
+  "listing_sha256": "84d4e7ee3875cb60afea529c702e9a0d84830c85f89f45d1be6e3b9cfa18a72b",
+  "native_comparisons": 64,
+  "native_payload_sha256": "a2498208c4bba1d6d94a10a2cb6689c8682067b79186c7e6a3a92089fd2deb24",
+  "original_detector_sha256": "1ca7e3fbd5260a785d5d1eb98a4bd0ecdb6b1c0e0b86cd3aa2f5889092df8e66",
+  "original_helper_sha256": "023bad9b9e2e98a40249131e5c46e5a436698c210d0e96aa5663b7d089d72d90",
+  "origins_sha256": "536cac033c46ff123cb1cdbbc16534a9948fa824fdcab11c875ae4574c2c37a3",
+  "payload_bytes": 101378,
+  "payload_sha256": "1b690baa1b241d2133f1dfbbecb23bc7ed8d7084171c111418431615a0645feb",
+  "policy_sha256": "b65da0b08a6f296181ab987cc1626b064a1c1e97ca840ee462285f96cc4bb700",
+  "producer_inputs": {
+    "crates/zrail-rust/src/repository_files.rs": "95df26c2fba72d36e1791d3f7bacd129becf8bd9e3558880e42979044b476a1d",
+    "crates/zrail-rust/src/repository_files/literal.rs": "f0ed9f0fbc5a2abc609e3fc548bca0ff1ffb702cd1040e34fcf9d3ff14db3796",
+    "crates/zrail-rust/src/repository_files/raw_dependency/legacy.rs": "73ad0f0739be2f405361bc2345d829149a056723b729ef723f6d3aad0d25e87d",
+    "crates/zrail-rust/tests/rc9_dependency_detector/model.rs": "30bdc3c8226692a1232e21833208dce9564b6db20bcd697e3af99e99844b5845",
+    "crates/zrail-rust/tests/rc9_dependency_detector/original_test.rs": "1527dbf2405d3b90d32f7e5277dc401b58e5da76866b045465610ad775410572",
+    "crates/zrail-rust/tests/rc9_dependency_detector/policy_test.rs": "821d938ad605b47b2d9e29bf55ef64fc23b9dcf9cb4fa8420f107e973e575256",
+    "crates/zrail-rust/tests/rc9_dependency_detector/qualification.rs": "5410d00adecd0c6bc34111733558ade6f67aa660afe10ba07b1919426e513c95",
+    "crates/zrail-testkit/tests/fixtures/rc9/dependency-detector-cases.json": "e27e21aa10d73c58cad0be00096bc0e8dbe79af95bc7448a70f1a971e6eaee8e",
+    "crates/zrail-testkit/tests/fixtures/rc9/dependency-detector-origins.json": "536cac033c46ff123cb1cdbbc16534a9948fa824fdcab11c875ae4574c2c37a3",
+    "docs/rc9/policies/kafka-driver.dependency-detector.fixture.toml": "b65da0b08a6f296181ab987cc1626b064a1c1e97ca840ee462285f96cc4bb700",
+    "scripts/rc9-dependency-detector": "ca55920d23862456f92008913676814c6510eedc25a06af38b84a7fa8869a4f9",
+    "scripts/rc9-retired-boundaries": "d44407fcf841904b7034a7ac68f242f9c20034e41fc9a191a90f44af78cc626b",
+    "scripts/rc9-route-runtime": "9f72ca5ebeec13d814a5ec9f5f04d2f3ead262a861ef8563da74e034397beb62",
+    "scripts/rc9-snapshots": "131aa3218507a9bc1e7bb0025a5df8284db5d6a7a402d19debdaccf305632fe4",
+    "scripts/rc9_dependency_detector_common.py": "5b8b6599eded39c2437ef41de552405d8c555a7efc417445963e1da3d3ba0cb6",
+    "scripts/rc9_retired_boundary_common.py": "2fdb53d4c7df5107739e4e54ff239ec1735f566a8abf66c4fe2450cd782e0afc",
+    "scripts/rc9_route_runtime_common.py": "3c99f33502725eae0961ca277f8ec47533ebb98c8e8d02e4f50cf4180f30c50f"
+  },
+  "producer_signature": "B58439871CD2A7275B20CC19EC8E4D26598A0373",
+  "repeat": {
+    "byte_identical": true,
+    "runs": 2
+  },
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: aarch64-apple-darwin\nrelease: 1.97.1\nLLVM version: 22.1.6",
+  "schema": 1,
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+  "test_binary_sha256": "b68ed11d734e52d99177cf6393a8e50bec356843c37348504b56e32a25304936",
+  "validator": "scripts/rc9_dependency_detector_evidence.py"
+}

@@ -28,6 +28,13 @@ no checkers or helper dependencies certified removable now.
 | `tests/guardrails/test_location.rs` | Qualify sibling/test placement against the detector's actual cfg syntax. Record any stronger native reachability semantics explicitly. |
 | `tests/guardrails/support.rs`, `mod.rs`, `tests/guardrails.rs` | The three traversal preconditions now bind `kafka-driver.traversal.fragment.toml`, complete frozen path multisets, physical boundaries and explicitly injected errors. Preserve documented ordering/completeness differences. Registry conversion and other dependent assertions remain open; remove only after every dependency has a verified replacement and full qualification passes. |
 
+The two `dependency.rs` name-extraction detector assertions now have bound
+fixture-only line-policy proof. Preserve the regression in zrail's trusted test
+suite; do not install `kafka-driver.dependency-detector.fixture.toml` as a live
+consumer contract or turn its inline `bytes` example into a package requirement.
+The mixed dependency checker stays installed until its other assertions and
+complete downstream qualification are discharged.
+
 The mission explicitly requires replacing `KD-CI-ENFORCEMENT`'s current blanket
 `!workflow.contains("zrail")` predicate. The proposed downstream change must add
 a required CI lane that verifies the protected rc9 archive/provenance, runs

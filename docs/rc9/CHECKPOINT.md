@@ -8,9 +8,39 @@ unchanged by that metadata-only rewrite.
 The user confirmed continued coverage work on 2026-09-07 after the signed-history
 release preparation. The full replacement criterion remains in place.
 See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
-The current ledger is **672 reviewed / 595 implemented / 549 verified**;
-123 reviewed assertion instances and the discovery blockers remain open.
+The current ledger is **672 reviewed / 597 implemented / 551 verified**;
+121 reviewed assertion instances and the discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
+
+The two dependency name-detector assertions now bind two byte-identical reports
+from signed producer `2a066fe2c9588bab3ccf737e0ff830111d7f9b79`. Each binds the
+complete original inline detector and unchanged extractor, 32 cases and 64
+native line-policy comparisons. Six validator tests reject 92 mutations; two
+runner tests reject 28 malformed outcomes. These are fixture policies, not new
+live Cargo.lock requirements. See the [index](evidence/dependency-detector-index.json)
+and [scope review](inventory/KAFKA-DRIVER-DEPENDENCY-DETECTOR.md).
+Next bounded slice: `KD-METADATA-PARENT`, then remaining kafka-driver inventory
+and complete policy qualification.
+
+The previous head's hosted Windows failure was a traversal fixture comparing
+backslash-rendered paths to slash-separated case identities. Signed `654f2ab`
+fixes only that comparison and adds a regression; recorded error text and
+historical evidence remain unchanged. Do not relabel the previous Windows run
+as passing or treat its successful macOS lane as portable qualification.
+The isolated fix's [hosted CI](https://github.com/zsumz/zrail/actions/runs/34390032401)
+now passes Windows, macOS and Rust 1.96.1 compatibility; its
+[Security run](https://github.com/zsumz/zrail/actions/runs/34390032344) passes.
+Canonical fails only the five protected-lock diagnostics. These results bind
+`654f2ab`, not the later detector producer or evidence-binding revision.
+
+The current detector binding passes 1,636 Rust tests with zero failures and 24
+ordinary-suite ignores. Formatting, strict Clippy, rustdoc, structure and all
+three extracted package builds pass. Complete self-analysis observes 1,078 Rust
+files, 1,674 base contexts and 1,207,358 projection work with zero unresolved
+items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
+`LOCK-028` and `LOCK-030`; this remains a failed release gate. Root authority
+and versions remain unchanged. Local logs are `dependency-detector-final-check.log`
+and `dependency-detector-package-check.log` under `target/rc9-completion-20260907/`.
 
 The three source-traversal preconditions now bind two byte-identical reports
 from signed producer `ec8ac46392ab08e2b6cf80c3fb944961e89b52d7`: all 772 frozen
@@ -22,10 +52,9 @@ execution logs, including explicit permission-test execution. Eight validator
 tests reject 93 mutations; two runner tests reject 42 malformed outcomes.
 The initial ordering-comparison failure is archived as diagnostic-only.
 See [the scope review](inventory/KAFKA-DRIVER-TRAVERSAL.md).
-Next bounded slice: the two dependency line-name detector assertions, followed
-by remaining kafka-driver inventory and complete policy qualification.
+The dependency line-name detector assertions have separate qualification above.
 
-Final local validation passes 1,632 Rust tests with zero failures and 23
+The preceding traversal slice's local validation passes 1,632 Rust tests with zero failures and 23
 ordinary-suite ignores, plus formatting, strict Clippy, rustdoc and all three
 extracted package builds. Complete self-analysis observes 1,074 Rust files,
 1,670 base contexts and 1,206,743 projection work with zero unresolved items.

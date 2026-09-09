@@ -25,8 +25,6 @@ policy qualification is claimed. See [the runtime evidence](evidence/route-runti
 | Assertion ID | Cause |
 | --- | --- |
 | `KD-CI-ENFORCEMENT` | The mission explicitly requires replacing this prohibition with an enforced zrail lane. The new lane and its required policy/receipt evidence are not yet qualified. |
-| `KD-DEP-DETECTOR-EXACT-NAME` | Import the exact detector fixture and execute its line-name extractor beside native line policies. |
-| `KD-DEP-DETECTOR-PRESENT-NAME` | Import the exact detector fixture and execute its line-name extractor beside native line policies. |
 | `KD-FACADE-LIVE` | Predicate fixtures pass; full downstream selection and complete declarative policy qualification remain open. |
 | `KD-FACADE-PARSE` | Stock wiring-only and test-facade policies already reject non-item fragments through RUST-FACADE-002, and malformed source fails parsing. Bind every frozen facade and the exact original implementation_items helper to positive/negative differential fixtures; preserve rc8 declarative fragment behavior. |
 | `KD-METADATA-PARENT` | Record the path-precondition proof and bind the exact translated license paths before closing this helper assertion. |

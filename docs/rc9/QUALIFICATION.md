@@ -1243,3 +1243,47 @@ Logs are preserved separately under `target/rc9-completion-20260907/` as
 `traversal-final-check.log`, `traversal-final-check-retry.log` and
 `traversal-package-check-retry.log`. Historical frozen reports remain pinned to
 their original signed producer, not relabeled as full-workspace qualification.
+
+## Dependency name-detector qualification, 2026-09-09
+
+The two `KD-DEP-DETECTOR-*` assertions now bind the complete original inline
+test and unchanged raw extractor beside stock exact-line predicates. These
+fixture policies do not become live Cargo.lock requirements or parsed Cargo
+graph claims. Signed producer `2a066fe2c9588bab3ccf737e0ff830111d7f9b79`, tree
+`9e14b141c64f48c7e60b4dae58dd87ebbd61246d`, produced two byte-identical reports:
+`1b690baa1b241d2133f1dfbbecb23bc7ed8d7084171c111418431615a0645feb`.
+
+Each exact four-test run includes the unchanged original test, source binding,
+ordinary matrix and explicit frozen qualification. Each report binds 32 cases
+and 64 native comparisons, full original name sets, source bytes, line counts
+and sampled offsets. Duplicate counts remain separate from original set
+membership. All 20 extraction registries and 213 original policy instances pass
+snapshot verification before and after each run. No source or producer changed.
+
+Six validator tests reject 92 mutations; two runner tests reject 28 malformed
+outcomes. The [index](evidence/dependency-detector-index.json) binds the 22 raw
+report/log files and exact producer/compiler/binary identities. The ledger is
+672 reviewed / 597 implemented / 551 verified: 121 reviewed instances remain,
+plus discovery and complete qualification. No downstream guard or root authority
+changed. See [the fixture-only scope](inventory/KAFKA-DRIVER-DEPENDENCY-DETECTOR.md).
+
+Separately, the prior head's Windows traversal test failed only its intended-root
+string comparison for backslash-rendered nested paths. Signed `654f2ab` normalizes
+separators for that comparison without changing recorded error text, traversal
+behavior, policies or historical reports. The previous Windows failure remains
+a failed result; macOS success alone does not confer Windows qualification.
+The isolated fix's [CI run](https://github.com/zsumz/zrail/actions/runs/34390032401)
+subsequently passes Windows, macOS and Rust 1.96.1 compatibility; its
+[Security run](https://github.com/zsumz/zrail/actions/runs/34390032344) passes.
+Its canonical failure contains only the five existing protected-lock diagnostics.
+These hosted results bind `654f2ab`, not the later detector revisions.
+
+Final local binding validation passes 1,636 Rust tests, zero failures and 24
+ordinary-suite ignores. Formatting, strict Clippy, rustdoc, structure and all
+three extracted package builds pass. Complete self-analysis observes 1,078 Rust
+files, 1,674 base contexts and 1,207,358 projection work with zero unresolved
+items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
+`LOCK-028` and `LOCK-030`. Logs are preserved under
+`target/rc9-completion-20260907/` as `dependency-detector-final-check.log`,
+`dependency-detector-package-check.log` and `traversal-portable-hosted-failures.log`.
+No reviewed root contract, lock, version or downstream guard changed.
