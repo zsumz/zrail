@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "context": "The unchanged raw extractor is reused; the entire original inline detector test is copied and executed. Fixture policies are not a consumer contract.",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "exact raw line-name extractor",
+      "harness": "crates/zrail-rust/src/repository_files/raw_dependency/legacy.rs",
+      "start_line": 7,
+      "end_line": 16,
+      "extracted_sha256": "023bad9b9e2e98a40249131e5c46e5a436698c210d0e96aa5663b7d089d72d90"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "complete original detector test",
+      "harness": "crates/zrail-rust/tests/rc9_dependency_detector/original_test.rs",
+      "start_line": 287,
+      "end_line": 295,
+      "extracted_sha256": "1ca7e3fbd5260a785d5d1eb98a4bd0ecdb6b1c0e0b86cd3aa2f5889092df8e66"
+    }
+  ]
+}

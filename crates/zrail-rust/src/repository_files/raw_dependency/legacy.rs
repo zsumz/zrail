@@ -5,6 +5,9 @@ use std::{collections::BTreeSet, fs, path::Path};
 use serde::Deserialize;
 use zrail_core::{RepositoryFilePredicate, RepositoryFileRule};
 
+#[path = "../../../tests/rc9_dependency_detector/policy_test.rs"]
+mod detector;
+
 #[derive(Debug, Deserialize)]
 pub(crate) struct Guardrails {
     schema: u64,

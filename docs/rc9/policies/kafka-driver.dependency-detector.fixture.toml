@@ -1,0 +1,13 @@
+# Qualification fixture only. Do not install these as a consumer policy bundle.
+# detector.txt contains the original inline string or an explicitly named mutation.
+[[repository.files]]
+name = "kd-dep-detector-exact-name"
+include = ["detector.txt"]
+reason = "The frozen detector must not mistake tokio-util-extra for tokio."
+predicate = { kind = "literal", text = 'name = "tokio"', mode = "line-absent", normalization = "trim" }
+
+[[repository.files]]
+name = "kd-dep-detector-present-name"
+include = ["detector.txt"]
+reason = "The frozen detector must recognize the exact bytes name."
+predicate = { kind = "literal", text = 'name = "bytes"', mode = "line-present", normalization = "trim" }
