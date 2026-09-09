@@ -17,6 +17,22 @@ use model::{Fixture, ROOTS, Row, observe};
 use std::fs;
 
 #[test]
+fn traversal_error_root_comparison_accepts_both_platform_separators() {
+    let case = "crates/kafka-driver-core/src:missing-root";
+    for error in [
+        "read directory $ROOT/crates/kafka-driver-core/src: missing",
+        "read directory $ROOT\\crates\\kafka-driver-core\\src: missing",
+        "REP-FILE-006: C:\\fixture\\crates\\kafka-driver-core\\src\\.git: incomplete",
+    ] {
+        assert!(model::error_names_root(error, case));
+    }
+    assert!(!model::error_names_root(
+        "read directory $ROOT/crates/kafka-driver-probe/src: missing",
+        case
+    ));
+}
+
+#[test]
 fn traversal_original_function_is_frozen() {
     model::source_binding();
 }

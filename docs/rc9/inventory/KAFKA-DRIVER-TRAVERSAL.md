@@ -92,3 +92,13 @@ The conditional-report binding limitation remains an analyzer follow-up; this
 test layout change is not a general engine fix for conditional type bindings.
 No complete consumer policy, downstream guard deletion, authority acceptance
 or release approval follows from these three preconditions.
+
+## Portable diagnostic comparison, 2026-09-09
+
+The first hosted Windows run at `b9613094be53ec059c5fd475a0d3c7bb3a8179eb`
+failed the portable fixture's root-name check: the OS rendered the nested root
+with backslashes, while its case identity uses slashes. The test comparison now
+normalizes separators only while checking the intended root. Stored error text,
+original traversal, native analysis, policies and case outcomes are unchanged.
+A platform-independent regression covers both separators and an unrelated root.
+The prior run passed macOS and Rust 1.96.1 compatibility; Windows was not green.

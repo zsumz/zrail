@@ -132,10 +132,7 @@ pub(super) fn observe(
             "{case}"
         );
         assert!(
-            actual_error
-                .as_ref()
-                .expect("panic")
-                .contains(case.split(':').next().expect("case root")),
+            error_names_root(actual_error.as_ref().expect("panic"), case),
             "intended original root"
         );
     }
@@ -183,7 +180,7 @@ pub(super) fn observe(
             assert_eq!(diagnostic, "REP-FILE-006", "{case}: {error}");
             assert!(error.starts_with("REP-FILE-006:"));
             assert!(
-                error.contains(case.split(':').next().expect("case root")),
+                error_names_root(&error, case),
                 "intended unread boundary: {error}"
             );
             row.native_error = Some(error.replace(root.to_str().expect("root"), "$ROOT"));
@@ -210,6 +207,13 @@ pub(super) fn source_binding() {
         sha256_hex(&source.as_bytes()[start..start + length]),
         "b2cd5030320fbd1bb6e958d71ae82fa2e0a505b9d8842144f8528450fc25388a"
     );
+}
+
+pub(super) fn error_names_root(error: &str, case: &str) -> bool {
+    // Compare platform renderings without rewriting the recorded OS error.
+    error
+        .replace('\\', "/")
+        .contains(case.split(':').next().expect("case root"))
 }
 
 pub(super) fn compare_paths(original: &[String], native: &[String]) {
