@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "name": "frozen",
+      "template": "=$VERSION",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": true
+    },
+    {
+      "name": "bare",
+      "template": "$VERSION",
+      "prefix_accepted": false,
+      "native_contract_accepted": true,
+      "native_graph_accepted": true
+    },
+    {
+      "name": "caret",
+      "template": "^$VERSION",
+      "prefix_accepted": false,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "tilde",
+      "template": "~$VERSION",
+      "prefix_accepted": false,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "gte",
+      "template": ">=$VERSION",
+      "prefix_accepted": false,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "wildcard",
+      "template": "*",
+      "prefix_accepted": false,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "empty",
+      "template": "",
+      "prefix_accepted": false,
+      "native_contract_accepted": false,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "space-before",
+      "template": " =$VERSION",
+      "prefix_accepted": false,
+      "native_contract_accepted": false,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "fullwidth",
+      "template": "\uff1d$VERSION",
+      "prefix_accepted": false,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "double-equals",
+      "template": "==$VERSION",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "equals-empty",
+      "template": "=",
+      "prefix_accepted": true,
+      "native_contract_accepted": false,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "equals-caret",
+      "template": "=^$VERSION",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "equals-tilde",
+      "template": "=~$VERSION",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "equals-gte",
+      "template": "=>=$VERSION",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "equals-wildcard",
+      "template": "=*",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "equals-leading-space",
+      "template": "= $VERSION",
+      "prefix_accepted": true,
+      "native_contract_accepted": false,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "equals-trailing-space",
+      "template": "=$VERSION ",
+      "prefix_accepted": true,
+      "native_contract_accepted": false,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "partial",
+      "template": "=1.2",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "leading-zero",
+      "template": "=01.2.3",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "newline",
+      "template": "=$VERSION\n",
+      "prefix_accepted": true,
+      "native_contract_accepted": false,
+      "native_graph_accepted": false
+    },
+    {
+      "name": "stable",
+      "template": "=1.2.3",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": true
+    },
+    {
+      "name": "prerelease",
+      "template": "=1.2.3-alpha.1",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": true
+    },
+    {
+      "name": "build",
+      "template": "=1.2.3+build.7",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": true
+    },
+    {
+      "name": "prerelease-build",
+      "template": "=1.2.3-rc.1+build.7",
+      "prefix_accepted": true,
+      "native_contract_accepted": true,
+      "native_graph_accepted": true
+    }
+  ]
+}

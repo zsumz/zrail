@@ -59,6 +59,26 @@ def documents(rows):
     return "repository.files", rules
 
 
+def reviewed_prefix(rows, package, version):
+    matches = [row for row in rows if row["id"] == "KD-PROVENANCE-" + package + "-VERSION-PREFIX"]
+    keys = ["dependencies", package.replace("-", "_") + "_version"]
+    if len(matches) != 1:
+        raise ValueError("one reviewed exact-version prefix assertion is required")
+    row = matches[0]
+    registry = row.get("policy_registry", {})
+    value = registry.get("entry")
+    if (row["source"]["file_sha256"] != SOURCE_SHA256
+            or row["source"]["instance"] != value
+            or row["selection"] != {"paths": ["guardrails.toml"], "keys": keys}
+            or registry.get("path") != "guardrails.toml" or registry.get("file_sha256") != REGISTRY_SHA256
+            or registry.get("selector") != keys or registry.get("index") is not None
+            or row["matching_semantics"] != {"kind": "UTF-8 str::strip_prefix", "prefix": "=",
+                                             "remaining_text_used_as_exact_lock_version": True}
+            or row["matching_semantics"].get("remaining_text_used_as_exact_lock_version") is not True
+            or not isinstance(value, str) or not value.startswith("=") or value[1:] != version):
+        raise ValueError("reviewed exact-version prefix must bind the unchanged literal lock identity")
+
+
 def locked(rows):
     groups = {}
     for row in rows:
@@ -70,6 +90,7 @@ def locked(rows):
         if set(fields) != {"count", "version", "source", "checksum"} or fields["count"]["required_cardinality"] != {"exact": 1}:
             raise ValueError("incomplete reviewed lock conjunction")
         identity = {field: fields[field]["matching_semantics"]["value"] for field in ["version", "source", "checksum"]}
+        reviewed_prefix(rows, package, identity["version"])
         rules.append(dict(name="kd-lock-" + package, package=package,
                           assertion=dict(kind="exact", identities=[identity]),
                           reason="Preserve the unique reviewed whole-lock version, registry source, and checksum identity."))

@@ -7,6 +7,8 @@ use std::{fs, path::Path};
 mod array;
 #[path = "../../../tests/rc9_lock_names/policy_test.rs"]
 mod names;
+#[path = "../../../tests/rc9_lock_prefix/policy_test.rs"]
+mod prefix;
 
 const CRATES_IO_SOURCE: &str = "registry+https://github.com/rust-lang/crates.io-index";
 
