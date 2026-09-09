@@ -26,15 +26,30 @@ policy's observed counts, not its full identity acceptance. Synthetic graphs
 have no active workspace packages. Missing/non-table, non-string/blank and later
 version/duplicate-node failures remain separate stages.
 
-Sixteen frozen-input mutations execute the complete original guard and all five
-native identity policies with all five actual workspace packages. Eleven native
+Sixteen frozen-input mutations invoke the complete original guard and the native
+loader with all five existing identity policies and actual workspace packages.
+Errors stop at the first failed check; only successful native cases reach all
+five policy observations. The report's five original helper invocations describe
+a successful complete original run, not an early-failing mutation. Eleven native
 rejections include three missing-name cases (before, within and after the full
 83-node inventory) and eight stricter non-string/blank cases. Five accepted cases
 preserve the exact required identities. Only a fresh test-owned copy's lockfile
 changes; all twelve input hashes and the complete mutated lock source are recorded.
 
 The trusted runner requires five exact tests, including explicit frozen
-qualification. Evidence linkage remains open until two clean signed-producer
-runs and their complete raw logs are bound and adversarial validation passes.
-No root contract, policy fragment, lock, downstream guard, grant or release
-state changes. Version-prefix authority and full qualification remain open.
+qualification. Two clean runs at signed producer
+`9ee1bced403ea609d931718357ab847ed896c400`, tree
+`916596d7e24de0577224e3ebf084b0bd06e54ac9`, produced byte-identical 419,017-byte
+reports with SHA-256
+`372a5e4baf3b4e22f3dd6a10e666c1c5faf0f484245bae1c1059c467d4ec01d9`.
+The [index](../evidence/lock-names-index.json) binds all 24 raw reports/logs,
+23 exact producer inputs, the 649-test executable inventory and compiler.
+Seven validator tests reject 133 mutations; two runner tests reject 35 malformed
+execution outcomes. Snapshot verification passes 22 extraction registries and
+213 original policy instances before and after each run.
+
+The ledger verifies only this one precondition with `full_snapshot_verified`
+false. Native name errors are graph-loader errors, not stable finding IDs;
+the exact messages are bound without inventing diagnostic codes. No root
+contract, policy fragment, lock, downstream guard, grant or release state changes.
+Version-prefix authority and full qualification remain open.

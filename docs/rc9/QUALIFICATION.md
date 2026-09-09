@@ -1381,3 +1381,60 @@ items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
 `lock-array-final-self-analysis.json` and
 `metadata-parent-portable-hosted-failures.log` under
 `target/rc9-completion-20260907/`.
+
+## All-entry package-name qualification, 2026-09-09
+
+`KD-PROVENANCE-LOCK-PACKAGE-NAMES` binds signed producer
+`9ee1bced403ea609d931718357ab847ed896c400`, tree
+`916596d7e24de0577224e3ebf084b0bd06e54ac9`, and two identical 419,017-byte reports:
+`372a5e4baf3b4e22f3dd6a10e666c1c5faf0f484245bae1c1059c467d4ec01d9`.
+Each five-test run binds the exact four-line name selection, complete unchanged
+original caller/helper, 32 selection-stage cases, 16 complete-original frozen
+mutations, twelve inputs and all five actual workspace packages.
+
+Mutation runs invoke the full unchanged guard and loader; failures stop at the
+first failed check. The report's five original helper invocations describe a
+successful original run; only successful native cases reach five policy observations.
+Three frozen missing-name mutations before, within and after the full 83-node
+inventory fail both guards. Eight present non-string/blank-name mutations pass
+the original guard but fail existing native parsing. Five other mutations retain
+the exact five required identities across 83 or 84 nodes. This explicitly stronger
+native behavior is not exact acceptance parity or new authority. Synthetic cases
+have no active workspace packages and compare policy-observed name counts, not
+full identity acceptance. Version and duplicate-node failures remain distinct
+from name-precondition failures. No normalization or full Cargo-name grammar
+validation is invented.
+
+The [index](evidence/lock-names-index.json) binds all 24 raw reports/logs, the
+649-test executable inventory, 23 producer inputs and compiler. Seven validator
+tests reject 133 mutations; two runner tests reject 35 malformed outcomes.
+Snapshot checks pass all 22 extraction registries and 213 original policy
+instances. Ledger integrity passes at 672 reviewed / 600 implemented / 554
+verified: 118 reviewed instances remain, plus discovery and full qualification.
+Only the name row changes; version-prefix authority remains open. See the
+[scope review](inventory/KAFKA-DRIVER-LOCK-NAMES.md).
+
+Reproduction uses the clean signed producer and fresh external zdev outputs:
+
+```sh
+python3 scripts/rc9-lock-names --snapshots target/rc9-completion-20260907/snapshots --directory /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/lock-names-evidence --report new-a.json --build target/rc9-completion-20260907/lock-names-build
+python3 scripts/rc9-lock-names --snapshots target/rc9-completion-20260907/snapshots --directory /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/lock-names-evidence --report new-b.json --build target/rc9-completion-20260907/lock-names-build
+```
+
+The preceding array head `ca117e8` passes Windows, macOS and Rust 1.96.1
+compatibility in [CI](https://github.com/zsumz/zrail/actions/runs/34396780268);
+canonical fails only the five known protected-lock diagnostics. Its
+[Security run](https://github.com/zsumz/zrail/actions/runs/34396780249) passes.
+These results do not qualify the later name producer or evidence-binding
+revision. The exact preceding failure log is `lock-array-hosted-failures.log`
+under `target/rc9-completion-20260907/`.
+
+Final local validation passes 1,648 Rust tests, zero failures and 27
+ordinary-suite ignores. Formatting, strict Clippy, rustdoc, structure and all
+three extracted package builds pass. Complete self-analysis observes 1,090 Rust
+files, 1,686 base contexts and 1,210,818 projection work with zero unresolved
+items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
+`LOCK-028` and `LOCK-030`; no protected lock was accepted or bypassed. Logs are
+`lock-names-final-check.log`, `lock-names-package-check.log` and
+`lock-names-final-self-analysis.json` under `target/rc9-completion-20260907/`.
+Root contracts, locks, versions, existing policies and downstream guards remain unchanged.

@@ -98,18 +98,19 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 403 | 392 | 389 |
+| kafka-driver | 826 | 772 | 403 | 393 | 390 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 88 | 34 | 0 |
 
-The **553 verified assertions** comprise five facade predicates, four
+The **554 verified assertions** comprise five facade predicates, four
 kafka-driver budget assertions, 161 Kafkars size predicates/instances, and 44
 kafka-driver raw/path assertions and detector fixtures, plus 33 publication
 metadata assertions and parser preconditions, plus one fixed metadata-parent
 precondition, plus five authored dependency key
 inventories, 35 authored dependency-field assertions and preconditions, and
 36 authored provenance assertions and parser preconditions, and 20 whole-lock
-cardinality/version/source/checksum assertions and one whole-lock array precondition, plus 16 raw dependency/read
+cardinality/version/source/checksum assertions, one whole-lock array precondition
+and one all-entry name precondition, plus 16 raw dependency/read
 assertions, plus 125 qualification text assertions and read preconditions, and four transport
 method/parser assertions, two expression-path assertions, two exact-owner assertions, two rename assertions, and two trait/type-set assertions, plus sixteen route source/input assertions, twelve retired-backend declaration/raw-token/input assertions, seven corrected retired-tree assertions, three source-traversal preconditions, two dependency name-detector assertions, and fifteen retained routing execution assertions.
 Size instances include
@@ -119,8 +120,8 @@ seventeen **new engine capability** and two **existing native rail** assertions.
 The three traversal preconditions add three **existing native rail** assertions;
 the dependency detector adds two **new engine capability** assertions and the
 metadata-parent proof adds one **existing native rail** assertion. The array
-precondition adds one **new engine capability** assertion, using the already
-implemented rc9 whole-lock loader without a new runtime rule. Behavioral
+and name preconditions add two **new engine capability** assertions, using the already
+implemented rc9 whole-lock loader without new runtime rules. Behavioral
 retention now has fifteen verified assertions, conditional on the explicitly
 patched native mirror scope; the approved-retirement verified count remains zero.
 Each registry instance binds its original TOML entry and the
@@ -144,8 +145,11 @@ mappings with twelve lexical checks and unchanged native license policies.
 It neither invents a failing frozen-registry path nor qualifies arbitrary
 manifest discovery. The array [proof](evidence/lock-array-index.json) separately
 binds 24 precise stage cases and all five required identities across 83 frozen
-nodes. Empty arrays pass the type stage but fail required counts; package names
-and version-prefix authority are not subsumed. There are 119 reviewed
+nodes. Empty arrays pass the type stage but fail required counts. The separate
+name [proof](evidence/lock-names-index.json) binds 32 selection-stage cases and
+16 complete-original frozen mutations. Missing-name failures and stricter native
+non-string/blank rejection remain explicit; version-prefix authority is not
+subsumed. There are 118 reviewed
 instances remaining overall.
 `KD-FACADE-LIVE` and `KF-FACADE-LIVE` remain unverified. No complete repository
 has replacement qualification; passing a size family does not close other rails.

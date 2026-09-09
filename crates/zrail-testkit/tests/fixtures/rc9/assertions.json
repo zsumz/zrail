@@ -17320,19 +17320,32 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera",
+          "dependency:lock-package:kd-lock-bornera-core",
+          "dependency:lock-package:kd-lock-bornera-rustls",
+          "dependency:lock-package:kd-lock-kafka-wire",
+          "dependency:lock-package:kd-lock-kafka-wire-core"
+        ],
         "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-LOCK-PACKAGE-NAMES",
-          "cause": "Account for the implicit all-entry name-index precondition. Existing Cargo parsing rejects non-string names more strictly; qualify this distinction and preserve complete lock scope."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_lock_names/original.rs",
+          "crates/zrail-rust/tests/rc9_lock_names/model.rs",
+          "crates/zrail-rust/tests/rc9_lock_names/mutations.rs",
+          "crates/zrail-rust/tests/rc9_lock_names/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_lock_names/qualification.rs"
+        ],
+        "qualification_scope": "one all-entry whole-lock name-index precondition; 32 selection-stage cases and 16 complete-original frozen mutations preserve missing-name failures and explicit stricter non-string/blank native validation; no version-prefix or full repository qualification",
+        "names_evidence": {
+          "artifact": "docs/rc9/evidence/lock-names.json.gz",
+          "payload_sha256": "372a5e4baf3b4e22f3dd6a10e666c1c5faf0f484245bae1c1059c467d4ec01d9",
+          "implementation_commit": "9ee1bced403ea609d931718357ab847ed896c400"
         }
-      ],
+      },
+      "blockers": [],
       "invocations": [
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:15:5:helper-call-candidate",
         "kafkars/kafka-driver:tests/guardrails/protocol_provenance.rs:21:5:helper-call-candidate",
@@ -59160,11 +59173,11 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 672,
-    "implemented": 599,
+    "implemented": 600,
     "verified_by_disposition": {
       "existing native rail": 6,
       "declarative translation": 16,
-      "new engine capability": 516,
+      "new engine capability": 517,
       "behavioral evidence retained": 15,
       "approved retirement": 0
     },
