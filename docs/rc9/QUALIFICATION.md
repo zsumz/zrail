@@ -1499,3 +1499,65 @@ was accepted or bypassed. Logs are `lock-prefix-final-check.log`,
 `lock-prefix-package-check.log` and `lock-prefix-final-self-analysis.json` under
 `target/rc9-completion-20260907/`. Root contracts, locks, versions, existing
 policies and downstream guards remain unchanged.
+
+## Typed registry implementation and contract blocker, 2026-09-09
+
+`KD-REGISTRY-PARSE` and `KD-REGISTRY-SCHEMA` now have implemented trusted
+conversion and focused original/native fixtures, but remain unverified.
+Ledger integrity is 672 reviewed / 607 implemented / 559 verified; all 113
+unverified instances plus discovery remain open. No repeated registry report
+or complete replacement certificate is claimed. See the
+[scope and blocker](inventory/KAFKA-DRIVER-REGISTRY.md).
+
+The exact complete original structures and loader bind frozen
+`tests/guardrails/support.rs:10-54` and `:60-70`, SHA-256
+`bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843`.
+All 24 extraction registries and 213 original policy instances verify against
+the unchanged snapshots. The original source matrix executes 249 cases:
+56 accepted typed values, three read failures, 186 parse failures and four
+unsupported-schema failures. The converter admits eleven unchanged-value
+forms, rejects 45 otherwise well-typed changes as new authority, and preserves
+the same read/parse/schema rejection stages. The explicit 4 MiB converter
+limit remains stronger than the original loader.
+
+Twenty-seven independent native cases exercise public contract loading.
+Schemas 1 and 2 accept identical carrier policy after schema normalization;
+unknown native fields fail although unknown valid source fields are ignored.
+Source schema 2 remains unsupported. The carrier has 118 existing file
+policies, five exact lock identities and three budget overrides, but is a
+schema fixture, not a complete consumer contract.
+
+Adding back the unchanged `kd-source-traversal` rule produces the exact native
+"empty or vacuous count constraint" rejection. This is newly recorded as
+`RC9-NATIVE-TRAVERSAL-CONTRACT`, not bypassed by accepting authority or weakening
+count validation. The rule is excluded only from the explicitly reduced test
+carrier; existing fragments and historical predicate-only reports are unchanged.
+Make complete physical inspection an explicit loadable policy, renew traversal
+and full-carrier qualification, then bind repeated signed registry evidence.
+
+The first focused compile/extraction failures and first source/native mismatch
+are preserved. The numeric mismatch exposed Python's arbitrary-precision TOML
+integers versus the original signed-64-bit parser boundary; conversion now
+rejects that mismatch, including in otherwise ignored fields. An independent
+self-analysis also found an unreviewed `json!` invocation. The first full gate
+was stopped with exit 143, not completed or counted as a pass; replacing the
+macro with ordinary typed serialization needed no new grant.
+
+The complete corrected local gate passes 1,655 Rust tests, zero failures and
+28 ordinary-suite ignores, plus 102 Python tests, formatting, strict Clippy,
+rustdoc and structure. All three extracted package builds pass. Complete
+self-analysis observes 1,101 Rust files, 1,697 base contexts and 1,213,062
+projection work with zero unresolved items. It exits only on `LOCK-008`,
+`LOCK-016`, `LOCK-026`, `LOCK-028` and `LOCK-030`. Logs are
+`registry-final-check-fixed.log`, `registry-package-check-fixed.log` and
+`registry-self-analysis-fixed.json` under `target/rc9-completion-20260907/`.
+No root contract, reviewed lock, version, existing fragment or downstream guard
+changed. The three new Rust tests and seven Python tests are ordinary focused
+checks, not repeated producer qualification.
+
+The preceding prefix head `6e33434` passes Windows, macOS and Rust 1.96.1
+compatibility in [CI](https://github.com/zsumz/zrail/actions/runs/34401815115);
+canonical fails only the same five protected-lock diagnostics. Its
+[Security run](https://github.com/zsumz/zrail/actions/runs/34401815207) passes.
+Those results do not qualify this later registry implementation. The exact
+preceding failure log is `prefix-hosted-failures.log` in the directory above.

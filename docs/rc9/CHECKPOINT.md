@@ -8,9 +8,36 @@ unchanged by that metadata-only rewrite.
 The user confirmed continued coverage work on 2026-09-07 after the signed-history
 release preparation. The full replacement criterion remains in place.
 See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
-The current ledger is **672 reviewed / 605 implemented / 559 verified**;
+The current ledger is **672 reviewed / 607 implemented / 559 verified**;
 113 reviewed assertion instances and the discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
+
+Registry parsing/schema now have typed conversion and 249 original/27 native
+fixtures, but neither assertion is verified. Public contract loading exposed
+`RC9-NATIVE-TRAVERSAL-CONTRACT`: the existing `kd-source-traversal` minimum-zero
+count rule is rejected as vacuous. The reduced schema-test carrier explicitly
+omits that rule; a separate regression preserves the exact rejection. Existing
+fragments, root rails and historical predicate-only reports are unchanged.
+See the [registry scope and next step](inventory/KAFKA-DRIVER-REGISTRY.md).
+Next bounded slice: a loadable complete-inspection policy and renewed traversal
+and registry-carrier qualification, then repeated registry evidence binding.
+
+Current local validation passes 1,655 Rust tests with zero failures and 28
+ordinary-suite ignores, plus 102 Python tests, formatting, strict Clippy,
+rustdoc, structure and all three extracted package builds. Complete analysis
+observes 1,101 Rust files, 1,697 base contexts and 1,213,062 projection work with
+zero unresolved items. The completed `registry-final-check-fixed.log` exits
+only on `LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028` and `LOCK-030`.
+The initial full run was interrupted after the independent analysis found a
+new unreviewed macro; ordinary typed serialization removed it without a grant.
+Logs and `registry-self-analysis-fixed.json` are under
+`target/rc9-completion-20260907/`. No existing policy or authority changed.
+
+The preceding prefix head `6e33434` passes Windows, macOS and Rust 1.96.1
+compatibility in [CI](https://github.com/zsumz/zrail/actions/runs/34401815115);
+canonical fails only the five known protected-lock diagnostics. Its
+[Security run](https://github.com/zsumz/zrail/actions/runs/34401815207) passes.
+These results do not qualify the later registry implementation.
 
 The five exact-version prefix instances now bind two byte-identical reports
 from signed producer `bea4b64848214e3d50cc3ba2fb72a528ceedc02d`: 120 paired
@@ -21,10 +48,9 @@ and the trusted converter only accepts the unchanged reviewed suffixes. The
 generated fragment remains byte-identical. Eight validator tests reject 256
 mutations; two runner tests reject 35 malformed outcomes. See the
 [index](evidence/lock-prefix-index.json) and [scope](inventory/KAFKA-DRIVER-LOCK-PREFIX.md).
-Next bounded slice: `KD-REGISTRY-PARSE` and `KD-REGISTRY-SCHEMA`, then the
-remaining kafka-driver inventory and complete policy qualification.
+Registry implementation and its newly exposed contract boundary are described above.
 
-Current local validation passes 1,652 Rust tests with zero failures and 28
+The preceding prefix local validation passes 1,652 Rust tests with zero failures and 28
 ordinary-suite ignores, plus all 95 Python tests, formatting, strict Clippy,
 rustdoc, structure and all three extracted package builds. Complete self-analysis
 observes 1,096 Rust files, 1,692 base contexts and 1,212,733 projection work with

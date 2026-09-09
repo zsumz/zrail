@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "harness": "crates/zrail-rust/tests/rc9_registry/original.rs",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "function": "typed registry structures",
+      "start_line": 10,
+      "end_line": 54,
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "extracted_sha256": "fafa16246d3e86afb5f9e73d97ce564ade63a628abb85c09b1ee5868940de540",
+      "excerpt": "#[derive(Debug, Deserialize)]\npub(crate) struct Guardrails {\n    pub(crate) schema: u32,\n    pub(crate) paths: Paths,\n    pub(crate) budgets: Budgets,\n    pub(crate) dependencies: Dependencies,\n    pub(crate) capabilities: Vec<Capability>,\n}\n\n#[derive(Debug, Deserialize)]\npub(crate) struct Paths {\n    pub(crate) rust_roots: Vec<String>,\n}\n\n#[derive(Clone, Copy, Debug, Deserialize)]\npub(crate) struct Budgets {\n    pub(crate) facade: usize,\n    pub(crate) production: usize,\n    pub(crate) test: usize,\n}\n\n#[derive(Debug, Deserialize)]\npub(crate) struct Dependencies {\n    pub(crate) banned: Vec<String>,\n    pub(crate) core_allowed: Vec<String>,\n    pub(crate) driver_allowed: Vec<String>,\n    pub(crate) probe_allowed: Vec<String>,\n    pub(crate) transport_allowed: Vec<String>,\n    pub(crate) kafka_wire_version: String,\n    pub(crate) kafka_wire_checksum: String,\n    pub(crate) kafka_wire_core_version: String,\n    pub(crate) kafka_wire_core_checksum: String,\n    pub(crate) bornera_version: String,\n    pub(crate) bornera_checksum: String,\n    pub(crate) bornera_core_version: String,\n    pub(crate) bornera_core_checksum: String,\n    pub(crate) bornera_rustls_version: String,\n    pub(crate) bornera_rustls_checksum: String,\n}\n\n#[derive(Debug, Deserialize)]\npub(crate) struct Capability {\n    pub(crate) root: String,\n    pub(crate) forbidden: Vec<String>,\n}\n"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "function": "load_guardrails and read",
+      "start_line": 60,
+      "end_line": 70,
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "extracted_sha256": "5e4e9d3bbb4429be23f042b28ed30f365559daf1fcfccab1ca817a4118b7c6e2",
+      "excerpt": "pub(crate) fn load_guardrails(root: &Path) -> Guardrails {\n    let source = read(&root.join(\"guardrails.toml\"));\n    let config = toml::from_str::<Guardrails>(&source)\n        .unwrap_or_else(|error| panic!(\"parse guardrails.toml: {error}\"));\n    assert_eq!(config.schema, 1, \"unsupported guardrails.toml schema\");\n    config\n}\n\npub(crate) fn read(path: &Path) -> String {\n    fs::read_to_string(path).unwrap_or_else(|error| panic!(\"read {}: {error}\", path.display()))\n}\n"
+    }
+  ]
+}

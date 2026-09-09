@@ -98,7 +98,7 @@ opaque syntax still require review; this is not a completed assertion inventory.
 
 | Repository | Tracked files | Rust files | Reviewed assertion instances | Implemented predicates | Verified detector assertions |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| kafka-driver | 826 | 772 | 403 | 398 | 395 |
+| kafka-driver | 826 | 772 | 403 | 400 | 395 |
 | Kafkars | 6,808 | 6,713 | 181 | 173 | 164 |
 | Rafter | 2,158 | 1,897 | 88 | 34 | 0 |
 
@@ -158,6 +158,11 @@ that prefix and the unchanged reviewed suffix. Range-looking literals never
 gain range semantics, and build metadata participates in exact string identity.
 These proofs do not close general registry conversion. There are 113 reviewed
 instances remaining overall.
+The two registry assertions now have implemented typed conversion and 249
+original/27 native fixtures, but are not verified. Public loading rejects the
+existing traversal count-zero rule (`RC9-NATIVE-TRAVERSAL-CONTRACT`). The reduced
+schema carrier and historical predicate-only traversal reports cannot establish
+complete contract acceptance; see the [scope](inventory/KAFKA-DRIVER-REGISTRY.md).
 `KD-FACADE-LIVE` and `KF-FACADE-LIVE` remain unverified. No complete repository
 has replacement qualification; passing a size family does not close other rails.
 

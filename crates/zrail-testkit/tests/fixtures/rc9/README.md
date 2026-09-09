@@ -11,8 +11,8 @@ No downstream checker is removable on the strength of this directory.
   instantiated capability tokens and lock provenance assertions. It binds each
   assertion to a census identity, source digest, selection, matching semantics,
   cardinality, exceptions, disposition, and independent implementation and
-  verification states. Its 160 open assertion IDs are release blockers, alongside
-  the unfinished discovery work; 512 instances have verified replacement evidence.
+  verification states. Its 113 open assertion IDs are release blockers, alongside
+  the unfinished discovery work; 559 instances have verified replacement evidence.
 - `facade-origins.json` binds two byte-exact extracted predicates and the imported
   `kafkars-facade-invalid.rs.txt` fixture to the frozen sources.
 - The budget, size-selection, file, and metadata origin manifests bind further
@@ -52,6 +52,12 @@ The last command **must fail** while inventory is incomplete. Integrity success
 does not establish release readiness. Reproduction commands and limitations are
 in `docs/rc9/QUALIFICATION.md`. These scripts are trusted qualification tools;
 stock zrail does not execute them or any downstream evaluator during analysis.
+
+The descriptions below retain each family's initial evidence scope; consult
+`assertions.json` and `docs/rc9/CHECKPOINT.md` for current verification status.
+The new registry structures/loader and 249 source/27 native cases are focused
+fixtures only. They expose `RC9-NATIVE-TRAVERSAL-CONTRACT`; neither registry
+assertion has repeated, bound replacement evidence yet.
 
 - `lock-packages-origins.json` binds the unchanged complete protocol lock test
   and helpers. Twelve frozen inputs and 50 fixtures qualify 20 exact whole-lock

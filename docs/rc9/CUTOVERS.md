@@ -11,6 +11,12 @@ assertion links to the frozen revisions. Every candidate remains conditional:
 an unreviewed assertion in a mixed file prevents removing that file. There are
 no checkers or helper dependencies certified removable now.
 
+`RC9-NATIVE-TRAVERSAL-CONTRACT` is an additional assembled-contract blocker:
+the existing `kd-source-traversal` minimum-zero count rule fails public contract
+loading. Its predicate-only proof does not authorize installation. The registry
+schema-test carrier explicitly omits it and is not a replacement bundle; see
+the [registry review](inventory/KAFKA-DRIVER-REGISTRY.md).
+
 ## kafka-driver first
 
 | Candidate evaluator | Replacement and prerequisites |
