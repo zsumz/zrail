@@ -3,6 +3,9 @@
 use std::{fs, path::Path};
 use toml::Value;
 
+#[path = "../../../tests/rc9_metadata_parent/policy_test.rs"]
+mod parent;
+
 const CANONICAL_REPOSITORY: &str = "https://github.com/kafkars/kafka-driver";
 
 const PUBLIC_PACKAGES: [(&str, &str); 3] = [
