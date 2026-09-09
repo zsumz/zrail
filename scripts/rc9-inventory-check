@@ -27,6 +27,7 @@ DEPENDENCY_DETECTOR_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_dependency_det
 METADATA_PARENT_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_metadata_parent_evidence.py")["verify"]
 LOCK_ARRAY_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_lock_array_evidence.py")["verify"]
 LOCK_NAMES_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_lock_names_evidence.py")["verify"]
+LOCK_PREFIX_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_lock_prefix_evidence.py")["verify"]
 
 
 def unique_object(pairs):
@@ -316,6 +317,11 @@ def main():
             runtime_report = parity_report(assertion, "runtime_evidence", "test-mirror:", file_reports)
             if runtime_report is not None:
                 RUNTIME_EVIDENCE(assertion, runtime_report, files)
+        elif assertion["id"].startswith("KD-PROVENANCE-") and assertion["id"].endswith("-VERSION-PREFIX"):
+            require(not replacement["verified"] or replacement.get("prefix_evidence"), "verified prefix assertion needs bound proof")
+            prefix_report = parity_report(assertion, "prefix_evidence", "dependency:lock-package:", file_reports)
+            if prefix_report is not None:
+                LOCK_PREFIX_EVIDENCE(assertion, prefix_report, files)
         elif assertion["id"] == "KD-PROVENANCE-LOCK-PACKAGE-NAMES":
             require(not replacement["verified"] or replacement.get("names_evidence"), "verified name assertion needs bound proof")
             names_report = parity_report(assertion, "names_evidence", "dependency:lock-package:", file_reports)

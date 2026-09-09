@@ -45,9 +45,13 @@ packages and are not full consumer qualification.
 
 The runner additionally executes the real converter CLI and verifies identical
 fragment bytes, plus 120 conversion cases and 95 authority-linkage rejections.
-Evidence linkage remains open until two clean signed-producer runs, all raw
-logs, and artifact/linkage validation are bound. No runtime engine rule, root
-contract, reviewed lock, existing policy, downstream guard or release state changes.
+Two clean signed-producer runs at `bea4b64848214e3d50cc3ba2fb72a528ceedc02d`
+produce byte-identical 426,245-byte reports. The [index](../evidence/lock-prefix-index.json)
+binds all 30 raw files, 30 producer inputs, compiler and the 654-test inventory.
+Eight validator tests reject 256 artifact/semantic/linkage mutations; two runner
+tests reject 35 malformed outcomes. Only these five prefix instances are closed.
+No runtime engine rule, root contract, reviewed lock, existing policy, downstream
+guard or release state changes.
 
 The initial focused run failed because the harness serialized a nested assertion
 as a top-level table. The corrected harness constructs the complete typed TOML

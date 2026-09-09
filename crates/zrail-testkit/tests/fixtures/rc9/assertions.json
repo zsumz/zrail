@@ -17760,19 +17760,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera"
+        ],
         "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-bornera-VERSION-PREFIX",
-          "cause": "Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_lock_prefix/original.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/model.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/native.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/matrix.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/qualification.rs"
+        ],
+        "qualification_scope": "five frozen prefix registry instances linked to unchanged native exact identities; 120 paired representation cases, 20 frozen literal mismatches, 120 converter cases and 95 rejected linkage mutations; no general registry or full repository qualification",
+        "prefix_evidence": {
+          "artifact": "docs/rc9/evidence/lock-prefix.json.gz",
+          "payload_sha256": "bca8476b88cfca98b4ef6b8b217ce767e3e67c7574f7b3b32c58c964d3b342d8",
+          "implementation_commit": "bea4b64848214e3d50cc3ba2fb72a528ceedc02d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -18014,19 +18024,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera-core"
+        ],
         "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-bornera-core-VERSION-PREFIX",
-          "cause": "Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_lock_prefix/original.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/model.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/native.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/matrix.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/qualification.rs"
+        ],
+        "qualification_scope": "five frozen prefix registry instances linked to unchanged native exact identities; 120 paired representation cases, 20 frozen literal mismatches, 120 converter cases and 95 rejected linkage mutations; no general registry or full repository qualification",
+        "prefix_evidence": {
+          "artifact": "docs/rc9/evidence/lock-prefix.json.gz",
+          "payload_sha256": "bca8476b88cfca98b4ef6b8b217ce767e3e67c7574f7b3b32c58c964d3b342d8",
+          "implementation_commit": "bea4b64848214e3d50cc3ba2fb72a528ceedc02d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -18268,19 +18288,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-bornera-rustls"
+        ],
         "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-bornera-rustls-VERSION-PREFIX",
-          "cause": "Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_lock_prefix/original.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/model.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/native.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/matrix.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/qualification.rs"
+        ],
+        "qualification_scope": "five frozen prefix registry instances linked to unchanged native exact identities; 120 paired representation cases, 20 frozen literal mismatches, 120 converter cases and 95 rejected linkage mutations; no general registry or full repository qualification",
+        "prefix_evidence": {
+          "artifact": "docs/rc9/evidence/lock-prefix.json.gz",
+          "payload_sha256": "bca8476b88cfca98b4ef6b8b217ce767e3e67c7574f7b3b32c58c964d3b342d8",
+          "implementation_commit": "bea4b64848214e3d50cc3ba2fb72a528ceedc02d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -20772,19 +20802,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-kafka-wire"
+        ],
         "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-kafka-wire-VERSION-PREFIX",
-          "cause": "Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_lock_prefix/original.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/model.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/native.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/matrix.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/qualification.rs"
+        ],
+        "qualification_scope": "five frozen prefix registry instances linked to unchanged native exact identities; 120 paired representation cases, 20 frozen literal mismatches, 120 converter cases and 95 rejected linkage mutations; no general registry or full repository qualification",
+        "prefix_evidence": {
+          "artifact": "docs/rc9/evidence/lock-prefix.json.gz",
+          "payload_sha256": "bca8476b88cfca98b4ef6b8b217ce767e3e67c7574f7b3b32c58c964d3b342d8",
+          "implementation_commit": "bea4b64848214e3d50cc3ba2fb72a528ceedc02d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -21026,19 +21066,29 @@
       "exception_semantics": "none",
       "disposition": "new engine capability",
       "replacement": {
-        "policy_ids": [],
+        "policy_ids": [
+          "dependency:lock-package:kd-lock-kafka-wire-core"
+        ],
         "expected_diagnostics": [],
-        "implemented": false,
-        "verified": false,
+        "implemented": true,
+        "verified": true,
         "full_snapshot_verified": false,
-        "fixtures": []
-      },
-      "blockers": [
-        {
-          "id": "KD-PROVENANCE-kafka-wire-core-VERSION-PREFIX",
-          "cause": "Preserve the exact-version input condition in canonical native package identity policy and qualify the representation change; a ranged or malformed expected version cannot become authority."
+        "fixtures": [
+          "crates/zrail-rust/tests/rc9_lock_prefix/original.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/model.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/native.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/matrix.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/policy_test.rs",
+          "crates/zrail-rust/tests/rc9_lock_prefix/qualification.rs"
+        ],
+        "qualification_scope": "five frozen prefix registry instances linked to unchanged native exact identities; 120 paired representation cases, 20 frozen literal mismatches, 120 converter cases and 95 rejected linkage mutations; no general registry or full repository qualification",
+        "prefix_evidence": {
+          "artifact": "docs/rc9/evidence/lock-prefix.json.gz",
+          "payload_sha256": "bca8476b88cfca98b4ef6b8b217ce767e3e67c7574f7b3b32c58c964d3b342d8",
+          "implementation_commit": "bea4b64848214e3d50cc3ba2fb72a528ceedc02d"
         }
-      ],
+      },
+      "blockers": [],
       "policy_registry": {
         "path": "guardrails.toml",
         "file_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
@@ -59173,11 +59223,11 @@
   ],
   "counts": {
     "reviewed_assertion_instances": 672,
-    "implemented": 600,
+    "implemented": 605,
     "verified_by_disposition": {
       "existing native rail": 6,
       "declarative translation": 16,
-      "new engine capability": 517,
+      "new engine capability": 522,
       "behavioral evidence retained": 15,
       "approved retirement": 0
     },

@@ -1438,3 +1438,64 @@ items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
 `lock-names-final-check.log`, `lock-names-package-check.log` and
 `lock-names-final-self-analysis.json` under `target/rc9-completion-20260907/`.
 Root contracts, locks, versions, existing policies and downstream guards remain unchanged.
+
+## Exact-version prefix qualification, 2026-09-09
+
+The five `KD-PROVENANCE-*-VERSION-PREFIX` instances bind signed producer
+`bea4b64848214e3d50cc3ba2fb72a528ceedc02d`, tree
+`444c972758ab1690c475a0b08ae2835679a354b1`, and two identical 426,245-byte reports:
+`bca8476b88cfca98b4ef6b8b217ce767e3e67c7574f7b3b32c58c964d3b342d8`.
+Each five-test run binds the exact three-line prefix operation, complete unchanged
+original caller/helper, 120 paired representation cases, 20 exact literal
+mismatches, twelve frozen inputs, all five workspace packages and 83 lock nodes.
+It separately executes the real converter CLI, 120 conversion cases and 95
+rejected authority-linkage mutations. Generated policy bytes remain unchanged.
+
+The original helper strips exactly one equals sign without trimming or semver
+parsing; even malformed suffixes can pass with a matching malformed lock string.
+Native contract validation accepts bounded nonempty literal strings; its Cargo
+loader separately requires valid observed versions. The paired report binds the
+actual serialized contract/lock bytes and both validation results independently.
+Bare native literals are a representation distinction, not authority to accept
+unprefixed legacy inputs. The converter requires the unchanged reviewed suffix.
+Range-looking strings never become requirements, and build metadata remains part
+of exact identity. The twenty frozen literal comparisons fail later equality
+in the original and `DEP-LOCK-001` in native analysis. Synthetic pairs have no
+active workspace packages and are not full downstream qualification.
+
+The [index](evidence/lock-prefix-index.json) binds all 30 raw files, the 654-test
+inventory, 30 producer inputs and compiler. Eight validator tests reject 256
+artifact, semantic, execution and assertion-linkage mutations. Two runner tests
+reject 35 malformed outcomes; three converter tests pass. Snapshot checks pass
+all 23 extraction registries and 213 original policy instances. Ledger integrity
+passes at 672 reviewed / 605 implemented / 559 verified: 113 reviewed instances
+remain (8 kafka-driver, 17 Kafkars, 88 Rafter), plus discovery and full qualification.
+Only the five prefix rows change. General registry parsing/schema remain open.
+See the [scope review](inventory/KAFKA-DRIVER-LOCK-PREFIX.md), including the
+retained initial harness failure; its correction changed no native validation rule.
+
+Reproduction uses the clean signed producer and fresh external zdev outputs:
+
+```sh
+python3 scripts/rc9-lock-prefix --snapshots target/rc9-completion-20260907/snapshots --directory /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/lock-prefix-evidence --report new-a.json --build target/rc9-completion-20260907/lock-prefix-build
+python3 scripts/rc9-lock-prefix --snapshots target/rc9-completion-20260907/snapshots --directory /Volumes/zdev/dev/tmp/zrail-rc9-prep.mg6eu9/lock-prefix-evidence --report new-b.json --build target/rc9-completion-20260907/lock-prefix-build
+```
+
+The preceding name head `3efb17b` passes Windows, macOS and Rust 1.96.1
+compatibility in [CI](https://github.com/zsumz/zrail/actions/runs/34398714483);
+canonical fails only `LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028` and `LOCK-030`.
+Its [Security run](https://github.com/zsumz/zrail/actions/runs/34398714561) passes.
+These results do not qualify the later prefix producer or binding revision.
+The exact preceding failure log is `lock-names-hosted-failures.log` under
+`target/rc9-completion-20260907/`.
+
+Final local validation passes 1,652 Rust tests, zero failures and 28
+ordinary-suite ignores, plus all 95 Python tests. Formatting, strict Clippy,
+rustdoc, structure and all three extracted package builds pass. Complete
+self-analysis observes 1,096 Rust files, 1,692 base contexts and 1,212,733
+projection work with zero unresolved items. `scripts/check` exits only on
+`LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028` and `LOCK-030`; no protected lock
+was accepted or bypassed. Logs are `lock-prefix-final-check.log`,
+`lock-prefix-package-check.log` and `lock-prefix-final-self-analysis.json` under
+`target/rc9-completion-20260907/`. Root contracts, locks, versions, existing
+policies and downstream guards remain unchanged.

@@ -36,6 +36,9 @@ python3 scripts/rc9_lock_array_runner_test.py
 python3 scripts/rc9_lock_array_evidence_test.py
 python3 scripts/rc9_lock_names_runner_test.py
 python3 scripts/rc9_lock_names_evidence_test.py
+python3 scripts/rc9_lock_prefix_runner_test.py
+python3 scripts/rc9_lock_prefix_conversion_test.py
+python3 scripts/rc9_lock_prefix_evidence_test.py
 python3 scripts/rc9_route_runtime_test.py
 python3 scripts/rc9_route_runtime_evidence_test.py
 cargo fmt --all -- --check

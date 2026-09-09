@@ -42,8 +42,13 @@ at the type stage and rejecting its five missing required identities afterward.
 The all-entry name precondition has its own [bound proof](evidence/lock-names-index.json):
 retain complete-array missing-name rejection and the explicitly stronger native
 non-string/blank-name validation. Name matching remains literal and case-sensitive,
-without dash/underscore or whitespace normalization. These proofs do not close
-the version-prefix preconditions or authorize removing the mixed provenance checker.
+without dash/underscore or whitespace normalization. The five version-prefix
+instances have their own [bound proof](evidence/lock-prefix-index.json). Preserve
+the trusted converter's required equals prefix and unchanged suffix binding to
+bare native literal identities; do not turn range-looking strings into semver
+requirements or normalize build metadata. All five generated rules are unchanged.
+General registry conversion and full qualification remain open. These proofs
+do not authorize removing the mixed provenance checker.
 
 The mission explicitly requires replacing `KD-CI-ENFORCEMENT`'s current blanket
 `!workflow.contains("zrail")` predicate. The proposed downstream change must add

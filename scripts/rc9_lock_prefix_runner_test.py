@@ -1,4 +1,4 @@
-"""Every required array-proof suite must execute exactly once, not merely appear in a listing."""
+"""Every required prefix-proof suite must execute exactly once, not merely appear in a listing."""
 
 import sys
 import unittest
@@ -8,7 +8,7 @@ sys.dont_write_bytecode = True
 from rc9_lock_prefix_common import PREFIX, SUITES, execution
 
 
-class LockArrayRunner(unittest.TestCase):
+class LockPrefixRunner(unittest.TestCase):
     def test_complete_suite_scope(self):
         self.assertEqual(len(SUITES), 5)
         self.assertEqual([row[2] for row in SUITES.values()], [0, 120, 20, 5, 120])

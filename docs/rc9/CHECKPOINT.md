@@ -8,9 +8,31 @@ unchanged by that metadata-only rewrite.
 The user confirmed continued coverage work on 2026-09-07 after the signed-history
 release preparation. The full replacement criterion remains in place.
 See [the completion order](COMPLETION.md). Release verdict remains **blocked**.
-The current ledger is **672 reviewed / 600 implemented / 554 verified**;
-118 reviewed assertion instances and the discovery blockers remain open.
+The current ledger is **672 reviewed / 605 implemented / 559 verified**;
+113 reviewed assertion instances and the discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
+
+The five exact-version prefix instances now bind two byte-identical reports
+from signed producer `bea4b64848214e3d50cc3ba2fb72a528ceedc02d`: 120 paired
+representation cases, 20 frozen literal mismatches, 120 converter cases and
+95 rejected authority-linkage mutations. The original helper strips one equals
+sign without parsing its suffix; native identities store literal bare versions,
+and the trusted converter only accepts the unchanged reviewed suffixes. The
+generated fragment remains byte-identical. Eight validator tests reject 256
+mutations; two runner tests reject 35 malformed outcomes. See the
+[index](evidence/lock-prefix-index.json) and [scope](inventory/KAFKA-DRIVER-LOCK-PREFIX.md).
+Next bounded slice: `KD-REGISTRY-PARSE` and `KD-REGISTRY-SCHEMA`, then the
+remaining kafka-driver inventory and complete policy qualification.
+
+Current local validation passes 1,652 Rust tests with zero failures and 28
+ordinary-suite ignores, plus all 95 Python tests, formatting, strict Clippy,
+rustdoc, structure and all three extracted package builds. Complete self-analysis
+observes 1,096 Rust files, 1,692 base contexts and 1,212,733 projection work with
+zero unresolved items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`,
+`LOCK-026`, `LOCK-028` and `LOCK-030`; this remains a failed release gate. Logs are
+`lock-prefix-final-check.log`, `lock-prefix-package-check.log` and
+`lock-prefix-final-self-analysis.json` under `target/rc9-completion-20260907/`.
+Root authority, locks, versions and the existing lock-package fragment are unchanged.
 
 The all-entry package-name precondition now binds two byte-identical reports
 from signed producer `9ee1bced403ea609d931718357ab847ed896c400`: 32 exact
@@ -20,10 +42,7 @@ present non-string/blank names remain an explicit stronger native constraint.
 Seven validator tests reject 133 mutations; two runner tests reject 35 malformed
 outcomes. Only `KD-PROVENANCE-LOCK-PACKAGE-NAMES` is closed. See the
 [index](evidence/lock-names-index.json) and [scope](inventory/KAFKA-DRIVER-LOCK-NAMES.md).
-Next bounded slice: the five `KD-PROVENANCE-*-VERSION-PREFIX` assertions,
-then remaining kafka-driver inventory and complete policy qualification.
-
-Current local validation passes 1,648 Rust tests with zero failures and 27
+The preceding name local validation passes 1,648 Rust tests with zero failures and 27
 ordinary-suite ignores, plus formatting, strict Clippy, rustdoc, structure and
 all three extracted package builds. Complete self-analysis observes 1,090 Rust
 files, 1,686 base contexts and 1,210,818 projection work with zero unresolved
@@ -33,14 +52,19 @@ items. `scripts/check` exits only on `LOCK-008`, `LOCK-016`, `LOCK-026`,
 `lock-names-final-self-analysis.json` under `target/rc9-completion-20260907/`.
 Root authority, locks, versions and the existing lock-package fragment are unchanged.
 
+The preceding name head `3efb17b` passes Windows, macOS and Rust 1.96.1
+compatibility in [CI](https://github.com/zsumz/zrail/actions/runs/34398714483);
+canonical fails only the five known protected-lock diagnostics. Its
+[Security run](https://github.com/zsumz/zrail/actions/runs/34398714561) passes.
+These results do not qualify the later prefix producer or binding revision.
+
 The whole-lock package-array precondition now binds two byte-identical reports
 from signed producer `a385ebb5e01d8e92fbcbff834b29b3f5c5080238`: 24 precise
 failure-stage fixtures, five separate empty-array count failures, and complete
 original/native execution over twelve inputs, five workspace packages and 83
 lock nodes. Seven validator tests reject 117 mutations; two runner tests reject
 35 malformed outcomes. This closes only `KD-PROVENANCE-LOCK-PACKAGE-ARRAY`;
-version-prefix qualification remains open; name qualification is separately
-bound above. See the
+version-prefix and name qualification are separately bound above. See the
 [index](evidence/lock-array-index.json) and [scope](inventory/KAFKA-DRIVER-LOCK-ARRAY.md).
 The preceding array local validation passes 1,644 Rust tests with zero failures and 26
 ordinary-suite ignores, plus formatting, strict Clippy, rustdoc, structure and
