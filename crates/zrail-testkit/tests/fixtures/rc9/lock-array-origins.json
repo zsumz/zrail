@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "context": "Only the unchanged three-line array precondition is isolated; complete assert_locked and caller bodies remain bound by lock-packages-origins.json and execute separately.",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/protocol_provenance.rs",
+      "source_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+      "function": "assert_locked array precondition",
+      "harness": "crates/zrail-rust/tests/rc9_lock_array/original.rs",
+      "start_line": 145,
+      "end_line": 147,
+      "extracted_sha256": "463f7d7eae2fea8f508aff4fdf0fefc0c53c6170f351f5591000a179de602d86"
+    }
+  ]
+}

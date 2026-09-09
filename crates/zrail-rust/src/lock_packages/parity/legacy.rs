@@ -3,6 +3,9 @@
 use serde::Deserialize;
 use std::{fs, path::Path};
 
+#[path = "../../../tests/rc9_lock_array/policy_test.rs"]
+mod array;
+
 const CRATES_IO_SOURCE: &str = "registry+https://github.com/rust-lang/crates.io-index";
 
 #[derive(Debug, Deserialize)]

@@ -1,0 +1,197 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "name": "missing",
+      "source": "version = 4\n\n",
+      "array_count": null,
+      "native_count": null,
+      "native_error": "Cargo.lock requires [[package]] entries",
+      "stage": "array-rejected"
+    },
+    {
+      "name": "wrong-case",
+      "source": "version = 4\nPackage = []\n",
+      "array_count": null,
+      "native_count": null,
+      "native_error": "Cargo.lock requires [[package]] entries",
+      "stage": "array-rejected"
+    },
+    {
+      "name": "nested-only",
+      "source": "version = 4\n[nested]\npackage = []\n",
+      "array_count": null,
+      "native_count": null,
+      "native_error": "Cargo.lock requires [[package]] entries",
+      "stage": "array-rejected"
+    },
+    {
+      "name": "string",
+      "source": "version = 4\npackage = \"[]\"\n",
+      "array_count": null,
+      "native_count": null,
+      "native_error": "Cargo.lock requires [[package]] entries",
+      "stage": "array-rejected"
+    },
+    {
+      "name": "integer",
+      "source": "version = 4\npackage = 0\n",
+      "array_count": null,
+      "native_count": null,
+      "native_error": "Cargo.lock requires [[package]] entries",
+      "stage": "array-rejected"
+    },
+    {
+      "name": "float",
+      "source": "version = 4\npackage = 0.5\n",
+      "array_count": null,
+      "native_count": null,
+      "native_error": "Cargo.lock requires [[package]] entries",
+      "stage": "array-rejected"
+    },
+    {
+      "name": "boolean",
+      "source": "version = 4\npackage = false\n",
+      "array_count": null,
+      "native_count": null,
+      "native_error": "Cargo.lock requires [[package]] entries",
+      "stage": "array-rejected"
+    },
+    {
+      "name": "datetime",
+      "source": "version = 4\npackage = 2026-09-09\n",
+      "array_count": null,
+      "native_count": null,
+      "native_error": "Cargo.lock requires [[package]] entries",
+      "stage": "array-rejected"
+    },
+    {
+      "name": "table",
+      "source": "version = 4\n[package]\nname = \"probe\"\n",
+      "array_count": null,
+      "native_count": null,
+      "native_error": "Cargo.lock requires [[package]] entries",
+      "stage": "array-rejected"
+    },
+    {
+      "name": "empty-inline-table",
+      "source": "version = 4\npackage = {}\n",
+      "array_count": null,
+      "native_count": null,
+      "native_error": "Cargo.lock requires [[package]] entries",
+      "stage": "array-rejected"
+    },
+    {
+      "name": "empty-v4",
+      "source": "version = 4\npackage = []\n",
+      "array_count": 0,
+      "native_count": 0,
+      "native_error": null,
+      "stage": "array-accepted"
+    },
+    {
+      "name": "empty-v3",
+      "source": "version = 3\npackage = []\n",
+      "array_count": 0,
+      "native_count": 0,
+      "native_error": null,
+      "stage": "array-accepted"
+    },
+    {
+      "name": "inline-array",
+      "source": "version = 4\npackage = [{ name = \"probe\", version = \"1.0.0\", source = \"registry+https://github.com/rust-lang/crates.io-index\", checksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\n",
+      "array_count": 1,
+      "native_count": 1,
+      "native_error": null,
+      "stage": "array-accepted"
+    },
+    {
+      "name": "array-of-tables",
+      "source": "version = 4\n[[package]]\nname = \"probe\"\nversion = \"1.0.0\"\nsource = \"registry+https://github.com/rust-lang/crates.io-index\"\nchecksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n",
+      "array_count": 1,
+      "native_count": 1,
+      "native_error": null,
+      "stage": "array-accepted"
+    },
+    {
+      "name": "unrelated-nodes",
+      "source": "version = 4\npackage = [{ name = \"probe\", version = \"1.0.0\", source = \"registry+https://github.com/rust-lang/crates.io-index\", checksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" },{ name = \"other\", version = \"1.0.0\", source = \"registry+https://github.com/rust-lang/crates.io-index\", checksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\n",
+      "array_count": 2,
+      "native_count": 2,
+      "native_error": null,
+      "stage": "array-accepted"
+    },
+    {
+      "name": "string-elements",
+      "source": "version = 4\npackage = [\"probe\"]\n",
+      "array_count": 1,
+      "native_count": null,
+      "native_error": "Cargo.lock package must be a table",
+      "stage": "later-package-validation"
+    },
+    {
+      "name": "integer-elements",
+      "source": "version = 4\npackage = [1,2]\n",
+      "array_count": 2,
+      "native_count": null,
+      "native_error": "Cargo.lock package must be a table",
+      "stage": "later-package-validation"
+    },
+    {
+      "name": "nested-arrays",
+      "source": "version = 4\npackage = [[]]\n",
+      "array_count": 1,
+      "native_count": null,
+      "native_error": "Cargo.lock package must be a table",
+      "stage": "later-package-validation"
+    },
+    {
+      "name": "missing-name",
+      "source": "version = 4\npackage = [{}]\n",
+      "array_count": 1,
+      "native_count": null,
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "later-package-validation"
+    },
+    {
+      "name": "non-string-name",
+      "source": "version = 4\npackage = [{name=1}]\n",
+      "array_count": 1,
+      "native_count": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "later-package-validation"
+    },
+    {
+      "name": "missing-version",
+      "source": "package = []\n",
+      "array_count": 0,
+      "native_count": null,
+      "native_error": "Cargo.lock requires integer version",
+      "stage": "earlier-version-validation"
+    },
+    {
+      "name": "unsupported-version",
+      "source": "version = 5\npackage = []\n",
+      "array_count": 0,
+      "native_count": null,
+      "native_error": "Cargo.lock version 5 is unsupported; expected 3 or 4",
+      "stage": "earlier-version-validation"
+    },
+    {
+      "name": "string-version",
+      "source": "version = \"4\"\npackage = []\n",
+      "array_count": 0,
+      "native_count": null,
+      "native_error": "Cargo.lock requires integer version",
+      "stage": "earlier-version-validation"
+    },
+    {
+      "name": "valid-then-scalar",
+      "source": "version = 4\npackage = [{ name = \"probe\", version = \"1.0.0\", source = \"registry+https://github.com/rust-lang/crates.io-index\", checksum = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" },2]\n",
+      "array_count": 2,
+      "native_count": null,
+      "native_error": "Cargo.lock package must be a table",
+      "stage": "later-package-validation"
+    }
+  ]
+}
