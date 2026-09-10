@@ -25,6 +25,20 @@ See the [registry scope and next step](inventory/KAFKA-DRIVER-REGISTRY.md).
 Next bounded slice: bind repeated clean signed-producer traversal-inspection and
 registry reports, including the frozen source scope and complete schema carrier.
 
+The signed inspection implementation is `3d7ec009f4f0e1e140e02da631ce3e1f192237ae`.
+Its completed local validation passes 1,662 Rust tests with zero failures and
+29 ordinary-suite ignores, all 102 Python tests, formatting, strict Clippy,
+rustdoc, structure and all three extracted crate builds. The corrected physical
+suite also passes all five tests with its permission case explicitly enabled:
+133 physical cases, including 19 enforced-permission cases. Complete analysis
+observes 1,103 Rust files, 1,699 base contexts and 1,214,948 projection work with
+zero unresolved items. `inspection-final-check.log` exits only on `LOCK-008`,
+`LOCK-016`, `LOCK-026`, `LOCK-028` and `LOCK-030`; this is still a failed release
+gate. The `inspection-*.log` files and `inspection-self-analysis.json` are under
+`target/rc9-completion-20260907/`. The redundant filtered workspace sweep was
+interrupted after compilation; its separate log is not a completed gate.
+No reviewed contract/lock, version, historical evidence or downstream guard changed.
+
 The preceding registry local validation passes 1,655 Rust tests with zero failures and 28
 ordinary-suite ignores, plus 102 Python tests, formatting, strict Clippy,
 rustdoc, structure and all three extracted package builds. Complete analysis

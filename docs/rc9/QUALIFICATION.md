@@ -1605,11 +1605,22 @@ pass both the 249-source and 27-native matrices; two public-report/lock tests pa
 All 102 Python checks and structure pass, and all three extracted crate builds
 pass. Logs are `inspection-physical-direct.log`, `inspection-public-direct.log`,
 `inspection-registry-direct.log` and `inspection-package-check.log` under the
-same directory. The canonical workspace run remains in progress; it must not
-be reported as complete from these focused results.
+same directory. These focused runs remain separate from repeated signed-producer
+qualification and do not promote any assertion's verification status.
 
 The redundant filtered workspace sweep was stopped after compilation and the
 targeted direct passes to prioritize the canonical run during severe local I/O
 delays. `inspection-workspace-filtered-interrupted.log` records exit 143, not a
 completed gate. The separate physical, registry and public-test results above
 are completed runs; the package build was resumed and completed successfully.
+
+The complete canonical run now passes 1,662 Rust tests with zero failures and
+29 ordinary-suite ignores, all 102 Python tests, formatting, strict Clippy,
+rustdoc and structure. Complete analysis records 1,103 Rust files, 1,699 base
+contexts, 1,214,948 projection work and zero unresolved items. It exits only on
+`LOCK-008`, `LOCK-016`, `LOCK-026`, `LOCK-028` and `LOCK-030`; those protected
+authority blockers are not bypassed. See `inspection-final-check.log` and
+`inspection-self-analysis.json` in the same directory. The implementation is
+PGP-signed as `3d7ec009f4f0e1e140e02da631ce3e1f192237ae`, verified locally and by
+GitHub. Root contract, reviewed lock, manifest/lock versions, historical
+traversal evidence and all downstream guards remain unchanged.
