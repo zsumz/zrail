@@ -82,12 +82,27 @@ pub struct PathExplanation {
     pub capability_owners: Vec<CapabilityOwnerExplanation>,
     /// Call-owner rules whose declared boundary contains the path.
     pub call_owners: Vec<CallOwnerExplanation>,
+    /// Matching repository-file predicates and their actual physical observations.
+    #[serde(default)]
+    pub repository_files: Vec<super::RepositoryFileExplanation>,
+    /// Whole-lock inventory policy and observed identities when explaining `Cargo.lock`.
+    #[serde(default)]
+    pub lock_packages: Vec<crate::GovernedLockPackage>,
+    /// Matching authored Rust inventories, including required subjects that are absent.
+    #[serde(default)]
+    pub rust_inventories: Vec<crate::GovernedRustInventory>,
     /// The advisory line target for the source class, when configured.
     pub design_target: Option<usize>,
     /// The enforced line ceiling for the source class, when configured.
     pub hard_ceiling: Option<usize>,
+    /// Complete selected thresholds, selectors, and exact exception authority.
+    #[serde(default)]
+    pub effective_budget: Option<crate::EffectiveSizeBudget>,
     /// Whether a facade or entry point must remain declarative, when applicable.
     pub declarative_shape: Option<bool>,
+    /// Effective written facade structure, independent of compilation reachability.
+    #[serde(default)]
+    pub facade_mode: Option<zrail_core::FacadeMode>,
     /// Whether the path must contain module-level documentation.
     pub module_docs_required: bool,
     /// Whether production tests must use sibling test modules.

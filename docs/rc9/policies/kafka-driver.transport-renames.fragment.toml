@@ -1,0 +1,12 @@
+# Partial authored syntax policy; full downstream qualification remains required.
+# Kafka-driver a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# Transport detector SHA-256: 6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed
+
+[[source.rust.inventories]]
+name = "kd-transport-renames"
+reason = "Preserve the frozen prohibition of explicit guarded import renames, including same-name and underscore aliases; source spelling selects authority and alias destinations remain distinct evidence."
+include = ["src/**/*.rs", "tests/**/*.rs", "crates/kafka-driver-core/src/**/*.rs", "crates/kafka-driver-probe/src/**/*.rs", "crates/kafka-driver-sim/src/**/*.rs", "crates/kafka-driver-transport/src/**/*.rs"]
+exclude = ["tests/**", "**/*_test.rs"]
+world = "authored"
+subject = { kind = "written-import-renames", names = ["ConnectionSet", "DirectSet", "RegisteredTransport", "SlotTransport", "Source"] }
+assertion = { kind = "exact-owners", owners = [] }

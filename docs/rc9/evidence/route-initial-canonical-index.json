@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "status": "failed",
+  "implementation": {
+    "commit": "2ca08376b506ea9b4ddc5c348612fe5c8aae4e33",
+    "tree": "3c0c42f07bfa2d32053dd2366e3a1802a3f3d2c3",
+    "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked": {},
+    "git_status": ""
+  },
+  "cause": "Clippy doc_markdown requires backticks around include_str in the new trusted compiler harness module documentation.",
+  "inputs_unchanged": true,
+  "release_qualified": false,
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/route-initial-canonical-runner.json.gz",
+      "payload_sha256": "3db714f2ce9bb619dbc0cc4bc436d46eb219bf33228fa3b5fc7cb3c2d3666d76",
+      "payload_bytes": 2061,
+      "compressed_sha256": "9d5ad15d9e9d807ff9faf97df0f55ccd8641d0a880c84ebea51b774d797bddf0"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-initial-canonical-canonical.log.gz",
+      "payload_sha256": "d9a4663a346d8499bc0baff3c195cddfdb6c36ddd658e88cc9a2d54695ab45d8",
+      "payload_bytes": 1747,
+      "compressed_sha256": "64f9f7ed48b7e3dcf7de0143cf758fa24e39ef02ce9504488ce37ed90527af13"
+    }
+  ]
+}

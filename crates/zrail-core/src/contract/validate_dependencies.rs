@@ -13,6 +13,7 @@ use super::{
 };
 
 pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
+    super::validate_lock_packages::validate(contract, errors);
     let mut identities = BTreeSet::new();
     for attestation in &contract.dependencies.crate_roots {
         validate_package_name(&attestation.package, errors);

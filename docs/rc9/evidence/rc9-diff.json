@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "summary": {
+    "grants": 0,
+    "revokes": 0,
+    "debt": 0,
+    "cleanup": 0,
+    "neutral": 0,
+    "unknown": 2
+  },
+  "changes": [
+    {
+      "kind": "unknown",
+      "rail": "lock.authority",
+      "subject": "after:semantics",
+      "message": "lock semantics are incompatible with this zrail engine",
+      "before": "6",
+      "after": "7"
+    },
+    {
+      "kind": "unknown",
+      "rail": "lock.authority",
+      "subject": "before:semantics",
+      "message": "lock semantics are incompatible with this zrail engine",
+      "before": "6",
+      "after": "7"
+    }
+  ]
+}

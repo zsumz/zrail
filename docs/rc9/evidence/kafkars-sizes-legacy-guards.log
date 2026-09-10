@@ -1,0 +1,10 @@
+
+running 5 tests
+test exact_reviewed_exception_is_accepted ... ok
+test an_inflated_or_stale_baseline_is_rejected ... ok
+test growth_above_a_design_target_is_rejected ... ok
+test nested_src_tests_directory_keeps_implementation_budget ... ok
+test live_files_remain_within_reviewed_size_targets ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+

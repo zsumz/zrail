@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "release_verdict": "blocked",
+  "implementation_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e",
+  "report_payload_sha256": "9895d7213b58d96e144fdc362c6c9fc0d86274f8b93ebdb47b1bfe9423340485",
+  "repeated_byte_identical": true,
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "6a5564ec8accf65f22de911c59827dee64aaaf78d86f0b1435a604b4f97803e8",
+  "fixture_origins_sha256": "c8c885b4b3e748aef026b1bbc1c3cfc87658928e94fea579a00d729d4bab2cc9",
+  "inputs": {
+    ".github/workflows/qualification.yml": "d87e3d3b6021c51b934b862fbb1b19972ed197fea122eb76c0f35e245832c868",
+    "Cargo.toml": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6",
+    "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "README.md": "6575365e288d9c8cfc996e846b4d0a7cd67def21abbb002551f9f225813a18c6",
+    "crates/kafka-driver-core/Cargo.toml": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881",
+    "crates/kafka-driver-core/LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "crates/kafka-driver-transport/Cargo.toml": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70",
+    "crates/kafka-driver-transport/LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "kafka-driver-logo.svg": "f0abcd140a73b2a1c6cd52979cfbabec34793525d061289b8b0547c9b50efb09",
+    "scripts/qualify-packages": "93ca5d9fcf5aa7b5e73339581990bf8d31e5fea43e460eca35ff7e6ce0c13b04",
+    "scripts/verify-release-repository": "3c1396e6d8d4c813a67d73b3dd3b980f76860e8a252f8cf29fa012926f02981e"
+  },
+  "policies": 35,
+  "frozen_policy_observations": 35,
+  "fixture_outcomes": 134,
+  "positive_fixture_outcomes": 35,
+  "negative_fixture_outcomes": 99,
+  "verified_assertion_ids": [
+    "KD-METADATA-PACKAGE-REPOSITORY",
+    "KD-METADATA-PARSE",
+    "KD-METADATA-README",
+    "KD-METADATA-REQUIRED-KAFKA-DRIVER-LOGO-SVG",
+    "KD-METADATA-REQUIRED-LICENSE",
+    "KD-METADATA-REQUIRED-README-MD",
+    "KD-METADATA-VERIFY-HTTP-FAIL",
+    "KD-METADATA-VERIFY-REPOSITORY",
+    "KD-METADATA-WORKFLOW-VERIFY",
+    "KD-METADATA-WORKSPACE-LICENSE",
+    "KD-METADATA-WORKSPACE-REPOSITORY",
+    "KD-METADATA-WORKSPACE-VERSION",
+    "KD-METADATA-kafka-driver-DESCRIPTION",
+    "KD-METADATA-kafka-driver-LICENSE",
+    "KD-METADATA-kafka-driver-LICENSE-COPY",
+    "KD-METADATA-kafka-driver-NAME",
+    "KD-METADATA-kafka-driver-PUBLISH",
+    "KD-METADATA-kafka-driver-REPOSITORY",
+    "KD-METADATA-kafka-driver-VERSION",
+    "KD-METADATA-kafka-driver-core-DESCRIPTION",
+    "KD-METADATA-kafka-driver-core-LICENSE",
+    "KD-METADATA-kafka-driver-core-LICENSE-COPY",
+    "KD-METADATA-kafka-driver-core-NAME",
+    "KD-METADATA-kafka-driver-core-PUBLISH",
+    "KD-METADATA-kafka-driver-core-REPOSITORY",
+    "KD-METADATA-kafka-driver-core-VERSION",
+    "KD-METADATA-kafka-driver-transport-DESCRIPTION",
+    "KD-METADATA-kafka-driver-transport-LICENSE",
+    "KD-METADATA-kafka-driver-transport-LICENSE-COPY",
+    "KD-METADATA-kafka-driver-transport-NAME",
+    "KD-METADATA-kafka-driver-transport-PUBLISH",
+    "KD-METADATA-kafka-driver-transport-REPOSITORY",
+    "KD-METADATA-kafka-driver-transport-VERSION"
+  ],
+  "full_repository_qualified": false,
+  "sources_patched": [],
+  "authority_grants_accepted": [],
+  "canonical_gate": {
+    "command": "scripts/check",
+    "exit_code": 1,
+    "structure": "pass",
+    "format": "pass",
+    "strict_workspace_clippy": "pass",
+    "tests": {
+      "passed": 1485,
+      "failed": 0,
+      "ignored": 5
+    },
+    "rustdoc": "pass",
+    "self_analysis": {
+      "complete": true,
+      "rust_files": 930,
+      "base_contexts": 1496,
+      "derived_contexts": 0,
+      "projection_work": 1213212,
+      "unresolved": 0
+    },
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_stage": "not reached",
+    "cleanliness_stage": "not reached"
+  },
+  "standalone_archives": {
+    "command": "scripts/package-check",
+    "exit_code": 0,
+    "version": "0.0.3-rc.8",
+    "release_qualified": false
+  },
+  "counts": {
+    "reviewed_assertion_instances": 332,
+    "implemented": 257,
+    "verified_by_disposition": {
+      "existing native rail": 0,
+      "declarative translation": 0,
+      "new engine capability": 247,
+      "behavioral evidence retained": 0,
+      "approved retirement": 0
+    },
+    "full_repository_verified": 0
+  },
+  "artifacts": {
+    "metadata-parity.json.gz": "39db83d6566a8c9a359bbcca6399d3e08ae62bb9f9d83d3262c197a93c35f6b3",
+    "metadata-parity.log": "e2bdc56d0f00baf293df26e0c7b4ca1e40de539d2eb552bcf06f314d5926ffc7",
+    "metadata-parity-repeat.log": "86f984e436a6ade298501897313d4f8723cf9c319e4970eca376e3680074b718",
+    "metadata-canonical.log.gz": "02bd9c91795fe53968c3e96a6f26965b389831d73d077686993e075d7dd26d30",
+    "metadata-package.log.gz": "002106890fa78240fe64925539ea005034b9f4659d67215de6054c78d8d94cb4"
+  }
+}

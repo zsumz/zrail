@@ -1,18 +1,20 @@
 //! Small injected budgets prove repository-wide projection failure semantics.
 
-use crate::inventory::FileClass;
 use zrail_core::AnalysisQuality;
 
 use super::*;
 use crate::source::{
     BindingKind, CompilationIncludeEdge, CompilationRoot, ImportBindingFact, IncludeContext,
-    IncludeOccurrenceId, Reachability, RustFileFacts, SourceAnalysisMetrics, SourceSyntax,
-    SyntaxGuard, include_bindings::IncludeBindings, include_projection_budget::ProjectionLimits,
+    IncludeOccurrenceId, SourceAnalysisMetrics, SourceSyntax, SyntaxGuard,
+    include_bindings::IncludeBindings, include_projection_budget::ProjectionLimits,
 };
 
 #[path = "include_projection_apply_test/support.rs"]
 mod support;
 use support::*;
+#[path = "include_projection_apply_test/file.rs"]
+mod empty_file;
+use empty_file::file;
 
 #[test]
 fn work_exhaustion_is_transactional_and_independent_of_file_order() {
@@ -232,49 +234,6 @@ fn fixture_index() -> SourceIndex {
         ],
         findings: Vec::new(),
         analysis_metrics: SourceAnalysisMetrics::default(),
-    }
-}
-
-fn file(
-    relative: &str,
-    calls: Vec<ObservedFact>,
-    import_bindings: Vec<ImportBindingFact>,
-) -> RustFileFacts {
-    RustFileFacts {
-        relative: relative.into(),
-        packages: Vec::new(),
-        class: FileClass::Implementation,
-        reachability: Reachability::UNREACHABLE,
-        syntax: SourceSyntax::Items,
-        lines: 1,
-        module_docs: true,
-        paths: Vec::new(),
-        calls,
-        call_resolutions: Vec::new(),
-        methods: Vec::new(),
-        operations: Vec::new(),
-        macros: Vec::new(),
-        macro_imports: Vec::new(),
-        macro_expansions: Vec::new(),
-        opaque_macro_inputs: Vec::new(),
-        macro_definitions: Vec::new(),
-        import_bindings,
-        associated_items: Vec::new(),
-        trait_declarations: Vec::new(),
-        glob_imports: Vec::new(),
-        inline_module_scopes: Vec::new(),
-        prelude_directives: Vec::new(),
-        compile_effects: Vec::new(),
-        lint_suppressions: Vec::new(),
-        unsafe_constructs: Vec::new(),
-        async_syntax: Vec::new(),
-        type_policy: crate::source::TypePolicyFacts::default(),
-        tests: Vec::new(),
-        modules: Vec::new(),
-        includes: Vec::new(),
-        item_macros: Vec::new(),
-        opaque_binding_macros: Vec::new(),
-        facade_implementation: Vec::new(),
     }
 }
 

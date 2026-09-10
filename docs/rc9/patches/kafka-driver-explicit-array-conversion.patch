@@ -1,0 +1,13 @@
+diff --git a/src/request/bornera_test.rs b/src/request/bornera_test.rs
+--- a/src/request/bornera_test.rs
++++ b/src/request/bornera_test.rs
+@@ -166,7 +166,7 @@ fn encoded_response(
+ }
+ 
+ fn encoded_correlation(frame: &[u8]) -> i32 {
+-    let Ok(bytes) = <[u8; 4]>::try_from(&frame[8..12]) else {
++    let Ok(bytes) = <[u8; 4] as core::convert::TryFrom<&[u8]>>::try_from(&frame[8..12]) else {
+         panic!("generated request header must contain a correlation ID");
+     };
+     i32::from_be_bytes(bytes)
+

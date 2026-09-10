@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+"""Translate frozen transport syntax inventories; trusted policy setup only."""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import tomllib
+
+
+ROOT = Path(__file__).resolve().parent.parent
+SOURCE_SHA = "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed"
+REGISTRY_SHA = "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10"
+
+
+def literal(value):
+    if isinstance(value, dict):
+        return "{ " + ", ".join(f"{key} = {literal(item)}" for key, item in value.items()) + " }"
+    if isinstance(value, list):
+        return "[" + ", ".join(literal(item) for item in value) + "]"
+    return json.dumps(value, ensure_ascii=False)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("snapshots", type=Path)
+    parser.add_argument("output", type=Path)
+    parser.add_argument("--subject", choices=["methods", "expression-paths", "owners", "renames", "impls"], default="methods")
+    args = parser.parse_args()
+    subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
+    consumer = args.snapshots / "kafka-driver"
+    for path, digest in [("tests/guardrails/transport_authority.rs", SOURCE_SHA),
+                         ("guardrails.toml", REGISTRY_SHA)]:
+        if hashlib.sha256((consumer / path).read_bytes()).hexdigest() != digest:
+            raise ValueError("frozen transport policy input changed")
+    ledger = json.loads((ROOT / "crates/zrail-testkit/tests/fixtures/rc9/assertions.json").read_text())
+    methods = args.subject == "methods"
+    identity = {"methods": "KD-TRANSPORT-METHODS", "expression-paths": "KD-TRANSPORT-ASSOCIATED",
+                "owners": "KD-TRANSPORT-OWNERS", "renames": "KD-TRANSPORT-RENAMES",
+                "impls": "KD-TRANSPORT-IMPLS"}[args.subject]
+    rows = [row for row in ledger["reviewed_assertions"] if row["id"] == identity]
+    row, = rows
+    roots = tomllib.loads((consumer / "guardrails.toml").read_text())["paths"]["rust_roots"]
+    if roots != row["selection"]["roots"]["roots"] or row["source"]["file_sha256"] != SOURCE_SHA:
+        raise ValueError("reviewed source selection differs from the frozen registry")
+    if args.subject == "owners":
+        expected = row["required_cardinality"]["exact_set"]
+        if expected != ["src/reactor/direct_plaintext/set_owner.rs"]:
+            raise ValueError("reviewed owner inventory changed")
+        subject = dict(kind="written-paths-containing", names=[row["matching_semantics"]["value"]])
+        assertion = dict(kind="exact-owners", owners=[dict(path=path, name=subject["names"][0])
+                                                    for path in expected])
+        summary = "1 exact owner; occurrence quantities remain independent"
+    elif args.subject == "renames":
+        if row["required_cardinality"]["exact_set"] != []:
+            raise ValueError("reviewed rename prohibition changed")
+        subject = dict(kind="written-import-renames", names=row["matching_semantics"]["guarded"])
+        assertion = dict(kind="exact-owners", owners=[])
+        summary = "persistent empty rename set over five written source identifiers"
+    elif args.subject == "impls":
+        expected = row["required_cardinality"]["exact_set"]
+        owner = "src/reactor/direct_plaintext/rustls_transport.rs"
+        traits = ["RegisteredTransport", "SlotTransport", "Source"]
+        if expected != [f"{owner}:DirectRustlsTransport:{name}" for name in traits]:
+            raise ValueError("reviewed trait/type/file inventory changed")
+        subject = dict(kind="written-trait-impls", names=traits,
+                       implementing_types={"Source": ["DirectRustlsTransport"]})
+        assertion = dict(kind="exact-owners", owners=[dict(path=owner, name=f"{name} for DirectRustlsTransport")
+                                                    for name in traits])
+        summary = "3 exact trait/type/file identities; occurrence quantities remain independent"
+    else:
+        expected = row["required_cardinality"]["exact_map"]
+        counts = [dict(path=key.split(":", 1)[0], name=key.split(":", 1)[1], count=count)
+                  for key, count in sorted(expected.items())]
+        pairs, total = (11, 20) if methods else (8, 8)
+        if len(counts) != pairs or sum(expected.values()) != total:
+            raise ValueError("reviewed selector inventory changed")
+        subject = (dict(kind="written-methods", names=row["matching_semantics"]["methods"]) if methods else
+                   dict(kind="written-expression-paths", suffixes=row["matching_semantics"]["selected_suffixes"]))
+        assertion = dict(kind="exact-counts", counts=counts)
+        summary = f"{pairs} exact pairs, {total} occurrences"
+    rule = dict(
+        name="kd-transport-" + args.subject,
+        reason=("Preserve the exact frozen per-file written selector method quantities; receiver identities and execution are separate claims." if methods else
+                "Preserve every frozen authored ExprPath quantity, including function values and path patterns, by physical file and final two written identifiers." if args.subject == "expression-paths" else
+                "Preserve the exact physical files containing a written ConnectionSet path segment across every original syntax context, independent of occurrence quantity or resolved identity." if args.subject == "owners" else
+                "Preserve the frozen prohibition of explicit guarded import renames, including same-name and underscore aliases; source spelling selects authority and alias destinations remain distinct evidence." if args.subject == "renames" else
+                "Preserve the exact frozen file/trait/type implementation set using final written path identifiers, with Source selected only for DirectRustlsTransport; polarity, qualification, generic arguments and duplicate occurrences retain their original syntax-only meaning."),
+        include=[root + "/**/*.rs" for root in roots],
+        exclude=["tests/**", "**/*_test.rs"], world="authored",
+        subject=subject, assertion=assertion,
+    )
+    lines = ["# Partial authored syntax policy; full downstream qualification remains required.",
+             "# Kafka-driver " + row["commit"], "# Transport detector SHA-256: " + SOURCE_SHA,
+             "", "[[source.rust.inventories]]"]
+    text = "\n".join(lines + [f"{key} = {literal(value)}" for key, value in rule.items()]) + "\n"
+    if tomllib.loads(text)["source"]["rust"]["inventories"] != [rule]:
+        raise ValueError("translated policy failed round-trip validation")
+    with args.output.open("x", encoding="utf-8", newline="\n") as output:
+        output.write(text)
+    print(f"transport {args.subject} translation: 1 policy, {summary}")
+
+
+if __name__ == "__main__":
+    main()

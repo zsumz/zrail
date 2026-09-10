@@ -1,11 +1,16 @@
 //! Typed public schema for `zrail.toml`.
 mod analysis;
 mod dependencies;
+mod documents;
 mod evidence;
 mod feature_worlds;
+mod files;
+mod inventories;
+mod lock_packages;
 mod macros;
 mod policy;
 mod repository;
+mod size;
 mod source;
 mod types;
 
@@ -17,11 +22,25 @@ pub use dependencies::{
     CrateRootContract, CrateRootSource, DependenciesContract, DependencyEdgeKind,
     DependencyReachability, MacroAmbientInputs,
 };
+pub use documents::{
+    RepositoryDocumentAssertion, RepositoryDocumentFormat, RepositoryDocumentPredicate,
+    RepositoryDocumentValue,
+};
 pub use evidence::{
     GateContract, GateKind, InvariantContract, InvariantStatus, MAX_TEST_MIRROR_INPUTS,
     TestExecutionIdentity, TestMirrorContract,
 };
 pub use feature_worlds::{CargoFeaturePackageContract, CargoFeatureWorldContract};
+pub use files::{
+    RepositoryCaseMode, RepositoryEntryMode, RepositoryFilePredicate, RepositoryFileRule,
+    RepositoryLiteralMode, RepositoryLiteralPredicate, RepositoryNameBasis, RepositoryNamePart,
+    RepositoryTextNormalization,
+};
+pub use inventories::{
+    RustInventoryAssertion, RustInventoryCount, RustInventoryOwner, RustInventoryRule,
+    RustInventorySubject, RustInventoryWorld,
+};
+pub use lock_packages::{LockPackageAssertion, LockPackageIdentity, LockPackageRule};
 pub use macros::{MacroExpansionAllow, MacroExpansionContract};
 pub use policy::{
     DependencyRule, EffectBoundary, LayerContract, LayerDependencies, OwnerContract,
@@ -29,6 +48,10 @@ pub use policy::{
 };
 pub use repository::RepositoryContract;
 use serde::{Deserialize, Serialize};
+pub use size::{
+    ScopedBudgetContract, SizeExceptionContract, SizeExceptionMetadata, SizePolicyContract,
+    SizeRole, SizeTargetMode, SizeThresholds,
+};
 pub use source::{
     FileRole, FileRoleContract, ItemMacroBinding, ItemMacroBindingKind, ItemMacroContract,
     ItemMacroManifest,
@@ -90,9 +113,13 @@ pub use types::{
     #[doc = "Repository-wide written duplication syntax policy."] pub duplication: RustDuplicationContract,
     #[serde(default)]
     #[doc = "Exact per-type shape and non-duplication policies."] pub types: Vec<RustTypeContract>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[doc = "Exact quantities over explicitly selected authored Rust syntax."] pub inventories: Vec<RustInventoryRule>,
     #[doc = "Unsafe-code, lint-suppression, and denied-operation policy."] pub hygiene: HygieneContract,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[doc = "Optional target and hard line budgets by Rust file role."] pub size: Option<FileSizeContract>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[doc = "Scoped thresholds and explicit above-hard exceptions; enables independent hard enforcement."] pub budgets: Option<SizePolicyContract>,
 }
 
 #[rustfmt::skip]

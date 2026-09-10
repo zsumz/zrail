@@ -1,0 +1,12 @@
+# Partial authored syntax policy; full downstream qualification remains required.
+# Kafka-driver a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# Transport detector SHA-256: 6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed
+
+[[source.rust.inventories]]
+name = "kd-transport-expression-paths"
+reason = "Preserve every frozen authored ExprPath quantity, including function values and path patterns, by physical file and final two written identifiers."
+include = ["src/**/*.rs", "tests/**/*.rs", "crates/kafka-driver-core/src/**/*.rs", "crates/kafka-driver-probe/src/**/*.rs", "crates/kafka-driver-sim/src/**/*.rs", "crates/kafka-driver-transport/src/**/*.rs"]
+exclude = ["tests/**", "**/*_test.rs"]
+world = "authored"
+subject = { kind = "written-expression-paths", suffixes = ["ConnectionSet::new", "ConnectionSet::turn_component", "ConnectionSet::poll_io", "ConnectionSet::wake_handle", "ConnectionSet::pulse_handle", "DirectSet::new", "DirectSet::turn_component", "DirectSet::poll_io", "DirectSet::wake_handle", "DirectSet::pulse_handle", "Source::register", "Source::reregister", "Source::deregister"] }
+assertion = { kind = "exact-counts", counts = [{ path = "src/reactor/direct_plaintext/rustls_transport.rs", name = "Source::deregister", count = 1 }, { path = "src/reactor/direct_plaintext/rustls_transport.rs", name = "Source::register", count = 1 }, { path = "src/reactor/direct_plaintext/rustls_transport.rs", name = "Source::reregister", count = 1 }, { path = "src/reactor/direct_plaintext/set_owner.rs", name = "ConnectionSet::new", count = 1 }, { path = "src/reactor/direct_plaintext/set_owner.rs", name = "ConnectionSet::poll_io", count = 1 }, { path = "src/reactor/direct_plaintext/set_owner.rs", name = "ConnectionSet::pulse_handle", count = 1 }, { path = "src/reactor/direct_plaintext/set_owner.rs", name = "ConnectionSet::turn_component", count = 1 }, { path = "src/reactor/direct_plaintext/set_owner.rs", name = "ConnectionSet::wake_handle", count = 1 }] }

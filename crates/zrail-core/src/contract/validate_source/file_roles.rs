@@ -10,6 +10,23 @@ use super::super::{
 pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
     let mut paths = BTreeSet::new();
     for role in &contract.source.rust.file_roles {
+        match role.role {
+            crate::FileRole::Implementation if role.mode.is_some() => {
+                errors.push(format!(
+                    "implementation file-role {:?} cannot set facade mode",
+                    role.path
+                ));
+            }
+            crate::FileRole::TestFacade
+                if role.mode.is_none() || role.mode == Some(crate::FacadeMode::Allow) =>
+            {
+                errors.push(format!(
+                    "test-facade {:?} requires an enforced facade mode",
+                    role.path
+                ));
+            }
+            _ => {}
+        }
         validate_repository_literal(&role.path, errors);
         require_reason("file-role override", &role.path, &role.reason, errors);
         if !std::path::Path::new(&role.path)

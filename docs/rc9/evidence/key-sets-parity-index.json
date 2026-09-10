@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "release_verdict": "blocked",
+  "implementation_commit": "c86f5173c90e564b204420789faf2d16ef17807a",
+  "report_payload_sha256": "09651c2e17559c8f0e445a5f79f29781858898bbae4f9bf0c2b7130ee1466d6b",
+  "repeated_byte_identical": true,
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "caf5ef9b14f4ce3bd4a71071adc28e80f05f936bae03beeb2d81283b0aca0698",
+  "fixture_origins_sha256": "e16099c1aa5f56f1472ac39a01b54b109e88528e8b01b9f46c9db21de5b7b867",
+  "inputs": {
+    "Cargo.toml": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6",
+    "crates/kafka-driver-core/Cargo.toml": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881",
+    "crates/kafka-driver-probe/Cargo.toml": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5",
+    "crates/kafka-driver-sim/Cargo.toml": "0c6e1d53bd243f7184967ac6a80aed24e984e4f2112c45bfd93a701116e4e8f1",
+    "crates/kafka-driver-transport/Cargo.toml": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70",
+    "guardrails.toml": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10"
+  },
+  "policies": 5,
+  "frozen_policy_observations": 5,
+  "fixture_outcomes": 130,
+  "positive_fixture_outcomes": 22,
+  "negative_fixture_outcomes": 108,
+  "verified_assertion_ids": [
+    "KD-DEP-CORE-KEYS",
+    "KD-DEP-DRIVER-KEYS",
+    "KD-DEP-PROBE-KEYS",
+    "KD-DEP-SIM-KEYS",
+    "KD-DEP-TRANSPORT-KEYS"
+  ],
+  "full_repository_qualified": false,
+  "sources_patched": [],
+  "authority_grants_accepted": [],
+  "counts": {
+    "reviewed_assertion_instances": 381,
+    "implemented": 262,
+    "verified_by_disposition": {
+      "existing native rail": 0,
+      "declarative translation": 0,
+      "new engine capability": 252,
+      "behavioral evidence retained": 0,
+      "approved retirement": 0
+    },
+    "full_repository_verified": 0
+  },
+  "canonical_gate": {
+    "command": "scripts/check",
+    "exit_code": 1,
+    "structure": "pass",
+    "format": "pass",
+    "strict_workspace_clippy": "pass",
+    "tests": {
+      "passed": 1496,
+      "failed": 0,
+      "ignored": 6
+    },
+    "rustdoc": "pass",
+    "self_analysis": {
+      "complete": true,
+      "rust_files": 937,
+      "base_contexts": 1504,
+      "derived_contexts": 0,
+      "projection_work": 1219301,
+      "unresolved": 0
+    },
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_stage": "not reached",
+    "cleanliness_stage": "not reached"
+  },
+  "artifacts": {
+    "key-sets-parity.json.gz": "009a721a7bb4ecdaf0e7db45d08ecdb2b9bad2ff8d0ffb4de08877093f4de357",
+    "key-sets-parity.log": "f15d05349eb6cffabdc50dc42c74a27c7779cb186d54eff73521e75837a945bf",
+    "key-sets-parity-repeat.log": "3fc2ec5014a75fc23be3c3fcf13063ae5e8df36161744d10f2345e3c28284b10",
+    "key-sets-parity-canonical.log.gz": "ce97b2f68284903d7cfd38826b56c7c96716934e258609ea47351a5838dbd36c"
+  }
+}

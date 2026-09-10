@@ -16,6 +16,8 @@ mod hygiene;
 mod macro_expansion;
 mod repository;
 mod size;
+#[cfg(test)]
+pub(crate) use size::legacy_driver_paths;
 pub(crate) mod source_graph;
 mod source_shape;
 mod test_placement;
@@ -35,3 +37,4 @@ pub(crate) use macro_expansion::closes_owned_operations;
 pub(crate) use macro_expansion::closes_source_operations;
 pub(crate) use macro_expansion::closes_type_duplication;
 pub(crate) use repository::matching_directory_owner;
+pub(crate) use source_shape::{facade_syntax_allowed, facade_violations};

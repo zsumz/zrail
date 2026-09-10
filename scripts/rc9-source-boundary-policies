@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+"""Translate reviewed Rafter raw boundary instances; trusted policy authoring only."""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import tomllib
+
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "crates/zrail-testkit/tests/fixtures/rc9"
+SOURCE = "crates/rafter/tests/source_boundary.rs"
+SOURCE_SHA = "d0d72712188265e89b5a23f8e084e733eed86ea5b918a78f1263752e8e9eacd6"
+COMMIT = "e99b43c1b3fb3c94dd626effccee8420016594f2"
+
+
+def literal(value):
+    if isinstance(value, dict):
+        return "{ " + ", ".join(f"{key} = {literal(item)}" for key, item in value.items()) + " }"
+    if isinstance(value, list):
+        return "[" + ", ".join(literal(item) for item in value) + "]"
+    return json.dumps(value, ensure_ascii=False)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("snapshots", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
+    source = (args.snapshots / "rafter" / SOURCE).read_bytes()
+    if hashlib.sha256(source).hexdigest() != SOURCE_SHA:
+        raise ValueError("frozen boundary input changed")
+    ledger = json.loads((DATA / "assertions.json").read_text())
+    rows = [row for row in ledger["reviewed_assertions"]
+            if row["matching_semantics"]["kind"] == "raw source line token boundary"]
+    if len(rows) != 31 or len({row["id"] for row in rows}) != 31:
+        raise ValueError("expected 31 distinct reviewed Rafter boundary instances")
+    rules, roots = [], set()
+    for row in rows:
+        if row["repository"] != "zsumz/rafter" or row["commit"] != COMMIT or row["source"]["file_sha256"] != SOURCE_SHA:
+            raise ValueError("boundary instance differs from the frozen review")
+        selected = row["matching_semantics"]
+        token, root = selected["token"], row["selection"]["root"]
+        if selected["leading_prefixes"] != ["use ", "pub use ", "extern crate "] or selected["after_token"] != {
+            "end_of_line": True, "characters": [":", ";", ",", "{", " ", "\t"]
+        }:
+            raise ValueError("reviewed raw matching semantics changed")
+        roots.add(root)
+        name = row["id"].lower()
+        predicates = [
+            ("path", dict(kind="literal", mode="absent", text=token + "::")),
+            ("prefixes", dict(kind="line-prefixes-absent", normalization="trim-start",
+                              prefixes=[prefix + token + boundary
+                                        for prefix in selected["leading_prefixes"]
+                                        for boundary in selected["after_token"]["characters"]])),
+        ]
+        predicates.extend((f"end-{index}", dict(kind="literal", mode="line-absent", text=prefix + token,
+                                               normalization="trim-start"))
+                          for index, prefix in enumerate(selected["leading_prefixes"], 1))
+        for suffix, predicate in predicates:
+            rules.append(dict(name=f"{name}-{suffix}", include=[root + "/**/*.rs"],
+                              reason=f"Preserve {row['id']} authored raw spelling; comments, strings and test/cfg text participate.",
+                              predicate=predicate))
+    for root in sorted(roots):
+        rules.append(dict(name="rf-boundary-root-" + root.split("/")[1], include=[root], entry="directory",
+                          reason="The original boundary traversal requires this exact source directory, including when it has no Rust files.",
+                          predicate=dict(kind="count", minimum=1, maximum=1)))
+    if len(roots) != 3 or len(rules) != 158:
+        raise ValueError("incomplete boundary translation")
+    text = "# Partial Rafter authored-spelling policy; full workspace qualification remains open.\n"
+    text += f"# Frozen commit: {COMMIT}\n# Detector SHA-256: {SOURCE_SHA}\n"
+    for rule in rules:
+        text += "\n[[repository.files]]\n" + "\n".join(f"{key} = {literal(value)}" for key, value in rule.items()) + "\n"
+    if tomllib.loads(text)["repository"]["files"] != rules:
+        raise ValueError("translated stock policy does not round-trip")
+    with args.output.open("x", encoding="utf-8", newline="\n") as output:
+        output.write(text)
+    print("Rafter boundary translation: 31 token predicates in 155 raw rules, plus 3 exact source roots")
+
+
+if __name__ == "__main__":
+    main()

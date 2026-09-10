@@ -9,6 +9,7 @@ pub(crate) enum RepositoryEntryKind {
     File,
     Directory,
     Symlink,
+    Other,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]

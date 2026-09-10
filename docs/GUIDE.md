@@ -221,8 +221,8 @@ candidate it finds. It never chooses a revision automatically; rerun
 `migrate-lock` with an explicitly reviewed `--base` and `--output`.
 
 Adapters are explicit and fail closed for unknown epochs. The current engine
-can reanalyze locks from every released prior semantics epoch (`1` through `5`)
-directly into current semantics `6`; adopters do not need to delete an older
+can reanalyze locks from every released prior semantics epoch (`1` through `6`)
+directly into current semantics `7`; adopters do not need to delete an older
 lock or manufacture a lock-free base commit. Each exact old or new authority
 subject is classified as preserved, retired, newly observable, or changed
 interpretation. Macro-source subjects identify allowances whose binding changed;
@@ -254,6 +254,23 @@ Gitlinks retain their Git object kind: a target containing any mode-160000
 entry is rejected under `submodules = "deny"`, even without `.gitmodules` or
 outside source roots. Allowed gitlinks are opaque, untraversed boundaries;
 their object identities remain bound by the target commit and change manifest.
+
+Repository paths and deliberately raw text can also be governed by closed
+[`repository.files` predicates](REPOSITORY-FILES.md). These preserve required
+and forbidden paths, exact file inventories, literal naming/text policies, and
+byte equality, separately from Rust syntax and execution evidence.
+[Authored document predicates](REPOSITORY-DOCUMENTS.md) add bounded literal-key
+TOML/JSON presence, absence, nonempty-string, and exact typed-value checks.
+[Raw structure predicates](RAW-STRUCTURE.md) preserve first-marker order,
+marker-bounded literal presence, and prefixed line-value allowlists.
+[Rust inventories](RUST-INVENTORIES.md) govern authored method calls, expression
+paths, path-segment membership, explicit import renames, and path-type trait
+implementations, direct file-module declarations and enum variants over parsed source
+facts. Exact owner sets retain location and subject identity independently of
+per-file occurrence quantities; rename identities retain both source and alias,
+and trait-implementation identities retain both trait and implementing type.
+Their explicit authored world and syntax claim remain separate from semantic
+identity, compilation reachability, and execution.
 
 ### Contract schema and fragments
 
@@ -350,6 +367,20 @@ statics, inline modules, and other behavioral items remain behind named module
 boundaries. A `main` function or procedural-macro entrypoint is declarative only
 when its body is empty or a single expression handoff without local statements,
 branches, loops, macros, or inline blocks.
+
+Two opt-in modes preserve stricter consumer policies. `facades = "wiring-only"`
+permits only external `mod name;` declarations and `use` items, including private
+imports. `facades = "wiring-reexports"` additionally restricts imports to `pub`
+or restricted visibility rooted at `crate` or `super`; `pub(self)` and private
+imports fail. Both modes reject data declarations, ordinary functions, impls,
+inline modules, extern crates, and item macros, including generated includes.
+They also reject thin `main` and proc-macro functions when selected for those
+files. The existing `declarative` mode retains its rc8 meaning.
+
+These are predicates over authored top-level syntax, including cfg-guarded
+items. They do not claim that macro expansions have executed or that syntax
+ordering proves runtime behavior. Macro provenance and source completeness
+remain separate rails.
 
 External crate-root attestations bind to the exact registry or Git declaration.
 Roots that no active canonical policy relies on remain unresolved rather than
@@ -681,10 +712,136 @@ reason = "Reviewed public surface; implementation belongs behind child modules."
 ```
 
 The effective role drives both declarative-shape enforcement and size budgets.
-Overrides for missing, unreachable, generated, already matching, test, or
+An optional `mode` selects exact facade structure for a `facade` declaration;
+it is invalid on an `implementation` declaration. An explicit mode makes a
+reasoned exact-path structural declaration meaningful even for an inferred
+facade. Overrides without a mode for missing, unreachable, generated, already matching, test, or
 auxiliary source fail as stale or invalid policy. An entrypoint may be
 reclassified only as `implementation`; treating it as a facade is invalid.
 `zrail explain` shows the inferred role, effective role, and override reason.
+
+Use the separate `test-facade` declaration for selected test wiring:
+
+```toml
+[[source.rust.file_roles]]
+path = "tests/scenarios.rs"
+role = "test-facade"
+mode = "wiring-only"
+reason = "Runnable scenarios belong in the declared child modules."
+```
+
+It requires an explicit enforced mode and exclusively test-reachable handwritten
+source. It does not change the file's compilation role, test identifiers,
+sibling placement, glob-import permissions, or test budget. Missing/unmounted
+source and production or mixed reachability fail. `declarative` can be selected
+where the reviewed test facade permits data declarations.
+
+The strict `wiring-only` and `wiring-reexports` global modes also govern natural
+`lib.rs` and `mod.rs` files in test source, including newly added files. Their
+test reachability and budgets remain independent. Existing `allow` and
+`declarative` modes keep their rc8 test-source selection.
+
+Coverage schema 6 includes every physical facade's policy identity, path, mode,
+source role, test-only status, exact-path reason, and complete rejected-item
+inventory with spans and syntax quality. Explain output includes `facade_mode`.
+Relaxing either global or exact modes and removing test-facade declarations
+requires protected authority review. Analyzer semantics advance from epoch 6
+to 7; lock schema remains 3. `migrate-lock` supports rc8's epoch 6 and all earlier
+supported released epochs. A migration report still requires human acceptance.
+
+Existing TOML contracts need no new field to retain their meaning. Rust library
+callers constructing `FileRoleContract` directly must add `mode: None` for the
+old behavior, and exhaustive matches must handle the new `FileRole` and
+`FacadeMode` variants. Coverage consumers must recognize schema 6.
+
+### Scoped file budgets
+
+Existing `source.rust.size` role defaults retain their rc8 behavior. Opt into
+independent hard enforcement and scoped thresholds with `source.rust.budgets`:
+
+```toml
+[source.rust.budgets]
+exception_metadata = "owner-issue"
+
+[[source.rust.budgets.overrides]]
+name = "core-production"
+packages = ["raft-core"]
+include = ["crates/raft-core/src/**"]
+exclude = ["crates/raft-core/src/generated/**"]
+roles = ["implementation"]
+budget = { target = 240, soft = 360, hard = 500, target_mode = "error" }
+reason = "Keep the deterministic state machine within its reviewed size family."
+
+[[source.rust.budgets.exceptions]]
+path = "crates/raft-core/src/transition.rs"
+hard = 530
+reason = "Split the existing transition table along its command-family seams."
+owner = "core-maintainers"
+issue = "ARCH-42"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/raft-core/src/transition.rs"
+baseline = 530
+reason = "Exact measured baseline pending the reviewed split."
+```
+
+Precedence is global role default, then one matching scoped override, then an
+exact-file hard exception. The override supplies all its thresholds; fields are
+not merged across scopes. Include/exclude paths use existing repository glob
+semantics. Package names are exact workspace identities. Package, path, and role
+selectors intersect; an empty package or role list means all. Unknown packages,
+duplicate selectors, and competing overrides for a physical file fail. TOML
+order and apparent glob specificity never break a tie. A potential overlap on
+an absent file fails hypothetical explain and fails analysis when the file
+arrives; it is not silently assigned to either scope.
+
+Budget roles are `facade`, `implementation`, `test`, `test-facade`, `auxiliary`,
+`entrypoint`, and `generated`. A test-facade role selects an explicit test facade
+or a test-only `lib.rs`/`mod.rs`. Its default remains the ordinary test budget;
+an override can supply a separate limit. Reachability and test execution do not
+change. Path selectors without a role restriction can preserve deliberately
+path-based legacy classifications. Generated-source provenance remains required.
+
+`target_mode = "error"` is the default and requires an exact measured ratchet
+above target. `warn` reports excess without failing the check. Optional `soft`
+always produces a warning above that threshold, including on ratcheted files.
+Thresholds must satisfy `0 < target <= soft <= hard`, omitting soft when absent.
+Warnings and display limits never change acceptance or totals. Measurements use
+`str::lines()` over each physical file once, including comments, inactive cfg
+branches, and the final unterminated record; repeated mounts do not add lines.
+
+In this opt-in mode a ratchet cannot bypass hard enforcement. An exception must
+name an existing governed Rust file, specify a maximum above its normal hard
+ceiling, carry a reason, and satisfy `exception_metadata`. The closed metadata
+choices are `owner-issue`, `tracking`, `owner-issue-and-tracking`, and the default
+`owner-issue-or-tracking`. Owner and issue always form a complete pair; supplied
+metadata must be nonempty. New files inherit no exact-file exception. An
+exception becomes stale when its file disappears or returns below the normal
+hard ceiling. An ordinary lock update cannot create or expand this authority.
+
+Optional `ratchet.baseline` binds an exact authored measurement independently of
+the lock. Growth and shrinkage both fail until the source or authored baseline
+is corrected; reaching the design target requires removing the stale ratchet.
+Existing ratchets without this field retain their lock-measured semantics.
+Authored baselines require the scoped-budget mode. The baseline command does
+not suggest a ratchet as a remedy for an independently enforced hard violation.
+
+Explain exposes `effective_budget`; coverage schema 6 adds `size_policy` and
+`size_budgets`. These include full selectors, thresholds, severity, source policy
+ID, exception metadata, physical measurements, and active debt. Coverage does
+not claim to validate the accepted lock. Policy IDs use
+`rust:size:scope:<name>` and `rust:size:exception:<path>`; existing global and
+ratchet IDs remain supported. Higher limits, removed baseline requirements,
+relaxed metadata forms, warning downgrades, and expanded exceptions are
+protected grants. Selector changes whose effective permission cannot be proved
+are protected unknowns. TOML set ordering alone is neutral.
+
+Rust API literals for `RustSourceContract` and `RatchetContract` need respectively
+`budgets: None` and `baseline: None` for their old behavior. Existing TOML
+contracts and formatting remain unchanged by default.
+
+### Written glob imports
 
 Written glob imports have a separate closed hygiene policy; name resolution
 continues to resolve globs regardless of this setting:
@@ -1203,6 +1360,11 @@ on downstream `Cargo.lock` edges, so `kinds` honestly selects only the first
 edge leaving `from`; the remainder of the path is resolved without an invented
 kind. Transitive policy requires a checked-in lock file.
 
+[Whole-lock package inventories](LOCK-PACKAGE-INVENTORIES.md) govern all locked
+nodes with a selected package name, including unreachable nodes. They require
+exact quantities or complete version/source/checksum sets, with persistent
+zero-count bans and protected comparison of changed identity requirements.
+
 An immutable external macro authority may select one resolved lock node. Add
 `version` or `source` whenever the package name alone is not unique:
 
@@ -1255,6 +1417,20 @@ dependency, and test-mirror rail. Exact test-mirror identities include their
 reviewed inputs, command, package, feature set, target, and toolchain. The report
 also lists each exact feature world and the world plus active feature set on
 every applicable compilation domain.
+
+Schema 6 adds physical facade and size-policy coverage. Size records retain every
+effective threshold, matched override, exact exception, authored baseline, and
+measured excess; the full policy also exposes selectors with no current match.
+It also includes `repository_files`: complete selected physical paths, raw
+predicates, content hashes, reference inputs, quantities, and results. Empty
+selections remain visible, and sampled text offsets never truncate totals.
+The `lock_packages` records expose complete whole-lock inventory counts,
+expected identities, missing identities, bounded observed/unexpected samples,
+explicit omitted totals, exact input digests, and satisfied zero-count bans.
+The `rust_inventories` records expose full selectors and authored worlds, complete
+per-file/subject quantities, input digests, bounded source-location samples, and
+explicit omitted totals. Exact owner policies keep actual quantities visible;
+required subjects disappearing cannot become a pass.
 
 Coverage is an audit artifact, not partial best-effort discovery. It fails when
 source analysis is incomplete, when a governed dependency cannot be mapped to

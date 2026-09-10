@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "status": "slice implemented; committed repeated parity and full release qualification remain blocked",
+  "full_repository_qualified": false,
+  "implementation_commit": "01bbf38481217b0611a387ee2af488328f52137c",
+  "implementation_tree": "da94311ebc90e262e2304915b958cc5cc15b61d0",
+  "implementation_has_pending_changes": true,
+  "implementation_diff_sha256": "9cd06b1524d88616d3782e2a48b958178fb498b2c86f07dc5e689bc1a3b0b779",
+  "implementation_inputs": "rafter-boundary-runner.json.gz",
+  "source": {
+    "repository": "zsumz/rafter",
+    "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+    "tree": "b91b3ca7362219e32fdbb08a8374403c0353e745",
+    "guard": "crates/rafter/tests/source_boundary.rs",
+    "guard_sha256": "d0d72712188265e89b5a23f8e084e733eed86ea5b918a78f1263752e8e9eacd6"
+  },
+  "policy": {
+    "path": "docs/rc9/policies/rafter.source-boundaries.fragment.toml",
+    "sha256": "3d9bd8167dd3b16601a6c9e37a64b17da2bd3dc025ecc719f1183285a54b1479",
+    "raw_rules": 155,
+    "required_roots": 3,
+    "content_work_mib": 57.51785755157471
+  },
+  "focused_fixture_matrix": {
+    "source_instances": 31,
+    "cases_per_instance": 32,
+    "accepted": 248,
+    "rejected": 744,
+    "total": 992,
+    "test": "repository_files::repository_files_test::boundary_sources::frozen_boundary_tokens_preserve_raw_prefix_end_and_qualified_path_semantics",
+    "limits": "Focused executable assertions check intended policy/category; no per-case repeatable report is claimed."
+  },
+  "frozen_file_slice": {
+    "selected_files": 194,
+    "status": "passed",
+    "limits": "Legacy matcher and native raw source-family acceptance; not full Cargo/Rust consumer qualification."
+  },
+  "canonical": {
+    "status": "blocked",
+    "rust_tests_passed": 1609,
+    "rust_tests_failed": 0,
+    "rust_tests_ignored": 17,
+    "format": "pass",
+    "clippy": "pass",
+    "rustdoc": "pass",
+    "self_analysis": {
+      "quality": "complete",
+      "rust_files": 1051,
+      "base_contexts": 1646,
+      "derived_contexts": 0,
+      "projection_work": 1194894,
+      "unresolved": 0
+    },
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-016",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_stage_reached": false,
+    "cleanliness_stage_reached": false
+  },
+  "separate_archive": "pass",
+  "tracked_and_staged_whitespace": "pass",
+  "source_inputs_unchanged_during_run": true,
+  "initial_failure": "The first gate failed a new test expectation that omitted the standard incomplete-analysis wrapper. The assertion was corrected; the final full gate has zero test failures.",
+  "artifacts": {
+    "runner.json": {
+      "artifact": "docs/rc9/evidence/rafter-boundary-runner.json.gz",
+      "payload_sha256": "cb58bbdc8f18f39f5d29d227c0c5897e72d6bee5730fc0efb0f5f161f7209353",
+      "payload_bytes": 16524,
+      "compressed_sha256": "491e47bffaab1ecf08a44e5f90048795b0de1761743f3b633f170711334bdb60"
+    },
+    "runner.py": {
+      "artifact": "docs/rc9/evidence/rafter-boundary-runner.py.gz",
+      "payload_sha256": "a9c0b631be6d314ad8197c5d8ef23fadbf66f87e566aa72d131a2b91f6b5cf33",
+      "payload_bytes": 3632,
+      "compressed_sha256": "db20f573463cf926982c745da8b7fa90feab0e72d6c6071d5d6451649dfcf3b1"
+    },
+    "tracked-changes.patch": {
+      "artifact": "docs/rc9/evidence/rafter-boundary-tracked-changes.patch.gz",
+      "payload_sha256": "9cd06b1524d88616d3782e2a48b958178fb498b2c86f07dc5e689bc1a3b0b779",
+      "payload_bytes": 427728,
+      "compressed_sha256": "45a7e6ac3e7920cd0654c501da28f0402254a98edb0708e3cfeb1fb1d532a778"
+    },
+    "frozen.log": {
+      "artifact": "docs/rc9/evidence/rafter-boundary-frozen.log.gz",
+      "payload_sha256": "bae9159cf9c8c77a51ae17e554b0edf6a2855029a6f5a3f1d2ce2f91cab3bbb4",
+      "payload_bytes": 2493,
+      "compressed_sha256": "ebe15ba9f2e17815f23152d9f53d85ce256738b7b9ddd7e0d1213f554a362d90"
+    },
+    "canonical.log": {
+      "artifact": "docs/rc9/evidence/rafter-boundary-canonical.log.gz",
+      "payload_sha256": "2ab76ebddd4921eaaeb2441b9455dd88b3ce5a97d3fb989a5899c7f95add92b9",
+      "payload_bytes": 190329,
+      "compressed_sha256": "e97f44e4690edb79a5fb35ca7c229eacd7dd890e23a1fd6a497ae8f396a954d0"
+    },
+    "package.log": {
+      "artifact": "docs/rc9/evidence/rafter-boundary-package.log.gz",
+      "payload_sha256": "346054dbc26d9bda16ea6bcaf05758c5465937c46f682c154c0a03474d027cd3",
+      "payload_bytes": 10596,
+      "compressed_sha256": "37f0b53557a760e153a311452518bbd7194c508952e14225c6505110604d8a7b"
+    },
+    "initial_failed_gate": {
+      "artifact": "docs/rc9/evidence/rafter-boundary-initial-canonical.log.gz",
+      "payload_sha256": "d7a7a2b1a820bd34c615d6feb9459ccff694a48ea4791104ca0e4f258ab8c660",
+      "payload_bytes": 118483,
+      "compressed_sha256": "6d0623d57e5b7bfd0b30a9cb7c897426f5a57dec58df016f56cf85b937e1ac59"
+    },
+    "legacy-receipt.json": {
+      "artifact": "docs/rc9/evidence/rafter-boundary-legacy-receipt.json.gz",
+      "payload_sha256": "3f06e29ef4a057a72e9dd73527b2686ffbd70d58c0aa6f5787b61a4d7a1c9eca",
+      "payload_bytes": 3764,
+      "compressed_sha256": "5e12cd4d72bd19de8b4bdeb1ff1b3361fdeca261354525cec9465bf00fc0ef8b"
+    },
+    "legacy-legacy-guards.log": {
+      "artifact": "docs/rc9/evidence/rafter-boundary-legacy-legacy-guards.log.gz",
+      "payload_sha256": "b9ca63fd99b44ba60a57f5baa2b5b7c80da70dee00d105288d701f9e91e3f5b4",
+      "payload_bytes": 253,
+      "compressed_sha256": "287cf17c5bf621eaa339f438b338c3a978103e5958b741b5dde3c527f085bb14"
+    }
+  }
+}

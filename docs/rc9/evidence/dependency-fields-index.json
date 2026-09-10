@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "release_verdict": "blocked",
+  "implementation_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d",
+  "report_payload_sha256": "bdf99f0a4fe71e27f5830fe565e5bb84cf26cf8ea2be59a18986fd36c2cfb1f6",
+  "repeated_byte_identical": true,
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "e5518f852b9b35164e78e0d45e71429de46f2e3015da356ce77430ece5486185",
+  "fixture_origins_sha256": "73248bf9af6d1996636342826342f7c32b60c49e75a0ed4bbd198f191b17f322",
+  "inputs": {
+    "Cargo.toml": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6",
+    "crates/kafka-driver-core/Cargo.toml": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881",
+    "crates/kafka-driver-probe/Cargo.toml": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5",
+    "crates/kafka-driver-sim/Cargo.toml": "0c6e1d53bd243f7184967ac6a80aed24e984e4f2112c45bfd93a701116e4e8f1",
+    "crates/kafka-driver-transport/Cargo.toml": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70",
+    "guardrails.toml": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10"
+  },
+  "policies": 30,
+  "frozen_policy_observations": 30,
+  "fixture_outcomes": 151,
+  "positive_fixture_outcomes": 34,
+  "negative_fixture_outcomes": 117,
+  "verified_assertion_ids": [
+    "KD-DEP-CRITICALITY-VERSION",
+    "KD-DEP-DRIVER-WIRE-INHERITANCE",
+    "KD-DEP-PARSE",
+    "KD-DEP-PROBE-WIRE-INHERITANCE",
+    "KD-DEP-RUSTLS-FEATURE-ARRAY",
+    "KD-DEP-RUSTLS-FEATURES",
+    "KD-DEP-RUSTLS-INHERITANCE",
+    "KD-DEP-RUSTLS-NO-DEFAULTS",
+    "KD-DEP-RUSTLS-OPTIONAL",
+    "KD-DEP-SASL-FEATURE-ARRAY",
+    "KD-DEP-SASL-FEATURES",
+    "KD-DEP-SASL-INHERITANCE",
+    "KD-DEP-SASL-NO-DEFAULTS",
+    "KD-DEP-SASL-VERSION",
+    "KD-DEP-SIM-NO-VERSION-STRING",
+    "KD-DEP-TLS-FEATURE-ARRAY",
+    "KD-DEP-TLS-FEATURES",
+    "KD-DEP-kafka-driver-PATH-RELEASE",
+    "KD-DEP-kafka-driver-PUBLIC-ARRAY",
+    "KD-DEP-kafka-driver-PUBLIC-COUNT",
+    "KD-DEP-kafka-driver-PUBLIC-REGISTRY",
+    "KD-DEP-kafka-driver-core-PATH-RELEASE",
+    "KD-DEP-kafka-driver-core-PUBLIC-ARRAY",
+    "KD-DEP-kafka-driver-core-PUBLIC-COUNT",
+    "KD-DEP-kafka-driver-core-PUBLIC-REGISTRY",
+    "KD-DEP-kafka-driver-probe-PRIVATE",
+    "KD-DEP-kafka-driver-sim-PRIVATE",
+    "KD-DEP-kafka-driver-transport-PATH-RELEASE",
+    "KD-DEP-kafka-driver-transport-PUBLIC-ARRAY",
+    "KD-DEP-kafka-driver-transport-PUBLIC-COUNT",
+    "KD-DEP-kafka-driver-transport-PUBLIC-REGISTRY",
+    "KD-DEP-kafka-wire-REGISTRY-VERSION",
+    "KD-DEP-kafka-wire-RELEASE",
+    "KD-DEP-kafka-wire-core-REGISTRY-VERSION",
+    "KD-DEP-kafka-wire-core-RELEASE"
+  ],
+  "full_repository_qualified": false,
+  "sources_patched": [],
+  "authority_grants_accepted": [],
+  "counts": {
+    "reviewed_assertion_instances": 381,
+    "implemented": 297,
+    "verified_by_disposition": {
+      "existing native rail": 0,
+      "declarative translation": 0,
+      "new engine capability": 287,
+      "behavioral evidence retained": 0,
+      "approved retirement": 0
+    },
+    "full_repository_verified": 0
+  },
+  "canonical_gate": {
+    "command": "scripts/check",
+    "exit_code": 1,
+    "structure": "pass",
+    "format": "pass",
+    "strict_workspace_clippy": "pass",
+    "tests": {
+      "passed": 1501,
+      "failed": 0,
+      "ignored": 7
+    },
+    "rustdoc": "pass",
+    "self_analysis": {
+      "complete": true,
+      "rust_files": 944,
+      "base_contexts": 1511,
+      "derived_contexts": 0,
+      "projection_work": 1221288,
+      "unresolved": 0
+    },
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_stage": "not reached",
+    "cleanliness_stage": "not reached"
+  },
+  "standalone_archives": {
+    "command": "scripts/package-check",
+    "exit_code": 0,
+    "version": "0.0.3-rc.8",
+    "release_qualified": false
+  },
+  "artifacts": {
+    "dependency-fields-parity.json.gz": "cb15fe5868c5597af936063680e1d6065fd608d520611b764f7b90693a34698b",
+    "dependency-fields-parity.log": "25337978dfecdf700eed09bb0fb6b44fe201c34b1b2bcf84c98b423565279ec2",
+    "dependency-fields-parity-repeat.log": "3640a3b32f4b608872004e3bafe0a5d30002a0b5f0aa2670107bcc9919fc0e44",
+    "dependency-fields-canonical.log.gz": "36ff344084fcaeb5d5ae31e3017c48dce248256250ff945864b1c0c766e3f6b6",
+    "dependency-fields-package.log.gz": "7f8ab809908b8e3fa1f884a744bd3ccdec385903482a4fbdf4144f7cf8a3af3d"
+  }
+}

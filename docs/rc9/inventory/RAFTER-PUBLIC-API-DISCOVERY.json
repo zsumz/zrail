@@ -1,0 +1,35 @@
+{
+  "repository": "zsumz/rafter",
+  "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+  "path": "crates/rafter/tests/public_api_docs_guard.rs",
+  "sha256": "daf0f10e90093be82029b29c2a62580e2c89d25d4091983ae6a02004e6748242",
+  "read_complete": true,
+  "assertion_expansion_complete": false,
+  "tests": [
+    "public_api_docs_guard_rejects_unallowlisted_warnings",
+    "public_api_docs_guard_allowlist_entries_are_actionable",
+    "public_api_docs_guard_allowlist_entries_are_used",
+    "public_api_docs_guard_rejects_untracked_todo_fixme_in_rustdoc",
+    "public_api_docs_guard_detects_missing_docs_and_enum_policy",
+    "public_api_docs_guard_warns_on_untracked_todo_in_rustdoc",
+    "public_api_docs_guard_ignores_cfg_test_modules_for_risky_macros",
+    "public_api_docs_guard_excludes_test_support_files_from_library_risk_scan"
+  ],
+  "allowances": 41,
+  "notes": [
+    "All warnings are enforced by visible.is_empty(); they are not merely advisory.",
+    "Allowlist metadata requires nonblank reason and classification label separately; every entry must match at least one current warning.",
+    "Every frozen allowance uses symbol=None and exact path/kind plus a required source-line substring; retain full justification constants and do not infer resolved call/type identity.",
+    "Tracked TODO/FIXME predicate is separately enforced even if a general warning could be allowlisted.",
+    "Public-item detection is raw trim_start then pub-prefix; ignores use and recognizes 12 declaration-prefix strings.",
+    "Doc/attribute attachment walks prior lines; only leading gap skipped, #[ and /// / #[doc recognized; doc(hidden), non_exhaustive and exhaustive are substring tests (the last ASCII case-insensitive).",
+    "Risk checks skip trimmed // lines, otherwise raw .unwrap(), .expect(, panic! substring. A lone panic!( line joins the next nonempty trimmed line for exception matching.",
+    "CfgTestScanner is an authored raw brace counter for #[cfg(test)] then inline mod/pub mod; braces in comments/strings count and it is not Rust compilation reachability.",
+    "Source scope recursively walks crates, prunes target directories and exact raw path test/support/example/bench/bin patterns; it is not a src-only Cargo library selection.",
+    "MAX_WARNINGS_TO_PRINT=200 affects rendering only; all warning/allowance enforcement counts remain complete.",
+    "This guard scans source, including Maelstrom and simulation source; vocabulary is no evidence that these assertions execute behavioral scenarios."
+  ],
+  "test_identity_method": "Eight actual top-level #[test] items reviewed in source; synthetic unit test text inside the raw detector fixture is not a runnable test.",
+  "legacy_baseline": "docs/rc9/evidence/rafter-public-api-legacy-index.json",
+  "legacy_baseline_status": "8 original source-only detector tests passed; no replacement assertion is verified"
+}

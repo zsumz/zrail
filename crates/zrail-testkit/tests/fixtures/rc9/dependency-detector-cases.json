@@ -1,0 +1,354 @@
+{
+  "schema": 1,
+  "scope": "Two frozen inline detector assertions only; not a Cargo graph or consumer contract.",
+  "cases": [
+    {
+      "name": "original",
+      "source": "[[package]]\nname = \"tokio-util-extra\"\n[[package]]\nname = \"bytes\"\n",
+      "names": [
+        "bytes",
+        "tokio-util-extra"
+      ],
+      "counts": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "exact-added",
+      "source": "[[package]]\nname = \"tokio-util-extra\"\n[[package]]\nname = \"bytes\"\nname = \"tokio\"\n",
+      "names": [
+        "bytes",
+        "tokio",
+        "tokio-util-extra"
+      ],
+      "counts": [
+        1,
+        1
+      ]
+    },
+    {
+      "name": "present-removed",
+      "source": "name = \"tokio-util-extra\"\n",
+      "names": [
+        "tokio-util-extra"
+      ],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "similar-replaced",
+      "source": "[[package]]\nname = \"tokio\"\n[[package]]\nname = \"bytes\"\n",
+      "names": [
+        "bytes",
+        "tokio"
+      ],
+      "counts": [
+        1,
+        1
+      ]
+    },
+    {
+      "name": "tokio-only",
+      "source": "name = \"tokio\"\n",
+      "names": [
+        "tokio"
+      ],
+      "counts": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "empty",
+      "source": "",
+      "names": [],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "similar-suffix",
+      "source": "name = \"tokio-util-extra\"\nname = \"bytes-extra\"\n",
+      "names": [
+        "bytes-extra",
+        "tokio-util-extra"
+      ],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "similar-prefix",
+      "source": "name = \"mytokio\"\nname = \"mybytes\"\n",
+      "names": [
+        "mybytes",
+        "mytokio"
+      ],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "unicode-trim",
+      "source": " \tname = \"tokio\" \n name = \"bytes\"\t \n",
+      "names": [
+        "bytes",
+        "tokio"
+      ],
+      "counts": [
+        1,
+        1
+      ]
+    },
+    {
+      "name": "crlf",
+      "source": "[[package]]\r\nname = \"tokio-util-extra\"\r\n[[package]]\r\nname = \"bytes\"\r\n",
+      "names": [
+        "bytes",
+        "tokio-util-extra"
+      ],
+      "counts": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "no-final-newline",
+      "source": "[[package]]\nname = \"tokio-util-extra\"\n[[package]]\nname = \"bytes\"",
+      "names": [
+        "bytes",
+        "tokio-util-extra"
+      ],
+      "counts": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "duplicate-present",
+      "source": "[[package]]\nname = \"tokio-util-extra\"\n[[package]]\nname = \"bytes\"\nname = \"bytes\"\n",
+      "names": [
+        "bytes",
+        "tokio-util-extra"
+      ],
+      "counts": [
+        0,
+        2
+      ]
+    },
+    {
+      "name": "beyond-offset-sample",
+      "source": "name = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\nname = \"tokio\"\nname = \"bytes\"\n",
+      "names": [
+        "bytes",
+        "tokio"
+      ],
+      "counts": [
+        20,
+        20
+      ]
+    },
+    {
+      "name": "commented-lines",
+      "source": "# name = \"tokio\"\n# name = \"bytes\"\n",
+      "names": [],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "trailing-comments",
+      "source": "name = \"tokio\" # comment\nname = \"bytes\" # comment\n",
+      "names": [],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "uppercase-keys",
+      "source": "NAME = \"tokio\"\nNAME = \"bytes\"\n",
+      "names": [],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "uppercase-names",
+      "source": "name = \"TOKIO\"\nname = \"BYTES\"\n",
+      "names": [
+        "BYTES",
+        "TOKIO"
+      ],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "no-assignment-spacing",
+      "source": "name=\"tokio\"\nname=\"bytes\"\n",
+      "names": [],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "extra-assignment-spacing",
+      "source": "name  = \"tokio\"\nname =  \"bytes\"\n",
+      "names": [],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "single-quotes",
+      "source": "name = 'tokio'\nname = 'bytes'\n",
+      "names": [],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "unrelated-section",
+      "source": "[unrelated]\nname = \"tokio\"\nname = \"bytes\"\n",
+      "names": [
+        "bytes",
+        "tokio"
+      ],
+      "counts": [
+        1,
+        1
+      ]
+    },
+    {
+      "name": "multiline-string",
+      "source": "note = '''\nname = \"tokio\"\nname = \"bytes\"\n'''\n",
+      "names": [
+        "bytes",
+        "tokio"
+      ],
+      "counts": [
+        1,
+        1
+      ]
+    },
+    {
+      "name": "malformed-toml",
+      "source": "[[broken\nname = \"tokio\"\nname = \"bytes\"\n",
+      "names": [
+        "bytes",
+        "tokio"
+      ],
+      "counts": [
+        1,
+        1
+      ]
+    },
+    {
+      "name": "internal-name-whitespace",
+      "source": "name = \" tokio\"\nname = \"bytes \"\n",
+      "names": [
+        " tokio",
+        "bytes "
+      ],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "embedded-quotes",
+      "source": "name = \"tokio\" \"suffix\"\nname = \"bytes\" \"suffix\"\n",
+      "names": [
+        "bytes\" \"suffix",
+        "tokio\" \"suffix"
+      ],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "literal-backslashes",
+      "source": "name = \"tok\\io\"\nname = \"byt\\es\"\n",
+      "names": [
+        "byt\\es",
+        "tok\\io"
+      ],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "non-rust-whitespace",
+      "source": "\u001cname = \"tokio\"\n\u001cname = \"bytes\"\n",
+      "names": [],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "unicode-line-separator",
+      "source": "name = \"bytes\" name = \"tokio\"\n",
+      "names": [
+        "bytes\" name = \"tokio"
+      ],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "bare-cr-between-names",
+      "source": "name = \"tokio\"\rname = \"bytes\"\n",
+      "names": [
+        "tokio\"\rname = \"bytes"
+      ],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "prefixed-lines",
+      "source": "prefix name = \"tokio\"\nprefix name = \"bytes\"\n",
+      "names": [],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "unrelated-keys",
+      "source": "rename = \"tokio\"\npackage.name = \"bytes\"\n",
+      "names": [],
+      "counts": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "nul-decorated-lines",
+      "source": "\u0000name = \"tokio\"\nname = \"bytes\"\u0000\n",
+      "names": [],
+      "counts": [
+        0,
+        0
+      ]
+    }
+  ]
+}

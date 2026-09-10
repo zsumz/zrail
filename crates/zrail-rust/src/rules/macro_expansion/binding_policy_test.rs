@@ -1,5 +1,9 @@
 //! Namespace opacity clears only for exact, canonically covered expansion authority.
 
+#[path = "binding_policy_test/source.rs"]
+mod source;
+
+use source::source;
 use std::collections::BTreeMap;
 
 use zrail_core::{
@@ -12,11 +16,9 @@ use zrail_core::{
 
 use crate::{
     cargo::DependencySource,
-    inventory::FileClass,
     source::{
         FactNamespace, MacroCandidate, MacroDerivation, MacroExpansionFact, MacroOrigin,
-        ObservedFact, Reachability, ReachabilityKind, RustFileFacts, SourceAnalysisMetrics,
-        SourceIndex, SourceSyntax, SyntaxGuard,
+        ObservedFact, SyntaxGuard,
     },
 };
 
@@ -163,49 +165,6 @@ fn fact(name: &str, quality: AnalysisQuality) -> ObservedFact {
     }
 }
 
-fn source(expansion: MacroExpansionFact) -> SourceIndex {
-    SourceIndex {
-        files: vec![RustFileFacts {
-            relative: "src/lib.rs".into(),
-            packages: Vec::new(),
-            class: FileClass::Facade,
-            reachability: Reachability::from_kind(ReachabilityKind::Production),
-            syntax: SourceSyntax::Items,
-            lines: 1,
-            module_docs: true,
-            paths: Vec::new(),
-            calls: Vec::new(),
-            call_resolutions: Vec::new(),
-            methods: Vec::new(),
-            operations: Vec::new(),
-            macros: Vec::new(),
-            macro_imports: Vec::new(),
-            macro_expansions: vec![expansion],
-            opaque_macro_inputs: Vec::new(),
-            macro_definitions: Vec::new(),
-            import_bindings: Vec::new(),
-            associated_items: Vec::new(),
-            trait_declarations: Vec::new(),
-            glob_imports: Vec::new(),
-            inline_module_scopes: Vec::new(),
-            prelude_directives: Vec::new(),
-            compile_effects: Vec::new(),
-            lint_suppressions: Vec::new(),
-            unsafe_constructs: Vec::new(),
-            async_syntax: Vec::new(),
-            type_policy: crate::source::TypePolicyFacts::default(),
-            tests: Vec::new(),
-            modules: Vec::new(),
-            includes: Vec::new(),
-            item_macros: Vec::new(),
-            opaque_binding_macros: Vec::new(),
-            facade_implementation: Vec::new(),
-        }],
-        findings: Vec::new(),
-        analysis_metrics: SourceAnalysisMetrics::default(),
-    }
-}
-
 fn clean_allowance(name: &str) -> MacroExpansionAllow {
     MacroExpansionAllow {
         name: name.into(),
@@ -239,6 +198,7 @@ fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
         schema: 1,
         adapters: vec!["rust".into()],
         repository: RepositoryContract {
+            files: Vec::new(),
             roots: vec![".".into()],
             exclude: Vec::new(),
             workspace_members: ExactMode::Exact,
@@ -251,6 +211,7 @@ fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
             unassigned_packages: PolicyMode::Allow,
             cycles: CycleMode::Deny,
             crate_roots: Vec::new(),
+            lock_packages: Vec::new(),
         },
         analysis: AnalysisContract::default(),
         source: SourceContract {
@@ -271,6 +232,8 @@ fn contract(allow: Vec<MacroExpansionAllow>) -> Contract {
                 },
                 duplication: zrail_core::RustDuplicationContract::default(),
                 types: Vec::new(),
+                budgets: None,
+                inventories: Vec::new(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,
                     lint_suppressions: LintSuppressionMode::Allow,

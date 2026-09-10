@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "implementation_commit": "e5f8178123658369ba8cbfbbc0ad068261be03c9",
+  "implementation_tree": "8833137a3c0ec6a4df67416b893df8e37885bf2a",
+  "full_repository_qualified": false,
+  "lock_authority_accepted": false,
+  "claim": "Native authored method inventory and source-bound synthetic collector parity; frozen full-source differential qualification remains pending.",
+  "source": {
+    "repository": "kafkars/kafka-driver",
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "path": "tests/guardrails/transport_authority.rs",
+    "sha256": "6586263df79223c6d4e7f147b2d17706f6a4837b55b43c9b981c00ae5c4481ed"
+  },
+  "canonical": {
+    "exit_status": 1,
+    "passed": 1548,
+    "failed": 0,
+    "ignored": 11,
+    "analysis_complete": true,
+    "rust_files": 1005,
+    "base_contexts": 1594,
+    "derived_contexts": 0,
+    "projection_work": 1166682,
+    "unresolved": 0,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_step_reached": false,
+    "cleanliness_step_reached": false
+  },
+  "standalone_archive_check_passed": true,
+  "git_status_unchanged": true,
+  "core_schema_and_diff_tests": 6,
+  "adversarial_integration_tests": 10,
+  "frozen_collector_syntax_cases": 20,
+  "new_verified_assertions": 0,
+  "logs": [
+    {
+      "artifact": "docs/rc9/evidence/method-inventory-canonical.log.gz",
+      "implementation_commit": "523bfd15eb72e145d876c8bb5bf6c90a7502a6ff",
+      "exit_status": 1,
+      "role": "initial canonical gate with five self-hosting violations",
+      "payload_sha256": "49a6667d0ebc37b80bfba92233601d9ce63fcf8a7398cc449da642fef559f32f",
+      "compressed_sha256": "499e5b09d85d583446fa41e15c24481500b17bf4c60e92865b91ba6a4b2d0732"
+    },
+    {
+      "artifact": "docs/rc9/evidence/method-inventory-canonical-final.log.gz",
+      "implementation_commit": "e5f8178123658369ba8cbfbbc0ad068261be03c9",
+      "exit_status": 1,
+      "role": "canonical gate with only protected lock diagnostics",
+      "payload_sha256": "b94edbbd8f34c91b9d81c772204b8cc0961a483f895410e5ee7846138dd296d3",
+      "compressed_sha256": "fa035fae87899ecf6012d07f276ae5d6ed97009f62eaca08605be6ddb5f0967e"
+    },
+    {
+      "artifact": "docs/rc9/evidence/method-inventory-package.log.gz",
+      "implementation_commit": "e5f8178123658369ba8cbfbbc0ad068261be03c9",
+      "exit_status": 0,
+      "role": "standalone normalized archive verification",
+      "payload_sha256": "ce6d3c0da9a8996378cb5ea6d5424a2ac3e1e2b89f957fc30ab4078bde344ee6",
+      "compressed_sha256": "9fabdf1a3e4c437d28390eb50fd7d38ac63a217e40310a258a3ba9aad703a082"
+    }
+  ],
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "test_binary_sha256": "1d34487df0f9afe05bbc8c61391f34aab3174cdc4c563698dc627b424cc24c69",
+  "fixture_origins_sha256": "1a0b4de00dbb7907075cf9a046bfba108a969496b7394bac250aaec8e5174d85"
+}

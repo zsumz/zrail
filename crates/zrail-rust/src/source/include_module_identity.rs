@@ -17,6 +17,10 @@ pub(super) type ModuleIdentityCache = std::cell::RefCell<
     >,
 >;
 
+pub(super) type LexicalFloorCache = std::cell::RefCell<
+    std::collections::BTreeMap<(SourceInstanceId, Vec<zrail_core::SourceSpan>), usize>,
+>;
+
 impl IncludeBindings {
     pub(super) fn effective_module(
         &self,
@@ -85,6 +89,21 @@ impl IncludeBindings {
     }
 
     pub(super) fn lexical_floor(
+        &self,
+        instance: SourceInstanceId,
+        scope: &[zrail_core::SourceSpan],
+        budget: &mut ProjectionBudget,
+    ) -> Result<usize, ProjectionLimit> {
+        let key = (instance, scope.to_vec());
+        if let Some(floor) = self.lexical_floor_cache.borrow().get(&key) {
+            return Ok(*floor);
+        }
+        let floor = self.uncached_lexical_floor(instance, scope, budget)?;
+        self.lexical_floor_cache.borrow_mut().insert(key, floor);
+        Ok(floor)
+    }
+
+    fn uncached_lexical_floor(
         &self,
         instance: SourceInstanceId,
         scope: &[zrail_core::SourceSpan],

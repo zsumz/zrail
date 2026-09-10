@@ -1,0 +1,834 @@
+{
+  "schema": 1,
+  "base": "5a368379360104ca19745326cfcef48d22a6452b",
+  "original_tip": "66b5b57415a967de5703a155f35cad8f74159b01",
+  "signed_tip": "545b671de3f6288af95d4ae7fb7ffd12267dd8db",
+  "commits": [
+    {
+      "old_commit": "e8117487af1d402bd0f2326508eb6a0cf413488e",
+      "new_commit": "9e2c99dd986ce8124bc7ebf34436a2b9d6571002",
+      "tree": "ac397cd8dd84fdc81448d060e17de2c70aaa3ef1",
+      "old_subject": "docs(rc9): pin replacement audit snapshots and blockers",
+      "new_subject": "docs: pin replacement audit snapshots and blockers"
+    },
+    {
+      "old_commit": "51c2771df7299882f80ae30242e5e2563aec42c8",
+      "new_commit": "685e045ad61a508b7631269a57ba0494721295e2",
+      "tree": "76f5f37beaa3dd60d15c2d289907c40f6be06204",
+      "old_subject": "feat(facades): enforce wiring modes and independent test structure",
+      "new_subject": "feat: enforce wiring modes and independent test structure"
+    },
+    {
+      "old_commit": "ab96f1abe5abb4de461c7d0742ad3961f347ee1f",
+      "new_commit": "42d2f86d82d085e1fe9bd4b0d911e5fee5fe4eb4",
+      "tree": "6cc4e4ebcc4d347971adb7ff0e945e8989d457b8",
+      "old_subject": "refactor(rust): keep public facade within its source budget",
+      "new_subject": "refactor: keep public facade within its source budget"
+    },
+    {
+      "old_commit": "e70d83ef29662d546aee30c1d9c02929ced76c57",
+      "new_commit": "e227b5900bafcae3bbee1e93a97624030a5f6655",
+      "tree": "a990f6dfb805609b7794951216bbdcb5ef19bf8e",
+      "old_subject": "test(facades): import frozen Kafkars counterexample",
+      "new_subject": "test: import frozen Kafkars counterexample"
+    },
+    {
+      "old_commit": "44a512a761fe55f190f28b1952840965e499045a",
+      "new_commit": "cb32051090c4b1cea1c1fb845ef6aaf5d9373872",
+      "tree": "686c095e9fee6c88ed0e2ffc276f484794884997",
+      "old_subject": "test(rc9): bind discovery and detector evidence to frozen inputs",
+      "new_subject": "test: bind discovery and detector evidence to frozen inputs"
+    },
+    {
+      "old_commit": "348ae5b777217f774433045da5c4431ea055c162",
+      "new_commit": "e5e78aea8e4f73285f679edddfe868633b303fb7",
+      "tree": "c953bfe490fd41f718cec77bf83897bd95171547",
+      "old_subject": "test(facades): load excluded detector data during qualification",
+      "new_subject": "test: load excluded detector data during qualification"
+    },
+    {
+      "old_commit": "36d397786012c6175a48791e943282fb6f75d916",
+      "new_commit": "1638ae39959d4911cdca528b74e6988c3a9c8b63",
+      "tree": "f37cba2c8747c85584f14c0beac3c7700a0687c2",
+      "old_subject": "docs(rc9): record parity gaps and reproducible qualification",
+      "new_subject": "docs: record parity gaps and reproducible qualification"
+    },
+    {
+      "old_commit": "e77dcfc8d638bbac09c4a0eeb257db6b663e9a7e",
+      "new_commit": "4054132bbb5b5af8a7f1304caaa8184b162f6d8e",
+      "tree": "e0613eb82dc4d02fcb1443649d66f873079be643",
+      "old_subject": "docs(rc9): record approved Rafter private-name retirement",
+      "new_subject": "docs: record approved Rafter private-name retirement"
+    },
+    {
+      "old_commit": "bc54b4863a71c6a552e046485206c51dfbc39b30",
+      "new_commit": "9b216a6581f6533c0585eb39dcf4b60b186e8594",
+      "tree": "67f764ae0fd886671261a4335c5c221a15b75c24",
+      "old_subject": "feat(contracts): define scoped budgets and bounded size authority",
+      "new_subject": "feat: define scoped budgets and bounded size authority"
+    },
+    {
+      "old_commit": "7329475e751459a27516d45beb403a1241d954e9",
+      "new_commit": "89faaaad68807256d145d7cbed656f0367bfedde",
+      "tree": "b4ce064ccefe6fb23876d6ba0ee9b4d2f32211d3",
+      "old_subject": "fix(facades): protect newly added test module facades",
+      "new_subject": "fix: protect newly added test module facades"
+    },
+    {
+      "old_commit": "76c69202ccfd16b416718f8a77a77eda9a683ebb",
+      "new_commit": "6c192231e235a61bc508f5578b2dc226f842711e",
+      "tree": "b42298044a0d774d587def228b8a76909720084e",
+      "old_subject": "feat(size): enforce scoped budgets and exact debt bounds",
+      "new_subject": "feat: enforce scoped budgets and exact debt bounds"
+    },
+    {
+      "old_commit": "767abfd0f4f26c97fa48433c300fce999f567778",
+      "new_commit": "c27acd227779af2e35691fd0c9223151eaff126f",
+      "tree": "6ac03a1f9fced11c89840d86fcd35dd2407ad0d2",
+      "old_subject": "test(size): qualify frozen selectors and every Kafka allowance",
+      "new_subject": "test: qualify frozen selectors and every Kafka allowance"
+    },
+    {
+      "old_commit": "7f6a2307c1e76e65ddba59898da5620f88f4295e",
+      "new_commit": "424b22d98b2998b05a7dc51ad473d48401201350",
+      "tree": "7abcdcc7b9e74a3d968769c0d4375328631175b4",
+      "old_subject": "refactor(testkit): preserve analyzer boundaries in size qualification",
+      "new_subject": "refactor: preserve analyzer boundaries in size qualification"
+    },
+    {
+      "old_commit": "bdf27efe27ded4303a298e9efdb73f13c55b86c4",
+      "new_commit": "30b89b24be70f64cfe8025cde5bb9e5c57b59ce2",
+      "tree": "1168e5efb2e217f0f2eeb4bd0b850f41a9783b93",
+      "old_subject": "docs(rc9): bind size assertions to frozen instance evidence",
+      "new_subject": "docs: bind size assertions to frozen instance evidence"
+    },
+    {
+      "old_commit": "cb198bada58ef8f08bdc60bc7ac5cea0b2993a0a",
+      "new_commit": "acbe81074160e1175f2b430baa0bf35e29ac3bfe",
+      "tree": "e453f473cbf5788bef109541a0a5c3eb9e583134",
+      "old_subject": "fix(testkit): use the reviewed failure macro in size fixtures",
+      "new_subject": "fix: use the reviewed failure macro in size fixtures"
+    },
+    {
+      "old_commit": "e98499dfc38a974c54e35372f173eebe2dfa4890",
+      "new_commit": "2c786384604584fd9e826a359a6066345a05121c",
+      "tree": "08e61c76f95c8ed1aa08ad187b32d8fd15844f08",
+      "old_subject": "docs(rc9): record repeated size and archive qualification",
+      "new_subject": "docs: record repeated size and archive qualification"
+    },
+    {
+      "old_commit": "e90de3dbd4d6021ea0293245dcda967299f8fbc3",
+      "new_commit": "4a3fc0c3d09d3e8ef741f7b3d595fabcf6559278",
+      "tree": "b77270ea0cb4121ee5ddf189a7548bfcdfc930b7",
+      "old_subject": "feat(contracts): define closed repository file predicates",
+      "new_subject": "feat: define closed repository file predicates"
+    },
+    {
+      "old_commit": "7c8da35a1ee79f4049eb2eb9308762e7f15e0419",
+      "new_commit": "c376bd8246999ae2530ec6760cd24600fe4c5dc9",
+      "tree": "5cd1bcf1ac13867eb351cc989ae169e2f73baaba",
+      "old_subject": "feat(paths): prove bounded glob descendant reachability",
+      "new_subject": "feat: prove bounded glob descendant reachability"
+    },
+    {
+      "old_commit": "ad841faca8ace50d37c89212d32c462bd0b493b8",
+      "new_commit": "3fa20d098afcdf18df66d2fb4ce3a018e8e51b45",
+      "tree": "bbe631c4fd8c2b8612f4ef00ffc883a8d3af8db9",
+      "old_subject": "feat(diff): protect repository file predicate changes",
+      "new_subject": "feat: protect repository file predicate changes"
+    },
+    {
+      "old_commit": "b32ee44d4dabf854977e42de98d0bcb5d8d8ca30",
+      "new_commit": "5db6f5febed7548142545f6f080b8b2f53a26f6e",
+      "tree": "d125a3194c6fe78097ba5efc728c84bee95c2cd5",
+      "old_subject": "feat(files): enforce bounded repository file contracts",
+      "new_subject": "feat: enforce bounded repository file contracts"
+    },
+    {
+      "old_commit": "79b4c09d9b3a2cfb77873366b4544fe1d3028ac9",
+      "new_commit": "810830fa27e5f16f75d23bb74ea8950c33f5b475",
+      "tree": "6310e26d690608fffc84f79237775e8e09ec24aa",
+      "old_subject": "docs(rc9): record file engine qualification evidence",
+      "new_subject": "docs: record file engine qualification evidence"
+    },
+    {
+      "old_commit": "dd44bb868aa30c87979503f61074e0f472ecdd6a",
+      "new_commit": "19d233b1c692e788f474652d424f8b8269626420",
+      "tree": "f22e0d5b0ecda515e2e533eb6dd0cc382b2a34be",
+      "old_subject": "test(files): qualify frozen Kafka raw and path policies",
+      "new_subject": "test: qualify frozen Kafka raw and path policies"
+    },
+    {
+      "old_commit": "ba7a52337ec435285e23a8ee1d64a095e90ab8e2",
+      "new_commit": "a5c19d8bd197e7cdf471600483798be13921fdc2",
+      "tree": "d4ce7ea3e3d2ae95e023ba317df02769ea676014",
+      "old_subject": "test(files): measure legacy directory counterexamples",
+      "new_subject": "test: measure legacy directory counterexamples"
+    },
+    {
+      "old_commit": "338eb74958bb872d4ee8a017e44adb7dd97d2ebf",
+      "new_commit": "2ca60d434981aa857c1515edadd468a630ec681f",
+      "tree": "79674dbb9aca3c1e910c37199c31037af8b0622f",
+      "old_subject": "docs(rc9): bind Kafka file assertions to parity evidence",
+      "new_subject": "docs: bind Kafka file assertions to parity evidence"
+    },
+    {
+      "old_commit": "0ba7ba21602cc32a5d7317fd6f595055551793ab",
+      "new_commit": "1a7cf9755e3534159411032c8d60a0c3a44cda22",
+      "tree": "425fabf69affe53f1b0d7250523b685cf39fd232",
+      "old_subject": "feat(files): preserve UTF-8 equality requirements",
+      "new_subject": "feat: preserve UTF-8 equality requirements"
+    },
+    {
+      "old_commit": "5fa08b0975b792d4df0728247d449bd73c5545e4",
+      "new_commit": "2b801be1cfe08df1560b9fadae9fe2f45e0856c6",
+      "tree": "d238a0c680c549344cab5800acb583d95d7b7bda",
+      "old_subject": "docs(rc9): inventory metadata and retired source assertions",
+      "new_subject": "docs: inventory metadata and retired source assertions"
+    },
+    {
+      "old_commit": "04d1a72b750a38d3985fd503f70a5e9067f47e44",
+      "new_commit": "6c4041bc40652218384530204c70be6f1f828867",
+      "tree": "d1fbf9fda07466a8c9e1749be5c5682e24e3fbe4",
+      "old_subject": "feat(documents): enforce bounded authored field assertions",
+      "new_subject": "feat: enforce bounded authored field assertions"
+    },
+    {
+      "old_commit": "8e37c7203be2c1d97b149b93a4711b7214c09e92",
+      "new_commit": "15bd9af19bff94e1edda70db38c039203dd1e83d",
+      "tree": "0d42030b281f03a53354bd8bde7b7924a0203e96",
+      "old_subject": "fix(tests): mount document diff tests beside their source",
+      "new_subject": "fix: mount document diff tests beside their source"
+    },
+    {
+      "old_commit": "ea9aa11e3e5f0869221645cf565272bd3dbec67b",
+      "new_commit": "31295e6564fa13a274bca3431789198d0d8e80c8",
+      "tree": "496468564c7bfa5344c2dcd9641f89258a3186d7",
+      "old_subject": "docs(rc9): record authored document engine qualification",
+      "new_subject": "docs: record authored document engine qualification"
+    },
+    {
+      "old_commit": "db11ebe40f3ffe969939785b34f2acf880c6b79e",
+      "new_commit": "3591de5b503bd75e732d4cd85633b81b31762e1b",
+      "tree": "026ff1481b6d97b100fa618ca848167be4cc6c7d",
+      "old_subject": "test(metadata): qualify frozen publication assertions",
+      "new_subject": "test: qualify frozen publication assertions"
+    },
+    {
+      "old_commit": "6b41cab81e78f976b3bc8830b5e1ebab5d351df6",
+      "new_commit": "1915813c7219cb81d77d4f07cabcce2e58b67ea9",
+      "tree": "cda8a65d2e3a729debfbcbf3ce43aa12deac0f6b",
+      "old_subject": "docs(rc9): bind publication metadata parity evidence",
+      "new_subject": "docs: bind publication metadata parity evidence"
+    },
+    {
+      "old_commit": "4b61bf0375a32e89596207a7de637b77ad6dc6c7",
+      "new_commit": "635278a3adc6bffb111d9dc2f55319aab768b978",
+      "tree": "bb3241d63d1d0900f791d1087e0066cc8f6b8bf3",
+      "old_subject": "docs(rc9): expand authored dependency assertion inventory",
+      "new_subject": "docs: expand authored dependency assertion inventory"
+    },
+    {
+      "old_commit": "d858b0cfd0fee495cd1eedcaa67e69dcf834c3a8",
+      "new_commit": "e60cb522f84d59916ef50bff62ca302b25c074a6",
+      "tree": "f9121217265520249ca64a55acae2d78f07ebe89",
+      "old_subject": "fix(rc9): distinguish absent dependency keys from wrong types",
+      "new_subject": "fix: distinguish absent dependency keys from wrong types"
+    },
+    {
+      "old_commit": "f058429466c1bc6349c422e1d207140502b84ad4",
+      "new_commit": "01fb7c27b00f93055d5fa341af7a10dceff986ff",
+      "tree": "7013e3f0a8644e39a2ae637d87c3abb7472525ff",
+      "old_subject": "feat(files): preserve exact normalized line predicates",
+      "new_subject": "feat: preserve exact normalized line predicates"
+    },
+    {
+      "old_commit": "c069b9962f4973b5c22f5830469659e5655f0b20",
+      "new_commit": "bd38d0665d363f2f858c8dd0364ab4bc526823e0",
+      "tree": "6cac843fa55785aefeedb52ad5c0998b162a3bac",
+      "old_subject": "docs(rc9): record exact line engine qualification",
+      "new_subject": "docs: record exact line engine qualification"
+    },
+    {
+      "old_commit": "4c4407cd183142473c55679933586ff897560ecb",
+      "new_commit": "ede1f9b554ab0812e487d5c105d0ac1e3eb9ea90",
+      "tree": "f5d14a88fbd312e85495cccf853025bce402af24",
+      "old_subject": "feat(documents): enforce exact and allowed key inventories",
+      "new_subject": "feat: enforce exact and allowed key inventories"
+    },
+    {
+      "old_commit": "b846d4e5edfdb9ae3c293c3295eccfb81724d4f1",
+      "new_commit": "9e560b82936d243f6ca72e7cfc2ba2902e178372",
+      "tree": "7f2937a02264071df14bedf29a8b6de5f19c4ecb",
+      "old_subject": "fix(documents): simplify key-set implication matching",
+      "new_subject": "fix: simplify key-set implication matching"
+    },
+    {
+      "old_commit": "1b9838d8eba9cd6532a88945e272cbb286b7f741",
+      "new_commit": "245a5ba2b423b7b03390115ac5986b386378526e",
+      "tree": "3313a2d860e2aa1b880fa856fb747dc1dd4dbcc1",
+      "old_subject": "docs(rc9): record authored key-set qualification",
+      "new_subject": "docs: record authored key-set qualification"
+    },
+    {
+      "old_commit": "62062b7c2805650db473799a5d627f3265a854f9",
+      "new_commit": "f27f69667d2932b3afbf0abcc3936c9414b32289",
+      "tree": "d3af9275c6391f448bcfce3d35c096692c014ad7",
+      "old_subject": "refactor(testkit): share trusted file parity execution",
+      "new_subject": "refactor: share trusted file parity execution"
+    },
+    {
+      "old_commit": "c86f5173c90e564b204420789faf2d16ef17807a",
+      "new_commit": "bd00058947f15baec40b799844a9e1b52e47762b",
+      "tree": "6351de7fe86ab7cf52e8246915e023cf15df40d4",
+      "old_subject": "test(dependencies): qualify frozen authored key inventories",
+      "new_subject": "test: qualify frozen authored key inventories"
+    },
+    {
+      "old_commit": "2e7a88a87eaa5baf31a785689adb3a619815d6a8",
+      "new_commit": "03e2ababf78d5bd0478c8f04a8e291cb16955e7c",
+      "tree": "9b0a287616ce2b5176b5dc008291132cd921faff",
+      "old_subject": "docs(rc9): bind dependency key parity evidence",
+      "new_subject": "docs: bind dependency key parity evidence"
+    },
+    {
+      "old_commit": "456e0351da0dd7d346a21f0026ac93e26a873a0c",
+      "new_commit": "94fa60f0a9ffa0cbed944b115bd899ae32045793",
+      "tree": "220c77f672b8c383fb21e3228cf9315a7ce4bb18",
+      "old_subject": "feat(documents): preserve typed field absence projections",
+      "new_subject": "feat: preserve typed field absence projections"
+    },
+    {
+      "old_commit": "a6904a0422e04db44f7cc7f79718d1276e3e79dc",
+      "new_commit": "77761864886f9684773f15850907e49f4cd074ad",
+      "tree": "c884f81b77d5011b99e5007784eb98f3bd2212c2",
+      "old_subject": "docs(documents): format typed projection identifiers",
+      "new_subject": "docs: format typed projection identifiers"
+    },
+    {
+      "old_commit": "c7ff4588f029169c10cce191be3bac3ceaec9e2d",
+      "new_commit": "fb966e62e86e1b1fe512f652292028915615550a",
+      "tree": "999438454e2a41f87ab689dfd1d448f8cdac5787",
+      "old_subject": "test(dependencies): qualify frozen manifest field assertions",
+      "new_subject": "test: qualify frozen manifest field assertions"
+    },
+    {
+      "old_commit": "ca538a82c15c96ffb4b7ae6100c2722058573bc0",
+      "new_commit": "a6fbf8201af6289435ed93373f5eff8fbcbebe6e",
+      "tree": "a5f10976b2561a5f5990f32790e60c8e4f52e930",
+      "old_subject": "docs(rc9): bind manifest field replacement evidence",
+      "new_subject": "docs: bind manifest field replacement evidence"
+    },
+    {
+      "old_commit": "c259e0b7723e1d9ff45d07e45305e3e99c68ee8d",
+      "new_commit": "a764235e4321a6ce006a2431e86eef80f55cdcda",
+      "tree": "ea53c004325b3e283ee76418d9ab0fea356bd94a",
+      "old_subject": "docs(rc9): complete reviewed protocol provenance assertions",
+      "new_subject": "docs: complete reviewed protocol provenance assertions"
+    },
+    {
+      "old_commit": "b3af6fba364e27baa96805db04d0458d4c41c313",
+      "new_commit": "8b0ac929ee46c6503fd46e5c2adc8a7bc0e5962f",
+      "tree": "acf2ba1de1dd73b6e59a6951c6ba2b5981c5c9e1",
+      "old_subject": "feat(contracts): define exact whole-lock inventories",
+      "new_subject": "feat: define exact whole-lock inventories"
+    },
+    {
+      "old_commit": "bd6372b91d39f59c3064a7a327b1b4349be7e28a",
+      "new_commit": "a02587ba8278e18633ed91e055e599bbb939682e",
+      "tree": "cef38b060a93ba8a6bbe95a0db6e45f318aa7396",
+      "old_subject": "feat(dependencies): enforce whole-lock identity inventories",
+      "new_subject": "feat: enforce whole-lock identity inventories"
+    },
+    {
+      "old_commit": "266767ba1c767efea562be92ee3d936477525353",
+      "new_commit": "5bfafbd2a1adc41a0daad4172b87c398144ad9a9",
+      "tree": "2eb32a33df03206bdb29e46edf6845f98875ddfa",
+      "old_subject": "docs(rc9): record whole-lock inventory qualification",
+      "new_subject": "docs: record whole-lock inventory qualification"
+    },
+    {
+      "old_commit": "0a37629bbba84bf23a21c4e8bbc4e61c16fcd7aa",
+      "new_commit": "b9ff3926b9ab123ae107df5cd0234e2e1b2fad46",
+      "tree": "faa6bef0828a4c3722d6804837cebc10fe2ac914",
+      "old_subject": "feat(policies): translate frozen protocol provenance",
+      "new_subject": "feat: translate frozen protocol provenance"
+    },
+    {
+      "old_commit": "51901c18681e15b1f14db2b61a2db057c678a90d",
+      "new_commit": "30b9dc09d362f263a36f66b00177c80d3e715ebb",
+      "tree": "34c2177f6fed1e22e3de05593d4af4a45ee4dbb1",
+      "old_subject": "test(provenance): add frozen manifest differential fixtures",
+      "new_subject": "test: add frozen manifest differential fixtures"
+    },
+    {
+      "old_commit": "010076f5a468e7adbe7ba0bdb88c5d5f64a2b0b0",
+      "new_commit": "3dc55f391c8252c889a9dd95552b4dad260683cf",
+      "tree": "baf7dad989c6b66f6a0535cba4b4d0a7446c972f",
+      "old_subject": "docs(rc9): bind frozen provenance replacement evidence",
+      "new_subject": "docs: bind frozen provenance replacement evidence"
+    },
+    {
+      "old_commit": "53093130b02aa3bb44a5a5148c530695cb935f3b",
+      "new_commit": "00776131f47046ef0524d74d053ea0ee265e1151",
+      "tree": "3e2deadf251a947e4fc255567ea375d0a0fb63e2",
+      "old_subject": "docs(rc9): preserve raw provenance logs as bound gzip",
+      "new_subject": "docs: preserve raw provenance logs as bound gzip"
+    },
+    {
+      "old_commit": "43b1ddc37932b5e48ddc878399572287b6a4f7e9",
+      "new_commit": "2e931b1205c63c81d8b965d66e032f4c56dffb4c",
+      "tree": "ebc64729da3677c23122c5c6b177c0c6ad282d9f",
+      "old_subject": "test(dependencies): qualify frozen whole-lock provenance",
+      "new_subject": "test: qualify frozen whole-lock provenance"
+    },
+    {
+      "old_commit": "365406305a9731c8feae86fc920b63c42fd553d6",
+      "new_commit": "95c384a4fe67febbfaeb2eedf90e19126325d3bc",
+      "tree": "531b549d5136a38efcab737abe54548c57b61e23",
+      "old_subject": "perf(resolver): reuse completed lexical scope boundaries",
+      "new_subject": "perf: reuse completed lexical scope boundaries"
+    },
+    {
+      "old_commit": "5251b4f056741768eb667c74d6e0949257ca843b",
+      "new_commit": "a8d0862b6c83e03a14ea4efce976be02d2ec001b",
+      "tree": "21ca3d2436c34c381a5dd0e6adfe6b9dc6686d05",
+      "old_subject": "fix(testkit): serialize lock parity reports with typed records",
+      "new_subject": "fix: serialize lock parity reports with typed records"
+    },
+    {
+      "old_commit": "2229195503e8ab0eea90a8fc0471f1b078c1a287",
+      "new_commit": "d2300d6207a3b022925b0fdfe4012a1670176c1c",
+      "tree": "2e3b1d98e545cd8f978b6f5c5bb59ab2ece70246",
+      "old_subject": "docs(rc9): bind exact whole-lock differential evidence",
+      "new_subject": "docs: bind exact whole-lock differential evidence"
+    },
+    {
+      "old_commit": "53c8a5c4b84c184388e4b72eb6532d89e46a5abc",
+      "new_commit": "c7f3478a9529758fb139ccdbd541f1007963bd59",
+      "tree": "99d83f6e9ef3a8469cc03290f0bd230801bb7808",
+      "old_subject": "feat(policies): translate frozen raw dependency contracts",
+      "new_subject": "feat: translate frozen raw dependency contracts"
+    },
+    {
+      "old_commit": "58e5835c82915144ebd1f147e536a9cbcb0af170",
+      "new_commit": "0fbb50083ffbcc279ead607bc4a3aded3af60927",
+      "tree": "cb7f8476d3fe49552fdea2510454e4eb4f9ed0dc",
+      "old_subject": "test(policies): qualify frozen raw dependency predicates",
+      "new_subject": "test: qualify frozen raw dependency predicates"
+    },
+    {
+      "old_commit": "2e098dbafcd0410acc1bd4411812c89e28c2ec17",
+      "new_commit": "98b206e7f5b05b1f4ced0105b96f80d7598bd31a",
+      "tree": "8c51828e6f2715a0f07c7e41c280d4948267bad0",
+      "old_subject": "docs(rc9): bind frozen raw dependency parity",
+      "new_subject": "docs: bind frozen raw dependency parity"
+    },
+    {
+      "old_commit": "03165fc85945f170eb3dd72f399df9e4f5706282",
+      "new_commit": "94e4de1e28d3d348bf9d8d0f9eef55106f6ef220",
+      "tree": "ec59cc85497ac55a830e228cc1ac3d04e76c27a2",
+      "old_subject": "docs(rc9): inventory frozen qualification assertions",
+      "new_subject": "docs: inventory frozen qualification assertions"
+    },
+    {
+      "old_commit": "6d638888e5d784dd3448842cf04ab05421ca7e04",
+      "new_commit": "86ef4836f9440874e0c1e0d6f95d279038c8dc43",
+      "tree": "3df96243c6e6da80040a4706eea3d9602971f647",
+      "old_subject": "feat(files): add bounded raw structure predicates",
+      "new_subject": "feat: add bounded raw structure predicates"
+    },
+    {
+      "old_commit": "f37fe8064f5ac28a2a10889f6dfa180ae42e105a",
+      "new_commit": "989f90e3afbaef5063ab77217347cb7e02dca463",
+      "tree": "dc0f847d56cef340bce863161d134085a6e0184e",
+      "old_subject": "feat(policies): translate frozen qualification predicates",
+      "new_subject": "feat: translate frozen qualification predicates"
+    },
+    {
+      "old_commit": "7c6c01d0af8bdeee598e87c3c8fae97ce72b9a0c",
+      "new_commit": "e974b1815d802b40ee9c320f02a771df27237804",
+      "tree": "1e97f833c6307a42201aaee1094de416b13b376c",
+      "old_subject": "test(policies): qualify frozen release text assertions",
+      "new_subject": "test: qualify frozen release text assertions"
+    },
+    {
+      "old_commit": "fcc6714c193e29d3c9c164991ab48c55a1c667d3",
+      "new_commit": "68cedaffe08cc48b6c2e507ace1bb108c335b47e",
+      "tree": "b7c87996e8d0f339f6e12a71b7c827f8c7de1dfc",
+      "old_subject": "test(rc9): bind frozen qualification parity evidence",
+      "new_subject": "test: bind frozen qualification parity evidence"
+    },
+    {
+      "old_commit": "23eeeed71504f530ab670051b0ef822659e018f2",
+      "new_commit": "7db271f580b8faf38a1bf3f3673bc5fbd8448db4",
+      "tree": "72e83140dd781da4395033c02ef09a5cffbdca96",
+      "old_subject": "docs(rc9): complete transport assertion review",
+      "new_subject": "docs: complete transport assertion review"
+    },
+    {
+      "old_commit": "a14a69ddd66b822dec813e13dc6e99eff8ea0cf9",
+      "new_commit": "8891a376a5bf11ca306ca191dd7f9c96a9f5de7e",
+      "tree": "1ff3863ab66b210488c430f616083db5f2289037",
+      "old_subject": "refactor(files): share bounded physical selection",
+      "new_subject": "refactor: share bounded physical selection"
+    },
+    {
+      "old_commit": "523bfd15eb72e145d876c8bb5bf6c90a7502a6ff",
+      "new_commit": "78dfe7f754108056a24c35f36a2c399c0a0f59cb",
+      "tree": "41f0dea274284070ac905f79544b5f5c874aeb8f",
+      "old_subject": "feat(rust): enforce exact authored method inventories",
+      "new_subject": "feat: enforce exact authored method inventories"
+    },
+    {
+      "old_commit": "e5f8178123658369ba8cbfbbc0ad068261be03c9",
+      "new_commit": "8c75d713b8b851173662de2eaa2bfe4183b01f0d",
+      "tree": "8833137a3c0ec6a4df67416b893df8e37885bf2a",
+      "old_subject": "refactor(rust): satisfy self-hosted inventory boundaries",
+      "new_subject": "refactor: satisfy self-hosted inventory boundaries"
+    },
+    {
+      "old_commit": "4a2c2eff5097d684cb0c39faa641994ae6e83216",
+      "new_commit": "17a5a545a80dbfb60516c41cc4e79160c9210cfb",
+      "tree": "0bcbed6635dadf3f4b44b2f253ea661af7e0f1ad",
+      "old_subject": "feat(policies): preserve written transport quantities",
+      "new_subject": "feat: preserve written transport quantities"
+    },
+    {
+      "old_commit": "01da4de1f60cfff2bf1a00f6bc9552d3a1181b00",
+      "new_commit": "7f63788b88ffb5613ad87b8df03884fcb9f77558",
+      "tree": "511b4250ea6c6208c8a0817c19e588a82be3a499",
+      "old_subject": "test(rc9): record authored inventory qualification",
+      "new_subject": "test: record authored inventory qualification"
+    },
+    {
+      "old_commit": "b90f34646664255231a06297cca8a1f572c18362",
+      "new_commit": "5945344e5694aca7f9aa410948ab466a394eaebf",
+      "tree": "33b597fab811c044c32b83d2ef4e97255dc1ac71",
+      "old_subject": "test(rc9): qualify frozen transport method inventory",
+      "new_subject": "test: qualify frozen transport method inventory"
+    },
+    {
+      "old_commit": "298e4b4c39d571232d91393b9bf9d809ab6e1e1d",
+      "new_commit": "020e3688e4c473048a2e66b17e5747c17451dae8",
+      "tree": "348a0d5d1e469ee2b818e2f518745eac04a32c1d",
+      "old_subject": "fix(rc9): compare canonical paths and parser outcomes",
+      "new_subject": "fix: compare canonical paths and parser outcomes"
+    },
+    {
+      "old_commit": "faef8f1fe81a489aef240e3afdda9124b5e433ed",
+      "new_commit": "508c6420c442f5cd4e5eb559db92ad0b55e64f22",
+      "tree": "923b979e1e9875d423d026e97427af851af20acc",
+      "old_subject": "fix(rc9): keep transport harness within reviewed boundaries",
+      "new_subject": "fix: keep transport harness within reviewed boundaries"
+    },
+    {
+      "old_commit": "869677ef3cc26be9190ac4ac960aafbbb7a559fd",
+      "new_commit": "410d594c6884658252b3d91fe045fb3c5ca26439",
+      "tree": "c821a19363064375345b0a37dbf7c8d87bbdd58f",
+      "old_subject": "docs(rc9): inventory driver helper and placement assertions",
+      "new_subject": "docs: inventory driver helper and placement assertions"
+    },
+    {
+      "old_commit": "c16671d1c7da2cf2fd2d815fee50c092bc643fb4",
+      "new_commit": "e082472ebe9282aae9d480a98b2ab41d4d52769b",
+      "tree": "56dbd491e723622a28d3dc007d70c05fc1d7d417",
+      "old_subject": "docs(rc9): specify raw process collector assertions",
+      "new_subject": "docs: specify raw process collector assertions"
+    },
+    {
+      "old_commit": "e01891c5843757f9f9cb5e1f5f39cfc21ca6e583",
+      "new_commit": "99b39e18cfa2949fe997310f807692d4b32ebf89",
+      "tree": "7c3f3e816d68fe36d56afaff150b3722741fcb4c",
+      "old_subject": "fix(rc9): discover fallible assertion preconditions",
+      "new_subject": "fix: discover fallible assertion preconditions"
+    },
+    {
+      "old_commit": "e609ad763c9524432a942c0a3797c63fc328481b",
+      "new_commit": "4270a4b91aeb433e9a124bcad948d95ba4640960",
+      "tree": "6d8afc3e3cd61089d763ad8c6e18a07d959b4b32",
+      "old_subject": "test(rc9): bind expanded fallible-call census",
+      "new_subject": "test: bind expanded fallible-call census"
+    },
+    {
+      "old_commit": "eb320f6d58668c429dfb3c5bc62c0e89f8b472fb",
+      "new_commit": "6b5604ebedfe54f576a0194cb04372d833400b96",
+      "tree": "89f6f560dcd49ef2695833b28ed4ead57445ffc4",
+      "old_subject": "fix(rc9): hash runtime transport fixture inputs",
+      "new_subject": "fix: hash runtime transport fixture inputs"
+    },
+    {
+      "old_commit": "151270ffa2285800833f2295abcfc61aa689d9ca",
+      "new_commit": "da43823b75c5d20e0714345a93685cb21f90bd68",
+      "tree": "cc0beffaef20c26cc0c292b9dd6a3cde0f86ffe9",
+      "old_subject": "style(rc9): simplify transport fixture path formatting",
+      "new_subject": "style: simplify transport fixture path formatting"
+    },
+    {
+      "old_commit": "3842c4ad5ea9889b07f52d959d53f1a57f02b275",
+      "new_commit": "49ed408332857551e2af6ee6404d6be9d4c4900a",
+      "tree": "4b7268169af3c6f008d5362059bcae03c4852e33",
+      "old_subject": "test(rc9): bind frozen transport parity evidence",
+      "new_subject": "test: bind frozen transport parity evidence"
+    },
+    {
+      "old_commit": "b763cebc431f6f2449c32025e88a68323d08da63",
+      "new_commit": "d2bb1e9a8844e246d1b70204a2b968f6e3b59fba",
+      "tree": "ecd75a21a811255c66cd060e62721136a5477973",
+      "old_subject": "feat(rust): inventory authored expression path quantities",
+      "new_subject": "feat: inventory authored expression path quantities"
+    },
+    {
+      "old_commit": "226af75d4a80f711bf7b2a7e991322ebe6462ca3",
+      "new_commit": "7e1cdcc682d3ee6caf94ec3bf864d2f4e6ab5868",
+      "tree": "038e1b0542236fbd5f8918291379371cff671285",
+      "old_subject": "docs(rc9): record expression inventory qualification",
+      "new_subject": "docs: record expression inventory qualification"
+    },
+    {
+      "old_commit": "d2b2772a628f3cbfd5985b51c3aa25c8b7723482",
+      "new_commit": "3a2b3a35543af133d0497c3fe6f4ee1d4389ca76",
+      "tree": "cf1fc48de1b81f5a6503637ce195d144cf48e6df",
+      "old_subject": "test(rc9): qualify frozen expression path inventory",
+      "new_subject": "test: qualify frozen expression path inventory"
+    },
+    {
+      "old_commit": "f2db6e496f763224b2ffeec41dd0fa1450b4b80f",
+      "new_commit": "6ebe8ec17720751527485d92dc5d5433b5db4704",
+      "tree": "5806fdef6f45fadc066b281b8d8304ca980ec5cf",
+      "old_subject": "fix(rc9): keep parity execution in trusted test runners",
+      "new_subject": "fix: keep parity execution in trusted test runners"
+    },
+    {
+      "old_commit": "951941ff2d8964ac8a6f61aef2e6bd7f5403cef7",
+      "new_commit": "16e315e003f49a4297fbeab5a978ee2c5bf126ec",
+      "tree": "9e6bccbf6a7da51a88f520adf6c708a3eb7fc397",
+      "old_subject": "fix(rc9): discover reviewed Rust source fragments",
+      "new_subject": "fix: discover reviewed Rust source fragments"
+    },
+    {
+      "old_commit": "7dd419191210d73769d381e519a6dee280a5ee30",
+      "new_commit": "ae3c9c0ecae5779d66dfee4b857273498e16f6ad",
+      "tree": "b6792c6758f45474f2c149791028de5a9c17d10b",
+      "old_subject": "test(rc9): bind fragment census discovery evidence",
+      "new_subject": "test: bind fragment census discovery evidence"
+    },
+    {
+      "old_commit": "756d51d84359e52ac3fa79a9d9b1bfa12651d704",
+      "new_commit": "34e9e4f5f079deaebdf2cd202247be1fdc50be6f",
+      "tree": "dc065fc2e582bf53a451af2895957552f48bef3d",
+      "old_subject": "fix(rust): distinguish expression inventory diagnostics",
+      "new_subject": "fix: distinguish expression inventory diagnostics"
+    },
+    {
+      "old_commit": "b6569d78a51aab6ae61473e82b4222384333369c",
+      "new_commit": "5e0db7c00cbbbeb7975fe18600760b2ea96e2597",
+      "tree": "3a3f8440c3b2b3f2206d6e17d98e4848484a0852",
+      "old_subject": "test(rc9): bind frozen expression path parity evidence",
+      "new_subject": "test: bind frozen expression path parity evidence"
+    },
+    {
+      "old_commit": "d4f901c6fe9f3137c27b5ddd7570db5ea76e2a16",
+      "new_commit": "e34001fa7423bc47d397d2a2715678c12e5f7f8e",
+      "tree": "cc9d401af61929be10f185d0a1b7f6eb8dffd966",
+      "old_subject": "docs(rc9): refresh assertion links in cutover maps",
+      "new_subject": "docs: refresh assertion links in cutover maps"
+    },
+    {
+      "old_commit": "11b4e70d5db2f6d3d5d6d55237debe8606058814",
+      "new_commit": "5a82ed7f85ea846150068d6b237fcdbec1b7327d",
+      "tree": "37810e99b6fb01f1af4cad165b8e96655fc1f95e",
+      "old_subject": "fix(rc9): use reviewed syntax in census fixtures",
+      "new_subject": "fix: use reviewed syntax in census fixtures"
+    },
+    {
+      "old_commit": "35c5d02e67a5e13a41e93ba8e529f42087d56790",
+      "new_commit": "be9626b904743bdb09526e52718dafd94a2142d7",
+      "tree": "21fac9bdac4168d6b97fdc67da5dc15aced7167b",
+      "old_subject": "docs(rc9): record census and transport evidence qualification",
+      "new_subject": "docs: record census and transport evidence qualification"
+    },
+    {
+      "old_commit": "45df3516a5cee64da3768a778ecfe83c91075621",
+      "new_commit": "6759a48bb6e236ec23527c875a61a9023084c5c9",
+      "tree": "9f6ef521088cef360ccb7407ee02e02e4ebb63b7",
+      "old_subject": "feat(rust): require exact source inventory owners",
+      "new_subject": "feat: require exact source inventory owners"
+    },
+    {
+      "old_commit": "23b9b537dbdc453ce0a571a58ef867f07d37b139",
+      "new_commit": "446854c2c230ed587b508bfd50bff298de206aff",
+      "tree": "3ce7d3d33aba3a9eb7cbbafe4328e05051b92890",
+      "old_subject": "feat(rust): inventory authored path owner membership",
+      "new_subject": "feat: inventory authored path owner membership"
+    },
+    {
+      "old_commit": "5efa1e257751480ab756caaf3c70e39c50b56dda",
+      "new_commit": "c4e42d74e3df9121f1ae3e8e3be13d1389dfd802",
+      "tree": "08de967672e20088019f369c21cacdc75aecc62c",
+      "old_subject": "test(rc9): qualify frozen transport owner sets",
+      "new_subject": "test: qualify frozen transport owner sets"
+    },
+    {
+      "old_commit": "faa606e33df78d4fb676338ac0c80cfb7df8d5ad",
+      "new_commit": "cf416c92888edc8d8d1ef655b32b3570cd142930",
+      "tree": "b17fd12ac90b9b387c75b37d8da6eb882514b1c2",
+      "old_subject": "fix(core): combine equivalent inventory comparison arms",
+      "new_subject": "fix: combine equivalent inventory comparison arms"
+    },
+    {
+      "old_commit": "b340af6aef13378a637281cd0e92a23f50d7777f",
+      "new_commit": "93cbecfa7ce4c366e78df5485cdc42d845216626",
+      "tree": "a5220f625b0d828593547464558fb73b37de7442",
+      "old_subject": "feat(rust): inventory explicit import rename identities",
+      "new_subject": "feat: inventory explicit import rename identities"
+    },
+    {
+      "old_commit": "48d951bca85cf35ab44275859452992005d6f9a0",
+      "new_commit": "b24eb957f281d9e94999afddf24629aab95d4bf5",
+      "tree": "3febdff0c59be943677857831cf9f5b56949b32c",
+      "old_subject": "test(rc9): bind frozen exact owner parity evidence",
+      "new_subject": "test: bind frozen exact owner parity evidence"
+    },
+    {
+      "old_commit": "405fe5674f77b8a31bd5aea01b190da55c7dcbcf",
+      "new_commit": "056e38c01980da958323e430edd4135389eef5f8",
+      "tree": "249a9080f851eee3579187eed463e3f46ab6cbaf",
+      "old_subject": "test(rc9): qualify frozen import rename sets",
+      "new_subject": "test: qualify frozen import rename sets"
+    },
+    {
+      "old_commit": "163d3d1f7da05276b23e45b0700ff94208099fdd",
+      "new_commit": "18ec1c880fe69e3b51b2a24a6de689301b6124cb",
+      "tree": "beddf4a16e8dec73f6bff0cc5631dd57612fcc05",
+      "old_subject": "feat(rust): inventory written trait implementation pairs",
+      "new_subject": "feat: inventory written trait implementation pairs"
+    },
+    {
+      "old_commit": "7aaa1157071de35eb46ba62442580dfba57f1b59",
+      "new_commit": "80c1e5d2918e29080a2037d521c60974dbc5a3cd",
+      "tree": "41ace8e91d5c249819a6a6961bc9f7816a0720e8",
+      "old_subject": "fix(rc9): mount trait inventory tests in test directories",
+      "new_subject": "fix: mount trait inventory tests in test directories"
+    },
+    {
+      "old_commit": "813bbdc7c7259c74cee5224441bbe8df54beb07e",
+      "new_commit": "634c04bb0d114dee8bcdc8b6e6a59c347eaea4a5",
+      "tree": "da1a81e3de4d400f765558d7ff3c0be475cf186d",
+      "old_subject": "test(rc9): qualify frozen trait implementation sets",
+      "new_subject": "test: qualify frozen trait implementation sets"
+    },
+    {
+      "old_commit": "53936654ffbaff1bb0e9e127db46d3ca0aa510ba",
+      "new_commit": "63f3ff46cac0877062ca14205cbb1d26b36ed208",
+      "tree": "867f379edce0e69867392247bf569d76e5f5038c",
+      "old_subject": "test(rc9): bind frozen import rename parity evidence",
+      "new_subject": "test: bind frozen import rename parity evidence"
+    },
+    {
+      "old_commit": "b800c03e00664dba51737da9ab5ee63ead0ab449",
+      "new_commit": "57a8d0e93233ec68ebc8f96beee599812fc9be5e",
+      "tree": "8381b2bd60c9f9d4bf551036195f3be3c6462a31",
+      "old_subject": "feat(rust): inventory direct file declarations",
+      "new_subject": "feat: inventory direct file declarations"
+    },
+    {
+      "old_commit": "01bbf38481217b0611a387ee2af488328f52137c",
+      "new_commit": "0086bc3f8d42e7363d9cca8828a5f6b7ff8176b8",
+      "tree": "da94311ebc90e262e2304915b958cc5cc15b61d0",
+      "old_subject": "chore(rc9): checkpoint interrupted qualification",
+      "new_subject": "chore: checkpoint interrupted qualification"
+    },
+    {
+      "old_commit": "6f5b3e90111670f96496d8778112f45c3cb5e8fe",
+      "new_commit": "e63045a90b1fbef814aea45585f01d1950381d6d",
+      "tree": "8aede5b4b10e6c209b7f3f7051f389cfe62e4139",
+      "old_subject": "test(rc9): bind repeated trait inventory evidence",
+      "new_subject": "test: bind repeated trait inventory evidence"
+    },
+    {
+      "old_commit": "5b2ca58ca5311c02d5663c208bc461088fd87fbe",
+      "new_commit": "3c2f7f3caa71240ea77a2dca6507dbb2555fd940",
+      "tree": "45b88a2b654a9983c4983ab36c4db3fd52be7322",
+      "old_subject": "feat(files): enforce bounded line-prefix prohibitions",
+      "new_subject": "feat: enforce bounded line-prefix prohibitions"
+    },
+    {
+      "old_commit": "1f18bf542ebd0429ebd71963498952ecf8c5853a",
+      "new_commit": "4292210dc1306152e4dff8c8e39819b4726ffe8d",
+      "tree": "ec6d63cad8d2ec5832ef32404360cf946a5da1dc",
+      "old_subject": "feat(audit): bind manually reviewed non-Rust assertion spans",
+      "new_subject": "feat: bind manually reviewed non-Rust assertion spans"
+    },
+    {
+      "old_commit": "1a3d5da5614de4eb6161ff0e68080c3a004e17d1",
+      "new_commit": "77ed943e146a1f6027b7c022f3cbda3895ba25d0",
+      "tree": "dbd1ae3776a68924c379ff18b2a6b81fadcc9a8b",
+      "old_subject": "test(rc9): translate mixed kafka-driver route assertions",
+      "new_subject": "test: translate mixed kafka-driver route assertions"
+    },
+    {
+      "old_commit": "bc2c8dec9597c5aa2f47eba9401ddc273fb5c7a0",
+      "new_commit": "6a799d4f1509b0a3ee65595f17b728bac21079a0",
+      "tree": "837d8f3cd6ee4bb16a431aa7de93e4123040feec",
+      "old_subject": "test(rc9): qualify Rafter source-boundary translations",
+      "new_subject": "test: qualify Rafter source-boundary translations"
+    },
+    {
+      "old_commit": "7fb1093e77e636a3e98c69fec7bf1dbcb61ff26d",
+      "new_commit": "8393763ff6d1e093146891bf41ed51449ce54d5d",
+      "tree": "4e849e86425ff2e463ce4eb914819edc6eefad7a",
+      "old_subject": "docs(rc9): checkpoint replacement qualification and cutovers",
+      "new_subject": "docs: checkpoint replacement qualification and cutovers"
+    },
+    {
+      "old_commit": "8c198a07c7552b3fe5287c61c2183e5a17079025",
+      "new_commit": "99479c275602d9834aba95b3797a3bb5ae039904",
+      "tree": "6c0950e3f0297c770e675c8d354877edb5b510b6",
+      "old_subject": "test(rc9): qualify route source and compile-input parity",
+      "new_subject": "test: qualify route source and compile-input parity"
+    },
+    {
+      "old_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4",
+      "new_commit": "e6982437651c152168975bb57a048fc0796cf854",
+      "tree": "74b8e73ed0dd1c82bd2d8a331a210311811e69f8",
+      "old_subject": "fix(rc9): bind precise compiler failures and route decoys",
+      "new_subject": "fix: bind precise compiler failures and route decoys"
+    },
+    {
+      "old_commit": "0e1fce7ac04621027c412d58d42efda66a364a45",
+      "new_commit": "1bfcebd2e1b723319c301a55734176239b13311c",
+      "tree": "6969c9fd327ffe06f729b3357e3bf1ed667cd6c7",
+      "old_subject": "test(rc9): verify route artifacts and close source assertions",
+      "new_subject": "test: verify route artifacts and close source assertions"
+    },
+    {
+      "old_commit": "2ca08376b506ea9b4ddc5c348612fe5c8aae4e33",
+      "new_commit": "ba502115dcf8816078e437cec936fb2a612eae35",
+      "tree": "3c0c42f07bfa2d32053dd2366e3a1802a3f3d2c3",
+      "old_subject": "docs(rc9): record unsigned checkpoints and committed qualification",
+      "new_subject": "docs: record unsigned checkpoints and committed qualification"
+    },
+    {
+      "old_commit": "d5d2f9bcd0e64d36b5703980fe5f2a4593476aa7",
+      "new_commit": "63fb4c222b0ce1083b737026404d5fd0b56dc53d",
+      "tree": "8b152c1c1658d0265fa473d74d555d49aa590cce",
+      "old_subject": "docs(rc9): fix the compiler harness macro reference",
+      "new_subject": "docs: fix the compiler harness macro reference"
+    },
+    {
+      "old_commit": "359fd5621f42e106615a66bb7a665a85cff3ff41",
+      "new_commit": "dc76072d1e7d875c7199bbf6bcbb323b3fa142ff",
+      "tree": "f9707a4d6f69754ac267ccde5866555b6100439d",
+      "old_subject": "refactor(rc9): serialize route evidence through reviewed types",
+      "new_subject": "refactor: serialize route evidence through reviewed types"
+    },
+    {
+      "old_commit": "66b5b57415a967de5703a155f35cad8f74159b01",
+      "new_commit": "545b671de3f6288af95d4ae7fb7ffd12267dd8db",
+      "tree": "7276b98d1a1f497a2bce2269a19f6ad86d3b2dcf",
+      "old_subject": "test(rc9): bind repeated typed route qualification",
+      "new_subject": "test: bind repeated typed route qualification"
+    }
+  ]
+}

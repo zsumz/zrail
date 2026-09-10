@@ -22,6 +22,9 @@ pub(crate) struct RuleContext<'a> {
     pub(crate) cargo: &'a CargoWorkspace,
     pub(crate) resolved_cargo: Option<&'a ResolvedCargoGraph>,
     pub(crate) source: &'a SourceIndex,
+    pub(crate) repository_files: &'a crate::repository_files::RepositoryFileAnalysis,
+    pub(crate) lock_packages: &'a [crate::GovernedLockPackage],
+    pub(crate) rust_inventories: &'a [crate::GovernedRustInventory],
     pub(crate) module_edges: &'a [ResolvedModuleEdge],
     pub(crate) compilation_domains: &'a BTreeMap<String, BTreeSet<CompilationDomain>>,
     pub(crate) feature_worlds: &'a [ResolvedFeatureWorld],
@@ -31,10 +34,15 @@ pub(crate) fn evaluate(context: &RuleContext<'_>, limit: DiagnosticLimit) -> Fin
     let mut findings =
         FindingSink::from_findings_with_limit(context.source.findings.clone(), limit);
     repository::evaluate(context, &mut findings);
+    for finding in &context.repository_files.findings {
+        findings.push(finding.clone());
+    }
     cargo_override::evaluate(context, &mut findings);
     cargo_identity::evaluate(context, &mut findings);
     generated::evaluate(context, &mut findings);
     dependency::evaluate(context, &mut findings);
+    crate::lock_packages::evaluate(context.lock_packages, &mut findings);
+    crate::rust_inventories::evaluate(context.rust_inventories, &mut findings);
     capability::evaluate(context, &mut findings);
     macro_expansion::evaluate(context, &mut findings);
     type_policy::evaluate(context, &mut findings);

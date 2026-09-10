@@ -1,0 +1,34 @@
+# Partial authored-key fragment; assemble the complete repository section before adoption.
+# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# Detector SHA-256: fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f
+# Registry SHA-256: 099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10
+
+[[repository.files]]
+name = "kd-dep-driver-keys"
+include = ["Cargo.toml"]
+reason = "Preserve the authored ordinary-dependency key set, exact/subset mode, and present-non-table empty projection."
+predicate = { kind = "document", format = "toml", path = ["dependencies"], assertion = { op = "keys-exact", keys = ["bornera", "bornera-core", "bornera-rustls", "bytes", "calandria", "calandria-mio", "kafka-driver-core", "kafka-driver-transport", "kafka-wire", "kafka-wire-core", "mio", "ring", "rustls", "sasl-scram", "zeroize"], empty_on_non_table = true } }
+
+[[repository.files]]
+name = "kd-dep-core-keys"
+include = ["crates/kafka-driver-core/Cargo.toml"]
+reason = "Preserve the authored ordinary-dependency key set, exact/subset mode, and present-non-table empty projection."
+predicate = { kind = "document", format = "toml", path = ["dependencies"], assertion = { op = "keys-allowed", keys = ["kafka-wire-core"], empty_on_non_table = true } }
+
+[[repository.files]]
+name = "kd-dep-transport-keys"
+include = ["crates/kafka-driver-transport/Cargo.toml"]
+reason = "Preserve the authored ordinary-dependency key set, exact/subset mode, and present-non-table empty projection."
+predicate = { kind = "document", format = "toml", path = ["dependencies"], assertion = { op = "keys-exact", keys = ["bytes", "kafka-driver-core", "kafka-wire-core"], empty_on_non_table = true } }
+
+[[repository.files]]
+name = "kd-dep-sim-keys"
+include = ["crates/kafka-driver-sim/Cargo.toml"]
+reason = "Preserve the authored ordinary-dependency key set, exact/subset mode, and present-non-table empty projection."
+predicate = { kind = "document", format = "toml", path = ["dependencies"], assertion = { op = "keys-exact", keys = ["criticality", "kafka-driver-core"], empty_on_non_table = true } }
+
+[[repository.files]]
+name = "kd-dep-probe-keys"
+include = ["crates/kafka-driver-probe/Cargo.toml"]
+reason = "Preserve the authored ordinary-dependency key set, exact/subset mode, and present-non-table empty projection."
+predicate = { kind = "document", format = "toml", path = ["dependencies"], assertion = { op = "keys-exact", keys = ["kafka-driver", "kafka-wire", "kafka-wire-core", "rustls"], empty_on_non_table = true } }

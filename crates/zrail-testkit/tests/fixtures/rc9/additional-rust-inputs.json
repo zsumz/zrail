@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "inputs": [
+    {
+      "repository": "kafkars/kafkars",
+      "commit": "67ad7aa8d91f9639c87b00338b9e21a633f7bb4c",
+      "path": "crates/kafka-client-guardrails/tests/fixtures/source_graph_bypass/package/src/hidden.inc",
+      "sha256": "c04c6745b8b17619405d0c8f481a6d246b8600a9c3b6f6ca83a79f926a99dbab",
+      "syntax": "items",
+      "reason": "Reviewed Rust detector fixture reached through builtin-looking imported include aliases. This is explicit discovery input, not a macro authority attestation or a claim that the fixture compiles.",
+      "review_sources": [
+        {
+          "path": "crates/kafka-client-guardrails/tests/fixtures/source_graph_bypass/package/src/shadowed_import.rs",
+          "sha256": "4f6ce8cf0da261acc6122685bb8a4eb610f50b7c31dc8f53f9b9207c63301e90"
+        },
+        {
+          "path": "crates/kafka-client-guardrails/tests/fixtures/source_graph_bypass/package/src/shadowed_builtin.rs",
+          "sha256": "2711227846c3d30e155fd67aa062b8b6b980116470a9e9de4c361910fe90249b"
+        },
+        {
+          "path": "crates/kafka-client-guardrails/tests/fixtures/source_graph_bypass/package/src/shadowed_core_extern.rs",
+          "sha256": "0116304daed08081f48f5c3067ece05309bafba4352aea274d39f159e95c0717"
+        },
+        {
+          "path": "crates/kafka-client-guardrails/tests/fixtures/source_graph_bypass/package/src/shadowed_raw_root.rs",
+          "sha256": "443e9d7fcf4fa3872b0a8ef0c4a5c80ae7d0dfe86d1112e85219c5b41ff37fd9"
+        },
+        {
+          "path": "crates/kafka-client-guardrails/tests/fixtures/source_graph_bypass/package/src/shadowed_syn.rs",
+          "sha256": "a26ba24b5f7e0732871fe6c69b1a26e065334da23ee983fcfd348cebd4a987cf"
+        },
+        {
+          "path": "crates/kafka-client-guardrails/tests/fixtures/source_graph_bypass/package/src/macro_scope_launder.rs",
+          "sha256": "ea350266f4ba5635d97b4dae00eee7ec8a581e4a6c2d2ac813e15f0d0d50b5ee"
+        }
+      ]
+    },
+    {
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "path": "crates/rafter-invariants/src/artifact_verify/tests/reports.inc",
+      "sha256": "4d7e7957decb4393491b03e0f0fc012b6495dffc1362550df8ea63a16eebbe42",
+      "syntax": "items",
+      "reason": "Reviewed item-source fragment mounted by literal include! in the bound test aggregate. Candidate discovery does not classify verifier execution as an architecture policy.",
+      "review_sources": [
+        {
+          "path": "crates/rafter-invariants/src/artifact_verify/tests.rs",
+          "sha256": "384a5a7ce43bc45809feda51fea9a7f1366d508897221a56235f70289ce3d75c"
+        }
+      ]
+    },
+    {
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "path": "crates/rafter-invariants/src/artifact_verify/tests/resources.inc",
+      "sha256": "3629f74397d3a2f5cb31e72e1fa3f00eaba1f76734c7d98a4542b0f96398bc65",
+      "syntax": "items",
+      "reason": "Reviewed item-source fragment mounted by literal include! in the bound test aggregate. Candidate discovery does not classify verifier execution as an architecture policy.",
+      "review_sources": [
+        {
+          "path": "crates/rafter-invariants/src/artifact_verify/tests.rs",
+          "sha256": "384a5a7ce43bc45809feda51fea9a7f1366d508897221a56235f70289ce3d75c"
+        }
+      ]
+    },
+    {
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "path": "crates/rafter-invariants/src/artifact_verify/tests/schedule.inc",
+      "sha256": "535e5c43ce7e917ef4b1266ddb08609408fcd8a541568bc3223d77f098a6d234",
+      "syntax": "items",
+      "reason": "Reviewed item-source fragment mounted by literal include! in the bound test aggregate. Candidate discovery does not classify verifier execution as an architecture policy.",
+      "review_sources": [
+        {
+          "path": "crates/rafter-invariants/src/artifact_verify/tests.rs",
+          "sha256": "384a5a7ce43bc45809feda51fea9a7f1366d508897221a56235f70289ce3d75c"
+        }
+      ]
+    },
+    {
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "path": "crates/rafter-invariants/src/verification/maelstrom/tests/full_bundle/bundle_fixture.inc",
+      "sha256": "5ba04316ab858243f4ab3c394ec7b7e07b11845bd6f7ce4a906c6b0c2c8e3c98",
+      "syntax": "items",
+      "reason": "Reviewed item-source fragment mounted by literal include! in the bound test aggregate. Candidate discovery does not classify verifier execution as an architecture policy.",
+      "review_sources": [
+        {
+          "path": "crates/rafter-invariants/src/verification/maelstrom/tests/full_bundle.rs",
+          "sha256": "cf8a6865fe890cc71dc8dc07e9deec2e2831a8010b935e17f9b75fdfc7136490"
+        }
+      ]
+    },
+    {
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "path": "crates/rafter-invariants/src/verification/maelstrom/tests/full_bundle/scenarios.inc",
+      "sha256": "def1c427b28d79ddabf73e1d29484412a6cd5443cf40b66aa840b76ac82ba6d5",
+      "syntax": "items",
+      "reason": "Reviewed item-source fragment mounted by literal include! in the bound test aggregate. Candidate discovery does not classify verifier execution as an architecture policy.",
+      "review_sources": [
+        {
+          "path": "crates/rafter-invariants/src/verification/maelstrom/tests/full_bundle.rs",
+          "sha256": "cf8a6865fe890cc71dc8dc07e9deec2e2831a8010b935e17f9b75fdfc7136490"
+        }
+      ]
+    },
+    {
+      "repository": "zsumz/rafter",
+      "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+      "path": "crates/rafter-invariants/src/verification/maelstrom/tests/full_bundle/serialized_fixture.inc",
+      "sha256": "e248574950b60375573a1d1e6474b5e129785d8f534f4c486e84cfcebc42e1dd",
+      "syntax": "items",
+      "reason": "Reviewed item-source fragment mounted by literal include! in the bound test aggregate. Candidate discovery does not classify verifier execution as an architecture policy.",
+      "review_sources": [
+        {
+          "path": "crates/rafter-invariants/src/verification/maelstrom/tests/full_bundle.rs",
+          "sha256": "cf8a6865fe890cc71dc8dc07e9deec2e2831a8010b935e17f9b75fdfc7136490"
+        }
+      ]
+    }
+  ]
+}

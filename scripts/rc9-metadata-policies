@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+"""Emit the frozen Kafka-driver metadata translation as declarative policy data."""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+
+
+ROOT = Path(__file__).resolve().parent.parent
+SOURCE_SHA256 = "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c"
+
+
+def literal(value):
+    if isinstance(value, dict):
+        return "{ " + ", ".join(f"{key} = {literal(item)}" for key, item in value.items()) + " }"
+    return json.dumps(value, ensure_ascii=False)
+
+
+def translate(source):
+    repository = re.search(r'const CANONICAL_REPOSITORY: &str = "([^"]+)";', source)[1]
+    registry = re.search(r'const PUBLIC_PACKAGES:.*?= \[(.*?)\n\];', source, re.S)[1]
+    packages = re.findall(r'\(\s*"([^"]+)",\s*"([^"]+)"\s*,?\s*\)', registry)
+    if len(packages) != 3 or len(set(packages)) != 3:
+        raise ValueError("unexpected frozen public package registry")
+    rules = []
+
+    def rule(name, path, predicate, reason):
+        rules.append(dict(name="kd-metadata-" + name, include=[path], reason=reason, predicate=predicate))
+
+    def field(name, path, keys, value=None, op="equals"):
+        assertion = dict(op=op)
+        if op == "equals":
+            assertion["value"] = value
+        rule(name, path, dict(kind="document", format="toml", path=keys, assertion=assertion),
+             "Preserve the exact authored metadata assertion; this is not resolved Cargo or execution evidence.")
+
+    for name, path in packages:
+        field("00-parse-" + name, path, [], op="present")
+    for key, value in [("version", "0.1.0-rc.5"), ("license", "Apache-2.0"), ("repository", repository)]:
+        field("workspace-" + key, "Cargo.toml", ["workspace", "package", key], value)
+    for name, path in packages:
+        field(name + "-name", path, ["package", "name"], name)
+        for key in ["version", "license", "repository"]:
+            field(name + "-" + key, path, ["package", key, "workspace"], True)
+        field(name + "-publish", path, ["package", "publish"], ["crates-io"])
+        field(name + "-description", path, ["package", "description"], op="nonempty-string")
+        rule(name + "-license-copy", str(Path(path).parent / "LICENSE"),
+             dict(kind="bytes-equal", other="LICENSE", utf8=True),
+             "Both license inputs must decode as UTF-8 and remain byte-identical.")
+    for path in ["LICENSE", "README.md", "kafka-driver-logo.svg"]:
+        rule("required-" + path.lower().replace(".", "-"), path,
+             dict(kind="count", minimum=1, maximum=1), "Preserve the required regular release file.")
+    field("readme", "Cargo.toml", ["package", "readme"], "README.md")
+    for name, path, text in [
+        ("package-repository", "scripts/qualify-packages", repository),
+        ("verify-repository", "scripts/verify-release-repository", "repository_url=" + repository),
+        ("verify-http-fail", "scripts/verify-release-repository", "--fail"),
+        ("workflow-verify", ".github/workflows/qualification.yml", "run: scripts/verify-release-repository"),
+    ]:
+        rule(name, path, dict(kind="literal", text=text, mode="contains"),
+             "Preserve the deliberately raw marker, including comments; it does not prove execution.")
+    if len(rules) != 35:
+        raise ValueError("incomplete frozen metadata translation")
+    return rules
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("snapshots", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
+    source = (args.snapshots / "kafka-driver/tests/guardrails/release_metadata.rs").read_bytes()
+    if hashlib.sha256(source).hexdigest() != SOURCE_SHA256:
+        raise ValueError("metadata detector differs from the frozen audit")
+    rules = translate(source.decode("utf-8"))
+    lines = ["# Partial metadata fragment; assemble the complete repository section before adoption.",
+             "# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+             "# Detector SHA-256: " + SOURCE_SHA256]
+    for rule in rules:
+        lines += ["", "[[repository.files]]"] + [f"{key} = {literal(value)}" for key, value in rule.items()]
+    with args.output.open("x", encoding="utf-8", newline="\n") as output:
+        output.write("\n".join(lines) + "\n")
+    print(f"metadata translation: {len(rules)} policies")
+
+
+if __name__ == "__main__":
+    main()

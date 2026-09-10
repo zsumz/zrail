@@ -1,0 +1,2016 @@
+structure: 886 Rust files, facades and tests valid, max 300 lines
+    Checking zrail-rust v0.0.3-rc.8 (/root/zrail-rc9/crates/zrail-rust)
+    Finished `dev` profile [unoptimized] target(s) in 10.72s
+   Compiling zrail-rust v0.0.3-rc.8 (/root/zrail-rc9/crates/zrail-rust)
+    Finished `test` profile [unoptimized] target(s) in 19.34s
+     Running unittests src/main.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/zrail-dfe6877a10d42574)
+
+running 109 tests
+test app::args::args_test::check_defaults_are_quiet_and_repository_local ... ok
+test app::args::args_test::init_accepts_a_rust_preset_with_baseline_in_any_order ... ok
+test app::args::args_test::diff_base_and_explicit_states_are_mutually_exclusive ... ok
+test app::args::args_test::diff_requires_a_base_or_two_explicit_repository_states ... ok
+test app::args::args_test::init_defaults_to_zsumz_without_baseline ... ok
+test app::args::args_test::baseline_parses_dry_run_rule_and_grant_authority ... ok
+test app::args::args_test::init_rejects_unknown_or_repeated_preset_authority ... ok
+test app::args::args_test::init_accepts_repeated_exclusion_inputs ... ok
+test app::args::args_test::review_denies_grants_without_a_safety_flag ... ok
+test app::args::args_test::review_separates_trusted_authority_from_proposed_source ... ok
+test app::args::args_test::update_requires_explicit_grant_acceptance ... ok
+test app::args::coverage::coverage_test::coverage_accepts_repository_config_and_json_format ... ok
+test app::args::coverage::coverage_test::coverage_defaults_to_a_human_repository_local_report ... ok
+test app::args::explain::explain_test::canonical_path_flag_accepts_any_option_order ... ok
+test app::args::explain::explain_test::concrete_and_hypothetical_paths_are_mutually_exclusive ... ok
+test app::args::explain::explain_test::hypothetical_path_is_explicit ... ok
+test app::args::explain::explain_test::positional_path_remains_compatible_without_ambiguity ... ok
+test app::args::limit::limit_test::commands_without_finding_payloads_reject_diagnostic_limits ... ok
+test app::args::limit::limit_test::deprecated_limit_alias_remains_compatible_but_cannot_be_combined ... ok
+test app::args::limit::limit_test::diagnostic_limits_are_available_on_diagnostic_commands ... ok
+test app::args::limit::limit_test::diagnostic_limits_reject_negative_and_unknown_values ... ok
+test app::args::migrate_lock::migrate_lock_test::base_discovery_is_read_only_and_needs_no_output ... ok
+test app::args::migrate_lock::migrate_lock_test::base_discovery_rejects_migration_authority ... ok
+test app::args::migrate_lock::migrate_lock_test::cross_revision_target_is_distinct_from_the_base ... ok
+test app::args::mirrors::mirrors_test::parses_json_plan_and_exact_verify_plan ... ok
+test app::args::mirrors::mirrors_test::receipts_requires_exact_plan_and_result_paths ... ok
+test app::args::mirrors::mirrors_test::verify_requires_one_plan_and_plan_rejects_it ... ok
+test app::args::review::review_test::missing_proposal_root_is_rejected ... ok
+test app::args::review::review_test::one_explicit_proposal_root_is_preserved ... ok
+test app::args::review::review_test::repeated_proposal_root_is_rejected ... ok
+test app::commands::baseline_edit::baseline_edit_test::no_additions_leave_contract_bytes_exactly_unchanged ... ok
+test app::commands::baseline_edit::baseline_edit_test::appends_only_missing_ratchets_without_reserializing_other_text ... ok
+test app::commands::baseline_edit::baseline_edit_test::selector_ratchets_render_and_compare_by_normalized_identity ... ok
+test app::commands::config_edit::config_edit_test::rollback_failure_is_reported_beside_the_original_write_failure ... ok
+test app::commands::config_edit::config_edit_test::source_changed_after_planning_is_never_overwritten ... ok
+test app::commands::config_edit::config_edit_test::later_write_failure_restores_every_previously_replaced_source ... ok
+test app::commands::baseline::baseline_test::non_ratchetable_failure_leaves_both_architecture_files_unchanged ... ok
+test app::commands::diff::diff_test::deny_grants_rejects_old_semantics ... ok
+test app::commands::diff::diff_test::deny_grants_rejects_stale_contract_digest ... ok
+test app::commands::baseline::baseline_test::dry_run_and_refusal_leave_existing_contract_and_missing_lock_unchanged ... ok
+test app::commands::doctor::doctor_test::old_lock_semantics_exit_nonzero ... ok
+test app::commands::baseline::baseline_test::lock_write_failure_rolls_back_the_contract ... ok
+test app::commands::doctor::doctor_test::unsupported_lock_schema_exits_nonzero ... ok
+test app::commands::git_process::git_process_test::bounded_drains_discard_excess_bytes ... ok
+test app::commands::git_process::git_process_test::bounded_reads_stop_after_the_first_excess_byte ... ok
+test app::commands::config_edit::config_edit_test::schema_migration_expands_imports_and_renames_macro_authority ... ok
+test app::commands::git_materialize::filesystem::filesystem_test::temporary_root_removes_create_only_nested_files_on_drop ... ok
+test app::commands::baseline::baseline_test::accepted_baseline_preserves_comments_and_second_run_is_byte_idempotent ... ok
+test app::commands::init::init_baseline::init_baseline_test::baseline_refuses_unratchetable_source_debt_without_partial_state ... ok
+test app::commands::init::init_baseline::init_baseline_test::baseline_records_size_and_inline_test_debt_as_ratchets ... ok
+test app::commands::init::init_baseline::init_baseline_test::baseline_inline_test_debt_cannot_grow_or_shrink_silently ... ok
+test app::commands::init::init_baseline::init_baseline_test::debt_free_baseline_retains_the_strict_template ... ok
+test app::commands::init::init_selection::init_selection_test::hidden_cargo_target_is_rejected_without_partial_architecture ... ok
+test app::commands::init::init_selection::init_selection_test::exclusion_flags_and_files_render_one_canonical_selection ... ok
+test app::commands::init::init_test::contract_only_initialization_defers_inline_test_debt ... ok
+test app::commands::init::init_test::contract_only_initialization_defers_size_debt ... ok
+test app::commands::init::init_test::non_cargo_directories_are_rejected_without_partial_state ... ok
+test app::commands::init::init_test::initialization_never_overwrites_existing_architecture ... ok
+test app::commands::init::init_selection::init_selection_test::baseline_skips_excluded_malformed_fixtures_and_writes_a_lock ... ok
+test app::commands::init::init_test::initialization_discovers_only_active_workspace_roots ... ok
+test app::commands::init::init_test::standalone_package_initializes_at_the_repository_root ... ok
+test app::commands::init::init_test::root_package_workspace_initializes_as_one_repository_boundary ... ok
+test app::commands::init::init_test::virtual_workspace_discovers_custom_package_directories ... ok
+test app::commands::init_template::init_template_test::canonical_exclusions_are_rendered_exactly ... ok
+test app::commands::init_template::init_template_test::roots_are_toml_escaped_and_defaults_remain_strict ... ok
+test app::commands::init_template::init_template_test::rust_preset_keeps_conventional_tests_without_inventing_a_size_limit ... ok
+test app::commands::init_template::init_template_test::zsumz_preset_denies_unreviewed_macro_expansion ... ok
+test app::commands::init_preset::init_preset_test::rust_preset_accepts_inline_and_integration_tests_without_a_size_policy ... ok
+test app::commands::migrate_lock_artifact::migrate_lock_artifact_test::report_json_is_embedded_under_an_escaped_review_envelope ... ok
+test app::commands::git_base::git_base_test::snapshot_rejects_symlinked_architecture_inputs ... ok
+test app::commands::init_preset::init_preset_test::baseline_is_an_independent_no_op_for_allowed_rust_conventions ... ok
+test app::commands::migration_bridge::migration_bridge_test::canonical_error_paths_do_not_bind_temporary_snapshot_locations ... ok
+test app::commands::init_preset::init_preset_test::rust_preset_accepts_an_external_root_that_no_active_policy_relies_on ... ok
+test app::commands::git_base::git_base_test::base_diff_compares_the_commit_with_the_current_worktree ... ok
+test app::commands::git_base::git_base_test::snapshot_materializes_exact_and_wildcard_contract_inputs ... ok
+test app::commands::git_base_migration_test::base_diff_accepts_a_legacy_generated_provenance_state ... ok
+test app::commands::migrate_lock_recovery::migrate_lock_recovery_test::discovery_identifies_uncommitted_contract_edits_as_the_cause ... ok
+test app::commands::migration_bridge::migration_bridge_test::migration_report_cannot_replace_a_tracked_target_file ... ok
+test app::commands::migration_bridge::migration_bridge_test::repository_snapshot_binds_internal_symlinks ... ok
+test app::commands::migrate_lock_recovery::migrate_lock_recovery_test::discovery_lists_every_matching_lock_revision_without_selecting_one ... ok
+test app::commands::migrate_lock::migrate_lock_test::immutable_base_migration_writes_a_digest_bound_scoped_report ... ok
+test app::commands::mutation_paths::mutation_paths_test::baseline_rejects_every_contract_source_as_its_lock_destination ... ok
+test app::commands::mutation_paths::mutation_paths_test::update_rejects_every_contract_source_as_its_lock_destination ... ok
+test app::commands::migration_bridge::migration_bridge_test::migration_acceptance_does_not_accept_target_policy_grants ... ok
+test app::commands::review::review_test::grant_exceptions_never_allow_debt_or_unknown_comparisons ... ok
+test app::commands::migration_bridge::migration_bridge_test::gitlinks::allowed_gitlinks_are_opaque_and_bind_the_exact_object_identity ... ok
+test app::commands::migration_bridge::migration_bridge_test::gitlinks::deny_rejects_raw_gitlinks_even_without_gitmodules_or_governed_contents ... ok
+test app::commands::migration_bridge::migration_bridge_test::target_must_retain_the_exact_prior_lock ... ok
+test app::commands::migration_bridge::migration_bridge_test::descendant_target_bridges_a_base_the_current_engine_cannot_analyze ... ok
+test app::commands::review::review_test::proposed_lock_must_match_independently_observed_source ... ok
+test app::commands::review::review_test::proposal_cargo_configuration_is_rejected_without_execution ... ok
+test app::commands::review::review_test::unchanged_compliant_source_passes_protected_review ... ok
+test app::commands::review::review_test::proposed_policy_weakening_cannot_authorize_violating_source ... ok
+test app::commands::review::review_test::unchanged_contract_and_lock_cannot_hide_a_source_violation ... ok
+test app::commands::review::review_test::unsupported_proposed_schema_fails_for_lock_optional_contract ... ok
+test app::commands::review_dependency_test::same_name_git_dependency_cannot_reuse_an_internal_lock ... ok
+test app::commands::review_lock_test::changed_producer_with_stable_semantics_is_reviewable ... ok
+test app::commands::update_authority::update_authority_test::grant_acceptance_cannot_replace_missing_immutable_authority ... ok
+test app::commands::review_lock_test::old_proposed_semantics_fail_explicitly ... ok
+test app::commands::update_authority::update_authority_test::missing_worktree_lock_cannot_authorize_a_weaker_contract ... ok
+test app::output::output_test::json_errors_include_message_and_help ... ok
+test app::output::output_test::json_strings_preserve_unicode_and_escape_controls ... ok
+test app::commands::update_authority::update_authority_test::forged_worktree_digest_cannot_hide_a_weaker_contract ... ok
+test app::commands::update::update_test::update_refuses_changed_gate_bytes_without_acceptance ... ok
+test app::commands::update::update_test::update_refuses_changed_generated_provenance_without_acceptance ... ok
+test app::commands::update::update_test::update_refuses_new_dependency_without_acceptance ... ok
+test app::commands::migration_bridge::migration_bridge_test::target_source_mutation_invalidates_the_reviewed_bridge ... ok
+test app::commands::migration_bridge::migration_bridge_test::untracked_and_index_hidden_changes_invalidate_the_reviewed_target ... ok
+test app::commands::update_contract_test::policy_weakenings_require_explicit_acceptance ... ok
+
+test result: ok. 109 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.38s
+
+     Running tests/explain_cli.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/explain_cli-4a83a56934a762d2)
+
+running 2 tests
+test hypothetical_path_remains_available_explicitly ... ok
+test nonexistent_concrete_path_exits_nonzero_without_classification ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/zrail_core-69dcf0505c167c95)
+
+running 211 tests
+test contract::evidence::evidence_test::parses_exact_supported_evidence ... ok
+test contract::evidence::evidence_test::rejects_ambiguous_or_extensible_spellings ... ok
+test contract::discover::discover_test::patterns_have_one_normalized_fixed_traversal_root ... ok
+test contract::imports::imports_test::imports_are_extracted_from_complete_or_fragment_contracts ... ok
+test contract::imports::imports_test::malformed_import_lists_fail_before_snapshot_materialization ... ok
+test contract::discover::discover_test::nested_target_directories_are_visible_but_root_build_output_is_not ... ok
+test contract::load::load_test::cargo_lock_source_selector_accepts_exact_discriminators ... ok
+test contract::load::load_test::contract_symlinks_are_rejected_before_reading ... ok
+test contract::load::load_test::unknown_keys_fail_closed ... ok
+test contract::load::load_test::profile_reachability_accepts_only_closed_policy_values ... ok
+test contract::load::load_test::entry_overlay_preserves_identity_and_imports_without_writing ... ok
+test contract::load::load_test::dependency_rules_default_to_direct_and_accept_transitive_kinds ... ok
+test contract::load::load_test::local_fragments_merge_without_order_dependent_overrides ... ok
+test contract::validate::owner::owner_test::call_owners_require_a_qualified_rust_path ... ok
+test contract::validate::owner::owner_test::capability_owners_require_a_source_scope ... ok
+test contract::validate::owner::owner_test::capability_owners_require_rust_paths_and_bounded_allowed_files ... ok
+test contract::validate::owner::owner_test::directory_owners_reject_source_reachability ... ok
+test contract::validate::owner::owner_test::exact_operation_owners_require_qualified_identities ... ok
+test contract::validate::owner::owner_test::field_mutation_owners_require_canonical_written_methods ... ok
+test contract::validate::owner::owner_test::method_name_owners_reject_resolved_method_claims ... ok
+test contract::validate::owner::owner_test::other_owner_kinds_reject_mutating_methods ... ok
+test contract::validate::validate_test::adoption_ratchets_are_rejected_without_strict_policy ... ok
+test contract::validate::validate_test::duplicate_dependency_kinds_are_rejected ... ok
+test contract::validate::validate_test::duplicate_effects_are_rejected ... ok
+test contract::validate::validate_test::duplicate_layer_names_are_rejected ... ok
+test contract::validate::validate_test::duplicate_repository_roots_are_rejected ... ok
+test contract::validate::validate_test::empty_profiles_and_scopes_are_rejected ... ok
+test contract::mirror_schema_test::missing_execution_field_and_member_fail_closed ... ok
+test contract::mirror_schema_test::duplicate_execution_field_and_member_fail_closed ... ok
+test contract::validate::validate_test::explicit_analysis_limits_must_be_positive ... ok
+test contract::validate::validate_test::generated_manifests_stay_inside_disjoint_roots ... ok
+test contract::mirror_schema_test::unknown_mirror_and_execution_keys_fail_closed ... ok
+test contract::validate::validate_test::generated_source_stays_inside_analyzed_roots ... ok
+test contract::validate::validate_test::item_macro_names_are_complete_rust_paths ... ok
+test contract::validate::validate_test::out_dir_sources_require_a_verified_generated_root ... ok
+test contract::validate::validate_test::owner_allow_paths_must_be_inside_the_selector ... ok
+test contract::validate::validate_test::repository_root_literal_may_cover_the_whole_repository ... ok
+test contract::validate::validate_test::package_selectors_are_bounded_to_cargo_name_globs ... ok
+test contract::validate::validate_test::unused_profiles_are_rejected_as_stale_policy ... ok
+test contract::validate::validate_test::wildcard_ratchet_targets_are_rejected ... ok
+test contract::validate_dependencies::validate_dependencies_test::one_package_can_have_distinct_exact_source_attestations ... ok
+test contract::validate_dependencies::validate_dependencies_test::crate_root_attestations_require_unique_packages_valid_roots_and_reasons ... ok
+test contract::validate_dependencies::validate_dependencies_test::repository_macro_provenance_is_not_dependency_crate_root_authority ... ok
+test contract::validate_evidence::validate_evidence_test::accepts_one_exact_reasoned_test_mirror_pair ... ok
+test contract::validate_evidence::validate_evidence_test::accepts_a_connected_local_and_ci_graph ... ok
+test contract::validate_evidence::validate_evidence_test::rejects_cycles_and_higher_gates_disconnected_from_local_qualification ... ok
+test contract::validate_evidence::validate_evidence_test::rejects_incomplete_or_ambiguous_test_execution_context ... ok
+test contract::discover::discover_test::narrow_prefix_ignores_unrelated_deep_trees ... ok
+test contract::validate_limits::validate_limits_test::evidence_nodes_and_edges_consume_the_contract_limit ... ok
+test contract::validate_limits::validate_limits_test::test_mirror_inputs_and_features_consume_the_contract_limit ... ok
+test contract::validate_paths::validate_paths_test::package_patterns_have_a_byte_limit ... ok
+test contract::validate_ratchet::validate_ratchet_test::adoption_ratchets_require_their_strict_policy ... ok
+test contract::validate_paths::validate_paths_test::repository_patterns_have_byte_and_segment_limits ... ok
+test contract::validate_ratchet::validate_ratchet_test::authored_baselines_are_positive_file_size_measurements_in_the_scoped_mode ... ok
+test contract::validate_ratchet::validate_ratchet_test::denied_operation_ratchets_require_a_configured_selector ... ok
+test contract::validate_ratchet::validate_ratchet_test::file_size_ratchets_require_an_effective_budget ... ok
+test contract::validate_ratchet::validate_ratchet_test::inline_tests_are_supported_without_opening_extensible_rule_names ... ok
+test contract::validate_ratchet::validate_ratchet_test::selector_identity_is_normalized_and_reserved_for_selector_rules ... ok
+test contract::validate_sets::validate_sets_test::duplicate_async_syntax_is_rejected ... ok
+test contract::validate_sets::validate_sets_test::raw_identifier_spellings_cannot_duplicate_a_selector ... ok
+test contract::validate_source::feature_worlds::feature_worlds_test::accepts_unique_named_world_package_selections ... ok
+test contract::validate_source::feature_worlds::feature_worlds_test::rejects_duplicate_packages_features_and_unstable_names ... ok
+test contract::validate_evidence::validate_evidence_test::rejects_stale_gates_and_invariants_without_both_evidence_kinds ... ok
+test contract::validate_source::file_roles::file_roles_test::generated_source_cannot_be_reclassified ... ok
+test contract::validate_source::file_roles::file_roles_test::overrides_require_exact_unique_rust_paths_and_reasons ... ok
+test contract::validate_source::file_roles::file_roles_test::test_facades_require_structure_and_implementation_cannot_select_it ... ok
+test contract::validate_evidence::validate_evidence_test::rejects_unsafe_or_ambiguous_gate_inputs ... ok
+test contract::validate_source::item_macros::item_macros_test::external_source_requires_explicit_exact_binding ... ok
+test contract::validate_source::item_macros::item_macros_test::path_and_within_are_mutually_exclusive ... ok
+test contract::validate_source::macros::macros_test::compiler_field_mutation_claim_can_defer_provenance_to_exact_binding ... ok
+test contract::validate_evidence::validate_evidence_test::rejects_reused_or_invalid_test_mirror_identities ... ok
+test contract::validate_source::file_roles::file_roles_test::facade_modes_and_exact_role_fields_parse_strictly ... ok
+test contract::validate_source::macros::macros_test::conservative_name_permission_can_carry_an_exact_occurrence_claim ... ok
+test contract::validate_source::macros::macros_test::compiler_source_operations_claim_can_defer_provenance_to_exact_binding ... ok
+test contract::validate_source::macros::macros_test::exact_local_no_duplication_attestation_is_valid ... ok
+test contract::validate_source::macros::macros_test::exact_local_no_source_operations_attestation_is_valid ... ok
+test contract::validate_source::macros::macros_test::git_revision_bound_no_binding_attestation_is_valid ... ok
+test contract::validate_source::macros::macros_test::no_binding_attestation_requires_provenance ... ok
+test contract::validate_source::macros::macros_test::no_duplication_attestation_requires_exact_provenance ... ok
+test contract::validate_source::macros::macros_test::repository_source_is_valid_macro_provenance ... ok
+test contract::validate_source::macros::macros_test::no_binding_attestation_rejects_mutable_external_sources ... ok
+test contract::validate_source::macros::macros_test::source_bound_no_binding_attestation_is_valid ... ok
+test contract::validate_source::size::size_test::formatting_preserves_authored_budget_comments_and_layout ... ok
+test contract::validate_source::size::size_test::required_metadata_forms_cannot_be_exchanged_to_bypass_a_consumer_policy ... ok
+test contract::validate_source::types::types_test::authority_token_requires_private_leaf_clone_copy_closed_exact_shape ... ok
+test contract::validate_source::types::types_test::bundled_clone_copy_closure_rejects_redundant_explicit_prohibitions ... ok
+test contract::validate_source::types::types_test::complete_expanded_clone_copy_closure_is_valid_for_an_ordinary_type ... ok
+test contract::validate_source::types::types_test::exact_field_types_accept_complete_recursive_shapes ... ok
+test contract::validate_source::size::size_test::tiers_are_not_resolved_using_toml_order ... ok
+test contract::validate_source::types::types_test::exact_field_types_reject_lossy_or_unqualified_shapes ... ok
+test contract::validate_source::size::size_test::syntax_rejects_unknown_fields_modes_and_duplicate_keys ... ok
+test contract::validate_source::types::types_test::exact_private_authority_shape_is_valid ... ok
+test contract_edit::contract_edit_test::formatting_preserves_comments_order_spacing_and_markers ... ok
+test contract::validate_source::size::size_test::exceptions_require_exact_paths_bounds_and_actionable_metadata ... ok
+test contract_edit::contract_edit_test::migration_rejects_mixed_legacy_and_current_keys ... ok
+test contract::validate_source::size::size_test::selectors_limits_names_and_reasons_are_validated ... ok
+test contract_edit::contract_edit_test::migration_preserves_inline_table_spellings ... ok
+test diagnostic::diagnostic_test::finding_sink_counts_exact_groups_after_payload_truncation ... ok
+test diagnostic::diagnostic_test::ordering_is_path_then_location_then_rule ... ok
+test diff::analysis::analysis_test::adding_or_raising_an_override_grants_and_tightening_revokes ... ok
+test contract_edit::contract_edit_test::migration_changes_only_schema_import_patterns_and_legacy_keys ... ok
+test diagnostic::diagnostic_test::fingerprints_are_stable_and_sensitive_to_location ... ok
+test diff::async_glob_test::adding_async_syntax_denials_is_a_revocation ... ok
+test diff::async_glob_test::trusting_macro_output_to_be_async_free_is_a_grant ... ok
+test diff::async_glob_test::trusting_macro_output_to_be_duplication_free_is_a_grant ... ok
+test diff::async_glob_test::stricter_glob_import_modes_are_revocations ... ok
+test diff::authority_test::conservative_macro_binding_is_a_grant_and_exact_binding_is_a_revoke ... ok
+test diff::authority_test::crate_root_and_external_macro_source_changes_fail_closed ... ok
+test diff::async_glob_test::trusting_macro_output_to_be_source_operation_free_is_a_grant ... ok
+test diff::authority_test::no_binding_attestation_is_a_grant_and_removal_is_a_revoke ... ok
+test diff::authority_test::opaque_macro_input_is_a_grant_and_local_body_change_is_unknown ... ok
+test diff::boundaries::boundaries_test::adding_and_removing_operation_ownership_has_directional_diff ... ok
+test diff::authority_test::repository_macro_package_authority_adds_as_grant_and_removes_as_revoke ... ok
+test diff::boundaries::boundaries_test::field_mutation_method_changes_have_directional_diff ... ok
+test diff::compare::compare_test::declaring_generated_source_is_a_grant ... ok
+test contract::mirror_schema_test::nested_execution_loads_and_formats_byte_stably ... ok
+test diff::compare::compare_test::external_crate_root_attestation_is_a_grant_and_change_is_unknown ... ok
+test diff::compare::compare_test::raising_a_hard_ceiling_is_a_grant ... ok
+test diff::compare::compare_test::macro_expansion_denial_revokes_power_and_allowance_grants_it ... ok
+test diff::compare::compare_test::generated_selector_removal_auxiliary_and_item_macro_trust_are_grants ... ok
+test diff::compare::compare_test::relaxing_entrypoints_and_lint_reasons_is_a_grant ... ok
+test diff::compare::compare_test::generated_provenance_lock_changes_are_semantic ... ok
+test diff::compare::compare_test::relaxing_exact_dependencies_is_a_grant ... ok
+test diff::compare::compare_test::trusting_out_dir_source_is_a_grant ... ok
+test diff::boundaries::boundaries_test::narrowing_owner_evaluation_to_production_is_a_grant ... ok
+test diff::compare::compare_test::widening_a_capability_owner_is_a_grant ... ok
+test diff::compare::compare_test::resolved_packages_and_ratchets_have_opposite_directions ... ok
+test diff::evidence::evidence_test::adding_gate_inputs_revokes_permission_and_removing_them_grants_it ... ok
+test diff::evidence::evidence_test::adding_graph_nodes_revokes_permission_and_removing_them_grants_it ... ok
+test contract::load::load_test::contract_import_depth_is_bounded ... ok
+test diff::evidence::evidence_test::disconnecting_evidence_or_a_required_gate_is_a_grant ... ok
+test diff::evidence::evidence_test::exact_test_mirror_changes_preserve_permission_direction ... ok
+test diff::evidence::evidence_test::mirror_input_changes_are_directional_and_execution_changes_are_unknown ... ok
+test contract::load::load_test::wildcard_imports_do_not_traverse_unrelated_repository_trees ... ok
+test diff::lock::lock_test::changing_reviewed_gate_bytes_requires_human_review ... ok
+test diff::compare_checked_test::incompatible_semantics_are_unknown ... ok
+test diff::lock::lock_test::gate_input_changes_preserve_their_permission_direction ... ok
+test diff::compare_checked_test::mixed_old_and_current_semantics_are_unknown_not_resolved_changes ... ok
+test diff::compare_checked_test::producer_change_with_stable_semantics_is_accepted ... ok
+test diff::lock::lock_test::ratchet_selector_is_normalized_and_part_of_identity ... ok
+test diff::model::model_test::human_summary_includes_neutral_changes ... ok
+test diff::compare_checked_test::stale_contract_lock_is_unknown_and_skips_lock_semantics ... ok
+test diff::lock::lock_test::execution_receipt_lock_changes_preserve_permission_direction ... ok
+test diff::lock::lock_test::removing_gate_attestation_is_a_grant ... ok
+test diff::compare_checked_test::missing_lock_authority_is_unknown_on_either_side ... ok
+test diff::source::budgets::budgets_test::disabling_independent_hard_enforcement_is_a_grant ... ok
+test diff::source::budgets::budgets_test::authored_baseline_cannot_be_removed_or_inflated_behind_an_unchanged_lock ... ok
+test diff::source::budgets::budgets_test::removing_or_exchanging_required_accountability_fields_exposes_grants ... ok
+test diff::source::budgets::budgets_test::exception_addition_expansion_redirection_and_removal_are_directional ... ok
+test diff::source::budgets::budgets_test::selector_changes_are_protected_but_toml_set_order_is_neutral ... ok
+test diff::source::budgets::budgets_test::higher_limits_and_warning_downgrades_are_grants ... ok
+test diff::source::feature_worlds::feature_worlds_test::changing_selected_features_is_non_monotonic ... ok
+test diff::source::file_roles::file_roles_test::adding_a_test_facade_does_not_inherit_a_production_facade_mode ... ok
+test diff::source::file_roles::file_roles_test::removing_or_redirecting_test_facade_structure_requires_review ... ok
+test diff::source::feature_worlds::feature_worlds_test::switching_between_legacy_and_exact_worlds_is_unknown ... ok
+test diff::source::item_macros::item_macros_test::adding_scoped_authority_is_a_grant ... ok
+test diff::source::item_macros::item_macros_test::provenance_binding_changes_cannot_disappear_from_the_diff ... ok
+test diff::source::file_roles::file_roles_test::implementation_overrides_grant_and_facade_overrides_revoke ... ok
+test diff::topology::topology_test::expanding_a_direct_denial_to_transitive_is_only_a_revocation ... ok
+test diff::topology::topology_test::narrowing_effect_evaluation_to_production_is_a_grant ... ok
+test diff::type_policy_test::adding_and_removing_exact_type_policy_are_directed ... ok
+test diff::type_policy_test::exact_representation_changes_are_unknown ... ok
+test diff::type_policy_test::clone_copy_closure_and_written_syntax_changes_are_directed ... ok
+test digest::digest_test::digest_is_lowercase_fixed_width_hex ... ok
+test diff::type_policy_test::removing_redundant_deny_from_clone_copy_closure_is_not_a_grant ... ok
+test diff::type_policy_test::bundled_and_expanded_clone_copy_closure_are_authority_equivalent ... ok
+test diff::source::file_roles::file_roles_test::every_facade_mode_weakening_is_a_protected_grant ... ok
+test lock::lock_test::current_semantics_require_complete_dependency_identity ... ok
+test input::input_test::bounded_byte_reads_accept_non_utf8_inputs ... ok
+test lock::lock_test::current_locks_separate_format_semantics_and_producer ... ok
+test lock::lock_test::dependency_source_is_part_of_resolved_architecture ... ok
+test input::input_test::reads_and_replacements_reject_symlinks ... ok
+test lock::lock_test::duplicate_dependencies_are_rejected_instead_of_normalized_away ... ok
+test lock::lock_test::generated_manifest_digests_must_be_exact ... ok
+test lock::lock_test::producer_identity_is_not_resolved_architecture ... ok
+test lock::lock_test::qualification_gate_digests_must_be_exact ... ok
+test lock::lock_test::qualification_gate_inputs_are_exact_unique_files ... ok
+test input::input_test::reads_stop_at_the_configured_byte_limit ... ok
+test lock::macro_source::macro_source_test::registry_macro_sources_without_checksums_fail_closed ... ok
+test diff::size_policy_test::removing_size_enforcement_grants_permission_and_adding_it_revokes ... ok
+test lock::lock_test::optional_read_accepts_only_a_genuinely_absent_lock ... ok
+test lock::lock_test::optional_read_rejects_a_dangling_lock_alias ... ok
+test lock::macro_source::macro_source_test::registry_macro_sources_require_and_render_exact_checksums ... ok
+test lock::receipt::receipt_test::canonicalization_orders_receipts_and_rejects_reused_test_files ... ok
+test migration::migration_test::epoch_five_reports_changed_allowance_binding_authority ... ok
+test lock::lock_test::render_sorts_packages_dependencies_and_ratchets ... ok
+test migration::migration_test::epoch_one_migration_is_scoped_per_authority_subject ... ok
+test lock_analysis_test::current_semantics_require_a_complete_analysis_certificate ... ok
+test migration::migration_test::migration_rejects_unsupported_or_different_contract_authority ... ok
+test path::path_test::component_wildcards_do_not_cross_slashes ... ok
+test path::path_test::escaping_paths_are_refused ... ok
+test path::path_test::filesystem_paths_have_one_portable_repository_spelling ... ok
+test path::path_test::recursive_globs_cross_directory_boundaries ... ok
+test migration::migration_test::migration_accepts_each_released_prior_epoch ... ok
+test migration::bridge::bridge_test::bridge_digest_binds_revisions_and_repository_changes ... ok
+test path::path_test::repeated_recursive_globs_are_bounded_and_collapsed ... ok
+test path::path_test::repository_paths_reject_non_utf8_and_backslash_components ... ok
+test ratchet::ratchet_test::raw_identifier_spelling_is_not_part_of_identity ... ok
+test migration::migration_test::schema_two_analysis_without_feature_fields_remains_migratable ... ok
+test path::path_test::repository_files_must_be_relative_and_parented_inside_the_root ... ok
+test report::report_test::appended_review_findings_remain_authoritative_when_not_retained ... ok
+test path::path_test::repository_files_reject_symlinked_parent_escapes ... ok
+test receipt::receipt_test::rejects_wrong_schema_unversioned_producers_and_invalid_execution ... ok
+test receipt::receipt_test::accepts_a_versioned_receipt_and_binds_the_complete_reviewed_context ... ok
+test report::report_test::errors_make_the_report_fail ... ok
+test report::report_test::json_ends_with_a_newline ... ok
+test report::report_test::zero_limit_is_aggregate_only_and_all_retains_every_finding ... ok
+test report::report_test::bounded_reports_keep_exact_totals_and_groups ... ok
+test lock_analysis_test::released_schema_two_analysis_reads_without_feature_fields ... ok
+test input::input_test::creation_is_complete_and_never_replaces_existing_state ... ok
+test input::input_test::replacement_is_complete_and_leaves_no_temporary_file ... ok
+
+test result: ok. 211 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/lock_crate_root.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/lock_crate_root-063f9606c044160c)
+
+running 3 tests
+test current_semantics_require_internal_crate_roots ... ok
+test current_semantics_reject_an_invalid_effective_crate_root ... ok
+test current_semantics_record_an_unresolved_crate_root_by_omission ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lock_macro.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/lock_macro-0a871b92cd893c46)
+
+running 4 tests
+test duplicate_macro_package_identities_fail_closed ... ok
+test macro_package_digest_participates_in_resolved_state ... ok
+test legacy_rendering_never_renames_text_inside_string_values ... ok
+test released_macro_digest_spelling_remains_readable_for_migration ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/lock_ratchet.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/lock_ratchet-f98a1fbbd8815e28)
+
+running 2 tests
+test normalized_selector_collisions_are_rejected ... ok
+test render_normalizes_selector_spelling ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/zrail_rust-a18c36634132c20d)
+
+running 563 tests
+test cargo::crate_roots::crate_roots_test::same_name_attestations_match_only_their_exact_source ... ok
+test cargo::crate_roots::crate_roots_test::attestations_resolve_only_uninspected_external_packages ... ok
+test cargo::dependencies::dependencies_test::path_version_requirements_are_preserved ... ok
+test cargo::dependencies::dependencies_test::kinds_remain_distinct ... ok
+test cargo::dependencies::dependencies_test::dependency_tables_and_specs_fail_closed ... ok
+test cargo::dependencies::dependencies_test::registry_git_target_and_feature_identity_are_distinct ... ok
+test cargo::dependencies::dependencies_test::aliases_and_workspace_sources_are_preserved ... ok
+test cargo::dependencies::dependencies_test::workspace_dependency_tables_are_strict ... ok
+test cargo::overrides::overrides_test::root_cargo_configuration_is_exact_fail_closed_authority ... ok
+test cargo::features::features_test::accepts_cargo_unicode_xid_feature_names ... ok
+test cargo::features::features_test::resolves_default_local_cycles_and_implicit_optional_features ... ok
+test cargo::features::features_test::weak_dependency_features_do_not_enable_optional_dependencies ... ok
+test cargo::overrides::overrides_test::manifest_patch_and_replace_tables_are_unsupported_surfaces ... ok
+test cargo::features::features_test::explicit_dependency_activation_suppresses_implicit_feature_and_rejects_unknowns ... ok
+test cargo::parse::parse_test::malformed_package_identity_is_not_a_virtual_manifest ... ok
+test cargo::parse::parse_test::cargo_manifest_symlinks_are_rejected_before_reading ... ok
+test cargo::parse::parse_test::active_path_dependency_cannot_cross_a_nested_workspace ... ok
+test cargo::parse::parse_test::workspace_retains_exact_package_feature_closure ... ok
+test cargo::parse::parse_test::ordinary_unlisted_package_is_observed_without_becoming_active ... ok
+test cargo::parse::parse_test::path_dependencies_become_implicit_active_members ... ok
+test cargo::parse::parse_test::unrelated_nested_workspace_is_not_resolved_against_the_root ... ok
+test cargo::resolved::resolved_test::ambiguous_manifest_mapping_fails_closed ... ok
+test cargo::parse::parse_test::unselected_nested_workspace_is_ignored_without_an_exclude_pattern ... ok
+test cargo::resolved::resolved_test::exact_identity_retains_version_source_and_checksum ... ok
+test cargo::resolved::resolved_test::git_identity_requires_a_precise_locked_revision ... ok
+test cargo::resolved_git_test::branch_mismatch_is_rejected ... ok
+test cargo::resolved::resolved_test::manifest_requirement_disambiguates_multiple_locked_versions ... ok
+test cargo::resolved_git_test::encoded_branch_identity_matches_exactly ... ok
+test cargo::resolved_git_test::named_revision_is_rejected_as_unprovable ... ok
+test cargo::resolved_git_test::manifest_revision_matches_query_and_precise_commit ... ok
+test cargo::resolved_git_test::default_branch_is_distinct_from_named_branch ... ok
+test cargo::resolved_git_test::same_reference_with_two_precise_nodes_is_ambiguous ... ok
+test cargo::resolved::resolved_test::cargo_lock_source_selector_requires_exactly_one_node ... ok
+test cargo::resolved_git_test::tag_mismatch_is_rejected ... ok
+test cargo::resolved_git_test::stale_or_forged_revision_is_rejected ... ok
+test cargo::targets::targets_test::ambiguous_auto_discovered_target_names_are_rejected ... ok
+test cargo::resolved_git_test::unknown_reference_query_fails_closed ... ok
+test cargo::resolved_git_test::tag_and_default_branch_match_their_exact_cases ... ok
+test cargo::targets::targets_test::disabled_auto_discovery_does_not_claim_source_files ... ok
+test cargo::targets::targets_test::edition_2015_manual_targets_disable_implicit_discovery ... ok
+test cargo::targets::targets_test::explicit_library_name_is_the_effective_rust_crate_root ... ok
+test cargo::targets::targets_test::conventional_and_explicit_targets_become_crate_roots ... ok
+test cargo::targets::targets_test::explicit_target_names_override_auto_discovery ... ok
+test cargo::targets::targets_test::explicit_targets_retain_exact_required_features ... ok
+test cargo::targets::targets_test::unknown_editions_fail_closed ... ok
+test cargo::resolved_git_test::two_git_nodes_resolve_by_reference_not_repository_alone ... ok
+test cargo::targets::targets_test::invalid_library_name_cannot_enter_policy_identity ... ok
+test cargo::workspace::workspace_test::a_root_package_is_an_implicit_workspace_member ... ok
+test cargo::workspace::workspace_test::explicit_package_rename_owns_the_rust_visible_root ... ok
+test cargo::workspace::workspace_test::in_tree_path_dependencies_are_implicit_members ... ok
+test cargo::targets_proc_macro_test::explicit_normal_crate_type_overrides_proc_macro_boolean ... ok
+test cargo::workspace::workspace_test::malformed_workspace_values_fail_closed ... ok
+test async_glob_policy_test::test_super_mode_uses_semantic_test_reachability_and_exact_spelling ... ok
+test cargo::workspace::workspace_test::only_exact_declared_member_paths_become_internal ... ok
+test cargo::targets_proc_macro_test::proc_macro_boolean_is_preserved_as_a_host_target ... ok
+test cargo::targets_proc_macro_test::proc_macro_crate_type_is_preserved_as_a_host_target ... ok
+test cargo::workspace::workspace_test::workspace_patterns_are_portable_and_normalized ... ok
+test cargo::workspace::workspace_test::workspace_excludes_are_strict_string_arrays ... ok
+test cargo::workspace::workspace_test::standalone_packages_have_no_explicit_workspace_patterns ... ok
+test cargo::worlds::worlds_test::inactive_optional_split_edges_taint_downstream_packages_structurally ... ok
+test cargo::worlds::worlds_test::accepts_target_conditional_edges_when_split_package_features_are_empty ... ok
+test coverage::coverage_test::feature_worlds_are_reported_in_canonical_name_order ... ok
+test cargo::worlds::worlds_test::rejects_incomplete_package_maps ... ok
+test cargo::worlds::worlds_test::rejects_build_and_development_feature_splits_with_exact_edge_diagnostics ... ok
+test cargo::worlds::worlds_test::rejects_target_conditional_feature_propagation ... ok
+test engine::doctor::doctor_test::generated_and_ratcheted_state_can_require_a_lock ... ok
+test engine::doctor::doctor_test::ready_status_is_ready ... ok
+test engine::doctor::doctor_test::old_required_lock_semantics_are_not_ready ... ok
+test engine::doctor::doctor_test::stale_status_is_not_ready ... ok
+test cargo::worlds::worlds_test::resolves_optional_workspace_dependency_features_to_a_fixed_point ... ok
+test engine::doctor::doctor_test::unsupported_required_lock_schema_is_not_ready ... ok
+test engine::lock_compare::lock_compare_test::changed_feature_certificate_fields_are_stale_lock_state ... ok
+test engine::lock_compare::lock_compare_test::changed_gate_contents_are_stale_lock_state ... ok
+test engine::lock_compare::lock_compare_test::changed_generated_manifest_is_stale_lock_state ... ok
+test async_glob_policy_test::profiles_deny_async_syntax_and_globs_keep_only_facade_reexports ... ok
+test engine::lock_compare::lock_compare_test::changed_repository_macro_package_is_stale_lock_state ... ok
+test engine::lock_compare::lock_compare_test::changed_ratchet_values_are_not_treated_as_equal ... ok
+test engine::lock_compare::lock_compare_test::gate_input_drift_is_exact_and_directional ... ok
+test engine::macro_implementations::macro_implementations_test::manifest_digest_is_path_and_content_bound ... ok
+test engine::macro_implementations::manifest::packages::packages_test::internal_dependency_cycles_are_deduplicated ... ok
+test engine::macro_implementations::manifest::packages::packages_test::follows_workspace_and_repository_path_dependencies_transitively ... ok
+test engine::macro_implementations::manifest::packages::packages_test::internal_dependency_with_no_package_fails_closed ... ok
+test explain::evidence::evidence_test::connects_test_document_and_gate_paths_to_invariants ... ok
+test explain::explain_test::facade_and_entrypoint_modes_are_reported_independently ... ok
+test explain::explain_test::generated_source_reports_its_effective_module_doc_exemption ... ok
+test explain::path_input::path_input_test::edit_distance_handles_insertions_deletions_and_substitutions ... ok
+test explain::policy::policy_test::policy_modes_use_contract_spellings ... ok
+test explain::policy::policy_test::sibling_paths_replace_only_rust_source_suffixes ... ok
+test inventory::classify::classify_test::classifies_root_package_tests_and_auxiliary_programs ... ok
+test inventory::classify::classify_test::classifies_workspace_source_shapes ... ok
+test inventory::classify::classify_test::generated_roots_override_ordinary_source_shape ... ok
+test inventory::classify::classify_test::recognizes_only_conventional_test_filenames ... ok
+test inventory::scan::scan_test::ambiguous_exclusions_do_not_hide_descendants ... ok
+test inventory::scan::scan_test::inventory_reads_rust_under_declared_roots ... ok
+test engine::macro_implementations::macro_implementations_test::manifest_digest_is_deterministic ... ok
+test inventory::scan::scan_test::manifest_discovery_stays_inside_declared_roots ... ok
+test engine::macro_implementations::macro_implementations_test::manifest_input_count_is_bounded ... ok
+test inventory::scan::scan_test::nested_target_directories_remain_visible_source ... ok
+test inventory::scan::scan_test::repository_root_and_manifest_names_are_exact ... ok
+test inventory::scan::scan_test::total_source_accounting_is_checked_and_bounded ... ok
+test mirror_execution::mirror_execution_test::configured_world_selection_is_rejected_when_ambiguous ... ok
+test mirror_execution::mirror_execution_test::feature_gated_mirror_requires_one_matching_exact_world ... ok
+test mirror_execution::mirror_execution_test::legacy_execution_identity_enforces_target_required_features ... ok
+test inventory::scan::scan_test::only_provable_subtree_patterns_are_pruned ... ok
+test mirrors::mirrors_test::delimiter_bearing_paths_round_trip_as_distinct_plan_entries ... ok
+test mirrors::mirrors_test::plan_round_trips_and_rejects_payload_drift ... ok
+test mirrors::model::model_test::length_prefixed_identity_distinguishes_delimiter_bearing_paths ... ok
+test mirrors::receipts::receipts_test::parser_requires_canonical_groups_tests_and_versioned_producer ... ok
+test mirrors::receipts::receipts_test::rejects_stale_missing_unknown_and_wrong_group_results ... ok
+test inventory::scan::scan_test::inventory_rejects_oversized_rust_source ... ok
+test mirrors::receipts::receipts_test::renders_every_exact_result_as_a_schema_two_receipt ... ok
+test coverage::coverage_test::report_rejects_incomplete_source_analysis ... ok
+test onboarding::selection::selection_test::exclusion_cannot_hide_an_authoritative_cargo_target ... ok
+test onboarding::selection::selection_test::excluded_malformed_fixture_manifest_is_not_parsed ... ok
+test onboarding::selection::selection_test::exclusions_are_normalized_sorted_and_deduplicated ... ok
+test onboarding::selection::selection_test::negation_and_parent_traversal_are_rejected ... ok
+test coverage::coverage_test::report_rejects_ambiguous_manifest_to_lock_mapping ... ok
+test rules::capability::capability_test::canonical_dependency_identity_owns_policy_matching ... ok
+test rules::capability::capability_test::conservative_glob_roots_cover_narrower_denials ... ok
+test rules::capability::capability_test::denied_paths_cover_descendants_but_not_similar_names ... ok
+test rules::capability::capability_test::explicit_crate_prefix_matches_canonical_local_identity ... ok
+test rules::capability::capability_test::raw_identifiers_cannot_change_policy_identity ... ok
+test rules::capability::ownership_call::ownership_call_test::unresolved_direct_call_fails_closed_inside_its_allowed_owner ... ok
+test rules::capability::ownership_operation::ownership_operation_test::canonical_opaque_field_does_not_fall_back_to_written_root ... ok
+test rules::capability::ownership_operation::ownership_operation_test::field_mutation_matches_only_declared_receiver_methods ... ok
+test rules::capability::ownership_operation::ownership_operation_test::opaque_field_wildcard_does_not_match_non_field_owner ... ok
+test rules::capability::ownership_operation::ownership_operation_test::opaque_update_fields_match_each_owner_on_the_same_source_type ... ok
+test rules::capability::resolution::resolution_test::capability_owner_applies_to_generic_function_reference ... ok
+test rules::capability::resolution::resolution_test::matching_call_owner_relies_on_generic_associated_identity ... ok
+test rules::capability::resolution::resolution_test::multiple_candidates_fail_closed_only_for_matching_authority ... ok
+test rules::capability::resolution::resolution_test::same_external_root_different_item_is_not_relevant ... ok
+test rules::capability::resolution::resolution_test::same_local_authority_different_item_is_not_relevant ... ok
+test rules::capability::resolution::resolution_test::trait_prefix_owner_remains_conservative ... ok
+test rules::capability::resolution::resolution_test::unknown_provider_same_item_remains_fail_closed ... ok
+test rules::capability::resolution::resolution_test::unrelated_call_owner_does_not_make_generic_rust_incomplete ... ok
+test rules::capability::resolution::resolution_test::unrelated_same_named_owner_is_not_implicated ... ok
+test rules::dependency_cycle::dependency_cycle_test::dense_component_produces_one_cycle_witness ... ok
+test rules::dependency_cycle::dependency_cycle_test::separate_components_and_self_edges_have_stable_witnesses ... ok
+test rules::evidence::evidence_test::code_fences_and_inline_html_text_cannot_fake_an_anchor ... ok
+test rules::evidence::evidence_test::recognizes_generated_and_explicit_markdown_anchors ... ok
+test rules::evidence::evidence_test::slugging_is_deterministic_and_drops_punctuation ... ok
+test rules::generated::generated_test::case_variant_source_extensions_cannot_escape_the_manifest ... ok
+test rules::generated::generated_test::edited_and_smuggled_generated_source_fails ... ok
+test place_domain_world_test::disjoint_feature_worlds_resolve_nested_writes_and_receiver_calls_exactly ... ok
+test rules::generated::generated_test::exact_generated_tree_passes ... ok
+test rules::generated::generated_test::edited_generator_input_fails ... ok
+test rules::generated::generated_test::manifest_paths_are_normalized_and_source_only ... ok
+test rules::generated::generated_test::missing_manifest_input_census_fails_closed ... ok
+test rules::generated::generated_test::missing_input_selectors_fail_closed ... ok
+test rules::generated::lock_state::lock_state_test::project_specific_provenance_changes_the_lock_digest ... ok
+test rules::hygiene::hygiene_test::facade_mode_requires_outward_top_level_reexports ... ok
+test rules::hygiene::hygiene_test::syntactically_absent_globs_do_not_violate_even_deny_mode ... ok
+test rules::hygiene::hygiene_test::test_super_mode_requires_exact_private_test_only_import ... ok
+test rules::macro_expansion::binding_policy::binding_policy_test::compiler_builtins_preserve_bindings_without_contract_allowances ... ok
+test rules::generated::generated_test::smuggled_input_and_stale_selector_fail ... ok
+test rules::macro_expansion::binding_policy::binding_policy_test::conservative_review_confidence_never_clears_opacity ... ok
+test rules::macro_expansion::binding_policy::binding_policy_test::source_operation_closure_requires_an_exact_bound_attestation ... ok
+test rules::macro_expansion::binding_policy::binding_policy_test::written_alias_cannot_cover_an_unmatched_canonical_candidate ... ok
+test rules::macro_expansion::macro_expansion_test::ambiguous_glob_candidates_all_require_allowances ... ok
+test rules::macro_expansion::macro_expansion_test::arbitrary_expression_macros_are_never_assumed_inspected ... ok
+test rules::macro_expansion::macro_expansion_test::conservative_bare_allowance_binds_only_the_written_name ... ok
+test rules::macro_expansion::macro_expansion_test::every_conservative_canonical_identity_requires_review ... ok
+test rules::macro_expansion::macro_expansion_test::exact_allowance_cannot_bind_an_unresolved_written_macro ... ok
+test rules::macro_expansion::macro_expansion_test::local_definitions_shadow_intrinsic_shortcuts ... ok
+test rules::macro_expansion::source::source_test::cargo_lock_source_authorizes_only_the_exact_resolved_occurrence ... ok
+test rules::macro_expansion::source::source_test::cargo_lock_source_rejects_same_source_multiversion_ambiguity ... ok
+test rules::size::size_test::qualify_all_frozen_kafka_size_instances ... ignored, requires explicitly prefetched frozen snapshots and a fresh size-report output path
+test place_domain_world_test::same_world_source_variants_remain_ambiguous_and_fail_closed ... ok
+test rules::source_graph::compilation::compilation_test::proc_macro_domains_are_build_reachable_and_only_the_harness_enables_test ... ok
+test rules::source_graph::feature_worlds::feature_worlds_test::exact_world_seeds_only_targets_whose_required_features_are_active ... ok
+test rules::source_graph::feature_worlds::feature_worlds_test::legacy_conditional_mode_retains_required_feature_targets ... ok
+test rules::type_policy::duplication::duplication_test::missing_derive_expansion_fails_closed ... ok
+test rules::type_policy::manual_impls::manual_impls_test::exact_other_target_is_irrelevant_even_when_trait_is_unresolved ... ok
+test rules::size::size_test::frozen_ten_line_facade_fixture_keeps_its_smallest_ceiling ... ok
+test mirror_inputs::mirror_inputs_test::one_thousand_two_hundred_forty_four_mirrors_share_input_bytes ... ok
+test rules::type_policy::manual_impls::manual_impls_test::unresolved_target_with_clone_trait_is_possible_duplication ... ok
+test source::active_facts::active_facts_test::cfg_attr_derive_follows_the_enclosing_guard_in_each_world ... ok
+test rules::type_policy::manual_impls::manual_impls_test::negative_impl_does_not_claim_duplication_authority ... ok
+test source::active_facts::active_facts_test::custom_and_nested_cfg_attrs_are_active_only_in_their_exact_worlds ... ok
+test source::active_facts::active_facts_test::legacy_conditional_mode_does_not_prune_physical_facts ... ok
+test source::active_facts::active_facts_test::exact_worlds_prune_inactive_features_and_retain_target_uncertainty ... ok
+test source::attributes::attributes_test::cfg_all_test_is_a_sibling_test_guard ... ok
+test source::attributes::attributes_test::cfg_any_test_is_not_a_sibling_test_guard ... ok
+test source::attributes::attributes_test::cfg_attr_is_not_a_test_detector_escape ... ok
+test source::attributes::attributes_test::cfg_not_test_is_not_a_sibling_test_guard ... ok
+test source::attributes::attributes_test::cfg_test_helper_is_not_a_test_body ... ok
+test source::attributes::attributes_test::conditional_lint_suppressions_are_visible ... ok
+test source::attributes::attributes_test::conditional_suppressions_are_reasoned_only_when_every_branch_is ... ok
+test source::attributes::attributes_test::lint_suppressions_require_a_nonempty_reason ... ok
+test source::attributes::attributes_test::sibling_path_attributes_are_extracted_exactly ... ok
+test source::calls::calls_projection_test::grouped_associated_type_projection_is_a_boundary ... ok
+test source::active_facts::active_facts_test::non_macro_attribute_policy_facts_follow_cfg_attr_worlds ... ok
+test source::calls::calls_projection_test::multiply_parenthesized_associated_type_projection_is_a_boundary ... ok
+test source::calls::calls_projection_test::parenthesized_associated_type_projection_is_a_boundary ... ok
+test source::calls::calls_projection_test::parenthesized_direct_trait_function_remains_exact ... ok
+test source::calls::calls_test::aliases_resolve_to_the_exact_called_path ... ok
+test source::calls::calls_test::function_local_imports_add_a_conservative_called_path ... ok
+test source::calls::calls_test::associated_type_qualified_calls_become_resolution_boundaries ... ok
+test source::calls::calls_test::generic_associated_self_paths_are_unresolved ... ok
+test source::calls::calls_test::glob_imports_add_a_conservative_called_path ... ok
+test source::calls::calls_test::inherent_qualified_self_calls_retain_the_self_type ... ok
+test source::calls::calls_test::inline_module_globs_do_not_become_file_wide_macro_candidates ... ok
+test source::calls::calls_test::non_path_qualified_self_calls_are_never_exact ... ok
+test source::calls::calls_test::ordinary_macro_occurrences_include_test_only_alias_candidates ... ok
+test source::calls::calls_test::qualified_self_calls_resolve_imported_type_aliases ... ok
+test source::calls::calls_test::trait_qualified_calls_retain_the_named_trait_path ... ok
+test source::calls::calls_test::macro_candidate_sets_fail_closed_at_the_fixed_limit ... ok
+test source::calls::calls_test::type_aliases_add_a_conservative_reference_path ... ok
+test source::calls::calls_test::type_aliases_add_a_conservative_called_path ... ok
+test source::canonical::canonical_test::canonical_identity_replaces_the_alias_as_policy_authority ... ok
+test source::canonical::canonical_test::excessive_shared_alias_identities_fail_closed_without_a_cross_product ... ok
+test source::canonical::canonical_test::raw_identifier_dependency_roots_recover_the_cargo_alias ... ok
+test source::canonical::canonical_test::renamed_dependency_roots_preserve_observed_diagnostics ... ok
+test source::canonical::canonical_test::target_dependent_aliases_remain_conservative_candidates ... ok
+test source::cfg::cfg_guards::cfg_guards_test::feature_controlled_nested_cfg_is_exact_in_each_world ... ok
+test source::cfg::cfg_completeness::cfg_completeness_test::detects_feature_gated_path_test_and_bench_attributes ... ok
+test source::cfg::cfg_guards::cfg_guards_test::malformed_nested_cfg_attr_remains_possible_instead_of_becoming_inert ... ok
+test source::cfg::cfg_predicate::cfg_predicate_test::canonical_algebra_detects_inverse_predicates ... ok
+test source::cfg::cfg_guards::cfg_guards_test::recursively_nested_cfg_attrs_control_item_presence_exactly ... ok
+test source::cfg::cfg_predicate::cfg_predicate_test::conjunction_implies_each_weaker_term ... ok
+test source::cfg::cfg_predicate::cfg_predicate_test::distinct_single_valued_target_cfgs_cannot_overlap ... ok
+test source::cfg::cfg_predicate::cfg_predicate_test::feature_boolean_algebra_is_exact_inside_a_world ... ok
+test source::cfg::cfg_predicate::cfg_predicate_test::known_feature_branches_reduce_unknown_target_predicates ... ok
+test source::cfg::cfg_predicate::cfg_predicate_test::opaque_target_predicates_are_span_free_and_structurally_equal ... ok
+test source::cfg::cfg_predicate::cfg_predicate_test::target_partition_is_proven_exhaustive_without_selecting_a_target ... ok
+test source::depth::depth_test::delimiters_in_comments_and_literals_do_not_consume_depth ... ok
+test source::depth::depth_test::excessive_syntax_and_comment_nesting_are_rejected ... ok
+test source::imports::imports_test::alias_chains_resolve_to_the_original_crate ... ok
+test source::glob_imports::glob_imports_test::nested_public_and_block_local_globs_are_distinct ... ok
+test source::imports::imports_test::alias_cycles_are_reported_as_unresolved ... ok
+test source::imports::imports_test::conditional_top_level_imports_are_applied_only_in_implied_contexts ... ok
+test source::imports::imports_test::renamed_imports_resolve_to_their_declared_capability ... ok
+test source::imports::imports_test::same_root_imports_do_not_rewrite_already_qualified_paths ... ok
+test source::imports::imports_test::self_imports_bind_the_parent_path_instead_of_a_synthetic_self_segment ... ok
+test source::imports::imports_test::test_only_aliases_cannot_replace_production_aliases ... ok
+test source::imports::imports_test::test_only_imports_are_available_only_to_test_syntax ... ok
+test source::include_bindings::implicit_prelude::implicit_prelude_test::cfg_attr_directive_retains_its_feature_guard ... ok
+test source::include_bindings::implicit_prelude::implicit_prelude_test::core_trait_identities_are_canonical ... ok
+test source::include_bindings::implicit_prelude::implicit_prelude_test::crate_directives_have_root_scope ... ok
+test source::include_bindings::implicit_prelude::implicit_prelude_test::edition_and_std_only_entries_stay_bounded ... ok
+test source::include_bindings::implicit_prelude::implicit_prelude_test::enum_constructor_identities_are_canonical ... ok
+test source::include_bindings::implicit_prelude::implicit_prelude_test::module_directive_uses_the_module_scope ... ok
+test source::include_projection_apply::include_projection_apply_test::complete_exact_projection_repairs_stale_physical_uncertainty ... ok
+test source::include_projection_apply::include_projection_apply_test::duplicate_projection_consumes_one_retained_fact_slot ... ok
+test source::include_projection_apply::include_projection_apply_test::fact_exhaustion_retains_no_partial_projection ... ok
+test source::include_projection_apply::include_projection_apply_test::generic_roots::expression_include_replaces_generic_associated_spelling_with_synthetic_identity ... ok
+test rules::size::size_test::translated_selectors_preserve_future_paths_and_test_facade_precedence ... ok
+test source::imports::imports_test::exact_alias_expansion_has_fixed_depth_and_byte_limits ... ok
+test source::include_projection_apply::include_projection_apply_test::opacity::authorized_opaque_namespace_keeps_struct_update_complete_and_fail_closed ... ok
+test source::include_projection_apply::include_projection_apply_test::hub::hub_aliases_resolve_across_repeated_child_mounts ... ok
+test source::include_projection_apply::include_projection_apply_test::hub::hub_types_repair_nested_self_and_typed_field_places ... ok
+test source::include_projection_apply::include_projection_apply_test::opacity::bare_self_receiver_is_an_exact_local_value_under_glob_imports ... ok
+test source::include_projection_apply::include_projection_apply_test::opacity::explicit_and_local_bindings_win_over_opaque_item_namespaces ... ok
+test source::include_projection_apply::include_projection_apply_test::opacity::exhaustive_single_value_target_partition_is_not_ambiguous ... ok
+test source::include_projection_apply::include_projection_apply_test::opacity::mutually_exclusive_target_cfg_bindings_are_not_ambiguous ... ok
+test source::include_projection_apply::include_projection_apply_test::opacity::target_cfg_alias_is_conservative_without_blocking_completeness ... ok
+test source::include_projection_apply::include_projection_apply_test::opacity::unreviewed_item_namespace_still_blocks_completeness ... ok
+test source::include_projection_apply::include_projection_apply_test::opacity::true_alias_cycle_still_blocks_completeness ... ok
+test source::include_projection_apply::include_projection_apply_test::opacity::unreviewed_opaque_namespace_blocks_struct_update_completeness ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_alias::cfg_partitioned_aliases_are_domain_exact ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_alias::cross_module_alias_resolves_to_underlying_adt ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_alias::external_update_retains_opaque_field_receipt ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_alias::local_type_alias_construction_reaches_underlying_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_alias::local_type_alias_update_reaches_underlying_field_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_alias::opaque_type_alias_fails_closed ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_alias::type_alias_chain_is_canonical ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_alias::relative_alias_target_is_module_canonical ... ok
+test rules::type_policy::manual_impls::manual_impls_test::unresolved_impl_in_another_package_does_not_claim_the_governed_type ... ok
+test source::include_projection_apply::include_projection_apply_test::opacity::opaque_item_namespace_does_not_block_ordinary_binding_completeness ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::cfg_inactive_associated_item_does_not_suppress_unknown_candidate ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::cross_module_associated_const_is_proven_value ... ok
+test coverage::coverage_test::report_covers_operations_dependencies_exclusions_and_test_mirrors ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::cross_module_default_trait_method_is_proven_value ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::cross_module_inherent_method_is_proven_value ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::external::external_unknown_item_without_variant_remains_unresolved ... ok
+test inventory::scan::scan_test::complete_exclusions_prune_before_directory_limits ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::cross_module_trait_method_is_proven_value ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::external::external_unit_variant_beats_extension_trait_const ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_alias::type_alias_cycle_fails_closed ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::external::external_variant_beats_in_scope_extension_trait ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::cross_module_default_trait_const_is_proven_value ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::external::local_variant_collision_remains_constructor ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::external::external_variant_beats_out_of_scope_extension_trait ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::external::fully_qualified_extension_trait_call_is_value ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::external::fully_qualified_trait_alias_is_value ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::external_trait_for_external_self_does_not_suppress_candidate ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::inherent_external_impl_does_not_suppress_candidate ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::required_trait_item_without_definition_does_not_suppress_candidate ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::same_named_item_on_another_type_does_not_suppress_candidate ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::external::unresolved_qualified_trait_is_not_construction ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::glob_imported_trait_method_is_proven_value ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::capability::constructor_returned_from_function_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::capability::constructor_cast_to_fn_pointer_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::capability::direct_constructor_call_does_not_duplicate_capability ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::capability::constructor_passed_to_function_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::associated::unqualified_local_trait_impl_for_external_self_remains_unresolved ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::capability::constructor_passed_to_iterator_adapter_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::lowercase_cross_module_tuple_constructor_is_exact ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::glob_imported_lowercase_constructor_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::capability::variant_constructor_stored_then_called_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::capability::ordinary_function_value_does_not_reach_constructor_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::capability::tuple_constructor_stored_then_called_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::lowercase_enum_variant_import_alias_is_exact ... ok
+test inventory::scan::scan_test::inventory_rejects_excessive_directory_depth ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::local_trait_shadows_prelude_trait ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::lowercase_unit_constructor_import_alias_is_exact ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::explicit_import_shadows_prelude_trait ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::no_implicit_prelude_disables_implicit_trait ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::lowercase_tuple_constructor_import_alias_is_exact ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::no_std_uses_core_prelude ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::prelude_default_trait_is_exact ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::import_target_does_not_consult_prelude ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::prelude_none_reaches_option_variant_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::prelude_some_reaches_option_variant_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::prelude_ok_and_err_reach_result_variant_owners ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::prelude_iterator_trait_is_exact ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::rust_2021_does_not_inject_2024_prelude_traits ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::prelude_into_trait_is_exact ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::rust_2018_does_not_inject_2021_prelude_traits ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::shadows::extern_type_root_precedes_the_type_prelude ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::rust_2024_injects_2024_prelude_traits ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::self_qualified_name_does_not_consult_prelude ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::rust_2021_injects_2021_prelude_traits ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::shadows::extern_value_root_does_not_precede_the_value_prelude ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::shadows::generic_option_shadows_the_implicit_prelude ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::std_prelude_injects_to_owned_trait ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::prelude::shadows::parameter_and_local_drop_shadow_the_implicit_prelude ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::explicit_local_trait_const_beats_same_named_unit_variant ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::explicit_external_trait_method_beats_same_named_variant ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::explicit_local_trait_method_beats_same_named_tuple_variant ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::generic_explicit_trait_const_is_not_construction ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::generic_qualified_constructor_fails_closed ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::generic_explicit_trait_method_is_not_construction ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::proven_values_and_wrong_constructor_forms_are_discarded ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::explicit_trait_alias_beats_same_named_variant ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::nested_associated_type_variant_remains_unresolved ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::same_named_free_constant_does_not_hide_variant ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::qualified_associated_function_is_discarded_as_value ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::type_relative_constructor_capability_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::same_named_free_function_does_not_hide_variant ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::type_relative_unit_variant_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::type_relative_variant_ignores_local_value_shadow ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::qualified::type_relative_tuple_variant_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::raw_identifier_constructor_alias_is_exact ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::self_shadows::block_local_enum_impl_self_reaches_local_variant ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::shadows::block_enum_variant_is_not_suppressed_by_outer_variant_shape ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::self_shadows::block_local_struct_impl_self_reaches_local_constructor ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::shadows::block_type_alias_shadows_outer_type ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::shadows::block_tuple_struct_is_not_suppressed_by_outer_named_struct ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::shadows::block_union_does_not_impersonate_outer_struct ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::shadows::block_use_alias_shadows_outer_type ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::self_shadows::cfg_partitioned_block_impl_self_never_selects_outer_type ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::updates::block_union_update_fails_closed_without_outer_fields ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::updates::block_type_alias_update_reads_underlying_fields ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::updates::block_struct_update_does_not_borrow_outer_fields ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::updates::block_use_alias_update_reads_underlying_fields ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::shadows::cfg_partitioned_block_aliases_never_select_outer_type ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::uppercase_cross_module_tuple_constructor_becomes_exact ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::updates::deferred_update_unites_cfg_partitioned_fields ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::updates::deferred_update_subtracts_explicit_field_cfg ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_global::edition_2015_global_path_uses_crate_root ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::updates::cfg_partitioned_named_and_union_updates_keep_opaque_world ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_constructor::updates::cfg_partitioned_block_alias_updates_read_each_world ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_global::edition_2024_global_path_stays_distinct_from_local_module ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_relative::direct_super_path_reaches_type_construction_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_relative::direct_self_path_reaches_type_construction_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_relative::ambiguous_module_attachment_fails_closed ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_global::rooted_functional_update_does_not_borrow_local_fields ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_relative::external_module_relative_path_is_canonical ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_relative::repeated_super_path_reaches_type_construction_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_relative::relative_import_alias_reaches_type_construction_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_self::cross_file_self_record_variant_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_self::cross_file_self_named_construction_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::scale::module_cache::repeated_module_identity_queries_reuse_completed_work ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_self::cross_file_self_functional_update_uses_declared_fields ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_self::cross_file_self_tuple_variant_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_self::cross_file_self_tuple_construction_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::operations_self::cross_file_self_unit_variant_reaches_owner ... ok
+test source::include_projection_apply::include_projection_apply_test::scale::module_cache::exhausted_work_is_not_cached_and_each_projection_pass_recounts_work ... ok
+test source::include_projection_apply::include_projection_apply_test::successful_projection_stays_inside_the_total_fact_limit ... ok
+test source::include_projection_apply::include_projection_apply_test::successful_projection_is_independent_of_file_order ... ok
+test source::include_projection_apply::include_projection_apply_test::type_modules::leaf_fact_exhaustion_rolls_back_earlier_path_projection ... ok
+test source::include_projection_apply::include_projection_apply_test::type_modules::retained_declaration_occurrences_count_toward_the_per_file_limit ... ok
+test source::includes::includes_test::literal_and_generated_includes_are_distinct ... ok
+test source::include_projection_apply::include_projection_apply_test::work_exhaustion_is_transactional_and_independent_of_file_order ... ok
+test source::macro_expansion::macro_expansion_test::derives_custom_attributes_and_nested_cfg_attributes_are_boundaries ... ok
+test source::include_projection_apply::include_projection_apply_test::scale::repeated_resolution_reuses_actual_transition_work ... ok
+test source::includes::includes_test::out_dir_bindings_require_one_canonical_builtin_expression ... ok
+test source::macro_expansion::macro_expansion_test::malformed_derive_and_cfg_attr_syntax_is_unresolved ... ok
+test source::macro_expansion::macro_expansion_test::nested_cfg_attribute_expansions_retain_every_predicate ... ok
+test source::macro_expansion::macro_expansion_test::only_unqualified_standard_derives_are_compiler_builtins ... ok
+test source::macro_expansion::macro_expansion_test::tool_and_builtin_attributes_are_inert ... ok
+test source::macro_inputs::macro_inputs_test::compiler_expression_inputs_retain_nested_compile_effects ... ok
+test source::macro_inputs::macro_inputs_test::opaque_scanning_retains_paths_calls_methods_and_nested_macros ... ok
+test source::macro_inputs::macro_inputs_test::opaque_scanning_retains_nested_compiler_effect_targets ... ok
+test source::macro_inputs::macro_inputs_test::matches_inputs_visit_patterns_and_guards ... ok
+test source::macro_inputs::macro_inputs_test::opaque_scanning_requires_a_delimited_group_after_a_macro_bang ... ok
+test source::macro_origins::macro_origins_test::bounded_local_macro_definition_retains_repository_origin ... ok
+test source::macro_origins::macro_origins_test::definition_bound_builtin_name_remains_repository_owned ... ok
+test source::macro_origins::macro_origins_test::excessive_source_identities_fail_closed ... ok
+test source::macro_origins::macro_origins_test::external_package_named_local_remains_external ... ok
+test source::macro_inputs::macro_inputs_test::standard_macro_inputs_retain_generic_qualified_self_uncertainty ... ok
+test source::macro_inputs::macro_inputs_test::standard_expression_inputs_use_the_normal_source_visitor ... ok
+test source::macro_origins::macro_origins_test::module_qualified_macro_is_repository_owned ... ok
+test source::macro_origins::macro_origins_test::local_standard_name_shadow_remains_unresolved ... ok
+test source::macro_origins::macro_origins_test::repository_function_alias_does_not_shadow_a_builtin_macro ... ok
+test source::macro_origins::macro_origins_test::package_crate_root_is_repository_owned_for_integration_targets ... ok
+test source::macro_origins::macro_origins_test::resolved_compiler_derive_uses_its_written_builtin_identity ... ok
+test source::macro_origins::macro_origins_test::workspace_dependency_macro_is_repository_owned ... ok
+test source::macro_resolution::exports::external::archive::archive_test::archive_filename_rejects_path_syntax_from_lock_data ... ok
+test source::macro_resolution::exports::external::archive::archive_test::archive_paths_reject_escape_and_noncanonical_components ... ok
+test source::macro_resolution::exports::external::exports::exports_test::conditional_and_glob_reexports_remain_unknown ... ok
+test source::macro_resolution::exports::external::exports::exports_test::duplicate_module_paths_do_not_retain_an_exact_surface ... ok
+test source::macro_resolution::exports::external::exports::exports_test::direct_prelude_names_are_present_uncertain_or_absent_per_name ... ok
+test source::macro_resolution::exports::external::exports::exports_test::duplicate_named_reexports_are_uncertain ... ok
+test source::macro_resolution::visibility::macro_visibility_test::external_imports_do_not_borrow_same_leaf_local_definitions ... ok
+test source::macro_resolution::visibility::macro_visibility_test::exact_repository_aliases_follow_parent_macro_imports ... ok
+test source::macro_resolution::exports::external::exports::exports_test::raw_macro_identifiers_use_their_canonical_spelling ... ok
+test source::macro_resolution::exports::external::exports::exports_test::public_glob_overrides_an_exact_named_reexport ... ok
+test source::macro_resolution::visibility::macro_visibility_test::repository_globs_remove_only_the_redundant_unresolved_spelling ... ok
+test source::macro_resolution::visibility::macro_visibility_test::unknown_or_external_names_remain_conservative ... ok
+test source::model::bound_subject::model_bound_subject_test::qualified_projection_retains_subject_and_qualifier ... ok
+test source::model::bound_subject::model_bound_subject_test::qualifier_and_associated_generic_arguments_are_distinct ... ok
+test source::model::bound_subject::model_bound_subject_test::self_projection_is_a_typed_subject ... ok
+test source::modules::modules_test::duplicate_path_attributes_are_unresolved ... ok
+test source::modules::modules_test::conditional_path_attributes_are_unresolved ... ok
+test source::modules::modules_test::external_modules_inherit_file_function_and_method_test_context ... ok
+test source::modules::modules_test::external_modules_inherit_file_inner_test_context ... ok
+test source::modules::modules_test::external_modules_retain_inline_path_context ... ok
+test source::modules::modules_test::external_modules_inherit_nested_inline_test_context ... ok
+test source::operation_place_canonical::routes::routes_test::declaring_field_is_missing_outside_its_feature_world ... ok
+test source::modules::modules_test::negated_test_module_is_production_only ... ok
+test source::operation_place_domains::operation_place_domains_test::operation_and_path_guards_intersect_on_exact_domain_identity ... ok
+test source::operation_place_domains::operation_place_domains_test::projected_candidates_replace_physical_fallback_only_in_their_world ... ok
+test source::parse::facade::parse_facade_test::facade_declarations_are_declarative ... ok
+test source::parse::facade::parse_facade_test::facade_behavior_remains_implementation ... ok
+test source::parse::facade::parse_facade_test::all_proc_macro_entrypoint_kinds_may_thinly_delegate ... ok
+test source::parse::facade::parse_facade_test::main_rejects_behavior_hidden_inside_a_call_argument ... ok
+test source::parse::facade::parse_facade_test::main_may_be_an_empty_or_single_expression_handoff ... ok
+test source::parse::facade::facade_parity::frozen_facade_predicates_agree_with_stock_wiring_modes ... ok
+test source::parse::facade::parse_facade_test::main_rejects_local_behavior_and_non_entry_functions ... ok
+test source::parse::facade::parse_facade_test::wiring_reexports_admit_only_the_reviewed_visibility_roots ... ok
+test source::parse::facade::parse_facade_test::proc_macro_entrypoints_reject_embedded_implementation ... ok
+test source::parse::facade::parse_facade_test::wiring_modes_reject_even_thin_language_entrypoints ... ok
+test source::parse::facade::parse_facade_test::main_rejects_multiple_handoffs_wrapped_as_a_value ... ok
+test source::parse::parse_test::expression_fragments_retain_reusable_facts ... ok
+test source::parse::parse_test::inline_modules_are_implementation_inside_facades ... ok
+test source::parse::parse_test::item_macro_invocations_are_expansion_boundaries ... ok
+test source::parse::parse_test::async_syntax_is_distinct_from_runtime_paths ... ok
+test source::parse::parse_test::type_alias_function_references_remain_visible_to_call_owners ... ok
+test source::parse::parse_test::opaque_derives_preserve_the_ordinary_namespace_boundary ... ok
+test source::parse::parse_test::parsed_facts_preserve_architectural_evidence ... ok
+test source::paths::paths_test::cargo_roots_are_mod_rs_regardless_of_their_file_name ... ok
+test source::paths::paths_test::exact_path_modules_give_children_the_loaded_sources_parent ... ok
+test source::paths::paths_test::lexical_escapes_and_platform_separators_are_rejected ... ok
+test source::parse::parse_test::unsafe_traits_extern_blocks_and_mutable_statics_are_visible ... ok
+test source::paths::paths_test::module_paths_follow_rust_file_layout_rules ... ok
+test source::paths::paths_test::inline_path_attributes_replace_the_first_logical_component ... ok
+test source::paths::paths_test::path_attributes_resolve_at_their_rust_defined_bases ... ok
+test source::scoped_globs::scoped_globs_test::direct_grouped_globs_retain_their_guard ... ok
+test source::parse::parse_test::unsafe_attributes_in_legacy_and_2024_forms_are_visible ... ok
+test source::scoped_globs::scoped_globs_test::nested_module_globs_do_not_escape_their_scope ... ok
+test source::scoped_imports::scoped_imports_test::alias_cycles_are_unresolved ... ok
+test source::scoped_imports::scoped_imports_test::bare_local_macro_definitions_retain_repository_ownership_in_their_scope ... ok
+test source::scoped_imports::scoped_imports_test::aliases_resolve_against_their_scope_and_outer_imports ... ok
+test source::scoped_imports::scoped_imports_test::conditional_aliases_retain_exact_identity_and_separate_applicability ... ok
+test source::scoped_imports::scoped_imports_test::same_named_import_does_not_duplicate_its_public_path ... ok
+test source::scoped_imports::scoped_imports_test::local_modules_shadow_dependency_roots_in_their_lexical_scope ... ok
+test source::scoped_imports::scoped_imports_test::test_only_aliases_retain_exact_guarded_authority ... ok
+test source::scoped_imports::scoped_imports_test::test_only_aliases_cannot_shadow_production_scope ... ok
+test source::source_instance::source_instance_test::include_cycles_retain_the_exact_chain ... ok
+test source::source_instance::source_instance_test::nested_mounts_retain_the_complete_cfg_predicate ... ok
+test source::source_instance::source_instance_test::repeated_module_mounts_remain_distinct_inside_each_domain ... ok
+test source::source_instance::source_instance_test::reviewed_derived_context_limit_is_applied_exactly ... ok
+test source::syntax_guard::syntax_guard_test::conditional_guards_are_possible_only_in_overlapping_domains ... ok
+test source::syntax_guard::syntax_guard_test::conditional_guards_preserve_test_and_production_intersections ... ok
+test source::syntax_guard::syntax_guard_test::ordinary_binding_is_exact_under_conditional_occurrence ... ok
+test source::scoped_imports::scoped_imports_test::expanded_alias_paths_have_a_fixed_byte_limit ... ok
+test source::syntax_guard::syntax_guard_test::ordinary_occurrences_overlap_both_compilation_domains ... ok
+test source::syntax_guard::syntax_guard_test::stronger_occurrence_makes_weaker_binding_exact ... ok
+test source::syntax_guard::syntax_guard_test::test_and_production_only_occurrences_do_not_overlap ... ok
+test source::scoped_imports::scoped_imports_test::alias_chains_have_a_fixed_depth_limit ... ok
+test source::type_policy_index::type_policy_index_test::replacement_occurrences_are_stored_on_each_declaration_without_span_guessing ... ok
+test source::type_policy_index::type_policy_index_test::trait_impl_polarity_is_preserved_from_nightly_syntax ... ok
+test source::visitor_parts::visitor_context::visitor_context_test::arbitrary_cfg_include_is_conditional ... ok
+test source::visitor_parts::visitor_context::visitor_context_test::arbitrary_cfg_inside_test_context_preserves_both_constraints ... ok
+test source::visitor_parts::visitor_context::visitor_context_test::file_inner_cfg_applies_to_all_boundaries ... ok
+test source::visitor_parts::visitor_context::visitor_context_test::negated_test_include_is_production_only ... ok
+test source::visitor_parts::visitor_context::visitor_context_test::ordinary_include_remains_production_context ... ok
+test source::visitor_parts::visitor_context::visitor_context_test::observed_facts_retain_test_only_syntax_guards ... ok
+test source::visitor_parts::visitor_context::visitor_context_test::enclosing_items_expressions_and_locals_are_test_only ... ok
+test source::visitor_parts::visitor_imports::visitor_imports_test::absolute_macro_paths_bypass_lexical_aliases_and_globs ... ok
+test source::visitor_parts::visitor_context::visitor_context_test::statement_macro_inputs_retain_outer_test_only_guard ... ok
+test source::visitor_parts::visitor_imports::visitor_imports_test::local_glob_candidates_resolve_outer_aliases_only_inside_their_scope ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::constructions_cover_struct_tuple_variant_unit_and_self_forms ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::field_writes_and_mutable_borrows_share_exact_self_identity ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::field_reads_exclude_write_and_mutable_borrow_places ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::operation_facts_preserve_test_only_guards ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::imported_structs_resolve_but_unknown_constructor_and_receiver_candidates_do_not ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::structured_places_retain_backing_authority_and_value_reads ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_constructor_calls::parenthesized_constructor_alias_is_recorded_as_one_tuple_construction ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_field_truth::typed_generic_receiver_keeps_synthetic_identity_before_local_catalog_lookup ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_field_truth::exact_field_identity_requires_a_local_declaration_with_that_member ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_field_truth::structural_patterns_emit_field_reads_and_shadow_outer_bindings ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_field_truth::unknown_shadows_tombstone_outer_types_and_cfg_bindings_keep_both_worlds ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_generic_roots::type_and_const_generics_shadow_only_their_declared_namespace ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_field_truth::unsupported_bases_retain_every_named_field_operation ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_implicit_reads::destructuring_assignment_emits_source_member_reads ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_implicit_reads::nested_destructuring_emits_each_source_projection ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_implicit_reads::nested_item_does_not_inherit_outer_value_bindings ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_implicit_reads::struct_update_defers_cfg_partitioned_declarations ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_implicit_reads::unit_struct_assignee_is_not_a_construction ... ok
+test source::macro_inputs::macro_inputs_test::oversized_macro_input_never_enters_recursive_parsing ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_implicit_reads::struct_update_receipt_tracks_explicit_field_cfg ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_implicit_reads::struct_update_retains_deferred_receipt ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_implicit_reads::unit_variant_assignee_is_not_a_construction ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_remaining_authority::nested_struct_patterns_propagate_field_reference_modes ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_remaining_authority::let_chain_and_match_guard_bindings_shadow_outer_exact_types ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_remaining_authority::mutable_pattern_authority_covers_every_binding_context_and_nesting ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_remaining_authority::destructuring_assignment_records_only_written_places ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_remaining_authority::raw_mutable_address_uses_mutable_borrow_authority ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_typed_places::dereference_stops_field_authority_but_indexing_preserves_it ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_typed_places::field_receiver_calls_retain_exact_place_and_written_method ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_typed_places::nested_and_typed_places_resolve_exact_receiver_types ... ok
+test source::visitor_parts::visitor_operations::visitor_operations_test::visitor_remaining_authority::structural_patterns_distinguish_mutable_shared_value_and_unknown_modes ... ok
+test source::visitor_parts::visitor_paths::visitor_paths_test::associated_callable_projection_is_not_an_exact_raw_path ... ok
+test source::visitor_parts::visitor_paths::visitor_paths_test::macro_and_attribute_names_are_not_observed_as_ordinary_paths ... ok
+test source_policy::source_policy_test::exact_implementation_override_reclassifies_an_entrypoint ... ok
+test source::visitor_parts::visitor_paths::visitor_paths_test::generic_roots_have_synthetic_path_and_call_identity ... ok
+test source::visitor_parts::visitor_paths::visitor_paths_test::restricted_visibility_paths_are_not_observed_authority ... ok
+test source_policy::source_policy_test::exact_overrides_change_only_facade_and_implementation_roles ... ok
+test source_policy::source_policy_test::generated_budget_remains_enforced_without_a_handwritten_size_policy ... ok
+test type_policy_test::authority_token_reports_field_representation_drift ... ok
+test type_policy_test::authority_token_accepts_recursive_private_exact_shape ... ok
+test type_policy_test::clone_copy_closed_enum_rejects_alias_impl_qualified_impl_derives_and_item_macro ... ok
+test type_policy_test::global_macro_token_policy_is_independent_of_per_type_policy ... ok
+test type_policy_cfg_attr_test::cfg_attr_derive_and_opacity_follow_inactive_and_active_worlds ... ok
+test type_policy_test::disabled_feature_world_impls_and_macros_do_not_affect_clone_copy_closure ... ok
+test type_shape_test::const_paths::a_const_alias_is_not_confused_with_a_type_of_the_same_name ... ok
+test type_shape_test::const_paths::array_lengths_resolve_const_paths_in_the_value_namespace ... ok
+test type_policy_test::unresolved_impl_target_in_the_governed_world_fails_closed ... ok
+test type_shape_test::const_paths::missing_values_and_nontrivial_const_blocks_remain_unresolved ... ok
+test type_shape_test::const_paths::braced_const_generic_paths_have_the_same_exact_value_identity ... ok
+test source::include_projection_apply::include_projection_apply_test::scale::repositories_without_include_edges_perform_zero_projection_work ... ok
+test type_shape_test::leaf::an_included_child_module_makes_the_containing_module_non_leaf ... ok
+test type_shape_test::leaf::possible_included_child_module_is_unresolved_not_a_leaf ... ok
+test type_shape_test::leaf::repeated_mounts_retain_separate_leafness_and_occurrence_diagnostics ... ok
+test type_shape_test::type_shape_attribute_test::enclosing_inline_module_replacement_is_retained_on_the_declaration ... ok
+test type_shape_test::leaf::an_included_type_sees_child_modules_in_its_parent_and_sibling_fragments ... ok
+test source::source_instance::source_instance_test::ordinary_base_contexts_are_not_capped_at_four_thousand ... ok
+test type_shape_test::leaf::duplication_clean_item_macros_require_separate_exact_namespace_authority ... ok
+test type_shape_test::type_shape_attribute_test::replacing_an_external_module_cannot_restore_exact_child_type_shape ... ok
+test type_shape_test::type_shape_domain_test::complementary_fields_cannot_pass_as_one_combined_shape ... ok
+test type_shape_test::type_shape_attribute_test::external_mount_opacity_follows_domains_and_transitive_includes ... ok
+test type_shape_test::type_shape_attribute_test::namespace_clean_attribute_still_invalidates_exact_shape ... ok
+test type_shape_test::type_shape_domain_test::target_predicate_field_is_unresolved_not_present ... ok
+test type_shape_test::type_shape_domain_test::inactive_fields_are_absent_from_enforcement_and_coverage ... ok
+test type_shape_test::type_shape_domain_test::leaf_module_shape_uses_domain_active_child_modules ... ok
+test type_shape_test::type_shape_domain_test::test_mode_shape_is_governed_only_when_selected ... ok
+test type_shape_test::type_shape_domain_test::every_world_must_match_and_guard_only_changes_are_detected ... ok
+test type_shape_test::type_shape_attribute_test::inactive_attribute_is_absent_but_active_and_possible_attributes_fail_closed ... ok
+test mirrors::receipts::receipts_test::renders_1244_mirrors_across_multiple_execution_groups_deterministically ... ok
+test source::include_projection_apply::include_projection_apply_test::scale::default_work_budget_covers_many_ordinary_compilation_occurrences ... ok
+
+test result: ok. 562 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.47s
+
+     Running tests/external_macro_cache.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/external_macro_cache-8950b779e25db5b4)
+
+running 2 tests
+test external_macro_archive_child ... ok
+test checksum_matched_external_glob_is_exact_and_tampering_is_unknown ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/rc9_inventory.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/rc9_inventory-2cf52ca640bf3ef7)
+
+running 2 tests
+test write_frozen_assertion_census ... ignored, requires explicitly prefetched frozen consumer checkouts and an output path
+test census_distinguishes_code_assertions_helpers_and_opaque_inputs ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/zrail_testkit-89c9bac8049c1717)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/analysis_completeness.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/analysis_completeness-caf4cde164b75645)
+
+running 3 tests
+test complete_analysis_returns_an_in_memory_candidate ... ok
+test parse_failure_returns_invalid_report_without_candidate_lock ... ok
+test completeness_certificate_binds_exact_cargo_lock_bytes ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/call_ownership.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/call_ownership-4211ae82d0ea89fd)
+
+running 5 tests
+test direct_call_outside_its_owner_is_rejected ... ok
+test unused_allowed_call_owner_is_stale ... ok
+test conservative_call_inside_an_owner_is_unverifiable ... ok
+test indirect_invocation_inside_an_owner_is_unverifiable ... ok
+test glob_import_cannot_escape_a_call_owner ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/cargo_alias_policy.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/cargo_alias_policy-eac97808f015f09f)
+
+running 1 test
+test dependency_aliases_compose_with_rust_aliases_across_policy_facts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/cargo_cache_exclusion.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/cargo_cache_exclusion-d42d5c969738f4b5)
+
+running 3 tests
+test exact_package_target_exclusion_is_valid_before_the_cache_exists ... ok
+test existing_package_target_requires_the_standard_cache_tag ... ok
+test untagged_populated_target_and_wildcard_target_patterns_are_rejected ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/cargo_crate_root.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/cargo_crate_root-adc19b17ad9bbe03)
+
+running 7 tests
+test irrelevant_external_crate_root_remains_explicitly_unresolved ... ok
+test external_crate_root_requires_explicit_authority ... ok
+test canonical_macro_allowance_requires_exact_external_identity ... ok
+test explicit_package_rename_is_the_source_visible_root ... ok
+test custom_workspace_library_name_is_locked_and_canonicalized ... ok
+test attested_external_crate_root_is_policy_visible_and_must_remain_used ... ok
+test custom_library_name_change_changes_locked_architecture ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/cargo_feature_world_oracle.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/cargo_feature_world_oracle-9df3613a1ce04832)
+
+running 5 tests
+test both_direct_split_directions_are_rejected ... ok
+test transitive_build_and_proc_macro_host_splits_are_rejected ... ok
+test authored_selected_and_default_features_cannot_mask_split_contexts ... ok
+test cargo_convergent_nonempty_contexts_are_conservatively_rejected ... ok
+test feature_empty_split_contexts_are_accepted ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s
+
+     Running tests/cargo_override.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/cargo_override-0c689772d13781d7)
+
+running 10 tests
+test included_configuration_is_rejected_without_following_its_paths ... ok
+test named_registry_without_an_attested_index_is_rejected ... ok
+test extensionless_root_cargo_configuration_is_rejected ... ok
+test ordinary_root_cargo_configuration_is_rejected ... ok
+test malformed_root_configuration_has_repository_stable_evidence ... ok
+test manifest_and_config_resolution_surfaces_are_rejected ... ok
+test non_file_root_cargo_configuration_is_rejected ... ok
+test nested_configuration_is_rejected_without_parsing_unbounded_input ... ok
+test symlinked_root_cargo_configuration_cannot_escape_attestation ... ok
+test symlinked_cargo_configuration_directory_is_not_traversed ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/compile_effects.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/compile_effects-92e4bf198e00d478)
+
+running 4 tests
+test embedded_files_must_be_literal_inventoried_repository_input ... ok
+test local_macro_shadow_cannot_claim_a_compiler_intrinsic_effect ... ok
+test compile_environment_and_filesystem_have_explicit_effects ... ok
+test external_macro_named_env_is_not_a_compiler_intrinsic ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/constructor_ownership.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/constructor_ownership-e2e9655ef9b78706)
+
+running 4 tests
+test proven_values_do_not_impersonate_constructors ... ok
+test split_impl_associated_values_do_not_impersonate_constructors ... ok
+test explicit_trait_items_do_not_reach_constructor_owners ... ok
+test lowercase_self_and_alias_constructors_raise_real_owner_findings ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/crate_root_authority.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/crate_root_authority-36440313efa3ceca)
+
+running 1 test
+test same_name_registry_and_git_dependencies_use_distinct_attestations ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/dependency_identity.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/dependency_identity-82178736b48929fa)
+
+running 2 tests
+test aliases_sources_targets_and_workspace_inheritance_are_locked ... ok
+test source_and_target_broadening_are_semantic_grants ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/effect_reachability.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/effect_reachability-a4a9cb5b17295cfe)
+
+running 4 tests
+test test_guarded_block_import_cannot_create_a_production_process_candidate ... ok
+test production_profiles_ignore_nonproduction_targets_and_guarded_facts ... ok
+test omitted_profile_reachability_preserves_all_fact_behavior ... ok
+test explain_reports_target_and_profile_fact_reachability ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/explain.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/explain-6d858fb72b62d464)
+
+running 7 tests
+test explanation_contains_actionable_source_policy ... ok
+test hypothetical_paths_retain_planning_classification ... ok
+test nonexistent_absolute_paths_report_their_interpretation ... ok
+test nonexistent_paths_fail_with_interpretation_and_close_matches ... ok
+test explanation_separates_written_public_and_origin_macro_identity ... ok
+test explanation_separates_opaque_input_from_content_bound_expansion ... ok
+test nested_module_and_include_edges_inherit_test_only_reachability ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/field_truth_ownership.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/field_truth_ownership-085d61fe762c3cf1)
+
+running 1 test
+test unresolved_field_bases_are_reported_instead_of_disappearing_or_misidentifying ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/file_role_overrides.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/file_role_overrides-8bdfc15ed24e018e)
+
+running 2 tests
+test entrypoints_accept_only_an_implementation_override ... ok
+test reasoned_role_overrides_are_effective_and_stale_policy_fails ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/fixtures.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/fixtures-c98991a06afd592e)
+
+running 35 tests
+test design_target_and_hard_ceiling_are_distinct ... ok
+test duplicate_simple_test_names_cannot_masquerade_as_exact_evidence ... ok
+test conditional_paths_and_generated_includes_are_unresolved ... ok
+test changed_qualification_gate_bytes_require_lock_review ... ok
+test facade_implementation_is_rejected ... ok
+test item_macro_source_edges_are_unresolved ... ok
+test exact_invariant_evidence_and_reviewed_gate_pass ... ok
+test known_good_repository_passes ... ok
+test inline_tests_are_rejected ... ok
+test missing_module_contract_is_rejected ... ok
+test missing_module_source_is_rejected ... ok
+test reasoned_lints_and_permissive_entrypoints_pass ... ok
+test production_reachability_overrides_test_like_pathnames ... ok
+test removed_declared_test_evidence_is_rejected ... ok
+test reversed_dependency_is_rejected ... ok
+test exact_rust_source_graphs_pass ... ok
+test root_package_workspace_passes ... ok
+test aliased_forbidden_capability_is_rejected ... ok
+test source_graph_escape_is_rejected ... ok
+test sibling_tests_cannot_be_both_test_and_production_reachable ... ok
+test sibling_tests_require_an_exact_path_declaration ... ok
+test stale_capability_owners_are_rejected ... ok
+test stale_capability_scopes_are_rejected ... ok
+test stale_dependency_edges_are_rejected ... ok
+test stale_item_macro_exemptions_are_rejected ... ok
+test nested_inline_test_source_graph_passes ... ok
+test stale_out_dir_bindings_are_rejected ... ok
+test stale_package_layers_are_rejected ... ok
+test aliased_capability_use_outside_its_owner_is_rejected ... ok
+test stale_repository_exclusions_are_rejected ... ok
+test unreachable_rust_source_is_rejected ... ok
+test undeclared_sibling_test_is_rejected ... ok
+test unchecked_failures_and_suppressions_are_rejected ... ok
+test unsafe_boundaries_are_detected_across_rust_editions ... ok
+test verified_generated_fragments_pass ... ok
+
+test result: ok. 35 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/generic_shadow_ownership.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/generic_shadow_ownership-f4936ab65c4014f2)
+
+running 114 tests
+test associated_includes::impl_item_include_becomes_source_graph_edge ... ok
+test associated_includes::associated_fragment_findings_keep_fragment_coordinates ... ok
+test aliased_impl_self::aliased_trait_impl_self_reference_reaches_trait_capability_owner ... ok
+test aliased_impl_self::aliased_impl_self_does_not_match_an_unrelated_trait ... ok
+test aliased_impl_self::nested_module_trait_impl_self_call_is_canonical ... ok
+test aliased_impl_self::direct_and_included_aliased_impl_self_have_identical_candidates ... ok
+test associated_includes::associated_item_include_inherits_generic_bounds ... ok
+test aliased_impl_self::aliased_trait_impl_self_call_reaches_defining_trait_owner ... ok
+test associated_includes::impl_item_include_inherits_concrete_self ... ok
+test associated_includes::nested_associated_item_include_is_transitive ... ok
+test associated_includes::non_rs_associated_fragment_is_analyzed ... ok
+test associated_includes::trait_item_include_keeps_associated_provider_surface_fail_closed ... ok
+test associated_includes::trait_item_include_inherits_current_trait ... ok
+test associated_substitutions::aliased_associated_equality_is_canonical ... ok
+test associated_substitutions::associated_bound_inside_trait_fragment_is_projected ... ok
+test associated_substitutions::associated_definition_inside_impl_fragment_is_projected ... ok
+test associated_substitutions::gat_associated_definition_preserves_arguments ... ok
+test associated_substitutions::impl_associated_type_definition_reaches_concrete_owner ... ok
+test associated_substitutions::qualified_associated_definition_is_preserved ... ok
+test associated_substitutions::included_impl_associated_definition_is_projected ... ok
+test bound_subjects::aliased_associated_type_declaration_bound_is_canonical ... ok
+test bound_subjects::associated_type_declaration_bound_reaches_provider_owner ... ok
+test associated_substitutions::cfg_partitioned_associated_definition_is_domain_exact ... ok
+test bound_subjects::colon_and_where_self_supertraits_have_identical_candidates ... ok
+test bound_subjects::external_provider_closure_blocks_matching_denied_scope ... ok
+test associated_substitutions::trait_argument_associated_equality_reaches_concrete_owner ... ok
+test bound_subjects::external_provider_closure_blocks_cross_authority_until_attested ... ok
+test bound_subjects::direct_and_inherited_projection_bounds_are_additive ... ok
+test bound_subjects::external_provider_closure_blocks_matching_owner ... ok
+test associated_substitutions::trait_argument_associated_bound_reaches_provider_owner ... ok
+test associated_substitutions::unqualified_projection_bound_reaches_qualified_occurrence ... ok
+test bound_subjects::external_provider_closure_blocks_matching_prefix_scope ... ok
+test bound_subjects::external_provider_closure_ignores_unrelated_associated_items ... ok
+test bound_subjects::opaque_local_provider_closure_blocks_bare_local_owner ... ok
+test bound_subjects::qualified_projection_bound_reaches_provider_owner ... ok
+test bound_subjects::opaque_associated_type_preserves_explicit_and_possible_providers ... ok
+test bound_subjects::opaque_local_provider_closure_blocks_matching_prefix_owner ... ok
+test bound_subjects::external_provider_closure_blocks_matching_prefix_owner ... ok
+test bound_subjects::opaque_associated_type_surface_blocks_provider_owner ... ok
+test bound_subjects::trait_body_macro_keeps_unknown_projection_surface_incomplete ... ok
+test direct::const_generic_does_not_impersonate_unit_constructor ... ok
+test bound_subjects::trait_default_associated_type_declaration_bound_reaches_provider_owner ... ok
+test direct::generic_type_associated_const_does_not_impersonate_unit_variant ... ok
+test bound_subjects::where_self_supertrait_reaches_provider_owner ... ok
+test fields::generic_deref_receiver_does_not_borrow_outer_field_identity ... ok
+test bound_subjects::unresolved_supertrait_alias_keeps_base_closure_incomplete ... ok
+test direct::generic_type_associated_function_does_not_impersonate_variant ... ok
+test fields::generic_deref_receiver_reaches_actual_field_owner_or_fails_closed ... ok
+test fragment_syntax::module_items_survive_a_second_impl_item_occurrence ... ok
+test fields::generic_receiver_and_outer_type_sharing_field_name_remain_distinct ... ok
+test fragment_syntax::non_rs_top_level_item_fragment_is_analyzed ... ok
+test fields::generic_derefmut_write_does_not_borrow_outer_field_identity ... ok
+test fields::generic_derefmut_borrow_does_not_borrow_outer_field_identity ... ok
+test fragment_syntax::same_fragment_supports_impl_and_trait_item_contexts ... ok
+test fragment_syntax::same_fragment_supports_top_level_and_impl_item_syntax ... ok
+test fragment_syntax::syntax_variants_count_as_one_physical_file ... ok
+test fragment_trait_scope::fragment_associated_definition_does_not_cross_an_explicit_trait ... ok
+test fragment_trait_scope::fragment_associated_definition_matches_current_trait_in_nested_module ... ok
+test includes::included_type_generic_does_not_shadow_bare_drop ... ok
+test fragment_trait_scope::fragment_associated_definition_matches_equivalent_trait_alias ... ok
+test fragment_trait_scope::filtered_fragment_candidate_is_removed_without_a_matching_bound ... ok
+test includes::direct_and_included_generic_rules_are_identical ... ok
+test fragment_trait_scope::inherited_explicit_trait_equality_remains_additive ... ok
+test includes::included_type_generic_does_not_shadow_some_or_none ... ok
+test observed::const_generic_reference_does_not_reach_outer_denied_symbol ... ok
+test observed::const_generic_reference_does_not_reach_outer_capability_owner ... ok
+test includes::included_type_generic_shadows_qualified_type_root ... ok
+test observed::generic_associated_const_reaches_capability_owner ... ok
+test includes::nested_include_preserves_generic_namespace ... ok
+test observed::generic_trait_call_does_not_reach_same_named_outer_variant_owner ... ok
+test observed::direct_and_included_generic_capabilities_match ... ok
+test observed::generic_trait_call_reaches_candidate_trait_owner ... ok
+test observed::generic_trait_call_does_not_reach_same_named_outer_inherent_owner ... ok
+test observed::generic_trait_function_reference_reaches_capability_owner ... ok
+test observed::generic_trait_reference_reaches_exact_symbol_scope ... ok
+test observed::multiple_trait_candidates_fail_closed_selectively ... ok
+test qualified_projections::ambiguous_unqualified_projection_fails_closed ... ok
+test qualified_projections::qualified_left_projection_reaches_only_left_provider ... ok
+test qualified_projections::same_external_root_different_item_is_not_relevant ... ok
+test qualified_projections::same_local_authority_different_item_is_not_relevant ... ok
+test qualified_projections::included_qualified_projection_matches_direct_source ... ok
+test qualified_projections::generic_arguments_distinguish_projection_qualifiers ... ok
+test qualified_projections::qualified_right_projection_reaches_only_right_provider ... ok
+test qualified_projections::same_named_associated_types_do_not_cross_contaminate ... ok
+test qualified_projections::included_generic_arguments_preserve_qualifier_identity ... ok
+test qualified_projections::trait_prefix_owner_remains_conservative ... ok
+test qualified_projections::unknown_provider_same_item_remains_fail_closed ... ok
+test qualified_projections::qualified_projection_alias_is_canonical ... ok
+test self_identity::cross_file_impl_self_call_is_canonical ... ok
+test self_identity::self_associated_call_reaches_call_owner ... ok
+test self_identity::self_associated_const_reaches_capability_owner ... ok
+test self_identity::expression_include_inherits_current_self ... ok
+test self_identity::nested_item_does_not_inherit_invalid_self_context ... ok
+test self_identity::nested_expression_include_inherits_current_self ... ok
+test self_identity::self_associated_function_reference_reaches_capability_owner ... ok
+test self_trait::generic_associated_type_bound_reaches_provider_trait ... ok
+test qualified_projections::unqualified_unique_projection_remains_precise ... ok
+test self_trait::trait_default_self_call_reaches_current_trait_owner ... ok
+test self_trait::self_associated_type_call_is_not_exact_concrete_path ... ok
+test self_trait::trait_impl_self_call_reaches_trait_owner ... ok
+test self_trait::unbounded_generic_projection_is_not_global_incompleteness ... ok
+test self_trait::trait_default_self_call_reaches_supertrait_provider ... ok
+test self_trait::trait_impl_self_reference_reaches_trait_capability_owner ... ok
+test trait_bounds::aliased_trait_bound_reaches_defining_owner ... ok
+test self_trait::included_self_projection_matches_direct_projection ... ok
+test trait_bounds::cross_file_supertrait_reaches_provider_owner ... ok
+test trait_bounds::imported_trait_bound_reaches_defining_owner ... ok
+test trait_bounds::glob_import_trait_bound_reaches_defining_owner ... ok
+test trait_bounds::glob_supertrait_provider_preserves_conservative_quality ... ok
+test trait_bounds::direct_and_included_alias_bounds_have_identical_candidates ... ok
+test trait_bounds::nested_module_trait_bound_is_module_qualified ... ok
+test trait_bounds::supertrait_associated_call_reaches_provider_owner ... ok
+test trait_bounds::transitive_supertrait_reaches_defining_provider ... ok
+test trait_bounds::unrelated_import_alias_does_not_match ... ok
+
+test result: ok. 114 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+     Running tests/global_path_ownership.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/global_path_ownership-927c337d41bc5e96)
+
+running 1 test
+test renamed_global_dependency_does_not_collapse_into_same_named_local_module ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/implicit_field_reads.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/implicit_field_reads-3a56c42bf429d135)
+
+running 2 tests
+test destructuring_source_read_reaches_field_owner ... ok
+test imported_local_update_reaches_each_field_owner_exactly ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/include_call_ownership.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/include_call_ownership-eca5e42fd1d9d49b)
+
+running 104 tests
+test module_reexports::ambiguous_module_namespace_fails_closed_inside_the_owner ... ok
+test module_reexports::alias_imported_from_a_module_continues_through_its_namespace ... ok
+test module_reexports::chained_module_reexports_reach_the_original_identity ... ok
+test compatible_include_instances_preserve_exact_allowed_call_ownership ... ok
+test caller_alias_used_by_included_call_cannot_bypass_call_ownership ... ok
+test expression_include_block_alias_does_not_escape_its_block ... ok
+test included_alias_used_by_caller_cannot_bypass_call_ownership ... ok
+test module_reexports::external_module_declared_by_an_include_uses_its_occurrence ... ok
+test module_reexports::inline_module_reexport_cannot_bypass_call_ownership ... ok
+test module_reexports::imported_module_alias_continues_through_its_namespace ... ok
+test module_reexports::local_type_terminal_does_not_borrow_external_authority ... ok
+test module_reexports::include_introduced_module_reexport_cannot_bypass_call_ownership ... ok
+test module_reexports::external_module_reexport_reaches_every_ordinary_path_consumer ... ok
+test included_globs_and_type_aliases_cannot_hide_owned_calls ... ok
+test module_reexports::module_glob_continues_through_the_member_namespace ... ok
+test module_reexports::module_aliases_stay_separate_across_compilation_domains ... ok
+test namespace_deep_audit::associated_type_calls::associated_projection_function_item_fails_closed ... ok
+test namespace_deep_audit::allowed_type_alias_remains_exact ... ok
+test namespace_deep_audit::associated_type_calls::associated_type_projection_inside_allowed_owner_is_not_exact ... ok
+test module_reexports::nested_super_module_reexport_cannot_bypass_call_ownership ... ok
+test namespace_deep_audit::associated_type_calls::associated_type_projection_through_imported_trait_fails_closed ... ok
+test namespace_deep_audit::allowed_block_alias_remains_exact ... ok
+test namespace_deep_audit::associated_type_calls::direct_associated_type_projection_fails_closed ... ok
+test namespace_deep_audit::associated_type_calls::direct_trait_function_remains_exact ... ok
+test namespace_deep_audit::associated_type_calls::multiply_parenthesized_projection_fails_closed ... ok
+test namespace_deep_audit::associated_type_calls::parenthesized_direct_trait_function_remains_exact ... ok
+test namespace_deep_audit::conditional_guards::cfg_attr_binding_fails_closed ... ok
+test namespace_deep_audit::associated_type_calls::parenthesized_associated_type_projection_fails_closed ... ok
+test namespace_deep_audit::conditional_guards::conditional_glob_cannot_hide_an_owned_call ... ok
+test namespace_deep_audit::conditional_guards::conditional_alias_in_an_allowed_owner_requires_exact_resolution ... ok
+test namespace_deep_audit::editions::absolute_type_alias_resolves_external_std_in_2015 ... ok
+test namespace_deep_audit::conditional_guards::conditional_same_file_alias_cannot_bypass_call_ownership ... ok
+test namespace_deep_audit::conditional_guards::conditional_call_fact_is_not_dropped_from_active_instances ... ok
+test namespace_deep_audit::conditional_guards::conditional_included_alias_cannot_bypass_call_ownership ... ok
+test namespace_deep_audit::conditional_guards::conditional_type_alias_cannot_hide_an_owned_call ... ok
+test namespace_deep_audit::editions::absolute_type_alias_resolves_external_std_in_2024 ... ok
+test namespace_deep_audit::macro_introduced_unknown_member_fails_closed ... ok
+test namespace_deep_audit::editions::plain_item_use_selects_the_crate_root_in_2015 ... ok
+test namespace_deep_audit::editions::included_absolute_std_import_ignores_a_local_std_module_in_2024 ... ok
+test namespace_deep_audit::exact_local_module_function_remains_a_negative_control ... ok
+test namespace_deep_audit::editions::plain_item_use_selects_the_local_module_in_2024 ... ok
+test namespace_deep_audit::local_reexport_keeps_its_canonical_module_prefix ... ok
+test namespace_deep_audit::macro_opacity::included_item_macro_generated_import_fails_closed ... ok
+test namespace_deep_audit::macro_opacity::opaque_explicit_import_takes_precedence_over_a_known_benign_glob ... ok
+test namespace_deep_audit::opaque_members::macro_generated_member_reached_through_a_module_glob_fails_closed ... ok
+test namespace_deep_audit::macro_opacity::statement_macro_generated_import_fails_closed ... ok
+test namespace_deep_audit::opaque_members::opaque_associated_type_alias_fails_closed ... ok
+test namespace_deep_audit::nested_module_globs_reach_a_fixed_point ... ok
+test namespace_deep_audit::opaque_members::complete_globbed_module_with_item_include_has_no_missing_member_uncertainty ... ok
+test namespace_deep_audit::opaque_members::type_only_local_name_does_not_suppress_a_glob_imported_value ... ok
+test namespace_deep_audit::parent_std_alias_does_not_hide_external_std_in_an_inline_child ... ok
+test namespace_deep_audit::parent_std_alias_does_not_leak_into_a_child_declared_by_an_include ... ok
+test namespace_deep_audit::qualified_self_calls::direct_qualified_self_call_outside_the_owner_fails ... ok
+test namespace_deep_audit::qualified_self_calls::generic_associated_self_type_fails_closed ... ok
+test namespace_deep_audit::proc_macro_opacity::attribute_macro_generated_import_fails_closed ... ok
+test namespace_deep_audit::qualified_self_calls::impl_self_qualified_type_fails_closed ... ok
+test namespace_deep_audit::qualified_self_calls::generic_associated_self_type_in_expression_include_fails_closed ... ok
+test namespace_deep_audit::proc_macro_opacity::attribute_replaced_benign_module_fails_closed ... ok
+test namespace_deep_audit::qualified_self_calls::non_path_qualified_self_type_fails_closed ... ok
+test namespace_deep_audit::proc_macro_opacity::attribute_replaced_benign_import_fails_closed ... ok
+test namespace_deep_audit::qualified_self_calls::opaque_qualified_self_type_fails_closed ... ok
+test namespace_deep_audit::proc_macro_opacity::derive_macro_generated_import_fails_closed ... ok
+test namespace_deep_audit::qualified_self_calls::qualified_self_call_inside_the_allowed_owner_remains_exact ... ok
+test namespace_deep_audit::qualified_self_calls::qualified_self_call_through_a_module_reexport_fails ... ok
+test namespace_deep_audit::qualified_self_calls::qualified_self_call_through_an_include_alias_fails ... ok
+test namespace_deep_audit::qualified_self_calls::qualified_self_call_through_an_ordinary_alias_fails ... ok
+test namespace_deep_audit::qualifier_blocks::included_block_module_super_qualifiers_ignore_the_block_alias ... ok
+test namespace_deep_audit::qualifier_blocks::extern_crate_self_alias_survives_nested_include_and_local_shadow ... ok
+test namespace_deep_audit::qualifier_blocks::inline_block_module_super_qualifiers_ignore_the_block_alias ... ok
+test namespace_deep_audit::type_value_qualifiers::local_function_wins_over_an_imported_same_name_module ... ok
+test namespace_deep_audit::type_value_qualifiers::opaque_alias_name_is_exact_in_a_plain_type_position ... ok
+test namespace_deep_audit::type_value_qualifiers::module_qualifier_wins_over_a_same_name_function_reexport ... ok
+test namespace_deep_audit::value_namespace::module_and_value_alias_with_the_same_spelling_reach_the_reexported_value ... ok
+test namespace_deep_audit::value_namespace::type_position_keeps_the_local_type_not_the_glob_imported_value ... ok
+test namespace_deep_audit::value_namespace::unit_struct_value_wins_over_a_same_name_filesystem_glob ... ok
+test namespace_deep_audit::value_namespace::test_only_foreign_function_does_not_shadow_a_production_glob_value ... ok
+test namespace_deep_audit::value_namespace::expression_path_uses_the_glob_imported_value_not_the_local_type ... ok
+test namespace_deep_audit::visibility::private_binding_is_exact_for_a_descendant ... ok
+test namespace_deep_audit::visibility::private_binding_is_unresolved_from_a_sibling ... ok
+test namespace_deep_audit::visibility::include_splice_is_transparent_to_private_descendant_visibility ... ok
+test namespace_deep_audit::visibility::private_child_binding_is_unresolved_from_its_parent ... ok
+test namespace_deep_audit::visibility::edition_2015_bare_pub_in_respects_crate_root_visibility ... ok
+test namespace_deep_audit::visibility::pub_crate_binding_is_exact_for_a_sibling ... ok
+test namespace_deep_audit::visibility::value_and_type_namespaces_coexist_without_false_authority ... ok
+test namespace_deep_audit::visibility::pub_in_binding_is_exact_inside_its_restricted_module ... ok
+test ordinary_qualified::inline_child_self_super_alias_cannot_bypass_call_ownership ... ok
+test ordinary_qualified::external_child_super_alias_cannot_bypass_call_ownership ... ok
+test ordinary_qualified::qualified_alias_in_an_allowed_owner_remains_exact ... ok
+test ordinary_qualified::crate_root_alias_cannot_bypass_call_ownership ... ok
+test ordinary_qualified::same_file_self_alias_cannot_bypass_call_ownership ... ok
+test namespace_deep_audit::visibility::pub_super_binding_is_exact_for_its_parent ... ok
+test ordinary_qualified::self_crosses_an_expression_include_to_the_effective_module ... ok
+test ordinary_qualified::self_ignores_a_block_alias_when_entering_the_module_namespace ... ok
+test ordinary_qualified::test_only_qualified_alias_does_not_change_production_identity ... ok
+test qualified::included_alias_via_crate_cannot_bypass_call_ownership ... ok
+test qualified::parent_included_alias_via_super_cannot_bypass_call_ownership ... ok
+test qualified::included_alias_via_self_cannot_bypass_call_ownership ... ok
+test qualified::qualified_alias_in_the_allowed_owner_remains_exact ... ok
+test qualified::nested_self_super_uses_the_effective_parent_module ... ok
+test qualified::super_leaves_an_inline_module_declared_inside_an_include ... ok
+test qualified::super_skips_the_include_edge_before_leaving_a_module ... ok
+test repeated_nested_includes_keep_distinct_alias_environments ... ok
+test test_only_include_alias_changes_only_the_test_compilation ... ok
+test qualified::test_only_qualified_alias_does_not_affect_production ... ok
+
+test result: ok. 104 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s
+
+     Running tests/item_macro_authority.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/item_macro_authority-738fe01259d1f7c3)
+
+running 1 test
+test item_macro_authority_selects_scope_and_requires_exact_origin_when_requested ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/item_macro_manifest.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/item_macro_manifest-76ff7449253b3e66)
+
+running 2 tests
+test external_manifest_binds_one_exact_cargo_lock_package ... ok
+test exact_manifest_binds_generated_names_invocation_and_lock_state ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_binding.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_binding-1c3a0cca454cf66a)
+
+running 5 tests
+test ambiguous_globs_emit_one_diagnostic_until_every_candidate_is_allowed ... ok
+test test_only_dependency_reexport_cannot_authorize_a_production_macro ... ok
+test sibling_glob_resolves_parent_exact_import ... ok
+test sibling_repository_glob_resolves_to_one_exact_allowance ... ok
+test unresolved_written_name_requires_explicit_conservative_binding ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/macro_binding_diagnostics.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_binding_diagnostics-23d811c4ae6feae6)
+
+running 6 tests
+test conservative_fallback_ignores_exact_source_claim_at_an_unresolved_site ... ok
+test allowance_without_a_syntactic_attempt_remains_stale ... ok
+test unresolved_exact_allowance_is_attempted_and_suggests_conservative_binding ... ok
+test definition_mismatch_reports_configured_path_and_observed_package_once ... ok
+test conservative_allowance_still_checks_source_at_an_exact_site ... ok
+test partial_candidate_attempt_is_rejected_without_unreviewed_or_stale_noise ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_builtin_derives.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_builtin_derives-1d8048d5fff54c01)
+
+running 7 tests
+test dependency_glob_candidates_remain_subject_to_macro_policy ... ok
+test dependency_alias_cannot_borrow_builtin_derive_authority ... ok
+test inherited_dependency_alias_cannot_borrow_builtin_derive_authority ... ok
+test imported_standard_trait_does_not_replace_builtin_derive ... ok
+test inherited_standard_trait_does_not_replace_builtin_derive ... ok
+test repository_function_alias_does_not_replace_builtin_invocation ... ok
+test builtin_derive_survives_an_overflowed_local_macro_catalog ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/macro_compilation_authority.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_compilation_authority-2f64d12e9490a48a)
+
+running 1 test
+test external_and_test_local_origins_are_both_authorized_and_content_bound ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_definition_reachability.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_definition_reachability-d84e62488db60ceb)
+
+running 7 tests
+test definition_after_invocation_does_not_shadow_the_compiler ... ok
+test external_allowance_cannot_attest_a_test_domain_local_definition ... ok
+test child_module_definition_does_not_shadow_its_parent ... ok
+test ordinary_invocation_requires_its_test_domain_local_definition ... ok
+test production_local_definition_still_shadows_a_compiler_macro ... ok
+test test_invocation_sees_ordinary_and_test_only_definitions ... ok
+test integration_definition_does_not_contaminate_other_cargo_targets ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_expansion.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_expansion-49087801c38fd525)
+
+running 16 tests
+test definition_binding::same_package_same_leaf_definition_cannot_lend_binding_authority ... ok
+test binding_opacity::wrong_source_derive_cannot_borrow_binding_clean_authority ... ok
+test binding_opacity::wrong_source_attribute_cannot_borrow_binding_clean_authority ... ok
+test definition_binding::feature_definition_cannot_borrow_complement_definition_binding_authority ... ok
+test intrinsic_shadow::qualified_intrinsic_spelling_is_not_assumed_to_be_the_standard_macro ... ok
+test expression_derive_and_attribute_macros_are_expansion_boundaries ... ok
+test definition_binding::test_definition_cannot_borrow_production_definition_binding_authority ... ok
+test conditional_import_cannot_authorize_macro_identity ... ok
+test local_macro_cannot_hide_unsafe_code_or_process_effects ... ok
+test definition_binding::external_qualified_definition_binds_its_exact_file ... ok
+test malformed_expansion_attributes_fail_closed ... ok
+test include_expansion_is_inspected_instead_of_blanket_trusted ... ok
+test binding_opacity::ordinary_source_bound_serde_review_keeps_the_namespace_opaque ... ok
+test binding_opacity::exact_source_bound_serde_review_keeps_the_namespace_complete ... ok
+test lexical_alias_authority_does_not_leak_to_same_spelled_macros ... ok
+test reviewed_expansion_is_allowed_and_stale_authority_is_rejected ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/macro_export_sets.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_export_sets-6cfbcf95c88517bd)
+
+running 3 tests
+test nested_empty_export_globs_do_not_shadow_compiler_macros ... ok
+test one_repository_macro_resolves_through_nested_export_globs ... ok
+test repository_dependency_macro_resolves_through_a_reexport_glob ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_external_glob.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_external_glob-ef9c345d94fd9d91)
+
+running 1 test
+test external_glob_requires_and_accepts_conservative_source_authority ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/macro_implementation_inputs.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_implementation_inputs-c3d46fdf27165d28)
+
+running 2 tests
+test included_rust_implementation_changes_invalidate_macro_authority ... ok
+test included_non_rust_input_changes_invalidate_macro_authority ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/macro_include_authority.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_include_authority-011e577a489bb283)
+
+running 4 tests
+test caller_definition_shadows_external_macro_inside_include ... ok
+test caller_definition_after_include_is_not_visible_inside_it ... ok
+test included_definition_shadows_compiler_macro_after_include ... ok
+test test_only_caller_definition_is_a_content_bound_second_origin ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/macro_include_qualified_alias.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_include_qualified_alias-2165c03e6a9619f9)
+
+running 1 test
+test qualified_include_alias_resolves_exact_repository_authority ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_include_splices.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_include_splices-ee4aecc327f8cc5c)
+
+running 5 tests
+test inline_module_include_does_not_leak_macro_definitions ... ok
+test nested_includes_preserve_definition_order ... ok
+test expression_include_does_not_leak_macro_definitions ... ok
+test repeated_include_occurrences_receive_distinct_macro_environments ... ok
+test aliases_crossing_include_splices_reject_name_only_authority ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/macro_input_authority.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_input_authority-5cd3777a0fa67164)
+
+running 3 tests
+test standard_macro_inputs_retain_unsafe_effect_and_nested_macro_facts ... ok
+test opaque_dsl_input_requires_separate_nonstale_authority ... ok
+test approved_local_macro_body_is_content_bound_in_the_lock ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_integration_crate_root.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_integration_crate_root-80717ad4bbd3f81a)
+
+running 1 test
+test integration_test_macro_import_binds_the_crate_under_test ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_logical_mounts.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_logical_mounts-62ba08f578949b0a)
+
+running 4 tests
+test mounted_invocation_diagnostics_keep_the_physical_fragment_path ... ok
+test included_import_contributes_to_the_parent_macro_scope ... ok
+test included_fragment_borrows_the_parent_dependency_scope ... ok
+test one_fragment_resolves_independently_in_two_logical_mounts ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/macro_module_edges.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_module_edges-7481ee8dd34317df)
+
+running 4 tests
+test test_only_module_edge_cannot_authorize_a_production_macro ... ok
+test test_only_module_edge_can_authorize_a_test_only_macro ... ok
+test bare_local_module_glob_does_not_claim_unexported_macros ... ok
+test direct_module_child_ignores_an_unselected_source_parent_candidate ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_names.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_names-386063de66610063)
+
+running 4 tests
+test exact_written_alias_is_accepted_without_becoming_the_preferred_name ... ok
+test unreviewed_same_named_import_suggests_one_valid_public_path ... ok
+test dependency_import_forms_share_one_public_policy_name ... ok
+test repository_reexport_accepts_public_and_written_spellings ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/macro_namespace_imports.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_namespace_imports-4e93b9b16d4ae4a6)
+
+running 2 tests
+test one_use_can_bind_macro_and_value_namespaces_independently ... ok
+test non_macro_imports_do_not_shadow_a_compiler_macro ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_namespaces.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_namespaces-e30d6d243e365c77)
+
+running 5 tests
+test relative_export_module_wins_over_the_same_crate_root_name ... ok
+test inaccessible_unknown_glob_does_not_escape_its_module ... ok
+test restricted_macro_export_does_not_escape_its_logical_module ... ok
+test accessible_unanalyzed_glob_reports_an_unknown_export_set ... ok
+test same_spelling_in_other_namespaces_does_not_shadow_a_compiler_macro ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_nested_inputs.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_nested_inputs-af99a86e41d5c06c)
+
+running 3 tests
+test opaque_input_macro_tokens_are_not_compiler_expansions ... ok
+test matches_pattern_macros_are_reviewed_independently ... ok
+test opaque_input_compiler_macros_retain_effects_and_path_validation ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/macro_operation_ownership.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_operation_ownership-bd7b945b0a2b767a)
+
+running 1 test
+test every_operation_owner_fails_closed_for_every_macro_form ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/macro_origin_authority.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_origin_authority-92a596168cbe52bf)
+
+running 5 tests
+test external_package_named_local_needs_external_source_authority ... ok
+test excluded_repository_path_macro_package_is_content_bound ... ok
+test qualified_local_macros_bind_the_package_and_transitive_helpers ... ok
+test workspace_macro_package_changes_invalidate_repository_authority ... ok
+test internal_proc_macro_implementation_is_package_bound ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/macro_proc_exports.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_proc_exports-9a418b645c909919)
+
+running 2 tests
+test proc_macro_export_resolves_through_a_dependency_glob ... ok
+test proc_macro_export_resolves_through_a_named_path_dependency_reexport ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/macro_repository_inputs.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_repository_inputs-ede5a4fd98553cd0)
+
+running 12 tests
+test input_patterns_cannot_escape_select_reserved_outputs_or_repeat ... ok
+test ambient_input_assumption_must_be_explicit_and_closed ... ok
+test owned_and_explicit_symlinks_are_not_silently_omitted ... ok
+test resolution::only_external_implementation_closures_require_a_lock ... ok
+test scanning::explicitly_selected_source_excluded_assets_remain_bound ... ok
+test resolution::stale_missing_and_ambiguous_outgoing_edges_are_rejected ... ok
+test resolution::git_resolution_binds_exact_revisions_and_rejects_wrong_manifest_references ... ok
+test external_reviewed_inputs_are_bound_and_empty_globs_are_rejected ... ok
+test scanning::fixed_prefixes_cannot_traverse_internal_symlink_aliases ... ok
+test provider_json_and_transitive_helper_template_invalidate_authority ... ok
+test scanning::unrelated_and_reserved_trees_are_pruned_before_traversal_limits ... ok
+test resolution::registry_versions_checksums_and_transitive_graph_changes_invalidate_authority ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/macro_repository_item_source.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_repository_item_source-4875350461202ef6)
+
+running 4 tests
+test repository_item_source_requires_exact_package_and_directory ... ok
+test repository_item_macro_content_changes_both_lock_surfaces ... ok
+test transitive_internal_helper_content_changes_both_lock_surfaces ... ok
+test matching_repository_source_binds_item_manifest_and_implementation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/macro_repository_source.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_repository_source-9b373fd71fc1554a)
+
+running 2 tests
+test repository_source_rejects_a_different_package_directory ... ok
+test repository_source_closes_only_the_matching_workspace_macro ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/macro_shadow.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_shadow-7f13b4b8f8690c23)
+
+running 5 tests
+test local_module_shadow_cannot_borrow_dependency_macro_authority ... ok
+test macro_use_namespace_cannot_be_allowlisted_as_exact ... ok
+test block_local_macro_cannot_borrow_a_standard_name_allowance ... ok
+test cross_file_macro_scope_cannot_borrow_a_standard_name_allowance ... ok
+test bare_local_macro_cannot_borrow_a_standard_name_allowance ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/macro_target_predicate_authority.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/macro_target_predicate_authority-efd5c7765391c89d)
+
+running 2 tests
+test target_guarded_local_shadow_cannot_borrow_builtin_authority ... ok
+test target_guarded_module_does_not_make_builtin_origin_unresolved ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/operation_ownership.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/operation_ownership-d4877c2680ab942f)
+
+running 2 tests
+test operation_owners_reject_construction_method_and_field_trespassers ... ok
+test exact_field_owners_fail_closed_for_unknown_receivers ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/owner_reachability.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/owner_reachability-f0a45e8e1550bc35)
+
+running 1 test
+test production_owners_ignore_nonproduction_uses_without_hiding_runtime_debt ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/place_expression_ownership.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/place_expression_ownership-8cc48c3952ec41d6)
+
+running 1 test
+test field_authority_covers_projected_writes_and_mutable_borrows ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/prelude_ownership.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/prelude_ownership-2303b76400e59499)
+
+running 20 tests
+test aliases::alias_generic_parameter_shadows_prelude_type ... ok
+test aliases::no_std_rejects_std_only_type_alias_target ... ok
+test aliases::prelude_option_alias_tuple_variant_reaches_base_owner ... ok
+test calls::bare_drop_reaches_canonical_call_owner ... ok
+test aliases::prelude_option_alias_unit_variant_reaches_base_owner ... ok
+test aliases::local_type_shadows_prelude_in_alias_target ... ok
+test aliases::prelude_result_alias_variants_reach_base_owner ... ok
+test calls::bare_drop_reference_reaches_capability_owner ... ok
+test calls::conditional_expression_include_shadow_fails_closed ... ok
+test aliases::alias_chain_through_prelude_type_is_canonical ... ok
+test calls::expression_include_inherits_drop_shadow ... ok
+test calls::local_drop_shadows_prelude_call ... ok
+test calls::no_implicit_prelude_does_not_canonicalize_drop ... ok
+test calls::no_std_does_not_canonicalize_vec ... ok
+test calls::nested_expression_include_inherits_drop_shadow ... ok
+test calls::mixed_cache_modes_preserve_before_and_after_let ... ok
+test calls::expression_include_inherits_const_generic_shadow ... ok
+test calls::prelude_type_reaches_denied_symbol_scope ... ok
+test calls::type_generic_drop_does_not_shadow_value_prelude ... ok
+test calls::vec_new_reaches_canonical_call_owner ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/proc_macro_reachability.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/proc_macro_reachability-17dea25ed687e14a)
+
+running 1 test
+test runtime_profiles_exclude_proc_macros_but_all_profiles_govern_them ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/qualification_gate_inputs.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/qualification_gate_inputs-da4b0077b1355883)
+
+running 4 tests
+test gate_input_bytes_are_part_of_the_candidate_lock ... ok
+test missing_and_changed_gate_inputs_fail_closed ... ok
+test manifest_target_selection_changes_are_exact_gate_input_drift ... ok
+test repository_manifests_are_locked_qualification_inputs ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.78s
+
+     Running tests/qualification_workflows.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/qualification_workflows-b804df440b886069)
+
+running 5 tests
+test canonical_and_compatibility_toolchains_are_explicit ... ok
+test local_gate_rejects_cargo_configuration_before_cargo_commands ... ok
+test rustsec_audit_is_exact_online_and_fail_closed ... ok
+test cargo_configuration_is_rejected_before_every_ci_cargo_invocation ... ok
+test self_check_selects_the_zrail_binary_explicitly ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/release_api_rehearsal.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/release_api_rehearsal-703b1e6f7c666241)
+
+running 1 test
+release API rehearsal: starter cleanup, publication resume, body, assets, and remote-tag checks passed
+test mocked_github_release_state_machine_is_fail_closed_and_resumable ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.20s
+
+     Running tests/release_crate_source_staging.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/release_crate_source_staging-39c597b76f847ab0)
+
+running 3 tests
+test staging_binds_the_archive_and_every_regular_file ... ok
+test staging_rejects_archive_symlinks_and_existing_package_directories ... ok
+test staging_rejects_traversal_links_duplicates_roots_and_wrong_identity ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+
+     Running tests/release_packaging.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/release_packaging-4db1789f40603ada)
+
+running 2 tests
+test release_notes_are_extracted_from_one_exact_version_section ... ok
+test release_archives_are_deterministic_with_exact_members ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/release_publish_preflight.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/release_publish_preflight-fe9c2dda8d043f46)
+
+running 2 tests
+test preflight_stages_all_predecessors_before_any_publication_traffic ... ok
+test preflight_rejects_non_registry_sources_and_wrong_archive_checksums ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/release_workflow.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/release_workflow-3fa6d66ba5788cb6)
+
+running 8 tests
+test packaged_archives_keep_and_check_their_registry_locks ... ok
+test every_external_release_action_uses_an_immutable_full_sha ... ok
+test readme_uses_verified_prebuilt_binaries_for_ci ... ok
+test crate_publication_is_ordered_exact_and_safe_to_resume ... ok
+test release_covers_the_exact_native_target_and_archive_set ... ok
+test publishing_waits_for_all_builds_and_clean_linux_runtime_checks ... ok
+test partial_publication_reruns_reuse_only_the_exact_draft ... ok
+test release_requires_protected_tagged_source_before_repository_execution ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/remaining_field_authority.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/remaining_field_authority-6f8f0b9a02989d73)
+
+running 5 tests
+test match_guard_let_binding_reaches_later_conditions_and_body ... ok
+test let_chain_shadow_cannot_borrow_outer_exact_identity ... ok
+test struct_destructuring_assignment_emits_field_writes ... ok
+test ref_mut_pattern_is_mutation_authority ... ok
+test raw_mut_address_is_mutation_authority ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/rust_debt_ratchet.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/rust_debt_ratchet-9ec82c885a8a6a81)
+
+running 4 tests
+test baseline_discovers_every_enabled_structural_debt_kind ... ok
+test lint_measurement_distinguishes_reasoned_from_deny ... ok
+test unsafe_debt_shrink_and_regrowth_are_both_explicit ... ok
+test module_doc_debt_is_exact_and_new_files_receive_no_exemption ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/scale_adoption.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/scale_adoption-77d17abf054bd159)
+
+running 1 test
+test ten_thousand_physical_rust_files_produce_stable_complete_lock_state ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.94s
+
+     Running tests/scoped_budgets.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/scoped_budgets-8003936e1e7ecfe8)
+
+running 16 tests
+test missing_exception_target_is_stale_even_after_the_source_is_deleted ... ok
+test overlapping_same_tier_scopes_reject_check_coverage_and_lock_building ... ok
+test parity_test::frozen_required_metadata_rejections_match_strict_contract_validation ... ok
+test coverage_counts_physical_lines_once_and_preserves_all_debt_metadata ... ok
+test exact_hard_allowance_and_authored_baseline_accept_only_the_reviewed_file ... ok
+test lock_updates_cannot_grant_independent_hard_exceptions ... ok
+test selection_test::unknown_package_selector_fails_instead_of_disabling_the_override ... ok
+test selection_test::line_measurement_keeps_crlf_and_unterminated_final_records ... ok
+test selection_test::future_overlap_is_rejected_by_hypothetical_explain_and_when_the_file_arrives ... ok
+test scope_intersects_packages_paths_and_roles_without_changing_default_families ... ok
+test parity_test::imported_oversized_fixture_preserves_target_rejection_and_exact_allowance_acceptance ... ok
+test test_facade_budget_is_independent_of_test_execution_and_ordinary_test_limit ... ok
+test old_contracts_preserve_the_documented_rc8_ratchet_behavior ... ok
+test authored_and_locked_measurements_reject_growth_shrinkage_and_removed_debt ... ok
+test warning_targets_and_soft_thresholds_do_not_become_release_failures ... ok
+test parity_test::frozen_baseline_and_hard_allowance_predicates_match_all_fifty_four_cases ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s
+
+     Running tests/selector_ratchet.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/selector_ratchet-85a9d1a37c65ab79)
+
+running 2 tests
+test baseline_discovers_one_ratchet_per_denied_selector_and_file ... ok
+test selector_ratchets_measure_and_tighten_independently ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/self_projection_budget.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/self_projection_budget-8f32bf20d7e8e011)
+
+running 2 tests
+test warm_process_wall_clock_smoke_is_advisory ... ignored, manual wall-clock smoke; run through scripts/perf-smoke
+test self_hosted_projection_work_does_not_regress ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 23.81s
+
+     Running tests/size_ratchet.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/size_ratchet-f31f59df2ffcf635)
+
+running 2 tests
+test unratcheted_file_keeps_the_class_hard_ceiling ... ok
+test locked_facade_ratchet_is_the_files_exact_ceiling_until_target ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/statement_macro_reachability.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/statement_macro_reachability-adb81b10bc562890)
+
+running 1 test
+test test_only_statement_macro_input_is_not_production_authority ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/strict_facades.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/strict_facades-8ed0efa60ba732fd)
+
+running 8 tests
+test declarative_mode_retains_rc8_data_declarations ... ok
+test test_facade_cannot_reclassify_production_or_hide_a_missing_mount ... ok
+test production_mount_of_a_test_facade_fails_without_changing_its_test_identity ... ok
+test expression_fragments_cannot_pass_as_empty_wiring_facades ... ok
+test test_facade_structure_keeps_test_reachability_budgets_and_scenario_identity ... ok
+test frozen_kafkars_negative_fixture_reports_each_architectural_violation ... ok
+test wiring_only_rejects_each_non_wiring_item_through_the_facade_rail ... ok
+test import_modes_preserve_the_two_consumers_distinct_written_visibility_rules ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/test_facade_discovery.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/test_facade_discovery-97b6b6bcaa5e24e1)
+
+running 2 tests
+test legacy_modes_preserve_test_source_selection ... ok
+test newly_added_test_mod_files_receive_global_wiring_policy ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/test_filename_classification.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/test_filename_classification-a635b94b97f45da8)
+
+running 1 test
+test tests_rs_uses_test_policy_across_consumers ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/test_mirror_receipts.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/test_mirror_receipts-e1ea18ea55d4f658)
+
+running 8 tests
+test mirror_requires_production_and_cargo_test_reachability_plus_exact_declaration ... ok
+test stale_explicit_paths_and_missing_receipts_fail_closed ... ok
+test selected_execution_package_must_own_both_mirror_sources ... ok
+test exact_cargo_reachable_mirror_with_passed_receipt_is_authoritative ... ok
+test mirror_plan_scales_execution_without_weakening_exact_receipts ... ok
+test trusted_group_results_render_the_complete_receipt_set_without_execution ... ok
+test receipt_binds_manifests_lock_shared_inputs_and_execution_identity ... ok
+test receipt_schema_digest_pass_status_and_exact_bytes_fail_closed ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/transitive_dependency.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/transitive_dependency-786b94f0e4a59c27)
+
+running 4 tests
+test transitive_policy_requires_a_checked_in_cargo_lock ... ok
+test ambiguous_manifest_to_lock_mapping_fails_closed ... ok
+test dependency_kind_selects_the_honest_first_manifest_edge ... ok
+test transitive_policy_reports_the_shortest_exact_locked_path ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/workspace_discovery.rs (/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/workspace_discovery-ef7bc28da530b25e)
+
+running 1 test
+test unlisted_package_is_reported_without_entering_ignored_workspaces ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests zrail_core
+
+running 1 test
+test crates/zrail-core/src/lib.rs - (line 17) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.25s; merged doctests compilation took 0.24s
+   Doc-tests zrail_rust
+
+running 1 test
+test crates/zrail-rust/src/check_repository.md - engine::check_repository (line 12) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+all doctests ran in 0.54s; merged doctests compilation took 0.53s
+   Doc-tests zrail_testkit
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+ Documenting zrail-rust v0.0.3-rc.8 (/root/zrail-rc9/crates/zrail-rust)
+    Finished `dev` profile [unoptimized] target(s) in 2.39s
+   Generated /mnt/volume_atl1_1787847588295/zrail-rc9/target/doc/zrail/index.html and 3 other files
+error[LOCK-008]: zrail.lock uses semantics 6, current engine uses semantics 7
+   = rule: lock.semantics
+   = analysis: exact
+   = help: review the semantic migration with a compatible zrail engine
+
+error[LOCK-026]: qualification gate "release" input "CHANGELOG.md" changed after review
+   = rule: lock.qualification-gate-input
+   = analysis: exact
+
+error[LOCK-028]: the active analyzed inventory differs from zrail.lock
+   = rule: lock.analysis
+   = analysis: exact
+   = help: run `zrail diff` and review the changed analysis universe
+
+error[LOCK-030]: the analysis certificate uses different analyzer semantics
+   = rule: lock.analysis
+   = analysis: exact
+   = help: run `zrail diff` and review the changed analysis universe
+
+Analysis: complete; 886 Rust files, 1,426 base contexts, 0 derived contexts, 1,177,203 projection work, 0 unresolved.
+Diagnostics: 4 total; showing 4.
+
+By rule:
+  LOCK-008  lock.semantics                 error    1
+  LOCK-026  lock.qualification-gate-input  error    1
+  LOCK-028  lock.analysis                  error    1
+  LOCK-030  lock.analysis                  error    1
+
+Status: fail (4 errors, 0 warnings, 0 notes)

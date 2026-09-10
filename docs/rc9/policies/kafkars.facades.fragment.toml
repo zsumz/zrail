@@ -1,0 +1,29 @@
+# PARTIAL REVIEW FRAGMENT. Not a complete replacement contract or qualified bundle.
+# Source: kafkars/kafkars 67ad7aa8d91f9639c87b00338b9e21a633f7bb4c.
+# Budgets and compilation reachability remain separate policy dimensions.
+[source.rust]
+facades = "wiring-reexports"
+
+[[source.rust.file_roles]]
+path = "crates/kafka-client-guardrails/tests/support/mod.rs"
+role = "test-facade"
+mode = "wiring-reexports"
+reason = "The frozen lib.rs/mod.rs selector governs the guardrail test support facade."
+
+[[source.rust.file_roles]]
+path = "crates/kafkars/tests/admin_list_offsets_loopback/mod.rs"
+role = "test-facade"
+mode = "wiring-reexports"
+reason = "Loopback scenarios stay behind this existing facade and retain test execution identity."
+
+[[source.rust.file_roles]]
+path = "crates/kafkars/tests/admin_list_partition_reassignments_loopback/mod.rs"
+role = "test-facade"
+mode = "wiring-reexports"
+reason = "Partition reassignment scenarios stay behind the existing test facade."
+
+[[source.rust.file_roles]]
+path = "crates/kafkars/tests/admin_partition_reassignments_loopback/mod.rs"
+role = "test-facade"
+mode = "wiring-reexports"
+reason = "Partition reassignment test wiring retains the frozen re-export-only policy."

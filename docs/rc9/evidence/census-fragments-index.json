@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "implementation_commit": "951941ff2d8964ac8a6f61aef2e6bd7f5403cef7",
+  "implementation_tree": "9e6bccbf6a7da51a88f520adf6c708a3eb7fc397",
+  "payload_sha256": "308d9fcb3b237d706f35b51069cb336b0ed6dd225f589af22e5c05554749a7c5",
+  "repeat_identical": true,
+  "git_status_unchanged": true,
+  "claim": "Trusted assertion discovery in seven explicitly reviewed Rust fragments; no automatic assertion disposition or replacement verification.",
+  "snapshots": {
+    "consumers": [
+      {
+        "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+        "name": "kafka-driver",
+        "repository": "kafkars/kafka-driver",
+        "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+      },
+      {
+        "commit": "67ad7aa8d91f9639c87b00338b9e21a633f7bb4c",
+        "name": "kafkars",
+        "repository": "kafkars/kafkars",
+        "tree": "6abde2775e12d772d7cdc1ea01fc253e699c6a45"
+      },
+      {
+        "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+        "name": "rafter",
+        "repository": "zsumz/rafter",
+        "tree": "b91b3ca7362219e32fdbb08a8374403c0353e745"
+      }
+    ],
+    "implementation_base": {
+      "commit": "5a368379360104ca19745326cfcef48d22a6452b",
+      "reference": "v0.0.3-rc.8",
+      "repository": "zsumz/zrail",
+      "tree": "f64cc5c258e1edf8e1de0d9d38a22f6100671475"
+    },
+    "schema": 1
+  },
+  "payload_bytes": 37670708,
+  "gzip_sha256": "bc2847418d15ccf2c9f0ddc7215b20b4a53ee10e11c448d22761c76201ce88ea",
+  "previous_artifact": {
+    "commit": "951941ff2d8964ac8a6f61aef2e6bd7f5403cef7",
+    "path": "crates/zrail-testkit/tests/fixtures/rc9/census.json.gz",
+    "payload_sha256": "f90b74831614e4a660fdc8d1c008eb9f036fd81350f931478322af1378cab161"
+  },
+  "tracked_files": 9792,
+  "previous_candidates": 79949,
+  "candidates": 80135,
+  "added_candidates": 186,
+  "added_candidate_kinds": {
+    "accumulator-candidate": 3,
+    "assertion-macro": 62,
+    "fallible-call-candidate": 58,
+    "helper-call-candidate": 3,
+    "macro-review-boundary": 60
+  },
+  "additional_rust_inputs": 7,
+  "additional_rust_inputs_sha256": "95aa661d3c53a25f56df27d03caa4a350e589f4cf725ffcee5eea10f0192ded5",
+  "previous_candidates_preserved": true,
+  "frozen_file_identities_preserved": true,
+  "focused_tests_passed": 5,
+  "focused_clippy_passed": true,
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "test_binary_sha256": "5669f7c2121e99f62199db5867ff3da57c84d91af35e4518c8f0aa6f2317ecb1",
+  "logs": [
+    {
+      "artifact": "docs/rc9/evidence/census-fragments-a.log.gz",
+      "exit_status": 0,
+      "payload_sha256": "f1ee75dcaafea2eff7a9cf792275346c91fb68c20704b9c9b0f836dd158a59bf",
+      "compressed_sha256": "cf66f2cb081dcc250235b0927b301a8340d013f5d3a74b9187a98a4a07a93bc0"
+    },
+    {
+      "artifact": "docs/rc9/evidence/census-fragments-b.log.gz",
+      "exit_status": 0,
+      "payload_sha256": "e604b5424d9dd1a14a610a32201588133e6b9b7dc735dc2308d5713aa7db1c90",
+      "compressed_sha256": "7ca83e74a781e935abf1732732428864a4104d186d0de5b938a53377002d00f2"
+    }
+  ]
+}

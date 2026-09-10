@@ -1,0 +1,92 @@
+# Proposed physical-boundary correction; not yet qualified for downstream cutover.
+# Preserve the original artifact-bound retired.fragment.toml for historical evidence.
+# Required inputs remain separate from zero-count prohibitions.
+[[repository.files]]
+name = "kd-retired-inputs"
+reason = "The original release-graph checks require all three UTF-8 source inputs."
+include = ["src/reactor/mod.rs", "src/reactor/backend.rs", "src/reactor/host/construction.rs"]
+predicate = { kind = "exact-paths", paths = ["src/reactor/mod.rs", "src/reactor/backend.rs", "src/reactor/host/construction.rs"] }
+
+[[repository.files]]
+name = "kd-retired-construction-new_legacy"
+reason = "Preserve the original raw construction-token prohibition, including comments and strings."
+include = ["src/reactor/host/construction.rs"]
+predicate = { kind = "literal", text = "new_legacy", mode = "absent" }
+
+[[repository.files]]
+name = "kd-retired-construction-LegacyBackend"
+reason = "Preserve the original raw construction-token prohibition, including comments and strings."
+include = ["src/reactor/host/construction.rs"]
+predicate = { kind = "literal", text = "LegacyBackend", mode = "absent" }
+
+[[repository.files]]
+name = "kd-retired-tree-broker_set"
+entry = "non-directory"
+reason = "No Rust source may remain beneath the retired broker_set tree. A file named .rs has no Rust extension in the original detector."
+include = ["src/reactor/broker_set/**/*.rs"]
+exclude = ["src/reactor/broker_set/**/.rs"]
+predicate = { kind = "count", minimum = 0, maximum = 0 }
+
+[[repository.files]]
+name = "kd-retired-tree-plaintext"
+entry = "non-directory"
+reason = "No Rust source may remain beneath the retired plaintext tree. A file named .rs has no Rust extension in the original detector."
+include = ["src/reactor/plaintext/**/*.rs"]
+exclude = ["src/reactor/plaintext/**/.rs"]
+predicate = { kind = "count", minimum = 0, maximum = 0 }
+
+[[repository.files]]
+name = "kd-retired-tree-poller"
+entry = "non-directory"
+reason = "No Rust source may remain beneath the retired poller tree. A file named .rs has no Rust extension in the original detector."
+include = ["src/reactor/poller/**/*.rs"]
+exclude = ["src/reactor/poller/**/.rs"]
+predicate = { kind = "count", minimum = 0, maximum = 0 }
+
+[[repository.files]]
+name = "kd-retired-tree-resource"
+entry = "non-directory"
+reason = "No Rust source may remain beneath the retired resource tree. A file named .rs has no Rust extension in the original detector."
+include = ["src/reactor/resource/**/*.rs"]
+exclude = ["src/reactor/resource/**/.rs"]
+predicate = { kind = "count", minimum = 0, maximum = 0 }
+
+[[repository.files]]
+name = "kd-retired-tree-tcp"
+entry = "non-directory"
+reason = "No Rust source may remain beneath the retired tcp tree. A file named .rs has no Rust extension in the original detector."
+include = ["src/reactor/tcp/**/*.rs"]
+exclude = ["src/reactor/tcp/**/.rs"]
+predicate = { kind = "count", minimum = 0, maximum = 0 }
+
+[[repository.files]]
+name = "kd-retired-tree-timer"
+entry = "non-directory"
+reason = "No Rust source may remain beneath the retired timer tree. A file named .rs has no Rust extension in the original detector."
+include = ["src/reactor/timer/**/*.rs"]
+exclude = ["src/reactor/timer/**/.rs"]
+predicate = { kind = "count", minimum = 0, maximum = 0 }
+
+[[repository.files]]
+name = "kd-retired-tree-tls"
+entry = "non-directory"
+reason = "No Rust source may remain beneath the retired tls tree. A file named .rs has no Rust extension in the original detector."
+include = ["src/reactor/tls/**/*.rs"]
+exclude = ["src/reactor/tls/**/.rs"]
+predicate = { kind = "count", minimum = 0, maximum = 0 }
+
+[[source.rust.inventories]]
+name = "kd-retired-modules"
+reason = "Preserve the original direct-file module declaration prohibition in every authored cfg branch."
+include = ["src/reactor/mod.rs"]
+world = "authored"
+subject = { kind = "written-file-modules", names = ["broker_set", "plaintext", "poller", "resource", "tcp", "timer", "tls"] }
+assertion = { kind = "count", maximum = 0 }
+
+[[source.rust.inventories]]
+name = "kd-retired-backend"
+reason = "Preserve the original direct-file ReactorBackend::Legacy variant prohibition in every authored cfg branch."
+include = ["src/reactor/backend.rs"]
+world = "authored"
+subject = { kind = "written-file-enum-variants", variants = ["ReactorBackend::Legacy"] }
+assertion = { kind = "count", maximum = 0 }

@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "status": "discovery-only",
+  "assertion_inventory_complete": false,
+  "payload_sha256": "308d9fcb3b237d706f35b51069cb336b0ed6dd225f589af22e5c05554749a7c5",
+  "gzip_sha256": "bc2847418d15ccf2c9f0ddc7215b20b4a53ee10e11c448d22761c76201ce88ea",
+  "payload_bytes": 37670708,
+  "tracked_files": 9792,
+  "candidate_count": 80135,
+  "repositories": [
+    {
+      "repository": "kafkars/kafka-driver",
+      "tracked_files": 826,
+      "rust_files": 772,
+      "candidate_counts": {
+        "accumulator-candidate": 135,
+        "assertion-macro": 3473,
+        "failure-macro": 2394,
+        "fallible-call-candidate": 4,
+        "helper-call-candidate": 167,
+        "macro-review-boundary": 418
+      },
+      "additional_rust_inputs": 0
+    },
+    {
+      "repository": "kafkars/kafkars",
+      "tracked_files": 6808,
+      "rust_files": 6713,
+      "candidate_counts": {
+        "accumulator-candidate": 1223,
+        "assertion-macro": 21832,
+        "failure-macro": 13075,
+        "fallible-call-candidate": 189,
+        "helper-call-candidate": 1814,
+        "macro-review-boundary": 5824
+      },
+      "additional_rust_inputs": 1
+    },
+    {
+      "repository": "zsumz/rafter",
+      "tracked_files": 2158,
+      "rust_files": 1897,
+      "candidate_counts": {
+        "accumulator-candidate": 1518,
+        "assertion-macro": 10432,
+        "failure-macro": 617,
+        "fallible-call-candidate": 7659,
+        "helper-call-candidate": 1768,
+        "macro-review-boundary": 7593
+      },
+      "additional_rust_inputs": 6
+    }
+  ],
+  "parse_boundaries": [
+    {
+      "repository": "kafkars/kafkars",
+      "commit": "67ad7aa8d91f9639c87b00338b9e21a633f7bb4c",
+      "path": "crates/kafka-client-guardrails/tests/fixtures/invariant_registry/src/invalid_test.rs",
+      "sha256": "082131a5d94d5b6f86e10af2c76f24e464617e48e99be7b6bf537062a8fdb2a8",
+      "parse_error": "cannot parse string into token stream"
+    }
+  ],
+  "additional_rust_inputs": 7,
+  "additional_rust_inputs_sha256": "95aa661d3c53a25f56df27d03caa4a350e589f4cf725ffcee5eea10f0192ded5"
+}

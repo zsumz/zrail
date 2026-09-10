@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+qualification_root=target/package-qualification
+archive_root=target/package
+packages=(kafka-driver-core kafka-driver-transport kafka-driver)
+version=$(sed -n 's/^version = "\([^"]*\)"/\1/p' Cargo.toml)
+if [[ -z "$version" ]]; then
+  echo "workspace release version is missing" >&2
+  exit 1
+fi
+workspace_root=$(pwd -P)
+source_core_patch="patch.crates-io.kafka-driver-core.path='$workspace_root/crates/kafka-driver-core'"
+source_transport_patch="patch.crates-io.kafka-driver-transport.path='$workspace_root/crates/kafka-driver-transport'"
+
+rm -rf "$qualification_root"
+mkdir -p "$qualification_root"
+rm -f \
+  "$archive_root/kafka-driver-core-$version.crate" \
+  "$archive_root/kafka-driver-transport-$version.crate" \
+  "$archive_root/kafka-driver-$version.crate"
+
+for package in "${packages[@]}"; do
+  case "$package" in
+    kafka-driver-core)
+      cargo package --locked --offline --no-verify --package "$package"
+      ;;
+    kafka-driver-transport)
+      cargo package \
+        --locked \
+        --offline \
+        --no-verify \
+        --package "$package" \
+        --config "$source_core_patch"
+      ;;
+    kafka-driver)
+      cargo package \
+        --locked \
+        --offline \
+        --no-verify \
+        --package "$package" \
+        --config "$source_core_patch" \
+        --config "$source_transport_patch"
+      ;;
+  esac
+  archive="$archive_root/$package-$version.crate"
+  package_root="$qualification_root/$package-$version"
+
+  tar -xzf "$archive" -C "$qualification_root"
+  test -f "$package_root/Cargo.toml"
+  test -f "$package_root/Cargo.lock"
+  cmp LICENSE "$package_root/LICENSE"
+
+  archive_entries=$(tar -tzf "$archive")
+  if printf '%s\n' "$archive_entries" | grep -Eiq '(^|/)docs/|(^|/)AGENTS\.md$'; then
+    echo "$package archive contains internal documentation" >&2
+    exit 1
+  fi
+  markdown_entries=$(printf '%s\n' "$archive_entries" | grep -Ei '\.md$' || true)
+  if [[ "$package" == kafka-driver ]]; then
+    expected_readme="$package-$version/README.md"
+    if [[ "$markdown_entries" != "$expected_readme" ]]; then
+      echo "$package archive must contain only its public README" >&2
+      exit 1
+    fi
+  elif [[ -n "$markdown_entries" ]]; then
+    echo "$package archive contains unexpected Markdown" >&2
+    exit 1
+  fi
+  if awk '
+    /^\[/ { dependency = ($0 ~ /dependencies\./) }
+    dependency && /^[[:space:]]*path[[:space:]]*=/ { found = 1 }
+    END { exit found ? 0 : 1 }
+  ' "$package_root/Cargo.toml"; then
+    echo "$package normalized manifest retains a dependency path" >&2
+    exit 1
+  fi
+  if [[ "$package" == kafka-driver ]]; then
+    grep -Fxq 'readme = "README.md"' "$package_root/Cargo.toml"
+    cmp README.md "$package_root/README.md"
+    cmp kafka-driver-logo.svg "$package_root/kafka-driver-logo.svg"
+  else
+    grep -Fxq 'readme = false' "$package_root/Cargo.toml"
+  fi
+  grep -Fxq \
+    'repository = "https://github.com/kafkars/kafka-driver"' \
+    "$package_root/Cargo.toml"
+  printf '\n[workspace]\n' >>"$package_root/Cargo.toml"
+  cargo metadata \
+    --locked \
+    --offline \
+    --no-deps \
+    --format-version 1 \
+    --manifest-path "$package_root/Cargo.toml" \
+    >/dev/null
+done
+
+core_root="$qualification_root/kafka-driver-core-$version"
+transport_root="$qualification_root/kafka-driver-transport-$version"
+driver_root="$qualification_root/kafka-driver-$version"
+core_patch="patch.crates-io.kafka-driver-core.path='$core_root'"
+transport_patch="patch.crates-io.kafka-driver-transport.path='$transport_root'"
+
+cargo check \
+  --locked \
+  --offline \
+  --all-features \
+  --manifest-path "$core_root/Cargo.toml"
+cargo generate-lockfile \
+  --offline \
+  --config "$core_patch" \
+  --manifest-path "$transport_root/Cargo.toml"
+cargo check \
+  --locked \
+  --offline \
+  --all-features \
+  --config "$core_patch" \
+  --manifest-path "$transport_root/Cargo.toml"
+cargo generate-lockfile \
+  --offline \
+  --config "$core_patch" \
+  --config "$transport_patch" \
+  --manifest-path "$driver_root/Cargo.toml"
+cargo check \
+  --locked \
+  --offline \
+  --all-features \
+  --config "$core_patch" \
+  --config "$transport_patch" \
+  --manifest-path "$driver_root/Cargo.toml"

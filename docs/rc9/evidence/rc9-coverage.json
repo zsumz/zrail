@@ -1,0 +1,1344 @@
+{
+  "schema": 6,
+  "contract_schema": 2,
+  "contract_sha256": "81b16717537fe63725367a198e8b63a12f5caf2ee4d8f9ffc29c589985426784",
+  "analysis": {
+    "complete": true,
+    "metrics": {
+      "physical_rust_files": 862,
+      "physical_facts": 262325,
+      "base_contexts": 1391,
+      "derived_contexts": 0,
+      "projection_files": 0,
+      "projection_work": 1157810,
+      "projected_facts": 75
+    },
+    "exclusions": [
+      "crates/zrail-testkit/tests/fixtures/**"
+    ]
+  },
+  "unresolved_occurrences": 0,
+  "ambiguous_occurrences": 0,
+  "enabled_rails": [
+    "adapter:rust",
+    "analysis:limit:derived-source-instances:input-derived",
+    "analysis:limit:include-projection-work:input-derived",
+    "analysis:limit:projected-facts:input-derived",
+    "contract-source:zrail.toml",
+    "dependencies:cycles",
+    "dependencies:mode",
+    "dependencies:unassigned-packages",
+    "dependency:core-remains-language-neutral",
+    "dependency:crate-root:flate2:registry:crates-io:default-index:1.1.10",
+    "dependency:crate-root:proc-macro2:registry:crates-io:default-index:1.0.107",
+    "dependency:crate-root:serde:registry:crates-io:default-index:=1.0.229",
+    "dependency:crate-root:serde_json:registry:crates-io:default-index:1.0.151",
+    "dependency:crate-root:sha2:registry:crates-io:default-index:0.10.9",
+    "dependency:crate-root:syn:registry:crates-io:default-index:2.0.119",
+    "dependency:crate-root:tar:registry:crates-io:default-index:0.4.46",
+    "dependency:crate-root:toml:registry:crates-io:default-index:0.8.23",
+    "gate:check",
+    "gate:ci",
+    "gate:release",
+    "gate:security",
+    "invariant:COMPILE-01",
+    "invariant:DEPS-01",
+    "invariant:INCLUDE-01",
+    "invariant:MACRO-01",
+    "invariant:QUAL-01",
+    "invariant:RELEASE-01",
+    "layer:adapter",
+    "layer:application",
+    "layer:model",
+    "layer:verification",
+    "owner:call:git-process-construction",
+    "owner:capability:git-process-capability",
+    "owner:directory:detector-fixtures",
+    "repository:exclude:crates/zrail-testkit/tests/fixtures/**",
+    "repository:nested-git",
+    "repository:root:crates",
+    "repository:submodules",
+    "repository:symlinks",
+    "repository:workspace-members",
+    "rust:entrypoints",
+    "rust:facades",
+    "rust:feature-world-mode:exact",
+    "rust:feature-world:default",
+    "rust:hygiene:denied-macro:dbg",
+    "rust:hygiene:denied-macro:panic",
+    "rust:hygiene:denied-macro:todo",
+    "rust:hygiene:denied-macro:unimplemented",
+    "rust:hygiene:denied-macro:unreachable",
+    "rust:hygiene:denied-method:expect",
+    "rust:hygiene:denied-method:unwrap",
+    "rust:hygiene:glob-imports",
+    "rust:hygiene:lint-suppressions",
+    "rust:hygiene:unsafe",
+    "rust:macro-expansion",
+    "rust:macro:Clone",
+    "rust:macro:Copy",
+    "rust:macro:Debug",
+    "rust:macro:Default",
+    "rust:macro:Eq",
+    "rust:macro:Ord",
+    "rust:macro:PartialEq",
+    "rust:macro:PartialOrd",
+    "rust:macro:assert",
+    "rust:macro:assert_eq",
+    "rust:macro:assert_ne",
+    "rust:macro:format",
+    "rust:macro:matches",
+    "rust:macro:panic",
+    "rust:macro:serde",
+    "rust:macro:serde::Deserialize",
+    "rust:macro:serde::Serialize",
+    "rust:macro:syn::Token",
+    "rust:macro:syn::parse_quote",
+    "rust:macro:vec",
+    "rust:macro:write",
+    "rust:macro:writeln",
+    "rust:module-docs",
+    "rust:size:auxiliary",
+    "rust:size:facade",
+    "rust:size:implementation",
+    "rust:size:test",
+    "rust:tests",
+    "scope:core-language-boundary",
+    "scope:rust-analysis-boundary"
+  ],
+  "feature_worlds": [
+    {
+      "name": "default",
+      "packages": [
+        {
+          "package": "zrail",
+          "default_features": true,
+          "selected": [],
+          "active": []
+        },
+        {
+          "package": "zrail-core",
+          "default_features": true,
+          "selected": [],
+          "active": []
+        },
+        {
+          "package": "zrail-rust",
+          "default_features": true,
+          "selected": [],
+          "active": []
+        },
+        {
+          "package": "zrail-testkit",
+          "default_features": true,
+          "selected": [],
+          "active": []
+        }
+      ]
+    }
+  ],
+  "source_policies": [
+    {
+      "policy_id": "rust:hygiene:glob-imports",
+      "policy": "allow",
+      "profile": null,
+      "reachability": "all",
+      "occurrences": [
+        {
+          "path": "crates/zrail-core/src/diff/analysis_test.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 4,
+            "column": 12,
+            "end_line": 4,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-core",
+              "edition": "2024",
+              "target": "zrail_core",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-core/src/receipt_test.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 3,
+            "column": 12,
+            "end_line": 3,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-core",
+              "edition": "2024",
+              "target": "zrail_core",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 6,
+            "column": 12,
+            "end_line": 6,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test.rs",
+          "operation": "glob-import",
+          "observed": "support::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 15,
+            "column": 14,
+            "end_line": 15,
+            "end_column": 15
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/generic_roots.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 3,
+            "column": 12,
+            "end_line": 3,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/hub.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 5,
+            "column": 12,
+            "end_line": 5,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/module_cache.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 3,
+            "column": 12,
+            "end_line": 3,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/opacity.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 7,
+            "column": 12,
+            "end_line": 7,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/operations_alias.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 5,
+            "column": 12,
+            "end_line": 5,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/operations_constructor.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 5,
+            "column": 12,
+            "end_line": 5,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/operations_constructor/associated_external.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 5,
+            "column": 12,
+            "end_line": 5,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/operations_constructor/prelude/shadows.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 4,
+            "column": 12,
+            "end_line": 4,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/operations_global.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 5,
+            "column": 12,
+            "end_line": 5,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/operations_relative.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 5,
+            "column": 12,
+            "end_line": 5,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/operations_self.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 5,
+            "column": 12,
+            "end_line": 5,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/include_projection_apply_test/tests/scale.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 6,
+            "column": 12,
+            "end_line": 6,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/mod.rs",
+          "operation": "glob-import",
+          "observed": "exports::*",
+          "visibility": "restricted:crate",
+          "lexical_scope": [],
+          "span": {
+            "line": 80,
+            "column": 25,
+            "end_line": 80,
+            "end_column": 26
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library",
+              "feature_world": "default",
+              "features": []
+            },
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/operation_place_canonical/routes_test.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 7,
+            "column": 12,
+            "end_line": 7,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/operation_place_domains_test.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 7,
+            "column": 12,
+            "end_line": 7,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-rust/src/source/source_instance_test.rs",
+          "operation": "glob-import",
+          "observed": "super::*",
+          "visibility": "private",
+          "lexical_scope": [],
+          "span": {
+            "line": 3,
+            "column": 12,
+            "end_line": 3,
+            "end_column": 13
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail-rust",
+              "edition": "2024",
+              "target": "zrail_rust",
+              "mode": "library-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        }
+      ]
+    }
+  ],
+  "facades": [
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-cli/src/app/commands/git_migration/mod.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-cli/src/app/commands/mod.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-cli/src/app/mod.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:entrypoints",
+      "path": "crates/zrail-cli/src/main.rs",
+      "source_role": "entrypoint",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-core/src/contract/mod.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-core/src/diff/mod.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-core/src/lib.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-rust/src/cargo/mod.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-rust/src/inventory/mod.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-rust/src/lib.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-rust/src/rules/mod.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-rust/src/source/mod.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    },
+    {
+      "policy_id": "rust:facades",
+      "path": "crates/zrail-testkit/src/lib.rs",
+      "source_role": "facade",
+      "test_only": false,
+      "mode": "declarative",
+      "syntax_allowed": true,
+      "reason": null,
+      "violations": []
+    }
+  ],
+  "type_policies": [],
+  "owners": [
+    {
+      "policy_id": "owner:call:git-process-construction",
+      "name": "git-process-construction",
+      "kind": "call",
+      "target": "std::process::Command::new",
+      "mutating_methods": [],
+      "reachability": "all",
+      "within": [
+        "crates/zrail-cli/src/**"
+      ],
+      "allow": [
+        "crates/zrail-cli/src/app/commands/git_base_test.rs",
+        "crates/zrail-cli/src/app/commands/git_process.rs"
+      ],
+      "reason": "Only the bounded Git adapter and its conformance tests may construct repository processes.",
+      "occurrences": [
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "direct-call",
+          "observed": "std::process::Command::new",
+          "written": null,
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 196,
+            "column": 18,
+            "end_line": 196,
+            "end_column": 30
+          },
+          "quality": "exact",
+          "guard": "test-only",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "direct-call",
+          "observed": "std::process::Command::new",
+          "written": null,
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 212,
+            "column": 18,
+            "end_line": 212,
+            "end_column": 30
+          },
+          "quality": "exact",
+          "guard": "test-only",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "direct-call",
+          "observed": "std::process::Command::new",
+          "written": null,
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 227,
+            "column": 5,
+            "end_line": 227,
+            "end_column": 17
+          },
+          "quality": "exact",
+          "guard": "test-only",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "direct-call",
+          "observed": "std::process::Command::new",
+          "written": "Command::new",
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 196,
+            "column": 18,
+            "end_line": 196,
+            "end_column": 30
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "direct-call",
+          "observed": "std::process::Command::new",
+          "written": "Command::new",
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 212,
+            "column": 18,
+            "end_line": 212,
+            "end_column": 30
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "direct-call",
+          "observed": "std::process::Command::new",
+          "written": "Command::new",
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 227,
+            "column": 5,
+            "end_line": 227,
+            "end_column": 17
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_process.rs",
+          "operation": "direct-call",
+          "observed": "std::process::Command::new",
+          "written": "Command::new",
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 23,
+            "column": 21,
+            "end_line": 23,
+            "end_column": 33
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary",
+              "feature_world": "default",
+              "features": []
+            },
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        }
+      ]
+    },
+    {
+      "policy_id": "owner:capability:git-process-capability",
+      "name": "git-process-capability",
+      "kind": "capability",
+      "target": "std::process::Command",
+      "mutating_methods": [],
+      "reachability": "all",
+      "within": [
+        "crates/zrail-cli/src/**"
+      ],
+      "allow": [
+        "crates/zrail-cli/src/app/commands/git_base_test.rs",
+        "crates/zrail-cli/src/app/commands/git_process.rs"
+      ],
+      "reason": "Only the bounded Git adapter and its conformance tests may spawn repository processes.",
+      "occurrences": [
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "capability-use",
+          "observed": "std::process::Command",
+          "written": null,
+          "method": null,
+          "canonical": [],
+          "span": null,
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "capability-use",
+          "observed": "std::process::Command::new",
+          "written": null,
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 196,
+            "column": 18,
+            "end_line": 196,
+            "end_column": 30
+          },
+          "quality": "exact",
+          "guard": "test-only",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "capability-use",
+          "observed": "std::process::Command::new",
+          "written": null,
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 212,
+            "column": 18,
+            "end_line": 212,
+            "end_column": 30
+          },
+          "quality": "exact",
+          "guard": "test-only",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "capability-use",
+          "observed": "std::process::Command::new",
+          "written": null,
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 227,
+            "column": 5,
+            "end_line": 227,
+            "end_column": 17
+          },
+          "quality": "exact",
+          "guard": "test-only",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "capability-use",
+          "observed": "std::process::Command::new",
+          "written": "Command::new",
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 196,
+            "column": 18,
+            "end_line": 196,
+            "end_column": 30
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "capability-use",
+          "observed": "std::process::Command::new",
+          "written": "Command::new",
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 212,
+            "column": 18,
+            "end_line": 212,
+            "end_column": 30
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_base_test.rs",
+          "operation": "capability-use",
+          "observed": "std::process::Command::new",
+          "written": "Command::new",
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 227,
+            "column": 5,
+            "end_line": 227,
+            "end_column": 17
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_process.rs",
+          "operation": "capability-use",
+          "observed": "std::process::Command",
+          "written": null,
+          "method": null,
+          "canonical": [],
+          "span": null,
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary",
+              "feature_world": "default",
+              "features": []
+            },
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        },
+        {
+          "path": "crates/zrail-cli/src/app/commands/git_process.rs",
+          "operation": "capability-use",
+          "observed": "std::process::Command::new",
+          "written": "Command::new",
+          "method": null,
+          "canonical": [],
+          "span": {
+            "line": 23,
+            "column": 21,
+            "end_line": 23,
+            "end_column": 33
+          },
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary",
+              "feature_world": "default",
+              "features": []
+            },
+            {
+              "package": "zrail",
+              "edition": "2024",
+              "target": "zrail",
+              "mode": "binary-test",
+              "feature_world": "default",
+              "features": []
+            }
+          ],
+          "allowed": true
+        }
+      ]
+    },
+    {
+      "policy_id": "owner:directory:detector-fixtures",
+      "name": "detector-fixtures",
+      "kind": "directory",
+      "target": "**/fixtures",
+      "mutating_methods": [],
+      "reachability": "all",
+      "within": [],
+      "allow": [
+        "crates/zrail-testkit/tests/fixtures"
+      ],
+      "reason": "Deliberately broken repositories have one visible, excluded owner.",
+      "occurrences": [
+        {
+          "path": "crates/zrail-testkit/tests/fixtures",
+          "operation": "directory",
+          "observed": "crates/zrail-testkit/tests/fixtures",
+          "written": null,
+          "method": null,
+          "canonical": [],
+          "span": null,
+          "quality": "exact",
+          "guard": "ordinary",
+          "compilation_domains": [],
+          "allowed": true
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "policy_id": "dependency:core-remains-language-neutral",
+      "name": "core-remains-language-neutral",
+      "from": "zrail-core",
+      "deny": [
+        "proc-macro2",
+        "syn",
+        "zrail-rust"
+      ],
+      "reachability": "direct",
+      "kinds": [
+        "normal",
+        "development",
+        "build"
+      ],
+      "reason": "The public contract model must not depend on one language adapter.",
+      "paths": []
+    }
+  ],
+  "test_mirrors": []
+}

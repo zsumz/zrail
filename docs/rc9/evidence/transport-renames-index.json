@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "implementation_commit": "405fe5674f77b8a31bd5aea01b190da55c7dcbcf",
+  "implementation_tree": "249a9080f851eee3579187eed463e3f46ab6cbaf",
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "e20118811ebf1a41e9b767ca6eb41e1e4a86decdae2d9890f815c4c455acc823",
+  "registry_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+  "fixture_origins_sha256": "925137e76f3e606acf5781cd523c04e5a941244c24df5d02e1336fe160da0fb6",
+  "test_binary_sha256": "b91ab5c4d9767ce9dc6a8d4ef6c820aea40858023f9c161931c2f28396ce4338",
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "detector_source_sha256": "52931f702eed8c81c079a2aabfb4934a0f7c4388faa26ed5c425bf470232f4bc",
+  "assertion_ids": [
+    "KD-TRANSPORT-RENAMES",
+    "KD-TRANSPORT-DETECTOR-RENAMES"
+  ],
+  "canonical": {
+    "command": "scripts/check",
+    "exit_status": 1,
+    "passed": 1580,
+    "failed": 0,
+    "ignored": 15,
+    "analysis_complete": true,
+    "rust_files": 1030,
+    "base_contexts": 1622,
+    "derived_contexts": 0,
+    "projection_work": 1182150,
+    "unresolved": 0,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-016",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_step_reached": false,
+    "cleanliness_step_reached": false
+  },
+  "standalone_archive_check_passed": true,
+  "git_status_unchanged": true,
+  "lock_authority_accepted": false,
+  "full_repository_qualified": false,
+  "differential": {
+    "runs": 2,
+    "identical_payloads": true,
+    "payload_sha256": "21a200cf3b2d3192495456eb6efde9f519aed0a45b9e349cf0ae7b0a3b4c0863",
+    "payload_bytes": 8000231,
+    "all_frozen_rust_inputs": 772,
+    "selected_physical_files": 479,
+    "legacy_distinct_rename_identities": 0,
+    "native_authored_rename_occurrences": 0,
+    "cases": 79,
+    "accepted": 23,
+    "rejected": 56
+  },
+  "claim": "Exact authored import-rename prohibition over the complete frozen physical detector selection, retaining both source and alias identities and all actual occurrence quantities. No Cargo, semantic identity, execution or full-repository certification.",
+  "artifact_validation": {
+    "unittest_methods": 10,
+    "adversarial_mutations": 89,
+    "command": "python3 scripts/rc9_method_evidence_test.py"
+  },
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/transport-renames-parity.json.gz",
+      "implementation_commit": "405fe5674f77b8a31bd5aea01b190da55c7dcbcf",
+      "payload_sha256": "21a200cf3b2d3192495456eb6efde9f519aed0a45b9e349cf0ae7b0a3b4c0863",
+      "compressed_sha256": "651bfabc3bc913968ccd3135f410af57811a7bee6e6736687f228b3ca9f0a2b4"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-renames-canonical.log.gz",
+      "implementation_commit": "405fe5674f77b8a31bd5aea01b190da55c7dcbcf",
+      "payload_sha256": "e8e4f2d10ad920ecf5c17288e79fbe84585725fbc0a8aa003f057fea17df073a",
+      "compressed_sha256": "90f438126a09172d4c3704049b21d7e271f34761318cc982bc4af652fb34288d"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-renames-package.log.gz",
+      "implementation_commit": "405fe5674f77b8a31bd5aea01b190da55c7dcbcf",
+      "payload_sha256": "4af8c9b227962fbfb4710ef6482b8309fe250617a0f0cf4d74efe2c7434f7560",
+      "compressed_sha256": "28b82b3a96cbea732413639234f5ea5365d1ecf3a7077eb51f2eb7d68cfd2996"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-renames-parity-a.log.gz",
+      "implementation_commit": "405fe5674f77b8a31bd5aea01b190da55c7dcbcf",
+      "payload_sha256": "a9dfba35ada09fa655fa5010b70c8ecfa06a80db401a31e146967487f4b82d65",
+      "compressed_sha256": "5fb523b7c9aa8f0cfe988c38ad14dd608fb2cd985d4aab516bc97e8d959d7069"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-renames-parity-b.log.gz",
+      "implementation_commit": "405fe5674f77b8a31bd5aea01b190da55c7dcbcf",
+      "payload_sha256": "5676c3c7b3b5d35e4a6666c3084aa2042087e11085f96678b95372df8518db73",
+      "compressed_sha256": "7788faddc7963bf99e802b027b71860e77c0be8a6a49e06e2df02f07e0a3c279"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-renames-runner.json.gz",
+      "implementation_commit": "405fe5674f77b8a31bd5aea01b190da55c7dcbcf",
+      "payload_sha256": "cc180abdc4535bcce5005e1e0522ff472be7b47011f9d71168db9dac0333c7a6",
+      "compressed_sha256": "0b57c8d6f80021f1cf1efc262b23451b154d5d3fc41d22a74f406c3ee5f0e876"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "implementation_commit": "11b4e70d5db2f6d3d5d6d55237debe8606058814",
+  "implementation_tree": "37810e99b6fb01f1af4cad165b8e96655fc1f95e",
+  "claim": "Committed census and transport parity artifact validation, corrected diagnostic wording, and reviewed census test syntax. Earlier differential reports retain their original implementation identities.",
+  "canonical": {
+    "command": "scripts/check",
+    "exit_status": 1,
+    "passed": 1560,
+    "failed": 0,
+    "ignored": 13,
+    "python_unittest_methods": 8,
+    "analysis_complete": true,
+    "rust_files": 1020,
+    "base_contexts": 1611,
+    "derived_contexts": 0,
+    "projection_work": 1174167,
+    "unresolved": 0,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-016",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "archive_step_reached": false,
+    "cleanliness_step_reached": false
+  },
+  "standalone_archive_check": {
+    "command": "scripts/package-check",
+    "exit_status": 0
+  },
+  "git_status_unchanged": true,
+  "lock_authority_accepted": false,
+  "full_repository_qualified": false,
+  "initial_failure": {
+    "commit": "d4f901c6fe9f3137c27b5ddd7570db5ea76e2a16",
+    "additional_diagnostic": "RUST-MACRO-001",
+    "occurrences": 3,
+    "cause": "Unreviewed serde_json::json and unreachable macros in new census test fixtures. Replaced with ordinary parsing and the existing reviewed panic macro without changing root policy."
+  },
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/transport-evidence-initial-canonical.log.gz",
+      "implementation_commit": "d4f901c6fe9f3137c27b5ddd7570db5ea76e2a16",
+      "payload_sha256": "b04888ccbb6726e8f5865e59d723122eda3343419609f38f1c4d0f7cb9600ed4",
+      "compressed_sha256": "2f110716093c746a85cba66fed801f32c9ecd815d51830a5c64c8948a23524fe"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-evidence-final-canonical.log.gz",
+      "implementation_commit": "11b4e70d5db2f6d3d5d6d55237debe8606058814",
+      "payload_sha256": "b51cc363091e1fbc65e17b98e66b9e71461d78a7339087387b1317444566fa67",
+      "compressed_sha256": "0b10b16e7ace8537f387cb1df5e9b4d090295bf1abb88223fa1d3dc6e4e58e53"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-evidence-final-package.log.gz",
+      "implementation_commit": "11b4e70d5db2f6d3d5d6d55237debe8606058814",
+      "payload_sha256": "d75b87755f619fa03ae81c6ec865766bd3764d20fc389522899c58f085fce6f6",
+      "compressed_sha256": "81151aab70e49d411a300b39bd67b6b25f73915b17fd6b6e279343a4e66e9ab8"
+    },
+    {
+      "artifact": "docs/rc9/evidence/transport-evidence-final-runner.json.gz",
+      "implementation_commit": "11b4e70d5db2f6d3d5d6d55237debe8606058814",
+      "payload_sha256": "bf7ce8c8d00a057e3f31ccee955616c207f9a59901ce3916033483d678b7aade",
+      "compressed_sha256": "f0d6ecdc055a41e4e3dbe7d3968572935492d882014601261f8c16b3a2ae26b6"
+    }
+  ]
+}

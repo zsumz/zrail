@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "release_verdict": "blocked",
+  "tested_file_code_commit": "b32ee44d4dabf854977e42de98d0bcb5d8d8ca30",
+  "full_repository_qualified": false,
+  "sources_patched": [],
+  "authority_grants_accepted": [],
+  "artifacts": {
+    "files-canonical.log": "dca2cd3449f01d81a8f1fe0a9f362577da73736674f5f9242445cb8674d69ddd",
+    "files-package.log": "dc8787736363d75418dd8ebe1f40392dd17476b6e5551312217a673b7844e318"
+  },
+  "canonical": {
+    "code_commit": "b32ee44d4dabf854977e42de98d0bcb5d8d8ca30",
+    "exit": 1,
+    "passed": 1469,
+    "failed": 0,
+    "ignored": 3,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "analysis_complete": true,
+    "physical_rust_files": 910,
+    "base_source_contexts": 1469,
+    "projection_work": 1202401,
+    "unresolved": 0,
+    "archive_stage_reached": false,
+    "cleanliness_stage_reached": false
+  },
+  "standalone_archives": {
+    "exit": 0,
+    "worktree_clean_after_run": true,
+    "version": "0.0.3-rc.8",
+    "release_assets": false
+  },
+  "file_integration_tests": {
+    "passed": 14,
+    "failed": 0
+  },
+  "protected_file_diff_tests": {
+    "passed": 9,
+    "failed": 0
+  },
+  "limitations": [
+    "Consumer file-policy differential linkage remains outstanding.",
+    "Complete downstream source/receipt qualification and policy bundles remain outstanding.",
+    "This gate did not accept or replace reviewed lock authority."
+  ]
+}

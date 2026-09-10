@@ -1,0 +1,72 @@
+{
+  "adversarial_mutations": 95,
+  "adversarial_tests": "scripts/rc9_metadata_parent_evidence_test.py",
+  "archives": {
+    "docs/rc9/evidence/metadata-parent-execution-logs.tar.gz": "f2c21aa165492c0d78be59084875a9cfe279ce040961e2db3c6f956005071040",
+    "docs/rc9/evidence/metadata-parent.json.gz": "fef433e48296668199ce244b7eebbb75dc27a0029126849f0c5a6d969cc59efb"
+  },
+  "assertions_verified": 1,
+  "binary_path": "/Volumes/zdev/dev/code/zrail/target/rc9-completion-20260907/metadata-parent-build/debug/deps/zrail_rust-80983c5ff1b09614",
+  "build_command": [
+    "cargo",
+    "test",
+    "-p",
+    "zrail-rust",
+    "--lib",
+    "--all-features",
+    "--locked",
+    "--offline",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "cargo_lock_sha256": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e",
+  "full_repository_qualified": false,
+  "implementation_commit": "f40fd5c3efda8619cf7dbf14662fa90d7e7a39c9",
+  "implementation_tree": "3a5ad04d3dbdfbd64b007469af65ac4eb5d20e8f",
+  "limitations": [
+    "One lexical parent precondition over three fixed authored manifest paths; not arbitrary manifest discovery or full metadata qualification.",
+    "Twelve path mappings use four absolute anchor shapes; synthetic anchors are lexical only, not filesystem or permission observations.",
+    "Existing UTF-8 license policies are reused unchanged; missing, unreadable or unequal licenses remain governed separately, not parent-precondition failures."
+  ],
+  "listing_sha256": "a89abf5ca2d190fc0b02bd4d09cb460fa95e2da908c86041018964e521605091",
+  "native_payload_sha256": "95157ea853383ad8597f6e5914c114132d035575b58f495f120fa846696f2057",
+  "original_parent_instances": 3,
+  "origins_sha256": "c8c885b4b3e748aef026b1bbc1c3cfc87658928e94fea579a00d729d4bab2cc9",
+  "path_checks": 12,
+  "payload_bytes": 16708,
+  "payload_sha256": "6b595acb5c42228c37d78c0eefe327649ed6679af7e2bda2ebcb08856f8e18fb",
+  "policy_sha256": "6a5564ec8accf65f22de911c59827dee64aaaf78d86f0b1435a604b4f97803e8",
+  "producer_inputs": {
+    "crates/zrail-rust/src/repository_files.rs": "95df26c2fba72d36e1791d3f7bacd129becf8bd9e3558880e42979044b476a1d",
+    "crates/zrail-rust/src/repository_files/metadata/legacy.rs": "2baa07f1cd23fbfbcb5debb21a8d927063ae5358bcdda8d058cb2b43b22d5e06",
+    "crates/zrail-rust/src/repository_files/predicates.rs": "3d05c2b23185bf72d77dc4f9edaf14b13492482d583eb8fb65a299c4fa65d5cb",
+    "crates/zrail-rust/tests/rc9_metadata_parent/model.rs": "4d4809f5708e1a7e2403a019e828b89a129eb3cfebe86a4ff418dbe980cbd2a9",
+    "crates/zrail-rust/tests/rc9_metadata_parent/policy_test.rs": "dd796db5acd1c33c7fbc48575606779c18e174a2446cfb8cfa56cc2693451dea",
+    "crates/zrail-rust/tests/rc9_metadata_parent/qualification.rs": "9c050249298f74c123c189824ce3276547b9688e5d0686b42614ca719e2a86be",
+    "crates/zrail-testkit/tests/fixtures/rc9/metadata-origins.json": "c8c885b4b3e748aef026b1bbc1c3cfc87658928e94fea579a00d729d4bab2cc9",
+    "docs/rc9/policies/kafka-driver.metadata.fragment.toml": "6a5564ec8accf65f22de911c59827dee64aaaf78d86f0b1435a604b4f97803e8",
+    "scripts/rc9-metadata-parent": "bb116d8ee6d334a9f67f01d21ebf0f8329aa59cf7604c16f58b28a8933ca6c42",
+    "scripts/rc9-retired-boundaries": "d44407fcf841904b7034a7ac68f242f9c20034e41fc9a191a90f44af78cc626b",
+    "scripts/rc9-route-runtime": "9f72ca5ebeec13d814a5ec9f5f04d2f3ead262a861ef8563da74e034397beb62",
+    "scripts/rc9-snapshots": "131aa3218507a9bc1e7bb0025a5df8284db5d6a7a402d19debdaccf305632fe4",
+    "scripts/rc9_metadata_parent_common.py": "249ecc6044ede03538f1ea90a609fd66d79a24a13c7608c8e235db01ae411132",
+    "scripts/rc9_retired_boundary_common.py": "2fdb53d4c7df5107739e4e54ff239ec1735f566a8abf66c4fe2450cd782e0afc",
+    "scripts/rc9_route_runtime_common.py": "3c99f33502725eae0961ca277f8ec47533ebb98c8e8d02e4f50cf4180f30c50f"
+  },
+  "producer_signature": "B58439871CD2A7275B20CC19EC8E4D26598A0373",
+  "repeat": {
+    "byte_identical": true,
+    "runs": 2
+  },
+  "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: aarch64-apple-darwin\nrelease: 1.97.1\nLLVM version: 22.1.6",
+  "schema": 1,
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "source_sha256": "336a0780ae3ec984f2a099f695387b0764c8b87303ddb81cdd7322829072576c",
+  "test_binary_sha256": "dfe31c628f27694c9e2a198e91193b4018c6656825e5e679b9d91068055850b9",
+  "validator": "scripts/rc9_metadata_parent_evidence.py"
+}

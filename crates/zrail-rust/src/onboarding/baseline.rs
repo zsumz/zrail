@@ -197,13 +197,13 @@ fn has_debt(
     contract: &Contract,
 ) -> bool {
     if rule == BaselineRule::FileSize {
-        return crate::source_policy::budget_for(
-            &file.relative,
-            file.class,
-            file.reachability,
-            &contract.source.rust,
-        )
-        .is_some_and(|budget| file.lines > budget.target);
+        return crate::source_budget::for_file(file, &contract.source.rust).is_ok_and(|budget| {
+            budget.is_some_and(|budget| {
+                file.lines > budget.thresholds.target
+                    && budget.thresholds.target_mode == zrail_core::SizeTargetMode::Error
+                    && (!budget.independent_hard || file.lines <= budget.hard_ceiling())
+            })
+        });
     }
     if rule == BaselineRule::InlineTests && contract.source.rust.tests != TestMode::Sibling {
         return false;

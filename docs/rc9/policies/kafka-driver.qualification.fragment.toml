@@ -1,0 +1,755 @@
+# Partial raw-file fragment; full repository qualification remains required.
+# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# Detector SHA-256: 92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad
+# CI read precondition: repository:file:kd-dep-read-ci in raw-dependency.fragment.toml.
+# KD-CI-ENFORCEMENT requires a separately qualified enforced zrail lane.
+
+[[repository.files]]
+name = "kd-qual-015"
+include = ["scripts/check"]
+predicate = { kind = "literal", text = "--locked", mode = "exact-count", case = "sensitive", normalization = "none", count = 4 }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-016"
+include = ["scripts/check"]
+predicate = { kind = "literal", text = "git diff --check", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-017"
+include = ["scripts/check"]
+predicate = { kind = "literal", text = "git diff --exit-code", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-025"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "literal", text = "run: cargo fetch --locked", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-026"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "literal", text = "CARGO_NET_OFFLINE: \"true\"", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-027"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "literal", text = "run: scripts/check", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-044"
+include = [".github/workflows/smoke.yml"]
+predicate = { kind = "literal", text = "pull_request:", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-045"
+include = [".github/workflows/smoke.yml"]
+predicate = { kind = "literal", text = "branches: [main]", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-046"
+include = [".github/workflows/smoke.yml"]
+predicate = { kind = "literal", text = "contents: read", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-047"
+include = [".github/workflows/smoke.yml"]
+predicate = { kind = "literal", text = "kafka-protocol", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-048"
+include = [".github/workflows/smoke.yml"]
+predicate = { kind = "literal", text = "repository: kafkars/kafka-wire", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-049"
+include = [".github/workflows/smoke.yml"]
+predicate = { kind = "literal", text = "run: npm run qualify:real-kafka-functional", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-050"
+include = [".github/workflows/smoke.yml"]
+predicate = { kind = "literal", text = "run: npm run qualify:real-kafka\n", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-051"
+include = [".github/workflows/smoke.yml"]
+predicate = { kind = "literal", text = "run: npm run measure:real-kafka", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-052"
+include = ["package.json"]
+predicate = { kind = "literal", text = "\"qualify:real-kafka-functional\": \"npm run test:qualification-policy && smoque run smoke/ --tag real-kafka-functional --ci\"", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-067-01"
+include = ["smoke/real-kafka.smoke.mjs"]
+predicate = { kind = "literal", text = "real-kafka-functional", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-067-02"
+include = ["smoke/real-kafka-movement.smoke.mjs"]
+predicate = { kind = "literal", text = "real-kafka-functional", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-067-03"
+include = ["smoke/real-kafka-multi-broker.smoke.mjs"]
+predicate = { kind = "literal", text = "real-kafka-functional", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-067-04"
+include = ["smoke/real-kafka-reconnect.smoke.mjs"]
+predicate = { kind = "literal", text = "real-kafka-functional", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-067-05"
+include = ["smoke/real-kafka-sasl.smoke.mjs"]
+predicate = { kind = "literal", text = "real-kafka-functional", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-067-06"
+include = ["smoke/real-kafka-secure-multi-broker.smoke.mjs"]
+predicate = { kind = "literal", text = "real-kafka-functional", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-067-07"
+include = ["smoke/real-kafka-security.smoke.mjs"]
+predicate = { kind = "literal", text = "real-kafka-functional", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-067-08"
+include = ["smoke/real-kafka-tls.smoke.mjs"]
+predicate = { kind = "literal", text = "real-kafka-functional", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-069"
+include = ["smoke/real-kafka-performance.smoke.mjs"]
+predicate = { kind = "literal", text = "real-kafka-functional", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-081"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "run: cargo fetch --locked", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-084"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "run: scripts/check", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-087"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "run: scripts/qualify-packages", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-089"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "tags: [\"v*\"]", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-090"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "rustup toolchain install 1.88.0 --profile minimal --component clippy,rustfmt", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-095"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal-order", before = "run: cargo fetch --locked", after = "run: scripts/check" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-096"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal-order", before = "run: scripts/check", after = "run: scripts/qualify-packages" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-097"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal-between", start = "run: scripts/check", end = "run: scripts/qualify-packages", contains = "CARGO_NET_OFFLINE: \"true\"" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-105"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "literal", text = "run: cargo fetch --locked", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-106"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "literal", text = "kafka-protocol", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-107"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "literal", text = "repository: kafkars/kafka-wire", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-108"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "literal", text = "KAFKA_PROTOCOL_SSH_KEY", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-109"
+include = [".github/workflows/ci.yml"]
+predicate = { kind = "literal", text = "KAFKA_PROTOCOL_TOKEN", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-119"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "run: scripts/prefetch-release-dependencies", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-120"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "run: scripts/qualify-packages", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-121"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "run: cargo fetch --locked", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-122"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "CARGO_NET_OFFLINE: \"true\"", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-123"
+include = ["scripts/prefetch-release-dependencies"]
+predicate = { kind = "literal", text = "kafka-wire = \"=0.1.0-rc.3\"", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-124"
+include = ["scripts/prefetch-release-dependencies"]
+predicate = { kind = "literal", text = "kafka-wire-core = \"=0.1.0-rc.3\"", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-125"
+include = ["scripts/prefetch-release-dependencies"]
+predicate = { kind = "literal", text = "bornera = \"=0.0.1-rc.3\"", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-126"
+include = ["scripts/prefetch-release-dependencies"]
+predicate = { kind = "literal", text = "bornera-core = \"=0.0.1-rc.3\"", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-127"
+include = ["scripts/prefetch-release-dependencies"]
+predicate = { kind = "literal", text = "bornera-rustls = \"=0.0.1-rc.3\"", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-128"
+include = ["scripts/prefetch-release-dependencies"]
+predicate = { kind = "literal", text = "cargo fetch --locked", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-129"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "cargo package", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-130"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "--no-verify", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-131"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "version=$(sed -n", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-132"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "$package-$version.crate", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-133"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "cargo check", mode = "exact-count", case = "sensitive", normalization = "none", count = 3 }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-139-01"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "kafka-driver-core", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-139-02"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "kafka-driver-transport", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-139-03"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "kafka-driver", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-141"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "normalized manifest retains a dependency path", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-142"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "cmp LICENSE", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-143"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "readme = \"README.md\"", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-144"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "cmp README.md", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-145"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "literal", text = "cmp kafka-driver-logo.svg", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-146"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "name: qualified-crates-${{ github.sha }}-${{ github.run_attempt }}", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-149"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "path: kafka-driver/target/package/*.crate", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-150"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "if-no-files-found: error", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-151"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "retention-days: 90", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-160"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "run: scripts/qualify-latest-compatible", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-161"
+include = ["scripts/qualify-latest-compatible"]
+predicate = { kind = "literal", text = "version=$(sed -n", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-162"
+include = ["scripts/qualify-latest-compatible"]
+predicate = { kind = "literal", text = "mktemp -d", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-163"
+include = ["scripts/qualify-latest-compatible"]
+predicate = { kind = "literal", text = "export CARGO_HOME", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-164"
+include = ["scripts/qualify-latest-compatible"]
+predicate = { kind = "literal", text = "unset CARGO_NET_OFFLINE", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-165"
+include = ["scripts/qualify-latest-compatible"]
+predicate = { kind = "literal", text = "cargo generate-lockfile", mode = "exact-count", case = "sensitive", normalization = "none", count = 3 }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-166"
+include = ["scripts/qualify-latest-compatible"]
+predicate = { kind = "literal", text = "cargo check", mode = "exact-count", case = "sensitive", normalization = "none", count = 3 }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-167"
+include = ["scripts/qualify-latest-compatible"]
+predicate = { kind = "literal", text = "kafka-wire", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-168"
+include = ["scripts/qualify-latest-compatible"]
+predicate = { kind = "literal", text = "kafka-wire-core", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-176"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "schedule:", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-177"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "tags: [\"v*\"]", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-178"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "kafka-protocol", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-179"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "repository: kafkars/kafka-wire", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-180"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "KAFKA_PROTOCOL_SSH_KEY", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-181"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "KAFKA_PROTOCOL_TOKEN", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-182"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "literal", text = "run: npm run qualify:real-kafka", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-193"
+include = ["package.json"]
+predicate = { kind = "literal", text = "\"smoke:real-kafka-secure-multi-broker\": \"smoque run smoke/ --tag real-kafka-secure-multi-broker --ci\"", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-197"
+include = ["smoke/kafka-secure-cluster.compose.yml"]
+predicate = { kind = "literal", text = "rust:1.88.0-bookworm@sha256:af306cfa71d987911a781c37b59d7d67d934f49684058f96cf72079c3626bfe0", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-199-01"
+include = ["smoke/kafka-secure-cluster.compose.yml"]
+predicate = { kind = "literal", text = "SSL://kafka-1:9092", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-199-02"
+include = ["smoke/kafka-secure-cluster.compose.yml"]
+predicate = { kind = "literal", text = "SSL://kafka-2:9092", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-199-03"
+include = ["smoke/kafka-secure-cluster.compose.yml"]
+predicate = { kind = "literal", text = "SSL://kafka-3:9092", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-200-01"
+include = ["smoke/kafka-secure-cluster.compose.yml"]
+predicate = { kind = "literal", text = "KAFKA_1_SSL_SECRETS", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-200-02"
+include = ["smoke/kafka-secure-cluster.compose.yml"]
+predicate = { kind = "literal", text = "KAFKA_2_SSL_SECRETS", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-200-03"
+include = ["smoke/kafka-secure-cluster.compose.yml"]
+predicate = { kind = "literal", text = "KAFKA_3_SSL_SECRETS", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-202"
+include = ["smoke/support/tls-identities.mjs"]
+predicate = { kind = "literal", text = "DNS.1 = ${brokerName}", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-203"
+include = ["smoke/real-kafka-secure-multi-broker.smoke.mjs"]
+predicate = { kind = "literal", text = "\"kafka-1:9092,kafka-2:9092\"", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-204"
+include = ["smoke/real-kafka-secure-multi-broker.smoke.mjs"]
+predicate = { kind = "literal", text = "KAFKA_PROTOCOL_SOURCE", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-205"
+include = ["smoke/kafka-secure-cluster.compose.yml"]
+predicate = { kind = "literal", text = "KAFKA_PROTOCOL_SOURCE", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-206"
+include = ["smoke/real-kafka-secure-multi-broker.smoke.mjs"]
+predicate = { kind = "literal", text = "kafka-protocol", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-207"
+include = ["smoke/kafka-secure-cluster.compose.yml"]
+predicate = { kind = "literal", text = "kafka-protocol", mode = "absent", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-208"
+include = ["smoke/real-kafka-secure-multi-broker.smoke.mjs"]
+predicate = { kind = "literal", text = "RECOVERED TLS broker failover 1", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-209"
+include = ["smoke/real-kafka-secure-multi-broker.smoke.mjs"]
+predicate = { kind = "literal", text = "PASS TLS broker failover 2", mode = "contains", case = "sensitive", normalization = "none" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-228-01"
+include = ["smoke/kafka-cluster.compose.yml"]
+predicate = { kind = "line-values-allowed", prefix = "image: ", values = ["apache/kafka:4.3.1@sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837", "rust:1.88.0-bookworm@sha256:af306cfa71d987911a781c37b59d7d67d934f49684058f96cf72079c3626bfe0"], normalization = "trim" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-228-02"
+include = ["smoke/kafka-tls.compose.yml"]
+predicate = { kind = "line-values-allowed", prefix = "image: ", values = ["apache/kafka:4.3.1@sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837", "rust:1.88.0-bookworm@sha256:af306cfa71d987911a781c37b59d7d67d934f49684058f96cf72079c3626bfe0"], normalization = "trim" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-228-03"
+include = ["smoke/kafka-sasl.compose.yml"]
+predicate = { kind = "line-values-allowed", prefix = "image: ", values = ["apache/kafka:4.3.1@sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837", "rust:1.88.0-bookworm@sha256:af306cfa71d987911a781c37b59d7d67d934f49684058f96cf72079c3626bfe0"], normalization = "trim" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-228-04"
+include = ["smoke/kafka-secure-cluster.compose.yml"]
+predicate = { kind = "line-values-allowed", prefix = "image: ", values = ["apache/kafka:4.3.1@sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837", "rust:1.88.0-bookworm@sha256:af306cfa71d987911a781c37b59d7d67d934f49684058f96cf72079c3626bfe0"], normalization = "trim" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-228-05"
+include = ["smoke/kafka-security.compose.yml"]
+predicate = { kind = "line-values-allowed", prefix = "image: ", values = ["apache/kafka:4.3.1@sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837", "rust:1.88.0-bookworm@sha256:af306cfa71d987911a781c37b59d7d67d934f49684058f96cf72079c3626bfe0"], normalization = "trim" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-228-06"
+include = ["smoke/kafka.compose.yml"]
+predicate = { kind = "line-values-allowed", prefix = "image: ", values = ["apache/kafka:4.3.1@sha256:77e3df9054047a88b520d0cc46e16696d3b22022e1d580aeccd2632df6532837", "rust:1.88.0-bookworm@sha256:af306cfa71d987911a781c37b59d7d67d934f49684058f96cf72079c3626bfe0"], normalization = "trim" }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-02"
+include = [".github/workflows/qualification.yml"]
+predicate = { kind = "bytes-equal", other = ".github/workflows/qualification.yml", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-03"
+include = [".github/workflows/smoke.yml"]
+predicate = { kind = "bytes-equal", other = ".github/workflows/smoke.yml", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-04"
+include = ["package.json"]
+predicate = { kind = "bytes-equal", other = "package.json", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-05"
+include = ["scripts/check"]
+predicate = { kind = "bytes-equal", other = "scripts/check", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-06"
+include = ["scripts/prefetch-release-dependencies"]
+predicate = { kind = "bytes-equal", other = "scripts/prefetch-release-dependencies", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-07"
+include = ["scripts/qualify-latest-compatible"]
+predicate = { kind = "bytes-equal", other = "scripts/qualify-latest-compatible", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-08"
+include = ["scripts/qualify-packages"]
+predicate = { kind = "bytes-equal", other = "scripts/qualify-packages", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-09"
+include = ["smoke/kafka-cluster.compose.yml"]
+predicate = { kind = "bytes-equal", other = "smoke/kafka-cluster.compose.yml", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-10"
+include = ["smoke/kafka-sasl.compose.yml"]
+predicate = { kind = "bytes-equal", other = "smoke/kafka-sasl.compose.yml", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-11"
+include = ["smoke/kafka-secure-cluster.compose.yml"]
+predicate = { kind = "bytes-equal", other = "smoke/kafka-secure-cluster.compose.yml", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-12"
+include = ["smoke/kafka-security.compose.yml"]
+predicate = { kind = "bytes-equal", other = "smoke/kafka-security.compose.yml", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-13"
+include = ["smoke/kafka-tls.compose.yml"]
+predicate = { kind = "bytes-equal", other = "smoke/kafka-tls.compose.yml", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-14"
+include = ["smoke/kafka.compose.yml"]
+predicate = { kind = "bytes-equal", other = "smoke/kafka.compose.yml", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-15"
+include = ["smoke/real-kafka-movement.smoke.mjs"]
+predicate = { kind = "bytes-equal", other = "smoke/real-kafka-movement.smoke.mjs", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-16"
+include = ["smoke/real-kafka-multi-broker.smoke.mjs"]
+predicate = { kind = "bytes-equal", other = "smoke/real-kafka-multi-broker.smoke.mjs", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-17"
+include = ["smoke/real-kafka-performance.smoke.mjs"]
+predicate = { kind = "bytes-equal", other = "smoke/real-kafka-performance.smoke.mjs", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-18"
+include = ["smoke/real-kafka-reconnect.smoke.mjs"]
+predicate = { kind = "bytes-equal", other = "smoke/real-kafka-reconnect.smoke.mjs", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-19"
+include = ["smoke/real-kafka-sasl.smoke.mjs"]
+predicate = { kind = "bytes-equal", other = "smoke/real-kafka-sasl.smoke.mjs", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-20"
+include = ["smoke/real-kafka-secure-multi-broker.smoke.mjs"]
+predicate = { kind = "bytes-equal", other = "smoke/real-kafka-secure-multi-broker.smoke.mjs", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-21"
+include = ["smoke/real-kafka-security.smoke.mjs"]
+predicate = { kind = "bytes-equal", other = "smoke/real-kafka-security.smoke.mjs", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-22"
+include = ["smoke/real-kafka-tls.smoke.mjs"]
+predicate = { kind = "bytes-equal", other = "smoke/real-kafka-tls.smoke.mjs", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-23"
+include = ["smoke/real-kafka.smoke.mjs"]
+predicate = { kind = "bytes-equal", other = "smoke/real-kafka.smoke.mjs", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."
+
+[[repository.files]]
+name = "kd-qual-read-24"
+include = ["smoke/support/tls-identities.mjs"]
+predicate = { kind = "bytes-equal", other = "smoke/support/tls-identities.mjs", utf8 = true }
+reason = "Preserve the frozen raw UTF-8 assertion and its exact matching scope; workflow structure and execution remain separate claims."

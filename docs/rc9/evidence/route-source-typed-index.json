@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "status": "verified source/input slice; full repository qualification remains blocked",
+  "implementation_commit": "359fd5621f42e106615a66bb7a665a85cff3ff41",
+  "implementation_tree": "f9707a4d6f69754ac267ccde5866555b6100439d",
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "ca58a580184e3ef1209b04c2b3188e0c8b7921d7d78a3c629a8e137d66887873",
+  "fixture_origins_sha256": "69dbf848608a70f88ad28ac023c95ac4e62622cf577669496bc169b941743bdf",
+  "source_test_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+  "assertion_ids": [
+    "KD-ROUTE-FORBID-BrokerSet",
+    "KD-ROUTE-FORBID-ConnectionSet",
+    "KD-ROUTE-FORBID-Poller",
+    "KD-ROUTE-FORBID-SingleBroker",
+    "KD-ROUTE-INPUT-facade",
+    "KD-ROUTE-INPUT-route_admission",
+    "KD-ROUTE-INPUT-route_directory",
+    "KD-ROUTE-INPUT-route_failure",
+    "KD-ROUTE-INPUT-route_install",
+    "KD-ROUTE-INPUT-route_install_publish",
+    "KD-ROUTE-INPUT-route_install_rollback",
+    "KD-ROUTE-INPUT-route_install_work",
+    "KD-ROUTE-INPUT-route_resolution",
+    "KD-ROUTE-INPUT-route_state",
+    "KD-ROUTE-INPUT-route_turn",
+    "KD-ROUTE-OWNER-FIELD"
+  ],
+  "full_repository_qualified": false,
+  "lock_authority_accepted": false,
+  "differential": {
+    "runs": 2,
+    "byte_identical": true,
+    "payload_sha256": "f6ed371562d7c28c7e9e9e9c697a3c4712cdc0ce8c624729c88111673ba332ef",
+    "payload_bytes": 6723169,
+    "cases": 189,
+    "accepted": 43,
+    "rejected": 146
+  },
+  "original_compilation": {
+    "per_run": 23,
+    "baseline_runnable_tests": 1,
+    "baseline_ignored": 0,
+    "missing_inputs": 11,
+    "invalid_utf8_inputs": 11
+  },
+  "artifact_validation": {
+    "command": "python3 scripts/rc9_route_evidence_test.py",
+    "unittest_methods": 2,
+    "adversarial_mutations": 42
+  },
+  "initial_failure": "The initial harness incorrectly required UTF-8 diagnostics to point at the macro invocation; rustc points at the invalid included byte. The corrected runner binds both distinct diagnostic locations and all unrelated-file decoys.",
+  "limitations": [
+    "Only the source-only route test and its eleven compile inputs are qualified; the mixed file's runtime scenario is retained and unqualified here.",
+    "Raw UTF-8 and physical-file observations do not claim semantic field/type identity, Cargo analysis, or full repository qualification.",
+    "The complete unchanged source-only test compiles and executes on the baseline. Missing inputs fail at the original include_str invocation; invalid UTF-8 diagnostics identify the included file's invalid byte."
+  ],
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/route-source-typed-parity.json.gz",
+      "payload_sha256": "f6ed371562d7c28c7e9e9e9c697a3c4712cdc0ce8c624729c88111673ba332ef",
+      "payload_bytes": 6723169,
+      "compressed_sha256": "19cd7f75d2f88fc08ea00d580bb27d70c7415db38ea3d0d525b661d044f5ffdd"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-source-typed-parity-a.log.gz",
+      "payload_sha256": "27f8eeb2a8396d9ee42ff6d6cedad443f97d0abf4d59b7dd57c3f46b02ee482c",
+      "payload_bytes": 35925,
+      "compressed_sha256": "93ca5b44ce52f1bbd8daecb9228a8465e48a91a259fe1a595d2acc31417349f2"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-source-typed-parity-b.log.gz",
+      "payload_sha256": "19149d5ce00c1d95b463179b6c91c5b492f6d9e9f4da0f691b645a945a410e6e",
+      "payload_bytes": 35852,
+      "compressed_sha256": "034ce19216dc0c0967f89aacf6c8e70778318a7c55abc89c2f80d1ac6205568b"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-source-typed-runner.json.gz",
+      "payload_sha256": "733866831c20eb546a66c050b3e6f64b8ff244356cb4c8e037659ac18100eabe",
+      "payload_bytes": 2093,
+      "compressed_sha256": "455e354594d819b7a3633ebfca33b0c37116145c8e755ce9dfe267c2f97bc9f9"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-source-typed-runner.py.gz",
+      "payload_sha256": "4fd5d6afeefb89c9d12590f0eac60dcdd3834f455542523e83bf2d67c418fa1d",
+      "payload_bytes": 4035,
+      "compressed_sha256": "59492625b47f56a0ec66345543141d7aa2ea3c223c95dca1bfd1a2d4fd217eff"
+    }
+  ],
+  "previous_index": "docs/rc9/evidence/route-source-index.json",
+  "macro_failure_index": "docs/rc9/evidence/route-macro-policy-index.json",
+  "serializer": "Typed serde serialization uses existing reviewed authority; no serde_json::json allowance was added.",
+  "changed_report_fields": [
+    "/fixture_root",
+    "/implementation_commit",
+    "/implementation_tree",
+    "/test_binary_sha256"
+  ]
+}

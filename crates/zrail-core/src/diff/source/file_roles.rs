@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::{Contract, FileRole};
+use crate::{Contract, FacadeMode, FileRole, FileRoleContract};
 
 use super::super::{ArchitectureChange, ChangeKind};
 
@@ -15,12 +15,26 @@ pub(super) fn compare(before: &Contract, after: &Contract, changes: &mut Vec<Arc
         .copied()
         .collect::<BTreeSet<_>>()
     {
+        let left = old.get(path).copied();
+        let right = new.get(path).copied();
+        if let (Some(left), Some(right)) = (left, right)
+            && left.role == right.role
+            && left.role != FileRole::Implementation
+        {
+            super::super::support::compare_ordered_mode(
+                "rust.facades",
+                path,
+                super::super::support::rank_facades(mode(left, before)),
+                super::super::support::rank_facades(mode(right, after)),
+                changes,
+            );
+        }
         match (old.get(path), new.get(path)) {
-            (Some(left), Some(right)) if left != right => {
-                change(path, Some(**left), Some(**right), changes);
+            (Some(left), Some(right)) if left.role != right.role => {
+                change(path, Some(left.role), Some(right.role), changes);
             }
-            (None, Some(right)) => change(path, None, Some(**right), changes),
-            (Some(left), None) => change(path, Some(**left), None, changes),
+            (None, Some(right)) => change(path, None, Some(right.role), changes),
+            (Some(left), None) => change(path, Some(left.role), None, changes),
             _ => {}
         }
     }
@@ -33,8 +47,12 @@ fn change(
     changes: &mut Vec<ArchitectureChange>,
 ) {
     let kind = match (before, after) {
-        (_, Some(FileRole::Implementation)) | (Some(FileRole::Facade), None) => ChangeKind::Grant,
-        (_, Some(FileRole::Facade)) | (Some(FileRole::Implementation), None) => ChangeKind::Revoke,
+        (Some(FileRole::Facade), Some(FileRole::TestFacade))
+        | (Some(FileRole::TestFacade), Some(FileRole::Facade)) => ChangeKind::Unknown,
+        (_, Some(FileRole::Implementation))
+        | (Some(FileRole::Facade | FileRole::TestFacade), None) => ChangeKind::Grant,
+        (_, Some(FileRole::Facade | FileRole::TestFacade))
+        | (Some(FileRole::Implementation), None) => ChangeKind::Revoke,
         (None, None) => return,
     };
     changes.push(
@@ -48,13 +66,17 @@ fn change(
     );
 }
 
-fn roles(contract: &Contract) -> BTreeMap<&str, &FileRole> {
+fn mode(role: &FileRoleContract, contract: &Contract) -> FacadeMode {
+    role.mode.unwrap_or(contract.source.rust.facades)
+}
+
+fn roles(contract: &Contract) -> BTreeMap<&str, &FileRoleContract> {
     contract
         .source
         .rust
         .file_roles
         .iter()
-        .map(|role| (role.path.as_str(), &role.role))
+        .map(|role| (role.path.as_str(), role))
         .collect()
 }
 

@@ -1,0 +1,10 @@
+
+running 5 tests
+test tests::facade_files_use_tight_size_limits ... ok
+test tests::fuzz_targets_use_auxiliary_size_limits ... ok
+test tests::library_files_use_three_hundred_line_ratchet_target ... ok
+test tests::storage_facades_use_tight_size_limits ... ok
+test file_size_guard_enforces_module_size_limits ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+

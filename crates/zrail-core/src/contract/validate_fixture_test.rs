@@ -37,6 +37,7 @@ pub(super) fn minimal_contract() -> Contract {
         schema: 1,
         adapters: vec!["rust".into()],
         repository: RepositoryContract {
+            files: Vec::new(),
             roots: vec!["crates".into()],
             exclude: Vec::new(),
             workspace_members: ExactMode::Exact,
@@ -49,6 +50,7 @@ pub(super) fn minimal_contract() -> Contract {
             unassigned_packages: PolicyMode::Allow,
             cycles: CycleMode::Allow,
             crate_roots: Vec::new(),
+            lock_packages: Vec::new(),
         },
         analysis: AnalysisContract::default(),
         source: SourceContract {
@@ -66,6 +68,8 @@ pub(super) fn minimal_contract() -> Contract {
                 macros: crate::MacroExpansionContract::default(),
                 duplication: crate::RustDuplicationContract::default(),
                 types: Vec::new(),
+                budgets: None,
+                inventories: Vec::new(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Allow,
                     lint_suppressions: LintSuppressionMode::Allow,

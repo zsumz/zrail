@@ -3,11 +3,14 @@
 use std::{collections::BTreeSet, path::Path};
 
 use zrail_core::{
-    Contract, Effect, ExternalDependencyMode, FacadeMode, GlobImportMode, LayerContract,
-    LintSuppressionMode, MacroExpansionMode, ModuleDocsMode, PolicyMode, ScopeContract,
+    Contract, Effect, ExternalDependencyMode, GlobImportMode, LayerContract, LintSuppressionMode,
+    MacroExpansionMode, ModuleDocsMode, PolicyMode, ScopeContract,
 };
 
 use crate::inventory::FileClass;
+
+#[cfg(test)]
+use zrail_core::FacadeMode;
 
 pub(super) fn dependency_layers(layer: Option<&LayerContract>) -> Vec<String> {
     let Some(layer) = layer else {
@@ -144,14 +147,15 @@ pub(super) fn sibling_path(path: &str) -> Option<String> {
         })
 }
 
+#[cfg(test)]
 pub(super) fn declarative_shape(
     class: FileClass,
     facades: FacadeMode,
     entrypoints: FacadeMode,
 ) -> Option<bool> {
     match class {
-        FileClass::Facade => Some(facades == FacadeMode::Declarative),
-        FileClass::EntryPoint => Some(entrypoints == FacadeMode::Declarative),
+        FileClass::Facade => Some(facades != FacadeMode::Allow),
+        FileClass::EntryPoint => Some(entrypoints != FacadeMode::Allow),
         _ => None,
     }
 }
@@ -181,3 +185,37 @@ const fn effect_name(effect: Effect) -> &'static str {
 #[cfg(test)]
 #[path = "policy_test.rs"]
 mod policy_test;
+
+pub(super) fn size_budget(
+    model: &crate::engine::RepositoryModel,
+    relative: &str,
+    class: crate::inventory::FileClass,
+    reachability: crate::source::Reachability,
+) -> Result<Option<crate::EffectiveSizeBudget>, crate::engine::CheckError> {
+    let mut packages = model
+        .source
+        .files
+        .iter()
+        .filter(|file| file.relative == relative)
+        .flat_map(|file| file.packages.iter().cloned())
+        .collect::<std::collections::BTreeSet<_>>();
+    if packages.is_empty() {
+        packages.extend(
+            model
+                .cargo
+                .packages
+                .iter()
+                .filter(|package| package.contains_file(relative))
+                .max_by_key(|package| package.directory.len())
+                .map(|package| package.name.clone()),
+        );
+    }
+    crate::source_budget::for_path(
+        relative,
+        class,
+        reachability,
+        &packages.into_iter().collect::<Vec<_>>(),
+        &model.bundle.contract.source.rust,
+    )
+    .map_err(crate::engine::CheckError::from_message)
+}

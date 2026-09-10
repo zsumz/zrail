@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "context": "Raw lock-name, CI, and attributes assertion bodies and read helpers execute unchanged. The isolated workspace_root closure and minimal registry type are harness-only. No TOML/YAML/execution claim is inferred from raw matches.",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "exact raw line-name extractor",
+      "harness": "crates/zrail-rust/src/repository_files/raw_dependency/legacy.rs",
+      "start_line": 7,
+      "end_line": 16,
+      "extracted_sha256": "023bad9b9e2e98a40249131e5c46e5a436698c210d0e96aa5663b7d089d72d90"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "lock body",
+      "harness": "crates/zrail-rust/src/repository_files/raw_dependency/legacy.rs",
+      "start_line": 20,
+      "end_line": 35,
+      "extracted_sha256": "513aa18e25bcfa645fcdaee7cba0b2b92bcac74f9878f14bf308068ab39e8ee5"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "gate body",
+      "harness": "crates/zrail-rust/src/repository_files/raw_dependency/legacy.rs",
+      "start_line": 253,
+      "end_line": 261,
+      "extracted_sha256": "77ab2422dfce2581f1713996bc1d553277ddc401bbcbe6d8b4a021ae33365c88"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "matrix body",
+      "harness": "crates/zrail-rust/src/repository_files/raw_dependency/legacy.rs",
+      "start_line": 265,
+      "end_line": 270,
+      "extracted_sha256": "7bfd85425e54c985a747e135a474cb0cd99ef8cb2f02350b5b2e7d4579d56a14"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "attributes body",
+      "harness": "crates/zrail-rust/src/repository_files/raw_dependency/legacy.rs",
+      "start_line": 274,
+      "end_line": 285,
+      "extracted_sha256": "fadfca92ca8b6df2757bf5de58801a1ad7d4f81c0880ece4771898f7ed22f6ec"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "function": "load_guardrails and read",
+      "harness": "crates/zrail-rust/src/repository_files/raw_dependency/legacy.rs",
+      "start_line": 60,
+      "end_line": 70,
+      "extracted_sha256": "5e4e9d3bbb4429be23f042b28ed30f365559daf1fcfccab1ca817a4118b7c6e2"
+    }
+  ],
+  "fixtures": [
+    {
+      "repository": "kafka-driver",
+      "path": "Cargo.lock",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/raw-dependency/valid/Cargo.lock",
+      "sha256": "ca19be9c0480526d9a7d2cf44fa1404ff3fe0b8522356d7141e2bb8dd75c0313"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "guardrails.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/raw-dependency/valid/guardrails.toml",
+      "sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": ".github/workflows/ci.yml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/raw-dependency/valid/.github/workflows/ci.yml",
+      "sha256": "b9e8ecefa03ae085602d915200924bfad7b866f639653834cf7a8afbbf8866eb"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": ".gitattributes",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/raw-dependency/valid/.gitattributes",
+      "sha256": "9a0cfa004901ef93979ecaf57b434f884de24008e2bf7a8aac2f5aeb1440856b"
+    }
+  ]
+}

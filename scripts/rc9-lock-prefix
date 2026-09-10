@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""Run exact native/original prefix tests from a clean signed producer; never execute a consumer repository."""
+
+import argparse
+from pathlib import Path
+import runpy
+import sys
+
+sys.dont_write_bytecode = True
+
+from rc9_lock_prefix_common import ROOT, POLICY, CASES, ORIGINS, PREFIX, SUITES, canonical, execution, git, parse, require, sha
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for name in ["snapshots", "directory", "build"]:
+        parser.add_argument("--" + name, type=Path, required=True)
+    parser.add_argument("--report", required=True)
+    args = parser.parse_args()
+    directory, snapshots, build = args.directory.resolve(strict=True), args.snapshots.resolve(strict=True), args.build.resolve()
+    require(Path(args.report).name == args.report and not (directory / args.report).exists(), "fresh report basename")
+    require(directory.is_relative_to("/Volumes/zdev") and build.is_relative_to("/Volumes/zdev")
+            and not directory.is_relative_to(ROOT) and not directory.is_relative_to(snapshots)
+            and not build.is_relative_to(snapshots) and not directory.is_relative_to(build), "independent zdev outputs")
+    require(not git("status", "--porcelain=v1", "--untracked-files=all"), "clean committed producer")
+    commit, tree = git("rev-parse", "HEAD"), git("rev-parse", "HEAD^{tree}")
+    env = runpy.run_path(ROOT / "scripts/rc9-route-runtime")["environment"](build, directory)
+    for parent in [ROOT, *ROOT.parents]:
+        require(not any((parent / ".cargo" / name).exists() for name in ["config", "config.toml"]), "ancestor Cargo configuration")
+    checked = runpy.run_path(ROOT / "scripts/rc9-retired-boundaries")["checked"]
+
+    def check(arguments, suffix):
+        return checked(arguments, env, directory / (args.report + suffix))
+
+    check([sys.executable, ROOT / "scripts/rc9-snapshots", snapshots], ".snapshots-before.log")
+    compiler = check(["rustc", "-Vv"], ".compiler.log").stdout.decode().strip()
+    command = ["cargo", "test", "-p", "zrail-rust", "--lib", "--all-features", "--locked", "--offline", "--no-run", "--message-format=json"]
+    print("building committed lock prefix tests", flush=True)
+    built = check(command, ".build.log")
+    artifacts = [parse(line) for line in built.stdout.splitlines() if line.startswith(b"{")]
+    item, = [row for row in artifacts if row.get("reason") == "compiler-artifact" and row.get("executable")]
+    require(any(row.get("reason") == "build-finished" and row.get("success") is True for row in artifacts), "missing build success")
+    require(item["target"]["name"] == "zrail_rust" and item["target"]["kind"] == ["lib"] and item["profile"]["test"] is True
+            and Path(item["target"]["src_path"]).resolve() == ROOT / "crates/zrail-rust/src/lib.rs", "foreign source target")
+    binary = Path(item["executable"]).resolve(strict=True)
+    require(binary.is_relative_to(build), "foreign executable")
+    digest = sha(binary.read_bytes())
+    listing = check([binary, "--list", "--format=terse"], ".listing.log").stdout
+    names = listing.decode().splitlines()
+    require(names and len(names) == len(set(names)) and all(name.endswith(": test") for name in names), "ambiguous inventory")
+    native_path = directory / (args.report + ".native.json")
+    require(not native_path.exists(), "fresh native report")
+    env.update(ZRAIL_RC9_SNAPSHOTS=str(snapshots), ZRAIL_RC9_LOCK_PREFIX_REPORT=str(native_path))
+    executions = []
+    for index, (name, (ignored, scope, cases)) in enumerate(SUITES.items()):
+        name = PREFIX + name
+        require(names.count(name + ": test") == 1, "required test missing")
+        arguments = [str(binary), name, "--exact"] + (["--ignored"] if ignored else [])
+        print("executing " + name, flush=True)
+        result = check(arguments, f".suite-{index:02}.log")
+        executions.append({"test": name, "arguments": arguments[1:], "scope": scope, "cases": cases,
+                           "outcome": execution(result.stdout, result.returncode, name, len(names))})
+    native_bytes = native_path.read_bytes()
+    report = parse(native_bytes)
+    translated = directory / (args.report + ".translated.toml")
+    require(not translated.exists(), "fresh translated output")
+    check([sys.executable, ROOT / "scripts/rc9-provenance-policies", snapshots, "lock", translated], ".translation.log")
+    require(translated.read_bytes() == (ROOT / POLICY).read_bytes(), "translation changed native authority")
+    converted = check([sys.executable, ROOT / "scripts/rc9_lock_prefix_conversion.py"], ".conversion.log")
+    report.update(conversion=parse(converted.stdout), translated_sha256=sha(translated.read_bytes()))
+    inputs = ["scripts/rc9-lock-prefix", "scripts/rc9_lock_prefix_common.py", "scripts/rc9-retired-boundaries",
+              "scripts/rc9_retired_boundary_common.py", "scripts/rc9-route-runtime", "scripts/rc9_route_runtime_common.py", "scripts/rc9-snapshots",
+              POLICY, CASES, ORIGINS, "crates/zrail-testkit/tests/fixtures/rc9/lock-packages-origins.json", "crates/zrail-rust/src/lock_packages/parity/legacy.rs",
+              "crates/zrail-rust/src/lock_packages.rs", "crates/zrail-rust/src/lock_packages/parity/model.rs",
+              "crates/zrail-rust/src/cargo/resolved/raw.rs", "crates/zrail-rust/src/cargo/resolved/raw/fields.rs", "crates/zrail-rust/src/cargo/resolved/build.rs"]
+    inputs += ["scripts/rc9-provenance-policies", "scripts/rc9_lock_prefix_conversion.py",
+               "crates/zrail-testkit/tests/fixtures/rc9/assertions.json", "crates/zrail-testkit/tests/fixtures/good/zrail.toml",
+               "crates/zrail-core/src/contract/validate_lock_packages.rs", "crates/zrail-core/src/contract/model/lock_packages.rs",
+               "crates/zrail-core/src/contract/load.rs"]
+    inputs += git("ls-files", "crates/zrail-rust/tests/rc9_lock_prefix").splitlines()
+    report.update(implementation_commit=commit, implementation_tree=tree, rustc_version=compiler,
+                  cargo_lock_sha256=sha((ROOT / "Cargo.lock").read_bytes()), test_binary_sha256=digest,
+                  binary_path=str(binary), total_tests=len(names), listing_sha256=sha(listing), build_command=command,
+                  policy_path=POLICY, native_payload_sha256=sha(native_bytes), origins_sha256=sha((ROOT / ORIGINS).read_bytes()),
+                  producer_inputs={path: sha((ROOT / path).read_bytes()) for path in sorted(inputs)}, executions=executions)
+    check([sys.executable, ROOT / "scripts/rc9-snapshots", snapshots], ".snapshots-after.log")
+    require(not git("status", "--porcelain=v1", "--untracked-files=all") and git("rev-parse", "HEAD") == commit
+            and sha(binary.read_bytes()) == digest, "producer changed during execution")
+    with (directory / args.report).open("xb") as stream:
+        stream.write(canonical(report))
+    print("lock prefix report: " + sha(canonical(report)), flush=True)
+
+
+if __name__ == "__main__":
+    main()

@@ -66,6 +66,45 @@ impl GovernedSurfaceReport {
             );
         }
         let _ = writeln!(output, "Test mirrors: {}", self.test_mirrors.len());
+        let _ = writeln!(
+            output,
+            "Whole-lock inventories: {}",
+            crate::lock_packages::display(&self.lock_packages)
+        );
+        let _ = writeln!(
+            output,
+            "Rust inventories: {}",
+            crate::rust_inventories::display(&self.rust_inventories)
+        );
+        let _ = writeln!(output, "Facade policies: {}", self.facades.len());
+        for facade in &self.facades {
+            let _ = writeln!(
+                output,
+                "  {} -> {} ({}, syntax allowed: {}, {} item violations)",
+                facade.policy_id,
+                facade.path,
+                crate::source_policy::facade_mode_name(facade.mode),
+                facade.syntax_allowed,
+                facade.violations.len()
+            );
+        }
+        let _ = writeln!(
+            output,
+            "Repository-file policies: {}",
+            self.repository_files.len()
+        );
+        for policy in &self.repository_files {
+            let _ = writeln!(
+                output,
+                "  {} -> {:?} ({}, {} selected entries, satisfied: {}, checkout: {:?})",
+                policy.policy_id,
+                policy.policy.predicate,
+                policy.claim,
+                policy.entries.len(),
+                policy.satisfied,
+                policy.checkout_path,
+            );
+        }
         output
     }
 }

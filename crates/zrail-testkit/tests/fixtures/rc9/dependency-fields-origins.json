@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "context": "Complete six original assertion bodies and manifest/read helpers are byte-exact. Only workspace_root is supplied from the isolated path. Unused registry fields are outside this minimal fixture harness.",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "kafka_wire_uses_the_exact_registry_release body",
+      "harness": "crates/zrail-rust/src/repository_files/dependency_fields/legacy/releases.rs",
+      "start_line": 39,
+      "end_line": 54,
+      "extracted_sha256": "3ade7080a20abd62aa47b63263d5dcd27fd13d228a8449cc837e2512a32d62ad"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "local_and_registry_dependencies_carry_the_release_version body",
+      "harness": "crates/zrail-rust/src/repository_files/dependency_fields/legacy/releases.rs",
+      "start_line": 59,
+      "end_line": 90,
+      "extracted_sha256": "0bf6ec25831757c2ec1f2cdc1c87c4a8aa92511c8f8d44142ebc6988d5db52cc"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "publication_policy_exposes_only_the_runtime_graph body",
+      "harness": "crates/zrail-rust/src/repository_files/dependency_fields/legacy/releases.rs",
+      "start_line": 95,
+      "end_line": 114,
+      "extracted_sha256": "eb0aea4548a82b3e8f5b4eae432ef2d5aa60278ef3caf40936567192d147e909"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "rustls_is_a_runtime_neutral_optional_transport_feature body",
+      "harness": "crates/zrail-rust/src/repository_files/dependency_fields/legacy/features.rs",
+      "start_line": 133,
+      "end_line": 161,
+      "extracted_sha256": "8ff5cf66d63c222a87983bc1d5be6e737e59b522dacf5672187d35b1940bcf14"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "sasl_scram_is_an_exact_packaged_dependency_with_both_kafka_algorithms body",
+      "harness": "crates/zrail-rust/src/repository_files/dependency_fields/legacy/features.rs",
+      "start_line": 166,
+      "end_line": 185,
+      "extracted_sha256": "aed27e1604b2fd5cc5e6b5cccc3fc75b329b9eec5a6d290c47be328ec16064a3"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "simulator_depends_only_on_criticality_and_the_deterministic_core body",
+      "harness": "crates/zrail-rust/src/repository_files/dependency_fields/legacy/features.rs",
+      "start_line": 223,
+      "end_line": 234,
+      "extracted_sha256": "cb6f82a59a3f5cb6a474de8d20ba28090dbfebc3a42c151209174b0d0715aa43"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/dependency.rs",
+      "source_sha256": "fa3fbc3331aa5fe299f7aa50410093188a6386da4103bb8678d5374a7bfbc53f",
+      "function": "manifest_dependencies and parse_manifest",
+      "harness": "crates/zrail-rust/src/repository_files/dependency_fields/legacy.rs",
+      "start_line": 297,
+      "end_line": 311,
+      "extracted_sha256": "ff30a1eb44f584f1bf529ca47dcf21fe4fb7654b1ccda8fc7fe72cc48d8dde9b"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "function": "load_guardrails and read",
+      "harness": "crates/zrail-rust/src/repository_files/dependency_fields/legacy.rs",
+      "start_line": 60,
+      "end_line": 70,
+      "extracted_sha256": "5e4e9d3bbb4429be23f042b28ed30f365559daf1fcfccab1ca817a4118b7c6e2"
+    }
+  ],
+  "fixtures": [
+    {
+      "repository": "kafka-driver",
+      "path": "Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/key-sets/valid/Cargo.toml",
+      "sha256": "ba234719aebd05d630c4df0d2d236f7060425a47fff2c2e4f38264b2c0979bf6"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-core/Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/key-sets/valid/crates/kafka-driver-core/Cargo.toml",
+      "sha256": "415876d424f42d10e29830f43bb17c93c01b055b86ec7da39314dc5ee55e2881"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-transport/Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/key-sets/valid/crates/kafka-driver-transport/Cargo.toml",
+      "sha256": "44ffdefba698729ecccff01737a73de75d3aafd105fcaad062375275953e8c70"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-sim/Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/key-sets/valid/crates/kafka-driver-sim/Cargo.toml",
+      "sha256": "0c6e1d53bd243f7184967ac6a80aed24e984e4f2112c45bfd93a701116e4e8f1"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "crates/kafka-driver-probe/Cargo.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/key-sets/valid/crates/kafka-driver-probe/Cargo.toml",
+      "sha256": "58d52fc6186c1e09cf356d00b4de866c7c2a22e260eddd61cf55f762759e6ab5"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "guardrails.toml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/key-sets/valid/guardrails.toml",
+      "sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10"
+    }
+  ]
+}

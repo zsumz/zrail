@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "status": "blocked",
+  "implementation": {
+    "commit": "7fb1093e77e636a3e98c69fec7bf1dbcb61ff26d",
+    "tree": "4e849e86425ff2e463ce4eb914819edc6eefad7a",
+    "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked": {},
+    "git_status": ""
+  },
+  "unsigned_local_commits_approved": true,
+  "release_qualified": false,
+  "full_repository_qualified": false,
+  "canonical": {
+    "exit_code": 1,
+    "passed": 1609,
+    "failed": 0,
+    "ignored": 17,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-016",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "analysis_complete": true,
+    "rust_files": 1051,
+    "base_contexts": 1646,
+    "projection_work": 1194894,
+    "unresolved": 0,
+    "archive_stage_reached": false,
+    "cleanliness_stage_reached": false
+  },
+  "standalone_archive": "pass",
+  "whitespace": "pass",
+  "inputs_unchanged": true,
+  "lock_authority_accepted": false,
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/committed-check-runner.json.gz",
+      "payload_sha256": "7a0d23c51e6e247dd045241e4e0156086960632bc18d0392c7de309e36f0bb87",
+      "payload_bytes": 2892,
+      "compressed_sha256": "f131fe9d88b949fc9e0e2edfe1023e5d17dfb8aff49f17a4f7195c9197d8b3a2"
+    },
+    {
+      "artifact": "docs/rc9/evidence/committed-check-runner.py.gz",
+      "payload_sha256": "868361eba563ebb66c909b33ec78e473b64df2fe8c298e46ab8e460d7f80d04b",
+      "payload_bytes": 3839,
+      "compressed_sha256": "7494212399c115559db2596a97272b5b1ee6787129140926a871083e9caa6eef"
+    },
+    {
+      "artifact": "docs/rc9/evidence/committed-check-snapshot-inputs.log.gz",
+      "payload_sha256": "4e21c58573fcd3cc8b7390c6c83cc27d81377ada220027de821e122a01d62715",
+      "payload_bytes": 1980,
+      "compressed_sha256": "59e3500f9c51c3e0ba9a3a8b42a88127b78d8f7810d451e4c8bf89cb05da41e9"
+    },
+    {
+      "artifact": "docs/rc9/evidence/committed-check-frozen.log.gz",
+      "payload_sha256": "f694d3ac5c9bce5113b57258eeec1475d84a5a73be2237a7e158c7bfc4af3983",
+      "payload_bytes": 2609,
+      "compressed_sha256": "71e04f05e0ad06a5034552bee315b6ed96fa555f0a0ea2d014ca5949e888c3c4"
+    },
+    {
+      "artifact": "docs/rc9/evidence/committed-check-canonical.log.gz",
+      "payload_sha256": "21b01fc7dcd9b6296473e46b69005483ab5d20ff6bdf301335ddc66c6ccece83",
+      "payload_bytes": 191142,
+      "compressed_sha256": "2047755086665e7119cf6b331be8d94035a9fccd35143b15a5d3245015a1886c"
+    },
+    {
+      "artifact": "docs/rc9/evidence/committed-check-package.log.gz",
+      "payload_sha256": "c44a0a0ae4b012c8e78e7c9181bceee801e6cc8928228a6fc41b77be1ed0e018",
+      "payload_bytes": 10662,
+      "compressed_sha256": "f129785dc59f2a7ce95033bd988cd0959a3f045a57e92169f98567284ea8692d"
+    },
+    {
+      "artifact": "docs/rc9/evidence/committed-check-diff-check.log.gz",
+      "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "payload_bytes": 0,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "artifact": "docs/rc9/evidence/committed-check-staged-diff-check.log.gz",
+      "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "payload_bytes": 0,
+      "compressed_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    }
+  ]
+}

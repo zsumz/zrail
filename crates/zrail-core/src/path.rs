@@ -1,5 +1,8 @@
 //! Repository-relative path normalization and bounded glob matching.
 
+mod descendant;
+pub use descendant::glob_can_match_descendant;
+
 use std::{
     fs,
     path::{Component, Path, PathBuf},

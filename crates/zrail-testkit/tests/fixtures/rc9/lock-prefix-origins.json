@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "context": "The exact three-line prefix operation is isolated without interpreting its suffix. Full original caller/helper and frozen inputs remain bound by lock-packages-origins.json. Native exact literals, contract validation and observed Cargo semver parsing are separate stages.",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/protocol_provenance.rs",
+      "source_sha256": "490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573",
+      "function": "assert_locked exact prefix operation",
+      "harness": "crates/zrail-rust/tests/rc9_lock_prefix/original.rs",
+      "start_line": 142,
+      "end_line": 144,
+      "extracted_sha256": "6124e965fff8006e8fdde7355d5c26350edb57433542333b77125fd6f6ca47e1"
+    }
+  ]
+}

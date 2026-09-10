@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "implementation_commit": "06b0f185f072bbd9211816a0694f0812ab4188d6",
+  "implementation_tree": "77cf32ad242a74ad59887c98648ee77475516863",
+  "full_repository_qualified": false,
+  "policy": "docs/rc9/policies/kafka-driver.retired.fragment.toml",
+  "report": {
+    "artifact": "docs/rc9/evidence/retired-parity.json.gz",
+    "archive_sha256": "fd252dac80abae97a183c1a46280804bb3941c34b8faa8d7f15e44728266d68b",
+    "payload_sha256": "79b9363ed2a7f39378e14dfe00a886b79b093ff6f30580e7aaf968042830dc83",
+    "cases": 144,
+    "accepted": 72,
+    "rejected": 72,
+    "independent_runs": 2,
+    "byte_identical": true
+  },
+  "runs": [
+    {
+      "artifact": "docs/rc9/evidence/retired-parity-a.log.gz",
+      "archive_sha256": "357e1e2e17b2634f71ddcca6e5328ca145e587bcc9a51284c8e2d467f7fe754a"
+    },
+    {
+      "artifact": "docs/rc9/evidence/retired-parity-b.log.gz",
+      "archive_sha256": "1597dfdca775c8489d3323e0ab79eae5fe91764300982d45d495162e2c404182"
+    }
+  ],
+  "validator": "scripts/rc9_retired_evidence.py",
+  "adversarial_tests": "scripts/rc9_retired_evidence_test.py",
+  "adversarial_mutations": 37,
+  "assertions_verified": 12,
+  "tree_assertions_implemented_but_unverified": 7,
+  "limitations": [
+    "Only this partial release-graph bundle is qualified; no complete downstream contract or lock is accepted.",
+    "Native and original physical discovery agree on ordinary files, empty directories, case and extensionless .rs names. Read-error, entry-error and symlink boundary qualification remains open.",
+    "Frozen snapshots were clean and revision/tree-verified before and after each run. Temporary fixture inputs were restored between cases and removed afterward.",
+    "The separate unchanged route runtime scenario passed, but its fifteen assertion rows remain open until exact execution-contract and native receipt verification exists."
+  ]
+}

@@ -4,6 +4,88 @@ All notable zrail changes are recorded here for reviewed release notes.
 
 ## [Unreleased]
 
+### Added
+
+- Explicit file-level module and enum-variant inventories over parsed Rust items,
+  preserving nested-scope boundaries, exact written identity and active zero bans.
+
+- Authored path-type trait-implementation inventories with explicit per-trait
+  type filters, exact trait/type/file identity, independent quantities, and
+  protected review of selection changes; semantic resolution remains separate.
+
+- Opt-in wiring-only facades, with separate unrestricted-import and
+  public/crate/super re-export modes, plus reasoned exact-path mode selection.
+- Test-facade structure independent of compilation reachability, test placement,
+  test budgets, and execution identity.
+- Facade coverage in schema 6 and effective modes in path explanations.
+- Scoped package/path/role budgets with deterministic override rejection,
+  independent target/soft/hard thresholds, warning-only targets, and test-facade
+  limits independent of execution identity.
+- Explicit bounded hard exceptions with required accountability forms and stale
+  debt detection; optional authored baselines extend existing measured ratchets.
+- Complete effective budget/debt reporting and protected comparisons for scoped
+  limits, warning downgrades, baseline removal, and exception authority.
+- Closed repository-file count/set, name, raw-text, and byte-equality assertions,
+  with independent physical selection, bounded contained reads, complete coverage,
+  path explanations, lock input binding, and protected semantic comparisons.
+- Explicit non-directory path selection includes special files without reading
+  their contents, preserving physical prohibitions that regular-file rules miss.
+  Contained-link resolution and fail-closed traversal boundaries remain in force.
+- Explicit repository-file inspection accepts empty selections while requiring
+  complete physical traversal, without a content or cardinality claim. Vacuous
+  counts remain invalid, and narrowed or removed inspection requires review.
+- Explicit UTF-8 validity for byte-equality policies, preserving legacy text-read
+  preconditions while retaining binary equality by default.
+- Exact raw-line presence and prohibition, with per-line normalization, complete
+  occurrence totals, bounded samples, and protected comparisons against whole-file
+  matching. Existing raw-text modes retain their meaning.
+- Bounded authored TOML/JSON field predicates for presence, absence, nonempty
+  strings, and exact typed values or ordered string arrays, with strict duplicate
+  rejection, auditable observations, input binding, and protected semantic diffs.
+- Immediate exact/allowed document key sets with explicit legacy non-table
+  projection, required subject presence, complete counts, bounded key samples,
+  and protected comparisons of accepted identities and type permissions.
+- Typed immediate-field string prohibitions that preserve explicit legacy
+  get/as_str projections while retaining required parent presence and input binding.
+- Whole-Cargo.lock package counts and exact version/source/checksum inventories
+  over the existing complete resolver, including unreachable nodes, persistent
+  zero bans, bounded identity samples, coverage/explanation, lock binding, and
+  protected comparisons that distinguish exact quantities from upper limits.
+- Closed raw first-marker order, marker-bounded literal presence, and prefixed
+  line-value allowlists, with complete quantities, bounded observations, input
+  binding, and protected comparisons; these make no workflow execution claim.
+- Bounded raw line-prefix prohibitions that count overlapping matches once,
+  preserve complete physical-line quantities and input binding, and compare
+  prefix languages for protected grants, tightening and redundant-set changes.
+- Exact authored Rust method-call inventories with selected-scope bounds and
+  complete per-file/identifier count maps, independent physical selection,
+  deduplicated locations, explicit cfg-world semantics, input binding, coverage,
+  explanations, and protected quantity comparisons.
+- Explicit written expression-path suffix inventories, including direct callees,
+  function-value acquisition and path patterns, with distinct syntax claims and
+  unchanged rc8 invocation authority. Qualification reuses the frozen collector.
+- Exact file/subject owner sets independent of occurrence quantities, with
+  required presence, persistent prohibitions, full count evidence, and protected
+  comparisons against bounds and exact counts.
+- Written path-segment membership across all authored Rust path contexts,
+  reusing parsed path facts with exact physical owner sets and separate counts.
+- Explicit authored import-rename inventories selected by source identifier,
+  retaining alias destinations, same-name and underscore forms, exact sets,
+  independent quantities, complete input binding, and protected review.
+
+### Changed
+
+- Analyzer/lock semantics advance to epoch 7 (lock schema 3); migration retains
+  every previously supported epoch and adds the rc8 epoch 6 path.
+- Strict facade relaxations and removed test-facade requirements are protected
+  semantic grants. The existing declarative mode retains its rc8 meaning.
+- Repeated immutable lexical-scope boundary queries reuse completed work within
+  each source instance. Exhausted queries remain retryable and every analysis
+  pass clears its cache; the self-hosted work ceiling is unchanged.
+
+The rc9 replacement audit remains blocked; these capabilities do not establish
+full downstream parity or authorize removal of any consumer guardrail.
+
 ## [0.0.3-rc.8] - 2026-09-04
 
 ### Changed

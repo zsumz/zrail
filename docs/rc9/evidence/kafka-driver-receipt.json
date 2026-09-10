@@ -1,0 +1,272 @@
+{
+  "schema": 1,
+  "snapshot": {
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "harness": "unmodified tests/guardrails.rs",
+  "implementation_commit": "348ae5b777217f774433045da5c4431ea055c162",
+  "implementation_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "build": [
+    "cargo",
+    "build",
+    "--locked",
+    "--offline",
+    "--lib",
+    "-p",
+    "zrail-rust",
+    "--message-format=json"
+  ],
+  "compile": [
+    "rustc",
+    "--edition=2024",
+    "--test",
+    "/mnt/volume_atl1_1787847588295/zrail-rc9/snapshots/kafka-driver/tests/guardrails.rs",
+    "-L",
+    "dependency=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps",
+    "-o",
+    "/mnt/volume_atl1_1787847588295/zrail-rc9/evidence/kafka-driver-final/legacy-guards",
+    "--extern",
+    "serde=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libserde-646f796a002175b1.rlib",
+    "--extern",
+    "syn=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libsyn-9d4bf8a2b9229703.rlib",
+    "--extern",
+    "toml=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libtoml-95ad40842fbfb375.rlib"
+  ],
+  "toolchain": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.97.1\nLLVM version: 22.1.6",
+  "dependencies": {
+    "serde": {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libserde-646f796a002175b1.rlib",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
+      "features": [
+        "default",
+        "derive",
+        "serde_derive",
+        "std"
+      ],
+      "sha256": "49f5e40483a5ee925bde2bb6aceecc6e06009a30db439c59cc97202a29b2aa0c"
+    },
+    "toml": {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libtoml-95ad40842fbfb375.rlib",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#toml@0.8.23",
+      "features": [
+        "default",
+        "display",
+        "parse"
+      ],
+      "sha256": "0f016f917d5d9585af7c12ddd04b6dde4c264cb3e20f324e0f07262fab56286e"
+    },
+    "syn": {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libsyn-9d4bf8a2b9229703.rlib",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.119",
+      "features": [
+        "clone-impls",
+        "default",
+        "derive",
+        "extra-traits",
+        "full",
+        "parsing",
+        "printing",
+        "proc-macro",
+        "visit"
+      ],
+      "sha256": "2a62696000b86315a73b2fbaf7f1dd88d28cb47ffb0e4d9668d9f3452fc5ba9d"
+    }
+  },
+  "status": 0,
+  "binary_sha256": "7bfec625bb9bdf96c2eb7fe45d410ba69f2f2029040f23379d6ba8f941d553c3",
+  "tests": [
+    {
+      "name": "guardrails::capability::a_socket_import_is_rejected_by_the_detector",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::capability::configured_capability_roots_exist",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::capability::deterministic_roots_name_no_external_capabilities",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::ci_delegates_validation_to_the_canonical_repository_gate",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::ci_runs_the_same_gate_on_linux_macos_and_windows",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::dependency_graph_contains_no_async_runtime",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::deterministic_core_depends_only_on_protocol_authority",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::driver_dependencies_are_explicitly_allowlisted",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::kafka_wire_uses_the_exact_registry_release",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::local_and_registry_dependencies_carry_the_release_version",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::package_extraction_matches_exact_names_only",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::publication_policy_exposes_only_the_runtime_graph",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::real_broker_probe_depends_only_on_public_driver_protocol_and_tls_surfaces",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::repository_sources_and_gate_scripts_keep_unix_line_endings_on_every_runner",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::rustls_is_a_runtime_neutral_optional_transport_feature",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::sasl_scram_is_an_exact_packaged_dependency_with_both_kafka_algorithms",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::simulator_depends_only_on_criticality_and_the_deterministic_core",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::dependency::transport_depends_only_on_deterministic_driver_and_wire_primitives",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::facade::a_function_hidden_in_a_facade_is_rejected",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::facade::an_inline_module_hidden_in_a_facade_is_rejected",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::facade::facades_contain_only_modules_and_curated_reexports",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::file_size::facades_have_the_smallest_budget",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::file_size::rust_files_stay_within_role_specific_ceilings",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::module_contract::a_vague_directory_name_is_rejected_by_the_detector",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::module_contract::code_without_a_contract_is_rejected_by_the_detector",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::module_contract::rust_modules_begin_with_an_ownership_or_scenario_contract",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::module_contract::source_modules_name_their_domain",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::protocol_provenance::protocol_dependencies_have_no_source_override_escape_hatch",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::protocol_provenance::protocol_lock_entries_match_the_audited_registry_artifacts",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::qualification::canonical_gate_uses_the_locked_graph_and_detects_mutation",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::qualification::ci_does_not_install_unenforced_zrail",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::qualification::ci_prefetches_before_running_the_gate_offline",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::qualification::ci_uses_the_locked_registry_protocol_without_a_sibling_checkout",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::qualification::functional_smoke_runs_on_pull_requests_and_main_without_performance",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::qualification::qualification_containers_use_immutable_digests",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::qualification::release_qualification_builds_normalized_public_archives",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::qualification::release_qualification_is_scheduled_and_uses_the_registry_protocol",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::qualification::release_qualification_resolves_latest_compatible_from_a_clean_registry",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::qualification::release_qualification_runs_the_canonical_gate_before_packaging",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::qualification::secure_cluster_qualification_binds_each_advertised_host_to_its_identity",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::release_graph::legacy_transport_module_trees_are_absent",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::release_graph::reactor_backend_and_construction_have_no_legacy_path",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::release_metadata::public_package_metadata_is_complete",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::test_location::inline_and_direct_tests_are_rejected_by_the_detector",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::test_location::production_modules_contain_no_test_bodies",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::transport_authority::inventory_detects_alias_ufcs_and_guarded_renames",
+      "outcome": "ok"
+    },
+    {
+      "name": "guardrails::transport_authority::selector_and_transport_authority_matches_the_reviewed_boundary",
+      "outcome": "ok"
+    }
+  ],
+  "log_sha256": "f6737033eb008dd56715ff1150b2476996a7b4723a04d26adb8366ec7a91b8f3",
+  "limits": "Detector qualification only; excludes runtime, smoke, and archive execution. Zrail dependency features include extra-traits on syn."
+}

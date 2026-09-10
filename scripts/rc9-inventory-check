@@ -1,0 +1,392 @@
+#!/usr/bin/env python3
+"""Validate rc9 audit artifact integrity; this does not evaluate consumer architecture."""
+
+import argparse
+import collections
+import gzip
+import hashlib
+import json
+from pathlib import Path
+import runpy
+import sys
+
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "crates/zrail-testkit/tests/fixtures/rc9"
+MAX_BYTES = 64 * 1024 * 1024
+QUALIFICATION_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_qualification_evidence.py")["verify"]
+METHOD_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_method_evidence.py")["verify"]
+TEXT_SOURCES = runpy.run_path(ROOT / "scripts/rc9_text_sources.py")["load"]
+ROUTE_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_route_evidence.py")["verify"]
+RETIRED_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_retired_evidence.py")["verify"]
+RETIRED_REPORT = runpy.run_path(ROOT / "scripts/rc9_retired_evidence.py")["verify_report"]
+RETIRED_BOUNDARIES = runpy.run_path(ROOT / "scripts/rc9_retired_boundary_evidence.py")["verify"]
+RUNTIME_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_route_runtime_evidence.py")["verify"]
+TRAVERSAL_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_traversal_evidence.py")["verify"]
+DEPENDENCY_DETECTOR_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_dependency_detector_evidence.py")["verify"]
+METADATA_PARENT_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_metadata_parent_evidence.py")["verify"]
+LOCK_ARRAY_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_lock_array_evidence.py")["verify"]
+LOCK_NAMES_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_lock_names_evidence.py")["verify"]
+LOCK_PREFIX_EVIDENCE = runpy.run_path(ROOT / "scripts/rc9_lock_prefix_evidence.py")["verify"]
+
+
+def unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON key: {key}")
+        result[key] = value
+    return result
+
+
+def parse(data):
+    if len(data) > MAX_BYTES:
+        raise ValueError("audit input exceeds 64 MiB")
+    return json.loads(data, object_pairs_hook=unique_object)
+
+
+def require(condition, message):
+    if not condition:
+        raise ValueError(message)
+
+
+def registry_identity(entry, instance):
+    if not isinstance(entry, dict):
+        return type(entry) is type(instance) and json.dumps(entry, sort_keys=True) == json.dumps(instance, sort_keys=True)
+    if "path" in entry:
+        return entry["path"] == instance
+    if "root" in entry and "forbidden" in entry:
+        if isinstance(instance, str):
+            return entry["root"] == instance
+        return (set(instance) == {"root", "token"} and instance["root"] == entry["root"]
+                and entry["forbidden"].count(instance["token"]) == 1)
+    return False
+
+
+def fragment_inputs(census, summary, files):
+    payload = (DATA / "additional-rust-inputs.json").read_bytes()
+    require(len(payload) <= 1024 * 1024, "fragment registry exceeds 1 MiB")
+    registry = parse(payload)
+    require(set(registry) == {"schema", "inputs"} and registry["schema"] == 1,
+            "unsupported fragment registry")
+    require(hashlib.sha256(payload).hexdigest() == census["additional_rust_inputs_sha256"]
+            == summary["additional_rust_inputs_sha256"], "unbound Rust fragment discovery inputs")
+    inputs = registry["inputs"]
+    keys = [(row["repository"], row["path"]) for row in inputs]
+    require(len(inputs) == len(set(keys)) == summary["additional_rust_inputs"] <= 64,
+            "duplicate or missing Rust fragment inputs")
+    for row in inputs:
+        require(set(row) == {"repository", "commit", "path", "sha256", "syntax", "reason", "review_sources"}
+                and row["syntax"] == "items" and row["reason"].strip(), "invalid reviewed Rust fragment")
+        file = files[(row["repository"], row["path"])]
+        require(file["commit"] == row["commit"] and file["sha256"] == row["sha256"]
+                and file["mode"] in ["100644", "100755"], "fragment snapshot or bytes changed")
+        sources = row["review_sources"]
+        require(0 < len(sources) == len({s["path"] for s in sources}) <= 32, "ambiguous review sources")
+        for source in sources:
+            reviewed = files[(row["repository"], source["path"])]
+            require(set(source) == {"path", "sha256"} and reviewed["commit"] == row["commit"]
+                    and reviewed["sha256"] == source["sha256"], "fragment review source changed")
+    for repository in summary["repositories"]:
+        require(repository["additional_rust_inputs"] == sum(row["repository"] == repository["repository"]
+                for row in inputs), "fragment repository count mismatch")
+
+
+def parity_report(assertion, field, prefix, cache):
+    evidence = assertion["replacement"].get(field)
+    if not evidence:
+        require(not (assertion["replacement"]["verified"] and any(
+            policy.startswith(prefix) for policy in assertion["replacement"]["policy_ids"])),
+            f"verified {prefix} assertions require bound differential evidence")
+        return
+    artifact = evidence["artifact"]
+    require(artifact.startswith("docs/rc9/evidence/") and ".." not in Path(artifact).parts,
+            "parity evidence must be a repository audit artifact")
+    if artifact not in cache:
+        with gzip.open(ROOT / artifact, "rb") as stream:
+            payload = stream.read(MAX_BYTES + 1)
+        cache[artifact] = (hashlib.sha256(payload).hexdigest(), parse(payload))
+    digest, report = cache[artifact]
+    require(digest == evidence["payload_sha256"], "parity payload mismatch")
+    require(report["snapshot"]["repository"] == assertion["repository"]
+            and report["snapshot"]["commit"] == assertion["commit"], "parity snapshot mismatch")
+    require(report["implementation_commit"] == evidence["implementation_commit"], "parity code mismatch")
+    require(not report["full_repository_qualified"], "slice evidence cannot claim full qualification")
+    return report
+
+
+def file_evidence(assertion, cache, files):
+    report = parity_report(assertion, "file_parity_evidence", "repository:file:", cache)
+    if report is None:
+        return
+    if assertion["id"].startswith("KD-ROUTE-"):
+        return ROUTE_EVIDENCE(assertion, report, files)
+    if assertion["id"].startswith("KD-QUAL-"):
+        QUALIFICATION_EVIDENCE(assertion, report)
+    for policy_id in assertion["replacement"]["policy_ids"]:
+        policies = [p for p in report["observations"] if p["policy_id"] == policy_id]
+        require(len(policies) == 1 and policies[0]["satisfied"], "missing valid frozen file policy")
+        paths = [entry["path"] for entry in policies[0]["entries"]]
+        legacy = [row for row in report["legacy"] if row["policy_id"] == policy_id]
+        require(len(paths) == len(set(paths)) == len(legacy)
+                and set(paths) == {row["path"] for row in legacy}
+                and all(row["accepted"] for row in legacy), "incomplete frozen file comparison")
+        rows = [row for row in report["fixtures"] if row["policy_id"] == policy_id]
+        require(any(row["native_accepted"] for row in rows), "missing positive file fixture")
+        require(any(not row["native_accepted"] and row["diagnostic"] in
+                    assertion["replacement"]["expected_diagnostics"] for row in rows),
+                "missing intended file-policy negative diagnostic")
+        require(all(row["native_accepted"] == row["legacy_accepted"] for row in rows),
+                "unexplained file-policy protection difference")
+        require(all(row["diagnostic"] is None if row["native_accepted"] else
+                    row["diagnostic"] in assertion["replacement"]["expected_diagnostics"] for row in rows),
+                "file fixture failed through an unrelated diagnostic")
+
+
+def lock_evidence(assertion, cache):
+    report = parity_report(assertion, "lock_parity_evidence", "dependency:lock-package:", cache)
+    if report is None:
+        return
+    require(assertion["replacement"]["expected_diagnostics"] == ["DEP-LOCK-001"],
+            "whole-lock evidence requires its intended diagnostic category")
+    require(report["cargo_inventory_roots"] == ["."] and len(report["workspace_packages"]) == 5
+            and len(report["inputs"]) == 12, "incomplete frozen Cargo projection inputs")
+    field = assertion["matching_semantics"]["field"]
+    negative_cases = (["required-node-removed-with-edges", "duplicate-name-new-version",
+                       "duplicate-name-new-source"] if field == "count" else ["same-count-" + field])
+    for policy_id in assertion["replacement"]["policy_ids"]:
+        policies = [p for p in report["observations"] if p["policy_id"] == policy_id]
+        require(len(policies) == 1 and policies[0]["satisfied"], "missing valid frozen lock policy")
+        observed = policies[0]
+        policy = observed["policy"]
+        require(observed["scope"] == "whole-cargo-lock" and observed["quality"] == "exact"
+                and observed["lock_sha256"] == report["inputs"]["Cargo.lock"], "inexact whole-lock scope")
+        require(policy["package"] == assertion["selection"]["select"]["name"]
+                and policy["assertion"]["kind"] == "exact", "lock package identity mismatch")
+        identities = policy["assertion"]["identities"]
+        require(len(identities) == observed["observed_count"] == 1, "invalid unique lock conjunction")
+        expected = len(identities) if field == "count" else identities[0][field]
+        require(expected == assertion["required_cardinality"]["exact"], "lock assertion value mismatch")
+        legacy = [r for r in report["legacy"] if r["policy_id"] == policy_id]
+        require(len(legacy) == 1 and legacy[0]["accepted"] and legacy[0]["path"] == "Cargo.lock",
+                "missing original frozen lock acceptance")
+        rows = [r for r in report["fixtures"] if r["policy_id"] == policy_id]
+        require(len(rows) == len({r["case"] for r in rows}) and any(r["native_accepted"] for r in rows),
+                "duplicate or missing positive lock fixture")
+        require(all(any(r["case"] == case and not r["native_accepted"] for r in rows)
+                    for case in negative_cases), "missing assertion-specific lock negative fixture")
+        for row in rows:
+            require(row["native_accepted"] == row["legacy_accepted"], "unexplained lock protection difference")
+            require(row["diagnostic"] is None if row["native_accepted"] else
+                    row["diagnostic"] == "DEP-LOCK-001", "unrelated lock fixture diagnostic")
+            require(row["observed"]["policy"] == policy and row["observed"]["policy_id"] == policy_id
+                    and row["observed"]["scope"] == "whole-cargo-lock"
+                    and row["observed"]["quality"] == "exact"
+                    and row["observed"]["satisfied"] == row["native_accepted"], "inexact lock fixture observation")
+            require(set(row["inputs"]) == set(report["inputs"])
+                    and all(path == "Cargo.lock" or digest == report["inputs"][path]
+                            for path, digest in row["inputs"].items()), "unbound lock fixture inputs")
+            require(row["path"] == "Cargo.lock" and row["source_sha256"] == row["inputs"]["Cargo.lock"]
+                    == row["observed"]["lock_sha256"], "lock fixture bytes mismatch")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--census", type=Path, help="compare an independently repeated census")
+    parser.add_argument("--require-complete", action="store_true")
+    args = parser.parse_args()
+    with gzip.open(DATA / "census.json.gz", "rb") as stream:
+        payload = stream.read(MAX_BYTES + 1)
+    census = parse(payload)
+    summary = parse((DATA / "census-summary.json").read_bytes())
+    ledger = parse((DATA / "assertions.json").read_bytes())
+    pins = parse((DATA / "snapshots.json").read_bytes())
+    for artifact in [census, summary, ledger, pins]:
+        require(artifact["schema"] == 1, "unsupported audit schema")
+    digest = hashlib.sha256(payload).hexdigest()
+    require(digest == summary["payload_sha256"] == ledger["census_payload_sha256"], "census digest mismatch")
+    require(census["snapshots"] == pins, "census snapshot identities differ")
+    require(len(payload) == summary["payload_bytes"], "census length mismatch")
+    if args.census:
+        with args.census.open("rb") as stream:
+            repeated = stream.read(MAX_BYTES + 1)
+        require(repeated == payload, "repeated census differs byte-for-byte")
+    files = {(file["repository"], file["path"]): file for file in census["files"]}
+    require(len(files) == len(census["files"]) == summary["tracked_files"], "duplicate or missing file records")
+    fragment_inputs(census, summary, files)
+    candidates = {}
+    for file in files.values():
+        for candidate in file["candidates"]:
+            require(candidate["id"] not in candidates, "duplicate candidate identity")
+            candidates[candidate["id"]] = (file, candidate)
+    require(len(candidates) == census["candidate_count"] == summary["candidate_count"], "candidate count mismatch")
+    text_sources = TEXT_SOURCES(ledger, files)
+    require(not candidates.keys() & text_sources.keys(), "audited spans cannot replace Rust candidates")
+    candidates.update(text_sources)
+    for repository in summary["repositories"]:
+        selected = [file for file in files.values() if file["repository"] == repository["repository"]]
+        counts = collections.Counter(c["kind"] for file in selected for c in file["candidates"])
+        require(len(selected) == repository["tracked_files"], "repository file count mismatch")
+        require(dict(counts) == repository["candidate_counts"], "repository candidate counts mismatch")
+    ids = set()
+    dispositions = {name: 0 for name in ["existing native rail", "declarative translation",
+                    "new engine capability", "behavioral evidence retained", "approved retirement"]}
+    implemented = 0
+    full = 0
+    file_reports = {}
+    assertions_by_id = {row["id"]: row for row in ledger["reviewed_assertions"]}
+    for assertion in ledger["reviewed_assertions"]:
+        require(assertion["id"] not in ids, "duplicate assertion ID")
+        ids.add(assertion["id"])
+        source = assertion["source"]
+        file, candidate = candidates[source["candidate_id"]]
+        require(file["repository"] == assertion["repository"] and file["commit"] == assertion["commit"], "assertion snapshot mismatch")
+        require(file["path"] == source["path"] and file["sha256"] == source["file_sha256"], "assertion file mismatch")
+        evidence_kind = source.get("evidence_kind", "rust-census")
+        require(evidence_kind in {"rust-census", "audited-text"}, "unknown assertion evidence kind")
+        require((evidence_kind == "audited-text") == (candidate["kind"] == "audited-text"),
+                "manual text cannot claim parsed Rust identity")
+        digest_field = "span_sha256" if evidence_kind == "audited-text" else "syntax_sha256"
+        require(("syntax_sha256" if evidence_kind == "audited-text" else "span_sha256") not in source,
+                "assertion cannot mix parsed and manual source digests")
+        for field in ["line", "column", "function", digest_field]:
+            require(candidate[field] == source[field], f"assertion {field} mismatch")
+        related = source.get("related_candidate_ids", [])
+        require(isinstance(related, list) and len(related) <= 1024
+                and all(isinstance(identity, str) for identity in related)
+                and len(related) == len(set(related)), "invalid supporting source identities")
+        for identity in related:
+            related_file, _ = candidates[identity]
+            require(related_file == file and identity != source["candidate_id"],
+                    "supporting source must belong to the same frozen file")
+        invocations = assertion.get("invocations", [])
+        require(isinstance(invocations, list) and len(invocations) <= 1024
+                and len(invocations) == len(set(invocations)), "invalid helper invocation identities")
+        for invocation in invocations:
+            caller_file, caller = candidates[invocation]
+            require(caller_file["repository"] == assertion["repository"]
+                    and caller_file["commit"] == assertion["commit"]
+                    and caller["kind"] == "helper-call-candidate", "helper invocation snapshot/kind mismatch")
+        if registry := assertion.get("policy_registry"):
+            registry_file = files[(assertion["repository"], registry["path"])]
+            require(registry_file["sha256"] == registry["file_sha256"], "registry source digest mismatch")
+            require(registry_file["commit"] == assertion["commit"], "registry snapshot mismatch")
+            require(registry_identity(registry["entry"], source["instance"]), "registry instance identity mismatch")
+            require((registry["index"] is None or type(registry["index"]) is int and registry["index"] >= 0)
+                    and registry["selector"], "invalid registry entry selector")
+        require(assertion["disposition"] in dispositions, "unsupported assertion disposition")
+        replacement = assertion["replacement"]
+        if assertion["disposition"] == "approved retirement":
+            decisions = [decision for decision in ledger["approved_policy_changes"]
+                         if decision["id"] == assertion.get("policy_decision")]
+            require(len(decisions) == 1, "retirement requires one recorded policy decision")
+            decision = decisions[0]
+            require(decision["authority"] == "user" and decision["disposition"] == "approved retirement"
+                    and decision["repository"] == assertion["repository"]
+                    and decision["commit"] == assertion["commit"]
+                    and assertion["id"] in decision["assertion_ids"], "retirement is outside its recorded decision")
+            require(not replacement["policy_ids"] and not replacement["expected_diagnostics"],
+                    "retirement cannot claim a replacement policy or diagnostic")
+        compiled = assertion.get("compile_input_preconditions", [])
+        require(isinstance(compiled, list) and len(compiled) <= 1024
+                and len(compiled) == len(set(compiled)), "invalid compile-input links")
+        for identity in compiled:
+            condition = assertions_by_id[identity]
+            require(condition["repository"] == assertion["repository"]
+                    and condition["commit"] == assertion["commit"]
+                    and condition["matching_semantics"]["kind"] == "Rust include_str! UTF-8 input precondition"
+                    and len(condition["selection"]["paths"]) == 1
+                    and set(condition["selection"]["paths"]) <= set(assertion["selection"]["paths"])
+                    and not condition.get("compile_input_preconditions"), "invalid compile-input dependency")
+            require(not replacement["verified"] or condition["replacement"]["verified"],
+                    "verified assertion depends on an unverified compile-time input")
+        preconditions = assertion.get("read_preconditions", [])
+        require(isinstance(preconditions, list) and len(preconditions) <= 1024
+                and len(preconditions) == len(set(preconditions)), "invalid read precondition links")
+        for identity in preconditions:
+            condition = assertions_by_id[identity]
+            require(condition["repository"] == assertion["repository"]
+                    and condition["commit"] == assertion["commit"]
+                    and condition["matching_semantics"]["kind"] == "Rust fs::read_to_string precondition"
+                    and condition["selection"]["paths"] == assertion["selection"]["paths"]
+                    and not condition.get("read_preconditions"), "invalid frozen read precondition")
+            require(not replacement["verified"] or condition["replacement"]["verified"],
+                    "verified assertion depends on an unverified read precondition")
+        if assertion["id"].startswith("KD-ROUTE-RUNTIME-"):
+            require(not replacement["verified"] or replacement.get("runtime_evidence"), "verified runtime assertion needs bound execution evidence")
+            runtime_report = parity_report(assertion, "runtime_evidence", "test-mirror:", file_reports)
+            if runtime_report is not None:
+                RUNTIME_EVIDENCE(assertion, runtime_report, files)
+        elif assertion["id"].startswith("KD-PROVENANCE-") and assertion["id"].endswith("-VERSION-PREFIX"):
+            require(not replacement["verified"] or replacement.get("prefix_evidence"), "verified prefix assertion needs bound proof")
+            prefix_report = parity_report(assertion, "prefix_evidence", "dependency:lock-package:", file_reports)
+            if prefix_report is not None:
+                LOCK_PREFIX_EVIDENCE(assertion, prefix_report, files)
+        elif assertion["id"] == "KD-PROVENANCE-LOCK-PACKAGE-NAMES":
+            require(not replacement["verified"] or replacement.get("names_evidence"), "verified name assertion needs bound proof")
+            names_report = parity_report(assertion, "names_evidence", "dependency:lock-package:", file_reports)
+            if names_report is not None:
+                LOCK_NAMES_EVIDENCE(assertion, names_report, files)
+        elif assertion["id"] == "KD-PROVENANCE-LOCK-PACKAGE-ARRAY":
+            require(not replacement["verified"] or replacement.get("array_evidence"), "verified array assertion needs bound proof")
+            array_report = parity_report(assertion, "array_evidence", "dependency:lock-package:", file_reports)
+            if array_report is not None:
+                LOCK_ARRAY_EVIDENCE(assertion, array_report, files)
+        elif assertion["id"] == "KD-METADATA-PARENT":
+            require(not replacement["verified"] or replacement.get("parent_evidence"), "verified parent assertion needs bound proof")
+            parent_report = parity_report(assertion, "parent_evidence", "repository:file:", file_reports)
+            if parent_report is not None:
+                METADATA_PARENT_EVIDENCE(assertion, parent_report, files)
+        elif assertion["id"].startswith("KD-DEP-DETECTOR-"):
+            require(not replacement["verified"] or replacement.get("detector_evidence"), "verified detector assertion needs bound evidence")
+            detector_report = parity_report(assertion, "detector_evidence", "repository:file:", file_reports)
+            if detector_report is not None:
+                DEPENDENCY_DETECTOR_EVIDENCE(assertion, detector_report, files)
+        elif assertion["id"].startswith("KD-TRAVERSAL-"):
+            require(not replacement["verified"] or replacement.get("traversal_evidence"), "verified traversal assertion needs bound evidence")
+            traversal_report = parity_report(assertion, "traversal_evidence", "repository:file:", file_reports)
+            if traversal_report is not None:
+                TRAVERSAL_EVIDENCE(assertion, traversal_report, files)
+        elif assertion["id"].startswith("KD-RETIRED-"):
+            require(not replacement["verified"] or replacement.get("retired_parity_evidence"), "verified retired assertion needs bound evidence")
+            retired_report = parity_report(assertion, "retired_parity_evidence", "rust:inventory:", file_reports)
+            if retired_report is not None:
+                if assertion["id"].startswith("KD-RETIRED-TREE-") and replacement.get("retired_boundary_evidence"):
+                    RETIRED_REPORT(retired_report, files)
+                    boundary_report = parity_report(assertion, "retired_boundary_evidence", "repository:file:", file_reports)
+                    RETIRED_BOUNDARIES(assertion, boundary_report, files)
+                else:
+                    RETIRED_EVIDENCE(assertion, retired_report, files, assertions_by_id)
+        else:
+            file_evidence(assertion, file_reports, files)
+            lock_evidence(assertion, file_reports)
+            method_report = parity_report(assertion, "rust_inventory_parity_evidence", "rust:inventory:", file_reports)
+            if method_report is not None:
+                METHOD_EVIDENCE(assertion, method_report, assertions_by_id, files)
+        if replacement["verified"]:
+            require(replacement["implemented"] and replacement["fixtures"], "verified assertion lacks implementation or fixtures")
+            require(not assertion["blockers"], "verified assertion retains blockers")
+            dispositions[assertion["disposition"]] += 1
+        else:
+            require(bool(assertion["blockers"]), "unverified assertion lacks a blocker")
+        implemented += replacement["implemented"]
+        full += replacement["full_snapshot_verified"]
+    expected = {"reviewed_assertion_instances": len(ids), "implemented": implemented,
+                "verified_by_disposition": dispositions, "full_repository_verified": full}
+    require(ledger["counts"] == expected, "ledger disposition counts mismatch")
+    print(f"Audit integrity: pass; {len(files)} files, {census['candidate_count']} discovery candidates")
+    print(f"Audited non-Rust assertion spans: {len(text_sources)}; no execution claim")
+    print(f"Reviewed assertion instances: {len(ids)}; implemented: {implemented}; verified: {sum(dispositions.values())}")
+    print(f"Assertion inventory complete: {ledger['assertion_inventory_complete']}; release verdict: {ledger['release_verdict']}")
+    if args.require_complete:
+        require(ledger["assertion_inventory_complete"], "release blocked: assertion inventory is incomplete")
+        require(not ledger["open_discovery_blockers"] and not ledger["external_input_blockers"], "release blocked: audit inputs remain open")
+        require(sum(dispositions.values()) == len(ids), "release blocked: unverified assertions remain")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except (ValueError, OSError, KeyError) as error:
+        sys.exit(f"audit validation failed: {error}")

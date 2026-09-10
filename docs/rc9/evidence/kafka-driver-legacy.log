@@ -1,0 +1,52 @@
+
+running 47 tests
+test guardrails::capability::a_socket_import_is_rejected_by_the_detector ... ok
+test guardrails::capability::configured_capability_roots_exist ... ok
+test guardrails::dependency::ci_delegates_validation_to_the_canonical_repository_gate ... ok
+test guardrails::dependency::ci_runs_the_same_gate_on_linux_macos_and_windows ... ok
+test guardrails::dependency::dependency_graph_contains_no_async_runtime ... ok
+test guardrails::dependency::deterministic_core_depends_only_on_protocol_authority ... ok
+test guardrails::dependency::driver_dependencies_are_explicitly_allowlisted ... ok
+test guardrails::dependency::kafka_wire_uses_the_exact_registry_release ... ok
+test guardrails::dependency::local_and_registry_dependencies_carry_the_release_version ... ok
+test guardrails::dependency::package_extraction_matches_exact_names_only ... ok
+test guardrails::dependency::publication_policy_exposes_only_the_runtime_graph ... ok
+test guardrails::dependency::real_broker_probe_depends_only_on_public_driver_protocol_and_tls_surfaces ... ok
+test guardrails::dependency::repository_sources_and_gate_scripts_keep_unix_line_endings_on_every_runner ... ok
+test guardrails::dependency::rustls_is_a_runtime_neutral_optional_transport_feature ... ok
+test guardrails::dependency::sasl_scram_is_an_exact_packaged_dependency_with_both_kafka_algorithms ... ok
+test guardrails::dependency::simulator_depends_only_on_criticality_and_the_deterministic_core ... ok
+test guardrails::dependency::transport_depends_only_on_deterministic_driver_and_wire_primitives ... ok
+test guardrails::facade::a_function_hidden_in_a_facade_is_rejected ... ok
+test guardrails::facade::an_inline_module_hidden_in_a_facade_is_rejected ... ok
+test guardrails::facade::facades_contain_only_modules_and_curated_reexports ... ok
+test guardrails::file_size::facades_have_the_smallest_budget ... ok
+test guardrails::capability::deterministic_roots_name_no_external_capabilities ... ok
+test guardrails::module_contract::a_vague_directory_name_is_rejected_by_the_detector ... ok
+test guardrails::module_contract::code_without_a_contract_is_rejected_by_the_detector ... ok
+test guardrails::module_contract::rust_modules_begin_with_an_ownership_or_scenario_contract ... ok
+test guardrails::module_contract::source_modules_name_their_domain ... ok
+test guardrails::protocol_provenance::protocol_dependencies_have_no_source_override_escape_hatch ... ok
+test guardrails::file_size::rust_files_stay_within_role_specific_ceilings ... ok
+test guardrails::qualification::canonical_gate_uses_the_locked_graph_and_detects_mutation ... ok
+test guardrails::qualification::ci_does_not_install_unenforced_zrail ... ok
+test guardrails::qualification::ci_prefetches_before_running_the_gate_offline ... ok
+test guardrails::qualification::ci_uses_the_locked_registry_protocol_without_a_sibling_checkout ... ok
+test guardrails::qualification::functional_smoke_runs_on_pull_requests_and_main_without_performance ... ok
+test guardrails::qualification::qualification_containers_use_immutable_digests ... ok
+test guardrails::qualification::release_qualification_builds_normalized_public_archives ... ok
+test guardrails::qualification::release_qualification_is_scheduled_and_uses_the_registry_protocol ... ok
+test guardrails::qualification::release_qualification_resolves_latest_compatible_from_a_clean_registry ... ok
+test guardrails::qualification::release_qualification_runs_the_canonical_gate_before_packaging ... ok
+test guardrails::qualification::secure_cluster_qualification_binds_each_advertised_host_to_its_identity ... ok
+test guardrails::release_graph::legacy_transport_module_trees_are_absent ... ok
+test guardrails::protocol_provenance::protocol_lock_entries_match_the_audited_registry_artifacts ... ok
+test guardrails::release_graph::reactor_backend_and_construction_have_no_legacy_path ... ok
+test guardrails::test_location::inline_and_direct_tests_are_rejected_by_the_detector ... ok
+test guardrails::release_metadata::public_package_metadata_is_complete ... ok
+test guardrails::transport_authority::inventory_detects_alias_ufcs_and_guarded_renames ... ok
+test guardrails::test_location::production_modules_contain_no_test_bodies ... ok
+test guardrails::transport_authority::selector_and_transport_authority_matches_the_reviewed_boundary ... ok
+
+test result: ok. 47 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.94s
+

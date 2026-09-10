@@ -1,0 +1,165 @@
+# Partial provenance fragment; assemble and qualify the complete repository policy before adoption.
+# Frozen Kafka-driver: a45be8071e6a663cd4ae3142cc5304ece9fdf45e
+# Detector SHA-256: 490a52269cd18516e625db062b0578c1e1f8c7208d57e7f9228d33f19de43573
+
+[[repository.files]]
+name = "kd-provenance-00-parse-driver"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = [], assertion = { op = "present" } }
+
+[[repository.files]]
+name = "kd-provenance-00-parse-lock"
+include = ["Cargo.lock"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = [], assertion = { op = "present" } }
+
+[[repository.files]]
+name = "kd-provenance-00-parse-probe"
+include = ["crates/kafka-driver-probe/Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = [], assertion = { op = "present" } }
+
+[[repository.files]]
+name = "kd-provenance-bornera-core-version"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "bornera-core"], assertion = { op = "equals", value = "=0.0.1-rc.3" } }
+
+[[repository.files]]
+name = "kd-provenance-bornera-rustls-version"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "bornera-rustls"], assertion = { op = "equals", value = "=0.0.1-rc.3" } }
+
+[[repository.files]]
+name = "kd-provenance-bornera-version"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "bornera"], assertion = { op = "equals", value = "=0.0.1-rc.3" } }
+
+[[repository.files]]
+name = "kd-provenance-driver-bornera-core-count"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "bornera-core"], assertion = { op = "keys-exact", keys = ["workspace"] } }
+
+[[repository.files]]
+name = "kd-provenance-driver-bornera-core-inheritance"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "bornera-core", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-provenance-driver-bornera-count"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "bornera"], assertion = { op = "keys-exact", keys = ["workspace"] } }
+
+[[repository.files]]
+name = "kd-provenance-driver-bornera-inheritance"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "bornera", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-provenance-driver-bornera-rustls-count"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "bornera-rustls"], assertion = { op = "keys-exact", keys = ["optional", "workspace"] } }
+
+[[repository.files]]
+name = "kd-provenance-driver-bornera-rustls-inheritance"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "bornera-rustls", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-provenance-driver-bornera-rustls-optional"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "bornera-rustls", "optional"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-provenance-driver-no-patch"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["patch"], assertion = { op = "absent" } }
+
+[[repository.files]]
+name = "kd-provenance-driver-no-replace"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["replace"], assertion = { op = "absent" } }
+
+[[repository.files]]
+name = "kd-provenance-driver-no-target"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["target"], assertion = { op = "absent" } }
+
+[[repository.files]]
+name = "kd-provenance-driver-wire-core-count"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "kafka-wire-core"], assertion = { op = "keys-exact", keys = ["workspace"] } }
+
+[[repository.files]]
+name = "kd-provenance-driver-wire-core-inheritance"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "kafka-wire-core", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-provenance-driver-wire-count"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "kafka-wire"], assertion = { op = "keys-exact", keys = ["workspace"] } }
+
+[[repository.files]]
+name = "kd-provenance-driver-wire-inheritance"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "kafka-wire", "workspace"], assertion = { op = "equals", value = true } }
+
+[[repository.files]]
+name = "kd-provenance-kafka-wire-core-version"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "kafka-wire-core"], assertion = { op = "equals", value = "=0.1.0-rc.3" } }
+
+[[repository.files]]
+name = "kd-provenance-kafka-wire-version"
+include = ["Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["workspace", "dependencies", "kafka-wire"], assertion = { op = "equals", value = "=0.1.0-rc.3" } }
+
+[[repository.files]]
+name = "kd-provenance-probe-no-patch"
+include = ["crates/kafka-driver-probe/Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["patch"], assertion = { op = "absent" } }
+
+[[repository.files]]
+name = "kd-provenance-probe-no-replace"
+include = ["crates/kafka-driver-probe/Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["replace"], assertion = { op = "absent" } }
+
+[[repository.files]]
+name = "kd-provenance-probe-no-target"
+include = ["crates/kafka-driver-probe/Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["target"], assertion = { op = "absent" } }
+
+[[repository.files]]
+name = "kd-provenance-probe-wire-count"
+include = ["crates/kafka-driver-probe/Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "kafka-wire"], assertion = { op = "keys-exact", keys = ["workspace"] } }
+
+[[repository.files]]
+name = "kd-provenance-probe-wire-inheritance"
+include = ["crates/kafka-driver-probe/Cargo.toml"]
+reason = "Preserve the reviewed authored provenance conjunction, independently of Cargo resolution and execution."
+predicate = { kind = "document", format = "toml", path = ["dependencies", "kafka-wire", "workspace"], assertion = { op = "equals", value = true } }

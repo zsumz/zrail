@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/facade.rs",
+      "source_sha256": "b22293ec6b8bb269a81ffd98264e6d393ea9985a12843b12cd810a8b042be850",
+      "function": "is_declaration",
+      "start_line": 17,
+      "end_line": 19,
+      "extracted_sha256": "187ae37cec1ada3dd92e6542a8c71e62176f1cbf67bb8dea9870710889d4867d"
+    },
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/facade_guard.rs",
+      "source_sha256": "97d2a8f6f06cac8b38295e642057c82363032c4976e4ec3ad7bf95d82e13c7f8",
+      "function": "declarative_facade_item",
+      "start_line": 31,
+      "end_line": 45,
+      "extracted_sha256": "8869843a35d7e87bdedcd0649607a2c85dffe969f0d0d226cdc56c5a3efad1e3"
+    }
+  ],
+  "fixtures": [
+    {
+      "repository": "kafkars",
+      "path": "crates/kafka-client-guardrails/tests/fixtures/facade_with_implementation/src/lib.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/kafkars-facade-invalid.rs.txt",
+      "sha256": "9dcf81cd5d691e4e589361f6f24b1be3fbf4ead789451347f5213630fde5f9cd"
+    }
+  ]
+}

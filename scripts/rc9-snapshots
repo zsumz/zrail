@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+"""Trusted rc9 snapshot setup; never called by the zrail analyzer.
+
+Network access requires --prefetch. The default operation verifies existing
+isolated checkouts offline. Existing source is never reset or cleaned.
+"""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tomllib
+
+
+ROOT = Path(__file__).resolve().parent.parent
+PINS = ROOT / "crates/zrail-testkit/tests/fixtures/rc9/snapshots.json"
+
+
+def git(path, *arguments):
+    return subprocess.check_output(
+        ["git", "-C", str(path), *arguments], text=True
+    ).strip()
+
+
+def verify(path, pin):
+    if path.is_symlink() or not (path / ".git").exists():
+        raise ValueError(f"not an isolated Git checkout: {path}")
+    if Path(git(path, "rev-parse", "--show-toplevel")).resolve() != path.resolve():
+        raise ValueError(f"checkout root differs: {path}")
+    for expression, expected in [("HEAD", pin["commit"]), ("HEAD^{tree}", pin["tree"])]:
+        actual = git(path, "rev-parse", expression)
+        if actual != expected:
+            raise ValueError(f"{path}: {expression} is {actual}, expected {expected}")
+    if git(path, "status", "--porcelain=v1", "--untracked-files=all"):
+        raise ValueError(f"snapshot contains changes: {path}")
+    print(f"verified {pin['repository']} {pin['commit']} tree {pin['tree']}")
+
+
+def verify_extractions(destination):
+    for manifest in ["facade-origins.json", "budget-origins.json", "size-selection-origins.json", "file-origins.json", "metadata-origins.json", "key-sets-origins.json", "dependency-fields-origins.json", "provenance-origins.json", "lock-packages-origins.json", "raw-dependency-origins.json", "qualification-origins.json", "transport-methods-origins.json", "transport-expression-paths-origins.json", "transport-owners-origins.json", "transport-renames-origins.json", "transport-impls-origins.json", "declarations-origins.json", "route-sources-origins.json", "audited-text-origins.json", "dependency-detector-origins.json", "lock-array-origins.json", "lock-names-origins.json", "lock-prefix-origins.json", "registry-origins.json"]:
+        origins = json.loads((PINS.parent / manifest).read_text(encoding="utf-8"))
+        for origin in origins["extractions"]:
+            harness_path = origin.get("harness", origins.get("harness", "crates/zrail-rust/src/source/tests/facade_parity.rs"))
+            harness = (ROOT / harness_path).read_bytes()
+            source = (destination / origin["repository"] / origin["path"]).read_bytes()
+            if hashlib.sha256(source).hexdigest() != origin["source_sha256"]:
+                raise ValueError(f"frozen detector source changed: {origin['path']}")
+            lines = source.splitlines(keepends=True)
+            excerpt = b"".join(lines[origin["start_line"] - 1:origin["end_line"]])
+            if hashlib.sha256(excerpt).hexdigest() != origin["extracted_sha256"]:
+                raise ValueError(f"frozen predicate extraction changed: {origin['function']}")
+            if excerpt not in harness:
+                raise ValueError(f"trusted harness differs from frozen predicate: {origin['function']}")
+        for fixture in origins.get("fixtures", []):
+            source = (destination / fixture["repository"] / fixture["path"]).read_bytes()
+            copied = (ROOT / fixture["copy"]).read_bytes()
+            if source != copied or hashlib.sha256(source).hexdigest() != fixture["sha256"]:
+                raise ValueError(f"frozen fixture mismatch: {fixture['path']}")
+        print(f"verified frozen predicate extractions and fixture bytes: {manifest}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("destination", type=Path)
+    parser.add_argument("--prefetch", action="store_true")
+    args = parser.parse_args()
+    pins = json.loads(PINS.read_text(encoding="utf-8"))
+    if pins["schema"] != 1:
+        raise ValueError("unsupported snapshot schema")
+    for pin in pins["consumers"]:
+        path = args.destination / pin["name"]
+        if not path.exists():
+            if not args.prefetch:
+                raise ValueError(f"missing {path}; run trusted setup with --prefetch first")
+            path.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q", str(path)], check=True)
+            git(path, "fetch", "--depth=1", f"https://github.com/{pin['repository']}.git", pin["commit"])
+            git(path, "checkout", "--detach", pin["commit"])
+        verify(path, pin)
+    verify_extractions(args.destination)
+    verify_registries(args.destination, pins)
+    return 0
+
+
+def verify_registries(destination, pins):
+    ledger = json.loads((PINS.parent / "assertions.json").read_text(encoding="utf-8"))
+    roots = {pin["repository"]: destination / pin["name"] for pin in pins["consumers"]}
+    documents = {}
+    count = 0
+    for assertion in ledger["reviewed_assertions"]:
+        registry = assertion.get("policy_registry")
+        if not registry:
+            continue
+        key = (assertion["repository"], registry["path"])
+        if key not in documents:
+            source = (roots[key[0]] / key[1]).read_bytes()
+            if len(source) > 4 * 1024 * 1024 or hashlib.sha256(source).hexdigest() != registry["file_sha256"]:
+                raise ValueError(f"frozen policy registry changed: {key}")
+            documents[key] = tomllib.loads(source.decode("utf-8"))
+        selected = documents[key]
+        for component in registry["selector"]:
+            selected = selected[component]
+        entry = selected if registry["index"] is None else selected[registry["index"]]
+        if entry != registry["entry"]:
+            raise ValueError(f"registry instance differs from frozen source: {assertion['id']}")
+        count += 1
+    print(f"verified {count} exact frozen policy registry instances")
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except (ValueError, OSError, subprocess.CalledProcessError) as error:
+        sys.exit(f"snapshot verification failed: {error}")

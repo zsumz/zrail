@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b",
+  "implementation_tree": "21ca3d2436c34c381a5dd0e6adfe6b9dc6686d05",
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "24943ec50e62f0d504704d333b4d420eccb85c78066fda1f02ffabb64af5fb79",
+  "payload_sha256": "ac73042f419004282fa1fb0e93c03a9c03b465933bdb12460c0551dcba70ffca",
+  "compressed_sha256": "74d1bf82a40b07bdea54fcdec801f563a79a4ae78216fa40e95dc0644044bdad",
+  "artifact": "docs/rc9/evidence/lock-packages-parity.json.gz",
+  "repeated_byte_identical": true,
+  "predicates": 5,
+  "inputs": 12,
+  "fixtures": {
+    "total": 50,
+    "accepted": 20,
+    "rejected": 30
+  },
+  "verified_assertions": 20,
+  "full_repository_qualified": false,
+  "lock_authority_accepted": false,
+  "canonical": {
+    "exit_status": 1,
+    "passed": 1518,
+    "failed": 0,
+    "ignored": 9,
+    "analysis_complete": true,
+    "rust_files": 965,
+    "base_contexts": 1540,
+    "derived_contexts": 0,
+    "projection_work": 1114966,
+    "unresolved": 0,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "same_revision": true,
+    "standalone_archive_check_passed": true
+  },
+  "command": "cargo test --locked --offline -p zrail-rust qualify_all_frozen_kafka_driver_lock_inventories -- --ignored",
+  "logs": [
+    {
+      "artifact": "lock-packages-parity.log.gz",
+      "payload_sha256": "dcadf37d85a351b6b37d51f1a84767c9e8fd115872239aa58bfd46bcc651f7bd",
+      "compressed_sha256": "b5b57a27e0e3907aefdbc2a270fe8fd0d111344ca7da216e602e9598d1066953",
+      "role": "frozen parity",
+      "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b",
+      "exit_status": 0
+    },
+    {
+      "artifact": "lock-packages-parity-repeat.log.gz",
+      "payload_sha256": "822af236d5916c4a1e799a439b91b6db5bffec2801d5e6e2314ebea18765ab99",
+      "compressed_sha256": "8cf62a0d678b1cb7de942bc89b3e1c4b413ba776258284315d6f58a25d3220d4",
+      "role": "repeated frozen parity",
+      "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b",
+      "exit_status": 0
+    },
+    {
+      "artifact": "lock-parity-canonical.log.gz",
+      "payload_sha256": "55d1b0a4901e014953ee4e24143b37ef6c3b462a9ed2d0e8abab2ada838d8957",
+      "compressed_sha256": "47b987bf01728570a6766546877985888d566e761a11e767982f0f41dc2f961f",
+      "role": "canonical gate",
+      "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b",
+      "exit_status": 1
+    },
+    {
+      "artifact": "lock-parity-package.log.gz",
+      "payload_sha256": "e556a0a9a1dacd86b87c5b4507004c023ba47706eb4ada3e9c8877c3581f739b",
+      "compressed_sha256": "63e0e5f2156d67f0c61715583fb8417fbe1ded1908c5ad31e4347d8d88bdb1e9",
+      "role": "standalone archive check",
+      "implementation_commit": "5251b4f056741768eb667c74d6e0949257ca843b",
+      "exit_status": 0
+    },
+    {
+      "artifact": "lock-parity-work-regression.log.gz",
+      "payload_sha256": "ef3d021def7e04bf1126b2680c295cedbfcd09e3e9535ff908a39f674ee3079f",
+      "compressed_sha256": "8a95902cba28f5aa15f83357b595d6a14b1fe1fb30cc774e0b641fe5c207bf91",
+      "role": "historical work regression",
+      "implementation_commit": "43b1ddc37932b5e48ddc878399572287b6a4f7e9",
+      "exit_status": 101
+    },
+    {
+      "artifact": "lock-parity-macro-regression.log.gz",
+      "payload_sha256": "b829cd7e7488f5e4b81d564ae1a785a0e7c8333fc0bbe945f8ffd8b781e164f1",
+      "compressed_sha256": "6ac393b9fefe8eb89fe7e8158b5de79c4ddc90eb2456e5361a6ce5071e3672f5",
+      "role": "historical macro-policy regression",
+      "implementation_commit": "365406305a9731c8feae86fc920b63c42fd553d6",
+      "exit_status": 1
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+"""Translate pinned legacy size policy into reviewable declarative fragments.
+
+Trusted migration tooling only. This emits policy data; it does not evaluate
+consumer source, update locks, or run inside stock zrail analysis.
+"""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import tomllib
+
+
+ROOT = Path(__file__).resolve().parent.parent
+PINS = ROOT / "crates/zrail-testkit/tests/fixtures/rc9/snapshots.json"
+
+
+def read(path):
+    data = path.read_bytes()
+    if len(data) > 4 * 1024 * 1024:
+        raise ValueError(f"policy input exceeds 4 MiB: {path}")
+    return tomllib.loads(data.decode("utf-8")), hashlib.sha256(data).hexdigest()
+
+
+def literal(value):
+    return json.dumps(value, ensure_ascii=False)
+
+
+def scope(name, include, exclude, budget):
+    lines = ["", "[[source.rust.budgets.overrides]]", f"name = {literal(name)}",
+             f"include = {literal(sorted(set(include)))}"]
+    if exclude:
+        lines.append(f"exclude = {literal(sorted(set(exclude)))}")
+    limits = ", ".join(f"{key} = {value}" for key, value in budget.items())
+    lines.extend([f"budget = {{ {limits} }}",
+                  f"reason = {literal('Preserve the frozen ' + name + ' size family.')}"])
+    return lines
+
+
+def kafka_driver(config):
+    roots = config["paths"]["rust_roots"]
+    facades = [f"{root}/**/{name}.rs" for root in roots for name in ["lib", "mod"]]
+    facades.append("tests/guardrails.rs")
+    tests = ["tests/**/*.rs", *[f"{root}/**/*_test.rs" for root in roots]]
+    lines = []
+    for name, include, exclude in [
+        ("facade", facades, []), ("test", tests, facades),
+        ("production", [f"{root}/**/*.rs" for root in roots], facades + tests),
+    ]:
+        ceiling = config["budgets"][name]
+        lines += scope(f"kd-{name}", include, exclude, {"target": ceiling, "hard": ceiling})
+    return lines
+
+
+def kafkars(root, config):
+    manifest, _ = read(root / "Cargo.toml")
+    members = []
+    for selector in manifest["workspace"]["members"]:
+        for member in sorted(root.glob(selector)):
+            package, _ = read(member / "Cargo.toml")
+            if "package" not in package:
+                raise ValueError(f"workspace member is not a package: {member}")
+            members.append(member.relative_to(root).as_posix())
+    if not members or config["paths"]["rust_roots"] != ["crates"]:
+        raise ValueError("frozen Kafkars workspace/source selection changed")
+    excluded = [f"{path}/**" for path in config["paths"]["excluded_roots"]]
+    tests = [f"{member}/tests/**/*.rs" for member in members] + ["crates/**/*_test.rs"]
+    auxiliary = ["crates/**/examples/**/*.rs", "crates/**/src/bin/**/*.rs", "crates/**/src/main.rs"]
+    facades = ["crates/**/lib.rs", "crates/**/mod.rs"]
+    lines = []
+    for name, include, exclude in [
+        ("test", tests, excluded),
+        ("auxiliary", auxiliary, excluded + tests),
+        ("facade", facades, excluded + tests + auxiliary),
+        ("implementation", ["crates/**/*.rs"], excluded + tests + auxiliary + facades),
+    ]:
+        lines += scope(f"kf-{name}", include, exclude, config["budgets"][name])
+    baselines = {entry["path"]: entry for entry in config["budgets"]["baseline"]}
+    for entry in sorted(config["budgets"]["allow"], key=lambda entry: entry["path"]):
+        # The legacy baseline already requires exact equality at this path.
+        # Its value therefore bounds the otherwise unbounded hard allowance.
+        baseline = baselines[entry["path"]]
+        lines += ["", "[[source.rust.budgets.exceptions]]",
+                  f"path = {literal(entry['path'])}", f"hard = {baseline['lines']}"]
+        lines += [f"{key} = {literal(entry[key])}" for key in ["reason", "owner", "issue"]]
+    for entry in sorted(baselines.values(), key=lambda entry: entry["path"]):
+        lines += ["", "[[ratchet]]", 'rule = "rust.file-size"',
+                  f"target = {literal(entry['path'])}", f"baseline = {entry['lines']}",
+                  f"reason = {literal(entry['reason'])}"]
+    return lines
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("snapshots", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    subprocess.run(["python3", str(ROOT / "scripts/rc9-snapshots"), str(args.snapshots)], check=True)
+    pins = json.loads(PINS.read_text())
+    args.output.mkdir(parents=True, exist_ok=True)
+    for name, translate in [("kafka-driver", kafka_driver), ("kafkars", kafkars)]:
+        pin = next(pin for pin in pins["consumers"] if pin["name"] == name)
+        source_root = args.snapshots / name
+        config, digest = read(source_root / "guardrails.toml")
+        lines = ["# PARTIAL REVIEW FRAGMENT: size policy only, not a complete replacement bundle.",
+                 f"# Source: {pin['repository']} {pin['commit']}",
+                 f"# guardrails.toml SHA-256: {digest}",
+                 "# No lock authority is accepted by this translation.",
+                 "[source.rust.budgets]", 'exception_metadata = "owner-issue"']
+        lines += translate(config) if name == "kafka-driver" else translate(source_root, config)
+        output = args.output / f"{name}.sizes.fragment.toml"
+        output.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        print(f"translated {output}")
+
+
+if __name__ == "__main__":
+    main()

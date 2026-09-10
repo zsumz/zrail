@@ -1,0 +1,97 @@
+   Vendoring adler2 v2.0.1 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/adler2-2.0.1) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/adler2-2.0.1
+   Vendoring block-buffer v0.10.4 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/block-buffer-0.10.4) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/block-buffer-0.10.4
+   Vendoring cfg-if v1.0.4 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cfg-if-1.0.4) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/cfg-if-1.0.4
+   Vendoring cpufeatures v0.2.17 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/cpufeatures-0.2.17
+   Vendoring crc32fast v1.5.1 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc32fast-1.5.1) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/crc32fast-1.5.1
+   Vendoring crypto-common v0.1.6 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crypto-common-0.1.6) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/crypto-common-0.1.6
+   Vendoring digest v0.10.7 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/digest-0.10.7) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/digest-0.10.7
+   Vendoring equivalent v1.0.2 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/equivalent-1.0.2) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/equivalent-1.0.2
+   Vendoring filetime v0.2.29 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/filetime-0.2.29) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/filetime-0.2.29
+   Vendoring flate2 v1.1.10 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/flate2-1.1.10) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/flate2-1.1.10
+   Vendoring generic-array v0.14.9 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generic-array-0.14.9) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/generic-array-0.14.9
+   Vendoring hashbrown v0.17.1 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hashbrown-0.17.1) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/hashbrown-0.17.1
+   Vendoring indexmap v2.14.0 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/indexmap-2.14.0) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/indexmap-2.14.0
+   Vendoring itoa v1.0.18 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/itoa-1.0.18) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/itoa-1.0.18
+   Vendoring libc v0.2.189 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.189) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/libc-0.2.189
+   Vendoring memchr v2.8.3 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/memchr-2.8.3) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/memchr-2.8.3
+   Vendoring miniz_oxide v0.9.1 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/miniz_oxide-0.9.1) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/miniz_oxide-0.9.1
+   Vendoring proc-macro2 v1.0.107 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/proc-macro2-1.0.107) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/proc-macro2-1.0.107
+   Vendoring quote v1.0.47 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quote-1.0.47) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/quote-1.0.47
+   Vendoring semver v1.0.28 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/semver-1.0.28) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/semver-1.0.28
+   Vendoring serde v1.0.229 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/serde-1.0.229
+   Vendoring serde_core v1.0.229 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/serde_core-1.0.229
+   Vendoring serde_derive v1.0.229 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_derive-1.0.229) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/serde_derive-1.0.229
+   Vendoring serde_json v1.0.151 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.151) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/serde_json-1.0.151
+   Vendoring serde_spanned v0.6.9 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_spanned-0.6.9) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/serde_spanned-0.6.9
+   Vendoring sha2 v0.10.9 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.9) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/sha2-0.10.9
+   Vendoring simd-adler32 v0.3.10 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/simd-adler32-0.3.10) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/simd-adler32-0.3.10
+   Vendoring syn v2.0.119 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/syn-2.0.119) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/syn-2.0.119
+   Vendoring syn v3.0.3 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/syn-3.0.3) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/syn-3.0.3
+   Vendoring tar v0.4.46 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tar-0.4.46) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/tar-0.4.46
+   Vendoring toml v0.8.23 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml-0.8.23) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/toml-0.8.23
+   Vendoring toml_datetime v0.6.11 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml_datetime-0.6.11) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/toml_datetime-0.6.11
+   Vendoring toml_edit v0.22.27 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml_edit-0.22.27) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/toml_edit-0.22.27
+   Vendoring toml_write v0.1.2 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml_write-0.1.2) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/toml_write-0.1.2
+   Vendoring typenum v1.20.1 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/typenum-1.20.1) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/typenum-1.20.1
+   Vendoring unicode-ident v1.0.24 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/unicode-ident-1.0.24) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/unicode-ident-1.0.24
+   Vendoring version_check v0.9.5 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/version_check-0.9.5) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/version_check-0.9.5
+   Vendoring winnow v0.7.15 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/winnow-0.7.15) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/winnow-0.7.15
+   Vendoring zmij v1.0.23 (/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.23) to /mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/zmij-1.0.23
+To use vendored sources, add this to your .cargo/config.toml for this project:
+
+   Packaging zrail-core v0.0.3-rc.8 (/root/zrail-rc9/crates/zrail-core)
+    Packaged 178 files, 694.0KiB (147.8KiB compressed)
+   Packaging zrail-rust v0.0.3-rc.8 (/root/zrail-rc9/crates/zrail-rust)
+    Packaged 523 files, 2.1MiB (435.5KiB compressed)
+   Packaging zrail v0.0.3-rc.8 (/root/zrail-rc9/crates/zrail-cli)
+    Packaged 101 files, 329.2KiB (70.5KiB compressed)
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.24
+   Compiling serde_core v1.0.229
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.9
+   Compiling syn v3.0.3
+   Compiling serde v1.0.229
+    Checking typenum v1.20.1
+   Compiling serde_derive v1.0.229
+    Checking equivalent v1.0.2
+    Checking hashbrown v0.17.1
+   Compiling zmij v1.0.23
+    Checking indexmap v2.14.0
+    Checking crypto-common v0.1.6
+    Checking block-buffer v0.10.4
+    Checking toml_write v0.1.2
+    Checking winnow v0.7.15
+    Checking serde_spanned v0.6.9
+    Checking toml_datetime v0.6.11
+   Compiling serde_json v1.0.151
+    Checking digest v0.10.7
+    Checking memchr v2.8.3
+    Checking toml_edit v0.22.27
+    Checking cpufeatures v0.2.17
+    Checking cfg-if v1.0.4
+    Checking itoa v1.0.18
+    Checking sha2 v0.10.9
+    Checking toml v0.8.23
+    Checking zrail-core v0.0.3-rc.8 (/mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/zrail-core-0.0.3-rc.8)
+    Finished `dev` profile [unoptimized] target(s) in 9.88s
+   Compiling libc v0.2.189
+   Compiling proc-macro2 v1.0.107
+    Checking unicode-ident v1.0.24
+   Compiling crc32fast v1.5.1
+   Compiling quote v1.0.47
+    Checking simd-adler32 v0.3.10
+    Checking adler2 v2.0.1
+    Checking miniz_oxide v0.9.1
+    Checking zrail-core v0.0.3-rc.8
+    Checking filetime v0.2.29
+    Checking tar v0.4.46
+    Checking flate2 v1.1.10
+    Checking syn v2.0.119
+    Checking semver v1.0.28
+    Checking zrail-rust v0.0.3-rc.8 (/mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/zrail-rust-0.0.3-rc.8)
+    Finished `dev` profile [unoptimized] target(s) in 9.60s
+    Checking zrail-rust v0.0.3-rc.8
+    Checking zrail v0.0.3-rc.8 (/mnt/volume_atl1_1787847588295/zrail-rc9/evidence/zrail-package-check.xKMVXY/source/zrail-0.0.3-rc.8)
+    Finished `dev` profile [unoptimized] target(s) in 5.70s

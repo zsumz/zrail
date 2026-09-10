@@ -1,6 +1,8 @@
 //! Complete, deterministic governed-surface reporting for audit consumers.
 
+mod budgets;
 mod dependencies;
+mod facades;
 mod model;
 mod output;
 mod owners;
@@ -19,6 +21,8 @@ use crate::{
     engine::{CheckError, load_model},
 };
 
+pub use budgets::GovernedSizeBudget;
+pub use facades::{GovernedFacade, GovernedFacadeItem};
 pub use model::{
     GovernedAnalysis, GovernedCompilationDomain, GovernedDependencyPath, GovernedDependencyRule,
     GovernedFeaturePackage, GovernedFeatureWorld, GovernedOperationOccurrence, GovernedOwnerRule,
@@ -27,7 +31,7 @@ pub use model::{
 };
 pub use type_policy_model::{GovernedTypeField, GovernedTypeObservation, GovernedTypePolicy};
 
-const REPORT_SCHEMA: u64 = 5;
+const REPORT_SCHEMA: u64 = 6;
 
 /// Builds a read-only audit report for every governed source and dependency surface.
 ///
@@ -98,6 +102,12 @@ pub fn governed_surface_report(
         enabled_rails,
         feature_worlds,
         source_policies,
+        facades: facades::report(&model),
+        repository_files: model.repository_files.policies.clone(),
+        lock_packages: model.lock_packages.clone(),
+        rust_inventories: model.rust_inventories.policies.clone(),
+        size_policy: model.bundle.contract.source.rust.budgets.clone(),
+        size_budgets: budgets::report(&model).map_err(CheckError::from_message)?,
         type_policies,
         owners,
         dependencies,

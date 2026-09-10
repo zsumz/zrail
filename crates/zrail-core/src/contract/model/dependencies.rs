@@ -40,6 +40,13 @@ pub struct DependenciesContract {
     #[serde(default, rename = "crate_root")]
     /// Reviewed source-root overrides for external packages.
     pub crate_roots: Vec<CrateRootContract>,
+    #[serde(
+        default,
+        rename = "lock_package",
+        skip_serializing_if = "Vec::is_empty"
+    )]
+    /// Whole-lock package inventories, independent of manifest reachability.
+    pub lock_packages: Vec<super::LockPackageRule>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]

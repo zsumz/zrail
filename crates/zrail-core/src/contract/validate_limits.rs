@@ -52,7 +52,11 @@ pub(super) fn enforce_contract_size(contract: &Contract) -> Result<(), ContractE
 }
 
 fn contract_items(contract: &Contract) -> usize {
-    let mut count = contract.adapters.len()
+    let file_items = super::validate_files::item_count(contract)
+        + super::validate_lock_packages::item_count(contract)
+        + super::validate_inventories::item_count(contract);
+    let mut count = file_items
+        + contract.adapters.len()
         + contract.repository.roots.len()
         + contract.repository.exclude.len()
         + contract.profiles.len()
@@ -69,6 +73,19 @@ fn contract_items(contract: &Contract) -> usize {
         + contract.source.rust.test_mirrors.len()
         + contract.source.rust.feature_worlds.len();
     count += contract.source.rust.macros.allow.len();
+    count += contract.source.rust.budgets.as_ref().map_or(0, |policy| {
+        policy.exceptions.len()
+            + policy
+                .overrides
+                .iter()
+                .map(|scope| {
+                    1 + scope.include.len()
+                        + scope.exclude.len()
+                        + scope.packages.len()
+                        + scope.roles.len()
+                })
+                .sum::<usize>()
+    });
     count += contract
         .source
         .rust

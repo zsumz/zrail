@@ -1,0 +1,272 @@
+{
+  "schema": 1,
+  "context": "Complete frozen qualification test bodies and read helper execute unchanged. Isolated root closures and typed dispatch are harness-only. The unenforced zrail prohibition remains a separate cutover blocker. Raw matching includes comments and literal text; no workflow parsing or execution claim.",
+  "extractions": [
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/qualification.rs",
+      "source_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+      "function": "canonical_gate_uses_the_locked_graph_and_detects_mutation complete body",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/gate.rs",
+      "start_line": 12,
+      "end_line": 18,
+      "extracted_sha256": "b75f7985750d9b17042a88fa46d44c98aedf8c8333476a1be02c12250b0f0086"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/qualification.rs",
+      "source_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+      "function": "ci_prefetches_before_running_the_gate_offline complete body",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/gate.rs",
+      "start_line": 22,
+      "end_line": 28,
+      "extracted_sha256": "9fd938d1016d57bf12164aa23e09167be756c989694f3157ddf12de69da0c79f"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/qualification.rs",
+      "source_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+      "function": "functional_smoke_runs_on_pull_requests_and_main_without_performance complete body",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/gate.rs",
+      "start_line": 40,
+      "end_line": 73,
+      "extracted_sha256": "2ce9427285c126c30df18179555ff047e78d63fb5f8259d426316d3e8410fc73"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/qualification.rs",
+      "source_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+      "function": "ci_uses_the_locked_registry_protocol_without_a_sibling_checkout complete body",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/gate.rs",
+      "start_line": 102,
+      "end_line": 110,
+      "extracted_sha256": "4fadd564bde8cd2c2cefa5b7ed0042824d0251d0d10c7c3844666e9e69ec9daa"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/qualification.rs",
+      "source_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+      "function": "release_qualification_runs_the_canonical_gate_before_packaging complete body",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/release.rs",
+      "start_line": 77,
+      "end_line": 98,
+      "extracted_sha256": "71872f03691c0e6494bd1212bf748555d19c69954f2b88066f1bca047424c53e"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/qualification.rs",
+      "source_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+      "function": "release_qualification_builds_normalized_public_archives complete body",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/release.rs",
+      "start_line": 114,
+      "end_line": 152,
+      "extracted_sha256": "d74757582d52fb4df815e4ce3b0fbeb8b17b3c8857f85690c55f38df5e7b1881"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/qualification.rs",
+      "source_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+      "function": "release_qualification_resolves_latest_compatible_from_a_clean_registry complete body",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/release.rs",
+      "start_line": 156,
+      "end_line": 169,
+      "extracted_sha256": "8aa9c5ca7abae8f2b12d5d1a1ff32002bab80ce5ba9ed92b850744d731fffda2"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/qualification.rs",
+      "source_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+      "function": "release_qualification_is_scheduled_and_uses_the_registry_protocol complete body",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/release.rs",
+      "start_line": 173,
+      "end_line": 183,
+      "extracted_sha256": "ca90b875d5f6789a4c19b37e46d0af2520ef1511d40a8e54beb144c24e3a6ec9"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/qualification.rs",
+      "source_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+      "function": "frozen image constants",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/security.rs",
+      "start_line": 5,
+      "end_line": 8,
+      "extracted_sha256": "cefc99aa19a0575fbc76de8edd4a2b865eec94fd70e907101202e00afd0e20ec"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/qualification.rs",
+      "source_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+      "function": "secure_cluster_qualification_binds_each_advertised_host_to_its_identity complete body",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/security.rs",
+      "start_line": 187,
+      "end_line": 210,
+      "extracted_sha256": "c02f01664daa5503a9c65bee5c450bb9832a682f006afc14e3aa31aaad84467b"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/qualification.rs",
+      "source_sha256": "92ad5631e90164e10613b02327dfd9714e771a7e350e1ee0058a9170f01c97ad",
+      "function": "qualification_containers_use_immutable_digests complete body",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/security.rs",
+      "start_line": 214,
+      "end_line": 234,
+      "extracted_sha256": "587aaaba3a973ca81d06552eb1a4b498a9be12ef5398f60c32345191ebb96734"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "tests/guardrails/support.rs",
+      "source_sha256": "bb0f3392b649b75ad417923e98559137f28b67e98815cbfa0470bb64808bc843",
+      "function": "UTF-8 read precondition",
+      "harness": "crates/zrail-rust/src/repository_files/qualification/legacy.rs",
+      "start_line": 68,
+      "end_line": 70,
+      "extracted_sha256": "2a13b1b1bff5dbc2e48c9b97eb29e7edc2099cda36466eed757f37727542fa60"
+    }
+  ],
+  "fixtures": [
+    {
+      "repository": "kafka-driver",
+      "path": ".github/workflows/ci.yml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/.github/workflows/ci.yml",
+      "sha256": "b9e8ecefa03ae085602d915200924bfad7b866f639653834cf7a8afbbf8866eb"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": ".github/workflows/qualification.yml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/.github/workflows/qualification.yml",
+      "sha256": "d87e3d3b6021c51b934b862fbb1b19972ed197fea122eb76c0f35e245832c868"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": ".github/workflows/smoke.yml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/.github/workflows/smoke.yml",
+      "sha256": "e3b90e06e1805e748d3a29e662034540f2304b7a0951999888c4e1ecc88af682"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "package.json",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/package.json",
+      "sha256": "ee11a6008831ac19f34ce1b881be7104b282c686b28733aaf8d79164ffd9c5c2"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "scripts/check",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/scripts/check",
+      "sha256": "98effb49f7bb7e38ad42f8eaffce669ada454c9799dff2c7c60fab18722d257d"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "scripts/prefetch-release-dependencies",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/scripts/prefetch-release-dependencies",
+      "sha256": "80a3106f908d58cb9964b7e065c8750a31af6190778aafa41bb0222d16bccbe8"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "scripts/qualify-latest-compatible",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/scripts/qualify-latest-compatible",
+      "sha256": "f6d2ec706a646a571ce8c6ede33826c8984175f709e3b77bee0ddc350b4999ef"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "scripts/qualify-packages",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/scripts/qualify-packages",
+      "sha256": "93ca5d9fcf5aa7b5e73339581990bf8d31e5fea43e460eca35ff7e6ce0c13b04"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/kafka-cluster.compose.yml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/kafka-cluster.compose.yml",
+      "sha256": "a25a6efe4cde922f8db2714fec7b1d7060d266962c5e0f85087a1684e2572c03"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/kafka-sasl.compose.yml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/kafka-sasl.compose.yml",
+      "sha256": "e2bbe9699cb893faeae429885544a7680d79f0ed1def4492bb54a4dd8f57edd4"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/kafka-secure-cluster.compose.yml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/kafka-secure-cluster.compose.yml",
+      "sha256": "fe154b9157d0a555125732bd3490bbb86dafce2083f2e5ca32aea944b934d835"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/kafka-security.compose.yml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/kafka-security.compose.yml",
+      "sha256": "c2b0814fe4093a68d972392acce8368cfba893b0cfc564d2c46dac1a8720b73f"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/kafka-tls.compose.yml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/kafka-tls.compose.yml",
+      "sha256": "c5c46522e48e5131e642394cd5976b63c74af043f4ea6e831b1cf3ed348b46c6"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/kafka.compose.yml",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/kafka.compose.yml",
+      "sha256": "b6d6313b64ec8d32ea1b8f65dcaaef1d3432a9af8d9a2884456b8e79649eccf4"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/real-kafka-movement.smoke.mjs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/real-kafka-movement.smoke.mjs",
+      "sha256": "7cf01bc00767ce2d543f6009ffe25566a5fb78ed81241445a5975ae6ed1d2674"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/real-kafka-multi-broker.smoke.mjs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/real-kafka-multi-broker.smoke.mjs",
+      "sha256": "f8675f6411dcc31a323f0f77a89cc75162c1670a1d1e97758d195e09652e8b02"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/real-kafka-performance.smoke.mjs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/real-kafka-performance.smoke.mjs",
+      "sha256": "e1c02ce4d8aa89a6b0c4288fea6d1a2ab4b32e274c5e5ca1b486735a5a240625"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/real-kafka-reconnect.smoke.mjs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/real-kafka-reconnect.smoke.mjs",
+      "sha256": "dad8eae5484468dcd1227f3374cd6fb3f36d53dd4233d206055e8474457255c8"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/real-kafka-sasl.smoke.mjs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/real-kafka-sasl.smoke.mjs",
+      "sha256": "abf27a79059dacbe661aa9599641a4eecddd20c913af0c2094f596b10c600d2b"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/real-kafka-secure-multi-broker.smoke.mjs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/real-kafka-secure-multi-broker.smoke.mjs",
+      "sha256": "9930f85d6532411205dfb33a184b4f6cd5b30ded984b97e79780ad4ff0c51eb2"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/real-kafka-security.smoke.mjs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/real-kafka-security.smoke.mjs",
+      "sha256": "8c19ec27049f39f4e80d3f740fc4e682175eb4faf93343bd8232b8cd7174b6ca"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/real-kafka-tls.smoke.mjs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/real-kafka-tls.smoke.mjs",
+      "sha256": "b8c76c08446b98766735d05cec17d1b8abe92d030efbfbcdf0807774e4873938"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/real-kafka.smoke.mjs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/real-kafka.smoke.mjs",
+      "sha256": "6a4c8724c27d9f578a55d700c1608ace509514fd304a2d779b2f6683bd542e28"
+    },
+    {
+      "repository": "kafka-driver",
+      "path": "smoke/support/tls-identities.mjs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/qualification/valid/smoke/support/tls-identities.mjs",
+      "sha256": "215d92b940cd42569ef3a79b242f5591a8036906f9076ded71179bb7ede318b6"
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+# Repository-file assertions
+
+Unreleased rc9 adds closed `[[repository.files]]` predicates. These inspect
+physical paths, raw UTF-8 text, file bytes, or authored document fields. They do
+not parse Rust expressions, interpret shell or workflow commands, or prove
+execution. The bounded [document subset](REPOSITORY-DOCUMENTS.md) supports
+literal-key TOML/JSON checks; other structured predicates remain explicit work.
+
+```toml
+[[repository.files]]
+name = "root-license"
+include = ["LICENSE"]
+reason = "Every checkout must retain the license."
+predicate = { kind = "count", minimum = 1, maximum = 1 }
+
+[[repository.files]]
+name = "retired-checker"
+include = ["scripts/old-architecture-check"]
+entry = "any"
+reason = "The retired architecture evaluator must not return."
+predicate = { kind = "exact-paths", paths = [] }
+
+[[repository.files]]
+name = "license-copies"
+include = ["crates/*/LICENSE"]
+reason = "Package licenses must exactly match the repository license."
+predicate = { kind = "bytes-equal", other = "LICENSE", utf8 = true }
+
+[[repository.files]]
+name = "leading-source-contract"
+include = ["crates/**/*.rs"]
+exclude = ["crates/**/target/**", "crates/**/.git/**"]
+reason = "The existing policy requires a raw leading documentation marker."
+predicate = { kind = "literal", text = "//!", mode = "starts-with", normalization = "trim-start" }
+```
+
+These declarations belong to the contract's single `[repository]` section.
+That entire section can live in one imported fragment; separate fragments do
+not merge partial repository sections. The canonical identity is
+`repository:file:<name>`. Names are unique and every rule requires a reason.
+Existing contracts default to an empty family and retain their old behavior.
+Rust API callers constructing `RepositoryContract` add `files: Vec::new()`.
+
+## Selection and completeness
+
+`include` is a union of canonical repository-relative literals and existing
+bounded `*`, `?`, and `**` globs. Per-rule `exclude` subtracts matching paths.
+Selectors cannot contain parent traversal, `.` components, duplicate separators,
+or platform-dependent separators. Overlapping selectors count a path once.
+Ordering has no effect. `entry` selects `file` (default), `directory`,
+`non-directory`, or `any`. `non-directory` additionally selects special files,
+such as FIFOs, without opening them. Like `file` and `directory`, it resolves
+contained links before classifying their targets; broken or escaping links fail
+closed. `any` includes broken links and other filesystem entries without resolving
+their targets. Content predicates still require `entry = "file"`. Count rules
+count distinct written physical paths, not file contents or inode identities.
+
+The shared scanner runs independently of Rust roots, source exclusions, Cargo
+activation, and compilation/test reachability. Changing a source exclusion does
+not remove an independently selected file from these assertions. Exact literal
+paths are probed even beneath normally pruned cache directories.
+
+Directory links are not recursively followed. A glob that could select unread
+descendants of a directory link, `.git`, root `target`, or root `.zrail` fails
+closed unless that subtree is explicitly excluded. A trailing `/**` exclusion
+proves exclusion of descendants; excluding only the directory name does not.
+Exact contained file links may be resolved and their targets are exposed and
+bound. Escaping or unresolved links cannot supply file-content evidence.
+The existing repository-wide symlink policy remains independently enforced.
+
+## Closed predicates
+
+| Kind | Semantics |
+| --- | --- |
+| `inspect` | Complete physical inspection of the selection, requiring explicit `entry = "any"`. Empty selections pass; unread descendants or entry errors fail closed. No cardinality, content-read or execution claim. |
+| `count` | Inclusive `minimum` and optional `maximum` over selected paths. `minimum = 0, maximum = 0` remains an active prohibition when no path exists. |
+| `exact-paths` | Complete unordered `paths` set. Missing and unexpected paths fail independently of the total count. An empty set is a persistent prohibition. |
+| `forbidden-names` | Literal `names`, with `part` selecting `component`, `component-stem`, `file-name`, or `file-stem`. Component stems use Rust `Path::file_stem` for directories too. |
+| `literal` | Per-file raw text predicate with explicit `text`, `mode`, `normalization`, and `case`. |
+| `document` | Per-file typed TOML/JSON assertion at a literal key path; see [authored documents](REPOSITORY-DOCUMENTS.md). |
+| `bytes-equal` | At least one selected regular file, every file byte-for-byte equal to the required regular reference `other`. Binary data is supported by default. `utf8 = true` additionally requires both sides to decode as UTF-8, without normalizing line endings or whitespace. |
+
+`inspect` accepts no predicate fields besides `kind`. Use it when empty trees
+are valid but traversal completeness is required; `count` with only
+`minimum = 0` remains invalid. Require root existence separately using an exact
+directory set or positive count. Inspection uses the same bounded selection
+and unread-subtree checks above; it never opens file contents or FIFO streams.
+Coverage and explain report `physical-entry-inspection`, and the lock binds
+the policy and physical entry observations, not uninspected content bytes.
+Removing inspection or provably narrowing its selection is a grant; expansion
+is a revoke. Unproven selector or predicate changes remain protected as unknown.
+
+```toml
+[[repository.files]]
+name = "source-inspection"
+include = ["src/**", "tests/**"]
+entry = "any"
+reason = "Empty trees are valid; unread descendants are not."
+predicate = { kind = "inspect" }
+```
+
+Name predicates default to `basis = "repository"`. The explicit `filesystem`
+basis additionally inspects the canonical checkout prefix, exposes it in
+coverage/explain, and binds that context into the lock. This preserves policies
+that deliberately inspect absolute path components; it is not portable naming
+authority inferred from a type or Cargo package.
+
+Literal modes are `contains`, `absent`, `starts-with`, `ends-with`, `equals`, and
+`exact-count`, plus exact `line-present` and `line-absent`. Only exact-count
+accepts and requires `count`. Occurrences are
+non-overlapping Rust string matches. Positive predicates require a nonempty
+file selection; `absent` and exact-count zero remain valid for an empty selection.
+Comments and string literals participate deliberately. These are raw predicates,
+and matching command text never certifies that the command ran.
+
+Normalization defaults to `none`. `trim-start` applies Unicode-aware Rust
+`str::trim_start`; `trim` applies `str::trim`; `remove-whitespace` removes
+`char::is_whitespace` characters.
+Normalization transforms input only; whitespace-removed literals cannot contain
+whitespace. Case defaults to `sensitive`; `ascii-insensitive` folds ASCII letters
+only in both the literal and input. Name comparisons use the same case choices.
+
+Line modes first use Rust `str::lines` (including its LF/CRLF behavior), normalize
+each line independently, and compare complete lines with the literal. They never
+join text across line boundaries. `line-present` requires at least one equal
+line in every selected file; `line-absent` requires zero and stays active when
+the selection is empty. Line literals cannot contain CR/LF and must already
+satisfy their selected whitespace normalization. Comments, prefixes, and suffixes
+do not satisfy equality with a different complete line.
+
+Line coverage uses `raw-utf8-lines`, reports the full matching-line count, and
+samples at most sixteen byte offsets in normalized lines joined by LF. Those
+offsets describe transformed text, not original byte positions. Duplicate equal
+lines count separately, even when the legacy detector only tests set membership.
+
+```toml
+[[repository.files]]
+name = "rust-line-endings"
+include = [".gitattributes"]
+reason = "Preserve the exact trimmed attributes declaration."
+predicate = { kind = "literal", text = "*.rs text eol=lf", mode = "line-present", normalization = "trim" }
+```
+
+## Evidence, bounds, and review
+
+File policies require a lock. Its analysis inventory binds the full observations,
+selected paths and kinds, resolved file targets, inspected input hashes, and any
+filesystem naming context. Even a content change that still satisfies a raw
+predicate invalidates the old input binding (`LOCK-028`). No command here writes
+or accepts lock authority automatically.
+
+Coverage schema 6 adds `repository_files`, including the full policies, empty
+selections, per-entry results and hashes, reference inputs, precise claim kind,
+and analysis quality. Explain includes matching policies and actual observations
+alongside complete scope counts; hypothetical paths do not fabricate evidence.
+Literal coverage reports the full count and at most sixteen transformed-text
+byte offsets, with the omitted count explicit. Samples never decide pass/fail.
+UTF-8 equality exposes `utf8-file-bytes` as its claim and `valid_utf8` for each
+inspected input. Invalid encoding is a decidable `REP-FILE-005` failure, with
+the exact inspected bytes still bound. Removing the UTF-8 requirement is a grant.
+
+Diagnostics `REP-FILE-001` through `005` identify count, exact-set, name, literal,
+and byte-equality failures; `007` identifies document field failures, and `008`
+identifies [raw order, interval, and line-value failures](RAW-STRUCTURE.md).
+`REP-FILE-006` means incomplete analysis: checks,
+coverage, and lock construction fail instead of returning trusted partial data.
+Reads are limited to 2 MiB per file, 64 MiB unique bytes, and 256 MiB cumulative
+content work. Selection permits 8,000,000 bounded glob queries and 250,000
+aggregate observations. Existing repository entry/depth and glob limits apply.
+Contracts allow at most 1,024 rules, 64 selectors per rule, 20,000 exact paths,
+256 forbidden names, and 16 KiB per literal. Unsupported syntax and duplicate
+keys are rejected by strict contract parsing.
+
+Protected semantic diffs classify removed guards, weakened minimum/maximum
+bounds, narrower name prohibitions, and demonstrably weakened literals as grants.
+Changing exact sets, exact counts, or byte references can both grant and revoke
+permission; numerical decrease alone is not tightening. Selector inclusion is
+interpreted according to presence versus prohibition. Unproven glob relations,
+mixed quantifier changes, normalization changes, and changed justifications stay
+protected as unknown. Reordering equivalent sets does not change authority.

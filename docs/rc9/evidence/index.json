@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "release_verdict": "blocked",
+  "release_qualified_revision": null,
+  "implementation_base": "5a368379360104ca19745326cfcef48d22a6452b",
+  "tested_code_commit": "348ae5b777217f774433045da5c4431ea055c162",
+  "tested_code_tree": "c953bfe490fd41f718cec77bf83897bd95171547",
+  "version": "0.0.3-rc.8",
+  "lock_schema": 3,
+  "analyzer_semantics": 7,
+  "coverage_schema": 6,
+  "gate_context": "Isolated implementation worktree; Rust source at tested_code_commit. Audit documents and data were being prepared, so this was not a clean final versioned release tree.",
+  "unchanged_reviewed_inputs": {
+    "zrail.toml": "0dcac6bcaedafa103d17a31058aff40bc73e3af2d367c2b657f9bbb4d7a77f5c",
+    "zrail.lock": "c44d5e4843fd25eb102d408be358b999adcc0b4cce822e0644038dfa8b67e713",
+    "Cargo.toml": "11d9acf35e9b1c4211981b7ecca4f515f949bbe1a6fbbe6d509e948fff275752",
+    "Cargo.lock": "ed9e20de4243fb159096670d50e413e8978538731fcfe62ee77ab8c88346636e"
+  },
+  "approved_downstream_changes": [],
+  "results": {
+    "rc8_canonical": {
+      "exit": 0,
+      "test_outcomes_passed": 1389,
+      "ignored": 1
+    },
+    "rc9_canonical": {
+      "exit": 1,
+      "test_outcomes_passed": 1406,
+      "test_failures": 0,
+      "ignored": 2,
+      "blockers": [
+        "LOCK-008",
+        "LOCK-026",
+        "LOCK-028",
+        "LOCK-030"
+      ],
+      "cleanliness_stage_reached": false
+    },
+    "rc9_archives": {
+      "exit": 0,
+      "release_assets": false
+    },
+    "rc9_coverage": {
+      "exit": 0,
+      "complete": true,
+      "physical_rust_files": 862,
+      "base_contexts": 1391,
+      "unresolved": 0
+    },
+    "frozen_kafka_driver_detectors": {
+      "exit": 0,
+      "passed": 47,
+      "ignored": 0,
+      "filtered": 0
+    },
+    "frozen_facade_differential": {
+      "exit": 0,
+      "predicates": 2,
+      "inputs_per_predicate": 28
+    },
+    "strict_facade_acceptance": {
+      "exit": 0,
+      "passed": 8
+    },
+    "repeated_census": {
+      "exit": 0,
+      "passed": 2,
+      "byte_identical": true
+    },
+    "inventory_completeness": {
+      "exit": 1,
+      "reason": "assertion inventory incomplete"
+    },
+    "same_revision_epoch_migration": {
+      "exit": 0,
+      "preserved": 36,
+      "retired": 0,
+      "newly_observable": 0,
+      "changed_interpretation": 0,
+      "accepted": false
+    },
+    "diff": {
+      "exit": 0,
+      "grants": 0,
+      "debt": 0,
+      "unknown": 2
+    }
+  },
+  "assertion_counts": {
+    "reviewed_assertion_instances": 103,
+    "implemented": 7,
+    "verified_by_disposition": {
+      "existing native rail": 0,
+      "declarative translation": 0,
+      "new engine capability": 5,
+      "behavioral evidence retained": 0,
+      "approved retirement": 0
+    },
+    "full_repository_verified": 0
+  },
+  "artifacts": [
+    {
+      "path": "census-final.log",
+      "bytes": 602,
+      "sha256": "599394f96f883d718249d3c47d204be8fe5547d9cfb1b13f6ce459b813913058"
+    },
+    {
+      "path": "inventory-completeness.log",
+      "bytes": 263,
+      "sha256": "1597fcf89988585c0a8bf49c9d0395813ca41b7982e790228c3c64b46028e12e"
+    },
+    {
+      "path": "kafka-driver-legacy.log",
+      "bytes": 4396,
+      "sha256": "f6737033eb008dd56715ff1150b2476996a7b4723a04d26adb8366ec7a91b8f3"
+    },
+    {
+      "path": "kafka-driver-receipt.json",
+      "bytes": 9330,
+      "sha256": "e511296e5392ec6057c1f701ec907605a033cc50dd65fc0725cadfe47fb13c5a"
+    },
+    {
+      "path": "rc8-frozen-check.log",
+      "bytes": 173465,
+      "sha256": "888d4e25a083644f2a99b9ec749511e6db39dbc175eb0da27891173da7b9d306"
+    },
+    {
+      "path": "rc8-migration.json",
+      "bytes": 24313,
+      "sha256": "b8d83c80befbeab59c7cfd8ce7f9e49cef87eb17747474f9ca5b64a3c34d4afc"
+    },
+    {
+      "path": "rc9-coverage.json",
+      "bytes": 39068,
+      "sha256": "4de258db812c3baab109d099fc857f372aadae74f41c63d95fedc8b0bfc561db"
+    },
+    {
+      "path": "rc9-diff.json",
+      "bytes": 603,
+      "sha256": "2d59e4369b592946a659275e87d69883c4f667f760d40430e6edde9ec1e0fb62"
+    },
+    {
+      "path": "rc9-final-check.log",
+      "bytes": 162951,
+      "sha256": "5a99b01b3abf80c0cafc65576018dc5fc1e8b4ac73b61191fbbe1bdc4b19829f"
+    },
+    {
+      "path": "rc9-package-check.log",
+      "bytes": 10594,
+      "sha256": "d309441ecc3dbc4adce5690953ee95d72dc142ed30918b76dcc092097e4aacd5"
+    }
+  ],
+  "local_archives": [
+    {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/package/zrail-core-0.0.3-rc.8.crate",
+      "bytes": 133913,
+      "sha256": "ebc1ea2dfa9f4f0c4b854b5b06f49ac2e1f61763293f9bc0b664d94488dcc55d",
+      "status": "passed standalone normalization and expanded archive check; not a release asset"
+    },
+    {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/package/zrail-rust-0.0.3-rc.8.crate",
+      "bytes": 425167,
+      "sha256": "6b4763895b51846e4cbb136603becb1b9229ddc869ec35e5b75273c677a94a33",
+      "status": "passed standalone normalization and expanded archive check; not a release asset"
+    },
+    {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/package/zrail-0.0.3-rc.8.crate",
+      "bytes": 72157,
+      "sha256": "1a34e641221af52e7f5cca4dc74a04c48a5b1459f6ac4cfb6676f856c9f883de",
+      "status": "passed standalone normalization and expanded archive check; not a release asset"
+    }
+  ]
+}

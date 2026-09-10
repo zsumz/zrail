@@ -14,6 +14,7 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
         schema: 1,
         adapters: vec!["rust".into()],
         repository: RepositoryContract {
+            files: Vec::new(),
             roots: vec!["crates".into()],
             exclude: Vec::new(),
             workspace_members: ExactMode::Exact,
@@ -26,6 +27,7 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
             unassigned_packages: PolicyMode::Deny,
             cycles: CycleMode::Deny,
             crate_roots: Vec::new(),
+            lock_packages: Vec::new(),
         },
         analysis: AnalysisContract::default(),
         source: SourceContract {
@@ -43,6 +45,8 @@ pub(super) fn contract_with_hard_limit(hard: usize) -> Contract {
                 macros: crate::MacroExpansionContract::default(),
                 duplication: crate::RustDuplicationContract::default(),
                 types: Vec::new(),
+                budgets: None,
+                inventories: Vec::new(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,
                     lint_suppressions: LintSuppressionMode::Deny,

@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "extractions": [
+    {
+      "repository": "rafter",
+      "path": "crates/rafter/tests/source_boundary.rs",
+      "source_sha256": "d0d72712188265e89b5a23f8e084e733eed86ea5b918a78f1263752e8e9eacd6",
+      "function": "matches_forbidden_source",
+      "start_line": 272,
+      "end_line": 278,
+      "extracted_sha256": "c5747f2e3b0705a1f95eb6cb6644d5f4a621ff12edb43ebec0db6f43bfbe54b2",
+      "harness": "crates/zrail-rust/tests/rc9_boundaries/legacy.rs"
+    },
+    {
+      "repository": "rafter",
+      "path": "crates/rafter/tests/source_boundary.rs",
+      "source_sha256": "d0d72712188265e89b5a23f8e084e733eed86ea5b918a78f1263752e8e9eacd6",
+      "function": "starts_with_token_boundary",
+      "start_line": 280,
+      "end_line": 291,
+      "extracted_sha256": "127aa94492241d1809257190f1e15a2a28715ed894c68546a403484fe06df459",
+      "harness": "crates/zrail-rust/tests/rc9_boundaries/legacy.rs"
+    }
+  ],
+  "fixtures": [
+    {
+      "repository": "rafter",
+      "path": "scripts/private-name-scan",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/audited-text/rafter/scripts/private-name-scan",
+      "sha256": "3d648d3358560b6943b4cb0d48eda6f926bab84cd53bc6b88524803e05177a0b"
+    },
+    {
+      "repository": "rafter",
+      "path": "RELEASE.md",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/audited-text/rafter/RELEASE.md",
+      "sha256": "7d0a3fb991e620981eec1893983f3096baf94a703772877a9e6020f5cc6fc9c8"
+    },
+    {
+      "repository": "rafter",
+      "path": "crates/rafter/tests/source_boundary.rs",
+      "copy": "crates/zrail-testkit/tests/fixtures/rc9/audited-text/rafter/crates/rafter/tests/source_boundary.rs.txt",
+      "sha256": "d0d72712188265e89b5a23f8e084e733eed86ea5b918a78f1263752e8e9eacd6"
+    }
+  ]
+}

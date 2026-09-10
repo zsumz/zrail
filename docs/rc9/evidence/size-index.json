@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "release_verdict": "blocked",
+  "full_repository_qualified": false,
+  "tested_size_code_commit": "cb198bada58ef8f08bdc60bc7ac5cea0b2993a0a",
+  "typed_harness_boundary_fix_commit": "7f6a2307c1e76e65ddba59898da5620f88f4295e",
+  "report_payload_sha256": "f060ab308686ba55c1a955d7aaa8660cd3f960e495b6ce87b6ba4fb8cc39f37b",
+  "sources_patched": [],
+  "authority_grants_accepted": [],
+  "artifacts": {
+    "size-parity.json.gz": "a9b4aa0d807724146ba658b27d4dd05350235d7561a6a7df8e7734df3c71f0c1",
+    "size-parity.log": "6adc0ff62691d4cef9d6e28331dd13ed5c9491fd81d7d1e180f38237ba92a9fd",
+    "kafkars-sizes-legacy-guards.log": "d905c91a6f7bcd0f045475f245665769d29f302881d098d6827cd3735e507282",
+    "kafkars-sizes-receipt.json": "1c532ff39952502a11568ed7cc48f6f21b2b4220f50bb225227b186ba44bee20",
+    "rafter-sizes-legacy-guards.log": "af090cae94df72904f8c0ddfb3dfc1147bf8eb11cd34ec0076bf9a54a04ece7e",
+    "rafter-sizes-receipt.json": "5cf01893f9f27a5f04ec328420a3685cc903f0b9344bd9dbae1793cce4d7a3d2",
+    "size-parity-repeat.log": "f3fcdcff45c0b9e48be544f7a6ef664759ddf6d608a85f56313503dd3b95859f",
+    "size-canonical.log": "ab33c55ac0b7fa80e222c1be19f913dca631de2796e3c9d9bc57fb1a174cb724",
+    "size-package.log": "f7ac3739c3144fbc8016717a932989c93e190f0714df25df341226ce9376757c"
+  },
+  "counts": {
+    "reviewed_assertion_instances": 274,
+    "implemented": 180,
+    "verified_by_disposition": {
+      "existing native rail": 0,
+      "declarative translation": 0,
+      "new engine capability": 170,
+      "behavioral evidence retained": 0,
+      "approved retirement": 0
+    },
+    "full_repository_verified": 0
+  },
+  "size_only_results": [
+    {
+      "snapshot": {
+        "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+        "name": "kafka-driver",
+        "repository": "kafkars/kafka-driver",
+        "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+      },
+      "physical_files": 772,
+      "baseline_instances": 0,
+      "hard_allow_instances": 0,
+      "policy_sha256": "f07f482b85526a779c1f10b3cda841e8126378e292b6a51331fc2bbf815e5cf5",
+      "legacy_policy_sha256": "099d48347a22288d024a05260c5a102a4b142a0f1ce7a4d763e8979a83e09f10",
+      "comparisons": 2316
+    },
+    {
+      "snapshot": {
+        "commit": "67ad7aa8d91f9639c87b00338b9e21a633f7bb4c",
+        "name": "kafkars",
+        "repository": "kafkars/kafkars",
+        "tree": "6abde2775e12d772d7cdc1ea01fc253e699c6a45"
+      },
+      "physical_files": 6280,
+      "baseline_instances": 141,
+      "hard_allow_instances": 3,
+      "policy_sha256": "f3852d547b314353c7a310ca07f8b584f3bf02982f94b1ccfcc620b0007261d6",
+      "legacy_policy_sha256": "fd8e749c86f21034f5faeae3a3c99863c0606956a5c4e1a7adbe327dff852d8c",
+      "comparisons": 18984
+    }
+  ],
+  "limitations": [
+    "No Rust syntax, semantic resolution, compilation completeness or execution-evidence claim.",
+    "No lock or source file is written; measured ratchet records are isolated evaluator inputs.",
+    "Full repository contracts, approved locks and complete source analysis remain separate qualification.",
+    "Standalone soft-limit warnings add observations without changing legacy size pass/fail."
+  ],
+  "repeated_byte_identical": true,
+  "canonical": {
+    "code_commit": "cb198bada58ef8f08bdc60bc7ac5cea0b2993a0a",
+    "exit": 1,
+    "passed": 1439,
+    "failed": 0,
+    "ignored": 3,
+    "diagnostics": [
+      "LOCK-008",
+      "LOCK-026",
+      "LOCK-028",
+      "LOCK-030"
+    ],
+    "analysis_complete": true,
+    "physical_rust_files": 886,
+    "base_source_contexts": 1426,
+    "projection_work": 1177203,
+    "unresolved": 0,
+    "archive_stage_reached": false,
+    "cleanliness_stage_reached": false
+  },
+  "standalone_archives": {
+    "exit": 0,
+    "isolated_worktree_clean_after_run": true,
+    "version": "0.0.3-rc.8",
+    "release_assets": false
+  }
+}

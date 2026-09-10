@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "snapshot": {
+    "name": "rafter",
+    "repository": "zsumz/rafter",
+    "commit": "e99b43c1b3fb3c94dd626effccee8420016594f2",
+    "tree": "b91b3ca7362219e32fdbb08a8374403c0353e745"
+  },
+  "harness": "unmodified crates/rafter/tests/file_size_guard.rs",
+  "surface": "rafter-sizes",
+  "environment": {
+    "CARGO_MANIFEST_DIR": "/mnt/volume_atl1_1787847588295/zrail-rc9/snapshots/rafter/crates/rafter"
+  },
+  "implementation_commit": "76c69202ccfd16b416718f8a77a77eda9a683ebb",
+  "implementation_diff_sha256": "3a76972557792906d5e33083097f0e185ce84b2a60868e2c8b293523ecd2aaac",
+  "build": [
+    "cargo",
+    "build",
+    "--locked",
+    "--offline",
+    "--lib",
+    "-p",
+    "zrail-rust",
+    "--message-format=json"
+  ],
+  "compile": [
+    "rustc",
+    "--edition=2024",
+    "--test",
+    "/mnt/volume_atl1_1787847588295/zrail-rc9/snapshots/rafter/crates/rafter/tests/file_size_guard.rs",
+    "-L",
+    "dependency=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps",
+    "-o",
+    "/mnt/volume_atl1_1787847588295/zrail-rc9/evidence/rafter-sizes/legacy-guards",
+    "--extern",
+    "serde=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libserde-646f796a002175b1.rlib",
+    "--extern",
+    "syn=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libsyn-9d4bf8a2b9229703.rlib",
+    "--extern",
+    "toml=/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libtoml-95ad40842fbfb375.rlib"
+  ],
+  "toolchain": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.97.1\nLLVM version: 22.1.6",
+  "dependencies": {
+    "serde": {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libserde-646f796a002175b1.rlib",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
+      "features": [
+        "default",
+        "derive",
+        "serde_derive",
+        "std"
+      ],
+      "sha256": "49f5e40483a5ee925bde2bb6aceecc6e06009a30db439c59cc97202a29b2aa0c"
+    },
+    "toml": {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libtoml-95ad40842fbfb375.rlib",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#toml@0.8.23",
+      "features": [
+        "default",
+        "display",
+        "parse"
+      ],
+      "sha256": "0f016f917d5d9585af7c12ddd04b6dde4c264cb3e20f324e0f07262fab56286e"
+    },
+    "syn": {
+      "path": "/mnt/volume_atl1_1787847588295/zrail-rc9/target/debug/deps/libsyn-9d4bf8a2b9229703.rlib",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.119",
+      "features": [
+        "clone-impls",
+        "default",
+        "derive",
+        "extra-traits",
+        "full",
+        "parsing",
+        "printing",
+        "proc-macro",
+        "visit"
+      ],
+      "sha256": "2a62696000b86315a73b2fbaf7f1dd88d28cb47ffb0e4d9668d9f3452fc5ba9d"
+    }
+  },
+  "status": 0,
+  "binary_sha256": "90c69af0c71e9953aba7b3b805bd02f859f96ee4414b6e227fa0bf52646cf6bb",
+  "tests": [
+    {
+      "name": "file_size_guard_enforces_module_size_limits",
+      "outcome": "ok"
+    },
+    {
+      "name": "tests::facade_files_use_tight_size_limits",
+      "outcome": "ok"
+    },
+    {
+      "name": "tests::fuzz_targets_use_auxiliary_size_limits",
+      "outcome": "ok"
+    },
+    {
+      "name": "tests::library_files_use_three_hundred_line_ratchet_target",
+      "outcome": "ok"
+    },
+    {
+      "name": "tests::storage_facades_use_tight_size_limits",
+      "outcome": "ok"
+    }
+  ],
+  "log_sha256": "af090cae94df72904f8c0ddfb3dfc1147bf8eb11cd34ec0076bf9a54a04ece7e",
+  "limits": "Detector qualification only; excludes runtime, smoke, and archive execution. Zrail dependency features include extra-traits on syn."
+}

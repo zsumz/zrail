@@ -1,0 +1,293 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "name": "empty",
+      "source": "version = 4\npackage = []\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": 0,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "target",
+      "source": "version = 4\npackage = [{name=\"kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 1,
+      "original_error": null,
+      "native_count": 1,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "unrelated",
+      "source": "version = 4\npackage = [{name=\"unrelated\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": 0,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "wrong-case",
+      "source": "version = 4\npackage = [{name=\"Kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": 0,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "underscore",
+      "source": "version = 4\npackage = [{name=\"kafka_wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": 0,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "prefix",
+      "source": "version = 4\npackage = [{name=\"pre-kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": 0,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "suffix",
+      "source": "version = 4\npackage = [{name=\"kafka-wire-more\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": 0,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "unicode",
+      "source": "version = 4\npackage = [{name=\"kafka-wir\\u00e9\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": 0,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "surrounding-space",
+      "source": "version = 4\npackage = [{name=\" kafka-wire \", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": 0,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "two-versions",
+      "source": "version = 4\npackage = [{name=\"kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}, {name=\"kafka-wire\", version=\"2.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 2,
+      "original_error": null,
+      "native_count": 2,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "missing-only",
+      "source": "version = 4\npackage = [{}]\n",
+      "original_count": null,
+      "original_error": "index not found",
+      "native_count": null,
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "missing-name"
+    },
+    {
+      "name": "scalar-string",
+      "source": "version = 4\npackage = [\"unrelated\"]\n",
+      "original_count": null,
+      "original_error": "index not found",
+      "native_count": null,
+      "native_error": "Cargo.lock package must be a table",
+      "stage": "missing-name"
+    },
+    {
+      "name": "scalar-integer",
+      "source": "version = 4\npackage = [1]\n",
+      "original_count": null,
+      "original_error": "index not found",
+      "native_count": null,
+      "native_error": "Cargo.lock package must be a table",
+      "stage": "missing-name"
+    },
+    {
+      "name": "scalar-array",
+      "source": "version = 4\npackage = [[]]\n",
+      "original_count": null,
+      "original_error": "index not found",
+      "native_count": null,
+      "native_error": "Cargo.lock package must be a table",
+      "stage": "missing-name"
+    },
+    {
+      "name": "target-then-missing",
+      "source": "version = 4\npackage = [{name=\"kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}, {}]\n",
+      "original_count": null,
+      "original_error": "index not found",
+      "native_count": null,
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "missing-name"
+    },
+    {
+      "name": "missing-then-target",
+      "source": "version = 4\npackage = [{}, {name=\"kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": null,
+      "original_error": "index not found",
+      "native_count": null,
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "missing-name"
+    },
+    {
+      "name": "target-and-unrelated",
+      "source": "version = 4\npackage = [{name=\"kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}, {name=\"unrelated\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 1,
+      "original_error": null,
+      "native_count": 1,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "name-integer",
+      "source": "version = 4\npackage = [{name=1}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "name-boolean",
+      "source": "version = 4\npackage = [{name=true}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "name-float",
+      "source": "version = 4\npackage = [{name=1.5}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "name-datetime",
+      "source": "version = 4\npackage = [{name=2026-09-09}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "name-array",
+      "source": "version = 4\npackage = [{name=[]}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "name-table",
+      "source": "version = 4\npackage = [{name={}}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "name-empty",
+      "source": "version = 4\npackage = [{name=\"\"}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "name-blank",
+      "source": "version = 4\npackage = [{name=\"  \"}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "name-newline",
+      "source": "version = 4\npackage = [{name=\"\\n\"}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package requires string name",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "target-then-non-string",
+      "source": "version = 4\npackage = [{name=\"kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}, {name=1}]\n",
+      "original_count": 1,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package.name must be a string",
+      "stage": "native-stricter-name"
+    },
+    {
+      "name": "target-without-version",
+      "source": "version = 4\npackage = [{name=\"kafka-wire\"}]\n",
+      "original_count": 1,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package requires string version",
+      "stage": "later-validation"
+    },
+    {
+      "name": "unrelated-without-version",
+      "source": "version = 4\npackage = [{name=\"unrelated\"}]\n",
+      "original_count": 0,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock package requires string version",
+      "stage": "later-validation"
+    },
+    {
+      "name": "duplicate-identity",
+      "source": "version = 4\npackage = [{name=\"kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}, {name=\"kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 2,
+      "original_error": null,
+      "native_count": null,
+      "native_error": "Cargo.lock contains duplicate package kafka-wire 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+      "stage": "later-validation"
+    },
+    {
+      "name": "reordered",
+      "source": "version = 4\npackage = [{name=\"unrelated\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}, {name=\"kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]\n",
+      "original_count": 1,
+      "original_error": null,
+      "native_count": 1,
+      "native_error": null,
+      "stage": "same-selection"
+    },
+    {
+      "name": "unknown-name-fields",
+      "source": "version = 4\npackage = [{name=\"kafka-wire\", version=\"1.0.0\", source=\"registry+https://github.com/rust-lang/crates.io-index\", checksum=\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", Name=\"unrelated\", metadata={name=\"other\"}}]\n",
+      "original_count": 1,
+      "original_error": null,
+      "native_count": 1,
+      "native_error": null,
+      "stage": "same-selection"
+    }
+  ]
+}

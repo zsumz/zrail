@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "status": "verified source/input slice; full repository qualification remains blocked",
+  "implementation_commit": "f552b5387b8d7941e8b52facdfe8e7e8829889b4",
+  "implementation_tree": "74b8e73ed0dd1c82bd2d8a331a210311811e69f8",
+  "snapshot": {
+    "commit": "a45be8071e6a663cd4ae3142cc5304ece9fdf45e",
+    "name": "kafka-driver",
+    "repository": "kafkars/kafka-driver",
+    "tree": "5a6dbfe18b7f8a22c6cf902803f0f1f222480b2b"
+  },
+  "policy_sha256": "ca58a580184e3ef1209b04c2b3188e0c8b7921d7d78a3c629a8e137d66887873",
+  "fixture_origins_sha256": "69dbf848608a70f88ad28ac023c95ac4e62622cf577669496bc169b941743bdf",
+  "source_test_sha256": "f9d1bcc036579e23d55b7d9f23d4d2aa95929f1fbe514b6a1397799107675be3",
+  "assertion_ids": [
+    "KD-ROUTE-FORBID-BrokerSet",
+    "KD-ROUTE-FORBID-ConnectionSet",
+    "KD-ROUTE-FORBID-Poller",
+    "KD-ROUTE-FORBID-SingleBroker",
+    "KD-ROUTE-INPUT-facade",
+    "KD-ROUTE-INPUT-route_admission",
+    "KD-ROUTE-INPUT-route_directory",
+    "KD-ROUTE-INPUT-route_failure",
+    "KD-ROUTE-INPUT-route_install",
+    "KD-ROUTE-INPUT-route_install_publish",
+    "KD-ROUTE-INPUT-route_install_rollback",
+    "KD-ROUTE-INPUT-route_install_work",
+    "KD-ROUTE-INPUT-route_resolution",
+    "KD-ROUTE-INPUT-route_state",
+    "KD-ROUTE-INPUT-route_turn",
+    "KD-ROUTE-OWNER-FIELD"
+  ],
+  "full_repository_qualified": false,
+  "lock_authority_accepted": false,
+  "differential": {
+    "runs": 2,
+    "byte_identical": true,
+    "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+    "payload_bytes": 6723169,
+    "cases": 189,
+    "accepted": 43,
+    "rejected": 146
+  },
+  "original_compilation": {
+    "per_run": 23,
+    "baseline_runnable_tests": 1,
+    "baseline_ignored": 0,
+    "missing_inputs": 11,
+    "invalid_utf8_inputs": 11
+  },
+  "artifact_validation": {
+    "command": "python3 scripts/rc9_route_evidence_test.py",
+    "unittest_methods": 2,
+    "adversarial_mutations": 42
+  },
+  "initial_failure": "The initial harness incorrectly required UTF-8 diagnostics to point at the macro invocation; rustc points at the invalid included byte. The corrected runner binds both distinct diagnostic locations and all unrelated-file decoys.",
+  "limitations": [
+    "Only the source-only route test and its eleven compile inputs are qualified; the mixed file's runtime scenario is retained and unqualified here.",
+    "Raw UTF-8 and physical-file observations do not claim semantic field/type identity, Cargo analysis, or full repository qualification.",
+    "The complete unchanged source-only test compiles and executes on the baseline. Missing inputs fail at the original include_str invocation; invalid UTF-8 diagnostics identify the included file's invalid byte."
+  ],
+  "artifacts": [
+    {
+      "artifact": "docs/rc9/evidence/route-source-parity.json.gz",
+      "payload_sha256": "db00e6f21140a0d7e3983de6fdf166ffdd04b1ccdba89ce56c96a2c70e300609",
+      "payload_bytes": 6723169,
+      "compressed_sha256": "f63bb441daa0b365c77d86e0f39b6884ebb25bd1454b8e7c0fe2063cdb496ccd"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-source-parity-a.log.gz",
+      "payload_sha256": "ee85f207468055f3c8a581a737a21b009814f384c8dc95805cf32d35cbb0938b",
+      "payload_bytes": 35925,
+      "compressed_sha256": "b8d8b0510eaca00aff8d88b52a18002bafe69c18f40ef7d86c1082e8a8997d01"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-source-parity-b.log.gz",
+      "payload_sha256": "d8d98d07b6aec1b62b7a9b3dd694302284b4d1347cb09ae4a4f46410185ce2ab",
+      "payload_bytes": 35852,
+      "compressed_sha256": "0aa8f2b716e5992a821e83a811d8269b031b2f92f5d7df85901baae39d6c108d"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-source-runner.json.gz",
+      "payload_sha256": "ed859e7d788f50b2c557f7d31580050db5d9a0e5fb401082ddc7a0bcc9ff1e0d",
+      "payload_bytes": 2093,
+      "compressed_sha256": "2225c2ebc1637116ef2da306e91c30c3f1dcc60f60aa02dc8b39f914dc136487"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-source-runner.py.gz",
+      "payload_sha256": "6221eb77cae359f690341f86069fff94140b6cf6c6b2b43568a2c9f097f6689e",
+      "payload_bytes": 4035,
+      "compressed_sha256": "bbd9caafeecaaaf00a3e34b805e21ed68b1869e1a3ca380117109bf09841a448"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-source-initial-parity-a.log.gz",
+      "payload_sha256": "159c75ca379342e1cdef16720719f14c9541145daa6ef447bf8ac66a0c855af7",
+      "payload_bytes": 34266,
+      "compressed_sha256": "69298e0c4873bbe210c9054479444ccd79ccb4697a539a15ea46b8800c6b13ae"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-source-initial-runner.json.gz",
+      "payload_sha256": "96fe331a5c8f23c0c50e70384947bca31f3e939fbc29ea18e74cdbf05c4b8aa1",
+      "payload_bytes": 1451,
+      "compressed_sha256": "d48d9450497a0a626010a1d7f1bcc43571097899ce168f4fe7afa082f50a8fd6"
+    },
+    {
+      "artifact": "docs/rc9/evidence/route-source-initial-runner.py.gz",
+      "payload_sha256": "de00221bc14ceee0e7f80179ab7b1a2ec97e18aee7c344b3f8ade994048275f2",
+      "payload_bytes": 4029,
+      "compressed_sha256": "602f6143108d3916298e2be9df18da4ed4f6e7be5866ba6ddc54acdb3ea5ec18"
+    }
+  ]
+}

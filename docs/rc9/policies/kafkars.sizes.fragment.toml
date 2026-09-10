@@ -1,0 +1,901 @@
+# PARTIAL REVIEW FRAGMENT: size policy only, not a complete replacement bundle.
+# Source: kafkars/kafkars 67ad7aa8d91f9639c87b00338b9e21a633f7bb4c
+# guardrails.toml SHA-256: fd8e749c86f21034f5faeae3a3c99863c0606956a5c4e1a7adbe327dff852d8c
+# No lock authority is accepted by this translation.
+[source.rust.budgets]
+exception_metadata = "owner-issue"
+
+[[source.rust.budgets.overrides]]
+name = "kf-test"
+include = ["crates/**/*_test.rs", "crates/kafka-client-core/tests/**/*.rs", "crates/kafka-client-engine/tests/**/*.rs", "crates/kafka-client-guardrails/tests/**/*.rs", "crates/kafka-client-sim/tests/**/*.rs", "crates/kafkars/tests/**/*.rs"]
+exclude = ["crates/kafka-client-guardrails/tests/fixtures/**"]
+budget = { target = 300, soft = 500, hard = 700 }
+reason = "Preserve the frozen kf-test size family."
+
+[[source.rust.budgets.overrides]]
+name = "kf-auxiliary"
+include = ["crates/**/examples/**/*.rs", "crates/**/src/bin/**/*.rs", "crates/**/src/main.rs"]
+exclude = ["crates/**/*_test.rs", "crates/kafka-client-core/tests/**/*.rs", "crates/kafka-client-engine/tests/**/*.rs", "crates/kafka-client-guardrails/tests/**/*.rs", "crates/kafka-client-guardrails/tests/fixtures/**", "crates/kafka-client-sim/tests/**/*.rs", "crates/kafkars/tests/**/*.rs"]
+budget = { target = 300, soft = 500, hard = 700 }
+reason = "Preserve the frozen kf-auxiliary size family."
+
+[[source.rust.budgets.overrides]]
+name = "kf-facade"
+include = ["crates/**/lib.rs", "crates/**/mod.rs"]
+exclude = ["crates/**/*_test.rs", "crates/**/examples/**/*.rs", "crates/**/src/bin/**/*.rs", "crates/**/src/main.rs", "crates/kafka-client-core/tests/**/*.rs", "crates/kafka-client-engine/tests/**/*.rs", "crates/kafka-client-guardrails/tests/**/*.rs", "crates/kafka-client-guardrails/tests/fixtures/**", "crates/kafka-client-sim/tests/**/*.rs", "crates/kafkars/tests/**/*.rs"]
+budget = { target = 80, soft = 120, hard = 180 }
+reason = "Preserve the frozen kf-facade size family."
+
+[[source.rust.budgets.overrides]]
+name = "kf-implementation"
+include = ["crates/**/*.rs"]
+exclude = ["crates/**/*_test.rs", "crates/**/examples/**/*.rs", "crates/**/lib.rs", "crates/**/mod.rs", "crates/**/src/bin/**/*.rs", "crates/**/src/main.rs", "crates/kafka-client-core/tests/**/*.rs", "crates/kafka-client-engine/tests/**/*.rs", "crates/kafka-client-guardrails/tests/**/*.rs", "crates/kafka-client-guardrails/tests/fixtures/**", "crates/kafka-client-sim/tests/**/*.rs", "crates/kafkars/tests/**/*.rs"]
+budget = { target = 240, soft = 360, hard = 500 }
+reason = "Preserve the frozen kf-implementation size family."
+
+[[source.rust.budgets.exceptions]]
+path = "crates/kafka-client-core/src/admin/exports.rs"
+hard = 561
+reason = "the explicit deterministic Admin export table names the complete source-preview policy vocabulary; splitting it is a facade-only follow-up after the preview surface settles"
+owner = "client-architecture"
+issue = "rust-beta-core-admin-exports-split"
+
+[[source.rust.budgets.exceptions]]
+path = "crates/kafka-client-engine/src/admin/public_api.rs"
+hard = 624
+reason = "the declarative Admin export surface remains explicit across the complete source-preview vocabulary; splitting the shared reexport table is a separate facade-only change"
+owner = "client-architecture"
+issue = "rust-beta-admin-public-api-split"
+
+[[source.rust.budgets.exceptions]]
+path = "crates/kafka-client-engine/src/driver/rpc.rs"
+hard = 670
+reason = "the explicit driver RPC facade names every concrete source-preview tracked lane, including ShareGroupHeartbeat; splitting the declaration table is a separate driver-wide shape change"
+owner = "client-architecture"
+issue = "rust-beta-driver-rpc-facade-split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/alter_share_group_offsets/outcome.rs"
+baseline = 268
+reason = "the bounded API 91 outcome seam keeps caller-ordered partition identities, nonzero topic IDs, exact group and partition errors, delivery certainty, and terminal variants in one deterministic vocabulary"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/delete_share_group_offsets/outcome.rs"
+baseline = 245
+reason = "the bounded API 92 outcome seam keeps exact signed top-level and per-topic broker failures, nonzero topic identities, delivery certainty, and retained-byte accounting together"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/delete_share_group_offsets/transition.rs"
+baseline = 268
+reason = "the destructive API 92 state transition keeps admission, handoff, deadline, broker settlement, and shutdown recovery exhaustive over one explicit operation state"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/delete_share_group_offsets/transition_test.rs"
+baseline = 351
+reason = "the destructive API 92 transition evidence covers pre-handoff and post-handoff deadlines, exact delivery certainty, broker outcomes, recovery, and terminal idempotence beside the state owner"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/describe_delegation_tokens/transition_test.rs"
+baseline = 357
+reason = "the API 41 transition evidence covers secret-bearing success, exact rejection, delivery certainty, deadline, recovery, and terminal idempotence beside one machine"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/describe_features/description.rs"
+baseline = 252
+reason = "the bounded API 18 result model keeps supported and finalized feature validation, canonical ordering, version-completeness evidence, retained-size accounting, and terminal result identity in one deterministic seam"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/describe_replica_log_dirs/outcome.rs"
+baseline = 275
+reason = "the bounded API 35 outcome seam keeps caller-ordered replica identity, optional current and future placements, exact broker errors, throttle, and delivery facts cohesive"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/describe_share_group/correlation.rs"
+baseline = 263
+reason = "the deterministic API 77 correlation seam validates singleton identity, canonical nested ordering, exact broker facts, and retained capacity before terminal acceptance"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/describe_share_group/machine.rs"
+baseline = 279
+reason = "the API 77 deterministic machine keeps explicit lifecycle state, bounded input effects, and exact batch sequencing ownership together"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/describe_share_group/result.rs"
+baseline = 402
+reason = "the bounded API 77 result vocabulary keeps group, member, assignment, topic identity, exact broker error, delivery certainty, and terminal facts cohesive for the public facade"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/describe_share_group/transition.rs"
+baseline = 282
+reason = "the API 77 transition keeps singleton and caller-ordered batch progression under one original deadline and cumulative byte budget"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/describe_share_group/transition_test.rs"
+baseline = 333
+reason = "the API 77 transition evidence covers singleton, batch continuation, deadlines, recovery, exact errors, and terminal idempotence beside the owner"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/describe_streams_group/correlation.rs"
+baseline = 314
+reason = "the deterministic API 89 correlation seam validates singleton identity, full nested topology shape, future-compatible raw values, canonical ordering, and retained capacity before terminal acceptance"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/describe_streams_group/result/value.rs"
+baseline = 269
+reason = "the generated-free API 89 value seam keeps reusable topology, endpoint, task-offset, task-assignment, topic, and key-value ownership cohesive"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/describe_streams_group/transition.rs"
+baseline = 292
+reason = "the API 89 transition keeps singleton and caller-ordered batch topology progression under one original deadline and cumulative byte budget"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/exports.rs"
+baseline = 561
+reason = "the deterministic Admin export facade explicitly exposes the complete source-preview policy, lifecycle, exact-error, generic configuration-resource, and exact-broker routing vocabulary after the DescribeLogDirs surface moved behind a focused declarative child"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/list_consumer_groups/transition_test.rs"
+baseline = 326
+reason = "the ListGroups transition evidence covers exact-broker sequencing, consumer and all-group scopes, canonical deduplication, exact broker errors, and protocol-type filtering together"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/mod.rs"
+baseline = 110
+reason = "the declarative deterministic Admin facade names the complete source-preview policy and sibling evidence surface"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/model.rs"
+baseline = 345
+reason = "the deterministic CreateTopics input seam keeps automatic and manual placement, configuration, bounded validation, and canonical retained-plan construction cohesive"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/admin/update_features/transition_test.rs"
+baseline = 302
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/consumer/classic_group/assignment.rs"
+baseline = 267
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/consumer/classic_group/cooperative_sticky.rs"
+baseline = 258
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/consumer/classic_group/model.rs"
+baseline = 256
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/consumer/classic_group/processing_lease/machine.rs"
+baseline = 274
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/consumer/classic_group/reconciliation.rs"
+baseline = 271
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/consumer/classic_group/transition.rs"
+baseline = 269
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/consumer/mod.rs"
+baseline = 91
+reason = "the declarative core consumer facade names atomic batch control, incremental direct assignment, and their sibling evidence"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/consumer/resolved_assignment/reconciliation_transition.rs"
+baseline = 291
+reason = "the focused owner keeps resolved reconciliation and heterogeneous acquisition fencing in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/consumer/resolved_assignment/reconciliation_transition_test.rs"
+baseline = 449
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/producer/idempotence_transition.rs"
+baseline = 253
+reason = "the identity transition keeps exact code-fourteen retry classification beside atomic terminal fencing; this measured baseline ratchets further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/producer/mod.rs"
+baseline = 95
+reason = "the declarative producer facade names the complete deterministic producer state surface including bounded identity retry, waiting, and their evidence"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/public_api.rs"
+baseline = 500
+reason = "the explicit generated-free core facade reexports the complete deterministic Rust source-preview vocabulary, including bounded producer identity retry and manual topic assignments"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-core/src/transaction/offset_commit/transition.rs"
+baseline = 246
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/abort_partition_transaction/host.rs"
+baseline = 255
+reason = "the bounded API 27 owner retains one leader-routed destructive call, terminal publication, shutdown recovery, and exact byte accounting in one lifecycle seam"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/completion.rs"
+baseline = 429
+reason = "the closed Admin notifier owns the capacity equation, tickets, ports, and worker while typed publisher implementations live in a focused child seam"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/completion_test.rs"
+baseline = 630
+reason = "the shared completion scenarios retain every concrete source-preview Admin terminal in one closed capacity equation and off-reactor publication set"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/create_delegation_token/host.rs"
+baseline = 267
+reason = "the bounded API 38 host retains operation admission, one tracked call, secret-safe completion, recovery, and exact byte accounting in one lifecycle owner"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/describe_delegation_tokens/host.rs"
+baseline = 256
+reason = "the bounded API 41 host retains operation admission, one tracked call, secret-bearing completion, recovery, and exact byte accounting in one lifecycle owner"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/describe_log_dirs/outcome.rs"
+baseline = 329
+reason = "the stable terminal seam losslessly translates nested broker, log-directory, replica, throttle, failure, and delivery facts for the public bridge"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/describe_outcome.rs"
+baseline = 243
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/describe_producers/host.rs"
+baseline = 252
+reason = "the bounded API 61 owner retains leader-target resolution, exact-broker handoff, tracked-call settlement, terminal publication, and retained-byte accounting in one lifecycle seam"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/describe_replica_log_dirs/host.rs"
+baseline = 269
+reason = "the bounded API 35 owner retains sequential exact-broker handoff, tracked-call settlement, terminal publication, and retained-byte accounting in one lifecycle seam"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/describe_replica_log_dirs/host/response.rs"
+baseline = 277
+reason = "the API 35 response seam validates exact broker correlation and restores optional current and future placements without losing caller order or signed errors"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/describe_replica_log_dirs/outcome.rs"
+baseline = 243
+reason = "the stable API 35 terminal seam translates caller-ordered placements, exact broker failures, throttle, and delivery facts for the public bridge"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/describe_share_group/host.rs"
+baseline = 301
+reason = "the API 77 host retains singleton and sequential batch machines, exact coordinator calls, terminal publication, and cumulative bytes in one owner"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/describe_streams_group/outcome/translate.rs"
+baseline = 287
+reason = "the API 89 outcome translator exhaustively preserves the complete core topology graph, future-compatible raw values, batch outcomes, broker rejection, and delivery facts for the public bridge"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/fence_producers/host.rs"
+baseline = 245
+reason = "the bounded API 22 owner retains sequential coordinator handoff, raw terminal ownership, publication, recovery, and exact byte accounting in one lifecycle seam"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/handle.rs"
+baseline = 298
+reason = "the runtime-neutral engine Admin handle retains bounded capture-first admission ports for the complete source-preview surface"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/mod.rs"
+baseline = 135
+reason = "the declarative engine Admin facade names the complete source-preview owner, public vocabulary, and completion evidence surface"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/model.rs"
+baseline = 261
+reason = "the engine-owned CreateTopics request seam keeps generated-free automatic and manual placement conversion plus validation before deterministic core handoff"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/admin/public_api.rs"
+baseline = 624
+reason = "the declarative engine Admin API facade explicitly reexports the complete typed source-preview admission, observer, outcome, and generic configuration-resource surface"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/fetch_store.rs"
+baseline = 246
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group.rs"
+baseline = 391
+reason = "the declarative classic-group facade names the complete sibling module and test surface including bounded Heartbeat liveness recovery, exact receive-notification publication, graceful revocation, named seek admission, and confirmed-state observation"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_assignment.rs"
+baseline = 251
+reason = "catalog, event observation, processing-lease, and Fetch retirement are prepared and committed through one exact assignment-loss seam"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_assignment_test.rs"
+baseline = 517
+reason = "exact catalog, processing-lease, and Fetch retirement scenarios remain beside their shared revocation seam"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_candidate.rs"
+baseline = 293
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_candidate_prepare.rs"
+baseline = 242
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_entry_fault.rs"
+baseline = 282
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this reduced exact baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_event.rs"
+baseline = 282
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_execution_close.rs"
+baseline = 278
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_fetch/delivery.rs"
+baseline = 269
+reason = "assignment-fenced Fetch transfer and exact reclaim remain one linear byte-owner seam"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_fetch/model.rs"
+baseline = 244
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_fetch/position_transfer_test.rs"
+baseline = 363
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_fetch/prepare.rs"
+baseline = 241
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_fetch/retirement_test.rs"
+baseline = 339
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_fetch/turn.rs"
+baseline = 292
+reason = "the explicit bounded Fetch and seek-position stage order remains one execution owner after its scalar report moved to a child module"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_heartbeat.rs"
+baseline = 249
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_heartbeat_prepare_test.rs"
+baseline = 437
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this reduced exact baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_join_interpret.rs"
+baseline = 249
+reason = "Join settlement keeps static MEMBER_ID_REQUIRED staging and dynamic or static terminal interpretation inside one cycle-fenced transition seam"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_leave/completion.rs"
+baseline = 253
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_reconciliation_turn.rs"
+baseline = 451
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_rediscovery_execution.rs"
+baseline = 247
+reason = "route-less retry delegates to the existing consumer fencing owner while token-backed invalidation remains terminal-gated; this reduced exact baseline ratchets further growth"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_rejoin_due.rs"
+baseline = 248
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/classic_group_sync_install.rs"
+baseline = 313
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/registry_close.rs"
+baseline = 319
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/registry_delivery.rs"
+baseline = 266
+reason = "fresh-time processing progress and exact delivery transfer or reclaim remain one registry boundary"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/registry_delivery_test.rs"
+baseline = 367
+reason = "group selection, contention, close, renewal, expiration, and reclaim scenarios exercise one delivery boundary"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/registry_entry.rs"
+baseline = 272
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/registry_graceful_revocation.rs"
+baseline = 295
+reason = "public acknowledgement mapping now belongs to the retained revocation owner; this reduced exact baseline ratchets further growth"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/registry_port_registration.rs"
+baseline = 338
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/registry_processing.rs"
+baseline = 253
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/registry_shard.rs"
+baseline = 250
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/registry_test_support.rs"
+baseline = 250
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group/session_catalog.rs"
+baseline = 269
+reason = "the bounded session catalog owns dynamic and static Kafka identity spellings through Join replacement and confirmed metadata without a second identity owner"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group_registration.rs"
+baseline = 246
+reason = "the public engine handle keeps capture-first registration, exact rejected request restoration, its sticky receive wake token, and unique operation entry points together"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group_registration_request.rs"
+baseline = 326
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/group_registration_request_test.rs"
+baseline = 492
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/mod.rs"
+baseline = 105
+reason = "the declarative consumer facade names the public ShareAcknowledge boundary and focused incremental direct-assignment admission owner"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/consumer/share/mod.rs"
+baseline = 149
+reason = "the declarative share facade names acknowledgement completion, capture-first admission, hosted publication, and their sibling evidence beside ShareFetch ownership"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/driver/mod.rs"
+baseline = 177
+reason = "the narrow driver facade explicitly names tracked-call, raw-terminal, and recovery types for the complete source-preview Admin surface"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/driver/rpc.rs"
+baseline = 670
+reason = "the declarative driver RPC facade explicitly names the bounded group-commit coordinator-retry owner, ShareGroupHeartbeat, and ShareAcknowledge beside every concrete source-preview tracked lane without a glob capability bypass"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/driver/rpc/calls.rs"
+baseline = 277
+reason = "the central driver RPC call owner retains exact admission, polling, settlement, and route invalidation for the supported broker operations"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/driver/rpc/calls_test.rs"
+baseline = 355
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/driver/rpc/remove_raft_voter_terminal.rs"
+baseline = 254
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/driver/rpc/transaction_control/add_partitions.rs"
+baseline = 268
+reason = "AddPartitionsToTxn retains exact response correlation, coordinator-refresh eligibility, and retry-safety evidence in one terminal owner"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/driver/rpc/transaction_offsets/add_offsets.rs"
+baseline = 296
+reason = "AddOffsetsToTxn retains one explicit call, causal coordinator refresh, terminal delivery, and abort-required ownership state machine"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/driver/rpc/transaction_offsets/offset_commit.rs"
+baseline = 254
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/driver/rpc/unregister_broker_terminal.rs"
+baseline = 242
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/engine.rs"
+baseline = 338
+reason = "the engine composition root retains common configuration and admission ports while Admin and shutdown admission live in focused child seams"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/engine_host/admin/recovery.rs"
+baseline = 251
+reason = "the Admin recovery dispatcher exhaustively returns each concrete tracked owner to its exact bounded host after driver shutdown"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/engine_host/admin/schedule.rs"
+baseline = 451
+reason = "the fair Admin scheduler drives every bounded source-preview operation once per fresh-time host cycle"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/engine_host/error/host_display.rs"
+baseline = 473
+reason = "the host error formatter preserves every concrete source-preview Admin invariant identity while completion and receive-notifier wording lives in the focused consumer owner"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/engine_host/recovery.rs"
+baseline = 244
+reason = "the top-level recovery dispatcher keeps exact producer, consumer, transaction, and Admin ownership routing exhaustive"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/engine_host/start.rs"
+baseline = 484
+reason = "host startup explicitly constructs every bounded source-preview operation owner and transfers its exact admission port"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/producer/host.rs"
+baseline = 246
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/producer/mod.rs"
+baseline = 85
+reason = "the declarative producer host facade names bounded waiting, automatic partition resolution, and their evidence surface"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/admin/alter_replica_log_dirs/request.rs"
+baseline = 286
+reason = "the destructive request seam validates bounded assignments and groups caller intent into generated directory and topic ownership without transport policy"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/admin/alter_replica_log_dirs/response.rs"
+baseline = 330
+reason = "the destructive response seam validates shape, exact caller correlation, signed broker errors, and retained bytes before core settlement"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/admin/alter_share_group_offsets/response.rs"
+baseline = 244
+reason = "the strict API 91 response seam validates exact v0 shape, bounded retention, nonzero topic identities, group and partition errors, and caller-order correlation before destructive core settlement"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/admin/delete_share_group_offsets/response.rs"
+baseline = 335
+reason = "the strict API 92 response seam validates bounded shape, exact caller-order topic correlation, signed top-level and per-topic errors, nonzero topic identities, and retained bytes before core settlement"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/admin/describe_acls/response.rs"
+baseline = 244
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/admin/describe_consumer_groups/modern_response_test.rs"
+baseline = 382
+reason = "the KIP-848 normalizer scenarios prove signed epochs, typed current and target assignments, bounded diagnostics, and malformed-shape rejection together"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/admin/describe_log_dirs/model.rs"
+baseline = 261
+reason = "the normalized protocol model owns bounded nested log-directory and replica facts without leaking generated DTOs into execution policy"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/admin/describe_log_dirs/response.rs"
+baseline = 378
+reason = "the strict response seam validates nested broker shape, signed errors, caller correlation, and retained bytes before core settlement"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/admin/describe_streams_group/materialize.rs"
+baseline = 317
+reason = "the fallible API 89 materializer copies and canonically orders the complete validated topology, member, task, endpoint, key-value, and topology-description graph without leaking generated DTOs"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/admin/list_share_group_offsets/response.rs"
+baseline = 363
+reason = "the strict API 90 response seam validates v0-v1 scalar semantics, bounded shape, selected or canonical ordering, exact top-level and per-partition errors, nonzero topic identities, and retained bytes before core settlement"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/admin/mod.rs"
+baseline = 117
+reason = "the declarative Admin protocol facade names strict request and response adaptation for the complete source-preview surface"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/consumer/classic_group/join_request.rs"
+baseline = 298
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/consumer/classic_group/join_response_members.rs"
+baseline = 270
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/consumer/classic_group/join_response_members_test.rs"
+baseline = 302
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/protocol/consumer/mod.rs"
+baseline = 89
+reason = "the declarative consumer protocol facade names classic-group, Fetch, share-heartbeat, ShareAcknowledge, position, and offset-commit protocol ownership including static membership"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/public_api.rs"
+baseline = 495
+reason = "the engine crate facade explicitly reexports the complete typed Rust source-preview engine after transactional exports moved into a focused declarative child"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/transaction/initialization/host.rs"
+baseline = 245
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/transaction/initialization/host/terminal.rs"
+baseline = 265
+reason = "the transaction-initialization settlement seam preserves its prior public failure taxonomy while the shared API 22 terminal now distinguishes compatibility for producer-fencing callers"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/transaction/initialization/host_test.rs"
+baseline = 325
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/transaction/initialization/shard.rs"
+baseline = 246
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this tightened measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-engine/src/transaction/offset_commit/driver_evidence.rs"
+baseline = 247
+reason = "the focused owner keeps its reviewed responsibility in one explicit seam; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-guardrails/tests/admin_create_delegation_token_guard/expectations.rs"
+baseline = 352
+reason = "the detector-safe finite API 38 ownership, capability, and mirror path map remains explicit in one checked-in expectation table"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-guardrails/tests/admin_describe_delegation_tokens_guard/expectations.rs"
+baseline = 340
+reason = "the detector-safe finite API 41 ownership, capability, and mirror path map remains explicit in one checked-in expectation table"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-guardrails/tests/admin_expire_delegation_token_guard/expectations.rs"
+baseline = 335
+reason = "the detector-safe finite API 40 ownership, capability, and mirror path map remains explicit in one checked-in expectation table"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-guardrails/tests/admin_renew_delegation_token_guard/expectations.rs"
+baseline = 335
+reason = "the detector-safe finite API 39 ownership, capability, and mirror path map remains explicit in one checked-in expectation table"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-guardrails/tests/consumer_assigned_event_ownership_guard.rs"
+baseline = 311
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-guardrails/tests/consumer_classic_group_fetch_preparation_guard.rs"
+baseline = 332
+reason = "the exact Fetch mutation and attempt-authority policy includes atomic batch-control ownership in one guard scenario"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-guardrails/tests/consumer_group_registry_guard.rs"
+baseline = 305
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafka-client-guardrails/tests/support/capability.rs"
+baseline = 320
+reason = "the focused evidence keeps its related ownership and regression scenarios together; this exact measured baseline ratchets any further growth pending a focused split"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafkars/src/admin/handle.rs"
+baseline = 365
+reason = "the shared Admin handle retains the stable common builder surface after group and specialist methods moved into focused child seams"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafkars/src/admin/mod.rs"
+baseline = 156
+reason = "the declarative Admin facade explicitly names the complete Rust source-preview module and sibling-test surface"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafkars/src/admin/public_api.rs"
+baseline = 255
+reason = "the curated generated-free Admin reexport table keeps the complete Rust source-preview vocabulary explicit without globbing protocol or engine internals"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafkars/src/bridge/admin.rs"
+baseline = 380
+reason = "the private Admin bridge retains common capture-first submissions after grouped, DescribeCluster, and DescribeTopics handoffs moved into focused child seams"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafkars/src/bridge/describe_streams_group/result.rs"
+baseline = 327
+reason = "the API 89 bridge result translator exhaustively maps the complete generated-free topology, member, task, exact broker rejection, and delivery vocabulary into the curated public surface"
+
+[[ratchet]]
+rule = "rust.file-size"
+target = "crates/kafkars/src/bridge/mod.rs"
+baseline = 138
+reason = "the declarative bridge facade explicitly names every private Rust source-preview adapter including share-consumer ownership"

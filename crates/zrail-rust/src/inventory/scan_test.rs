@@ -4,15 +4,15 @@ use std::{collections::BTreeMap, fs, path::PathBuf};
 
 use zrail_core::{
     AnalysisContract, Budget, Contract, CycleMode, DependenciesContract, DependencyMode, ExactMode,
-    FacadeMode, FileSizeContract, HygieneContract, LintSuppressionMode, ModuleDocsMode, PolicyMode,
-    RepositoryContract, RustSourceContract, SourceContract, SymlinkMode, TestMode,
+    FacadeMode, FileSizeContract, HygieneContract, LintSuppressionMode, MAX_DIRECTORY_DEPTH,
+    ModuleDocsMode, PolicyMode, RepositoryContract, RustSourceContract, SourceContract,
+    SymlinkMode, TestMode,
 };
 
 use crate::inventory::exclusions::excluded_subtree;
 
 use super::{
-    MAX_DIRECTORY_DEPTH, MAX_RUST_SOURCE_BYTES, MAX_TOTAL_RUST_SOURCE_BYTES, add_source_bytes,
-    inventory_repository,
+    MAX_RUST_SOURCE_BYTES, MAX_TOTAL_RUST_SOURCE_BYTES, add_source_bytes, inventory_repository,
 };
 
 #[test]
@@ -220,6 +220,7 @@ fn contract() -> Contract {
         schema: 1,
         adapters: vec!["rust".into()],
         repository: RepositoryContract {
+            files: Vec::new(),
             roots: vec!["crates".into()],
             exclude: Vec::new(),
             workspace_members: ExactMode::Exact,
@@ -232,6 +233,7 @@ fn contract() -> Contract {
             unassigned_packages: PolicyMode::Allow,
             cycles: CycleMode::Allow,
             crate_roots: Vec::new(),
+            lock_packages: Vec::new(),
         },
         analysis: AnalysisContract::default(),
         source: SourceContract {
@@ -249,6 +251,8 @@ fn contract() -> Contract {
                 macros: zrail_core::MacroExpansionContract::default(),
                 duplication: zrail_core::RustDuplicationContract::default(),
                 types: Vec::new(),
+                budgets: None,
+                inventories: Vec::new(),
                 hygiene: HygieneContract {
                     unsafe_code: PolicyMode::Deny,
                     lint_suppressions: LintSuppressionMode::Deny,

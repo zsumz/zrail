@@ -1,0 +1,4 @@
+Audit integrity: pass; 9792 files, 72155 discovery candidates
+Reviewed assertion instances: 103; implemented: 7; verified: 5
+Assertion inventory complete: False; release verdict: blocked
+audit validation failed: release blocked: assertion inventory is incomplete

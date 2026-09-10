@@ -17,6 +17,31 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 scripts/structure-check
+python3 scripts/rc9-inventory-check
+python3 scripts/rc9_census_evidence_test.py
+python3 scripts/rc9_text_sources_test.py
+python3 scripts/rc9_qualification_evidence_test.py
+python3 scripts/rc9_method_evidence_test.py
+python3 scripts/rc9_route_evidence_test.py
+python3 scripts/rc9_retired_evidence_test.py
+python3 scripts/rc9_retired_boundary_runner_test.py
+python3 scripts/rc9_retired_boundary_evidence_test.py
+python3 scripts/rc9_traversal_runner_test.py
+python3 scripts/rc9_traversal_evidence_test.py
+python3 scripts/rc9_dependency_detector_runner_test.py
+python3 scripts/rc9_dependency_detector_evidence_test.py
+python3 scripts/rc9_metadata_parent_runner_test.py
+python3 scripts/rc9_metadata_parent_evidence_test.py
+python3 scripts/rc9_lock_array_runner_test.py
+python3 scripts/rc9_lock_array_evidence_test.py
+python3 scripts/rc9_lock_names_runner_test.py
+python3 scripts/rc9_lock_names_evidence_test.py
+python3 scripts/rc9_lock_prefix_runner_test.py
+python3 scripts/rc9_lock_prefix_conversion_test.py
+python3 scripts/rc9_lock_prefix_evidence_test.py
+python3 scripts/rc9_registry_test.py
+python3 scripts/rc9_route_runtime_test.py
+python3 scripts/rc9_route_runtime_evidence_test.py
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --all-features --locked --offline -- -D warnings
 cargo test --workspace --all-features --locked --offline

@@ -1,0 +1,148 @@
+# Open reviewed assertion blockers
+
+Release verdict: **blocked**. This list names each reviewed but unverified
+assertion instance. It does not close the additional discovery blockers
+`RC9-INVENTORY-KD`, `RC9-INVENTORY-KF`, and `RC9-INVENTORY-RF`.
+The fallible-call discovery gap is closed by the expanded census; its new
+candidates still require review. The fragment-discovery defect
+`RC9-INVENTORY-FRAGMENTS` is also closed by a bound, repeated census; its 186 new
+candidates remain unreviewed.
+
+All unreviewed candidate IDs are enumerated in `census.json.gz`. Non-Rust
+files and opaque or invalid syntax remain explicit review work.
+`RF-PRIVATE-NAME-PATTERNS` is closed by the user's approved retirement in
+[RC9-DECISION-RF-PRIVATE-NAMES](DECISIONS.md).
+
+Rafter public API/docs discovery also remains open as `RC9-INVENTORY-RF-PUBLIC-API`: its enforced warnings and 41 exact path/text allowances must be expanded before any replacement claim.
+
+`RC9-NATIVE-TRAVERSAL-CONTRACT` remains open for renewed assembled-policy
+qualification. The corrected `inspect` predicate loads without weakening count
+validation, and the schema carrier includes all 119 file policies. Publicly
+loaded physical fixtures and report/lock tests cover the correction. Repeated
+signed-producer traversal and registry evidence still needs renewal; historical
+count-zero reports remain predicate-only proof. The schema scaffold is not a
+complete downstream contract.
+See [the registry scope](inventory/KAFKA-DRIVER-REGISTRY.md).
+
+The separate reference runner also remains open as `RC9-INVENTORY-RF-REFERENCE-SCRIPT`: its patch-closure checks and six uncapped hard allowances require explicit translation and review.
+
+The fifteen routing execution rows are verified only for original execution plus
+the proposed patched-snapshot native mirror. The one-line explicit-trait helper
+patch remains a downstream cutover prerequisite; no untouched-snapshot or full
+policy qualification is claimed. See [the runtime evidence](evidence/route-runtime-index.json).
+
+| Assertion ID | Cause |
+| --- | --- |
+| `KD-CI-ENFORCEMENT` | The mission explicitly requires replacing this prohibition with an enforced zrail lane. The new lane and its required policy/receipt evidence are not yet qualified. |
+| `KD-FACADE-LIVE` | Predicate fixtures pass; full downstream selection and complete declarative policy qualification remain open. |
+| `KD-FACADE-PARSE` | Stock wiring-only and test-facade policies already reject non-item fragments through RUST-FACADE-002, and malformed source fails parsing. Bind every frozen facade and the exact original implementation_items helper to positive/negative differential fixtures; preserve rc8 declarative fragment behavior. |
+| `KD-REGISTRY-PARSE` | Typed conversion and 249 original/27 native fixtures now include corrected inspection. Renew and bind repeated signed-producer traversal/registry evidence; the schema carrier is not a qualified replacement. |
+| `KD-REGISTRY-SCHEMA` | Source schema 1 and strict native schemas 1/2 have focused fixtures. Resolve the traversal-contract blocker and bind repeated complete-carrier evidence before verification. |
+| `KD-TEST-PLACEMENT-DETECTOR` | Execute the exact frozen detector fixture and compare the structural observations, including original order and cardinality; a generic nonzero zrail status is insufficient. |
+| `KD-TEST-PLACEMENT-LIVE` | Preserve the top-level selection and intentional raw cfg-token predicate, or obtain a separately approved normalization. Semantic cfg(test) detection alone permits legacy-forbidden cfg(not(test)) and feature="latest" inline modules; nested detection also differs. No policy/diagnostic fixtures yet. |
+| `KD-TEST-PLACEMENT-PARSE` | The authored inventory already requires strict file syntax over the same frozen production path selection. Bind the original test_body_kinds helper and its exact detector source to differential parser fixtures before claiming this separate assertion verified. |
+| `KF-BUDGET-ALLOW-PATH` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-ALLOW-PRESENCE` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-ALLOW-UNIQUE` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-BASELINE-PATH` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-BASELINE-PRESENCE` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-BASELINE-UNIQUE` | Predicate implementation exists; exact frozen positive/negative mapping remains to qualify. |
+| `KF-BUDGET-DECOY-FIXTURE` | Required detector input must be imported and bound; this assertion is not classified as system behavioral evidence. |
+| `KF-BUDGET-NESTED-TESTS` | Future nested path classification passes; the exact nested-decoy-manifest counterexample still needs import and complete Cargo/source qualification. |
+| `KF-FACADE-LIVE` | Predicate fixtures pass; full downstream selection and complete declarative policy qualification remain open. |
+| `KF-FETCH-ORDER-ACTIVATION` | Bounded code-order predicate is absent; its stronger code-only semantics need explicit difference evidence. An owner allowlist is insufficient. |
+| `KF-FETCH-ORDER-CONTROL` | Bounded code-order predicate is absent; its stronger code-only semantics need explicit difference evidence. An owner allowlist is insufficient. |
+| `KF-FETCH-ORDER-PREPARE` | Bounded code-order predicate is absent; its stronger code-only semantics need explicit difference evidence. An owner allowlist is insufficient. |
+| `KF-FETCH-PRESENCE-01` | Required literal/code predicate translation and omission fixtures remain open. |
+| `KF-FETCH-PRESENCE-02` | Required literal/code predicate translation and omission fixtures remain open. |
+| `KF-FETCH-PRESENCE-03` | Required literal/code predicate translation and omission fixtures remain open. |
+| `KF-SCAN-MINIMUM` | Repository-file assertions and exact source-selection fixtures are required; passing the frozen scan does not supply a replacement guard. |
+| `KF-SCAN-ROOTS` | Native repository.roots already checks directory presence; the frozen positive/negative source-selection qualification still needs intended-diagnostic linkage. |
+| `RF-BOUNDARY-ENTRY-rafter` | Bind original/native directory iterator failure and complete selected-glob traversal to the intended completeness diagnostic; a successful readable frozen tree does not exercise this failure precondition. |
+| `RF-BOUNDARY-ENTRY-rafter-app` | Bind original/native directory iterator failure and complete selected-glob traversal to the intended completeness diagnostic; a successful readable frozen tree does not exercise this failure precondition. |
+| `RF-BOUNDARY-ENTRY-rafter-runtime-api` | Bind original/native directory iterator failure and complete selected-glob traversal to the intended completeness diagnostic; a successful readable frozen tree does not exercise this failure precondition. |
+| `RF-BOUNDARY-READ-rafter` | Each selected root has a native malformed-UTF-8 fixture. Bind original/native read-error cases and repeated frozen input coverage before verifying this precondition. |
+| `RF-BOUNDARY-READ-rafter-app` | Each selected root has a native malformed-UTF-8 fixture. Bind original/native read-error cases and repeated frozen input coverage before verifying this precondition. |
+| `RF-BOUNDARY-READ-rafter-runtime-api` | Each selected root has a native malformed-UTF-8 fixture. Bind original/native read-error cases and repeated frozen input coverage before verifying this precondition. |
+| `RF-BOUNDARY-TRAVERSAL-rafter` | Qualify missing/empty roots, directory and entry errors, UTF-8 extension filtering, symlinks and out-of-root traversal against bounded native physical discovery. Do not make exclusions to force parity. |
+| `RF-BOUNDARY-TRAVERSAL-rafter-app` | Qualify missing/empty roots, directory and entry errors, UTF-8 extension filtering, symlinks and out-of-root traversal against bounded native physical discovery. Do not make exclusions to force parity. |
+| `RF-BOUNDARY-TRAVERSAL-rafter-runtime-api` | Qualify missing/empty roots, directory and entry errors, UTF-8 extension filtering, symlinks and out-of-root traversal against bounded native physical discovery. Do not make exclusions to force parity. |
+| `RF-BOUNDARY-WORKSPACE` | Bind the explicit stock analysis root and trusted receipt inputs to the frozen workspace. The old ancestor calculation is a runner precondition, not a requirement that production code execute it. |
+| `RF-BOUNDARY-rafter-app-rafter_multiraft` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-app-rafter_runtime` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-app-rafter_service` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-app-rafter_storage` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-app-rafter_transport_tcp_insecure` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-app-std-fs` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-app-std-net` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-app-tokio` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-async_trait` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-rafter_app` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-rafter_codec` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-rafter_multiraft` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-rafter_runtime` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-rafter_runtime_api` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-rafter_service` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-rafter_storage` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-rafter_transport_tcp_insecure` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-runtime-api-async_trait` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-runtime-api-rafter_app` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-runtime-api-rafter_codec` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-runtime-api-rafter_multiraft` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-runtime-api-rafter_runtime` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-runtime-api-rafter_service` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-runtime-api-rafter_storage` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-runtime-api-rafter_transport_tcp_insecure` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-runtime-api-std-fs` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-runtime-api-std-net` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-runtime-api-tokio` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-std-fs` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-std-net` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-BOUNDARY-rafter-tokio` | Native compact raw boundary translation and focused fixtures are implemented. Bind repeated committed-revision frozen differential evidence, the selected physical input/read conditions and traversal differences before verification. |
+| `RF-FACADE-LIVE` | Rafter permits data declarations; wiring modes would change policy. Exact raw-line or reviewed structural normalization remains open. |
+| `RF-PRIVATE-BOUNDARY-PARSER` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-BOUNDARY-rafter` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-BOUNDARY-rafter-app` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-BOUNDARY-rafter-runtime-api` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-RELEASE-ARCHIVE-CLAIM` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-RELEASE-INVOCATION` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-RELEASE-SCOPE-LIMITS` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-ARCHIVE-CLOSURE` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-ARCHIVE-LIST` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-ARCHIVE-MODE` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-ARCHIVE-NONEMPTY` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-ASSETS` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-CARGO-TOOL` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-EXISTING-TARGETS` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-INPUTS` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-LITERAL-MATCH` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-PUBLISHABLE-SELECTION` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-RELEASE-NO-SKIP` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-REQUIRED-PATTERNS` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-RESULT` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-RG-TOOL` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-ROOT` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-SCANNED-LIST` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-SEARCH-ERROR` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PRIVATE-SCAN-TARGETS` | Retirement is user-approved and assertion scope is inventoried; bind the final retirement/cutover coverage before counting a verified disposition. No native replacement or execution is claimed. |
+| `RF-PROCESS-ALLOWLIST` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
+| `RF-PROCESS-CRATE-ALIASES` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
+| `RF-PROCESS-DETECTOR-CRATE-ALIASES` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-DETECTOR-MACROS` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-DETECTOR-PARSE` | Bind the exact original fixture parse precondition to native strict syntax and malformed/expression-only detector fixtures; no qualified replacement policy identity or diagnostic is linked yet. |
+| `RF-PROCESS-DETECTOR-ROOT-IMPORT` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-EXACT` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
+| `RF-PROCESS-MACROS` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
+| `RF-PROCESS-NORMALIZE-IMPORT-SELF` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-NORMALIZE-SUPER` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-PARSE` | Translate this exact original collector/parser assertion and bind its positive/negative fixture, intended native policy identity and diagnostic. No behavioral retention or implicit retirement applies. |
+| `RF-PROCESS-SPELLING` | Qualify the exact authored Import/all-Path occurrence contexts, module-graph normalization, written spelling, extern-crate and flattened macro-token predicates. Preserve each exact tuple/count and test the original detector; semantic call ownership alone is insufficient. |
+| `RF-TEST-FACADE-LIVE` | Rafter permits data declarations; wiring modes would change policy. Exact raw-line or reviewed structural normalization remains open. |
+| `RF-WIRE-ALIAS-ENTRY` | The same final assertion combines expression-shape and raw-text checks; this independent raw-text branch also needs replacement. |
+| `RF-WIRE-ALIAS-MEMBERSHIP` | The same final assertion combines expression-shape and raw-text checks; this independent raw-text branch also needs replacement. |
+| `RF-WIRE-ALIAS-MSG` | The same final assertion combines expression-shape and raw-text checks; this independent raw-text branch also needs replacement. |
+| `RF-WIRE-REGISTRY-LogEntryTag` | Required source/text predicates are not translated. |
+| `RF-WIRE-REGISTRY-MembershipTag` | Required source/text predicates are not translated. |
+| `RF-WIRE-REGISTRY-MessageTag` | Required source/text predicates are not translated. |
+| `RF-WIRE-RESERVATION` | Required documentation literal predicate is not translated. |
+| `RF-WIRE-U8-SHAPES` | Call-argument shapes and exact exception parity are not implemented; ownership does not subsume this requirement. |
