@@ -170,7 +170,16 @@ pub(super) fn native_cases() {
             let contract = load_contract(&fixture.0, std::path::Path::new("zrail.toml"))
                 .expect("accepted carrier")
                 .contract;
-            assert_eq!(contract.repository.files.len(), 118);
+            assert_eq!(contract.repository.files.len(), 119);
+            assert!(
+                contract
+                    .repository
+                    .files
+                    .iter()
+                    .any(|rule| rule.name == "kd-source-traversal"
+                        && rule.predicate == zrail_core::RepositoryFilePredicate::Inspect {}
+                        && rule.entry == zrail_core::RepositoryEntryMode::Any)
+            );
             assert_eq!(contract.dependencies.lock_packages.len(), 5);
             assert_eq!(
                 contract

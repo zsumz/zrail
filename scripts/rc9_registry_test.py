@@ -23,11 +23,14 @@ class RegistryConversion(unittest.TestCase):
         policy, report = convert(frozen())
         self.assertFalse(report["full_repository_qualified"])
         self.assertEqual(len(report["inputs"]), 9)
-        self.assertEqual(len(policy["repository"]["files"]), 118)
+        self.assertEqual(len(policy["repository"]["files"]), 119)
         self.assertEqual(len(policy["dependencies"]["lock_package"]), 5)
         self.assertEqual(len(policy["source"]["rust"]["budgets"]["overrides"]), 3)
-        self.assertEqual(report["excluded_from_schema_carrier"], ["kd-source-traversal"])
-        self.assertEqual(report["open_blocker"], "RC9-NATIVE-TRAVERSAL-CONTRACT")
+        self.assertEqual(report["excluded_from_schema_carrier"], [])
+        self.assertEqual(report["qualification_pending"], ["traversal-inspection", "registry"])
+        traversal, = [row for row in policy["repository"]["files"] if row["name"] == "kd-source-traversal"]
+        self.assertEqual(traversal["predicate"], {"kind": "inspect"})
+        self.assertEqual(traversal["entry"], "any")
 
     def test_every_interpreted_field_is_required(self):
         for key in FIELDS:
@@ -62,7 +65,7 @@ class RegistryConversion(unittest.TestCase):
             result = subprocess.run(command, capture_output=True)
             self.assertEqual(result.returncode, 0, result.stderr)
             source = output.read_bytes()
-            self.assertIn(b"EXCLUDES kd-source-traversal", source)
+            self.assertIn(b"Includes corrected inspection; repeated qualification remains pending.", source.splitlines()[1])
             self.assertEqual(tomllib.loads(source.decode()), convert(frozen())[0])
             self.assertNotEqual(subprocess.run(command, capture_output=True).returncode, 0)
             self.assertEqual(output.read_bytes(), source)

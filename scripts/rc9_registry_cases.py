@@ -6,6 +6,8 @@ import json
 import sys
 import tomllib
 
+sys.dont_write_bytecode = True
+
 from rc9_registry import ROOT, REGISTRY, FIELDS, Rejected, parse_bytes, convert, document, frozen
 
 CASES = "crates/zrail-testkit/tests/fixtures/rc9/registry-cases.json.gz"
@@ -125,7 +127,7 @@ def native_cases():
     value = copy.deepcopy(policy)
     fragment = tomllib.loads((ROOT / "docs/rc9/policies/kafka-driver.traversal.fragment.toml").read_text())
     row, = [row for row in fragment["repository"]["files"] if row["name"] == "kd-source-traversal"]
-    value["repository"]["files"].append(row)
+    value["repository"]["files"] = [row if rule["name"] == row["name"] else rule for rule in value["repository"]["files"]]
     add("known-traversal-contract-blocker", document(value))
     return rows
 

@@ -27,9 +27,10 @@ It does not run a consumer checker, update a lock or install a policy.
 
 ## Native schema-test carrier
 
-The carrier uses the existing good-contract scaffold and data from eight
-unchanged fragments, checking every interpreted registry field against their
-existing selections and values. It contains 118 file policies, five exact lock
+The carrier uses the existing good-contract scaffold and data from seven
+unchanged fragments plus the corrected `traversal-inspection` fragment, checking
+every interpreted registry field against their selections and values.
+It contains 119 file policies, five exact lock
 identities and three budget overrides. Source schema `1` maps to explicit
 native schema `1`; native schema `2` also loads this same carrier, but source
 schema `2` is still rejected. Unknown native contract keys are rejected, unlike
@@ -37,8 +38,9 @@ unknown source-registry keys. These are representation differences, not exact
 acceptance-set parity.
 
 The scaffold is a parser fixture, not the downstream repository layout or a
-full consumer contract. One original fragment rule is explicitly excluded:
-`kd-source-traversal`. No existing fragment or downstream guard is edited.
+full consumer contract. No rule is excluded: `kd-source-traversal` now uses the
+explicit `inspect` predicate and `entry = "any"`. The earlier traversal fragment
+and its predicate-only evidence remain byte-identical historical inputs.
 
 ## Blocking discovery: RC9-NATIVE-TRAVERSAL-CONTRACT
 
@@ -52,14 +54,21 @@ file assertion "kd-source-traversal" has an empty or vacuous count constraint
 
 The earlier traversal reports establish isolated predicate/physical behavior,
 not the assembled fragment's acceptance by the contract loader. Their original
-bytes and limited claims remain unchanged. The new native fixture adds the
-unchanged rule back and requires this exact failure. The schema-only exclusion
-is not a corrected traversal translation, a waived rail or a guard removal.
+bytes and limited claims remain unchanged. The native regression substitutes
+the unchanged historical rule for corrected inspection and still requires this
+exact failure. Vacuous counts are not made valid by the new predicate.
 
-Next: give complete physical inspection an explicit, loadable policy
-representation without weakening count validation, then rerun the original
-traversal boundary evidence and this complete carrier. Only afterward bind
-repeated signed-producer registry evidence and close the two registry rows.
+The representation defect is fixed in source: complete inspection has a closed,
+loadable policy, public report/lock tests and the same 133 physical boundary
+fixtures run after public contract loading (19 require enforced Unix permissions).
+The 96 injected scanner failures remain separate from observed OS behavior.
+Narrowed or removed inspection is protected; no new authority is accepted.
+
+Next: bind renewed repeated clean signed-producer traversal and registry reports,
+including frozen source coverage and the now-complete schema-test carrier.
+`RC9-NATIVE-TRAVERSAL-CONTRACT` remains open for that qualification renewal,
+not because the corrected representation is still unloadable. Only afterward
+close the two registry rows; no full consumer contract is qualified by this fix.
 
 ## Focused evidence
 
@@ -72,7 +81,7 @@ repeated signed-producer registry evidence and close the two registry rows.
   1 and 2 load with identical policy after schema normalization; unsupported,
   malformed, missing and unknown fields fail. The known traversal-fragment
   rejection remains a separate explicit regression.
-- Three Rust tests and seven Python tests exercise source binding, the two
+- Three registry Rust tests and seven Python tests exercise source binding, the two
   matrices, deterministic fixture regeneration, frozen values, the stronger
   input bound, and actual CLI output/overwrite refusal.
 

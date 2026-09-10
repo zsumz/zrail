@@ -32,7 +32,8 @@ pub(super) fn compare(left: &RepositoryFileRule, right: &RepositoryFileRule) -> 
         return vec![ChangeKind::Unknown];
     }
     let expansion_tightens = match &left.predicate {
-        RepositoryFilePredicate::Count { minimum: 0, .. }
+        RepositoryFilePredicate::Inspect {}
+        | RepositoryFilePredicate::Count { minimum: 0, .. }
         | RepositoryFilePredicate::ExactPaths { .. }
         | RepositoryFilePredicate::ForbiddenNames { .. }
         | RepositoryFilePredicate::LineValuesAllowed { .. }

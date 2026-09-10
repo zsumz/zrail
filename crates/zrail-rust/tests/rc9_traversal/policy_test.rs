@@ -5,6 +5,8 @@ use crate::inventory::test_faults as fault_io;
 mod injected;
 #[path = "injected_oracle.rs"]
 mod injected_oracle;
+#[path = "inspection_test.rs"]
+mod inspection;
 #[path = "model.rs"]
 mod model;
 #[path = "qualification.rs"]
@@ -38,6 +40,10 @@ fn traversal_original_function_is_frozen() {
 }
 
 fn portable() -> Vec<Row> {
+    portable_with(observe)
+}
+
+fn portable_with(observe: model::Observer) -> Vec<Row> {
     let mut rows = Vec::new();
     for selected in ROOTS {
         for case in [

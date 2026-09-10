@@ -50,6 +50,7 @@ pub(crate) fn analyze(
             policy_id: policy_id.clone(),
             policy: rule.clone(),
             claim: match rule.predicate {
+                RepositoryFilePredicate::Inspect {} => "physical-entry-inspection",
                 RepositoryFilePredicate::Literal(ref literal)
                     if matches!(
                         literal.mode,

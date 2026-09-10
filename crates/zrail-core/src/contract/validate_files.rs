@@ -48,6 +48,14 @@ pub(super) fn validate(contract: &Contract, errors: &mut ValidationErrors) {
             }
         }
         match &rule.predicate {
+            RepositoryFilePredicate::Inspect {} => {
+                if rule.entry != RepositoryEntryMode::Any {
+                    errors.push(format!(
+                        "file inspection assertion {:?} must select any entries",
+                        rule.name
+                    ));
+                }
+            }
             RepositoryFilePredicate::Count { minimum, maximum } => {
                 if maximum.is_some_and(|maximum| maximum < *minimum)
                     || (*minimum == 0 && maximum.is_none())

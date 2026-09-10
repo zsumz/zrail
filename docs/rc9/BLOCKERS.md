@@ -15,12 +15,13 @@ files and opaque or invalid syntax remain explicit review work.
 
 Rafter public API/docs discovery also remains open as `RC9-INVENTORY-RF-PUBLIC-API`: its enforced warnings and 41 exact path/text allowances must be expanded before any replacement claim.
 
-`RC9-NATIVE-TRAVERSAL-CONTRACT` now blocks assembled-policy qualification:
-the existing `kd-source-traversal` rule is rejected by public contract loading
-as an empty/vacuous count constraint. Earlier isolated predicate reports do not
-establish that the fragment loads. Preserve count validation, introduce a
-loadable complete-inspection representation and renew traversal and registry
-qualification. The reduced schema-test carrier is not a complete contract.
+`RC9-NATIVE-TRAVERSAL-CONTRACT` remains open for renewed assembled-policy
+qualification. The corrected `inspect` predicate loads without weakening count
+validation, and the schema carrier includes all 119 file policies. Publicly
+loaded physical fixtures and report/lock tests cover the correction. Repeated
+signed-producer traversal and registry evidence still needs renewal; historical
+count-zero reports remain predicate-only proof. The schema scaffold is not a
+complete downstream contract.
 See [the registry scope](inventory/KAFKA-DRIVER-REGISTRY.md).
 
 The separate reference runner also remains open as `RC9-INVENTORY-RF-REFERENCE-SCRIPT`: its patch-closure checks and six uncapped hard allowances require explicit translation and review.
@@ -35,7 +36,7 @@ policy qualification is claimed. See [the runtime evidence](evidence/route-runti
 | `KD-CI-ENFORCEMENT` | The mission explicitly requires replacing this prohibition with an enforced zrail lane. The new lane and its required policy/receipt evidence are not yet qualified. |
 | `KD-FACADE-LIVE` | Predicate fixtures pass; full downstream selection and complete declarative policy qualification remain open. |
 | `KD-FACADE-PARSE` | Stock wiring-only and test-facade policies already reject non-item fragments through RUST-FACADE-002, and malformed source fails parsing. Bind every frozen facade and the exact original implementation_items helper to positive/negative differential fixtures; preserve rc8 declarative fragment behavior. |
-| `KD-REGISTRY-PARSE` | Typed conversion and 249 original/27 native fixtures exist. Resolve `RC9-NATIVE-TRAVERSAL-CONTRACT` and bind repeated signed-producer evidence; the reduced schema carrier is not a qualified replacement. |
+| `KD-REGISTRY-PARSE` | Typed conversion and 249 original/27 native fixtures now include corrected inspection. Renew and bind repeated signed-producer traversal/registry evidence; the schema carrier is not a qualified replacement. |
 | `KD-REGISTRY-SCHEMA` | Source schema 1 and strict native schemas 1/2 have focused fixtures. Resolve the traversal-contract blocker and bind repeated complete-carrier evidence before verification. |
 | `KD-TEST-PLACEMENT-DETECTOR` | Execute the exact frozen detector fixture and compare the structural observations, including original order and cardinality; a generic nonzero zrail status is insufficient. |
 | `KD-TEST-PLACEMENT-LIVE` | Preserve the top-level selection and intentional raw cfg-token predicate, or obtain a separately approved normalization. Semantic cfg(test) detection alone permits legacy-forbidden cfg(not(test)) and feature="latest" inline modules; nested detection also differs. No policy/diagnostic fixtures yet. |

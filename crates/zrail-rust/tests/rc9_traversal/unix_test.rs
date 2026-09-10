@@ -8,6 +8,10 @@ use std::{
 };
 
 pub(super) fn links_and_specials() -> Vec<Row> {
+    links_and_specials_with(observe)
+}
+
+pub(super) fn links_and_specials_with(observe: super::model::Observer) -> Vec<Row> {
     let mut rows = Vec::new();
     for selected in ROOTS {
         for case in [
@@ -95,6 +99,10 @@ fn traversal_links_and_special_entries_preserve_explicit_boundaries() {
 }
 
 pub(super) fn permissions() -> Vec<Row> {
+    permissions_with(observe)
+}
+
+pub(super) fn permissions_with(observe: super::model::Observer) -> Vec<Row> {
     let mut rows = Vec::new();
     for selected in ROOTS {
         for case in ["unread-empty", "unread-nested", "unread-file"] {

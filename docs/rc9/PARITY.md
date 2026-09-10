@@ -159,10 +159,12 @@ gain range semantics, and build metadata participates in exact string identity.
 These proofs do not close general registry conversion. There are 113 reviewed
 instances remaining overall.
 The two registry assertions now have implemented typed conversion and 249
-original/27 native fixtures, but are not verified. Public loading rejects the
-existing traversal count-zero rule (`RC9-NATIVE-TRAVERSAL-CONTRACT`). The reduced
-schema carrier and historical predicate-only traversal reports cannot establish
-complete contract acceptance; see the [scope](inventory/KAFKA-DRIVER-REGISTRY.md).
+original/27 native fixtures, but are not verified. Public loading now accepts
+the corrected inspection fragment in the 119-file-policy schema carrier and
+still rejects the historical count-zero rule. `RC9-NATIVE-TRAVERSAL-CONTRACT`
+remains open for repeated qualification renewal. Historical predicate-only
+traversal reports cannot establish corrected contract acceptance; see the
+[scope](inventory/KAFKA-DRIVER-REGISTRY.md).
 `KD-FACADE-LIVE` and `KF-FACADE-LIVE` remain unverified. No complete repository
 has replacement qualification; passing a size family does not close other rails.
 

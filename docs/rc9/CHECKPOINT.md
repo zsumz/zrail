@@ -12,17 +12,20 @@ The current ledger is **672 reviewed / 607 implemented / 559 verified**;
 113 reviewed assertion instances and the discovery blockers remain open.
 No complete consumer bundle or full downstream qualification exists yet.
 
-Registry parsing/schema now have typed conversion and 249 original/27 native
-fixtures, but neither assertion is verified. Public contract loading exposed
-`RC9-NATIVE-TRAVERSAL-CONTRACT`: the existing `kd-source-traversal` minimum-zero
-count rule is rejected as vacuous. The reduced schema-test carrier explicitly
-omits that rule; a separate regression preserves the exact rejection. Existing
-fragments, root rails and historical predicate-only reports are unchanged.
+The traversal representation defect is fixed: explicit `inspect` loads with
+`entry = "any"`, while vacuous counts remain invalid. The corrected fragment
+preserves the six roots, selectors and reasons. Registry conversion now includes
+all 119 file policies, five lock policies and three budget overrides; none are
+excluded. The 249 original/27 native registry fixtures remain implementation
+evidence, not verification. The corrected traversal suite loads public contracts
+before all 133 physical cases; report, explain, lock and protected-diff tests
+cover the new predicate. Earlier count-zero fragments and predicate-only reports
+remain unchanged. `RC9-NATIVE-TRAVERSAL-CONTRACT` stays open for renewal evidence.
 See the [registry scope and next step](inventory/KAFKA-DRIVER-REGISTRY.md).
-Next bounded slice: a loadable complete-inspection policy and renewed traversal
-and registry-carrier qualification, then repeated registry evidence binding.
+Next bounded slice: bind repeated clean signed-producer traversal-inspection and
+registry reports, including the frozen source scope and complete schema carrier.
 
-Current local validation passes 1,655 Rust tests with zero failures and 28
+The preceding registry local validation passes 1,655 Rust tests with zero failures and 28
 ordinary-suite ignores, plus 102 Python tests, formatting, strict Clippy,
 rustdoc, structure and all three extracted package builds. Complete analysis
 observes 1,101 Rust files, 1,697 base contexts and 1,213,062 projection work with
@@ -33,11 +36,11 @@ new unreviewed macro; ordinary typed serialization removed it without a grant.
 Logs and `registry-self-analysis-fixed.json` are under
 `target/rc9-completion-20260907/`. No existing policy or authority changed.
 
-The preceding prefix head `6e33434` passes Windows, macOS and Rust 1.96.1
-compatibility in [CI](https://github.com/zsumz/zrail/actions/runs/34401815115);
+The preceding registry head `eafc3c3` passes Windows, macOS and Rust 1.96.1
+compatibility in [CI](https://github.com/zsumz/zrail/actions/runs/34405239711);
 canonical fails only the five known protected-lock diagnostics. Its
-[Security run](https://github.com/zsumz/zrail/actions/runs/34401815207) passes.
-These results do not qualify the later registry implementation.
+[Security run](https://github.com/zsumz/zrail/actions/runs/34405239695) passes.
+These results do not qualify the later inspection correction.
 
 The five exact-version prefix instances now bind two byte-identical reports
 from signed producer `bea4b64848214e3d50cc3ba2fb72a528ceedc02d`: 120 paired

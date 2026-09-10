@@ -51139,6 +51139,7 @@
           "repository:file:kd-provenance-probe-wire-count",
           "repository:file:kd-provenance-probe-wire-inheritance",
           "repository:file:kd-source-roots",
+          "repository:file:kd-source-traversal",
           "rust:size:scope:kd-facade",
           "rust:size:scope:kd-production",
           "rust:size:scope:kd-test"
@@ -51150,18 +51151,19 @@
         "fixtures": [
           "crates/zrail-rust/tests/rc9_registry/policy_test.rs",
           "crates/zrail-testkit/tests/fixtures/rc9/registry-cases.json.gz",
-          "scripts/rc9_registry_test.py"
+          "scripts/rc9_registry_test.py",
+          "crates/zrail-rust/tests/rc9_traversal/inspection_test.rs"
         ],
-        "qualification_scope": "Implemented source typing and native schema fixtures only; reduced review-only carrier explicitly omits unloadable kd-source-traversal. Repeated committed evidence and full carrier compatibility remain unverified."
+        "qualification_scope": "Implemented source typing, complete schema-test carrier and publicly loaded inspection fixtures only. No carrier rules are excluded. Repeated committed traversal and registry evidence and full consumer compatibility remain unverified."
       },
       "blockers": [
         {
           "id": "KD-REGISTRY-PARSE",
-          "cause": "Typed conversion and 249 original/27 native fixtures are implemented. Bind repeated committed original/converter/native evidence after resolving RC9-NATIVE-TRAVERSAL-CONTRACT; do not promote the reduced schema carrier into a complete consumer contract."
+          "cause": "Typed conversion and 249 original/27 native fixtures are implemented with the corrected inspection carrier. Bind repeated committed original/converter/native evidence; this schema scaffold is not a complete consumer contract."
         },
         {
           "id": "RC9-NATIVE-TRAVERSAL-CONTRACT",
-          "cause": "Existing kd-source-traversal count(minimum=0) is rejected by native contract validation as vacuous. Preserve the exact rejection regression and the earlier predicate-only reports; a corrected loadable policy and renewed qualification are required."
+          "cause": "The corrected inspect predicate loads without relaxing count validation, and the carrier includes kd-source-traversal. Bind renewed repeated committed traversal/registry qualification before closing this blocker; historical count-zero reports remain predicate-only evidence."
         }
       ]
     },
@@ -51325,6 +51327,7 @@
           "repository:file:kd-provenance-probe-wire-count",
           "repository:file:kd-provenance-probe-wire-inheritance",
           "repository:file:kd-source-roots",
+          "repository:file:kd-source-traversal",
           "rust:size:scope:kd-facade",
           "rust:size:scope:kd-production",
           "rust:size:scope:kd-test"
@@ -51336,18 +51339,19 @@
         "fixtures": [
           "crates/zrail-rust/tests/rc9_registry/policy_test.rs",
           "crates/zrail-testkit/tests/fixtures/rc9/registry-cases.json.gz",
-          "scripts/rc9_registry_test.py"
+          "scripts/rc9_registry_test.py",
+          "crates/zrail-rust/tests/rc9_traversal/inspection_test.rs"
         ],
-        "qualification_scope": "Implemented source typing and native schema fixtures only; reduced review-only carrier explicitly omits unloadable kd-source-traversal. Repeated committed evidence and full carrier compatibility remain unverified."
+        "qualification_scope": "Implemented source typing, complete schema-test carrier and publicly loaded inspection fixtures only. No carrier rules are excluded. Repeated committed traversal and registry evidence and full consumer compatibility remain unverified."
       },
       "blockers": [
         {
           "id": "KD-REGISTRY-SCHEMA",
-          "cause": "Typed conversion and 249 original/27 native fixtures are implemented. Bind repeated committed original/converter/native evidence after resolving RC9-NATIVE-TRAVERSAL-CONTRACT; do not promote the reduced schema carrier into a complete consumer contract."
+          "cause": "Typed conversion and 249 original/27 native fixtures are implemented with the corrected inspection carrier. Bind repeated committed original/converter/native evidence; this schema scaffold is not a complete consumer contract."
         },
         {
           "id": "RC9-NATIVE-TRAVERSAL-CONTRACT",
-          "cause": "Existing kd-source-traversal count(minimum=0) is rejected by native contract validation as vacuous. Preserve the exact rejection regression and the earlier predicate-only reports; a corrected loadable policy and renewed qualification are required."
+          "cause": "The corrected inspect predicate loads without relaxing count validation, and the carrier includes kd-source-traversal. Bind renewed repeated committed traversal/registry qualification before closing this blocker; historical count-zero reports remain predicate-only evidence."
         }
       ]
     },

@@ -122,7 +122,7 @@ def main():
     policy, _ = convert(load(args.registry))
     with args.output.open("x", encoding="utf-8", newline="\n") as output:
         output.write("# REVIEW-ONLY SCHEMA CARRIER. Not a qualified downstream contract.\n"
-                     "# EXCLUDES kd-source-traversal: known contract-validation blocker.\n" + document(policy))
+                     "# Includes corrected inspection; repeated qualification remains pending.\n" + document(policy))
     print("registry conversion: unchanged reviewed values; no lock or downstream mutation")
 
 

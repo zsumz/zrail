@@ -17,6 +17,9 @@ pub(super) fn evaluate(
     inputs: &mut Inputs,
 ) -> Result<&'static str, String> {
     let (satisfied, diagnostic) = match &observed.policy.predicate {
+        // Selection has already completed atomically. No contents or targets
+        // are read here; an incomplete selection returns REP-FILE-006 upstream.
+        RepositoryFilePredicate::Inspect {} => (true, "REP-FILE-006"),
         RepositoryFilePredicate::Count { minimum, maximum } => {
             let count = observed.entries.len();
             (

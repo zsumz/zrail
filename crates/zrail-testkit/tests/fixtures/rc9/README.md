@@ -56,8 +56,9 @@ stock zrail does not execute them or any downstream evaluator during analysis.
 The descriptions below retain each family's initial evidence scope; consult
 `assertions.json` and `docs/rc9/CHECKPOINT.md` for current verification status.
 The new registry structures/loader and 249 source/27 native cases are focused
-fixtures only. They expose `RC9-NATIVE-TRAVERSAL-CONTRACT`; neither registry
-assertion has repeated, bound replacement evidence yet.
+fixtures only. The corrected inspection carrier includes all 119 file policies;
+`RC9-NATIVE-TRAVERSAL-CONTRACT` remains open for qualification renewal. Neither
+registry assertion has repeated, bound replacement evidence yet.
 
 - `lock-packages-origins.json` binds the unchanged complete protocol lock test
   and helpers. Twelve frozen inputs and 50 fixtures qualify 20 exact whole-lock

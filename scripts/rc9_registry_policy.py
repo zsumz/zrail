@@ -8,7 +8,7 @@ import tomllib
 from rc9_registry import ROOT, PACKAGES, Rejected
 
 BASE = "crates/zrail-testkit/tests/fixtures/good/zrail.toml"
-FRAGMENTS = ["sizes", "files", "key-sets", "raw-dependency", "dependency-fields", "provenance", "lock-packages", "traversal"]
+FRAGMENTS = ["sizes", "files", "key-sets", "raw-dependency", "dependency-fields", "provenance", "lock-packages", "traversal-inspection"]
 
 
 def merge(target, incoming):
@@ -33,14 +33,6 @@ def carrier(config):
         inputs[path] = hashlib.sha256(source).hexdigest()
         fragments[name] = tomllib.loads(source.decode())
         selected = copy.deepcopy(fragments[name])
-        if name == "traversal":
-            # The unchanged count(minimum=0) rule fails current contract loading.
-            # Retain its regression separately; never call this a full bundle.
-            blocked, = [row for row in selected["repository"]["files"] if row["name"] == "kd-source-traversal"]
-            if blocked["entry"] != "any" or blocked["predicate"] != {"kind": "count", "minimum": 0}:
-                raise Rejected("authority", "tracked traversal blocker changed; review the carrier exclusion")
-            selected["repository"]["files"] = [row for row in selected["repository"]["files"]
-                                                if row["name"] != "kd-source-traversal"]
         merge(result, selected)
     bindings = {}
 
@@ -51,7 +43,9 @@ def carrier(config):
 
     bind("schema", result["schema"], config["schema"])
     roots = config["paths"]["rust_roots"]
-    traversal = fragments["traversal"]["repository"]["files"]
+    traversal = fragments["traversal-inspection"]["repository"]["files"]
+    if traversal[1]["entry"] != "any" or traversal[1]["predicate"] != {"kind": "inspect"}:
+        raise Rejected("authority", "complete inspection predicate changed")
     bind("paths.rust_roots", traversal[0]["predicate"]["paths"], roots)
     bind("paths.rust_roots.include", traversal[0]["include"], roots)
     bind("paths.rust_roots.traversal", traversal[1]["include"], [root + "/**" for root in roots])
@@ -81,5 +75,5 @@ def carrier(config):
     if len(names) != len(set(names)):
         raise Rejected("authority", "duplicate carrier file policy")
     return result, {"inputs": inputs, "bindings": bindings, "full_repository_qualified": False,
-                    "excluded_from_schema_carrier": ["kd-source-traversal"],
-                    "open_blocker": "RC9-NATIVE-TRAVERSAL-CONTRACT"}
+                    "excluded_from_schema_carrier": [],
+                    "qualification_pending": ["traversal-inspection", "registry"]}

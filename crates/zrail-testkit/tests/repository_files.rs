@@ -8,6 +8,8 @@ mod encoding_test;
 mod entry_test;
 #[path = "strict_facades/fixture.rs"]
 mod fixture;
+#[path = "repository_files/inspection_test.rs"]
+mod inspection_test;
 #[path = "repository_files/line_test.rs"]
 mod line_test;
 #[path = "repository_files/prefix_test.rs"]

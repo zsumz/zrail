@@ -1,0 +1,16 @@
+# PARTIAL REVIEW FRAGMENT: loadable physical inspection, not a consumer bundle.
+[repository]
+
+[[repository.files]]
+name = "kd-source-roots"
+include = ["src", "tests", "crates/kafka-driver-core/src", "crates/kafka-driver-probe/src", "crates/kafka-driver-sim/src", "crates/kafka-driver-transport/src"]
+entry = "directory"
+reason = "Every frozen configured source root must remain a directory, even when it contains no Rust files."
+predicate = { kind = "exact-paths", paths = ["src", "tests", "crates/kafka-driver-core/src", "crates/kafka-driver-probe/src", "crates/kafka-driver-sim/src", "crates/kafka-driver-transport/src"] }
+
+[[repository.files]]
+name = "kd-source-traversal"
+include = ["src/**", "tests/**", "crates/kafka-driver-core/src/**", "crates/kafka-driver-probe/src/**", "crates/kafka-driver-sim/src/**", "crates/kafka-driver-transport/src/**"]
+entry = "any"
+reason = "Require complete physical entry inspection under every source root; empty trees are valid, unread descendants are not."
+predicate = { kind = "inspect" }

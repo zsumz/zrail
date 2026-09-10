@@ -42,6 +42,9 @@ pub enum RepositoryEntryMode {
 #[serde(tag = "kind", rename_all = "kebab-case", deny_unknown_fields)]
 /// Bounded file predicates do not interpret code or execute repository programs.
 pub enum RepositoryFilePredicate {
+    /// Require complete physical inspection without a cardinality or content constraint.
+    /// Empty selections are valid; `entry = "any"` is required.
+    Inspect {},
     /// Count distinct selected physical paths; zero is a persistent prohibition.
     Count {
         /// Minimum selected paths, including zero for a prohibition.

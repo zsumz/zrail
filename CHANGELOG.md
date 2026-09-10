@@ -31,6 +31,9 @@ All notable zrail changes are recorded here for reviewed release notes.
 - Explicit non-directory path selection includes special files without reading
   their contents, preserving physical prohibitions that regular-file rules miss.
   Contained-link resolution and fail-closed traversal boundaries remain in force.
+- Explicit repository-file inspection accepts empty selections while requiring
+  complete physical traversal, without a content or cardinality claim. Vacuous
+  counts remain invalid, and narrowed or removed inspection requires review.
 - Explicit UTF-8 validity for byte-equality policies, preserving legacy text-read
   preconditions while retaining binary equality by default.
 - Exact raw-line presence and prohibition, with per-line normalization, complete

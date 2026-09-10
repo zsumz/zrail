@@ -72,12 +72,32 @@ The existing repository-wide symlink policy remains independently enforced.
 
 | Kind | Semantics |
 | --- | --- |
+| `inspect` | Complete physical inspection of the selection, requiring explicit `entry = "any"`. Empty selections pass; unread descendants or entry errors fail closed. No cardinality, content-read or execution claim. |
 | `count` | Inclusive `minimum` and optional `maximum` over selected paths. `minimum = 0, maximum = 0` remains an active prohibition when no path exists. |
 | `exact-paths` | Complete unordered `paths` set. Missing and unexpected paths fail independently of the total count. An empty set is a persistent prohibition. |
 | `forbidden-names` | Literal `names`, with `part` selecting `component`, `component-stem`, `file-name`, or `file-stem`. Component stems use Rust `Path::file_stem` for directories too. |
 | `literal` | Per-file raw text predicate with explicit `text`, `mode`, `normalization`, and `case`. |
 | `document` | Per-file typed TOML/JSON assertion at a literal key path; see [authored documents](REPOSITORY-DOCUMENTS.md). |
 | `bytes-equal` | At least one selected regular file, every file byte-for-byte equal to the required regular reference `other`. Binary data is supported by default. `utf8 = true` additionally requires both sides to decode as UTF-8, without normalizing line endings or whitespace. |
+
+`inspect` accepts no predicate fields besides `kind`. Use it when empty trees
+are valid but traversal completeness is required; `count` with only
+`minimum = 0` remains invalid. Require root existence separately using an exact
+directory set or positive count. Inspection uses the same bounded selection
+and unread-subtree checks above; it never opens file contents or FIFO streams.
+Coverage and explain report `physical-entry-inspection`, and the lock binds
+the policy and physical entry observations, not uninspected content bytes.
+Removing inspection or provably narrowing its selection is a grant; expansion
+is a revoke. Unproven selector or predicate changes remain protected as unknown.
+
+```toml
+[[repository.files]]
+name = "source-inspection"
+include = ["src/**", "tests/**"]
+entry = "any"
+reason = "Empty trees are valid; unread descendants are not."
+predicate = { kind = "inspect" }
+```
 
 Name predicates default to `basis = "repository"`. The explicit `filesystem`
 basis additionally inspects the canonical checkout prefix, exposes it in

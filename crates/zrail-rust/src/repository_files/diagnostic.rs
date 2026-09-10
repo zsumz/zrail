@@ -13,6 +13,7 @@ pub(super) fn finding(observed: &GovernedRepositoryFile, diagnostic: &str) -> Fi
         .filter(|entry| !entry.satisfied)
         .count();
     let message = match &observed.policy.predicate {
+        RepositoryFilePredicate::Inspect {} => "incomplete physical entry inspection".into(),
         RepositoryFilePredicate::Count { minimum, maximum } => format!(
             "selected {} entries; required minimum {minimum}, maximum {}",
             observed.entries.len(),

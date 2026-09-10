@@ -1561,3 +1561,55 @@ canonical fails only the same five protected-lock diagnostics. Its
 [Security run](https://github.com/zsumz/zrail/actions/runs/34401815207) passes.
 Those results do not qualify this later registry implementation. The exact
 preceding failure log is `prefix-hosted-failures.log` in the directory above.
+
+## Loadable traversal inspection, 2026-09-10
+
+The new closed `inspect` predicate requires explicit `entry = "any"`, accepts
+empty selections and uses the existing bounded fail-closed physical scanner.
+It reads no file content. Counts with minimum zero and no maximum remain invalid;
+inspection accepts no count, path-list or extension fields. Removing inspection
+or provably narrowing its scope is a grant; unproven selector/predicate changes
+remain protected as unknown. No grant is accepted by these tests or this change.
+
+`kafka-driver.traversal-inspection.fragment.toml` changes only the historical
+traversal predicate's representation. The six roots, selectors and reasons are
+unchanged. Historical `traversal.fragment.toml`, compressed reports and index
+remain byte-identical and retain their predicate-only scope. New fixtures load
+a complete schema scaffold with the corrected fragment through `load_contract`
+before reusing the 48 portable, 66 link/FIFO and 19 enforced-permission cases.
+The 96 existing injected scanner errors are still separate from physical OS
+failures. Public coverage, explain, check and lock fixtures additionally test
+empty selections, physical input changes and atomic incomplete-analysis failure.
+
+The registry converter now includes all 119 file policies, five exact lock
+policies and three budget overrides, with no excluded rule. Its 249 source and
+27 native cases preserve all original distinctions; the historical count-zero
+rule is substituted into the corrected carrier to require its exact rejection.
+Native schemas 1 and 2 load the corrected carrier. Neither registry assertion
+is promoted: the ledger remains 672 reviewed / 607 implemented / 559 verified,
+with 113 reviewed instances plus discovery still open.
+
+`RC9-NATIVE-TRAVERSAL-CONTRACT` remains open for renewed repeated signed-producer
+traversal/registry evidence, including frozen source coverage. The source-level
+loadability defect is fixed; a schema-test scaffold is not a full consumer
+contract. Earlier failed focused runs remain under
+`target/rc9-completion-20260907/inspection-*.log`: fixture insertion, the explicit
+hypothetical-path API, and root-inclusive glob cardinality expectations were
+corrected without changing those production semantics. The initial Python CLI
+expectation still named the old exclusion and was updated to the corrected
+review-only header. These stopped/failed runs are not qualification passes.
+
+Current focused validation passes all five corrected inspection tests, including
+all 133 physical cases and explicitly enforced permissions. Three registry tests
+pass both the 249-source and 27-native matrices; two public-report/lock tests pass.
+All 102 Python checks and structure pass, and all three extracted crate builds
+pass. Logs are `inspection-physical-direct.log`, `inspection-public-direct.log`,
+`inspection-registry-direct.log` and `inspection-package-check.log` under the
+same directory. The canonical workspace run remains in progress; it must not
+be reported as complete from these focused results.
+
+The redundant filtered workspace sweep was stopped after compilation and the
+targeted direct passes to prioritize the canonical run during severe local I/O
+delays. `inspection-workspace-filtered-interrupted.log` records exit 143, not a
+completed gate. The separate physical, registry and public-test results above
+are completed runs; the package build was resumed and completed successfully.

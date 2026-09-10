@@ -116,6 +116,18 @@ pub(super) fn observe(
     legacy_error: Option<&str>,
     diagnostic: &str,
 ) -> Row {
+    observe_with(fixture, case, legacy_error, diagnostic, &policies())
+}
+
+pub(super) type Observer = fn(&Fixture, &str, Option<&str>, &str) -> Row;
+
+pub(super) fn observe_with(
+    fixture: &Fixture,
+    case: &str,
+    legacy_error: Option<&str>,
+    diagnostic: &str,
+    policies: &[RepositoryFileRule],
+) -> Row {
     let root = &fixture.root;
     let original = std::panic::catch_unwind(|| original(root));
     let (legacy_paths, actual_error) = match original {
@@ -145,7 +157,7 @@ pub(super) fn observe(
         diagnostics: vec![],
         observations: vec![],
     };
-    match crate::repository_files::analyze(root, &policies()) {
+    match crate::repository_files::analyze(root, policies) {
         Ok(analysis) => {
             row.diagnostics = analysis
                 .findings
